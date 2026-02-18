@@ -11,9 +11,13 @@
 //! 3. Handler accumulates state as needed
 
 mod error;
+mod handler;
+mod parser;
 mod segment_builder;
 mod tokenizer;
 
 pub use error::ParseError;
+pub use handler::EdifactHandler;
+pub use parser::EdifactStreamParser;
 pub use segment_builder::SegmentBuilder;
 pub use tokenizer::EdifactTokenizer;
