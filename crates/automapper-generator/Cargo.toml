@@ -1,0 +1,19 @@
+[package]
+name = "automapper-generator"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Code generation CLI — reads MIG/AHB XML schemas, generates Rust mapper code"
+
+[dependencies]
+automapper-core.workspace = true
+automapper-validation.workspace = true
+clap.workspace = true
+quick-xml.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+test-case.workspace = true
