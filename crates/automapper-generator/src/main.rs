@@ -59,7 +59,7 @@ enum Commands {
 
         /// Maximum concurrent Claude CLI calls
         #[arg(long, default_value = "4")]
-        concurrency: usize,
+        max_concurrent: usize,
 
         /// Path to MIG XML file (optional, for segment structure context)
         #[arg(long)]
@@ -89,7 +89,14 @@ enum Commands {
 fn main() {
     let cli = Cli::parse();
 
-    let result = match cli.command {
+    if let Err(e) = run(cli) {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
+}
+
+fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
+    match cli.command {
         Commands::GenerateMappers {
             mig_path,
             ahb_path,
@@ -110,21 +117,244 @@ fn main() {
             )
         }
         Commands::GenerateConditions {
-            ahb_path: _,
-            output_dir: _,
+            ahb_path,
+            output_dir,
             format_version,
             message_type,
             incremental,
-            concurrency: _,
-            mig_path: _,
-            batch_size: _,
-            dry_run: _,
+            max_concurrent,
+            mig_path,
+            batch_size,
+            dry_run,
         } => {
             eprintln!(
                 "Generating conditions for {} {} (incremental={})",
                 message_type, format_version, incremental
             );
-            // Placeholder — implemented in Epic 3
+
+            // Parse AHB
+            let ahb_filename = ahb_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+            let variant = if ahb_filename.contains("Strom") {
+                Some("Strom")
+            } else if ahb_filename.contains("Gas") {
+                Some("Gas")
+            } else {
+                None
+            };
+
+            let ahb_schema = automapper_generator::parsing::ahb_parser::parse_ahb(
+                &ahb_path,
+                &message_type,
+                variant,
+                &format_version,
+            )?;
+
+            // Optionally parse MIG for segment structure context
+            let mig_schema = if let Some(ref mig) = mig_path {
+                Some(automapper_generator::parsing::mig_parser::parse_mig(
+                    mig,
+                    &message_type,
+                    variant,
+                    &format_version,
+                )?)
+            } else {
+                None
+            };
+
+            // Extract condition descriptions
+            let conditions: Vec<(String, String)> = ahb_schema
+                .bedingungen
+                .iter()
+                .map(|b| (b.id.clone(), b.description.clone()))
+                .collect();
+
+            eprintln!("Found {} conditions", conditions.len());
+
+            // Create output directory
+            std::fs::create_dir_all(&output_dir)?;
+
+            // Load existing metadata for incremental mode
+            let metadata_path = output_dir.join(format!(
+                "{}_condition_evaluator_{}.conditions.json",
+                message_type.to_lowercase(),
+                format_version.to_lowercase()
+            ));
+            let existing_metadata =
+                automapper_generator::conditions::metadata::load_metadata(&metadata_path)?;
+
+            // Determine what needs regeneration
+            let existing_ids = std::collections::HashSet::new();
+            let decision = automapper_generator::conditions::metadata::decide_regeneration(
+                &conditions,
+                existing_metadata.as_ref(),
+                &existing_ids,
+                !incremental,
+            );
+
+            eprintln!(
+                "Regeneration: {} to regenerate, {} to preserve",
+                decision.to_regenerate.len(),
+                decision.to_preserve.len()
+            );
+
+            if dry_run {
+                eprintln!("\n=== DRY RUN MODE ===");
+                for item in &decision.to_regenerate {
+                    eprintln!(
+                        "  [{}] {} - {}",
+                        item.condition_id, item.reason, item.description
+                    );
+                }
+                return Ok(());
+            }
+
+            if decision.to_regenerate.is_empty() {
+                eprintln!("All conditions are up-to-date. Nothing to regenerate.");
+                return Ok(());
+            }
+
+            // Build condition inputs
+            let condition_inputs: Vec<
+                automapper_generator::conditions::condition_types::ConditionInput,
+            > = decision
+                .to_regenerate
+                .iter()
+                .map(
+                    |c| automapper_generator::conditions::condition_types::ConditionInput {
+                        id: c.condition_id.clone(),
+                        description: c.description.clone(),
+                        referencing_fields: None,
+                    },
+                )
+                .collect();
+
+            // Generate conditions in batches
+            let generator =
+                automapper_generator::conditions::claude_generator::ClaudeConditionGenerator::new(
+                    max_concurrent,
+                );
+            let context = automapper_generator::conditions::prompt::ConditionContext {
+                message_type: &message_type,
+                format_version: &format_version,
+                mig_schema: mig_schema.as_ref(),
+                example_implementations:
+                    automapper_generator::conditions::prompt::default_example_implementations(),
+            };
+
+            let mut all_generated = Vec::new();
+
+            for (i, batch) in condition_inputs.chunks(batch_size).enumerate() {
+                eprintln!(
+                    "[Batch {}/{}] Processing {} conditions...",
+                    i + 1,
+                    condition_inputs.len().div_ceil(batch_size),
+                    batch.len()
+                );
+
+                match generator.generate_batch(batch, &context) {
+                    Ok(mut generated) => {
+                        // Enrich with original descriptions
+                        for gc in &mut generated {
+                            if let Some(input) = batch
+                                .iter()
+                                .find(|c| c.id == gc.condition_number.to_string())
+                            {
+                                gc.original_description = Some(input.description.clone());
+                                gc.referencing_fields = input.referencing_fields.clone();
+                            }
+                        }
+                        let high = generated
+                            .iter()
+                            .filter(|c| {
+                                c.confidence
+                                    == automapper_generator::conditions::condition_types::ConfidenceLevel::High
+                            })
+                            .count();
+                        let medium = generated
+                            .iter()
+                            .filter(|c| {
+                                c.confidence
+                                    == automapper_generator::conditions::condition_types::ConfidenceLevel::Medium
+                            })
+                            .count();
+                        let low = generated
+                            .iter()
+                            .filter(|c| {
+                                c.confidence
+                                    == automapper_generator::conditions::condition_types::ConfidenceLevel::Low
+                            })
+                            .count();
+                        eprintln!(
+                            "  Generated: {} (High: {}, Medium: {}, Low: {})",
+                            generated.len(),
+                            high,
+                            medium,
+                            low
+                        );
+                        all_generated.extend(generated);
+                    }
+                    Err(e) => {
+                        eprintln!("  ERROR: {}", e);
+                    }
+                }
+            }
+
+            // Generate output file
+            let output_path = output_dir.join(format!(
+                "{}_conditions_{}.rs",
+                message_type.to_lowercase(),
+                format_version.to_lowercase()
+            ));
+
+            let preserved = std::collections::HashMap::new();
+            let source_code =
+                automapper_generator::conditions::codegen::generate_condition_evaluator_file(
+                    &message_type,
+                    &format_version,
+                    &all_generated,
+                    ahb_path.to_str().unwrap_or("unknown"),
+                    &preserved,
+                );
+
+            std::fs::write(&output_path, &source_code)?;
+            eprintln!("Generated: {:?}", output_path);
+
+            // Save metadata
+            let mut meta_conditions = std::collections::HashMap::new();
+            for gc in &all_generated {
+                let desc = gc.original_description.as_deref().unwrap_or("");
+                meta_conditions.insert(
+                    gc.condition_number.to_string(),
+                    automapper_generator::conditions::metadata::ConditionMetadata {
+                        confidence: gc.confidence.to_string(),
+                        reasoning: gc.reasoning.clone(),
+                        description_hash:
+                            automapper_generator::conditions::metadata::compute_description_hash(
+                                desc,
+                            ),
+                        is_external: gc.is_external,
+                    },
+                );
+            }
+
+            let metadata_file = automapper_generator::conditions::metadata::ConditionMetadataFile {
+                generated_at: chrono::Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string(),
+                ahb_file: ahb_path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .unwrap_or("unknown")
+                    .to_string(),
+                format_version: format_version.clone(),
+                conditions: meta_conditions,
+            };
+
+            automapper_generator::conditions::metadata::save_metadata(
+                &metadata_path,
+                &metadata_file,
+            )?;
+            eprintln!("Metadata: {:?}", metadata_path);
+            eprintln!("Generation complete!");
+
             Ok(())
         }
         Commands::ValidateSchema {
@@ -135,13 +365,45 @@ fn main() {
                 "Validating generated code in {:?} against {:?}",
                 generated_dir, stammdatenmodell_path
             );
-            // Placeholder — implemented in Epic 3
+
+            let known_types =
+                automapper_generator::validation::schema_validator::extract_bo4e_types(
+                    &stammdatenmodell_path,
+                )?;
+            eprintln!("Found {} BO4E types in stammdatenmodell", known_types.len());
+
+            let report =
+                automapper_generator::validation::schema_validator::validate_generated_code(
+                    &generated_dir,
+                    &known_types,
+                )?;
+
+            eprintln!("Checked {} type references", report.total_references);
+
+            if !report.errors.is_empty() {
+                eprintln!("\n=== Errors ===");
+                for error in &report.errors {
+                    eprintln!("  ERROR: {}", error);
+                }
+            }
+
+            if !report.warnings.is_empty() {
+                eprintln!("\n=== Warnings ===");
+                for warning in &report.warnings {
+                    eprintln!("  WARN: {}", warning);
+                }
+            }
+
+            if report.is_valid() {
+                eprintln!("\nValidation PASSED");
+            } else {
+                eprintln!("\nValidation FAILED");
+                return Err(automapper_generator::GeneratorError::Validation {
+                    message: format!("{} errors found", report.errors.len()),
+                });
+            }
+
             Ok(())
         }
-    };
-
-    if let Err(e) = result {
-        eprintln!("Error: {}", e);
-        std::process::exit(1);
     }
 }

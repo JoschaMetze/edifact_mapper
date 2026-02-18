@@ -3188,3 +3188,21 @@ cargo run -p automapper-generator -- validate-schema \
     --stammdatenmodell-path stammdatenmodell/ \
     --generated-dir generated/
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 99 |
+| Passed | 99 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- crates/automapper-generator/src/conditions/condition_types.rs
+- crates/automapper-generator/src/conditions/metadata.rs
+- crates/automapper-generator/src/conditions/prompt.rs
+- crates/automapper-generator/src/conditions/claude_generator.rs
+- crates/automapper-generator/src/conditions/codegen.rs
+- crates/automapper-generator/src/validation/schema_validator.rs
+- crates/automapper-generator/src/main.rs
