@@ -182,10 +182,7 @@ fn generate_mapper_stub(mig: &MigSchema, entity: &DetectedEntity) -> String {
     code.push_str("}\n\n");
 
     // SegmentHandler impl
-    code.push_str(&format!(
-        "impl SegmentHandler for {} {{\n",
-        struct_name
-    ));
+    code.push_str(&format!("impl SegmentHandler for {} {{\n", struct_name));
     code.push_str("    fn can_handle(&self, segment: &RawSegment) -> bool {\n");
 
     if entity.segments.is_empty() {
@@ -237,10 +234,7 @@ fn generate_mapper_stub(mig: &MigSchema, entity: &DetectedEntity) -> String {
     // Mapper impl
     code.push_str(&format!("impl Mapper for {} {{\n", struct_name));
     code.push_str("    fn format_version(&self) -> FormatVersion {\n");
-    code.push_str(&format!(
-        "        FormatVersion::{}\n",
-        mig.format_version
-    ));
+    code.push_str(&format!("        FormatVersion::{}\n", mig.format_version));
     code.push_str("    }\n");
     code.push_str("}\n\n");
 

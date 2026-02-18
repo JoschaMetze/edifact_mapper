@@ -73,7 +73,7 @@ pub fn generate_coordinator(
         "        // mappers.push(Box::new(ProzessdatenMapper{}::default()));\n",
         fv_variant
     ));
-    code.push_str("\n");
+    code.push('\n');
     code.push_str("        Self { mappers }\n");
     code.push_str("    }\n\n");
 
@@ -106,11 +106,7 @@ pub fn generate_coordinator(
     code.push_str("        &[\n");
 
     for entry in ordered_segments {
-        let optional = if entry.is_optional {
-            " (optional)"
-        } else {
-            ""
-        };
+        let optional = if entry.is_optional { " (optional)" } else { "" };
         let group = entry
             .group_id
             .as_deref()

@@ -34,17 +34,11 @@ pub fn generate_version_config(mig: &MigSchema) -> Result<String, GeneratorError
     code.push_str("use automapper_core::FormatVersion;\n\n");
 
     // Marker struct
-    code.push_str(&format!(
-        "/// Marker type for format version {}.\n",
-        fv
-    ));
+    code.push_str(&format!("/// Marker type for format version {}.\n", fv));
     code.push_str(&format!("pub struct {};\n\n", struct_name));
 
     // VersionConfig impl
-    code.push_str(&format!(
-        "impl VersionConfig for {} {{\n",
-        struct_name
-    ));
+    code.push_str(&format!("impl VersionConfig for {} {{\n", struct_name));
     code.push_str(&format!(
         "    const VERSION: FormatVersion = FormatVersion::{};\n",
         fv

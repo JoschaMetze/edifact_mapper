@@ -16,10 +16,7 @@ pub fn generate_mappers(
     message_type: &str,
 ) -> Result<(), GeneratorError> {
     // Infer variant from filename
-    let mig_filename = mig_path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or("");
+    let mig_filename = mig_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
     let variant = if mig_filename.contains("Strom") {
         Some("Strom")
     } else if mig_filename.contains("Gas") {
