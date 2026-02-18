@@ -2528,3 +2528,27 @@ Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 EOF
 )"
 ```
+
+---
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 81 |
+| Passed | 81 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/automapper-core/src/mappers/prozessdaten.rs`
+- `crates/automapper-core/src/mappers/zeitscheibe.rs`
+- `crates/automapper-core/src/mappers/marktlokation.rs`
+- `crates/automapper-core/src/mappers/messlokation.rs`
+- `crates/automapper-core/src/mappers/netzlokation.rs`
+- `crates/automapper-core/src/mappers/geschaeftspartner.rs`
+- `crates/automapper-core/src/mappers/vertrag.rs`
+- `crates/automapper-core/src/mappers/zaehler.rs`
+- `crates/automapper-core/src/utilmd_coordinator.rs`
+- `crates/automapper-core/src/coordinator.rs`
+- `crates/automapper-core/tests/forward_mapping_test.rs`

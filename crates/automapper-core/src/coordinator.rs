@@ -12,6 +12,8 @@ use edifact_parser::EdifactHandler;
 
 use crate::error::AutomapperError;
 use crate::traits::FormatVersion;
+use crate::utilmd_coordinator::UtilmdCoordinator;
+use crate::version::{FV2504, FV2510};
 
 /// Orchestrates mappers during EDIFACT processing.
 ///
@@ -53,8 +55,8 @@ pub trait Coordinator: EdifactHandler + Send {
 /// ```
 pub fn create_coordinator(fv: FormatVersion) -> Result<Box<dyn Coordinator>, AutomapperError> {
     match fv {
-        FormatVersion::FV2504 => Ok(Box::new(StubCoordinator::new(FormatVersion::FV2504))),
-        FormatVersion::FV2510 => Ok(Box::new(StubCoordinator::new(FormatVersion::FV2510))),
+        FormatVersion::FV2504 => Ok(Box::new(UtilmdCoordinator::<FV2504>::new())),
+        FormatVersion::FV2510 => Ok(Box::new(UtilmdCoordinator::<FV2510>::new())),
     }
 }
 
@@ -83,36 +85,6 @@ pub fn detect_format_version(input: &[u8]) -> Option<FormatVersion> {
     }
 }
 
-/// Stub coordinator used until real UtilmdCoordinator is implemented in Epic 7.
-///
-/// This allows the trait, create_coordinator(), and tests to work while
-/// the full mapper infrastructure is being built.
-struct StubCoordinator {
-    fv: FormatVersion,
-}
-
-impl StubCoordinator {
-    fn new(fv: FormatVersion) -> Self {
-        Self { fv }
-    }
-}
-
-impl EdifactHandler for StubCoordinator {}
-
-impl Coordinator for StubCoordinator {
-    fn parse(&mut self, _input: &[u8]) -> Result<Vec<UtilmdTransaktion>, AutomapperError> {
-        Ok(Vec::new())
-    }
-
-    fn generate(&self, _transaktion: &UtilmdTransaktion) -> Result<Vec<u8>, AutomapperError> {
-        Ok(Vec::new())
-    }
-
-    fn format_version(&self) -> FormatVersion {
-        self.fv
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -130,14 +102,14 @@ mod tests {
     }
 
     #[test]
-    fn test_stub_coordinator_parse_returns_empty() {
+    fn test_coordinator_parse_empty_returns_empty() {
         let mut coord = create_coordinator(FormatVersion::FV2504).unwrap();
         let result = coord.parse(b"").unwrap();
         assert!(result.is_empty());
     }
 
     #[test]
-    fn test_stub_coordinator_generate_returns_empty() {
+    fn test_coordinator_generate_returns_empty() {
         let coord = create_coordinator(FormatVersion::FV2504).unwrap();
         let tx = UtilmdTransaktion::default();
         let result = coord.generate(&tx).unwrap();
