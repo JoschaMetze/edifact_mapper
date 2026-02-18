@@ -5,6 +5,7 @@ title: "Cargo Workspace & Project Setup"
 depends_on: []
 estimated_tasks: 5
 crate: workspace
+status: in_progress
 ---
 
 # Epic 1: Cargo Workspace & Project Setup
