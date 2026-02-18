@@ -4,13 +4,17 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
-description = "AHB validation — condition expression parser and evaluator"
+description = "AHB condition expression parsing, evaluation, and EDIFACT validation"
 
 [dependencies]
 edifact-types.workspace = true
+edifact-parser.workspace = true
 bo4e-extensions.workspace = true
 automapper-core.workspace = true
 thiserror.workspace = true
+serde.workspace = true
 
 [dev-dependencies]
 test-case.workspace = true
+pretty_assertions = "1"
+proptest.workspace = true
