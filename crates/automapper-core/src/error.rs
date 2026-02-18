@@ -62,10 +62,7 @@ mod tests {
         let err = AutomapperError::RoundtripMismatch {
             message: "segment count differs".to_string(),
         };
-        assert_eq!(
-            err.to_string(),
-            "roundtrip mismatch: segment count differs"
-        );
+        assert_eq!(err.to_string(), "roundtrip mismatch: segment count differs");
     }
 
     #[test]
