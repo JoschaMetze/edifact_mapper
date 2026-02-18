@@ -5,6 +5,7 @@ title: "Writer, Roundtrip & Batch Processing"
 depends_on: [edifact-core-implementation/E07]
 estimated_tasks: 7
 crate: automapper-core
+status: in_progress
 ---
 
 # Epic 8: Writer, Roundtrip & Batch Processing
