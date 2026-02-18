@@ -5,6 +5,7 @@ title: "edifact-types Crate"
 depends_on: [edifact-core-implementation/E01]
 estimated_tasks: 5
 crate: edifact-types
+status: in_progress
 ---
 
 # Epic 2: edifact-types Crate
