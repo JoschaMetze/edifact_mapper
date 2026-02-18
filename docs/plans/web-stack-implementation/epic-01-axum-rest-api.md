@@ -5,6 +5,7 @@ title: "Axum REST API"
 depends_on: []
 estimated_tasks: 7
 crate: automapper-api
+status: in_progress
 ---
 
 # Epic 1: Axum REST API
