@@ -1,0 +1,68 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/edifact-types",
+    "crates/edifact-parser",
+    "crates/bo4e-extensions",
+    "crates/automapper-core",
+    "crates/automapper-validation",
+    "crates/automapper-generator",
+    "crates/automapper-api",
+    "crates/automapper-web",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT"
+repository = "https://github.com/your-org/edifact-bo4e-automapper"
+
+[workspace.dependencies]
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Date/time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Error handling
+thiserror = "2"
+
+# Parallelism
+rayon = "1"
+
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# XML
+quick-xml = "0.37"
+
+# Web
+axum = "0.8"
+tokio = { version = "1", features = ["full"] }
+tonic = "0.12"
+prost = "0.13"
+
+# Frontend
+leptos = "0.7"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# Testing
+insta = { version = "1", features = ["json"] }
+proptest = "1"
+criterion = { version = "0.5", features = ["html_reports"] }
+test-case = "3"
+
+# Internal crates
+edifact-types = { path = "crates/edifact-types" }
+edifact-parser = { path = "crates/edifact-parser" }
+bo4e-extensions = { path = "crates/bo4e-extensions" }
+automapper-core = { path = "crates/automapper-core" }
+automapper-validation = { path = "crates/automapper-validation" }
+automapper-generator = { path = "crates/automapper-generator" }
+automapper-api = { path = "crates/automapper-api" }
+automapper-web = { path = "crates/automapper-web" }

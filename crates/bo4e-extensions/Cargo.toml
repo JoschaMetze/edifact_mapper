@@ -1,0 +1,15 @@
+[package]
+name = "bo4e-extensions"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "BO4E extension types for EDIFACT mapping — companion structs, WithValidity, LinkRegistry"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+
+[dev-dependencies]
+insta.workspace = true
