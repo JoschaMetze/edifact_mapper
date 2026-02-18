@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package automapper.inspection;
+
+/// Service for EDIFACT message inspection and coordinator discovery.
+service InspectionService {
+  /// Parse EDIFACT content into a segment tree.
+  rpc InspectEdifact(InspectEdifactRequest) returns (InspectEdifactResponse);
+
+  /// List all available coordinators.
+  rpc ListCoordinators(ListCoordinatorsRequest) returns (ListCoordinatorsResponse);
+}
+
+/// Request to inspect EDIFACT content.
+message InspectEdifactRequest {
+  /// Raw EDIFACT content to parse.
+  string edifact = 1;
+}
+
+/// Response with the parsed segment tree.
+message InspectEdifactResponse {
+  /// Parsed segments.
+  repeated SegmentNode segments = 1;
+
+  /// Total segment count.
+  uint32 segment_count = 2;
+
+  /// Detected message type (e.g., "UTILMD").
+  string message_type = 3;
+
+  /// Detected format version.
+  string format_version = 4;
+}
+
+/// A single EDIFACT segment.
+message SegmentNode {
+  /// Segment tag (e.g., "UNH", "NAD").
+  string tag = 1;
+
+  /// 1-based segment ordinal.
+  uint32 line_number = 2;
+
+  /// Raw segment content.
+  string raw_content = 3;
+
+  /// Parsed data elements.
+  repeated DataElement elements = 4;
+
+  /// Child segments (for hierarchical grouping).
+  repeated SegmentNode children = 5;
+}
+
+/// A data element within a segment.
+message DataElement {
+  /// 1-based position.
+  uint32 position = 1;
+
+  /// Simple element value.
+  string value = 2;
+
+  /// Component elements (for composite elements).
+  repeated ComponentElement components = 3;
+}
+
+/// A component element within a composite data element.
+message ComponentElement {
+  /// 1-based position.
+  uint32 position = 1;
+
+  /// Component value.
+  string value = 2;
+}
+
+/// Request to list coordinators (empty — no parameters needed).
+message ListCoordinatorsRequest {}
+
+/// Response with available coordinators.
+message ListCoordinatorsResponse {
+  repeated CoordinatorInfo coordinators = 1;
+}
+
+/// Information about an available coordinator.
+message CoordinatorInfo {
+  /// EDIFACT message type (e.g., "UTILMD").
+  string message_type = 1;
+
+  /// Human-readable description.
+  string description = 2;
+
+  /// Supported format versions.
+  repeated string supported_versions = 3;
+}

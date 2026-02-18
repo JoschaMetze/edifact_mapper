@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package automapper.transform;
+
+/// Service for EDIFACT <-> BO4E conversion.
+service TransformService {
+  /// Convert a single EDIFACT message to BO4E JSON.
+  rpc ConvertEdifactToBo4e(EdifactToBo4eRequest) returns (ConvertResponse);
+
+  /// Convert a single BO4E JSON to EDIFACT.
+  rpc ConvertBo4eToEdifact(Bo4eToEdifactRequest) returns (ConvertResponse);
+
+  /// Stream: convert multiple EDIFACT messages to BO4E.
+  rpc ConvertEdifactToBo4eStream(stream EdifactToBo4eRequest) returns (stream ConvertResponse);
+}
+
+/// Request to convert EDIFACT to BO4E.
+message EdifactToBo4eRequest {
+  /// Raw EDIFACT content.
+  string edifact = 1;
+
+  /// Optional format version override (e.g., "FV2504").
+  string format_version = 2;
+
+  /// Whether to include a mapping trace.
+  bool include_trace = 3;
+}
+
+/// Request to convert BO4E to EDIFACT.
+message Bo4eToEdifactRequest {
+  /// BO4E JSON content.
+  string bo4e_json = 1;
+
+  /// Message type (e.g., "UTILMD").
+  string message_type = 2;
+
+  /// Optional format version override.
+  string format_version = 3;
+}
+
+/// Conversion response (used for both directions).
+message ConvertResponse {
+  /// Whether the conversion succeeded.
+  bool success = 1;
+
+  /// Converted content (BO4E JSON or EDIFACT string).
+  string result = 2;
+
+  /// Mapping trace (populated if include_trace was true).
+  MappingTrace trace = 3;
+
+  /// Errors encountered during conversion.
+  repeated ConversionError errors = 4;
+
+  /// Conversion duration in milliseconds.
+  double duration_ms = 5;
+}
+
+/// A mapping trace recording the conversion steps.
+message MappingTrace {
+  /// Name of the coordinator used.
+  string coordinator_used = 1;
+
+  /// Individual mapping steps.
+  repeated MappingStep steps = 2;
+
+  /// Total duration in milliseconds.
+  double duration_ms = 3;
+}
+
+/// A single step in the mapping trace.
+message MappingStep {
+  /// Mapper/writer name.
+  string mapper = 1;
+
+  /// Source segment reference.
+  string source_segment = 2;
+
+  /// Target BO4E path.
+  string target_path = 3;
+
+  /// Mapped value.
+  string value = 4;
+
+  /// Optional note.
+  string note = 5;
+}
+
+/// An error from a conversion operation.
+message ConversionError {
+  /// Machine-readable error code.
+  string code = 1;
+
+  /// Human-readable error message.
+  string message = 2;
+
+  /// Location in the source content.
+  string location = 3;
+
+  /// Error severity.
+  ErrorSeverity severity = 4;
+}
+
+/// Severity level.
+enum ErrorSeverity {
+  ERROR_SEVERITY_UNSPECIFIED = 0;
+  ERROR_SEVERITY_WARNING = 1;
+  ERROR_SEVERITY_ERROR = 2;
+  ERROR_SEVERITY_CRITICAL = 3;
+}
