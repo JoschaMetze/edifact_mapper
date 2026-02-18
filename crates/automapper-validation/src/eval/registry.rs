@@ -107,7 +107,7 @@ impl Default for EvaluatorRegistry {
 #[cfg(test)]
 mod tests {
     use super::super::context::EvaluationContext;
-    use super::super::evaluator::{ConditionResult, NoOpExternalProvider};
+    use super::super::evaluator::ConditionResult;
     use super::*;
 
     /// Minimal evaluator for testing registry operations.

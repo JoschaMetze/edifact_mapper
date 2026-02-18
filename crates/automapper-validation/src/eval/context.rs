@@ -58,7 +58,7 @@ impl<'a> EvaluationContext<'a> {
                     && s.elements
                         .get(element_index)
                         .and_then(|e| e.first())
-                        .map_or(false, |v| *v == qualifier)
+                        .is_some_and(|v| *v == qualifier)
             })
             .collect()
     }

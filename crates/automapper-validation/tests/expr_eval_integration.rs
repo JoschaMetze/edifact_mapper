@@ -4,7 +4,6 @@ use automapper_validation::eval::{
     ConditionEvaluator, ConditionExprEvaluator, ConditionResult, EvaluationContext,
     ExternalConditionProvider,
 };
-use automapper_validation::expr::ConditionParser;
 use edifact_types::RawSegment;
 use std::collections::HashMap;
 

@@ -119,7 +119,7 @@ impl<'a, E: ConditionEvaluator> ConditionExprEvaluator<'a, E> {
 mod tests {
     use super::super::evaluator::{ConditionResult as CR, NoOpExternalProvider};
     use super::*;
-    use edifact_types::{RawSegment, SegmentPosition};
+    use edifact_types::RawSegment;
     use std::collections::HashMap;
 
     /// A mock condition evaluator for testing.

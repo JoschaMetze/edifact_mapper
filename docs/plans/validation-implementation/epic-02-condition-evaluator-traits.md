@@ -1477,3 +1477,19 @@ End-to-end tests parsing real AHB expressions and evaluating them with
 mock condition evaluators. Covers ORDERS complex expressions, UTILMD XOR,
 three-way AND chains, Unknown propagation, and bare status strings.
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 128 |
+| Passed | 128 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- crates/automapper-validation/src/eval/evaluator.rs
+- crates/automapper-validation/src/eval/context.rs
+- crates/automapper-validation/src/eval/expr_eval.rs
+- crates/automapper-validation/src/eval/registry.rs
+- crates/automapper-validation/tests/expr_eval_integration.rs
