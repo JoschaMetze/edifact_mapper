@@ -5,6 +5,7 @@ title: "Condition Expression Parser"
 depends_on: []
 estimated_tasks: 5
 crate: automapper-validation
+status: in_progress
 ---
 
 # Epic 1: Condition Expression Parser
