@@ -4,20 +4,44 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
-description = "REST + gRPC server for EDIFACT/BO4E conversion"
+description = "Axum REST API + tonic gRPC server for edifact-bo4e-automapper"
+publish = false
+
+[[bin]]
+name = "automapper-api"
+path = "src/main.rs"
+
+[lib]
+name = "automapper_api"
+path = "src/lib.rs"
 
 [dependencies]
+# Internal crates
 automapper-core.workspace = true
-automapper-validation.workspace = true
-bo4e-extensions.workspace = true
-axum.workspace = true
+edifact-parser = { path = "../edifact-parser" }
+edifact-types = { path = "../edifact-types" }
+bo4e-extensions = { path = "../bo4e-extensions" }
+
+# Web framework
+axum = { version = "0.8", features = ["json", "macros"] }
 tokio.workspace = true
-tonic.workspace = true
-prost.workspace = true
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = ["cors", "fs", "trace"] }
+
+# Serialization
 serde.workspace = true
 serde_json.workspace = true
-tracing.workspace = true
-tracing-subscriber.workspace = true
+
+# Error handling
 thiserror.workspace = true
 
+# Observability
+tracing.workspace = true
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
 [dev-dependencies]
+http = "1"
+http-body-util = "0.1"
+tower = { version = "0.5", features = ["util"] }
+serde_json.workspace = true
+tokio = { version = "1", features = ["full", "test-util"] }
