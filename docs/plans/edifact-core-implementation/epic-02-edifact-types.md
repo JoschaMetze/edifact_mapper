@@ -911,3 +911,18 @@ Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 EOF
 )"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 29 |
+| Passed | 29 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/edifact-types/src/delimiters.rs` (11 tests: defaults, equality, debug, UNA parsing, detection, roundtrip)
+- `crates/edifact-types/src/position.rs` (5 tests: construction, display, service segment, equality, clone)
+- `crates/edifact-types/src/segment.rs` (9 tests: simple access, out-of-bounds, display, case-insensitive ID, components, zero-copy lifetime, clone)
+- `crates/edifact-types/src/control.rs` (4 tests: continue, stop, default, equality)
