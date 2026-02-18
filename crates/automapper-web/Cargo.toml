@@ -1,14 +1,38 @@
+# Build instructions:
+# 1. Install trunk: cargo install trunk
+# 2. Build WASM: trunk build --release (from this directory)
+# 3. Copy dist/* to ../../static/ for the API server to serve
+# 4. Or run `trunk serve` for dev mode with hot-reload (proxies API calls to localhost:8080)
+
 [package]
 name = "automapper-web"
-version.workspace = true
-edition.workspace = true
-rust-version.workspace = true
-license.workspace = true
-description = "Leptos WASM frontend for the EDIFACT converter"
+version = "0.1.0"
+edition = "2021"
+description = "Leptos WASM frontend for edifact-bo4e-automapper"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-leptos.workspace = true
-serde.workspace = true
-serde_json.workspace = true
+leptos = { version = "0.7", features = ["csr"] }
+leptos_router = "0.7"
+
+# HTTP client for WASM
+gloo-net = { version = "0.6", features = ["http", "json"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# WASM bindings
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = ["Window", "Document", "console"] }
+
+# Logging
+log = "0.4"
+console_log = "1"
+console_error_panic_hook = "0.1"
 
 [dev-dependencies]
+wasm-bindgen-test = "0.3"
