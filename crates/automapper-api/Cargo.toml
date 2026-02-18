@@ -35,9 +35,20 @@ serde_json.workspace = true
 # Error handling
 thiserror.workspace = true
 
+# gRPC
+tonic.workspace = true
+tonic-prost = "0.14"
+prost.workspace = true
+async-stream = "0.3"
+tokio-stream = "0.1"
+
 # Observability
 tracing.workspace = true
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[build-dependencies]
+tonic-prost-build = "0.14"
+protox = "0.9"
 
 [dev-dependencies]
 http = "1"
@@ -45,3 +56,4 @@ http-body-util = "0.1"
 tower = { version = "0.5", features = ["util"] }
 serde_json.workspace = true
 tokio = { version = "1", features = ["full", "test-util"] }
+tonic.workspace = true

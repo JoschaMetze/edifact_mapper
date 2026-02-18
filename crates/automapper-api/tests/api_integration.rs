@@ -15,7 +15,7 @@ use automapper_api::state::AppState;
 
 fn app() -> axum::Router {
     let state = AppState::new();
-    automapper_api::build_router(state)
+    automapper_api::build_http_router(state)
 }
 
 // --- Health ---

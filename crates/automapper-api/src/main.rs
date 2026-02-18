@@ -21,7 +21,7 @@ async fn main() {
         .expect("failed to bind");
 
     tracing::info!(
-        "automapper-api listening on {}, static_dir={}",
+        "automapper-api listening on {} (REST + gRPC), static_dir={}",
         bind_addr,
         static_dir
     );
