@@ -5,7 +5,7 @@ title: "Axum REST API"
 depends_on: []
 estimated_tasks: 7
 crate: automapper-api
-status: in_progress
+status: complete
 ---
 
 # Epic 1: Axum REST API
@@ -1651,3 +1651,34 @@ Expected: all pass cleanly.
 git add -A
 git commit -m "chore(api): final cleanup and verification for Epic 1 — Axum REST API complete"
 ```
+
+---
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 17 |
+| Passed | 17 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/automapper-api/src/lib.rs`
+- `crates/automapper-api/src/main.rs`
+- `crates/automapper-api/src/error.rs`
+- `crates/automapper-api/src/state.rs`
+- `crates/automapper-api/src/contracts/mod.rs`
+- `crates/automapper-api/src/contracts/convert.rs`
+- `crates/automapper-api/src/contracts/inspect.rs`
+- `crates/automapper-api/src/contracts/coordinators.rs`
+- `crates/automapper-api/src/contracts/health.rs`
+- `crates/automapper-api/src/contracts/error.rs`
+- `crates/automapper-api/src/contracts/trace.rs`
+- `crates/automapper-api/src/routes/mod.rs`
+- `crates/automapper-api/src/routes/health.rs`
+- `crates/automapper-api/src/routes/coordinators.rs`
+- `crates/automapper-api/src/routes/inspect.rs`
+- `crates/automapper-api/src/routes/convert.rs`
+- `crates/automapper-api/tests/api_integration.rs`
+- `crates/automapper-api/tests/contract_tests.rs`
