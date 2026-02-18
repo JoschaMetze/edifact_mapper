@@ -9,3 +9,9 @@
 //! 1. Tokenizer splits raw bytes into segments
 //! 2. Parser routes segments to handler callbacks
 //! 3. Handler accumulates state as needed
+
+mod segment_builder;
+mod tokenizer;
+
+pub use segment_builder::SegmentBuilder;
+pub use tokenizer::EdifactTokenizer;
