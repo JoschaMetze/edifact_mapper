@@ -112,10 +112,7 @@ mod tests {
     fn test_vertrag_mapper_seq_z18_haushaltskunde() {
         let mut mapper = VertragMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
-        mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z18"]], pos()),
-            &mut ctx,
-        );
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z18"]], pos()), &mut ctx);
         mapper.handle(
             &RawSegment::new("CCI", vec![vec!["Z15"], vec![], vec!["Z01"]], pos()),
             &mut ctx,
@@ -128,10 +125,7 @@ mod tests {
     fn test_vertrag_mapper_ignores_outside_z18() {
         let mut mapper = VertragMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
-        mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z01"]], pos()),
-            &mut ctx,
-        );
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z01"]], pos()), &mut ctx);
         mapper.handle(
             &RawSegment::new("CCI", vec![vec!["Z15"], vec![], vec!["Z01"]], pos()),
             &mut ctx,

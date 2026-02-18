@@ -56,11 +56,8 @@ impl ProzessdatenMapper {
             }
             "102" => {
                 if value.len() >= 8 {
-                    NaiveDateTime::parse_from_str(
-                        &format!("{}0000", &value[..8]),
-                        "%Y%m%d%H%M",
-                    )
-                    .ok()
+                    NaiveDateTime::parse_from_str(&format!("{}0000", &value[..8]), "%Y%m%d%H%M")
+                        .ok()
                 } else {
                     None
                 }
@@ -217,11 +214,7 @@ mod tests {
 
         let sts = RawSegment::new(
             "STS",
-            vec![
-                vec!["E01"],
-                vec!["E01", "", "Z44"],
-                vec!["Z01"],
-            ],
+            vec![vec!["E01"], vec!["E01", "", "Z44"], vec!["Z01"]],
             pos(),
         );
 
@@ -239,11 +232,7 @@ mod tests {
         let mut mapper = ProzessdatenMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
 
-        let dtm = RawSegment::new(
-            "DTM",
-            vec![vec!["137", "202506190130", "303"]],
-            pos(),
-        );
+        let dtm = RawSegment::new("DTM", vec![vec!["137", "202506190130", "303"]], pos());
 
         mapper.handle(&dtm, &mut ctx);
 
@@ -259,11 +248,7 @@ mod tests {
         let mut ctx = TransactionContext::new("FV2504");
 
         // DTM+137:202506190130?+00:303'
-        let dtm = RawSegment::new(
-            "DTM",
-            vec![vec!["137", "202506190130?+00", "303"]],
-            pos(),
-        );
+        let dtm = RawSegment::new("DTM", vec![vec!["137", "202506190130?+00", "303"]], pos());
 
         mapper.handle(&dtm, &mut ctx);
 
@@ -276,11 +261,7 @@ mod tests {
         let mut mapper = ProzessdatenMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
 
-        let dtm = RawSegment::new(
-            "DTM",
-            vec![vec!["471", "20250701", "102"]],
-            pos(),
-        );
+        let dtm = RawSegment::new("DTM", vec![vec!["471", "20250701", "102"]], pos());
 
         mapper.handle(&dtm, &mut ctx);
 
@@ -293,11 +274,7 @@ mod tests {
         let mut mapper = ProzessdatenMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
 
-        let rff = RawSegment::new(
-            "RFF",
-            vec![vec!["Z13", "VORGANGSNUMMER001"]],
-            pos(),
-        );
+        let rff = RawSegment::new("RFF", vec![vec!["Z13", "VORGANGSNUMMER001"]], pos());
 
         mapper.handle(&rff, &mut ctx);
 
@@ -343,11 +320,7 @@ mod tests {
         let mut mapper = ProzessdatenMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
 
-        let dtm = RawSegment::new(
-            "DTM",
-            vec![vec!["999", "20250701", "102"]],
-            pos(),
-        );
+        let dtm = RawSegment::new("DTM", vec![vec!["999", "20250701", "102"]], pos());
 
         mapper.handle(&dtm, &mut ctx);
         assert!(mapper.is_empty());

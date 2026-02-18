@@ -45,20 +45,14 @@ fn test_forward_mapping_synthetic_utilmd() {
     assert_eq!(tx.empfaenger.mp_id, Some("9900456000001".to_string()));
 
     // Prozessdaten
-    assert_eq!(
-        tx.prozessdaten.transaktionsgrund,
-        Some("E01".to_string())
-    );
+    assert_eq!(tx.prozessdaten.transaktionsgrund, Some("E01".to_string()));
     assert!(tx.prozessdaten.prozessdatum.is_some());
     assert!(tx.prozessdaten.wirksamkeitsdatum.is_some());
     assert_eq!(
         tx.prozessdaten.referenz_vorgangsnummer,
         Some("VORGANGS001".to_string())
     );
-    assert_eq!(
-        tx.prozessdaten.bemerkung,
-        Some("Testbemerkung".to_string())
-    );
+    assert_eq!(tx.prozessdaten.bemerkung, Some("Testbemerkung".to_string()));
 
     // Zeitscheiben
     assert_eq!(tx.zeitscheiben.len(), 1);

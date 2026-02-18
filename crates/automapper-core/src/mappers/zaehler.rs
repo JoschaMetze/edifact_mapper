@@ -2,7 +2,7 @@
 //!
 //! Handles SEQ+Z03 (device data) and SEQ+Z79 (product package) segments.
 
-use bo4e_extensions::{Zaehler, ZaehlerEdifact, WithValidity};
+use bo4e_extensions::{WithValidity, Zaehler, ZaehlerEdifact};
 use edifact_types::RawSegment;
 
 use crate::context::TransactionContext;
@@ -148,10 +148,7 @@ mod tests {
     fn test_zaehler_mapper_seq_z03_rff() {
         let mut mapper = ZaehlerMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
-        mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z03"]], pos()),
-            &mut ctx,
-        );
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z03"]], pos()), &mut ctx);
         mapper.handle(
             &RawSegment::new("RFF", vec![vec!["Z19", "MELO001"]], pos()),
             &mut ctx,
@@ -168,19 +165,13 @@ mod tests {
     fn test_zaehler_mapper_pia_zaehlernummer() {
         let mut mapper = ZaehlerMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
-        mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z03"]], pos()),
-            &mut ctx,
-        );
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z03"]], pos()), &mut ctx);
         mapper.handle(
             &RawSegment::new("PIA", vec![vec!["5"], vec!["ZAEHLER001"]], pos()),
             &mut ctx,
         );
         let result = mapper.build();
         assert_eq!(result.len(), 1);
-        assert_eq!(
-            result[0].data.zaehlernummer,
-            Some("ZAEHLER001".to_string())
-        );
+        assert_eq!(result[0].data.zaehlernummer, Some("ZAEHLER001".to_string()));
     }
 }

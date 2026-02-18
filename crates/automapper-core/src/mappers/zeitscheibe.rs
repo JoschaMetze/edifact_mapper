@@ -59,11 +59,8 @@ impl ZeitscheibeMapper {
             }
             "102" => {
                 if value.len() >= 8 {
-                    NaiveDateTime::parse_from_str(
-                        &format!("{}0000", &value[..8]),
-                        "%Y%m%d%H%M",
-                    )
-                    .ok()
+                    NaiveDateTime::parse_from_str(&format!("{}0000", &value[..8]), "%Y%m%d%H%M")
+                        .ok()
                 } else {
                     None
                 }
@@ -221,7 +218,10 @@ mod tests {
         let mut ctx = TransactionContext::new("FV2504");
 
         // First Zeitscheibe
-        mapper.handle(&RawSegment::new("RFF", vec![vec!["Z49", "1"]], pos()), &mut ctx);
+        mapper.handle(
+            &RawSegment::new("RFF", vec![vec!["Z49", "1"]], pos()),
+            &mut ctx,
+        );
         mapper.handle(
             &RawSegment::new("DTM", vec![vec!["Z25", "202507010000", "303"]], pos()),
             &mut ctx,
@@ -232,7 +232,10 @@ mod tests {
         );
 
         // Second Zeitscheibe
-        mapper.handle(&RawSegment::new("RFF", vec![vec!["Z49", "2"]], pos()), &mut ctx);
+        mapper.handle(
+            &RawSegment::new("RFF", vec![vec!["Z49", "2"]], pos()),
+            &mut ctx,
+        );
         mapper.handle(
             &RawSegment::new("DTM", vec![vec!["Z25", "202510010000", "303"]], pos()),
             &mut ctx,
@@ -253,7 +256,10 @@ mod tests {
         let mut mapper = ZeitscheibeMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
 
-        mapper.handle(&RawSegment::new("RFF", vec![vec!["Z50", "A"]], pos()), &mut ctx);
+        mapper.handle(
+            &RawSegment::new("RFF", vec![vec!["Z50", "A"]], pos()),
+            &mut ctx,
+        );
 
         let zs = mapper.build();
         assert_eq!(zs.len(), 1);
@@ -265,7 +271,10 @@ mod tests {
         let mut mapper = ZeitscheibeMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
 
-        mapper.handle(&RawSegment::new("RFF", vec![vec!["Z49", "1"]], pos()), &mut ctx);
+        mapper.handle(
+            &RawSegment::new("RFF", vec![vec!["Z49", "1"]], pos()),
+            &mut ctx,
+        );
         assert!(!mapper.is_empty());
 
         mapper.reset();

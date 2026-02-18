@@ -7,11 +7,9 @@
 
 use std::marker::PhantomData;
 
-use bo4e_extensions::{
-    LinkRegistry, Marktteilnehmer, Nachrichtendaten, UtilmdTransaktion,
-};
-use edifact_types::{Control, EdifactDelimiters, RawSegment};
+use bo4e_extensions::{LinkRegistry, Marktteilnehmer, Nachrichtendaten, UtilmdTransaktion};
 use edifact_parser::EdifactHandler;
+use edifact_types::{Control, EdifactDelimiters, RawSegment};
 
 use crate::context::TransactionContext;
 use crate::coordinator::Coordinator;
@@ -160,21 +158,9 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
     fn collect_transaction(&mut self) -> UtilmdTransaktion {
         let prozessdaten = self.prozessdaten_mapper.build();
         let zeitscheiben = self.zeitscheibe_mapper.build();
-        let marktlokationen = self
-            .marktlokation_mapper
-            .build()
-            .into_iter()
-            .collect();
-        let messlokationen = self
-            .messlokation_mapper
-            .build()
-            .into_iter()
-            .collect();
-        let netzlokationen = self
-            .netzlokation_mapper
-            .build()
-            .into_iter()
-            .collect();
+        let marktlokationen = self.marktlokation_mapper.build().into_iter().collect();
+        let messlokationen = self.messlokation_mapper.build().into_iter().collect();
+        let netzlokationen = self.netzlokation_mapper.build().into_iter().collect();
         let parteien = self.geschaeftspartner_mapper.build();
         let vertrag = self.vertrag_mapper.build();
         let zaehler = self.zaehler_mapper.build();
@@ -289,10 +275,7 @@ impl<V: VersionConfig> Coordinator for UtilmdCoordinator<V> {
         Ok(std::mem::take(&mut self.transactions))
     }
 
-    fn generate(
-        &self,
-        _transaktion: &UtilmdTransaktion,
-    ) -> Result<Vec<u8>, AutomapperError> {
+    fn generate(&self, _transaktion: &UtilmdTransaktion) -> Result<Vec<u8>, AutomapperError> {
         // Will be implemented in Epic 8 (Writer)
         Ok(Vec::new())
     }

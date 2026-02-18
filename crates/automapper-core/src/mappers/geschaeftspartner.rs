@@ -2,9 +2,7 @@
 //!
 //! Handles NAD segments with party qualifiers (Z04, Z09, DP, etc.).
 
-use bo4e_extensions::{
-    Adresse, Geschaeftspartner, GeschaeftspartnerEdifact, WithValidity,
-};
+use bo4e_extensions::{Adresse, Geschaeftspartner, GeschaeftspartnerEdifact, WithValidity};
 use edifact_types::RawSegment;
 
 use crate::context::TransactionContext;
@@ -82,11 +80,31 @@ impl SegmentHandler for GeschaeftspartnerMapper {
             },
             partneradresse: if !strasse.is_empty() || !ort.is_empty() {
                 Some(Adresse {
-                    strasse: if strasse.is_empty() { None } else { Some(strasse.to_string()) },
-                    hausnummer: if hausnummer.is_empty() { None } else { Some(hausnummer.to_string()) },
-                    postleitzahl: if plz.is_empty() { None } else { Some(plz.to_string()) },
-                    ort: if ort.is_empty() { None } else { Some(ort.to_string()) },
-                    landescode: if land.is_empty() { None } else { Some(land.to_string()) },
+                    strasse: if strasse.is_empty() {
+                        None
+                    } else {
+                        Some(strasse.to_string())
+                    },
+                    hausnummer: if hausnummer.is_empty() {
+                        None
+                    } else {
+                        Some(hausnummer.to_string())
+                    },
+                    postleitzahl: if plz.is_empty() {
+                        None
+                    } else {
+                        Some(plz.to_string())
+                    },
+                    ort: if ort.is_empty() {
+                        None
+                    } else {
+                        Some(ort.to_string())
+                    },
+                    landescode: if land.is_empty() {
+                        None
+                    } else {
+                        Some(land.to_string())
+                    },
                 })
             } else {
                 None

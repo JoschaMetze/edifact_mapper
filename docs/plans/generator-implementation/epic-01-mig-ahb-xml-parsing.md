@@ -2604,3 +2604,20 @@ Expected: If the submodule is present, all real XML files parse successfully. If
 ```bash
 git add -A && git commit -m "test(generator): add integration tests for real MIG/AHB XML files from submodule"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 35 |
+| Passed | 35 |
+| Failed | 0 |
+| Skipped | 0 (3 integration tests skip gracefully when submodule absent) |
+
+Files tested:
+- crates/automapper-generator/src/error.rs
+- crates/automapper-generator/src/schema/common.rs
+- crates/automapper-generator/src/schema/mig.rs
+- crates/automapper-generator/src/schema/ahb.rs
+- crates/automapper-generator/src/parsing/mig_parser.rs
+- crates/automapper-generator/src/parsing/ahb_parser.rs

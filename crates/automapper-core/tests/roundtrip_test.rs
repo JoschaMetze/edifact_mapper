@@ -4,11 +4,11 @@
 //! the original input. For full byte-identical roundtrip, the writer
 //! must reproduce all segment details from the parsed data.
 
+use automapper_core::writer::entity_writers::*;
 use automapper_core::{
     create_coordinator, detect_format_version, Coordinator, EdifactDocumentWriter, FormatVersion,
     UtilmdCoordinator, FV2504,
 };
-use automapper_core::writer::entity_writers::*;
 
 /// A minimal EDIFACT interchange for roundtrip testing.
 ///
@@ -98,10 +98,8 @@ fn test_roundtrip_preserves_location_ids() {
     );
 
     // Generate back and verify IDs survive the roundtrip
-    let mut doc = EdifactDocumentWriter::with_delimiters(
-        edifact_types::EdifactDelimiters::default(),
-        false,
-    );
+    let mut doc =
+        EdifactDocumentWriter::with_delimiters(edifact_types::EdifactDelimiters::default(), false);
     doc.begin_interchange("S", "R", "REF", "D", "T");
     doc.begin_message("M", "TYPE");
     MarktlokationWriter::write(&mut doc, &tx.marktlokationen[0]);

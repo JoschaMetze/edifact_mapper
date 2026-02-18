@@ -4,7 +4,9 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion, Throughput};
 
-use automapper_core::{convert_batch, convert_sequential, Coordinator, FormatVersion, UtilmdCoordinator, FV2504};
+use automapper_core::{
+    convert_batch, convert_sequential, Coordinator, FormatVersion, UtilmdCoordinator, FV2504,
+};
 
 /// A synthetic UTILMD message for benchmarking.
 fn synthetic_utilmd() -> Vec<u8> {

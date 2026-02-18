@@ -1,0 +1,174 @@
+---
+source: crates/automapper-generator/tests/schema_snapshot_tests.rs
+expression: schema
+---
+message_type: UTILMD
+variant: Strom
+version: S2.1
+publication_date: "20250320"
+author: BDEW
+format_version: FV2510
+source_file: /home/claude/.claude-orchestrator/worktrees/generator-implementation-E01-e2b24b/crates/automapper-generator/tests/fixtures/minimal_mig.xml
+segments:
+  - id: UNH
+    name: Nachrichtenkopfsegment
+    description: ~
+    counter: "0010"
+    level: 0
+    number: "1"
+    max_rep_std: 1
+    max_rep_spec: 1
+    status_std: M
+    status_spec: M
+    example: "UNH+1+UTILMD:D:11A:UN:S2.1"
+    data_elements:
+      - id: "0062"
+        name: Nachrichten-Referenznummer
+        description: ~
+        status_std: M
+        status_spec: M
+        format_std: an..14
+        format_spec: an..14
+        codes: []
+        position: 0
+    composites:
+      - id: S009
+        name: Nachrichtenkennung
+        description: ~
+        status_std: M
+        status_spec: M
+        data_elements:
+          - id: "0065"
+            name: Nachrichtentyp-Kennung
+            description: ~
+            status_std: M
+            status_spec: M
+            format_std: an..6
+            format_spec: an..6
+            codes:
+              - value: UTILMD
+                name: Stammdaten
+                description: ~
+            position: 0
+          - id: "0052"
+            name: Versionsnummer
+            description: ~
+            status_std: M
+            status_spec: M
+            format_std: an..3
+            format_spec: an..3
+            codes:
+              - value: D
+                name: Entwurfs-Verzeichnis
+                description: ~
+            position: 1
+        position: 1
+  - id: BGM
+    name: Beginn der Nachricht
+    description: ~
+    counter: "0020"
+    level: 0
+    number: ~
+    max_rep_std: 1
+    max_rep_spec: 1
+    status_std: M
+    status_spec: M
+    example: ~
+    data_elements: []
+    composites:
+      - id: C002
+        name: Dokumentenname
+        description: ~
+        status_std: C
+        status_spec: R
+        data_elements:
+          - id: "1001"
+            name: "Dokumentenname, Code"
+            description: ~
+            status_std: C
+            status_spec: R
+            format_std: an..3
+            format_spec: an..3
+            codes:
+              - value: E40
+                name: Utilities master data message
+                description: ~
+            position: 0
+        position: 0
+segment_groups:
+  - id: SG2
+    name: Segment Gruppe 2
+    description: ~
+    counter: "0070"
+    level: 1
+    max_rep_std: 99
+    max_rep_spec: 99
+    status_std: C
+    status_spec: M
+    segments:
+      - id: NAD
+        name: Name und Adresse
+        description: ~
+        counter: "0080"
+        level: 2
+        number: ~
+        max_rep_std: 1
+        max_rep_spec: 1
+        status_std: M
+        status_spec: M
+        example: ~
+        data_elements:
+          - id: "3035"
+            name: "Beteiligter, Qualifier"
+            description: ~
+            status_std: M
+            status_spec: M
+            format_std: an..3
+            format_spec: an..3
+            codes:
+              - value: MS
+                name: Absender
+                description: ~
+              - value: MR
+                name: Empfaenger
+                description: ~
+            position: 0
+        composites:
+          - id: C082
+            name: Beteiligtenidentifikation
+            description: ~
+            status_std: C
+            status_spec: R
+            data_elements:
+              - id: "3039"
+                name: Beteiligtenkennung
+                description: ~
+                status_std: M
+                status_spec: M
+                format_std: an..35
+                format_spec: an..35
+                codes: []
+                position: 0
+              - id: "1131"
+                name: "Codeliste, Qualifier"
+                description: ~
+                status_std: C
+                status_spec: N
+                format_std: an..17
+                format_spec: an..17
+                codes: []
+                position: 1
+              - id: "3055"
+                name: Verantwortliche Stelle Code
+                description: ~
+                status_std: C
+                status_spec: R
+                format_std: an..3
+                format_spec: an..3
+                codes:
+                  - value: "293"
+                    name: "DE, BDEW"
+                    description: ~
+                position: 2
+            position: 1
+    nested_groups: []
