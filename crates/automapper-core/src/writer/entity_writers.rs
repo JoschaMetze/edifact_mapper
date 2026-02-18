@@ -36,7 +36,7 @@ impl MarktlokationWriter {
             w.add_empty_element(); // C082
             w.add_empty_element(); // C058
             w.add_empty_element(); // C080
-            // C059: street address
+                                   // C059: street address
             w.begin_composite();
             w.add_component(addr.strasse.as_deref().unwrap_or(""));
             w.add_empty_component(); // 3042_1
@@ -98,10 +98,7 @@ impl GeschaeftspartnerWriter {
 pub struct ZaehlerWriter;
 
 impl ZaehlerWriter {
-    pub fn write(
-        doc: &mut EdifactDocumentWriter,
-        z: &WithValidity<Zaehler, ZaehlerEdifact>,
-    ) {
+    pub fn write(doc: &mut EdifactDocumentWriter, z: &WithValidity<Zaehler, ZaehlerEdifact>) {
         // SEQ+Z03'
         doc.write_segment("SEQ", &["Z03"]);
 
@@ -126,10 +123,7 @@ impl ZaehlerWriter {
 pub struct VertragWriter;
 
 impl VertragWriter {
-    pub fn write(
-        doc: &mut EdifactDocumentWriter,
-        v: &WithValidity<Vertrag, VertragEdifact>,
-    ) {
+    pub fn write(doc: &mut EdifactDocumentWriter, v: &WithValidity<Vertrag, VertragEdifact>) {
         doc.write_segment("SEQ", &["Z18"]);
 
         if let Some(haushalt) = v.edifact.haushaltskunde {
@@ -150,10 +144,7 @@ mod tests {
 
     #[test]
     fn test_marktlokation_writer_loc() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(
-            EdifactDelimiters::default(),
-            false,
-        );
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
         doc.begin_interchange("S", "R", "REF", "D", "T");
         doc.begin_message("M", "TYPE");
 
@@ -177,10 +168,7 @@ mod tests {
 
     #[test]
     fn test_messlokation_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(
-            EdifactDelimiters::default(),
-            false,
-        );
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
         doc.begin_interchange("S", "R", "REF", "D", "T");
         doc.begin_message("M", "TYPE");
 
@@ -203,10 +191,7 @@ mod tests {
 
     #[test]
     fn test_zaehler_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(
-            EdifactDelimiters::default(),
-            false,
-        );
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
         doc.begin_interchange("S", "R", "REF", "D", "T");
         doc.begin_message("M", "TYPE");
 
@@ -235,10 +220,7 @@ mod tests {
 
     #[test]
     fn test_vertrag_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(
-            EdifactDelimiters::default(),
-            false,
-        );
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
         doc.begin_interchange("S", "R", "REF", "D", "T");
         doc.begin_message("M", "TYPE");
 

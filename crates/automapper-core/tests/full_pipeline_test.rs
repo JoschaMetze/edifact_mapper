@@ -2,10 +2,10 @@
 //!
 //! Tests the complete flow from raw EDIFACT bytes through all layers.
 
+use automapper_core::writer::entity_writers::*;
 use automapper_core::{
     convert_batch, create_coordinator, detect_format_version, EdifactDocumentWriter, FormatVersion,
 };
-use automapper_core::writer::entity_writers::*;
 
 const FULL_UTILMD: &[u8] = b"UNA:+.? '\
 UNB+UNOC:3+9900123000002:500+9900456000001:500+251217:1229+GEN0001'\
@@ -68,7 +68,10 @@ fn test_full_pipeline_detect_parse_write() {
         Some("ZAEHLER001".to_string())
     );
     assert!(tx.vertrag.is_some());
-    assert_eq!(tx.vertrag.as_ref().unwrap().edifact.haushaltskunde, Some(true));
+    assert_eq!(
+        tx.vertrag.as_ref().unwrap().edifact.haushaltskunde,
+        Some(true)
+    );
 
     // Step 4: Write back to EDIFACT
     let mut doc = EdifactDocumentWriter::new();
@@ -117,13 +120,28 @@ fn test_full_pipeline_detect_parse_write() {
     assert!(output.contains("UNA:+.? "), "should have UNA");
     assert!(output.contains("UNB+"), "should have UNB");
     assert!(output.contains("UNH+"), "should have UNH");
-    assert!(output.contains("LOC+Z16+DE00014545768S0000000000000003054'"), "should have MALO");
-    assert!(output.contains("LOC+Z17+DE00098765432100000000000000012'"), "should have MELO");
-    assert!(output.contains("LOC+Z18+NELO00000000001'"), "should have NELO");
+    assert!(
+        output.contains("LOC+Z16+DE00014545768S0000000000000003054'"),
+        "should have MALO"
+    );
+    assert!(
+        output.contains("LOC+Z17+DE00098765432100000000000000012'"),
+        "should have MELO"
+    );
+    assert!(
+        output.contains("LOC+Z18+NELO00000000001'"),
+        "should have NELO"
+    );
     assert!(output.contains("SEQ+Z03'"), "should have Zaehler SEQ");
-    assert!(output.contains("PIA+5+ZAEHLER001'"), "should have Zaehler PIA");
+    assert!(
+        output.contains("PIA+5+ZAEHLER001'"),
+        "should have Zaehler PIA"
+    );
     assert!(output.contains("SEQ+Z18'"), "should have Vertrag SEQ");
-    assert!(output.contains("CCI+Z15++Z01'"), "should have Haushaltskunde");
+    assert!(
+        output.contains("CCI+Z15++Z01'"),
+        "should have Haushaltskunde"
+    );
     assert!(output.contains("UNT+"), "should have UNT");
     assert!(output.contains("UNZ+1+GEN0001'"), "should have UNZ");
 }

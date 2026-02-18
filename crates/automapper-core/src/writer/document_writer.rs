@@ -166,7 +166,8 @@ impl EdifactDocumentWriter {
 
         let reference = self.message_ref.take().unwrap_or_default();
         self.writer.begin_segment("UNT");
-        self.writer.add_element(&self.message_segment_count.to_string());
+        self.writer
+            .add_element(&self.message_segment_count.to_string());
         self.writer.add_element(&reference);
         self.writer.end_segment();
 

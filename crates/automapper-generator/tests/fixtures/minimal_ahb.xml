@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AHB_UTILMD Versionsnummer="2.1">
+    <AWF Pruefidentifikator="55001" Beschreibung="Lieferantenwechsel" Kommunikation_von="NB an LF">
+        <Uebertragungsdatei>
+            <M_UTILMD>
+                <S_BGM Name="Beginn der Nachricht">
+                    <C_C002 Name="Dokumentenname">
+                        <D_1001 Name="Dokumentenname, Code" AHB_Status="X">
+                            <Code Name="UTILMD" AHB_Status="X">E40</Code>
+                        </D_1001>
+                    </C_C002>
+                </S_BGM>
+                <G_SG2 Name="Segment Gruppe 2" AHB_Status="Muss">
+                    <S_NAD Name="Name und Adresse">
+                        <D_3035 Name="Qualifier" AHB_Status="X">
+                            <Code Name="Absender" AHB_Status="X">MS</Code>
+                            <Code Name="Empfaenger" AHB_Status="X">MR</Code>
+                        </D_3035>
+                        <C_C082 Name="Beteiligtenidentifikation">
+                            <D_3039 Name="MP-ID" AHB_Status="X"/>
+                        </C_C082>
+                    </S_NAD>
+                </G_SG2>
+                <G_SG8 Name="Segment Gruppe 8" AHB_Status="[166] &#x2227; [2351]">
+                    <S_SEQ Name="Sequenz">
+                        <D_1245 Name="Statusanzeiger" AHB_Status="X [931]"/>
+                    </S_SEQ>
+                </G_SG8>
+            </M_UTILMD>
+        </Uebertragungsdatei>
+    </AWF>
+    <AWF Pruefidentifikator="55002" Beschreibung="Ein-/Auszug" Kommunikation_von="LF an NB">
+        <Uebertragungsdatei>
+            <M_UTILMD>
+                <S_BGM Name="Beginn der Nachricht">
+                    <C_C002 Name="Dokumentenname">
+                        <D_1001 Name="Dokumentenname, Code" AHB_Status="Muss"/>
+                    </C_C002>
+                </S_BGM>
+            </M_UTILMD>
+        </Uebertragungsdatei>
+    </AWF>
+    <Bedingungen>
+        <Bedingung Nummer="[1]">Wenn Aufteilung vorhanden</Bedingung>
+        <Bedingung Nummer="[2]">Wenn Transaktionsgrund vorhanden</Bedingung>
+        <Bedingung Nummer="[931]">Wenn Zeitformat korrekt ist</Bedingung>
+    </Bedingungen>
+</AHB_UTILMD>

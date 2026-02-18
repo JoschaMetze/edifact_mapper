@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M_UTILMD Versionsnummer="S2.1" Veroeffentlichungsdatum="20250320" Author="BDEW" Bezeichnung="UTILMD Strom">
+    <S_UNH Name="Nachrichtenkopfsegment" Counter="0010" Level="0" Number="1" MaxRep_Std="1" MaxRep_Specification="1" Status_Std="M" Status_Specification="M" Example="UNH+1+UTILMD:D:11A:UN:S2.1">
+        <D_0062 Name="Nachrichten-Referenznummer" Status_Std="M" Status_Specification="M" Format_Std="an..14" Format_Specification="an..14"/>
+        <C_S009 Name="Nachrichtenkennung" Status_Std="M" Status_Specification="M">
+            <D_0065 Name="Nachrichtentyp-Kennung" Status_Std="M" Status_Specification="M" Format_Std="an..6" Format_Specification="an..6">
+                <Code Name="Stammdaten">UTILMD</Code>
+            </D_0065>
+            <D_0052 Name="Versionsnummer" Status_Std="M" Status_Specification="M" Format_Std="an..3" Format_Specification="an..3">
+                <Code Name="Entwurfs-Verzeichnis">D</Code>
+            </D_0052>
+        </C_S009>
+    </S_UNH>
+    <S_BGM Name="Beginn der Nachricht" Counter="0020" Level="0" MaxRep_Std="1" MaxRep_Specification="1" Status_Std="M" Status_Specification="M">
+        <C_C002 Name="Dokumentenname" Status_Std="C" Status_Specification="R">
+            <D_1001 Name="Dokumentenname, Code" Status_Std="C" Status_Specification="R" Format_Std="an..3" Format_Specification="an..3">
+                <Code Name="Utilities master data message">E40</Code>
+            </D_1001>
+        </C_C002>
+    </S_BGM>
+    <G_SG2 Name="Segment Gruppe 2" Counter="0070" Level="1" MaxRep_Std="99" MaxRep_Specification="99" Status_Std="C" Status_Specification="M">
+        <S_NAD Name="Name und Adresse" Counter="0080" Level="2" MaxRep_Std="1" MaxRep_Specification="1" Status_Std="M" Status_Specification="M">
+            <D_3035 Name="Beteiligter, Qualifier" Status_Std="M" Status_Specification="M" Format_Std="an..3" Format_Specification="an..3">
+                <Code Name="Absender">MS</Code>
+                <Code Name="Empfaenger">MR</Code>
+            </D_3035>
+            <C_C082 Name="Beteiligtenidentifikation" Status_Std="C" Status_Specification="R">
+                <D_3039 Name="Beteiligtenkennung" Status_Std="M" Status_Specification="M" Format_Std="an..35" Format_Specification="an..35"/>
+                <D_1131 Name="Codeliste, Qualifier" Status_Std="C" Status_Specification="N" Format_Std="an..17" Format_Specification="an..17"/>
+                <D_3055 Name="Verantwortliche Stelle Code" Status_Std="C" Status_Specification="R" Format_Std="an..3" Format_Specification="an..3">
+                    <Code Name="DE, BDEW">293</Code>
+                </D_3055>
+            </C_C082>
+        </S_NAD>
+    </G_SG2>
+</M_UTILMD>

@@ -1,0 +1,67 @@
+---
+source: crates/automapper-generator/tests/schema_snapshot_tests.rs
+expression: schema
+---
+message_type: UTILMD
+variant: Strom
+version: "2.1"
+format_version: FV2510
+source_file: /home/claude/.claude-orchestrator/worktrees/generator-implementation-E01-e2b24b/crates/automapper-generator/tests/fixtures/minimal_ahb.xml
+workflows:
+  - id: "55001"
+    beschreibung: Lieferantenwechsel
+    kommunikation_von: NB an LF
+    fields:
+      - segment_path: BGM/C002/1001
+        name: "Dokumentenname, Code"
+        ahb_status: X
+        description: ~
+        codes:
+          - value: E40
+            name: UTILMD
+            description: ~
+            ahb_status: X
+      - segment_path: SG2/NAD/3035
+        name: Qualifier
+        ahb_status: X
+        description: ~
+        codes:
+          - value: MS
+            name: Absender
+            description: ~
+            ahb_status: X
+          - value: MR
+            name: Empfaenger
+            description: ~
+            ahb_status: X
+      - segment_path: SG2/NAD/C082/3039
+        name: MP-ID
+        ahb_status: X
+        description: ~
+        codes: []
+      - segment_path: SG8
+        name: Segment Gruppe 8
+        ahb_status: "[166] ∧ [2351]"
+        description: ~
+        codes: []
+      - segment_path: SG8/SEQ/1245
+        name: Statusanzeiger
+        ahb_status: "X [931]"
+        description: ~
+        codes: []
+  - id: "55002"
+    beschreibung: Ein-/Auszug
+    kommunikation_von: LF an NB
+    fields:
+      - segment_path: BGM/C002/1001
+        name: "Dokumentenname, Code"
+        ahb_status: Muss
+        description: ~
+        codes: []
+bedingungen:
+  - id: "1"
+    description: Wenn Aufteilung vorhanden
+  - id: "2"
+    description: Wenn Transaktionsgrund vorhanden
+  - id: "931"
+    description: Wenn Zeitformat korrekt ist

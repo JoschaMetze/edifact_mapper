@@ -10,9 +10,7 @@
 //!
 //! Mirrors C# `MarktlokationMapper.cs`.
 
-use bo4e_extensions::{
-    Marktlokation, MarktlokationEdifact, WithValidity,
-};
+use bo4e_extensions::{Marktlokation, MarktlokationEdifact, WithValidity};
 use edifact_types::RawSegment;
 
 use crate::context::TransactionContext;
@@ -228,10 +226,7 @@ mod tests {
 
         let loc = RawSegment::new(
             "LOC",
-            vec![
-                vec!["Z16"],
-                vec!["DE00014545768S0000000000000003054"],
-            ],
+            vec![vec!["Z16"], vec!["DE00014545768S0000000000000003054"]],
             pos(),
         );
 

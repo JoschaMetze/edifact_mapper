@@ -1,0 +1,45 @@
+---
+source: crates/automapper-generator/tests/schema_snapshot_tests.rs
+expression: wf1
+---
+id: "55001"
+beschreibung: Lieferantenwechsel
+kommunikation_von: NB an LF
+fields:
+  - segment_path: BGM/C002/1001
+    name: "Dokumentenname, Code"
+    ahb_status: X
+    description: ~
+    codes:
+      - value: E40
+        name: UTILMD
+        description: ~
+        ahb_status: X
+  - segment_path: SG2/NAD/3035
+    name: Qualifier
+    ahb_status: X
+    description: ~
+    codes:
+      - value: MS
+        name: Absender
+        description: ~
+        ahb_status: X
+      - value: MR
+        name: Empfaenger
+        description: ~
+        ahb_status: X
+  - segment_path: SG2/NAD/C082/3039
+    name: MP-ID
+    ahb_status: X
+    description: ~
+    codes: []
+  - segment_path: SG8
+    name: Segment Gruppe 8
+    ahb_status: "[166] ∧ [2351]"
+    description: ~
+    codes: []
+  - segment_path: SG8/SEQ/1245
+    name: Statusanzeiger
+    ahb_status: "X [931]"
+    description: ~
+    codes: []

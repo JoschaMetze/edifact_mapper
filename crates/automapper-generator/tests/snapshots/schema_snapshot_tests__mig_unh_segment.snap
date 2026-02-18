@@ -1,0 +1,57 @@
+---
+source: crates/automapper-generator/tests/schema_snapshot_tests.rs
+expression: unh
+---
+id: UNH
+name: Nachrichtenkopfsegment
+description: ~
+counter: "0010"
+level: 0
+number: "1"
+max_rep_std: 1
+max_rep_spec: 1
+status_std: M
+status_spec: M
+example: "UNH+1+UTILMD:D:11A:UN:S2.1"
+data_elements:
+  - id: "0062"
+    name: Nachrichten-Referenznummer
+    description: ~
+    status_std: M
+    status_spec: M
+    format_std: an..14
+    format_spec: an..14
+    codes: []
+    position: 0
+composites:
+  - id: S009
+    name: Nachrichtenkennung
+    description: ~
+    status_std: M
+    status_spec: M
+    data_elements:
+      - id: "0065"
+        name: Nachrichtentyp-Kennung
+        description: ~
+        status_std: M
+        status_spec: M
+        format_std: an..6
+        format_spec: an..6
+        codes:
+          - value: UTILMD
+            name: Stammdaten
+            description: ~
+        position: 0
+      - id: "0052"
+        name: Versionsnummer
+        description: ~
+        status_std: M
+        status_spec: M
+        format_std: an..3
+        format_spec: an..3
+        codes:
+          - value: D
+            name: Entwurfs-Verzeichnis
+            description: ~
+        position: 1
+    position: 1
