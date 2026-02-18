@@ -5,7 +5,7 @@ title: "edifact-parser — Tokenizer & UNA"
 depends_on: [edifact-core-implementation/E02]
 estimated_tasks: 3
 crate: edifact-parser
-status: in_progress
+status: complete
 ---
 
 # Epic 3: edifact-parser — Tokenizer & UNA
