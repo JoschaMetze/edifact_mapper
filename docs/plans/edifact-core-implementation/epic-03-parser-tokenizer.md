@@ -686,3 +686,16 @@ Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 EOF
 )"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 20 |
+| Passed | 20 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/edifact-parser/src/tokenizer.rs` (12 tests: segment splitting, element splitting, component splitting, release char escaping, custom delimiters, full pipeline)
+- `crates/edifact-parser/src/segment_builder.rs` (8 tests: simple/composite segments, escaped delimiters, position preservation, edge cases)
