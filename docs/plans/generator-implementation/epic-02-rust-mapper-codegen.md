@@ -1741,3 +1741,30 @@ Verify all tests across all test files pass.
 ```bash
 git add -A && git commit -m "test(generator): verify generated code is syntactically valid and deterministic"
 ```
+
+---
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 57 |
+| Passed | 57 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/automapper-generator/src/codegen/mod.rs`
+- `crates/automapper-generator/src/codegen/segment_order.rs`
+- `crates/automapper-generator/src/codegen/mapper_gen.rs`
+- `crates/automapper-generator/src/codegen/version_config_gen.rs`
+- `crates/automapper-generator/src/codegen/coordinator_gen.rs`
+- `crates/automapper-generator/src/main.rs`
+- `crates/automapper-generator/src/lib.rs`
+- `crates/automapper-generator/tests/cli_tests.rs`
+- `crates/automapper-generator/tests/segment_order_tests.rs`
+- `crates/automapper-generator/tests/mapper_gen_tests.rs`
+- `crates/automapper-generator/tests/version_config_tests.rs`
+- `crates/automapper-generator/tests/coordinator_gen_tests.rs`
+- `crates/automapper-generator/tests/e2e_generate_mappers_tests.rs`
+- `crates/automapper-generator/tests/generated_compiles_tests.rs`
