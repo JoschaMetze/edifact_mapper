@@ -5,6 +5,7 @@ title: "tonic gRPC Services"
 depends_on: [web-stack-implementation/E01]
 estimated_tasks: 6
 crate: automapper-api
+status: in_progress
 ---
 
 # Epic 2: tonic gRPC Services
