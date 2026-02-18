@@ -5,6 +5,7 @@ title: "MIG/AHB XML Schema Parsing"
 depends_on: []
 estimated_tasks: 7
 crate: automapper-generator
+status: in_progress
 ---
 
 # Epic 1: MIG/AHB XML Schema Parsing
