@@ -1,19 +1,22 @@
 [package]
 name = "automapper-generator"
-version.workspace = true
-edition.workspace = true
-rust-version.workspace = true
-license.workspace = true
-description = "Code generation CLI — reads MIG/AHB XML schemas, generates Rust mapper code"
+version = "0.1.0"
+edition = "2021"
+description = "CLI tool for generating Rust mapper code from MIG/AHB XML schemas"
+
+[[bin]]
+name = "automapper-generator"
+path = "src/main.rs"
 
 [dependencies]
-automapper-core.workspace = true
-automapper-validation.workspace = true
-clap.workspace = true
-quick-xml.workspace = true
-thiserror.workspace = true
-serde.workspace = true
-serde_json.workspace = true
+thiserror = "2"
+quick-xml = "0.37"
+clap = { version = "4", features = ["derive"] }
+askama = "0.12"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+regex = "1"
 
 [dev-dependencies]
-test-case.workspace = true
+insta = { version = "1", features = ["yaml"] }
+tempfile = "3"
