@@ -21,7 +21,7 @@ pub fn CoordinatorsPage() -> impl IntoView {
                 </div>
             }>
                 {move || {
-                    coordinators.get().map(|result| match result {
+                    coordinators.get().map(|result| match &*result {
                         Ok(coords) => {
                             if coords.is_empty() {
                                 view! {
@@ -34,9 +34,9 @@ pub fn CoordinatorsPage() -> impl IntoView {
                                 view! {
                                     <div class="coordinator-grid">
                                         {coords
-                                            .into_iter()
+                                            .iter()
                                             .map(|coord| {
-                                                view! { <CoordinatorCard coordinator=coord /> }
+                                                view! { <CoordinatorCard coordinator=coord.clone() /> }
                                             })
                                             .collect::<Vec<_>>()}
                                     </div>
@@ -47,7 +47,7 @@ pub fn CoordinatorsPage() -> impl IntoView {
                         Err(e) => {
                             view! {
                                 <p style="color: var(--color-error);">
-                                    "Failed to load coordinators: " {e}
+                                    "Failed to load coordinators: " {e.clone()}
                                 </p>
                             }
                             .into_any()

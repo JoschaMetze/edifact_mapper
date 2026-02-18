@@ -25,8 +25,7 @@ pub fn ErrorList(
                     <ul class="error-list">
                         {errs
                             .into_iter()
-                            .enumerate()
-                            .map(|(i, err)| {
+                            .map(|err| {
                                 let severity_class = match err.severity.as_str() {
                                     "warning" => "warning",
                                     "critical" => "critical",
@@ -37,10 +36,11 @@ pub fn ErrorList(
                                     "critical" => "!",
                                     _ => "E",
                                 };
+                                let icon_class = format!("severity-icon {severity_class}");
                                 let location = err.location.clone();
                                 view! {
-                                    <li class="error-item" key=i>
-                                        <span class={format!("severity-icon {severity_class}")}>
+                                    <li class="error-item">
+                                        <span class=icon_class>
                                             {severity_char}
                                         </span>
                                         <div>

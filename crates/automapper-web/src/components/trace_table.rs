@@ -22,23 +22,24 @@ pub fn TraceTable(
                 </tr>
             </thead>
             <tbody>
-                <For
-                    each=move || entries.get().into_iter().enumerate().collect::<Vec<_>>()
-                    key=|(i, _)| *i
-                    children=move |(_, entry)| {
-                        let value = entry.value.clone().unwrap_or_default();
-                        let note = entry.note.clone().unwrap_or_default();
-                        view! {
-                            <tr>
-                                <td>{entry.mapper.clone()}</td>
-                                <td><code>{entry.source_segment.clone()}</code></td>
-                                <td><code>{entry.target_path.clone()}</code></td>
-                                <td class="value-cell">{value}</td>
-                                <td class="note-cell">{note}</td>
-                            </tr>
-                        }
-                    }
-                />
+                {move || {
+                    entries.get()
+                        .into_iter()
+                        .map(|entry| {
+                            let value = entry.value.clone().unwrap_or_default();
+                            let note = entry.note.clone().unwrap_or_default();
+                            view! {
+                                <tr>
+                                    <td>{entry.mapper.clone()}</td>
+                                    <td>{entry.source_segment.clone()}</td>
+                                    <td>{entry.target_path.clone()}</td>
+                                    <td class="value-cell">{value}</td>
+                                    <td class="note-cell">{note}</td>
+                                </tr>
+                            }
+                        })
+                        .collect::<Vec<_>>()
+                }}
             </tbody>
         </table>
     }

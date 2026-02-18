@@ -12,28 +12,20 @@ pub fn SegmentTreeView(
 ) -> impl IntoView {
     view! {
         <div class="segment-tree">
-            <For
-                each=move || segments.get().into_iter().enumerate().collect::<Vec<_>>()
-                key=|(i, _)| *i
-                children=move |(_, node)| {
-                    view! { <SegmentNodeView node=node /> }
-                }
-            />
+            {move || {
+                segments.get()
+                    .into_iter()
+                    .map(render_segment_node)
+                    .collect::<Vec<_>>()
+            }}
         </div>
     }
 }
 
-/// Display a single segment node (recursive for children).
-#[component]
-fn SegmentNodeView(
-    /// The segment node to display.
-    node: SegmentNode,
-) -> impl IntoView {
-    let has_children = node
-        .children
-        .as_ref()
-        .map(|c| !c.is_empty())
-        .unwrap_or(false);
+/// Render a single segment node (recursive for children).
+/// Uses `AnyView` to break the recursive opaque type cycle.
+fn render_segment_node(node: SegmentNode) -> AnyView {
+    let has_children = node.children.as_ref().is_some_and(|c| !c.is_empty());
 
     let children_nodes = node.children.clone().unwrap_or_default();
     let tag = node.tag.clone();
@@ -52,7 +44,7 @@ fn SegmentNodeView(
                     <div class="children">
                         {children_nodes
                             .into_iter()
-                            .map(|child| view! { <SegmentNodeView node=child /> })
+                            .map(render_segment_node)
                             .collect::<Vec<_>>()}
                     </div>
                 })
@@ -61,4 +53,5 @@ fn SegmentNodeView(
             }}
         </div>
     }
+    .into_any()
 }

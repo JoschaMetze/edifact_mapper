@@ -27,7 +27,7 @@ pub fn ConverterPage() -> impl IntoView {
     let (duration_ms, set_duration_ms) = signal(0.0_f64);
 
     // Convert action
-    let convert_action = Action::new(move |_: &()| {
+    let convert_action = Action::new_local(move |_: &()| {
         let input_val = input.get();
         let dir = direction.get();
 
@@ -123,7 +123,7 @@ pub fn ConverterPage() -> impl IntoView {
                     <DirectionToggle direction=direction on_toggle=set_direction />
                     <button
                         class="btn btn-primary"
-                        on:click=move |_| convert_action.dispatch(())
+                        on:click=move |_| { convert_action.dispatch(()); }
                         disabled=move || is_converting.get()
                     >
                         {move || if is_converting.get() { "Converting..." } else { "Convert" }}
