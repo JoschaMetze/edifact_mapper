@@ -5,7 +5,7 @@ title: "Rust Mapper Code Generation"
 depends_on: [generator-implementation/E01]
 estimated_tasks: 7
 crate: automapper-generator
-status: in_progress
+status: complete
 ---
 
 # Epic 2: Rust Mapper Code Generation
