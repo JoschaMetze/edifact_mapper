@@ -5,6 +5,7 @@ title: "bo4e-extensions Crate"
 depends_on: [edifact-core-implementation/E01]
 estimated_tasks: 6
 crate: bo4e-extensions
+status: in_progress
 ---
 
 # Epic 5: bo4e-extensions Crate
