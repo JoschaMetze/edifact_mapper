@@ -5,6 +5,7 @@ title: "edifact-parser — Streaming Parser & Handler"
 depends_on: [edifact-core-implementation/E03]
 estimated_tasks: 5
 crate: edifact-parser
+status: in_progress
 ---
 
 # Epic 4: edifact-parser — Streaming Parser & Handler
