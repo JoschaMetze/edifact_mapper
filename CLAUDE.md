@@ -1,4 +1,4 @@
-# CLAUDE.md
+# CLAUDE.md — Project Conventions for edifact-bo4e-automapper
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -8,17 +8,29 @@ Rust port of the C# [edifact_bo4e_automapper](https://github.com/Hochfrequenz/ed
 
 C# reference repo: `../edifact_bo4e_automapper/` (commit cee0b09)
 
+## Workspace Structure
+
+8 crates in dependency order:
+1. `edifact-types` — zero-dep EDIFACT primitives
+2. `edifact-parser` — standalone streaming parser (publishable)
+3. `bo4e-extensions` — BO4E companion types for EDIFACT domain data
+4. `automapper-core` — coordinators, mappers, builders, writers
+5. `automapper-validation` — AHB condition parser/evaluator
+6. `automapper-generator` — CLI code generator from MIG/AHB XML
+7. `automapper-api` — Axum REST + tonic gRPC server
+8. `automapper-web` — Leptos WASM frontend
+
 ## Commands
 
 ```bash
-cargo check --workspace          # Compile check all crates
+cargo check --workspace          # Type-check everything
 cargo test --workspace           # Run all tests
-cargo test -p edifact-types      # Run tests for a specific crate
+cargo test -p <crate>            # Run tests for one crate
 cargo test -p edifact-parser test_una_detection  # Run a single test
-cargo clippy --workspace -- -D warnings          # Lint (warnings are errors)
+cargo clippy --workspace -- -D warnings  # Lint (warnings are errors)
 cargo fmt --all -- --check       # Format check
 cargo fmt --all                  # Auto-format
-cargo bench -p automapper-core   # Run benchmarks
+cargo bench -p automapper-core   # Benchmarks
 cargo build --release --workspace
 ```
 
@@ -54,20 +66,45 @@ automapper-core        Coordinators, entity mappers, builders, writers, batch (r
 
 **WithValidity<T, E>**: Wraps a standard BO4E object (`T`) with its EDIFACT companion (`E`), a validity period (`Zeitraum`), and optional Zeitscheibe reference.
 
-## Conventions
+## Coding Conventions
 
-- **Error handling**: `thiserror` for typed errors in all library crates. No `anyhow` in libraries.
+- **Error handling**: `thiserror` in all library crates. No `anyhow` in library code.
 - **Serialization**: All domain types derive `Serialize, Deserialize`.
-- **German domain terms**: Preserve original names (Marktlokation, Zeitscheibe, Geschaeftspartner, etc.).
-- **Testing**: TDD. Use `insta` for snapshot tests, `proptest` for parser fuzzing, `test-case` for parameterized fixture tests, `criterion` for benchmarks.
+- **Lifetimes**: `RawSegment<'a>` borrows from input buffer. Zero-copy hot path.
+- **Testing**: TDD — write failing test first, then implement. Use `#[cfg(test)]` modules.
+- **Naming**: Rust snake_case for fields/functions. German domain terms preserved (Marktlokation, Zeitscheibe, Geschaeftspartner).
+- **Format versions**: `FV2504`, `FV2510` marker types. `VersionConfig` trait for compile-time dispatch.
+- **Commits**: Conventional commits (`feat`, `fix`, `refactor`, `test`, `docs`). Include `Co-Authored-By` trailer.
 - **`edifact-parser` is standalone**: No BO4E dependency — publishable as a generic EDIFACT parser crate.
 - **Generated code**: Output of `automapper-generator` goes to `generated/` and is committed (no build-time codegen).
 
-## Submodules
+## Architecture Decisions
 
-- `xml-migs-and-ahbs/` — MIG/AHB XML schemas
-- `stammdatenmodell/` — BO4E data model reference
-- `example_market_communication_bo4e_transactions/` — Test fixture EDIFACT files
+- Parser is SAX-style streaming (matches C# EdifactStreamParser)
+- Handler trait has default no-op methods — implementors override what they need
+- Coordinator routes segments to registered mappers
+- Each mapper handles specific segment qualifiers (LOC+Z16 -> MarktlokationMapper)
+- Writers reverse the mapping (domain -> EDIFACT segments)
+- Roundtrip fidelity: parse -> map -> write must produce byte-identical output
+
+## Test Data
+
+- `example_market_communication_bo4e_transactions/` — real EDIFACT fixture files (submodule)
+- `xml-migs-and-ahbs/` — MIG/AHB XML schemas (submodule)
+- `stammdatenmodell/` — BO4E data model reference (submodule)
+- `tests/fixtures/` — symlinks to submodule data
+
+## Dependencies on C# Reference
+
+Reference C# repo: see design doc for architectural mapping.
+Key correspondences:
+- `EdifactStreamParser.cs` -> `edifact-parser` crate
+- `CoordinatorBase.cs` -> `automapper-core::coordinator` module
+- `ISegmentHandler.cs` -> `automapper-core::traits::SegmentHandler`
+- `IBuilder.cs` -> `automapper-core::traits::Builder`
+- `IEntityWriter.cs` -> `automapper-core::traits::EntityWriter`
+- `MarktlokationMapper.cs` -> `automapper-core::mappers::marktlokation`
+- `MarktlokationWriter.cs` -> `automapper-core::writers::marktlokation`
 
 ## Implementation Plans
 
