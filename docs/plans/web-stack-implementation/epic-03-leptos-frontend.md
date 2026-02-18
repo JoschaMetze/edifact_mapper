@@ -5,6 +5,7 @@ title: "Leptos WASM Frontend"
 depends_on: [web-stack-implementation/E01]
 estimated_tasks: 8
 crate: automapper-web
+status: in_progress
 ---
 
 # Epic 3: Leptos WASM Frontend
