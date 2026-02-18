@@ -2,7 +2,7 @@
 feature: edifact-core-implementation
 epic: 5
 title: "bo4e-extensions Crate"
-depends_on: [1]
+depends_on: [edifact-core-implementation/E01]
 estimated_tasks: 6
 crate: bo4e-extensions
 ---

@@ -1,9 +1,10 @@
 [general]
-project_root = "."  # or absolute path
+project_root = "/home/claude/github/edifact_mapper"  # or absolute path
 max_parallel_agents = 10
 max_jobs = 10                                                                                                                     
 #executor = "opencode"                                                                                                                                           
 opencode_model = "zai-coding-plan/glm-4.7"
+database_path = "~/.claude-orchestrator/edifactmapper.db"
 
 [web]
 port = 8081

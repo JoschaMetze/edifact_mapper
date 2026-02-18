@@ -2,7 +2,7 @@
 feature: edifact-core-implementation
 epic: 8
 title: "Writer, Roundtrip & Batch Processing"
-depends_on: [7]
+depends_on: [edifact-core-implementation/E07]
 estimated_tasks: 7
 crate: automapper-core
 ---

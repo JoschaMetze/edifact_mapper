@@ -2,7 +2,7 @@
 feature: edifact-core-implementation
 epic: 2
 title: "edifact-types Crate"
-depends_on: [1]
+depends_on: [edifact-core-implementation/E01]
 estimated_tasks: 5
 crate: edifact-types
 ---

@@ -2,7 +2,7 @@
 feature: web-stack-implementation
 epic: 3
 title: "Leptos WASM Frontend"
-depends_on: [1]
+depends_on: [web-stack-implementation/E01]
 estimated_tasks: 8
 crate: automapper-web
 ---

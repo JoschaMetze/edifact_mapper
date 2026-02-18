@@ -2,7 +2,7 @@
 feature: edifact-core-implementation
 epic: 3
 title: "edifact-parser — Tokenizer & UNA"
-depends_on: [2]
+depends_on: [edifact-core-implementation/E02]
 estimated_tasks: 3
 crate: edifact-parser
 ---

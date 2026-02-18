@@ -2,7 +2,7 @@
 feature: edifact-core-implementation
 epic: 4
 title: "edifact-parser — Streaming Parser & Handler"
-depends_on: [3]
+depends_on: [edifact-core-implementation/E03]
 estimated_tasks: 5
 crate: edifact-parser
 ---

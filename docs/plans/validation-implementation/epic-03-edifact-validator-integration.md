@@ -2,7 +2,7 @@
 feature: validation-implementation
 epic: 3
 title: "EdifactValidator & Integration"
-depends_on: [2]
+depends_on: [validation-implementation/E02]
 estimated_tasks: 5
 crate: automapper-validation
 ---

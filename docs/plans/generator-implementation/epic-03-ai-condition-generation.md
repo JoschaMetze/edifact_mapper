@@ -2,7 +2,7 @@
 feature: generator-implementation
 epic: 3
 title: "AI-Assisted Condition Generation"
-depends_on: [1, 2]
+depends_on: [generator-implementation/E01, generator-implementation/E02]
 estimated_tasks: 7
 crate: automapper-generator
 ---

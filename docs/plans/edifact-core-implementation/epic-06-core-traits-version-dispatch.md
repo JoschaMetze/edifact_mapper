@@ -2,7 +2,7 @@
 feature: edifact-core-implementation
 epic: 6
 title: "automapper-core Traits & Version Dispatch"
-depends_on: [4, 5]
+depends_on: [edifact-core-implementation/E04, edifact-core-implementation/E05]
 estimated_tasks: 6
 crate: automapper-core
 ---

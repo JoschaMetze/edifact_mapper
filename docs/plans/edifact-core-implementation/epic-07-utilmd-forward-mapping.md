@@ -2,7 +2,7 @@
 feature: edifact-core-implementation
 epic: 7
 title: "UTILMD Forward Mapping (EDIFACT -> BO4E)"
-depends_on: [6]
+depends_on: [edifact-core-implementation/E06]
 estimated_tasks: 6
 crate: automapper-core
 ---

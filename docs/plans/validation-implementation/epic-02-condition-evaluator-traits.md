@@ -2,7 +2,7 @@
 feature: validation-implementation
 epic: 2
 title: "Condition Evaluator Traits & Registry"
-depends_on: [1]
+depends_on: [validation-implementation/E01]
 estimated_tasks: 4
 crate: automapper-validation
 ---

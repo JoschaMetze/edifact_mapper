@@ -2,7 +2,7 @@
 feature: generator-implementation
 epic: 2
 title: "Rust Mapper Code Generation"
-depends_on: [1]
+depends_on: [generator-implementation/E01]
 estimated_tasks: 7
 crate: automapper-generator
 ---
