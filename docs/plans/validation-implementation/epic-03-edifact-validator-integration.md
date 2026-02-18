@@ -5,6 +5,7 @@ title: "EdifactValidator & Integration"
 depends_on: [validation-implementation/E02]
 estimated_tasks: 5
 crate: automapper-validation
+status: in_progress
 ---
 
 # Epic 3: EdifactValidator & Integration
