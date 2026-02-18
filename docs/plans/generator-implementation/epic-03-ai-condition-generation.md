@@ -5,6 +5,7 @@ title: "AI-Assisted Condition Generation"
 depends_on: [generator-implementation/E01, generator-implementation/E02]
 estimated_tasks: 7
 crate: automapper-generator
+status: in_progress
 ---
 
 # Epic 3: AI-Assisted Condition Generation
