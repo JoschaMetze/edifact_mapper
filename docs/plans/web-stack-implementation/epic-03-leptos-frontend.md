@@ -5,7 +5,7 @@ title: "Leptos WASM Frontend"
 depends_on: [web-stack-implementation/E01]
 estimated_tasks: 8
 crate: automapper-web
-status: in_progress
+status: complete
 ---
 
 # Epic 3: Leptos WASM Frontend
@@ -2002,3 +2002,29 @@ Expected: compiles.
 git add -A
 git commit -m "chore(web): final cleanup and verification for Epic 3 — Leptos WASM frontend complete"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 9 |
+| Passed | 9 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/automapper-web/tests/wasm_build.rs` — contract type tests (Direction, ConvertRequest/Response, InspectResponse, CoordinatorInfo, HealthResponse, ApiErrorEntry)
+
+Components implemented:
+- `crates/automapper-web/src/types.rs` — shared frontend types matching API contracts
+- `crates/automapper-web/src/api_client.rs` — REST API client (convert, inspect, coordinators, health)
+- `crates/automapper-web/src/app.rs` — App component with Leptos Router
+- `crates/automapper-web/src/pages/converter.rs` — ConverterPage with two-panel editor layout
+- `crates/automapper-web/src/pages/coordinators.rs` — CoordinatorsPage with card grid
+- `crates/automapper-web/src/components/code_editor.rs` — CodeEditor textarea component
+- `crates/automapper-web/src/components/direction_toggle.rs` — Direction toggle button
+- `crates/automapper-web/src/components/collapsible_panel.rs` — Collapsible panel with badge
+- `crates/automapper-web/src/components/segment_tree.rs` — Recursive segment tree view
+- `crates/automapper-web/src/components/trace_table.rs` — Mapping trace table
+- `crates/automapper-web/src/components/error_list.rs` — Error list with severity icons
+- `crates/automapper-web/src/main.rs` — WASM entry point
