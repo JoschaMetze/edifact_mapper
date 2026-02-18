@@ -1,0 +1,25 @@
+[general]
+project_root = "."  # or absolute path
+max_parallel_agents = 10
+max_jobs = 10                                                                                                                     
+#executor = "opencode"                                                                                                                                           
+opencode_model = "zai-coding-plan/glm-4.7"
+
+[web]
+port = 8081
+
+[build_pool]
+enabled = true
+websocket_port = 8081
+git_daemon_port = 9417
+git_daemon_listen_addr = ""  # Empty = all interfaces, "127.0.0.1" = local only
+
+[build_pool.local_fallback]
+enabled = true              # Run builds locally if no workers connected
+max_jobs = 2
+worktree_dir = "/tmp/build-pool/local"
+
+[build_pool.timeouts]
+job_default_secs = 300      # 5 minute default timeout
+heartbeat_interval_secs = 30
+heartbeat_timeout_secs = 90 # Allow missing 2 heartbeats (handles high CPU load)
