@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AHB_UTILMD_Strom>
+  <AWF Pruefidentifikator="11001" Beschreibung="Lieferbeginn">
+    <Feld Segment="UNH" Status="Muss"/>
+    <Feld Segment="BGM" Status="Muss [1]"/>
+    <Feld Segment="SG8/SEQ" Status="Muss [2]"/>
+  </AWF>
+  <Bedingungen>
+    <Bedingung Nr="1" Beschreibung="Wenn Aufteilung vorhanden"/>
+    <Bedingung Nr="2" Beschreibung="Wenn Marktlokation vorhanden"/>
+    <Bedingung Nr="3" Beschreibung="Wenn Zeitraum gueltig"/>
+  </Bedingungen>
+</AHB_UTILMD_Strom>
