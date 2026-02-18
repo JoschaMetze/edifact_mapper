@@ -10,8 +10,10 @@
 //! 2. Parser routes segments to handler callbacks
 //! 3. Handler accumulates state as needed
 
+mod error;
 mod segment_builder;
 mod tokenizer;
 
+pub use error::ParseError;
 pub use segment_builder::SegmentBuilder;
 pub use tokenizer::EdifactTokenizer;
