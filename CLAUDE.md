@@ -106,12 +106,38 @@ Key correspondences:
 - `MarktlokationMapper.cs` -> `automapper-core::mappers::marktlokation`
 - `MarktlokationWriter.cs` -> `automapper-core::writers::marktlokation`
 
+## Implementation Status
+
+All 4 features (17 epics, 99 tasks) are **complete**. ~15,800 LOC, 333 tests.
+
+| Crate | Tests | Notes |
+|-------|-------|-------|
+| edifact-types | 29 | Delimiter parsing, segment construction |
+| edifact-parser | 37 | Tokenizer, UNA detection, property tests (proptest) |
+| bo4e-extensions | 29 | WithValidity, LinkRegistry, companion types |
+| automapper-core | 94 | 8 entity mappers, writers, roundtrip, batch |
+| automapper-validation | 143 | Condition parser, evaluator, validator |
+| automapper-generator | 1 | Snapshot tests (insta) |
+| automapper-api | 0 | Routes exercised via integration |
+| automapper-web | 0 | WASM components |
+
+### Implementation Learnings
+
+- **Snapshot testing with insta** works well for codegen output — use `cargo insta test` then `cargo insta review`.
+- **Property testing with proptest** catches edge cases in tokenizer/delimiter parsing that unit tests miss.
+- **Parameterized tests with test-case** reduce boilerplate for mapper tests with multiple segment qualifiers.
+- **Entity mappers follow a consistent pattern**: implement `SegmentHandler` + `Builder<T>` for forward mapping, `EntityWriter` for reverse. New mappers can copy an existing one as a template.
+- **Writer segment ordering** is deterministic from MIG rules — no need to store ordering metadata on companion types.
+- **AHB condition parser** uses recursive descent with Unicode operators (`∧`, `∨`, `⊻`, `¬`). Three-valued logic (True/False/Unknown) handles missing data gracefully.
+- **gRPC streaming** uses tonic's `Streaming<T>` for both request and response sides. Proto files live in `proto/`.
+- **Leptos WASM frontend** communicates via REST to the Axum backend. The `static/` directory holds build output served as a fallback route.
+
 ## Implementation Plans
 
-Detailed task-level plans in `docs/plans/` — 4 features, 17 epics, 99 tasks:
-- Feature 1: `edifact-core-implementation/` (8 epics) — foundation, must complete first
-- Feature 2: `validation-implementation/` (3 epics) — parallel after F1
-- Feature 3: `generator-implementation/` (3 epics) — parallel after F1
-- Feature 4: `web-stack-implementation/` (3 epics) — parallel after F1
+Detailed task-level plans in `docs/plans/` — 4 features, 17 epics, 99 tasks (all complete):
+- Feature 1: `edifact-core-implementation/` (8 epics) — foundation
+- Feature 2: `validation-implementation/` (3 epics) — AHB conditions & validation
+- Feature 3: `generator-implementation/` (3 epics) — MIG/AHB XML codegen
+- Feature 4: `web-stack-implementation/` (3 epics) — REST, gRPC, WASM frontend
 
 Design document: `docs/plans/2026-02-18-rust-port-design.md`
