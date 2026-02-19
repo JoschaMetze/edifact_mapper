@@ -43,6 +43,38 @@ UNT+16+MSG001'\
 UNZ+1+REF001'";
 
 #[test]
+fn test_envelope_fields_roundtrip() {
+    let edifact = b"UNA:+.? '\
+UNB+UNOC:3+9900123000002:500+9900456000001:500+251217:1229+REF001'\
+UNH+MSG001+UTILMD:D:11A:UN:S2.1'\
+BGM+E03+DOC001'\
+DTM+137:202507011330:303'\
+NAD+MS+9900123000002::293'\
+NAD+MR+9900456000001::293'\
+IDE+24+TX001'\
+UNT+8+MSG001'\
+UNZ+1+REF001'";
+
+    let mut coord = create_coordinator(FormatVersion::FV2504).unwrap();
+    let nachricht = coord.parse_nachricht(edifact).unwrap();
+
+    let nd = &nachricht.nachrichtendaten;
+    assert_eq!(nd.absender_unb_qualifier.as_deref(), Some("500"));
+    assert_eq!(nd.empfaenger_unb_qualifier.as_deref(), Some("500"));
+    assert_eq!(nd.unb_datum.as_deref(), Some("251217"));
+    assert_eq!(nd.unb_zeit.as_deref(), Some("1229"));
+    assert!(nd.explicit_una);
+    assert_eq!(nd.nachrichtentyp.as_deref(), Some("UTILMD:D:11A:UN:S2.1"));
+    assert_eq!(
+        nd.erstellungsdatum
+            .unwrap()
+            .format("%Y%m%d%H%M")
+            .to_string(),
+        "202507011330"
+    );
+}
+
+#[test]
 fn test_bo4e_roundtrip_synthetic_parse_generate() {
     // Step 1: Parse EDIFACT → BO4E (UtilmdNachricht)
     let mut coord = create_coordinator(FormatVersion::FV2504).unwrap();
@@ -648,11 +680,240 @@ fn collect_edi_files(dir: &Path) -> Vec<std::path::PathBuf> {
     files
 }
 
+// ---------------------------------------------------------------------------
+// Normalization helpers for byte-identical comparison
+// ---------------------------------------------------------------------------
+
+/// Normalize an EDIFACT message for deterministic comparison.
+///
+/// Port of C# `RoundtripTestHelper.NormalizeEdifact`:
+/// 1. Strip CR/LF between segments
+/// 2. Split into individual segments
+/// 3. Sort consecutive SEQ groups with the same qualifier by their first RFF
+/// 4. Rejoin with segment terminator (no newlines)
+fn normalize_edifact(input: &[u8]) -> String {
+    let input_str = String::from_utf8_lossy(input);
+
+    // Split on segment terminator, trim whitespace, drop empty
+    let segments: Vec<&str> = input_str
+        .split('\'')
+        .map(|s| s.trim_matches(|c: char| c == '\r' || c == '\n' || c == ' '))
+        .filter(|s| !s.is_empty())
+        .collect();
+
+    // Normalize SEQ group ordering: consecutive SEQ groups with the same
+    // qualifier (e.g. multiple SEQ+Z03 blocks) can appear in any order per MIG.
+    // Sort them by the content of their first RFF segment for determinism.
+    let segments = normalize_seq_group_order(segments);
+
+    // Rejoin: each segment terminated by '
+    let mut result = String::new();
+    for seg in &segments {
+        result.push_str(seg);
+        result.push('\'');
+    }
+    result
+}
+
+/// Identify consecutive SEQ groups with the same qualifier and sort them
+/// by their first RFF value, matching the C# NormalizeSeqGroupOrder logic.
+fn normalize_seq_group_order(segments: Vec<&str>) -> Vec<String> {
+    let mut result: Vec<String> = Vec::new();
+    let mut i = 0;
+
+    while i < segments.len() {
+        // Check if this is the start of a SEQ segment
+        if !segments[i].starts_with("SEQ+") {
+            result.push(segments[i].to_string());
+            i += 1;
+            continue;
+        }
+
+        // Extract the SEQ qualifier (e.g. "Z03" from "SEQ+Z03")
+        let qualifier = segments[i]
+            .strip_prefix("SEQ+")
+            .unwrap_or("")
+            .split('+')
+            .next()
+            .unwrap_or("");
+
+        // Collect all consecutive SEQ groups with the same qualifier.
+        // A SEQ group = the SEQ segment + all following non-SEQ segments
+        // until the next SEQ, LOC, IDE, NAD (SG12), UNT, or UNZ.
+        let mut groups: Vec<Vec<String>> = Vec::new();
+
+        while i < segments.len()
+            && segments[i].starts_with("SEQ+")
+            && segments[i]
+                .strip_prefix("SEQ+")
+                .unwrap_or("")
+                .starts_with(qualifier)
+        {
+            let mut group = vec![segments[i].to_string()];
+            i += 1;
+
+            // Collect child segments of this SEQ group
+            while i < segments.len()
+                && !segments[i].starts_with("SEQ+")
+                && !segments[i].starts_with("LOC+")
+                && !segments[i].starts_with("IDE+")
+                && !segments[i].starts_with("NAD+")
+                && !segments[i].starts_with("UNT+")
+                && !segments[i].starts_with("UNZ+")
+            {
+                group.push(segments[i].to_string());
+                i += 1;
+            }
+
+            groups.push(group);
+        }
+
+        if groups.len() > 1 {
+            // Sort groups by their first RFF segment content (if any)
+            groups.sort_by(|a, b| {
+                let rff_a = a
+                    .iter()
+                    .find(|s| s.starts_with("RFF+"))
+                    .map(|s| s.as_str())
+                    .unwrap_or("");
+                let rff_b = b
+                    .iter()
+                    .find(|s| s.starts_with("RFF+"))
+                    .map(|s| s.as_str())
+                    .unwrap_or("");
+                rff_a.cmp(rff_b)
+            });
+        }
+
+        for group in groups {
+            result.extend(group);
+        }
+    }
+
+    result
+}
+
+/// Show a segment-level diff between two normalized EDIFACT strings.
+fn edifact_diff(original: &str, generated: &str) -> String {
+    let orig_segs: Vec<&str> = original.split('\'').filter(|s| !s.is_empty()).collect();
+    let gen_segs: Vec<&str> = generated.split('\'').filter(|s| !s.is_empty()).collect();
+
+    let mut diff = String::new();
+    let max_len = orig_segs.len().max(gen_segs.len());
+
+    for i in 0..max_len {
+        let o = orig_segs.get(i).unwrap_or(&"<missing>");
+        let g = gen_segs.get(i).unwrap_or(&"<missing>");
+        if o != g {
+            diff.push_str(&format!("  seg[{:3}] orig: {}'\n", i, o));
+            diff.push_str(&format!("  seg[{:3}]  gen: {}'\n", i, g));
+        }
+    }
+
+    if diff.is_empty() && orig_segs.len() != gen_segs.len() {
+        diff.push_str(&format!(
+            "  segment count: orig={} gen={}\n",
+            orig_segs.len(),
+            gen_segs.len()
+        ));
+    }
+
+    diff
+}
+
+// ---------------------------------------------------------------------------
+// 5. Fixture byte-identical roundtrip: parse → generate → normalize → compare
+// ---------------------------------------------------------------------------
+
+/// Parse UTILMD fixtures → generate → compare normalized EDIFACT byte-for-byte.
+///
+/// Port of C# `UtilmdRoundtripTests.Roundtrip_Should_Produce_Identical_EDIFACT`.
+/// Both original and generated output are normalized (strip newlines, sort
+/// SEQ groups with the same qualifier) before comparison.
+#[test]
+fn test_bo4e_roundtrip_fixture_byte_identical() {
+    let fixture_path = match fixture_dir() {
+        Some(p) => p,
+        None => {
+            eprintln!("Skipping: fixture submodule not initialized");
+            return;
+        }
+    };
+
+    let utilmd_dir = fixture_path.join("UTILMD");
+    if !utilmd_dir.exists() {
+        eprintln!("Skipping: UTILMD directory not found");
+        return;
+    }
+
+    let files = collect_edi_files(&utilmd_dir);
+    assert!(!files.is_empty(), "No UTILMD .edi files found");
+
+    let mut identical = 0;
+    let mut failures: Vec<String> = Vec::new();
+
+    for file_path in &files {
+        let content = match std::fs::read(file_path) {
+            Ok(c) => c,
+            Err(_) => continue,
+        };
+
+        let rel = file_path.strip_prefix(&fixture_path).unwrap_or(file_path);
+
+        let fv = detect_format_version(&content).unwrap_or(FormatVersion::FV2504);
+        let mut coord = match create_coordinator(fv) {
+            Ok(c) => c,
+            Err(_) => continue,
+        };
+
+        let nachricht = match coord.parse_nachricht(&content) {
+            Ok(n) => n,
+            Err(_) => continue,
+        };
+
+        let output_bytes = match coord.generate(&nachricht) {
+            Ok(b) => b,
+            Err(_) => continue,
+        };
+
+        let normalized_original = normalize_edifact(&content);
+        let normalized_generated = normalize_edifact(&output_bytes);
+
+        if normalized_original == normalized_generated {
+            identical += 1;
+        } else {
+            let diff = edifact_diff(&normalized_original, &normalized_generated);
+            failures.push(format!("{}:\n{}", rel.display(), diff));
+        }
+    }
+
+    eprintln!(
+        "BO4E byte-identical roundtrip: {}/{} UTILMD files match",
+        identical,
+        files.len()
+    );
+
+    if !failures.is_empty() {
+        // Show first 5 failures in detail
+        let shown = failures.len().min(5);
+        panic!(
+            "{} of {} files differ after roundtrip.\nFirst {}:\n{}",
+            failures.len(),
+            files.len(),
+            shown,
+            failures[..shown].join("\n")
+        );
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 6. Fixture regression: parse → generate → no panics
+// ---------------------------------------------------------------------------
+
 /// Parse all UTILMD fixtures → generate → no panics.
 ///
-/// This is a regression test: it verifies that generate() does not panic
-/// on any real-world UTILMD file, regardless of whether the output is
-/// byte-identical (it won't be — not all entity types have writers yet).
+/// Regression test: verifies that generate() does not panic on any
+/// real-world UTILMD file.
 #[test]
 fn test_bo4e_roundtrip_fixture_regression() {
     let fixture_path = match fixture_dir() {
@@ -732,9 +993,13 @@ fn test_bo4e_roundtrip_fixture_regression() {
     }
 }
 
+// ---------------------------------------------------------------------------
+// 7. Fixture structural roundtrip: parse → generate → reparse → compare fields
+// ---------------------------------------------------------------------------
+
 /// Parse → generate → reparse fixture files and compare key fields.
 ///
-/// This is the structural equality test: after parse→generate→reparse,
+/// Structural equality test: after parse→generate→reparse,
 /// the transaction IDs, location IDs, and entity counts should match.
 #[test]
 fn test_bo4e_roundtrip_fixture_reparse() {

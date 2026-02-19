@@ -15,6 +15,34 @@ use edifact_types::RawSegment;
 use crate::context::TransactionContext;
 use crate::traits::{Builder, SegmentHandler};
 
+/// Parse a DTM date/time value with format code into NaiveDateTime.
+/// Supports format codes 303 (CCYYMMDDHHmm) and 102 (CCYYMMDD).
+pub(crate) fn parse_edifact_dtm(value: &str, format_code: &str) -> Option<NaiveDateTime> {
+    match format_code {
+        "303" => {
+            // Strip timezone suffix like ?+00 if present
+            let clean = if let Some(pos) = value.find('?') {
+                &value[..pos]
+            } else {
+                value
+            };
+            if clean.len() >= 12 {
+                NaiveDateTime::parse_from_str(&clean[..12], "%Y%m%d%H%M").ok()
+            } else {
+                None
+            }
+        }
+        "102" => {
+            if value.len() >= 8 {
+                NaiveDateTime::parse_from_str(&format!("{}0000", &value[..8]), "%Y%m%d%H%M").ok()
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
+}
+
 /// Mapper for UTILMD process-level data.
 ///
 /// This mapper handles STS, DTM, RFF, and FTX segments at the transaction
@@ -36,34 +64,9 @@ impl ProzessdatenMapper {
 
     /// Parses a DTM date value in EDIFACT format.
     ///
-    /// Supports formats:
-    /// - `303`: `CCYYMMDDHHmm` (12 chars) with optional timezone
-    /// - `102`: `CCYYMMDD` (8 chars)
+    /// Delegates to the standalone [`parse_edifact_dtm`] function.
     fn parse_dtm_value(value: &str, format_code: &str) -> Option<NaiveDateTime> {
-        match format_code {
-            "303" => {
-                // Strip timezone suffix like ?+00 if present
-                let clean = if let Some(pos) = value.find('?') {
-                    &value[..pos]
-                } else {
-                    value
-                };
-                if clean.len() >= 12 {
-                    NaiveDateTime::parse_from_str(&clean[..12], "%Y%m%d%H%M").ok()
-                } else {
-                    None
-                }
-            }
-            "102" => {
-                if value.len() >= 8 {
-                    NaiveDateTime::parse_from_str(&format!("{}0000", &value[..8]), "%Y%m%d%H%M")
-                        .ok()
-                } else {
-                    None
-                }
-            }
-            _ => None,
-        }
+        parse_edifact_dtm(value, format_code)
     }
 
     fn handle_sts(&mut self, segment: &RawSegment) {

@@ -16,6 +16,7 @@ use edifact_types::{Control, EdifactDelimiters, RawSegment};
 use crate::context::TransactionContext;
 use crate::coordinator::Coordinator;
 use crate::error::AutomapperError;
+use crate::mappers::prozessdaten::parse_edifact_dtm;
 use crate::mappers::*;
 use crate::traits::{Builder, FormatVersion, SegmentHandler};
 use crate::version::VersionConfig;
@@ -464,7 +465,9 @@ impl<V: VersionConfig> Default for UtilmdCoordinator<V> {
 }
 
 impl<V: VersionConfig> EdifactHandler for UtilmdCoordinator<V> {
-    fn on_delimiters(&mut self, _delimiters: &EdifactDelimiters, _explicit_una: bool) {}
+    fn on_delimiters(&mut self, _delimiters: &EdifactDelimiters, explicit_una: bool) {
+        self.nachrichtendaten.explicit_una = explicit_una;
+    }
 
     fn on_interchange_start(&mut self, unb: &RawSegment) -> Control {
         // Extract sender/recipient from UNB
@@ -472,9 +475,25 @@ impl<V: VersionConfig> EdifactHandler for UtilmdCoordinator<V> {
         if !sender.is_empty() {
             self.nachrichtendaten.absender_mp_id = Some(sender.to_string());
         }
+        let sender_qualifier = unb.get_component(1, 1);
+        if !sender_qualifier.is_empty() {
+            self.nachrichtendaten.absender_unb_qualifier = Some(sender_qualifier.to_string());
+        }
         let recipient = unb.get_component(2, 0);
         if !recipient.is_empty() {
             self.nachrichtendaten.empfaenger_mp_id = Some(recipient.to_string());
+        }
+        let recipient_qualifier = unb.get_component(2, 1);
+        if !recipient_qualifier.is_empty() {
+            self.nachrichtendaten.empfaenger_unb_qualifier = Some(recipient_qualifier.to_string());
+        }
+        let unb_datum = unb.get_component(3, 0);
+        if !unb_datum.is_empty() {
+            self.nachrichtendaten.unb_datum = Some(unb_datum.to_string());
+        }
+        let unb_zeit = unb.get_component(3, 1);
+        if !unb_zeit.is_empty() {
+            self.nachrichtendaten.unb_zeit = Some(unb_zeit.to_string());
         }
         let ref_nr = unb.get_element(4);
         if !ref_nr.is_empty() {
@@ -489,6 +508,10 @@ impl<V: VersionConfig> EdifactHandler for UtilmdCoordinator<V> {
             self.nachrichtendaten.nachrichtenreferenz = Some(msg_ref.to_string());
             self.context.set_message_reference(msg_ref);
         }
+        let msg_type_components = unh.get_components(1);
+        if !msg_type_components.is_empty() {
+            self.nachrichtendaten.nachrichtentyp = Some(msg_type_components.join(":"));
+        }
         Control::Continue
     }
 
@@ -502,6 +525,17 @@ impl<V: VersionConfig> EdifactHandler for UtilmdCoordinator<V> {
                     self.handle_message_level_nad(segment);
                 }
                 // Also route to mappers (Geschaeftspartner handles party NADs)
+                self.route_to_mappers(segment);
+            }
+            "DTM" if !self.in_transaction => {
+                let qualifier = segment.get_component(0, 0);
+                if qualifier == "137" {
+                    let value = segment.get_component(0, 1);
+                    let format_code = segment.get_component(0, 2);
+                    if let Some(dt) = parse_edifact_dtm(value, format_code) {
+                        self.nachrichtendaten.erstellungsdatum = Some(dt);
+                    }
+                }
                 self.route_to_mappers(segment);
             }
             _ => {
