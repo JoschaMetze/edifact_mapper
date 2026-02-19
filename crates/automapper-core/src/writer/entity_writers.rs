@@ -186,18 +186,21 @@ impl ProzessdatenWriter {
         }
 
         // STS segment (Counter=0250, Nr 00035)
-        // STS+7+transaktionsgrund::codelist+ergaenzung'
+        // S2.1 format: STS+7++grund+ergaenzung+befristete_anmeldung
         if let Some(ref grund) = pd.transaktionsgrund {
             let w = doc.segment_writer();
             w.begin_segment("STS");
             w.add_element("7");
-            w.begin_composite();
-            w.add_component(grund);
-            w.end_composite();
+            w.add_empty_element(); // empty element 1 per S2.1 format
+            w.add_element(grund);
             if let Some(ref erg) = pd.transaktionsgrund_ergaenzung {
-                w.begin_composite();
-                w.add_component(erg);
-                w.end_composite();
+                w.add_element(erg);
+            }
+            if let Some(ref befr) = pd.transaktionsgrund_ergaenzung_befristete_anmeldung {
+                if pd.transaktionsgrund_ergaenzung.is_none() {
+                    w.add_empty_element(); // placeholder if ergaenzung missing but befristete present
+                }
+                w.add_element(befr);
             }
             w.end_segment();
             doc.message_segment_count_increment();
@@ -531,7 +534,7 @@ mod tests {
         assert!(output.contains("DTM+137:202507011330:303'"));
         assert!(output.contains("DTM+471:202507011330:303'"));
         assert!(output.contains("DTM+92:202507011330:303'"));
-        assert!(output.contains("STS+7+E01+Z01'"));
+        assert!(output.contains("STS+7++E01+Z01'"));
     }
 
     #[test]
@@ -554,6 +557,75 @@ mod tests {
         let output = doc.output();
         assert!(output.contains("FTX+ACB+++Test Bemerkung'"));
         assert!(output.contains("RFF+Z13:VG001'"));
+    }
+
+    #[test]
+    fn test_prozessdaten_writer_sts_s21_format() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
+        doc.begin_message("M", "TYPE");
+
+        let pd = Prozessdaten {
+            transaktionsgrund: Some("E01".to_string()),
+            transaktionsgrund_ergaenzung: Some("ZW4".to_string()),
+            transaktionsgrund_ergaenzung_befristete_anmeldung: Some("E03".to_string()),
+            ..Default::default()
+        };
+        ProzessdatenWriter::write(&mut doc, &pd);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(
+            output.contains("STS+7++E01+ZW4+E03'"),
+            "STS should use S2.1 format, got: {}",
+            output
+        );
+    }
+
+    #[test]
+    fn test_prozessdaten_writer_sts_befristete_without_ergaenzung() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
+        doc.begin_message("M", "TYPE");
+
+        let pd = Prozessdaten {
+            transaktionsgrund: Some("E01".to_string()),
+            transaktionsgrund_ergaenzung_befristete_anmeldung: Some("E03".to_string()),
+            ..Default::default()
+        };
+        ProzessdatenWriter::write(&mut doc, &pd);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(
+            output.contains("STS+7++E01++E03'"),
+            "STS should have empty placeholder for missing ergaenzung, got: {}",
+            output
+        );
+    }
+
+    #[test]
+    fn test_prozessdaten_writer_sts_grund_only() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
+        doc.begin_message("M", "TYPE");
+
+        let pd = Prozessdaten {
+            transaktionsgrund: Some("E01".to_string()),
+            ..Default::default()
+        };
+        ProzessdatenWriter::write(&mut doc, &pd);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(
+            output.contains("STS+7++E01'"),
+            "STS should have empty element after 7, got: {}",
+            output
+        );
     }
 
     #[test]

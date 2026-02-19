@@ -70,21 +70,45 @@ impl ProzessdatenMapper {
     }
 
     fn handle_sts(&mut self, segment: &RawSegment) {
-        // STS+E01+transaktionsgrund::Z44+ergaenzung' or STS+7+grund::codeList'
-        // Element 0: status type (E01 = process status)
-        // Element 1: composite with transaction reason
-        //   - Component 0: code
-        //   - Component 2: code list qualifier
-        let grund_code = segment.get_component(1, 0);
-        if !grund_code.is_empty() {
-            self.prozessdaten.transaktionsgrund = Some(grund_code.to_string());
-            self.has_data = true;
-        }
+        let el0 = segment.get_element(0);
 
-        // Element 2: supplementary reason
-        let ergaenzung = segment.get_component(2, 0);
-        if !ergaenzung.is_empty() {
-            self.prozessdaten.transaktionsgrund_ergaenzung = Some(ergaenzung.to_string());
+        if el0 == "7" {
+            // S2.1 format: STS+7++grund+ergaenzung+befristete_anmeldung
+            // Element 0: "7" (status type qualifier)
+            // Element 1: empty
+            // Element 2: transaktionsgrund (e.g. E01, ZX6, Z33)
+            // Element 3: transaktionsgrund_ergaenzung (e.g. ZW4, ZW7)
+            // Element 4: transaktionsgrund_ergaenzung_befristete_anmeldung (e.g. E03, E01)
+            let grund = segment.get_component(2, 0);
+            if !grund.is_empty() {
+                self.prozessdaten.transaktionsgrund = Some(grund.to_string());
+                self.has_data = true;
+            }
+            let ergaenzung = segment.get_component(3, 0);
+            if !ergaenzung.is_empty() {
+                self.prozessdaten.transaktionsgrund_ergaenzung = Some(ergaenzung.to_string());
+            }
+            let befristet = segment.get_component(4, 0);
+            if !befristet.is_empty() {
+                self.prozessdaten
+                    .transaktionsgrund_ergaenzung_befristete_anmeldung =
+                    Some(befristet.to_string());
+            }
+        } else {
+            // Legacy format: STS+grund+composite+ergaenzung
+            // Element 0: status type (E01 = process status)
+            // Element 1: composite with transaction reason
+            //   - Component 0: code
+            // Element 2: supplementary reason
+            let grund_code = segment.get_component(1, 0);
+            if !grund_code.is_empty() {
+                self.prozessdaten.transaktionsgrund = Some(grund_code.to_string());
+                self.has_data = true;
+            }
+            let ergaenzung = segment.get_component(2, 0);
+            if !ergaenzung.is_empty() {
+                self.prozessdaten.transaktionsgrund_ergaenzung = Some(ergaenzung.to_string());
+            }
         }
     }
 
@@ -303,6 +327,47 @@ mod tests {
 
         let pd = mapper.build();
         assert_eq!(pd.bemerkung, Some("Test remark".to_string()));
+    }
+
+    #[test]
+    fn test_prozessdaten_mapper_sts_s21_format() {
+        let mut mapper = ProzessdatenMapper::new();
+        let mut ctx = TransactionContext::new("FV2504");
+
+        // Real S2.1 format: STS+7++E01+ZW4+E03
+        let sts = RawSegment::new(
+            "STS",
+            vec![vec!["7"], vec![], vec!["E01"], vec!["ZW4"], vec!["E03"]],
+            pos(),
+        );
+        mapper.handle(&sts, &mut ctx);
+
+        assert!(!mapper.is_empty());
+        let pd = mapper.build();
+        assert_eq!(pd.transaktionsgrund, Some("E01".to_string()));
+        assert_eq!(pd.transaktionsgrund_ergaenzung, Some("ZW4".to_string()));
+        assert_eq!(
+            pd.transaktionsgrund_ergaenzung_befristete_anmeldung,
+            Some("E03".to_string())
+        );
+    }
+
+    #[test]
+    fn test_prozessdaten_mapper_sts_s21_partial() {
+        let mut mapper = ProzessdatenMapper::new();
+        let mut ctx = TransactionContext::new("FV2504");
+
+        // STS+7++E01 (no ergaenzung)
+        let sts = RawSegment::new("STS", vec![vec!["7"], vec![], vec!["E01"]], pos());
+        mapper.handle(&sts, &mut ctx);
+
+        assert!(!mapper.is_empty());
+        let pd = mapper.build();
+        assert_eq!(pd.transaktionsgrund, Some("E01".to_string()));
+        assert!(pd.transaktionsgrund_ergaenzung.is_none());
+        assert!(pd
+            .transaktionsgrund_ergaenzung_befristete_anmeldung
+            .is_none());
     }
 
     #[test]
