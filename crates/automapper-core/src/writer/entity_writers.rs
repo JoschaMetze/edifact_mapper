@@ -184,6 +184,15 @@ impl ProzessdatenWriter {
         if let Some(ref dt) = pd.datum_naechste_bearbeitung {
             Self::write_dtm(doc, "Z08", dt);
         }
+        if let Some(ref dt) = pd.tag_des_empfangs {
+            Self::write_dtm(doc, "Z51", dt);
+        }
+        if let Some(ref dt) = pd.kuendigungsdatum_kunde {
+            Self::write_dtm(doc, "Z52", dt);
+        }
+        if let Some(ref dt) = pd.geplanter_liefertermin {
+            Self::write_dtm(doc, "Z53", dt);
+        }
 
         // STS segment (Counter=0250, Nr 00035)
         // S2.1 format: STS+7++grund+ergaenzung+befristete_anmeldung
@@ -857,6 +866,32 @@ mod tests {
         assert!(output.contains("SEQ+Z78'"));
         assert!(output.contains("RFF+Z18:MALO001'"));
         assert!(output.contains("RFF+Z19:MELO001'"));
+    }
+
+    #[test]
+    fn test_prozessdaten_writer_all_dtm_qualifiers() {
+        let dt = NaiveDate::from_ymd_opt(2025, 7, 1)
+            .unwrap()
+            .and_hms_opt(13, 30, 0)
+            .unwrap();
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
+        doc.begin_message("M", "TYPE");
+
+        let pd = Prozessdaten {
+            tag_des_empfangs: Some(dt),
+            kuendigungsdatum_kunde: Some(dt),
+            geplanter_liefertermin: Some(dt),
+            ..Default::default()
+        };
+        ProzessdatenWriter::write(&mut doc, &pd);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(output.contains("DTM+Z51:202507011330:303'"), "missing Z51");
+        assert!(output.contains("DTM+Z52:202507011330:303'"), "missing Z52");
+        assert!(output.contains("DTM+Z53:202507011330:303'"), "missing Z53");
     }
 
     #[test]
