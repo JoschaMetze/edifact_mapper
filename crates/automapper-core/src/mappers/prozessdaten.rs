@@ -126,6 +126,14 @@ impl ProzessdatenMapper {
             return;
         }
 
+        // Store raw DTM for roundtrip fidelity
+        let raw = if format_code.is_empty() {
+            value.to_string()
+        } else {
+            format!("{}:{}", value, format_code)
+        };
+        self.prozessdaten.raw_dtm.insert(qualifier.to_string(), raw);
+
         let parsed = Self::parse_dtm_value(value, format_code);
 
         match qualifier {

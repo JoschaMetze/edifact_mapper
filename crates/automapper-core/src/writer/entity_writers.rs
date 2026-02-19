@@ -3,6 +3,8 @@
 //! Each writer knows how to produce the EDIFACT segments for one entity type.
 //! They use `EdifactDocumentWriter` to append segments within an open message.
 
+use std::collections::HashMap;
+
 use bo4e_extensions::*;
 use chrono::NaiveDateTime;
 
@@ -159,6 +161,23 @@ impl ProzessdatenWriter {
         doc.write_segment_with_composites("DTM", &[&[qualifier, &value, "303"]]);
     }
 
+    /// Write a DTM segment, preferring the raw preserved value for roundtrip fidelity.
+    fn write_dtm_prefer_raw(
+        doc: &mut EdifactDocumentWriter,
+        qualifier: &str,
+        dt: &NaiveDateTime,
+        raw_dtm: &HashMap<String, String>,
+    ) {
+        if let Some(raw) = raw_dtm.get(qualifier) {
+            // Write raw preserved value: DTM+qualifier:raw'
+            // raw already contains "value:format" (e.g. "202503311329?+00:303")
+            let composite = format!("{}:{}", qualifier, raw);
+            doc.write_segment("DTM", &[&composite]);
+        } else {
+            Self::write_dtm(doc, qualifier, dt);
+        }
+    }
+
     /// Writes all Prozessdaten segments for a transaction.
     ///
     /// Segment order follows MIG Counter=0230 (DTM dates), then
@@ -167,31 +186,31 @@ impl ProzessdatenWriter {
     pub fn write(doc: &mut EdifactDocumentWriter, pd: &Prozessdaten) {
         // DTM segments (Counter=0230, Nr 00021-00034)
         if let Some(ref dt) = pd.prozessdatum {
-            Self::write_dtm(doc, "137", dt);
+            Self::write_dtm_prefer_raw(doc, "137", dt, &pd.raw_dtm);
         }
         if let Some(ref dt) = pd.wirksamkeitsdatum {
-            Self::write_dtm(doc, "471", dt);
+            Self::write_dtm_prefer_raw(doc, "471", dt, &pd.raw_dtm);
         }
         if let Some(ref dt) = pd.vertragsbeginn {
-            Self::write_dtm(doc, "92", dt);
+            Self::write_dtm_prefer_raw(doc, "92", dt, &pd.raw_dtm);
         }
         if let Some(ref dt) = pd.vertragsende {
-            Self::write_dtm(doc, "93", dt);
+            Self::write_dtm_prefer_raw(doc, "93", dt, &pd.raw_dtm);
         }
         if let Some(ref dt) = pd.lieferbeginndatum_in_bearbeitung {
-            Self::write_dtm(doc, "Z07", dt);
+            Self::write_dtm_prefer_raw(doc, "Z07", dt, &pd.raw_dtm);
         }
         if let Some(ref dt) = pd.datum_naechste_bearbeitung {
-            Self::write_dtm(doc, "Z08", dt);
+            Self::write_dtm_prefer_raw(doc, "Z08", dt, &pd.raw_dtm);
         }
         if let Some(ref dt) = pd.tag_des_empfangs {
-            Self::write_dtm(doc, "Z51", dt);
+            Self::write_dtm_prefer_raw(doc, "Z51", dt, &pd.raw_dtm);
         }
         if let Some(ref dt) = pd.kuendigungsdatum_kunde {
-            Self::write_dtm(doc, "Z52", dt);
+            Self::write_dtm_prefer_raw(doc, "Z52", dt, &pd.raw_dtm);
         }
         if let Some(ref dt) = pd.geplanter_liefertermin {
-            Self::write_dtm(doc, "Z53", dt);
+            Self::write_dtm_prefer_raw(doc, "Z53", dt, &pd.raw_dtm);
         }
 
         // STS segment (Counter=0250, Nr 00035)

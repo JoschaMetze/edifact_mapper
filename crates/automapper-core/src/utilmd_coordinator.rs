@@ -360,7 +360,10 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         );
 
         // DTM+137 Nachrichtendatum (Counter=0030, Nr 00005)
-        if let Some(ref dt) = nd.erstellungsdatum {
+        if let Some(ref raw) = nd.raw_nachrichtendatum {
+            let composite = format!("137:{}", raw);
+            doc.write_segment("DTM", &[&composite]);
+        } else if let Some(ref dt) = nd.erstellungsdatum {
             let value = dt.format("%Y%m%d%H%M").to_string();
             doc.write_segment_with_composites("DTM", &[&["137", &value, "303"]]);
         }
@@ -544,6 +547,15 @@ impl<V: VersionConfig> EdifactHandler for UtilmdCoordinator<V> {
                 if qualifier == "137" {
                     let value = segment.get_component(0, 1);
                     let format_code = segment.get_component(0, 2);
+                    // Store raw for roundtrip
+                    if !value.is_empty() {
+                        let raw = if format_code.is_empty() {
+                            value.to_string()
+                        } else {
+                            format!("{}:{}", value, format_code)
+                        };
+                        self.nachrichtendaten.raw_nachrichtendatum = Some(raw);
+                    }
                     if let Some(dt) = parse_edifact_dtm(value, format_code) {
                         self.nachrichtendaten.erstellungsdatum = Some(dt);
                     }

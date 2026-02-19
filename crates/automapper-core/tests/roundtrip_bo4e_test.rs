@@ -1245,3 +1245,41 @@ fn test_bo4e_roundtrip_fixture_reparse() {
         );
     }
 }
+
+// ---------------------------------------------------------------------------
+// Raw DTM roundtrip: format code and timezone preservation
+// ---------------------------------------------------------------------------
+
+#[test]
+fn test_raw_dtm_roundtrip() {
+    // DTM with timezone suffix (?+00) and format 102 (date-only)
+    let edifact = b"UNA:+.? '\
+UNB+UNOC:3+SENDER:500+RECEIVER:500+250331:1329+REF001'\
+UNH+MSG001+UTILMD:D:11A:UN:S2.1'\
+BGM+E03+DOC001'\
+DTM+137:202503311329?+00:303'\
+NAD+MS+SENDER::293'\
+NAD+MR+RECEIVER::293'\
+IDE+24+TX001'\
+DTM+92:20220624:102'\
+STS+7++E01'\
+UNT+9+MSG001'\
+UNZ+1+REF001'";
+
+    let mut coord = create_coordinator(FormatVersion::FV2504).unwrap();
+    let nachricht = coord.parse_nachricht(edifact).unwrap();
+    let output = String::from_utf8(coord.generate(&nachricht).unwrap()).unwrap();
+
+    // Message-level DTM+137 should preserve raw format including ?+00
+    assert!(
+        output.contains("DTM+137:202503311329?+00:303'"),
+        "DTM+137 raw not preserved in: {}",
+        output
+    );
+    // Transaction-level DTM+92 should preserve format 102
+    assert!(
+        output.contains("DTM+92:20220624:102'"),
+        "DTM+92 format 102 not preserved in: {}",
+        output
+    );
+}

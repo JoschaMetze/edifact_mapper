@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
@@ -23,6 +25,10 @@ pub struct Prozessdaten {
     pub geplantes_paket: Option<String>,
     pub bemerkung: Option<String>,
     pub andere_partei_mp_id: Option<String>,
+    /// Raw DTM composite values for roundtrip fidelity.
+    /// Maps qualifier (e.g. "137") to raw value:format string (e.g. "202503311329?+00:303").
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    pub raw_dtm: HashMap<String, String>,
 }
 
 /// Message-level metadata (from UNB/BGM/DTM segments).
@@ -53,6 +59,9 @@ pub struct Nachrichtendaten {
     pub explicit_una: bool,
     /// Original message type identifier from UNH (e.g. "UTILMD:D:11A:UN:S2.1").
     pub nachrichtentyp: Option<String>,
+    /// Raw DTM+137 composite for message-level Nachrichtendatum roundtrip.
+    /// Stores the full "value:format" string (e.g. "202503311329?+00:303").
+    pub raw_nachrichtendatum: Option<String>,
 }
 
 /// A time slice reference within a transaction.
