@@ -317,6 +317,88 @@ impl MabisZaehlpunktWriter {
     }
 }
 
+/// Writes a Produktpaket to EDIFACT segments.
+pub struct ProduktpaketWriter;
+
+impl ProduktpaketWriter {
+    pub fn write(
+        doc: &mut EdifactDocumentWriter,
+        pp: &WithValidity<Produktpaket, ProduktpaketEdifact>,
+    ) {
+        // SEQ+Z79+produktpaket_id'
+        let id = pp.data.produktpaket_id.as_deref().unwrap_or("");
+        doc.write_segment("SEQ", &["Z79", id]);
+
+        // PIA+5+produktpaket_name'
+        if let Some(ref name) = pp.edifact.produktpaket_name {
+            doc.write_segment("PIA", &["5", name]);
+        }
+    }
+}
+
+/// Writes a Lokationszuordnung to EDIFACT segments.
+pub struct LokationszuordnungWriter;
+
+impl LokationszuordnungWriter {
+    pub fn write(
+        doc: &mut EdifactDocumentWriter,
+        lz: &WithValidity<Lokationszuordnung, LokationszuordnungEdifact>,
+    ) {
+        // SEQ+Z78'
+        doc.write_segment("SEQ", &["Z78"]);
+
+        // RFF+Z18:marktlokations_id'
+        if let Some(ref malo_id) = lz.data.marktlokations_id {
+            doc.write_segment_with_composites("RFF", &[&["Z18", malo_id]]);
+        }
+
+        // RFF+Z19:messlokations_id'
+        if let Some(ref melo_id) = lz.data.messlokations_id {
+            doc.write_segment_with_composites("RFF", &[&["Z19", melo_id]]);
+        }
+    }
+}
+
+/// Writes Bilanzierung data to EDIFACT segments.
+pub struct BilanzierungWriter;
+
+impl BilanzierungWriter {
+    pub fn write(
+        doc: &mut EdifactDocumentWriter,
+        b: &WithValidity<Bilanzierung, BilanzierungEdifact>,
+    ) {
+        // SEQ+Z98'
+        doc.write_segment("SEQ", &["Z98"]);
+
+        // CCI+Z20++bilanzkreis'
+        if let Some(ref bk) = b.data.bilanzkreis {
+            doc.write_segment("CCI", &["Z20", "", bk]);
+        }
+
+        // CCI+Z21++regelzone'
+        if let Some(ref rz) = b.data.regelzone {
+            doc.write_segment("CCI", &["Z21", "", rz]);
+        }
+
+        // CCI+Z22++bilanzierungsgebiet'
+        if let Some(ref bg) = b.data.bilanzierungsgebiet {
+            doc.write_segment("CCI", &["Z22", "", bg]);
+        }
+
+        // QTY+Z09:jahresverbrauchsprognose'
+        if let Some(jvp) = b.edifact.jahresverbrauchsprognose {
+            let value = format!("{jvp}");
+            doc.write_segment_with_composites("QTY", &[&["Z09", &value]]);
+        }
+
+        // QTY+265:temperatur_arbeit'
+        if let Some(ta) = b.edifact.temperatur_arbeit {
+            let value = format!("{ta}");
+            doc.write_segment_with_composites("QTY", &[&["265", &value]]);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -654,5 +736,87 @@ mod tests {
         doc.end_interchange();
 
         assert!(doc.output().contains("LOC+Z15+MABIS001'"));
+    }
+
+    #[test]
+    fn test_produktpaket_writer() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let pp = WithValidity {
+            data: Produktpaket {
+                produktpaket_id: Some("PP001".to_string()),
+            },
+            edifact: ProduktpaketEdifact {
+                produktpaket_name: Some("Grundversorgung".to_string()),
+            },
+            gueltigkeitszeitraum: None,
+            zeitscheibe_ref: None,
+        };
+
+        ProduktpaketWriter::write(&mut doc, &pp);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(output.contains("SEQ+Z79+PP001'"));
+        assert!(output.contains("PIA+5+Grundversorgung'"));
+    }
+
+    #[test]
+    fn test_lokationszuordnung_writer() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let lz = WithValidity {
+            data: Lokationszuordnung {
+                marktlokations_id: Some("MALO001".to_string()),
+                messlokations_id: Some("MELO001".to_string()),
+            },
+            edifact: LokationszuordnungEdifact::default(),
+            gueltigkeitszeitraum: None,
+            zeitscheibe_ref: None,
+        };
+
+        LokationszuordnungWriter::write(&mut doc, &lz);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(output.contains("SEQ+Z78'"));
+        assert!(output.contains("RFF+Z18:MALO001'"));
+        assert!(output.contains("RFF+Z19:MELO001'"));
+    }
+
+    #[test]
+    fn test_bilanzierung_writer() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let b = WithValidity {
+            data: Bilanzierung {
+                bilanzkreis: Some("11YN20---------Z".to_string()),
+                regelzone: None,
+                bilanzierungsgebiet: None,
+            },
+            edifact: BilanzierungEdifact {
+                jahresverbrauchsprognose: Some(12345.67),
+                temperatur_arbeit: None,
+            },
+            gueltigkeitszeitraum: None,
+            zeitscheibe_ref: None,
+        };
+
+        BilanzierungWriter::write(&mut doc, &b);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(output.contains("SEQ+Z98'"));
+        assert!(output.contains("CCI+Z20++11YN20---------Z'"));
+        assert!(output.contains("QTY+Z09:12345.67'"));
     }
 }
