@@ -22,7 +22,21 @@ impl EdifactStreamParser {
     /// 2. Tokenizes input into segments
     /// 3. Routes each segment to the handler
     /// 4. Stops if the handler returns `Control::Stop`
+    ///
+    /// Supports both UTF-8 and ISO-8859-1 encoded input. If the input
+    /// contains non-UTF-8 bytes (raw ISO-8859-1), it is transparently
+    /// transcoded to UTF-8 before parsing. EDIFACT delimiters are always
+    /// ASCII, so transcoding does not affect delimiter detection.
     pub fn parse(input: &[u8], handler: &mut dyn EdifactHandler) -> Result<(), ParseError> {
+        if std::str::from_utf8(input).is_ok() {
+            Self::parse_inner(input, handler)
+        } else {
+            let transcoded = transcode_iso_8859_1_to_utf8(input);
+            Self::parse_inner(&transcoded, handler)
+        }
+    }
+
+    fn parse_inner(input: &[u8], handler: &mut dyn EdifactHandler) -> Result<(), ParseError> {
         // Step 1: Detect delimiters
         let (has_una, delimiters) = EdifactDelimiters::detect(input);
         handler.on_delimiters(&delimiters, has_una);
@@ -104,6 +118,26 @@ impl EdifactStreamParser {
 
         Ok(())
     }
+}
+
+/// Transcode ISO-8859-1 bytes to UTF-8.
+///
+/// ISO-8859-1 code points 0x00–0xFF map directly to Unicode U+0000–U+00FF.
+/// - 0x00–0x7F: single UTF-8 byte (identical)
+/// - 0x80–0xBF: two UTF-8 bytes: 0xC2 + original byte
+/// - 0xC0–0xFF: two UTF-8 bytes: 0xC3 + (original byte - 0x40)
+fn transcode_iso_8859_1_to_utf8(input: &[u8]) -> Vec<u8> {
+    let mut output = Vec::with_capacity(input.len() + input.len() / 4);
+    for &b in input {
+        if b < 0x80 {
+            output.push(b);
+        } else {
+            // ISO-8859-1 byte to UTF-8 two-byte sequence
+            output.push(0xC0 | (b >> 6));
+            output.push(0x80 | (b & 0x3F));
+        }
+    }
+    output
 }
 
 #[cfg(test)]
@@ -265,6 +299,88 @@ mod tests {
         let mut handler = NoOp;
         let result = EdifactStreamParser::parse(b"", &mut handler);
         assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_parse_iso_8859_1_preserves_characters() {
+        // EDIFACT with ISO-8859-1 encoded German characters:
+        // ß = 0xDF, ö = 0xF6, ü = 0xFC in ISO-8859-1
+        // These are single bytes > 0x7F, NOT valid UTF-8.
+        let input: Vec<u8> = [
+            b"UNA:+.? '".as_slice(),
+            b"UNB+UNOC:3+SENDER+RECEIVER+210101:1200+REF'",
+            b"UNH+001+UTILMD:D:11A:UN'",
+            // NAD segment with "Müller" where ü = 0xFC (ISO-8859-1)
+            b"NAD+Z09+++M",
+            &[0xFC], // ü in ISO-8859-1
+            b"ller:Max::::Herr'",
+            // LOC segment with "Straße" where ß = 0xDF (ISO-8859-1)
+            b"LOC+Z16+++Hauptstra",
+            &[0xDF], // ß in ISO-8859-1
+            b"e::5'",
+            b"UNT+4+001'",
+            b"UNZ+1+REF'",
+        ]
+        .concat();
+
+        struct SegCollector {
+            segments: Vec<(String, Vec<Vec<String>>)>,
+        }
+        impl EdifactHandler for SegCollector {
+            fn on_segment(&mut self, seg: &RawSegment) -> Control {
+                self.segments.push((
+                    seg.id.to_string(),
+                    seg.elements
+                        .iter()
+                        .map(|e| e.iter().map(|c| c.to_string()).collect())
+                        .collect(),
+                ));
+                Control::Continue
+            }
+        }
+
+        let mut handler = SegCollector {
+            segments: Vec::new(),
+        };
+        EdifactStreamParser::parse(&input, &mut handler).unwrap();
+
+        // Find NAD segment — should contain "Müller" (ü transcoded to UTF-8)
+        // NAD+Z09+++Müller:Max::::Herr → elements: [Z09], [], [], [Müller,Max,...,Herr]
+        let nad = handler
+            .segments
+            .iter()
+            .find(|(id, _)| id == "NAD")
+            .expect("NAD segment should be present");
+        let name = &nad.1[3][0]; // element 3, component 0
+        assert!(
+            name.contains("ller"),
+            "NAD name component should contain 'ller', got: {:?}",
+            name
+        );
+        assert!(
+            name.contains('ü'),
+            "NAD name should contain ü (transcoded from ISO-8859-1 0xFC), got: {:?}",
+            name
+        );
+
+        // Find LOC segment — should contain "Straße" (ß transcoded to UTF-8)
+        // LOC+Z16+++Hauptstraße::5 → elements: [Z16], [], [], [Hauptstraße,,5]
+        let loc = handler
+            .segments
+            .iter()
+            .find(|(id, _)| id == "LOC")
+            .expect("LOC segment should be present");
+        let street = &loc.1[3][0]; // element 3, component 0
+        assert!(
+            street.contains("stra"),
+            "LOC street should contain 'stra', got: {:?}",
+            street
+        );
+        assert!(
+            street.contains('ß'),
+            "LOC street should contain ß (transcoded from ISO-8859-1 0xDF), got: {:?}",
+            street
+        );
     }
 
     #[test]

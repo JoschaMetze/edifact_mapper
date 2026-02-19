@@ -105,8 +105,6 @@ fn normalize_edifact(input: &[u8]) -> Vec<u8> {
 ///
 /// Reasons to skip:
 /// - Non-standard escape usage (e.g. `?e` for ß)
-/// - Contains non-ASCII bytes (ISO-8859-1 chars like ß=0xDF) which the
-///   parser's internal `from_utf8` can't handle losslessly
 /// - Missing trailing segment terminator (malformed but tolerated by parser)
 fn should_skip_roundtrip(input: &[u8]) -> bool {
     // Non-standard escape sequences
@@ -119,11 +117,6 @@ fn should_skip_roundtrip(input: &[u8]) -> bool {
                 return true;
             }
         }
-    }
-
-    // Non-ASCII bytes (ISO-8859-1 characters outside UTF-8 ASCII range)
-    if input.iter().any(|&b| b > 127) {
-        return true;
     }
 
     // Missing trailing segment terminator (file doesn't end with ')
@@ -140,6 +133,35 @@ fn should_skip_roundtrip(input: &[u8]) -> bool {
     }
 
     false
+}
+
+/// Transcode ISO-8859-1 bytes to UTF-8 (mirrors parser's internal transcoding).
+///
+/// ISO-8859-1 code points 0x00–0xFF map directly to Unicode U+0000–U+00FF.
+fn transcode_iso_8859_1_to_utf8(input: &[u8]) -> Vec<u8> {
+    let mut output = Vec::with_capacity(input.len() + input.len() / 4);
+    for &b in input {
+        if b < 0x80 {
+            output.push(b);
+        } else {
+            output.push(0xC0 | (b >> 6));
+            output.push(0x80 | (b & 0x3F));
+        }
+    }
+    output
+}
+
+/// Normalize input for roundtrip comparison.
+///
+/// For ISO-8859-1 inputs, the parser transcodes to UTF-8 internally, so
+/// reconstructed output will be UTF-8. We transcode the original to match.
+fn normalize_for_comparison(input: &[u8]) -> Vec<u8> {
+    let normalized = normalize_edifact(input);
+    if std::str::from_utf8(&normalized).is_ok() {
+        normalized
+    } else {
+        transcode_iso_8859_1_to_utf8(&normalize_edifact(input))
+    }
 }
 
 fn fixture_dir() -> Option<std::path::PathBuf> {
@@ -215,16 +237,16 @@ fn test_roundtrip_sample_files() {
         }
 
         let reconstructed = handler.reconstruct();
-        let original_normalized = normalize_edifact(&content);
+        let expected = normalize_for_comparison(&content);
 
-        if reconstructed != original_normalized {
+        if reconstructed != expected {
             let rel = file_path.strip_prefix(&fixture_path).unwrap_or(file_path);
             failures.push(format!(
                 "{}: roundtrip mismatch\n  original len: {}\n  reconstructed len: {}\n  first diff at: {}",
                 rel.display(),
-                original_normalized.len(),
+                expected.len(),
                 reconstructed.len(),
-                find_first_diff(&original_normalized, &reconstructed),
+                find_first_diff(&expected, &reconstructed),
             ));
         } else {
             roundtrip_ok += 1;
@@ -283,14 +305,14 @@ fn test_roundtrip_all_utilmd_files() {
         }
 
         let reconstructed = handler.reconstruct();
-        let original_normalized = normalize_edifact(&content);
+        let expected = normalize_for_comparison(&content);
 
-        if reconstructed != original_normalized {
+        if reconstructed != expected {
             let rel = file_path.strip_prefix(&fixture_path).unwrap_or(file_path);
             failures.push(format!(
                 "{}: roundtrip mismatch (first diff at {})",
                 rel.display(),
-                find_first_diff(&original_normalized, &reconstructed),
+                find_first_diff(&expected, &reconstructed),
             ));
         } else {
             roundtrip_ok += 1;
