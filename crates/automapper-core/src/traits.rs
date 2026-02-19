@@ -92,6 +92,18 @@ impl FormatVersion {
             Self::FV2510 => "FV2510",
         }
     }
+
+    /// Returns the EDIFACT message type identifier for UNH segments.
+    ///
+    /// Derived from MIG XML: S_UNH / C_S009 composites.
+    /// - FV2504 → S2.1 (Versionsnummer from FV2504 MIG)
+    /// - FV2510 → S2.2 (Versionsnummer from FV2510 MIG)
+    pub fn message_type_string(&self) -> &'static str {
+        match self {
+            Self::FV2504 => "UTILMD:D:11A:UN:S2.1",
+            Self::FV2510 => "UTILMD:D:11A:UN:S2.2",
+        }
+    }
 }
 
 impl std::str::FromStr for FormatVersion {
@@ -232,6 +244,18 @@ mod tests {
         );
         assert!("FV9999".parse::<FormatVersion>().is_err());
         assert!("".parse::<FormatVersion>().is_err());
+    }
+
+    #[test]
+    fn test_format_version_message_type_string() {
+        assert_eq!(
+            FormatVersion::FV2504.message_type_string(),
+            "UTILMD:D:11A:UN:S2.1"
+        );
+        assert_eq!(
+            FormatVersion::FV2510.message_type_string(),
+            "UTILMD:D:11A:UN:S2.2"
+        );
     }
 
     #[test]

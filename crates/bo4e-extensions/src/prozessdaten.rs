@@ -32,6 +32,10 @@ pub struct Nachrichtendaten {
     pub nachrichtenreferenz: Option<String>,
     pub absender_mp_id: Option<String>,
     pub empfaenger_mp_id: Option<String>,
+    /// Code list qualifier from NAD+MS (e.g. "293" for STROM, "332" for GAS, "9" for EAN).
+    pub absender_code_qualifier: Option<String>,
+    /// Code list qualifier from NAD+MR (e.g. "293" for STROM, "332" for GAS, "9" for EAN).
+    pub empfaenger_code_qualifier: Option<String>,
     pub erstellungsdatum: Option<NaiveDateTime>,
     pub datenaustauschreferenz: Option<String>,
     pub pruefidentifikator: Option<String>,

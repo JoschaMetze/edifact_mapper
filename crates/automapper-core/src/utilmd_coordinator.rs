@@ -7,7 +7,9 @@
 
 use std::marker::PhantomData;
 
-use bo4e_extensions::{LinkRegistry, Marktteilnehmer, Nachrichtendaten, UtilmdTransaktion};
+use bo4e_extensions::{
+    LinkRegistry, Marktteilnehmer, Nachrichtendaten, UtilmdNachricht, UtilmdTransaktion,
+};
 use edifact_parser::EdifactHandler;
 use edifact_types::{Control, EdifactDelimiters, RawSegment};
 
@@ -17,6 +19,10 @@ use crate::error::AutomapperError;
 use crate::mappers::*;
 use crate::traits::{Builder, FormatVersion, SegmentHandler};
 use crate::version::VersionConfig;
+use crate::writer::{
+    EdifactDocumentWriter, GeschaeftspartnerWriter, MarktlokationWriter, MesslokationWriter,
+    NetzlokationWriter, ProzessdatenWriter, VertragWriter, ZaehlerWriter, ZeitscheibeWriter,
+};
 
 /// UTILMD coordinator that orchestrates all entity mappers.
 ///
@@ -107,10 +113,20 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
     }
 
     /// Handles IDE segment (transaction identifier).
+    ///
+    /// When a new IDE+24 is encountered while already processing a transaction,
+    /// the current transaction is finalized first (multi-transaction support).
     fn handle_ide(&mut self, segment: &RawSegment) {
         // IDE+24+transactionId'
         let qualifier = segment.get_element(0);
         if qualifier == "24" {
+            // Finalize previous transaction if we're already in one
+            if self.in_transaction {
+                let tx = self.collect_transaction();
+                self.transactions.push(tx);
+                self.reset_mappers();
+            }
+
             let tx_id = segment.get_element(1);
             if !tx_id.is_empty() {
                 self.current_transaction_id = Some(tx_id.to_string());
@@ -123,6 +139,7 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
     fn handle_message_level_nad(&mut self, segment: &RawSegment) {
         let qualifier = segment.get_element(0);
         let mp_id = segment.get_component(1, 0);
+        let code_qualifier = segment.get_component(1, 2);
 
         match qualifier {
             "MS" => {
@@ -130,11 +147,19 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
                     self.absender.mp_id = Some(mp_id.to_string());
                     self.context.set_sender_mp_id(mp_id);
                 }
+                if !code_qualifier.is_empty() {
+                    self.nachrichtendaten.absender_code_qualifier =
+                        Some(code_qualifier.to_string());
+                }
             }
             "MR" => {
                 if !mp_id.is_empty() {
                     self.empfaenger.mp_id = Some(mp_id.to_string());
                     self.context.set_recipient_mp_id(mp_id);
+                }
+                if !code_qualifier.is_empty() {
+                    self.nachrichtendaten.empfaenger_code_qualifier =
+                        Some(code_qualifier.to_string());
                 }
             }
             _ => {}
@@ -200,6 +225,158 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         self.vertrag_mapper.reset();
         self.zaehler_mapper.reset();
         self.in_transaction = false;
+    }
+
+    /// Builds a UtilmdNachricht from the current coordinator state.
+    fn build_nachricht(&mut self) -> UtilmdNachricht {
+        let transactions = std::mem::take(&mut self.transactions);
+        let nachrichtendaten = self.nachrichtendaten.clone();
+
+        UtilmdNachricht {
+            dokumentennummer: nachrichtendaten
+                .dokumentennummer
+                .clone()
+                .unwrap_or_default(),
+            kategorie: nachrichtendaten.kategorie.clone(),
+            nachrichtendaten,
+            transaktionen: transactions,
+        }
+    }
+
+    /// Generates EDIFACT bytes from a UtilmdNachricht.
+    ///
+    /// Segment ordering follows the MIG XML Counter attributes from
+    /// `UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml`.
+    /// See `docs/mig-segment-ordering.md` for the full derivation.
+    fn generate_impl(
+        nachricht: &UtilmdNachricht,
+        format_version: FormatVersion,
+    ) -> Result<Vec<u8>, AutomapperError> {
+        let nd = &nachricht.nachrichtendaten;
+
+        // Determine date/time for UNB from erstellungsdatum
+        let (date_str, time_str) = if let Some(ref dt) = nd.erstellungsdatum {
+            (
+                dt.format("%y%m%d").to_string(),
+                dt.format("%H%M").to_string(),
+            )
+        } else {
+            (String::new(), String::new())
+        };
+
+        let mut doc = EdifactDocumentWriter::new();
+
+        // UNA + UNB (Counter=0000)
+        doc.begin_interchange(
+            nd.absender_mp_id.as_deref().unwrap_or(""),
+            nd.empfaenger_mp_id.as_deref().unwrap_or(""),
+            nd.datenaustauschreferenz.as_deref().unwrap_or(""),
+            &date_str,
+            &time_str,
+        );
+
+        // UNH (Counter=0010)
+        doc.begin_message(
+            nd.nachrichtenreferenz.as_deref().unwrap_or(""),
+            format_version.message_type_string(),
+        );
+
+        // BGM (Counter=0020)
+        doc.write_segment(
+            "BGM",
+            &[
+                nachricht.kategorie.as_deref().unwrap_or(""),
+                &nachricht.dokumentennummer,
+            ],
+        );
+
+        // DTM+137 Nachrichtendatum (Counter=0030, Nr 00005)
+        if let Some(ref dt) = nd.erstellungsdatum {
+            let value = dt.format("%Y%m%d%H%M").to_string();
+            doc.write_segment_with_composites("DTM", &[&["137", &value, "303"]]);
+        }
+
+        // SG2: NAD+MS Absender (Counter=0100, Nr 00008)
+        if let Some(ref mp_id) = nd.absender_mp_id {
+            let cq = nd.absender_code_qualifier.as_deref().unwrap_or("293");
+            let nad_value = format!("{mp_id}::{cq}");
+            doc.write_segment("NAD", &["MS", &nad_value]);
+        }
+
+        // SG2: NAD+MR Empfaenger (Counter=0100, Nr 00011)
+        if let Some(ref mp_id) = nd.empfaenger_mp_id {
+            let cq = nd.empfaenger_code_qualifier.as_deref().unwrap_or("293");
+            let nad_value = format!("{mp_id}::{cq}");
+            doc.write_segment("NAD", &["MR", &nad_value]);
+        }
+
+        // SG4: Transactions (Counter=0180)
+        for tx in &nachricht.transaktionen {
+            Self::write_transaction(&mut doc, tx);
+        }
+
+        // UNT + UNZ
+        doc.end_message();
+        doc.end_interchange();
+
+        Ok(doc.into_bytes())
+    }
+
+    /// Writes a single transaction (SG4) to the document writer.
+    ///
+    /// MIG segment ordering within SG4 (by Counter):
+    /// - 0190: IDE+24
+    /// - 0230: DTM (process dates)
+    /// - 0250: STS (transaction reason)
+    /// - 0280: FTX (remarks)
+    /// - 0320: SG5/LOC (locations: Z18, Z16, Z17)
+    /// - 0350: SG6/RFF (references: Z13, Z47+DTM)
+    /// - 0410: SG8/SEQ (entity data: Z03, Z18 for zaehler/vertrag)
+    /// - 0570: SG12/NAD (parties: DP address, geschaeftspartner)
+    fn write_transaction(doc: &mut EdifactDocumentWriter, tx: &UtilmdTransaktion) {
+        // IDE+24+transaktions_id (Counter=0190, Nr 00020)
+        doc.write_segment("IDE", &["24", &tx.transaktions_id]);
+
+        // DTM + STS + FTX (Counter=0230, 0250, 0280)
+        ProzessdatenWriter::write(doc, &tx.prozessdaten);
+
+        // SG5: LOC segments (Counter=0320)
+        // MIG order: Z18 (Nr 00048), Z16 (Nr 00049), Z17 (Nr 00054)
+        for nl in &tx.netzlokationen {
+            NetzlokationWriter::write(doc, nl);
+        }
+        for ml in &tx.marktlokationen {
+            MarktlokationWriter::write(doc, ml);
+        }
+        for ml in &tx.messlokationen {
+            MesslokationWriter::write(doc, ml);
+        }
+
+        // SG6: RFF references (Counter=0350)
+        // RFF+Z13 (Nr 00056)
+        ProzessdatenWriter::write_references(doc, &tx.prozessdaten);
+        // RFF+Z47 Zeitscheiben (Nr 00066)
+        ZeitscheibeWriter::write(doc, &tx.zeitscheiben);
+
+        // SG8: SEQ groups (Counter=0410)
+        // SEQ+Z03 Zaehler (Nr 00311)
+        for z in &tx.zaehler {
+            ZaehlerWriter::write(doc, z);
+        }
+        // Vertrag uses SEQ+Z18 in current codebase
+        if let Some(ref v) = tx.vertrag {
+            VertragWriter::write(doc, v);
+        }
+
+        // SG12: NAD parties (Counter=0570)
+        // NAD+DP Marktlokationsanschrift (Nr 00518)
+        for ml in &tx.marktlokationen {
+            MarktlokationWriter::write_address(doc, ml);
+        }
+        // NAD+qualifier Geschaeftspartner (Nr varies by qualifier)
+        for gp in &tx.parteien {
+            GeschaeftspartnerWriter::write(doc, gp);
+        }
     }
 }
 
@@ -275,9 +452,13 @@ impl<V: VersionConfig> Coordinator for UtilmdCoordinator<V> {
         Ok(std::mem::take(&mut self.transactions))
     }
 
-    fn generate(&self, _transaktion: &UtilmdTransaktion) -> Result<Vec<u8>, AutomapperError> {
-        // Will be implemented in Epic 8 (Writer)
-        Ok(Vec::new())
+    fn parse_nachricht(&mut self, input: &[u8]) -> Result<UtilmdNachricht, AutomapperError> {
+        edifact_parser::EdifactStreamParser::parse(input, self)?;
+        Ok(self.build_nachricht())
+    }
+
+    fn generate(&self, nachricht: &UtilmdNachricht) -> Result<Vec<u8>, AutomapperError> {
+        Self::generate_impl(nachricht, V::VERSION)
     }
 
     fn format_version(&self) -> FormatVersion {

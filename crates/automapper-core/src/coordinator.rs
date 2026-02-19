@@ -7,7 +7,7 @@
 //!
 //! See design doc section 5 (Coordinator).
 
-use bo4e_extensions::UtilmdTransaktion;
+use bo4e_extensions::{UtilmdNachricht, UtilmdTransaktion};
 use edifact_parser::EdifactHandler;
 
 use crate::error::AutomapperError;
@@ -29,11 +29,22 @@ pub trait Coordinator: EdifactHandler + Send {
     /// completed transactions.
     fn parse(&mut self, input: &[u8]) -> Result<Vec<UtilmdTransaktion>, AutomapperError>;
 
-    /// Generates EDIFACT bytes from a transaction.
+    /// Parses an EDIFACT interchange and returns the full message structure.
     ///
-    /// This is the main reverse-mapping entry point. It takes a transaction
-    /// and serializes it back to EDIFACT format.
-    fn generate(&self, transaktion: &UtilmdTransaktion) -> Result<Vec<u8>, AutomapperError>;
+    /// Like `parse()`, but returns a `UtilmdNachricht` that includes the
+    /// message envelope (Nachrichtendaten, dokumentennummer, kategorie)
+    /// in addition to the transactions. This is needed for `generate()`.
+    fn parse_nachricht(&mut self, input: &[u8]) -> Result<UtilmdNachricht, AutomapperError>;
+
+    /// Generates EDIFACT bytes from a full message.
+    ///
+    /// This is the main reverse-mapping entry point. It takes a complete
+    /// `UtilmdNachricht` (with envelope metadata and transactions) and
+    /// serializes it back to EDIFACT format.
+    ///
+    /// Segment ordering follows the MIG XML Counter attributes.
+    /// See `docs/mig-segment-ordering.md` for the derivation.
+    fn generate(&self, nachricht: &UtilmdNachricht) -> Result<Vec<u8>, AutomapperError>;
 
     /// Returns the format version this coordinator handles.
     fn format_version(&self) -> FormatVersion;
@@ -109,11 +120,10 @@ mod tests {
     }
 
     #[test]
-    fn test_coordinator_generate_returns_empty() {
-        let coord = create_coordinator(FormatVersion::FV2504).unwrap();
-        let tx = UtilmdTransaktion::default();
-        let result = coord.generate(&tx).unwrap();
-        assert!(result.is_empty());
+    fn test_coordinator_parse_nachricht_empty() {
+        let mut coord = create_coordinator(FormatVersion::FV2504).unwrap();
+        let result = coord.parse_nachricht(b"").unwrap();
+        assert!(result.transaktionen.is_empty());
     }
 
     #[test]

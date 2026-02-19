@@ -142,16 +142,16 @@ impl CoordinatorRegistry {
             _ => FormatVersion::FV2504,
         };
 
-        // Deserialize the BO4E transaction
-        let transaktion: bo4e_extensions::UtilmdTransaktion = serde_json::from_str(bo4e_json)
-            .map_err(|e| crate::error::ApiError::BadRequest {
+        // Deserialize the BO4E message (full Nachricht with envelope + transactions)
+        let nachricht: bo4e_extensions::UtilmdNachricht =
+            serde_json::from_str(bo4e_json).map_err(|e| crate::error::ApiError::BadRequest {
                 message: format!("invalid BO4E JSON: {e}"),
             })?;
 
         let coordinator = create_coordinator(fv).map_err(|e| crate::error::ApiError::Internal {
             message: e.to_string(),
         })?;
-        let edifact_bytes = coordinator.generate(&transaktion).map_err(|e| {
+        let edifact_bytes = coordinator.generate(&nachricht).map_err(|e| {
             crate::error::ApiError::ConversionError {
                 message: e.to_string(),
             }

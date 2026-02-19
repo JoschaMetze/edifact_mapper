@@ -4,6 +4,7 @@
 //! They use `EdifactDocumentWriter` to append segments within an open message.
 
 use bo4e_extensions::*;
+use chrono::NaiveDateTime;
 
 use super::document_writer::EdifactDocumentWriter;
 
@@ -137,10 +138,134 @@ impl VertragWriter {
     }
 }
 
+/// Writes Prozessdaten to EDIFACT segments.
+///
+/// MIG segment ordering (from UTILMD_MIG_Strom_S2_1, Counter values):
+/// - DTM qualifiers at Counter=0230 (Nr 00021-00034)
+/// - STS at Counter=0250 (Nr 00035)
+/// - FTX+ACB at Counter=0280 (Nr 00038)
+/// - RFF+Z13 at Counter=0350 via SG6 (Nr 00056)
+pub struct ProzessdatenWriter;
+
+impl ProzessdatenWriter {
+    /// Formats a NaiveDateTime as EDIFACT DTM format code 303 (CCYYMMDDHHmm).
+    fn format_dtm(dt: &NaiveDateTime) -> String {
+        dt.format("%Y%m%d%H%M").to_string()
+    }
+
+    /// Writes a DTM composite segment: DTM+qualifier:value:303'
+    fn write_dtm(doc: &mut EdifactDocumentWriter, qualifier: &str, dt: &NaiveDateTime) {
+        let value = Self::format_dtm(dt);
+        doc.write_segment_with_composites("DTM", &[&[qualifier, &value, "303"]]);
+    }
+
+    /// Writes all Prozessdaten segments for a transaction.
+    ///
+    /// Segment order follows MIG Counter=0230 (DTM dates), then
+    /// Counter=0250 (STS), then Counter=0280 (FTX).
+    /// RFF+Z13 is written separately via SG6 (Counter=0350).
+    pub fn write(doc: &mut EdifactDocumentWriter, pd: &Prozessdaten) {
+        // DTM segments (Counter=0230, Nr 00021-00034)
+        if let Some(ref dt) = pd.prozessdatum {
+            Self::write_dtm(doc, "137", dt);
+        }
+        if let Some(ref dt) = pd.wirksamkeitsdatum {
+            Self::write_dtm(doc, "471", dt);
+        }
+        if let Some(ref dt) = pd.vertragsbeginn {
+            Self::write_dtm(doc, "92", dt);
+        }
+        if let Some(ref dt) = pd.vertragsende {
+            Self::write_dtm(doc, "93", dt);
+        }
+        if let Some(ref dt) = pd.lieferbeginndatum_in_bearbeitung {
+            Self::write_dtm(doc, "Z07", dt);
+        }
+        if let Some(ref dt) = pd.datum_naechste_bearbeitung {
+            Self::write_dtm(doc, "Z08", dt);
+        }
+
+        // STS segment (Counter=0250, Nr 00035)
+        // STS+7+transaktionsgrund::codelist+ergaenzung'
+        if let Some(ref grund) = pd.transaktionsgrund {
+            let w = doc.segment_writer();
+            w.begin_segment("STS");
+            w.add_element("7");
+            w.begin_composite();
+            w.add_component(grund);
+            w.end_composite();
+            if let Some(ref erg) = pd.transaktionsgrund_ergaenzung {
+                w.begin_composite();
+                w.add_component(erg);
+                w.end_composite();
+            }
+            w.end_segment();
+            doc.message_segment_count_increment();
+        }
+
+        // FTX+ACB segment (Counter=0280, Nr 00038)
+        if let Some(ref bemerkung) = pd.bemerkung {
+            let w = doc.segment_writer();
+            w.begin_segment("FTX");
+            w.add_element("ACB");
+            w.add_empty_element(); // text subject code
+            w.add_empty_element(); // text function code
+            w.begin_composite();
+            w.add_component(bemerkung);
+            w.end_composite();
+            w.end_segment();
+            doc.message_segment_count_increment();
+        }
+    }
+
+    /// Writes RFF segments from Prozessdaten (SG6, Counter=0350).
+    ///
+    /// Called separately from `write()` because SG6 comes after SG5 (LOC)
+    /// in MIG counter order.
+    pub fn write_references(doc: &mut EdifactDocumentWriter, pd: &Prozessdaten) {
+        // RFF+Z13:referenz_vorgangsnummer (Nr 00056)
+        if let Some(ref vorgangsnr) = pd.referenz_vorgangsnummer {
+            doc.write_segment_with_composites("RFF", &[&["Z13", vorgangsnr]]);
+        }
+    }
+}
+
+/// Writes Zeitscheibe data to EDIFACT segments.
+///
+/// MIG: SG6 with RFF+Z47 (Verwendungszeitraum der Daten, Nr 00066, Counter=0350)
+/// Each Zeitscheibe produces:
+/// - RFF+Z47:zeitscheiben_id (Counter=0360)
+/// - DTM+Z25:von:303 (Counter=0370, if gueltigkeitszeitraum.von present)
+/// - DTM+Z26:bis:303 (Counter=0370, if gueltigkeitszeitraum.bis present)
+pub struct ZeitscheibeWriter;
+
+impl ZeitscheibeWriter {
+    /// Writes all Zeitscheibe segments for a transaction.
+    pub fn write(doc: &mut EdifactDocumentWriter, zeitscheiben: &[Zeitscheibe]) {
+        for zs in zeitscheiben {
+            // RFF+Z47:zeitscheiben_id
+            doc.write_segment_with_composites("RFF", &[&["Z47", &zs.zeitscheiben_id]]);
+
+            // DTM+Z25/Z26 from gueltigkeitszeitraum
+            if let Some(ref gz) = zs.gueltigkeitszeitraum {
+                if let Some(ref von) = gz.von {
+                    let value = von.format("%Y%m%d%H%M").to_string();
+                    doc.write_segment_with_composites("DTM", &[&["Z25", &value, "303"]]);
+                }
+                if let Some(ref bis) = gz.bis {
+                    let value = bis.format("%Y%m%d%H%M").to_string();
+                    doc.write_segment_with_composites("DTM", &[&["Z26", &value, "303"]]);
+                }
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use ::edifact_types::EdifactDelimiters;
+    use chrono::NaiveDate;
 
     #[test]
     fn test_marktlokation_writer_loc() {
@@ -242,5 +367,148 @@ mod tests {
         assert!(output.contains("SEQ+Z18'"));
         assert!(output.contains("CCI+Z15++Z01'"));
         assert!(output.contains("CCI+Z36++ZD0'"));
+    }
+
+    #[test]
+    fn test_prozessdaten_writer_dtm_and_sts() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let dt = NaiveDate::from_ymd_opt(2025, 7, 1)
+            .unwrap()
+            .and_hms_opt(13, 30, 0)
+            .unwrap();
+        let pd = Prozessdaten {
+            transaktionsgrund: Some("E01".to_string()),
+            transaktionsgrund_ergaenzung: Some("Z01".to_string()),
+            prozessdatum: Some(dt),
+            wirksamkeitsdatum: Some(dt),
+            vertragsbeginn: Some(dt),
+            ..Default::default()
+        };
+
+        ProzessdatenWriter::write(&mut doc, &pd);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(output.contains("DTM+137:202507011330:303'"));
+        assert!(output.contains("DTM+471:202507011330:303'"));
+        assert!(output.contains("DTM+92:202507011330:303'"));
+        assert!(output.contains("STS+7+E01+Z01'"));
+    }
+
+    #[test]
+    fn test_prozessdaten_writer_ftx_and_rff() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let pd = Prozessdaten {
+            bemerkung: Some("Test Bemerkung".to_string()),
+            referenz_vorgangsnummer: Some("VG001".to_string()),
+            ..Default::default()
+        };
+
+        ProzessdatenWriter::write(&mut doc, &pd);
+        ProzessdatenWriter::write_references(&mut doc, &pd);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(output.contains("FTX+ACB+++Test Bemerkung'"));
+        assert!(output.contains("RFF+Z13:VG001'"));
+    }
+
+    #[test]
+    fn test_prozessdaten_writer_empty() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let pd = Prozessdaten::default();
+        ProzessdatenWriter::write(&mut doc, &pd);
+        ProzessdatenWriter::write_references(&mut doc, &pd);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        // No DTM, STS, FTX, or RFF segments should be written
+        assert!(!output.contains("DTM"));
+        assert!(!output.contains("STS"));
+        assert!(!output.contains("FTX"));
+        assert!(!output.contains("RFF"));
+    }
+
+    #[test]
+    fn test_zeitscheibe_writer_single() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let von = NaiveDate::from_ymd_opt(2025, 7, 1)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap();
+        let bis = NaiveDate::from_ymd_opt(2025, 12, 31)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap();
+
+        let zs = vec![Zeitscheibe {
+            zeitscheiben_id: "1".to_string(),
+            gueltigkeitszeitraum: Some(Zeitraum::new(Some(von), Some(bis))),
+        }];
+
+        ZeitscheibeWriter::write(&mut doc, &zs);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(output.contains("RFF+Z47:1'"));
+        assert!(output.contains("DTM+Z25:202507010000:303'"));
+        assert!(output.contains("DTM+Z26:202512310000:303'"));
+    }
+
+    #[test]
+    fn test_zeitscheibe_writer_multiple() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let zs = vec![
+            Zeitscheibe {
+                zeitscheiben_id: "1".to_string(),
+                gueltigkeitszeitraum: None,
+            },
+            Zeitscheibe {
+                zeitscheiben_id: "2".to_string(),
+                gueltigkeitszeitraum: None,
+            },
+        ];
+
+        ZeitscheibeWriter::write(&mut doc, &zs);
+        doc.end_message();
+        doc.end_interchange();
+
+        let output = doc.output();
+        assert!(output.contains("RFF+Z47:1'"));
+        assert!(output.contains("RFF+Z47:2'"));
+    }
+
+    #[test]
+    fn test_zeitscheibe_writer_empty() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        ZeitscheibeWriter::write(&mut doc, &[]);
+        doc.end_message();
+        doc.end_interchange();
+
+        // No RFF or DTM segments should be written
+        let output = doc.output();
+        assert!(!output.contains("RFF"));
     }
 }

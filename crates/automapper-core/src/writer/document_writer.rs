@@ -61,21 +61,16 @@ impl EdifactDocumentWriter {
     }
 
     /// Writes the UNA service string advice.
+    ///
+    /// UNA is exactly 9 bytes: `UNA` + 6 delimiter characters.
+    /// The 6th character is the segment terminator itself.
     fn write_una(&mut self) {
-        let una = format!(
-            "UNA{}{}{}{}{}{}",
-            self.delimiters.component as char,
-            self.delimiters.element as char,
-            self.delimiters.decimal as char,
-            self.delimiters.release as char,
-            self.delimiters.reserved as char,
-            // Note: UNA does not have a segment terminator in the normal sense;
-            // the 6th character IS the terminator indicator
-            ""
-        );
-        // UNA is written without the segment terminator appended by write_raw
-        // Instead we write the raw UNA string directly
-        self.writer.buffer.push_str(&una);
+        // Use the canonical to_una_string() from EdifactDelimiters
+        // which correctly includes all 6 service characters.
+        // UNA is written directly (no extra segment terminator appended).
+        self.writer
+            .buffer
+            .push_str(&self.delimiters.to_una_string());
     }
 
     /// Begins a new interchange with the UNB segment.
