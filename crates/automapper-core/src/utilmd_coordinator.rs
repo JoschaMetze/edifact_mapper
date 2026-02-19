@@ -20,8 +20,10 @@ use crate::mappers::*;
 use crate::traits::{Builder, FormatVersion, SegmentHandler};
 use crate::version::VersionConfig;
 use crate::writer::{
-    EdifactDocumentWriter, GeschaeftspartnerWriter, MarktlokationWriter, MesslokationWriter,
-    NetzlokationWriter, ProzessdatenWriter, VertragWriter, ZaehlerWriter, ZeitscheibeWriter,
+    BilanzierungWriter, EdifactDocumentWriter, GeschaeftspartnerWriter,
+    LokationszuordnungWriter, MabisZaehlpunktWriter, MarktlokationWriter, MesslokationWriter,
+    NetzlokationWriter, ProduktpaketWriter, ProzessdatenWriter, SteuerbareRessourceWriter,
+    TechnischeRessourceWriter, TrancheWriter, VertragWriter, ZaehlerWriter, ZeitscheibeWriter,
 };
 
 /// UTILMD coordinator that orchestrates all entity mappers.
@@ -43,6 +45,13 @@ pub struct UtilmdCoordinator<V: VersionConfig> {
     geschaeftspartner_mapper: GeschaeftspartnerMapper,
     vertrag_mapper: VertragMapper,
     zaehler_mapper: ZaehlerMapper,
+    steuerbare_ressource_mapper: SteuerbareRessourceMapper,
+    technische_ressource_mapper: TechnischeRessourceMapper,
+    tranche_mapper: TrancheMapper,
+    mabis_zaehlpunkt_mapper: MabisZaehlpunktMapper,
+    bilanzierung_mapper: BilanzierungMapper,
+    produktpaket_mapper: ProduktpaketMapper,
+    lokationszuordnung_mapper: LokationszuordnungMapper,
 
     // Collected transactions
     transactions: Vec<UtilmdTransaktion>,
@@ -73,6 +82,13 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
             geschaeftspartner_mapper: GeschaeftspartnerMapper::new(),
             vertrag_mapper: VertragMapper::new(),
             zaehler_mapper: ZaehlerMapper::new(),
+            steuerbare_ressource_mapper: SteuerbareRessourceMapper::new(),
+            technische_ressource_mapper: TechnischeRessourceMapper::new(),
+            tranche_mapper: TrancheMapper::new(),
+            mabis_zaehlpunkt_mapper: MabisZaehlpunktMapper::new(),
+            bilanzierung_mapper: BilanzierungMapper::new(),
+            produktpaket_mapper: ProduktpaketMapper::new(),
+            lokationszuordnung_mapper: LokationszuordnungMapper::new(),
             transactions: Vec::new(),
             nachrichtendaten: Nachrichtendaten::default(),
             absender: Marktteilnehmer::default(),
@@ -109,6 +125,33 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         }
         if self.zaehler_mapper.can_handle(segment) {
             self.zaehler_mapper.handle(segment, &mut self.context);
+        }
+        if self.steuerbare_ressource_mapper.can_handle(segment) {
+            self.steuerbare_ressource_mapper
+                .handle(segment, &mut self.context);
+        }
+        if self.technische_ressource_mapper.can_handle(segment) {
+            self.technische_ressource_mapper
+                .handle(segment, &mut self.context);
+        }
+        if self.tranche_mapper.can_handle(segment) {
+            self.tranche_mapper.handle(segment, &mut self.context);
+        }
+        if self.mabis_zaehlpunkt_mapper.can_handle(segment) {
+            self.mabis_zaehlpunkt_mapper
+                .handle(segment, &mut self.context);
+        }
+        if self.bilanzierung_mapper.can_handle(segment) {
+            self.bilanzierung_mapper
+                .handle(segment, &mut self.context);
+        }
+        if self.produktpaket_mapper.can_handle(segment) {
+            self.produktpaket_mapper
+                .handle(segment, &mut self.context);
+        }
+        if self.lokationszuordnung_mapper.can_handle(segment) {
+            self.lokationszuordnung_mapper
+                .handle(segment, &mut self.context);
         }
     }
 
@@ -201,16 +244,28 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
             marktlokationen,
             messlokationen,
             netzlokationen,
-            steuerbare_ressourcen: Vec::new(),
-            technische_ressourcen: Vec::new(),
-            tranchen: Vec::new(),
-            mabis_zaehlpunkte: Vec::new(),
+            steuerbare_ressourcen: self
+                .steuerbare_ressource_mapper
+                .build()
+                .into_iter()
+                .collect(),
+            technische_ressourcen: self
+                .technische_ressource_mapper
+                .build()
+                .into_iter()
+                .collect(),
+            tranchen: self.tranche_mapper.build().into_iter().collect(),
+            mabis_zaehlpunkte: self
+                .mabis_zaehlpunkt_mapper
+                .build()
+                .into_iter()
+                .collect(),
             parteien,
             vertrag,
-            bilanzierung: None,
+            bilanzierung: self.bilanzierung_mapper.build(),
             zaehler,
-            produktpakete: Vec::new(),
-            lokationszuordnungen: Vec::new(),
+            produktpakete: self.produktpaket_mapper.build(),
+            lokationszuordnungen: self.lokationszuordnung_mapper.build(),
         }
     }
 
@@ -224,6 +279,13 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         self.geschaeftspartner_mapper.reset();
         self.vertrag_mapper.reset();
         self.zaehler_mapper.reset();
+        self.steuerbare_ressource_mapper.reset();
+        self.technische_ressource_mapper.reset();
+        self.tranche_mapper.reset();
+        self.mabis_zaehlpunkt_mapper.reset();
+        self.bilanzierung_mapper.reset();
+        self.produktpaket_mapper.reset();
+        self.lokationszuordnung_mapper.reset();
         self.in_transaction = false;
     }
 
@@ -329,10 +391,10 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
     /// - 0230: DTM (process dates)
     /// - 0250: STS (transaction reason)
     /// - 0280: FTX (remarks)
-    /// - 0320: SG5/LOC (locations: Z18, Z16, Z17)
-    /// - 0350: SG6/RFF (references: Z13, Z47+DTM)
-    /// - 0410: SG8/SEQ (entity data: Z03, Z18 for zaehler/vertrag)
-    /// - 0570: SG12/NAD (parties: DP address, geschaeftspartner)
+    /// - 0320: SG5/LOC (Z18, Z16, Z20, Z19, Z21, Z17, Z15)
+    /// - 0350: SG6/RFF (Z13, Z47+DTM)
+    /// - 0410: SG8/SEQ (Z78, Z79, Z98, Z03, Z18)
+    /// - 0570: SG12/NAD (DP address, geschaeftspartner)
     fn write_transaction(doc: &mut EdifactDocumentWriter, tx: &UtilmdTransaktion) {
         // IDE+24+transaktions_id (Counter=0190, Nr 00020)
         doc.write_segment("IDE", &["24", &tx.transaktions_id]);
@@ -341,15 +403,28 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         ProzessdatenWriter::write(doc, &tx.prozessdaten);
 
         // SG5: LOC segments (Counter=0320)
-        // MIG order: Z18 (Nr 00048), Z16 (Nr 00049), Z17 (Nr 00054)
+        // MIG order: Z18 (Nr 48), Z16 (Nr 49), Z20 (Nr 51), Z19 (Nr 52),
+        //            Z21 (Nr 53), Z17 (Nr 54), Z15 (Nr 55)
         for nl in &tx.netzlokationen {
             NetzlokationWriter::write(doc, nl);
         }
         for ml in &tx.marktlokationen {
             MarktlokationWriter::write(doc, ml);
         }
+        for tr in &tx.technische_ressourcen {
+            TechnischeRessourceWriter::write(doc, tr);
+        }
+        for sr in &tx.steuerbare_ressourcen {
+            SteuerbareRessourceWriter::write(doc, sr);
+        }
+        for t in &tx.tranchen {
+            TrancheWriter::write(doc, t);
+        }
         for ml in &tx.messlokationen {
             MesslokationWriter::write(doc, ml);
+        }
+        for mz in &tx.mabis_zaehlpunkte {
+            MabisZaehlpunktWriter::write(doc, mz);
         }
 
         // SG6: RFF references (Counter=0350)
@@ -359,11 +434,19 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         ZeitscheibeWriter::write(doc, &tx.zeitscheiben);
 
         // SG8: SEQ groups (Counter=0410)
-        // SEQ+Z03 Zaehler (Nr 00311)
+        // MIG order: Z78 (Nr 74), Z79 (Nr 81), Z98 (Bilanzierung), Z03 (Nr 311), Z18 (Nr 291)
+        for lz in &tx.lokationszuordnungen {
+            LokationszuordnungWriter::write(doc, lz);
+        }
+        for pp in &tx.produktpakete {
+            ProduktpaketWriter::write(doc, pp);
+        }
+        if let Some(ref b) = tx.bilanzierung {
+            BilanzierungWriter::write(doc, b);
+        }
         for z in &tx.zaehler {
             ZaehlerWriter::write(doc, z);
         }
-        // Vertrag uses SEQ+Z18 in current codebase
         if let Some(ref v) = tx.vertrag {
             VertragWriter::write(doc, v);
         }
