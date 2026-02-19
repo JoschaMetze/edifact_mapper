@@ -293,10 +293,7 @@ impl TechnischeRessourceWriter {
 pub struct TrancheWriter;
 
 impl TrancheWriter {
-    pub fn write(
-        doc: &mut EdifactDocumentWriter,
-        t: &WithValidity<Tranche, TrancheEdifact>,
-    ) {
+    pub fn write(doc: &mut EdifactDocumentWriter, t: &WithValidity<Tranche, TrancheEdifact>) {
         if let Some(ref id) = t.data.tranche_id {
             doc.write_segment("LOC", &["Z21", id]);
         }

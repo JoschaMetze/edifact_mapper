@@ -6,10 +6,13 @@
 
 use automapper_core::{create_coordinator, detect_format_version, FormatVersion};
 use bo4e_extensions::{
-    Geschaeftspartner, GeschaeftspartnerEdifact, Marktlokation, MarktlokationEdifact, Messlokation,
-    MesslokationEdifact, Nachrichtendaten, Netzlokation, NetzlokationEdifact, Prozessdaten,
-    UtilmdNachricht, UtilmdTransaktion, WithValidity, Zaehler, ZaehlerEdifact, Zeitraum,
-    Zeitscheibe,
+    Bilanzierung, BilanzierungEdifact, Geschaeftspartner, GeschaeftspartnerEdifact,
+    Lokationszuordnung, LokationszuordnungEdifact, MabisZaehlpunkt, MabisZaehlpunktEdifact,
+    Marktlokation, MarktlokationEdifact, Messlokation, MesslokationEdifact, Nachrichtendaten,
+    Netzlokation, NetzlokationEdifact, Produktpaket, ProduktpaketEdifact, Prozessdaten,
+    SteuerbareRessource, SteuerbareRessourceEdifact, TechnischeRessource,
+    TechnischeRessourceEdifact, Tranche, TrancheEdifact, UtilmdNachricht, UtilmdTransaktion,
+    Vertrag, VertragEdifact, WithValidity, Zaehler, ZaehlerEdifact, Zeitraum, Zeitscheibe,
 };
 use chrono::NaiveDate;
 use std::path::Path;
@@ -19,7 +22,7 @@ use std::path::Path;
 // ---------------------------------------------------------------------------
 
 /// Minimal EDIFACT message with envelope + one transaction containing
-/// a Marktlokation, Messlokation, and Netzlokation.
+/// all LOC-based entity types.
 const MINIMAL_EDIFACT: &[u8] = b"UNA:+.? '\
 UNB+UNOC:3+9900123000002+9900456000001+251217:1229+REF001'\
 UNH+MSG001+UTILMD:D:11A:UN:S2.1'\
@@ -28,11 +31,15 @@ DTM+137:202507011330:303'\
 NAD+MS+9900123000002::293'\
 NAD+MR+9900456000001::293'\
 IDE+24+TXID001'\
-LOC+Z16+DE00014545768S0000000000000003054'\
-LOC+Z17+MELO001'\
 LOC+Z18+NELO001'\
+LOC+Z16+DE00014545768S0000000000000003054'\
+LOC+Z20+TECRES001'\
+LOC+Z19+STRES001'\
+LOC+Z21+TRANCHE001'\
+LOC+Z17+MELO001'\
+LOC+Z15+MABIS001'\
 STS+7+E01'\
-UNT+11+MSG001'\
+UNT+16+MSG001'\
 UNZ+1+REF001'";
 
 #[test]
@@ -56,6 +63,10 @@ fn test_bo4e_roundtrip_synthetic_parse_generate() {
     assert_eq!(tx.marktlokationen.len(), 1);
     assert_eq!(tx.messlokationen.len(), 1);
     assert_eq!(tx.netzlokationen.len(), 1);
+    assert_eq!(tx.steuerbare_ressourcen.len(), 1);
+    assert_eq!(tx.technische_ressourcen.len(), 1);
+    assert_eq!(tx.tranchen.len(), 1);
+    assert_eq!(tx.mabis_zaehlpunkte.len(), 1);
     assert_eq!(tx.prozessdaten.transaktionsgrund, Some("E01".to_string()));
 
     // Step 2: Generate BO4E → EDIFACT
@@ -96,7 +107,20 @@ fn test_bo4e_roundtrip_synthetic_parse_generate() {
         output.contains("LOC+Z16+DE00014545768S0000000000000003054'"),
         "LOC+Z16 marktlokation"
     );
+    assert!(
+        output.contains("LOC+Z20+TECRES001'"),
+        "LOC+Z20 technische_ressource"
+    );
+    assert!(
+        output.contains("LOC+Z19+STRES001'"),
+        "LOC+Z19 steuerbare_ressource"
+    );
+    assert!(output.contains("LOC+Z21+TRANCHE001'"), "LOC+Z21 tranche");
     assert!(output.contains("LOC+Z17+MELO001'"), "LOC+Z17 messlokation");
+    assert!(
+        output.contains("LOC+Z15+MABIS001'"),
+        "LOC+Z15 mabis_zaehlpunkt"
+    );
     assert!(output.contains("UNT+"), "UNT trailer");
     assert!(output.contains("UNZ+1+REF001'"), "UNZ trailer");
 }
@@ -145,6 +169,16 @@ fn test_bo4e_roundtrip_synthetic_reparse() {
     assert_eq!(tx1.marktlokationen.len(), tx2.marktlokationen.len());
     assert_eq!(tx1.messlokationen.len(), tx2.messlokationen.len());
     assert_eq!(tx1.netzlokationen.len(), tx2.netzlokationen.len());
+    assert_eq!(
+        tx1.steuerbare_ressourcen.len(),
+        tx2.steuerbare_ressourcen.len()
+    );
+    assert_eq!(
+        tx1.technische_ressourcen.len(),
+        tx2.technische_ressourcen.len()
+    );
+    assert_eq!(tx1.tranchen.len(), tx2.tranchen.len());
+    assert_eq!(tx1.mabis_zaehlpunkte.len(), tx2.mabis_zaehlpunkte.len());
     assert_eq!(
         tx1.prozessdaten.transaktionsgrund,
         tx2.prozessdaten.transaktionsgrund
@@ -259,6 +293,79 @@ fn test_bo4e_roundtrip_construct_and_generate() {
                 gueltigkeitszeitraum: None,
                 zeitscheibe_ref: None,
             }],
+            steuerbare_ressourcen: vec![WithValidity {
+                data: SteuerbareRessource {
+                    steuerbare_ressource_id: Some("STRES_GEN_001".to_string()),
+                },
+                edifact: SteuerbareRessourceEdifact::default(),
+                gueltigkeitszeitraum: None,
+                zeitscheibe_ref: None,
+            }],
+            technische_ressourcen: vec![WithValidity {
+                data: TechnischeRessource {
+                    technische_ressource_id: Some("TECRES_GEN_001".to_string()),
+                },
+                edifact: TechnischeRessourceEdifact::default(),
+                gueltigkeitszeitraum: None,
+                zeitscheibe_ref: None,
+            }],
+            tranchen: vec![WithValidity {
+                data: Tranche {
+                    tranche_id: Some("TRANCHE_GEN_001".to_string()),
+                },
+                edifact: TrancheEdifact::default(),
+                gueltigkeitszeitraum: None,
+                zeitscheibe_ref: None,
+            }],
+            mabis_zaehlpunkte: vec![WithValidity {
+                data: MabisZaehlpunkt {
+                    zaehlpunkt_id: Some("MABIS_GEN_001".to_string()),
+                },
+                edifact: MabisZaehlpunktEdifact::default(),
+                gueltigkeitszeitraum: None,
+                zeitscheibe_ref: None,
+            }],
+            bilanzierung: Some(WithValidity {
+                data: Bilanzierung {
+                    bilanzkreis: Some("11YN20---------Z".to_string()),
+                    regelzone: None,
+                    bilanzierungsgebiet: None,
+                },
+                edifact: BilanzierungEdifact {
+                    jahresverbrauchsprognose: Some(12345.67),
+                    temperatur_arbeit: None,
+                },
+                gueltigkeitszeitraum: None,
+                zeitscheibe_ref: None,
+            }),
+            produktpakete: vec![WithValidity {
+                data: Produktpaket {
+                    produktpaket_id: Some("PP_GEN_001".to_string()),
+                },
+                edifact: ProduktpaketEdifact {
+                    produktpaket_name: Some("Grundversorgung".to_string()),
+                },
+                gueltigkeitszeitraum: None,
+                zeitscheibe_ref: None,
+            }],
+            lokationszuordnungen: vec![WithValidity {
+                data: Lokationszuordnung {
+                    marktlokations_id: Some("MALO_LZ_001".to_string()),
+                    messlokations_id: Some("MELO_LZ_001".to_string()),
+                },
+                edifact: LokationszuordnungEdifact::default(),
+                gueltigkeitszeitraum: None,
+                zeitscheibe_ref: None,
+            }],
+            vertrag: Some(WithValidity {
+                data: Vertrag::default(),
+                edifact: VertragEdifact {
+                    haushaltskunde: Some(true),
+                    versorgungsart: None,
+                },
+                gueltigkeitszeitraum: None,
+                zeitscheibe_ref: None,
+            }),
             ..Default::default()
         }],
     };
@@ -288,6 +395,22 @@ fn test_bo4e_roundtrip_construct_and_generate() {
     assert!(output.contains("RFF+Z19:DE001234567890MELO'"));
     assert!(output.contains("NAD+Z09+Test GmbH'"));
 
+    // New LOC segments
+    assert!(output.contains("LOC+Z20+TECRES_GEN_001'"));
+    assert!(output.contains("LOC+Z19+STRES_GEN_001'"));
+    assert!(output.contains("LOC+Z21+TRANCHE_GEN_001'"));
+    assert!(output.contains("LOC+Z15+MABIS_GEN_001'"));
+
+    // New SEQ segments
+    assert!(output.contains("SEQ+Z78'"));
+    assert!(output.contains("RFF+Z18:MALO_LZ_001'"));
+    assert!(output.contains("RFF+Z19:MELO_LZ_001'"));
+    assert!(output.contains("SEQ+Z79+PP_GEN_001'"));
+    assert!(output.contains("PIA+5+Grundversorgung'"));
+    assert!(output.contains("SEQ+Z98'"));
+    assert!(output.contains("CCI+Z20++11YN20---------Z'"));
+    assert!(output.contains("QTY+Z09:12345.67'"));
+
     // Verify MIG segment order within the transaction:
     // IDE should come before DTM, DTM before STS, STS before FTX,
     // FTX before LOC, LOC before RFF, RFF before SEQ, SEQ before NAD (SG12)
@@ -302,9 +425,16 @@ fn test_bo4e_roundtrip_construct_and_generate() {
     let ftx_pos = output.find("FTX+ACB").unwrap();
     let loc_z18_pos = output.find("LOC+Z18").unwrap();
     let loc_z16_pos = output.find("LOC+Z16").unwrap();
+    let loc_z20_pos = output.find("LOC+Z20").unwrap();
+    let loc_z19_pos = output.find("LOC+Z19").unwrap();
+    let loc_z21_pos = output.find("LOC+Z21").unwrap();
     let loc_z17_pos = output.find("LOC+Z17").unwrap();
+    let loc_z15_pos = output.find("LOC+Z15").unwrap();
     let rff_z13_pos = output.find("RFF+Z13").unwrap();
     let rff_z47_pos = output.find("RFF+Z47").unwrap();
+    let seq_z78_pos = output.find("SEQ+Z78").unwrap();
+    let seq_z79_pos = output.find("SEQ+Z79").unwrap();
+    let seq_z98_pos = output.find("SEQ+Z98").unwrap();
     let seq_z03_pos = output.find("SEQ+Z03").unwrap();
     let nad_z09_pos = output.find("NAD+Z09").unwrap();
 
@@ -313,23 +443,48 @@ fn test_bo4e_roundtrip_construct_and_generate() {
     assert!(dtm_137_pos < sts_pos, "DTM (0230) before STS (0250)");
     assert!(sts_pos < ftx_pos, "STS (0250) before FTX (0280)");
     assert!(ftx_pos < loc_z18_pos, "FTX (0280) before LOC (0320)");
-    // Within SG5: Z18 (Nr 00048) before Z16 (Nr 00049) before Z17 (Nr 00054)
+    // Full SG5 LOC MIG ordering: Z18 < Z16 < Z20 < Z19 < Z21 < Z17 < Z15
     assert!(
         loc_z18_pos < loc_z16_pos,
         "LOC+Z18 (Nr 48) before LOC+Z16 (Nr 49)"
     );
     assert!(
-        loc_z16_pos < loc_z17_pos,
-        "LOC+Z16 (Nr 49) before LOC+Z17 (Nr 54)"
+        loc_z16_pos < loc_z20_pos,
+        "LOC+Z16 (Nr 49) before LOC+Z20 (Nr 51)"
+    );
+    assert!(
+        loc_z20_pos < loc_z19_pos,
+        "LOC+Z20 (Nr 51) before LOC+Z19 (Nr 52)"
+    );
+    assert!(
+        loc_z19_pos < loc_z21_pos,
+        "LOC+Z19 (Nr 52) before LOC+Z21 (Nr 53)"
+    );
+    assert!(
+        loc_z21_pos < loc_z17_pos,
+        "LOC+Z21 (Nr 53) before LOC+Z17 (Nr 54)"
+    );
+    assert!(
+        loc_z17_pos < loc_z15_pos,
+        "LOC+Z17 (Nr 54) before LOC+Z15 (Nr 55)"
     );
     // SG6 after SG5
-    assert!(loc_z17_pos < rff_z13_pos, "LOC (0320) before RFF (0350)");
+    assert!(loc_z15_pos < rff_z13_pos, "LOC (0320) before RFF (0350)");
     assert!(
         rff_z13_pos < rff_z47_pos,
         "RFF+Z13 (Nr 56) before RFF+Z47 (Nr 66)"
     );
-    // SG8 after SG6
-    assert!(rff_z47_pos < seq_z03_pos, "RFF (0350) before SEQ (0410)");
+    // SG8 after SG6: Z78 < Z79 < Z98 < Z03
+    assert!(rff_z47_pos < seq_z78_pos, "RFF (0350) before SEQ (0410)");
+    assert!(
+        seq_z78_pos < seq_z79_pos,
+        "SEQ+Z78 (Nr 74) before SEQ+Z79 (Nr 81)"
+    );
+    assert!(
+        seq_z79_pos < seq_z98_pos,
+        "SEQ+Z79 (Nr 81) before SEQ+Z98 (Bilanzierung)"
+    );
+    assert!(seq_z98_pos < seq_z03_pos, "SEQ+Z98 before SEQ+Z03 (Nr 311)");
     // SG12 after SG8
     assert!(seq_z03_pos < nad_z09_pos, "SEQ (0410) before NAD (0570)");
 
@@ -345,6 +500,13 @@ fn test_bo4e_roundtrip_construct_and_generate() {
     assert_eq!(tx2.messlokationen.len(), 1);
     assert_eq!(tx2.netzlokationen.len(), 1);
     assert_eq!(tx2.zaehler.len(), 1);
+    assert_eq!(tx2.steuerbare_ressourcen.len(), 1);
+    assert_eq!(tx2.technische_ressourcen.len(), 1);
+    assert_eq!(tx2.tranchen.len(), 1);
+    assert_eq!(tx2.mabis_zaehlpunkte.len(), 1);
+    assert!(tx2.bilanzierung.is_some());
+    assert_eq!(tx2.produktpakete.len(), 1);
+    assert_eq!(tx2.lokationszuordnungen.len(), 1);
     assert_eq!(
         tx2.marktlokationen[0].data.marktlokations_id,
         Some("DE00014545768S0000000000000003054".to_string())
@@ -660,16 +822,64 @@ fn test_bo4e_roundtrip_fixture_reparse() {
                 file_ok = false;
             }
 
-            // Compare location counts
-            if tx1.marktlokationen.len() != tx2.marktlokationen.len() {
-                reparse_fail.push(format!(
-                    "{} tx[{}]: marktlokationen count {} vs {}",
-                    rel.display(),
-                    i,
+            // Compare all entity counts
+            let entity_checks = [
+                (
+                    "marktlokationen",
                     tx1.marktlokationen.len(),
-                    tx2.marktlokationen.len()
-                ));
-                file_ok = false;
+                    tx2.marktlokationen.len(),
+                ),
+                (
+                    "messlokationen",
+                    tx1.messlokationen.len(),
+                    tx2.messlokationen.len(),
+                ),
+                (
+                    "netzlokationen",
+                    tx1.netzlokationen.len(),
+                    tx2.netzlokationen.len(),
+                ),
+                (
+                    "steuerbare_ressourcen",
+                    tx1.steuerbare_ressourcen.len(),
+                    tx2.steuerbare_ressourcen.len(),
+                ),
+                (
+                    "technische_ressourcen",
+                    tx1.technische_ressourcen.len(),
+                    tx2.technische_ressourcen.len(),
+                ),
+                ("tranchen", tx1.tranchen.len(), tx2.tranchen.len()),
+                (
+                    "mabis_zaehlpunkte",
+                    tx1.mabis_zaehlpunkte.len(),
+                    tx2.mabis_zaehlpunkte.len(),
+                ),
+                ("zaehler", tx1.zaehler.len(), tx2.zaehler.len()),
+                (
+                    "produktpakete",
+                    tx1.produktpakete.len(),
+                    tx2.produktpakete.len(),
+                ),
+                (
+                    "lokationszuordnungen",
+                    tx1.lokationszuordnungen.len(),
+                    tx2.lokationszuordnungen.len(),
+                ),
+                ("parteien", tx1.parteien.len(), tx2.parteien.len()),
+            ];
+            for (name, c1, c2) in entity_checks {
+                if c1 != c2 {
+                    reparse_fail.push(format!(
+                        "{} tx[{}]: {} count {} vs {}",
+                        rel.display(),
+                        i,
+                        name,
+                        c1,
+                        c2
+                    ));
+                    file_ok = false;
+                }
             }
 
             // Compare marktlokation IDs

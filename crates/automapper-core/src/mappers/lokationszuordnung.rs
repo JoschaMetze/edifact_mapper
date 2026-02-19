@@ -147,10 +147,7 @@ mod tests {
     fn test_lokationszuordnung_mapper_seq_z78_with_rff() {
         let mut mapper = LokationszuordnungMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
-        mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z78"]], pos()),
-            &mut ctx,
-        );
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z78"]], pos()), &mut ctx);
         mapper.handle(
             &RawSegment::new("RFF", vec![vec!["Z18", "MALO001"]], pos()),
             &mut ctx,
@@ -165,20 +162,14 @@ mod tests {
             result[0].data.marktlokations_id,
             Some("MALO001".to_string())
         );
-        assert_eq!(
-            result[0].data.messlokations_id,
-            Some("MELO001".to_string())
-        );
+        assert_eq!(result[0].data.messlokations_id, Some("MELO001".to_string()));
     }
 
     #[test]
     fn test_lokationszuordnung_mapper_ignores_rff_outside_z78() {
         let mut mapper = LokationszuordnungMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
-        mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z03"]], pos()),
-            &mut ctx,
-        );
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z03"]], pos()), &mut ctx);
         mapper.handle(
             &RawSegment::new("RFF", vec![vec!["Z18", "MALO001"]], pos()),
             &mut ctx,

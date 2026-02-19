@@ -200,14 +200,20 @@ NAD+MR   (Empfänger from Nachrichtendaten)
   --- SG5: Lokationen (Ctr=0320) ---
   LOC+Z18             (netzlokationen)                   Nr=00048
   LOC+Z16             (marktlokationen)                  Nr=00049
+  LOC+Z20             (technische_ressourcen)             Nr=00051
+  LOC+Z19             (steuerbare_ressourcen)             Nr=00052
+  LOC+Z21             (tranchen)                          Nr=00053
   LOC+Z17             (messlokationen)                   Nr=00054
+  LOC+Z15             (mabis_zaehlpunkte)                Nr=00055
   --- SG6: Referenzen (Ctr=0350) ---
   RFF+Z13             (referenz_vorgangsnummer)          Nr=00056
   RFF+Z47 + DTM+Z25/Z26  (zeitscheiben)                 Nr=00066
   --- SG8: Sequenzgruppen (Ctr=0410) ---
-  SEQ+Z01             (marktlokation data)               Nr=00114
-  SEQ+Z18             (messlokation data)                Nr=00291
+  SEQ+Z78             (lokationszuordnungen)             Nr=00074
+  SEQ+Z79             (produktpakete)                    Nr=00081
+  SEQ+Z98             (bilanzierung)                     Nr≈00200
   SEQ+Z03             (zaehler)                          Nr=00311
+  SEQ+Z18             (messlokation/vertrag data)        Nr=00291
   --- SG12: Parteien (Ctr=0570) ---
   NAD+DP              (marktlokation address)            Nr=00518
   NAD+qualifier       (geschaeftspartner)                Nr=varies
