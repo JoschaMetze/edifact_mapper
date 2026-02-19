@@ -19,7 +19,8 @@ const SUPPORTED_MESSAGE_TYPES: &[&str] = &["UTILMD"];
 
 /// Filenames containing these substrings are special editions with
 /// potentially different XML schemas (missing attributes, different structure).
-const SPECIAL_EDITION_MARKERS: &[&str] = &["außerordentliche", "außerordendliche", "Fehlerkorrektur"];
+const SPECIAL_EDITION_MARKERS: &[&str] =
+    &["außerordentliche", "außerordendliche", "Fehlerkorrektur"];
 
 /// Helper to locate the xml-migs-and-ahbs directory.
 /// Returns None if the submodule is not initialized.
@@ -255,9 +256,11 @@ fn test_mig_captures_all_qualifiers() {
             let is_special = SPECIAL_EDITION_MARKERS
                 .iter()
                 .any(|marker| file_name.contains(marker));
-            if file_name.starts_with("UTILMD_MIG_Strom") && file_name.ends_with(".xml") && !is_special {
-                let schema =
-                    parse_mig(&file_entry.path(), "UTILMD", Some("Strom"), fv).unwrap();
+            if file_name.starts_with("UTILMD_MIG_Strom")
+                && file_name.ends_with(".xml")
+                && !is_special
+            {
+                let schema = parse_mig(&file_entry.path(), "UTILMD", Some("Strom"), fv).unwrap();
 
                 // Collect all code values across all segments (recursively)
                 let mut all_codes = Vec::new();

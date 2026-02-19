@@ -41,7 +41,10 @@ impl<'a> EvaluationContext<'a> {
 
     /// Find all segments with the given ID.
     pub fn find_segments(&self, segment_id: &str) -> Vec<&edifact_types::RawSegment<'a>> {
-        self.segments.iter().filter(|s| s.id == segment_id).collect()
+        self.segments
+            .iter()
+            .filter(|s| s.id == segment_id)
+            .collect()
     }
 
     /// Find segments with a specific qualifier value on a given element.

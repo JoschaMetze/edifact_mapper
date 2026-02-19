@@ -113,10 +113,6 @@ mod tests {
         ];
 
         let unique: std::collections::HashSet<&str> = codes.iter().copied().collect();
-        assert_eq!(
-            codes.len(),
-            unique.len(),
-            "Duplicate error codes found"
-        );
+        assert_eq!(codes.len(), unique.len(), "Duplicate error codes found");
     }
 }

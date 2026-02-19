@@ -255,7 +255,9 @@ fn test_roundtrip_sample_files() {
 
     eprintln!(
         "Roundtrip: {} OK, {} skipped (non-ASCII/non-standard/malformed), {} failed",
-        roundtrip_ok, skipped_nonstandard, failures.len()
+        roundtrip_ok,
+        skipped_nonstandard,
+        failures.len()
     );
 
     if !failures.is_empty() {

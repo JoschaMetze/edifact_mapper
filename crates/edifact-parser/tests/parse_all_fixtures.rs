@@ -61,8 +61,7 @@ impl EdifactHandler for CollectingHandler {
 
 fn fixture_dir() -> Option<std::path::PathBuf> {
     let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let fixture_path = manifest
-        .join("../../example_market_communication_bo4e_transactions");
+    let fixture_path = manifest.join("../../example_market_communication_bo4e_transactions");
     if fixture_path.exists() {
         Some(fixture_path)
     } else {
@@ -118,10 +117,7 @@ fn test_parse_all_edi_files_should_not_fail() {
         match EdifactStreamParser::parse(&content, &mut handler) {
             Ok(()) => {
                 if handler.segment_count == 0 {
-                    failures.push(format!(
-                        "{}: parsed OK but 0 segments",
-                        file_path.display()
-                    ));
+                    failures.push(format!("{}: parsed OK but 0 segments", file_path.display()));
                 } else {
                     success_count += 1;
                 }
@@ -172,9 +168,7 @@ fn test_all_edi_files_have_valid_structure() {
             continue; // Parse failures caught by the other test
         }
 
-        let rel = file_path
-            .strip_prefix(&fixture_path)
-            .unwrap_or(file_path);
+        let rel = file_path.strip_prefix(&fixture_path).unwrap_or(file_path);
 
         if !handler.has_unb {
             failures.push(format!("{}: missing UNB", rel.display()));

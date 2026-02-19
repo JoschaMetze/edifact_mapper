@@ -1,10 +1,10 @@
 //! Main EdifactValidator implementation.
 
+use crate::error::ValidationError;
 use crate::eval::{
     ConditionEvaluator, ConditionExprEvaluator, ConditionResult, EvaluationContext,
     ExternalConditionProvider,
 };
-use crate::error::ValidationError;
 
 use super::codes::ErrorCodes;
 use super::issue::{Severity, ValidationCategory, ValidationIssue};
@@ -117,9 +117,8 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
         external: &dyn ExternalConditionProvider,
         workflow: Option<&AhbWorkflow>,
     ) -> Result<ValidationReport, ValidationError> {
-        let input_str = std::str::from_utf8(input).map_err(|_| {
-            ValidationError::Parse(edifact_parser::ParseError::UnexpectedEof)
-        })?;
+        let input_str = std::str::from_utf8(input)
+            .map_err(|_| ValidationError::Parse(edifact_parser::ParseError::UnexpectedEof))?;
 
         // Collect segments using the parser
         let segments = self.parse_segments(input_str)?;
@@ -525,12 +524,7 @@ mod tests {
 
         // With Structure level, conditions are not checked
         let report = validator
-            .validate(
-                b"",
-                ValidationLevel::Structure,
-                &external,
-                Some(&workflow),
-            )
+            .validate(b"", ValidationLevel::Structure, &external, Some(&workflow))
             .unwrap();
 
         // No AHB errors because conditions were not evaluated

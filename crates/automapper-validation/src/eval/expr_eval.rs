@@ -1,8 +1,8 @@
 //! Evaluates `ConditionExpr` trees using a `ConditionEvaluator`.
 
-use crate::expr::ConditionExpr;
 use super::context::EvaluationContext;
 use super::evaluator::{ConditionEvaluator, ConditionResult};
+use crate::expr::ConditionExpr;
 
 /// Evaluates a `ConditionExpr` AST against an evaluation context.
 ///

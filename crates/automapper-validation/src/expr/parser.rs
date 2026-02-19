@@ -110,10 +110,7 @@ fn parse_xor(
 }
 
 /// OR has middle-low precedence.
-fn parse_or(
-    tokens: &[SpannedToken],
-    pos: &mut usize,
-) -> Result<Option<ConditionExpr>, ParseError> {
+fn parse_or(tokens: &[SpannedToken], pos: &mut usize) -> Result<Option<ConditionExpr>, ParseError> {
     let mut left = match parse_and(tokens, pos)? {
         Some(expr) => expr,
         None => return Ok(None),
@@ -410,9 +407,7 @@ mod tests {
     #[test]
     fn test_and_has_higher_precedence_than_or() {
         // [1] ∨ [2] ∧ [3] should parse as [1] ∨ ([2] ∧ [3])
-        let result = ConditionParser::parse("[1] ∨ [2] ∧ [3]")
-            .unwrap()
-            .unwrap();
+        let result = ConditionParser::parse("[1] ∨ [2] ∧ [3]").unwrap().unwrap();
         assert_eq!(
             result,
             ConditionExpr::Or(vec![
@@ -425,9 +420,7 @@ mod tests {
     #[test]
     fn test_or_has_higher_precedence_than_xor() {
         // [1] ⊻ [2] ∨ [3] should parse as [1] ⊻ ([2] ∨ [3])
-        let result = ConditionParser::parse("[1] ⊻ [2] ∨ [3]")
-            .unwrap()
-            .unwrap();
+        let result = ConditionParser::parse("[1] ⊻ [2] ∨ [3]").unwrap().unwrap();
         assert_eq!(
             result,
             ConditionExpr::Xor(
@@ -467,10 +460,7 @@ mod tests {
     #[test]
     fn test_parse_not() {
         let result = ConditionParser::parse("NOT [1]").unwrap().unwrap();
-        assert_eq!(
-            result,
-            ConditionExpr::Not(Box::new(ConditionExpr::Ref(1)))
-        );
+        assert_eq!(result, ConditionExpr::Not(Box::new(ConditionExpr::Ref(1))));
     }
 
     #[test]
@@ -582,9 +572,7 @@ mod tests {
 
     #[test]
     fn test_parse_mixed_unicode_and_text_operators() {
-        let result = ConditionParser::parse("[1] ∧ [2] OR [3]")
-            .unwrap()
-            .unwrap();
+        let result = ConditionParser::parse("[1] ∧ [2] OR [3]").unwrap().unwrap();
         assert_eq!(
             result,
             ConditionExpr::Or(vec![

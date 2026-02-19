@@ -183,8 +183,8 @@ fn test_validate_mixed_mandatory_and_conditional_fields() {
         .condition(152, ConditionResult::False); // Condition false
 
     let workflow = make_workflow(vec![
-        simple_field("NAD", "Partnerrolle", "Muss"),                // Always required
-        simple_field("DTM", "Datum", "Muss [182] ∧ [152]"),        // Condition false
+        simple_field("NAD", "Partnerrolle", "Muss"), // Always required
+        simple_field("DTM", "Datum", "Muss [182] ∧ [152]"), // Condition false
     ]);
 
     let validator = EdifactValidator::new(evaluator);
@@ -269,12 +269,7 @@ fn test_validate_structure_level_ignores_conditions() {
     let external = NoOpExternalProvider;
 
     let report = validator
-        .validate(
-            b"",
-            ValidationLevel::Structure,
-            &external,
-            Some(&workflow),
-        )
+        .validate(b"", ValidationLevel::Structure, &external, Some(&workflow))
         .unwrap();
 
     // Structure level does not check AHB conditions

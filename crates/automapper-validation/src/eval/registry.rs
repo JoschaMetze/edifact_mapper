@@ -72,11 +72,12 @@ impl EvaluatorRegistry {
         message_type: &str,
         format_version: &str,
     ) -> Result<Arc<dyn ConditionEvaluator>, crate::error::ValidationError> {
-        self.get(message_type, format_version)
-            .ok_or_else(|| crate::error::ValidationError::NoEvaluator {
+        self.get(message_type, format_version).ok_or_else(|| {
+            crate::error::ValidationError::NoEvaluator {
                 message_type: message_type.to_string(),
                 format_version: format_version.to_string(),
-            })
+            }
+        })
     }
 
     /// List all registered (message_type, format_version) keys.
@@ -202,8 +203,7 @@ mod tests {
     #[test]
     fn test_register_arc() {
         let registry = EvaluatorRegistry::new();
-        let eval: Arc<dyn ConditionEvaluator> =
-            Arc::new(TestEvaluator::new("UTILMD", "FV2510"));
+        let eval: Arc<dyn ConditionEvaluator> = Arc::new(TestEvaluator::new("UTILMD", "FV2510"));
         registry.register_arc(eval);
 
         assert!(registry.get("UTILMD", "FV2510").is_some());

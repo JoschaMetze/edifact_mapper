@@ -66,9 +66,7 @@ fn test_parse_all_utilmd_files_through_coordinator() {
             }
         };
 
-        let rel = file_path
-            .strip_prefix(&fixture_path)
-            .unwrap_or(file_path);
+        let rel = file_path.strip_prefix(&fixture_path).unwrap_or(file_path);
 
         // Detect format version
         let fv = match detect_format_version(&content) {
@@ -159,9 +157,7 @@ fn test_utilmd_transaktionsdaten_extraction() {
             Err(_) => continue,
         };
 
-        let rel = file_path
-            .strip_prefix(&fixture_path)
-            .unwrap_or(file_path);
+        let rel = file_path.strip_prefix(&fixture_path).unwrap_or(file_path);
 
         for (i, tx) in transactions.iter().enumerate() {
             // Every transaction should have an ID
@@ -227,9 +223,7 @@ fn test_utilmd_results_serialize_to_json() {
             Err(_) => continue,
         };
 
-        let rel = file_path
-            .strip_prefix(&fixture_path)
-            .unwrap_or(file_path);
+        let rel = file_path.strip_prefix(&fixture_path).unwrap_or(file_path);
 
         // Serialize to JSON and back
         let json = match serde_json::to_string_pretty(&transactions) {
