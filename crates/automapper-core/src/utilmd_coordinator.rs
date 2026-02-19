@@ -116,6 +116,12 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
     /// When `coordinator_handled` is true, the segment won't become passthrough even
     /// if no mapper claims it (the coordinator already processed it).
     fn route_to_mappers_ex(&mut self, segment: &RawSegment, coordinator_handled: bool) {
+        // Service segments (UNA, UNB, UNH, UNT, UNZ) are handled by the parser's
+        // dedicated callbacks and should never become passthrough.
+        if matches!(segment.id, "UNB" | "UNH" | "UNT" | "UNZ") {
+            return;
+        }
+
         // Update zone based on segment type
         self.update_zone(segment);
 
@@ -692,8 +698,16 @@ impl<V: VersionConfig> EdifactHandler for UtilmdCoordinator<V> {
                     if let Some(dt) = parse_edifact_dtm(value, format_code) {
                         self.nachrichtendaten.erstellungsdatum = Some(dt);
                     }
+                } else {
+                    // Non-137 message-level DTMs: store as passthrough
+                    let raw = segment.to_raw_string(&self.delimiters);
+                    self.message_passthrough.push(PassthroughSegment {
+                        raw,
+                        zone: SegmentZone::MessageHeader,
+                    });
                 }
-                self.route_to_mappers(segment);
+                // Don't route message-level DTMs to mappers — they would
+                // incorrectly populate the transaction's prozessdaten.
             }
             _ => {
                 self.route_to_mappers(segment);

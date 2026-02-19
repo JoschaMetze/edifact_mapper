@@ -38,7 +38,7 @@ LOC+Z19+STRES001'\
 LOC+Z21+TRANCHE001'\
 LOC+Z17+MELO001'\
 LOC+Z15+MABIS001'\
-STS+7+E01'\
+STS+7++E01'\
 UNT+16+MSG001'\
 UNZ+1+REF001'";
 
@@ -133,7 +133,7 @@ fn test_bo4e_roundtrip_synthetic_parse_generate() {
         "NAD+MR recipient"
     );
     assert!(output.contains("IDE+24+TXID001'"), "IDE transaction ID");
-    assert!(output.contains("STS+7+E01'"), "STS transaktionsgrund");
+    assert!(output.contains("STS+7++E01'"), "STS transaktionsgrund");
     assert!(output.contains("LOC+Z18+NELO001'"), "LOC+Z18 netzlokation");
     assert!(
         output.contains("LOC+Z16+DE00014545768S0000000000000003054'"),
@@ -413,7 +413,7 @@ fn test_bo4e_roundtrip_construct_and_generate() {
     assert!(output.contains("NAD+MS+9900111000001::293'"));
     assert!(output.contains("NAD+MR+9900222000002::293'"));
     assert!(output.contains("IDE+24+TX_GEN_001'"));
-    assert!(output.contains("STS+7+E01+Z14'"));
+    assert!(output.contains("STS+7++E01+Z14'"));
     assert!(output.contains("FTX+ACB+++Testbemerkung'"));
     assert!(output.contains("LOC+Z18+NELO_GEN_001'"));
     assert!(output.contains("LOC+Z16+DE00014545768S0000000000000003054'"));
@@ -453,7 +453,7 @@ fn test_bo4e_roundtrip_construct_and_generate() {
         .find("DTM+137:")
         .map(|p| p + ide_pos)
         .unwrap();
-    let sts_pos = output.find("STS+7+E01").unwrap();
+    let sts_pos = output.find("STS+7++E01").unwrap();
     let ftx_pos = output.find("FTX+ACB").unwrap();
     let loc_z18_pos = output.find("LOC+Z18").unwrap();
     let loc_z16_pos = output.find("LOC+Z16").unwrap();
