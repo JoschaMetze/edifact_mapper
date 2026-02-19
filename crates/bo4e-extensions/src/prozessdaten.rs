@@ -40,6 +40,19 @@ pub struct Nachrichtendaten {
     pub datenaustauschreferenz: Option<String>,
     pub pruefidentifikator: Option<String>,
     pub kategorie: Option<String>,
+    /// UNB sender identification code qualifier (e.g. "500"), element 1 component 1.
+    pub absender_unb_qualifier: Option<String>,
+    /// UNB recipient identification code qualifier (e.g. "500"), element 2 component 1.
+    pub empfaenger_unb_qualifier: Option<String>,
+    /// UNB preparation date (YYMMDD), element 3 component 0.
+    pub unb_datum: Option<String>,
+    /// UNB preparation time (HHMM), element 3 component 1.
+    pub unb_zeit: Option<String>,
+    /// Whether the original message had an explicit UNA service string.
+    #[serde(default)]
+    pub explicit_una: bool,
+    /// Original message type identifier from UNH (e.g. "UTILMD:D:11A:UN:S2.1").
+    pub nachrichtentyp: Option<String>,
 }
 
 /// A time slice reference within a transaction.
@@ -78,6 +91,23 @@ mod tests {
         let json = serde_json::to_string(&nd).unwrap();
         let de: Nachrichtendaten = serde_json::from_str(&json).unwrap();
         assert_eq!(de.dokumentennummer, Some("DOC001".to_string()));
+    }
+
+    #[test]
+    fn test_nachrichtendaten_has_envelope_fields() {
+        let nd = Nachrichtendaten {
+            absender_unb_qualifier: Some("500".to_string()),
+            empfaenger_unb_qualifier: Some("500".to_string()),
+            unb_datum: Some("250331".to_string()),
+            unb_zeit: Some("1329".to_string()),
+            explicit_una: true,
+            nachrichtentyp: Some("UTILMD:D:11A:UN:S2.1".to_string()),
+            ..Default::default()
+        };
+        assert_eq!(nd.absender_unb_qualifier, Some("500".to_string()));
+        assert_eq!(nd.unb_datum, Some("250331".to_string()));
+        assert!(nd.explicit_una);
+        assert_eq!(nd.nachrichtentyp.as_deref(), Some("UTILMD:D:11A:UN:S2.1"));
     }
 
     #[test]
