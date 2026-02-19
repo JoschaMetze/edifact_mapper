@@ -8,7 +8,8 @@
 use std::marker::PhantomData;
 
 use bo4e_extensions::{
-    LinkRegistry, Marktteilnehmer, Nachrichtendaten, UtilmdNachricht, UtilmdTransaktion,
+    LinkRegistry, Marktteilnehmer, Nachrichtendaten, PassthroughSegment, SegmentZone,
+    UtilmdNachricht, UtilmdTransaktion,
 };
 use edifact_parser::EdifactHandler;
 use edifact_types::{Control, EdifactDelimiters, RawSegment};
@@ -66,6 +67,12 @@ pub struct UtilmdCoordinator<V: VersionConfig> {
     in_transaction: bool,
     current_transaction_id: Option<String>,
 
+    // Passthrough state
+    delimiters: EdifactDelimiters,
+    current_zone: SegmentZone,
+    passthrough_segments: Vec<PassthroughSegment>,
+    message_passthrough: Vec<PassthroughSegment>,
+
     _version: PhantomData<V>,
 }
 
@@ -96,61 +103,147 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
             empfaenger: Marktteilnehmer::default(),
             in_transaction: false,
             current_transaction_id: None,
+            delimiters: EdifactDelimiters::default(),
+            current_zone: SegmentZone::MessageHeader,
+            passthrough_segments: Vec::new(),
+            message_passthrough: Vec::new(),
             _version: PhantomData,
         }
     }
 
     /// Routes a segment to all mappers that can handle it.
-    fn route_to_mappers(&mut self, segment: &RawSegment) {
+    /// If no mapper handles the segment, it is captured as a passthrough segment.
+    /// When `coordinator_handled` is true, the segment won't become passthrough even
+    /// if no mapper claims it (the coordinator already processed it).
+    fn route_to_mappers_ex(&mut self, segment: &RawSegment, coordinator_handled: bool) {
+        // Update zone based on segment type
+        self.update_zone(segment);
+
+        // Route to mappers and track if handled
+        let mut handled = coordinator_handled;
+
         if self.prozessdaten_mapper.can_handle(segment) {
             self.prozessdaten_mapper.handle(segment, &mut self.context);
+            handled = true;
         }
         if self.zeitscheibe_mapper.can_handle(segment) {
             self.zeitscheibe_mapper.handle(segment, &mut self.context);
+            handled = true;
         }
         if self.marktlokation_mapper.can_handle(segment) {
             self.marktlokation_mapper.handle(segment, &mut self.context);
+            handled = true;
         }
         if self.messlokation_mapper.can_handle(segment) {
             self.messlokation_mapper.handle(segment, &mut self.context);
+            handled = true;
         }
         if self.netzlokation_mapper.can_handle(segment) {
             self.netzlokation_mapper.handle(segment, &mut self.context);
+            handled = true;
         }
         if self.geschaeftspartner_mapper.can_handle(segment) {
             self.geschaeftspartner_mapper
                 .handle(segment, &mut self.context);
+            handled = true;
         }
         if self.vertrag_mapper.can_handle(segment) {
             self.vertrag_mapper.handle(segment, &mut self.context);
+            handled = true;
         }
         if self.zaehler_mapper.can_handle(segment) {
             self.zaehler_mapper.handle(segment, &mut self.context);
+            handled = true;
         }
         if self.steuerbare_ressource_mapper.can_handle(segment) {
             self.steuerbare_ressource_mapper
                 .handle(segment, &mut self.context);
+            handled = true;
         }
         if self.technische_ressource_mapper.can_handle(segment) {
             self.technische_ressource_mapper
                 .handle(segment, &mut self.context);
+            handled = true;
         }
         if self.tranche_mapper.can_handle(segment) {
             self.tranche_mapper.handle(segment, &mut self.context);
+            handled = true;
         }
         if self.mabis_zaehlpunkt_mapper.can_handle(segment) {
             self.mabis_zaehlpunkt_mapper
                 .handle(segment, &mut self.context);
+            handled = true;
         }
         if self.bilanzierung_mapper.can_handle(segment) {
             self.bilanzierung_mapper.handle(segment, &mut self.context);
+            handled = true;
         }
         if self.produktpaket_mapper.can_handle(segment) {
             self.produktpaket_mapper.handle(segment, &mut self.context);
+            handled = true;
         }
         if self.lokationszuordnung_mapper.can_handle(segment) {
             self.lokationszuordnung_mapper
                 .handle(segment, &mut self.context);
+            handled = true;
+        }
+
+        // If no mapper handled it, store as passthrough
+        if !handled {
+            let raw = segment.to_raw_string(&self.delimiters);
+            let ps = PassthroughSegment {
+                raw,
+                zone: self.current_zone,
+            };
+            if self.in_transaction {
+                self.passthrough_segments.push(ps);
+            } else {
+                self.message_passthrough.push(ps);
+            }
+        }
+    }
+
+    /// Routes a segment to all mappers that can handle it.
+    /// If no mapper handles the segment, it is captured as a passthrough segment.
+    fn route_to_mappers(&mut self, segment: &RawSegment) {
+        self.route_to_mappers_ex(segment, false);
+    }
+
+    /// Updates the current zone based on the segment type.
+    fn update_zone(&mut self, segment: &RawSegment) {
+        if !self.in_transaction {
+            self.current_zone = SegmentZone::MessageHeader;
+            return;
+        }
+
+        match segment.id {
+            "LOC" => self.current_zone = SegmentZone::Locations,
+            "RFF"
+                if self.current_zone == SegmentZone::Locations
+                    || self.current_zone == SegmentZone::TransactionHeader =>
+            {
+                self.current_zone = SegmentZone::References;
+            }
+            "SEQ" => self.current_zone = SegmentZone::Sequences,
+            // CCI, CAV, QTY, PIA after SEQ stay in Sequences
+            "CCI" | "CAV" | "QTY" | "PIA" if self.current_zone == SegmentZone::Sequences => {}
+            // RFF after SEQ stays in Sequences (e.g. RFF+Z19 inside a SEQ+Z03 group)
+            "RFF" if self.current_zone == SegmentZone::Sequences => {}
+            // DTM after SEQ stays in Sequences
+            "DTM" if self.current_zone == SegmentZone::Sequences => {}
+            "NAD"
+                if self.current_zone == SegmentZone::Sequences
+                    || self.current_zone == SegmentZone::Parties =>
+            {
+                self.current_zone = SegmentZone::Parties;
+            }
+            // Default: stay in current zone for segments within their group
+            _ => {
+                // For DTM/STS/FTX before LOC, stay in TransactionHeader
+                if self.current_zone == SegmentZone::MessageHeader {
+                    self.current_zone = SegmentZone::TransactionHeader;
+                }
+            }
         }
     }
 
@@ -173,6 +266,8 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
             if !tx_id.is_empty() {
                 self.current_transaction_id = Some(tx_id.to_string());
                 self.in_transaction = true;
+                self.current_zone = SegmentZone::TransactionHeader;
+                self.passthrough_segments.clear();
             }
         }
     }
@@ -261,7 +356,7 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
             zaehler,
             produktpakete: self.produktpaket_mapper.build(),
             lokationszuordnungen: self.lokationszuordnung_mapper.build(),
-            passthrough_segments: Vec::new(),
+            passthrough_segments: std::mem::take(&mut self.passthrough_segments),
         }
     }
 
@@ -283,12 +378,15 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         self.produktpaket_mapper.reset();
         self.lokationszuordnung_mapper.reset();
         self.in_transaction = false;
+        self.current_zone = SegmentZone::TransactionHeader;
+        self.passthrough_segments.clear();
     }
 
     /// Builds a UtilmdNachricht from the current coordinator state.
     fn build_nachricht(&mut self) -> UtilmdNachricht {
         let transactions = std::mem::take(&mut self.transactions);
-        let nachrichtendaten = self.nachrichtendaten.clone();
+        let mut nachrichtendaten = std::mem::take(&mut self.nachrichtendaten);
+        nachrichtendaten.passthrough_segments = std::mem::take(&mut self.message_passthrough);
 
         UtilmdNachricht {
             dokumentennummer: nachrichtendaten
@@ -481,8 +579,9 @@ impl<V: VersionConfig> Default for UtilmdCoordinator<V> {
 }
 
 impl<V: VersionConfig> EdifactHandler for UtilmdCoordinator<V> {
-    fn on_delimiters(&mut self, _delimiters: &EdifactDelimiters, explicit_una: bool) {
+    fn on_delimiters(&mut self, delimiters: &EdifactDelimiters, explicit_una: bool) {
         self.nachrichtendaten.explicit_una = explicit_una;
+        self.delimiters = *delimiters;
     }
 
     fn on_interchange_start(&mut self, unb: &RawSegment) -> Control {
@@ -539,9 +638,12 @@ impl<V: VersionConfig> EdifactHandler for UtilmdCoordinator<V> {
                 let q = segment.get_element(0);
                 if q == "MS" || q == "MR" {
                     self.handle_message_level_nad(segment);
+                    // Route to mappers (MarktlokationMapper uses NAD+MS for Sparte)
+                    // but mark as coordinator-handled so NAD+MR doesn't become passthrough
+                    self.route_to_mappers_ex(segment, true);
+                } else {
+                    self.route_to_mappers(segment);
                 }
-                // Also route to mappers (Geschaeftspartner handles party NADs)
-                self.route_to_mappers(segment);
             }
             "DTM" if !self.in_transaction => {
                 let qualifier = segment.get_component(0, 0);
@@ -665,5 +767,106 @@ mod tests {
     fn test_utilmd_coordinator_is_send() {
         fn assert_send<T: Send>() {}
         assert_send::<UtilmdCoordinator<FV2504>>();
+    }
+
+    #[test]
+    fn test_passthrough_captures_unhandled_segments() {
+        use crate::coordinator::create_coordinator;
+
+        // EDIFACT with IMD (unhandled at message level) and various transaction segments
+        let edifact = b"UNA:+.? '\
+UNB+UNOC:3+SENDER:500+RECEIVER:500+251217:1229+REF001'\
+UNH+MSG001+UTILMD:D:11A:UN:S2.1'\
+BGM+E03+DOC001'\
+DTM+137:202507011330:303'\
+IMD++Z36+Z13'\
+NAD+MS+SENDER::293'\
+NAD+MR+RECEIVER::293'\
+IDE+24+TX001'\
+DTM+92:20220624:102'\
+STS+7++E01'\
+LOC+Z16+MALO001'\
+SEQ+Z01'\
+CCI+Z30++Z07'\
+CAV+Z74:::Z09'\
+SEQ+Z03'\
+PIA+5+ZAEHLER001'\
+NAD+Z09+++Test:Person'\
+UNT+17+MSG001'\
+UNZ+1+REF001'";
+
+        let mut coord = create_coordinator(FormatVersion::FV2504).unwrap();
+        let nachricht = coord.parse_nachricht(edifact).unwrap();
+
+        // IMD should be message-level passthrough (not handled by any mapper)
+        assert!(
+            !nachricht.nachrichtendaten.passthrough_segments.is_empty(),
+            "IMD should be captured as message-level passthrough"
+        );
+        assert!(
+            nachricht
+                .nachrichtendaten
+                .passthrough_segments
+                .iter()
+                .any(|ps| ps.raw.starts_with("IMD")),
+            "IMD segment should be in message passthrough"
+        );
+        // IMD is in MessageHeader zone (before IDE)
+        let imd = nachricht
+            .nachrichtendaten
+            .passthrough_segments
+            .iter()
+            .find(|ps| ps.raw.starts_with("IMD"))
+            .unwrap();
+        assert_eq!(imd.zone, SegmentZone::MessageHeader);
+
+        // Transaction passthrough: segments not handled by any mapper
+        let tx = &nachricht.transaktionen[0];
+        let passthrough_ids: Vec<&str> = tx
+            .passthrough_segments
+            .iter()
+            .map(|ps| ps.raw.split('+').next().unwrap_or(""))
+            .collect();
+        eprintln!(
+            "Transaction passthrough segments: {:?}",
+            tx.passthrough_segments
+        );
+
+        // CCI+Z30 and CAV+Z74 may or may not be handled depending on mapper support.
+        // The key invariant: segments not handled by any mapper appear in passthrough.
+        // NAD+MS/MR should NOT appear in passthrough (handled at message level).
+        assert!(
+            !nachricht
+                .nachrichtendaten
+                .passthrough_segments
+                .iter()
+                .any(|ps| ps.raw.starts_with("NAD+MS") || ps.raw.starts_with("NAD+MR")),
+            "NAD+MS/MR should NOT be in passthrough — handled at message level"
+        );
+
+        // BGM should NOT appear in passthrough (handled by handle_bgm)
+        assert!(
+            !nachricht
+                .nachrichtendaten
+                .passthrough_segments
+                .iter()
+                .any(|ps| ps.raw.starts_with("BGM")),
+            "BGM should NOT be in passthrough"
+        );
+
+        // Verify zone tracking: any passthrough in the SEQ area should be Sequences zone
+        for ps in &tx.passthrough_segments {
+            if ps.raw.starts_with("CCI") || ps.raw.starts_with("CAV") {
+                assert_eq!(
+                    ps.zone,
+                    SegmentZone::Sequences,
+                    "CCI/CAV should be in Sequences zone, got {:?}",
+                    ps.zone
+                );
+            }
+        }
+
+        // Verify passthrough_ids is used (avoid unused variable warning)
+        let _ = passthrough_ids;
     }
 }
