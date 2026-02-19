@@ -54,9 +54,7 @@ impl Builder<Option<WithValidity<SteuerbareRessource, SteuerbareRessourceEdifact
         !self.has_data
     }
 
-    fn build(
-        &mut self,
-    ) -> Option<WithValidity<SteuerbareRessource, SteuerbareRessourceEdifact>> {
+    fn build(&mut self) -> Option<WithValidity<SteuerbareRessource, SteuerbareRessourceEdifact>> {
         if !self.has_data {
             return None;
         }

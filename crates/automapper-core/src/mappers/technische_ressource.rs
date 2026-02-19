@@ -54,9 +54,7 @@ impl Builder<Option<WithValidity<TechnischeRessource, TechnischeRessourceEdifact
         !self.has_data
     }
 
-    fn build(
-        &mut self,
-    ) -> Option<WithValidity<TechnischeRessource, TechnischeRessourceEdifact>> {
+    fn build(&mut self) -> Option<WithValidity<TechnischeRessource, TechnischeRessourceEdifact>> {
         if !self.has_data {
             return None;
         }

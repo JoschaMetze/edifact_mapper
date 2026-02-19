@@ -158,10 +158,7 @@ mod tests {
         let mut mapper = ProduktpaketMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
         // Set context to Z03 (not Z79)
-        mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z03"]], pos()),
-            &mut ctx,
-        );
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z03"]], pos()), &mut ctx);
         mapper.handle(
             &RawSegment::new("PIA", vec![vec!["5"], vec!["SomeProduct"]], pos()),
             &mut ctx,

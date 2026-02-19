@@ -156,10 +156,7 @@ mod tests {
     fn test_bilanzierung_mapper_cci_z20_bilanzkreis() {
         let mut mapper = BilanzierungMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
-        mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z98"]], pos()),
-            &mut ctx,
-        );
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z98"]], pos()), &mut ctx);
         mapper.handle(
             &RawSegment::new(
                 "CCI",
@@ -179,28 +176,20 @@ mod tests {
     fn test_bilanzierung_mapper_qty_jahresverbrauchsprognose() {
         let mut mapper = BilanzierungMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
-        mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z98"]], pos()),
-            &mut ctx,
-        );
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z98"]], pos()), &mut ctx);
         mapper.handle(
             &RawSegment::new("QTY", vec![vec!["Z09", "12345.67"]], pos()),
             &mut ctx,
         );
         let result = mapper.build().unwrap();
-        assert!(
-            (result.edifact.jahresverbrauchsprognose.unwrap() - 12345.67).abs() < f64::EPSILON
-        );
+        assert!((result.edifact.jahresverbrauchsprognose.unwrap() - 12345.67).abs() < f64::EPSILON);
     }
 
     #[test]
     fn test_bilanzierung_mapper_qty_temperatur_arbeit() {
         let mut mapper = BilanzierungMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
-        mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z81"]], pos()),
-            &mut ctx,
-        );
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z81"]], pos()), &mut ctx);
         mapper.handle(
             &RawSegment::new("QTY", vec![vec!["265", "9876.54"]], pos()),
             &mut ctx,
@@ -213,16 +202,9 @@ mod tests {
     fn test_bilanzierung_mapper_ignores_outside_seq() {
         let mut mapper = BilanzierungMapper::new();
         let mut ctx = TransactionContext::new("FV2504");
+        mapper.handle(&RawSegment::new("SEQ", vec![vec!["Z03"]], pos()), &mut ctx);
         mapper.handle(
-            &RawSegment::new("SEQ", vec![vec!["Z03"]], pos()),
-            &mut ctx,
-        );
-        mapper.handle(
-            &RawSegment::new(
-                "CCI",
-                vec![vec!["Z20"], vec![], vec!["BK001"]],
-                pos(),
-            ),
+            &RawSegment::new("CCI", vec![vec!["Z20"], vec![], vec!["BK001"]], pos()),
             &mut ctx,
         );
         assert!(mapper.is_empty());

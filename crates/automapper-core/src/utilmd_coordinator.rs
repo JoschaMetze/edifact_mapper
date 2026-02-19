@@ -20,10 +20,10 @@ use crate::mappers::*;
 use crate::traits::{Builder, FormatVersion, SegmentHandler};
 use crate::version::VersionConfig;
 use crate::writer::{
-    BilanzierungWriter, EdifactDocumentWriter, GeschaeftspartnerWriter,
-    LokationszuordnungWriter, MabisZaehlpunktWriter, MarktlokationWriter, MesslokationWriter,
-    NetzlokationWriter, ProduktpaketWriter, ProzessdatenWriter, SteuerbareRessourceWriter,
-    TechnischeRessourceWriter, TrancheWriter, VertragWriter, ZaehlerWriter, ZeitscheibeWriter,
+    BilanzierungWriter, EdifactDocumentWriter, GeschaeftspartnerWriter, LokationszuordnungWriter,
+    MabisZaehlpunktWriter, MarktlokationWriter, MesslokationWriter, NetzlokationWriter,
+    ProduktpaketWriter, ProzessdatenWriter, SteuerbareRessourceWriter, TechnischeRessourceWriter,
+    TrancheWriter, VertragWriter, ZaehlerWriter, ZeitscheibeWriter,
 };
 
 /// UTILMD coordinator that orchestrates all entity mappers.
@@ -142,12 +142,10 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
                 .handle(segment, &mut self.context);
         }
         if self.bilanzierung_mapper.can_handle(segment) {
-            self.bilanzierung_mapper
-                .handle(segment, &mut self.context);
+            self.bilanzierung_mapper.handle(segment, &mut self.context);
         }
         if self.produktpaket_mapper.can_handle(segment) {
-            self.produktpaket_mapper
-                .handle(segment, &mut self.context);
+            self.produktpaket_mapper.handle(segment, &mut self.context);
         }
         if self.lokationszuordnung_mapper.can_handle(segment) {
             self.lokationszuordnung_mapper
@@ -255,11 +253,7 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
                 .into_iter()
                 .collect(),
             tranchen: self.tranche_mapper.build().into_iter().collect(),
-            mabis_zaehlpunkte: self
-                .mabis_zaehlpunkt_mapper
-                .build()
-                .into_iter()
-                .collect(),
+            mabis_zaehlpunkte: self.mabis_zaehlpunkt_mapper.build().into_iter().collect(),
             parteien,
             vertrag,
             bilanzierung: self.bilanzierung_mapper.build(),
