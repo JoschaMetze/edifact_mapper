@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::bo4e_types::*;
 use crate::edifact_types::*;
+use crate::passthrough::PassthroughSegment;
 use crate::prozessdaten::*;
 use crate::with_validity::WithValidity;
 
@@ -37,6 +38,9 @@ pub struct UtilmdTransaktion {
     pub zaehler: Vec<WithValidity<Zaehler, ZaehlerEdifact>>,
     pub produktpakete: Vec<WithValidity<Produktpaket, ProduktpaketEdifact>>,
     pub lokationszuordnungen: Vec<WithValidity<Lokationszuordnung, LokationszuordnungEdifact>>,
+    /// Segments not handled by any mapper, preserved for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub passthrough_segments: Vec<PassthroughSegment>,
 }
 
 #[cfg(test)]

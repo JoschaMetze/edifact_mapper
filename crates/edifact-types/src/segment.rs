@@ -71,6 +71,40 @@ impl<'a> RawSegment<'a> {
     pub fn is(&self, segment_id: &str) -> bool {
         self.id.eq_ignore_ascii_case(segment_id)
     }
+
+    /// Reconstruct the raw segment string (without terminator) using the given delimiters.
+    ///
+    /// This produces `ID+elem1:comp1:comp2+elem2` format (without the trailing terminator).
+    pub fn to_raw_string(&self, delimiters: &crate::EdifactDelimiters) -> String {
+        let elem_sep = delimiters.element as char;
+        let comp_sep = delimiters.component as char;
+
+        let mut result = self.id.to_string();
+
+        for element in &self.elements {
+            result.push(elem_sep);
+            // Trim trailing empty components
+            let last_non_empty = element
+                .iter()
+                .rposition(|s| !s.is_empty())
+                .map(|i| i + 1)
+                .unwrap_or(0);
+            let trimmed = &element[..last_non_empty];
+            for (j, component) in trimmed.iter().enumerate() {
+                if j > 0 {
+                    result.push(comp_sep);
+                }
+                result.push_str(component);
+            }
+        }
+
+        // Trim trailing empty elements (trailing element separators)
+        while result.ends_with(elem_sep) {
+            result.pop();
+        }
+
+        result
+    }
 }
 
 impl<'a> std::fmt::Display for RawSegment<'a> {
@@ -187,5 +221,61 @@ mod tests {
         assert_eq!(seg.id, cloned.id);
         assert_eq!(seg.elements, cloned.elements);
         assert_eq!(seg.position, cloned.position);
+    }
+
+    #[test]
+    fn test_raw_segment_to_raw_string() {
+        let seg = RawSegment::new(
+            "LOC",
+            vec![vec!["Z16"], vec!["DE00014545768S0000000000000003054"]],
+            make_position(),
+        );
+        let delimiters = crate::EdifactDelimiters::default();
+        assert_eq!(
+            seg.to_raw_string(&delimiters),
+            "LOC+Z16+DE00014545768S0000000000000003054"
+        );
+    }
+
+    #[test]
+    fn test_raw_segment_to_raw_string_composite() {
+        let seg = RawSegment::new(
+            "DTM",
+            vec![vec!["137", "202507011330", "303"]],
+            make_position(),
+        );
+        let delimiters = crate::EdifactDelimiters::default();
+        assert_eq!(seg.to_raw_string(&delimiters), "DTM+137:202507011330:303");
+    }
+
+    #[test]
+    fn test_raw_segment_to_raw_string_no_elements() {
+        let seg = RawSegment::new("UNA", vec![], make_position());
+        let delimiters = crate::EdifactDelimiters::default();
+        assert_eq!(seg.to_raw_string(&delimiters), "UNA");
+    }
+
+    #[test]
+    fn test_raw_segment_to_raw_string_trailing_empty_components() {
+        // Segment like "CCI+Z30++Z07" where element[1] is empty
+        let seg = RawSegment::new(
+            "CCI",
+            vec![vec!["Z30"], vec![""], vec!["Z07"]],
+            make_position(),
+        );
+        let delimiters = crate::EdifactDelimiters::default();
+        assert_eq!(seg.to_raw_string(&delimiters), "CCI+Z30++Z07");
+    }
+
+    #[test]
+    fn test_raw_segment_to_raw_string_trailing_empty_elements() {
+        // Trailing empty elements should be trimmed
+        let seg = RawSegment::new(
+            "BGM",
+            vec![vec!["E03"], vec![""], vec![""]],
+            make_position(),
+        );
+        let delimiters = crate::EdifactDelimiters::default();
+        assert_eq!(seg.to_raw_string(&delimiters), "BGM+E03");
     }
 }

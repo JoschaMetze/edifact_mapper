@@ -261,6 +261,7 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
             zaehler,
             produktpakete: self.produktpaket_mapper.build(),
             lokationszuordnungen: self.lokationszuordnung_mapper.build(),
+            passthrough_segments: Vec::new(),
         }
     }
 

@@ -62,6 +62,9 @@ pub struct Nachrichtendaten {
     /// Raw DTM+137 composite for message-level Nachrichtendatum roundtrip.
     /// Stores the full "value:format" string (e.g. "202503311329?+00:303").
     pub raw_nachrichtendatum: Option<String>,
+    /// Message-level passthrough segments (before first IDE).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub passthrough_segments: Vec<crate::PassthroughSegment>,
 }
 
 /// A time slice reference within a transaction.
