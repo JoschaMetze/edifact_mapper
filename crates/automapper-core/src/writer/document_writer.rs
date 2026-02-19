@@ -162,6 +162,13 @@ impl EdifactDocumentWriter {
         self.message_segment_count += 1;
     }
 
+    /// Writes a pre-formatted raw segment string and increments the message segment count.
+    /// The raw string should NOT include the segment terminator.
+    pub fn write_raw_segment(&mut self, raw: &str) {
+        self.writer.write_raw(raw);
+        self.message_segment_count += 1;
+    }
+
     /// Writes a segment with composite elements.
     pub fn write_segment_with_composites(&mut self, id: &str, composites: &[&[&str]]) {
         self.writer.begin_segment(id);
@@ -344,5 +351,21 @@ mod tests {
             "UNB should have composites with qualifiers, got: {}",
             output
         );
+    }
+
+    #[test]
+    fn test_document_writer_write_raw_segment() {
+        let mut w = EdifactDocumentWriter::new();
+        w.begin_interchange("S", None, "R", None, "REF", "D", "T", true);
+        w.begin_message("M", "TYPE");
+        w.write_segment("BGM", &["E03"]);
+        w.write_raw_segment("CCI+Z30++Z07");
+        w.end_message();
+        w.end_interchange();
+
+        let output = w.output();
+        assert!(output.contains("CCI+Z30++Z07'"));
+        // UNH + BGM + CCI + UNT = 4
+        assert!(output.contains("UNT+4+M'"));
     }
 }

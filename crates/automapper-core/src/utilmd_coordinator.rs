@@ -481,6 +481,11 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
             doc.write_segment("NAD", &["MR", &nad_value]);
         }
 
+        // Message-level passthrough segments
+        for ps in &nd.passthrough_segments {
+            doc.write_raw_segment(&ps.raw);
+        }
+
         // SG4: Transactions (Counter=0180)
         for tx in &nachricht.transaktionen {
             Self::write_transaction(&mut doc, tx);
@@ -491,6 +496,17 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         doc.end_interchange();
 
         Ok(doc.into_bytes())
+    }
+
+    /// Replays passthrough segments for a specific zone.
+    fn replay_passthrough(
+        doc: &mut EdifactDocumentWriter,
+        segments: &[PassthroughSegment],
+        zone: SegmentZone,
+    ) {
+        for ps in segments.iter().filter(|ps| ps.zone == zone) {
+            doc.write_raw_segment(&ps.raw);
+        }
     }
 
     /// Writes a single transaction (SG4) to the document writer.
@@ -510,6 +526,12 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
 
         // DTM + STS + FTX (Counter=0230, 0250, 0280)
         ProzessdatenWriter::write(doc, &tx.prozessdaten);
+        // Replay TransactionHeader passthrough (unmodeled DTM qualifiers, etc.)
+        Self::replay_passthrough(
+            doc,
+            &tx.passthrough_segments,
+            SegmentZone::TransactionHeader,
+        );
 
         // SG5: LOC segments (Counter=0320)
         // MIG order: Z18 (Nr 48), Z16 (Nr 49), Z20 (Nr 51), Z19 (Nr 52),
@@ -535,12 +557,16 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         for mz in &tx.mabis_zaehlpunkte {
             MabisZaehlpunktWriter::write(doc, mz);
         }
+        // Replay Locations passthrough (unmodeled LOC qualifiers)
+        Self::replay_passthrough(doc, &tx.passthrough_segments, SegmentZone::Locations);
 
         // SG6: RFF references (Counter=0350)
         // RFF+Z13 (Nr 00056)
         ProzessdatenWriter::write_references(doc, &tx.prozessdaten);
         // RFF+Z47 Zeitscheiben (Nr 00066)
         ZeitscheibeWriter::write(doc, &tx.zeitscheiben);
+        // Replay References passthrough
+        Self::replay_passthrough(doc, &tx.passthrough_segments, SegmentZone::References);
 
         // SG8: SEQ groups (Counter=0410)
         // MIG order: Z78 (Nr 74), Z79 (Nr 81), Z98 (Bilanzierung), Z03 (Nr 311), Z18 (Nr 291)
@@ -559,6 +585,8 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         if let Some(ref v) = tx.vertrag {
             VertragWriter::write(doc, v);
         }
+        // Replay Sequences passthrough (unmodeled SEQ+qualifier groups)
+        Self::replay_passthrough(doc, &tx.passthrough_segments, SegmentZone::Sequences);
 
         // SG12: NAD parties (Counter=0570)
         // NAD+DP Marktlokationsanschrift (Nr 00518)
@@ -569,6 +597,8 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         for gp in &tx.parteien {
             GeschaeftspartnerWriter::write(doc, gp);
         }
+        // Replay Parties passthrough (unmodeled NAD qualifiers)
+        Self::replay_passthrough(doc, &tx.passthrough_segments, SegmentZone::Parties);
     }
 }
 
