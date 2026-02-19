@@ -261,6 +261,62 @@ impl ZeitscheibeWriter {
     }
 }
 
+/// Writes a SteuerbareRessource to EDIFACT segments.
+pub struct SteuerbareRessourceWriter;
+
+impl SteuerbareRessourceWriter {
+    pub fn write(
+        doc: &mut EdifactDocumentWriter,
+        sr: &WithValidity<SteuerbareRessource, SteuerbareRessourceEdifact>,
+    ) {
+        if let Some(ref id) = sr.data.steuerbare_ressource_id {
+            doc.write_segment("LOC", &["Z19", id]);
+        }
+    }
+}
+
+/// Writes a TechnischeRessource to EDIFACT segments.
+pub struct TechnischeRessourceWriter;
+
+impl TechnischeRessourceWriter {
+    pub fn write(
+        doc: &mut EdifactDocumentWriter,
+        tr: &WithValidity<TechnischeRessource, TechnischeRessourceEdifact>,
+    ) {
+        if let Some(ref id) = tr.data.technische_ressource_id {
+            doc.write_segment("LOC", &["Z20", id]);
+        }
+    }
+}
+
+/// Writes a Tranche to EDIFACT segments.
+pub struct TrancheWriter;
+
+impl TrancheWriter {
+    pub fn write(
+        doc: &mut EdifactDocumentWriter,
+        t: &WithValidity<Tranche, TrancheEdifact>,
+    ) {
+        if let Some(ref id) = t.data.tranche_id {
+            doc.write_segment("LOC", &["Z21", id]);
+        }
+    }
+}
+
+/// Writes a MabisZaehlpunkt to EDIFACT segments.
+pub struct MabisZaehlpunktWriter;
+
+impl MabisZaehlpunktWriter {
+    pub fn write(
+        doc: &mut EdifactDocumentWriter,
+        mz: &WithValidity<MabisZaehlpunkt, MabisZaehlpunktEdifact>,
+    ) {
+        if let Some(ref id) = mz.data.zaehlpunkt_id {
+            doc.write_segment("LOC", &["Z15", id]);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -510,5 +566,93 @@ mod tests {
         // No RFF or DTM segments should be written
         let output = doc.output();
         assert!(!output.contains("RFF"));
+    }
+
+    #[test]
+    fn test_steuerbare_ressource_writer() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let sr = WithValidity {
+            data: SteuerbareRessource {
+                steuerbare_ressource_id: Some("STRES001".to_string()),
+            },
+            edifact: SteuerbareRessourceEdifact::default(),
+            gueltigkeitszeitraum: None,
+            zeitscheibe_ref: None,
+        };
+
+        SteuerbareRessourceWriter::write(&mut doc, &sr);
+        doc.end_message();
+        doc.end_interchange();
+
+        assert!(doc.output().contains("LOC+Z19+STRES001'"));
+    }
+
+    #[test]
+    fn test_technische_ressource_writer() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let tr = WithValidity {
+            data: TechnischeRessource {
+                technische_ressource_id: Some("TECRES001".to_string()),
+            },
+            edifact: TechnischeRessourceEdifact::default(),
+            gueltigkeitszeitraum: None,
+            zeitscheibe_ref: None,
+        };
+
+        TechnischeRessourceWriter::write(&mut doc, &tr);
+        doc.end_message();
+        doc.end_interchange();
+
+        assert!(doc.output().contains("LOC+Z20+TECRES001'"));
+    }
+
+    #[test]
+    fn test_tranche_writer() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let t = WithValidity {
+            data: Tranche {
+                tranche_id: Some("TRANCHE001".to_string()),
+            },
+            edifact: TrancheEdifact::default(),
+            gueltigkeitszeitraum: None,
+            zeitscheibe_ref: None,
+        };
+
+        TrancheWriter::write(&mut doc, &t);
+        doc.end_message();
+        doc.end_interchange();
+
+        assert!(doc.output().contains("LOC+Z21+TRANCHE001'"));
+    }
+
+    #[test]
+    fn test_mabis_zaehlpunkt_writer() {
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
+        doc.begin_interchange("S", "R", "REF", "D", "T");
+        doc.begin_message("M", "TYPE");
+
+        let mz = WithValidity {
+            data: MabisZaehlpunkt {
+                zaehlpunkt_id: Some("MABIS001".to_string()),
+            },
+            edifact: MabisZaehlpunktEdifact::default(),
+            gueltigkeitszeitraum: None,
+            zeitscheibe_ref: None,
+        };
+
+        MabisZaehlpunktWriter::write(&mut doc, &mz);
+        doc.end_message();
+        doc.end_interchange();
+
+        assert!(doc.output().contains("LOC+Z15+MABIS001'"));
     }
 }
