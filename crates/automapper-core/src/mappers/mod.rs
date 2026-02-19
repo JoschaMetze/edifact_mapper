@@ -16,6 +16,8 @@ pub mod vertrag;
 pub mod zaehler;
 pub mod zeitscheibe;
 
+pub mod produktpaket;
+
 pub use geschaeftspartner::GeschaeftspartnerMapper;
 pub use mabis_zaehlpunkt::MabisZaehlpunktMapper;
 pub use marktlokation::MarktlokationMapper;
@@ -28,3 +30,5 @@ pub use tranche::TrancheMapper;
 pub use vertrag::VertragMapper;
 pub use zaehler::ZaehlerMapper;
 pub use zeitscheibe::ZeitscheibeMapper;
+
+pub use produktpaket::ProduktpaketMapper;
