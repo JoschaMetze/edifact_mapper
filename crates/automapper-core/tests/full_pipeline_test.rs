@@ -76,11 +76,14 @@ fn test_full_pipeline_detect_parse_write() {
     // Step 4: Write back to EDIFACT
     let mut doc = EdifactDocumentWriter::new();
     doc.begin_interchange(
-        "9900123000002:500",
-        "9900456000001:500",
+        "9900123000002",
+        Some("500"),
+        "9900456000001",
+        Some("500"),
         "GEN0001",
         "251217",
         "1229",
+        true,
     );
     doc.begin_message("GEN0001MSG", "UTILMD:D:11A:UN:S2.1");
 

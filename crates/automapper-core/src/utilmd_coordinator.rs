@@ -311,8 +311,13 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
     ) -> Result<Vec<u8>, AutomapperError> {
         let nd = &nachricht.nachrichtendaten;
 
-        // Determine date/time for UNB from erstellungsdatum
-        let (date_str, time_str) = if let Some(ref dt) = nd.erstellungsdatum {
+        // Determine date/time for UNB: prefer raw UNB values, fallback to erstellungsdatum
+        let (date_str, time_str) = if nd.unb_datum.is_some() || nd.unb_zeit.is_some() {
+            (
+                nd.unb_datum.clone().unwrap_or_default(),
+                nd.unb_zeit.clone().unwrap_or_default(),
+            )
+        } else if let Some(ref dt) = nd.erstellungsdatum {
             (
                 dt.format("%y%m%d").to_string(),
                 dt.format("%H%M").to_string(),
@@ -326,16 +331,23 @@ impl<V: VersionConfig> UtilmdCoordinator<V> {
         // UNA + UNB (Counter=0000)
         doc.begin_interchange(
             nd.absender_mp_id.as_deref().unwrap_or(""),
+            nd.absender_unb_qualifier.as_deref(),
             nd.empfaenger_mp_id.as_deref().unwrap_or(""),
+            nd.empfaenger_unb_qualifier.as_deref(),
             nd.datenaustauschreferenz.as_deref().unwrap_or(""),
             &date_str,
             &time_str,
+            nd.explicit_una,
         );
 
-        // UNH (Counter=0010)
+        // UNH (Counter=0010) — use original message type if available, else derive from version
+        let message_type = nd
+            .nachrichtentyp
+            .as_deref()
+            .unwrap_or_else(|| format_version.message_type_string());
         doc.begin_message(
             nd.nachrichtenreferenz.as_deref().unwrap_or(""),
-            format_version.message_type_string(),
+            message_type,
         );
 
         // BGM (Counter=0020)

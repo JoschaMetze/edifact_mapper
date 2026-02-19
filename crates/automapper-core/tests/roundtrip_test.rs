@@ -28,7 +28,9 @@ fn test_roundtrip_simple_locations() {
 
     // Step 2: Generate BO4E -> EDIFACT
     let mut doc = EdifactDocumentWriter::new();
-    doc.begin_interchange("SENDER", "RECEIVER", "REF001", "251217", "1229");
+    doc.begin_interchange(
+        "SENDER", None, "RECEIVER", None, "REF001", "251217", "1229", true,
+    );
     doc.begin_message("MSG001", "UTILMD:D:11A:UN:S2.1");
 
     doc.write_segment("BGM", &["E03", "DOC001"]);
@@ -99,8 +101,8 @@ fn test_roundtrip_preserves_location_ids() {
 
     // Generate back and verify IDs survive the roundtrip
     let mut doc =
-        EdifactDocumentWriter::with_delimiters(edifact_types::EdifactDelimiters::default(), false);
-    doc.begin_interchange("S", "R", "REF", "D", "T");
+        EdifactDocumentWriter::with_delimiters(edifact_types::EdifactDelimiters::default());
+    doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
     doc.begin_message("M", "TYPE");
     MarktlokationWriter::write(&mut doc, &tx.marktlokationen[0]);
     MesslokationWriter::write(&mut doc, &tx.messlokationen[0]);

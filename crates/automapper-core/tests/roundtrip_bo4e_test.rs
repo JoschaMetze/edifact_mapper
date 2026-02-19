@@ -994,7 +994,65 @@ fn test_bo4e_roundtrip_fixture_regression() {
 }
 
 // ---------------------------------------------------------------------------
-// 7. Fixture structural roundtrip: parse → generate → reparse → compare fields
+// 7. Envelope writer preserves UNB qualifiers, date/time, UNA, UNH type
+// ---------------------------------------------------------------------------
+
+#[test]
+fn test_envelope_writer_preserves_qualifiers() {
+    // No UNA in original
+    let edifact = b"UNB+UNOC:3+9900123000002:500+9900456000001:500+251217:1229+REF001'\
+UNH+MSG001+UTILMD:D:11A:UN:S2.1'\
+BGM+E03+DOC001'\
+NAD+MS+9900123000002::293'\
+NAD+MR+9900456000001::293'\
+IDE+24+TX001'\
+UNT+6+MSG001'\
+UNZ+1+REF001'";
+
+    let mut coord = create_coordinator(FormatVersion::FV2504).unwrap();
+    let nachricht = coord.parse_nachricht(edifact).unwrap();
+    let output = String::from_utf8(coord.generate(&nachricht).unwrap()).unwrap();
+
+    // No UNA (original had none)
+    assert!(
+        output.starts_with("UNB+"),
+        "should NOT start with UNA when original had none"
+    );
+    // UNB should preserve :500 qualifiers and date/time
+    assert!(
+        output.contains("UNB+UNOC:3+9900123000002:500+9900456000001:500+251217:1229+REF001'"),
+        "UNB should preserve qualifiers and date/time, got: {}",
+        output
+    );
+    // UNH should preserve original message type
+    assert!(
+        output.contains("UNH+MSG001+UTILMD:D:11A:UN:S2.1'"),
+        "UNH should preserve message type"
+    );
+}
+
+#[test]
+fn test_envelope_writer_preserves_una() {
+    let edifact = b"UNA:+.? '\
+UNB+UNOC:3+SENDER+RECEIVER+251217:1229+REF001'\
+UNH+MSG001+UTILMD:D:11A:UN:S2.1'\
+BGM+E03+DOC001'\
+IDE+24+TX001'\
+UNT+4+MSG001'\
+UNZ+1+REF001'";
+
+    let mut coord = create_coordinator(FormatVersion::FV2504).unwrap();
+    let nachricht = coord.parse_nachricht(edifact).unwrap();
+    let output = String::from_utf8(coord.generate(&nachricht).unwrap()).unwrap();
+
+    assert!(
+        output.starts_with("UNA:+.? '"),
+        "should start with UNA when original had one"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// 8. Fixture structural roundtrip: parse → generate → reparse → compare fields
 // ---------------------------------------------------------------------------
 
 /// Parse → generate → reparse fixture files and compare key fields.

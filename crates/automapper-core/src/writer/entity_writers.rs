@@ -404,8 +404,8 @@ mod tests {
 
     #[test]
     fn test_marktlokation_writer_loc() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let ml = WithValidity {
@@ -428,8 +428,8 @@ mod tests {
 
     #[test]
     fn test_messlokation_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let ml = WithValidity {
@@ -451,8 +451,8 @@ mod tests {
 
     #[test]
     fn test_zaehler_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let z = WithValidity {
@@ -480,8 +480,8 @@ mod tests {
 
     #[test]
     fn test_vertrag_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let v = WithValidity {
@@ -506,8 +506,8 @@ mod tests {
 
     #[test]
     fn test_prozessdaten_writer_dtm_and_sts() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let dt = NaiveDate::from_ymd_opt(2025, 7, 1)
@@ -536,8 +536,8 @@ mod tests {
 
     #[test]
     fn test_prozessdaten_writer_ftx_and_rff() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let pd = Prozessdaten {
@@ -558,8 +558,8 @@ mod tests {
 
     #[test]
     fn test_prozessdaten_writer_empty() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let pd = Prozessdaten::default();
@@ -578,8 +578,8 @@ mod tests {
 
     #[test]
     fn test_zeitscheibe_writer_single() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let von = NaiveDate::from_ymd_opt(2025, 7, 1)
@@ -608,8 +608,8 @@ mod tests {
 
     #[test]
     fn test_zeitscheibe_writer_multiple() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let zs = vec![
@@ -634,8 +634,8 @@ mod tests {
 
     #[test]
     fn test_zeitscheibe_writer_empty() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         ZeitscheibeWriter::write(&mut doc, &[]);
@@ -649,8 +649,8 @@ mod tests {
 
     #[test]
     fn test_steuerbare_ressource_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let sr = WithValidity {
@@ -671,8 +671,8 @@ mod tests {
 
     #[test]
     fn test_technische_ressource_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let tr = WithValidity {
@@ -693,8 +693,8 @@ mod tests {
 
     #[test]
     fn test_tranche_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let t = WithValidity {
@@ -715,8 +715,8 @@ mod tests {
 
     #[test]
     fn test_mabis_zaehlpunkt_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let mz = WithValidity {
@@ -737,8 +737,8 @@ mod tests {
 
     #[test]
     fn test_produktpaket_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let pp = WithValidity {
@@ -763,8 +763,8 @@ mod tests {
 
     #[test]
     fn test_lokationszuordnung_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let lz = WithValidity {
@@ -789,8 +789,8 @@ mod tests {
 
     #[test]
     fn test_bilanzierung_writer() {
-        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        doc.begin_interchange("S", "R", "REF", "D", "T");
+        let mut doc = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default());
+        doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
         let b = WithValidity {

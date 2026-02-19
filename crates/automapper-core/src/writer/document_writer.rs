@@ -15,7 +15,6 @@ use super::segment_writer::EdifactSegmentWriter;
 pub struct EdifactDocumentWriter {
     writer: EdifactSegmentWriter,
     delimiters: EdifactDelimiters,
-    write_una: bool,
     interchange_ref: Option<String>,
     message_ref: Option<String>,
     message_segment_count: u32,
@@ -27,15 +26,14 @@ pub struct EdifactDocumentWriter {
 impl EdifactDocumentWriter {
     /// Creates a new document writer with default delimiters.
     pub fn new() -> Self {
-        Self::with_delimiters(EdifactDelimiters::default(), true)
+        Self::with_delimiters(EdifactDelimiters::default())
     }
 
     /// Creates a new document writer with the given delimiters.
-    pub fn with_delimiters(delimiters: EdifactDelimiters, write_una: bool) -> Self {
+    pub fn with_delimiters(delimiters: EdifactDelimiters) -> Self {
         Self {
             writer: EdifactSegmentWriter::new(delimiters),
             delimiters,
-            write_una,
             interchange_ref: None,
             message_ref: None,
             message_segment_count: 0,
@@ -74,15 +72,27 @@ impl EdifactDocumentWriter {
     }
 
     /// Begins a new interchange with the UNB segment.
+    ///
+    /// When `sender_qualifier` or `recipient_qualifier` is `Some`, the
+    /// sender/recipient is written as a composite element (id:qualifier).
+    /// When `None`, it is written as a simple element.
+    ///
+    /// The `write_una` parameter controls whether the UNA service string
+    /// is emitted before UNB. Pass `true` to reproduce the original UNA
+    /// or `false` when the original had no explicit UNA.
+    #[allow(clippy::too_many_arguments)]
     pub fn begin_interchange(
         &mut self,
-        sender: &str,
-        recipient: &str,
+        sender_id: &str,
+        sender_qualifier: Option<&str>,
+        recipient_id: &str,
+        recipient_qualifier: Option<&str>,
         reference: &str,
         date: &str,
         time: &str,
+        write_una: bool,
     ) {
-        if self.write_una {
+        if write_una {
             self.write_una();
         }
 
@@ -95,8 +105,25 @@ impl EdifactDocumentWriter {
         self.writer.add_component("UNOC");
         self.writer.add_component("3");
         self.writer.end_composite();
-        self.writer.add_element(sender);
-        self.writer.add_element(recipient);
+        // Sender: composite if qualifier present, simple element otherwise
+        if let Some(q) = sender_qualifier {
+            self.writer.begin_composite();
+            self.writer.add_component(sender_id);
+            self.writer.add_component(q);
+            self.writer.end_composite();
+        } else {
+            self.writer.add_element(sender_id);
+        }
+        // Recipient: same logic
+        if let Some(q) = recipient_qualifier {
+            self.writer.begin_composite();
+            self.writer.add_component(recipient_id);
+            self.writer.add_component(q);
+            self.writer.end_composite();
+        } else {
+            self.writer.add_element(recipient_id);
+        }
+        // Date/time composite
         self.writer.begin_composite();
         self.writer.add_component(date);
         self.writer.add_component(time);
@@ -205,7 +232,9 @@ mod tests {
     #[test]
     fn test_document_writer_minimal_interchange() {
         let mut w = EdifactDocumentWriter::new();
-        w.begin_interchange("SENDER", "RECEIVER", "REF001", "251217", "1229");
+        w.begin_interchange(
+            "SENDER", None, "RECEIVER", None, "REF001", "251217", "1229", true,
+        );
         w.begin_message("MSG001", "UTILMD:D:11A:UN:S2.1");
         w.write_segment("BGM", &["E03", "DOC001"]);
         w.end_message();
@@ -223,7 +252,7 @@ mod tests {
     #[test]
     fn test_document_writer_segment_count() {
         let mut w = EdifactDocumentWriter::new();
-        w.begin_interchange("S", "R", "REF", "D", "T");
+        w.begin_interchange("S", None, "R", None, "REF", "D", "T", true);
         w.begin_message("M", "TYPE");
         w.write_segment("BGM", &["E03"]);
         w.write_segment("DTM", &["137:20250701:102"]);
@@ -239,7 +268,7 @@ mod tests {
     #[test]
     fn test_document_writer_multi_message() {
         let mut w = EdifactDocumentWriter::new();
-        w.begin_interchange("S", "R", "REF", "D", "T");
+        w.begin_interchange("S", None, "R", None, "REF", "D", "T", true);
 
         w.begin_message("M1", "TYPE");
         w.write_segment("BGM", &["E03"]);
@@ -258,7 +287,7 @@ mod tests {
     #[test]
     fn test_document_writer_composite_segments() {
         let mut w = EdifactDocumentWriter::new();
-        w.begin_interchange("S", "R", "REF", "D", "T");
+        w.begin_interchange("S", None, "R", None, "REF", "D", "T", true);
         w.begin_message("M", "TYPE");
         w.write_segment_with_composites("DTM", &[&["137", "202507010000", "303"]]);
         w.end_message();
@@ -270,8 +299,8 @@ mod tests {
 
     #[test]
     fn test_document_writer_without_una() {
-        let mut w = EdifactDocumentWriter::with_delimiters(EdifactDelimiters::default(), false);
-        w.begin_interchange("S", "R", "REF", "D", "T");
+        let mut w = EdifactDocumentWriter::new();
+        w.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         w.begin_message("M", "TYPE");
         w.end_message();
         w.end_interchange();
@@ -283,12 +312,37 @@ mod tests {
     #[test]
     fn test_document_writer_into_bytes() {
         let mut w = EdifactDocumentWriter::new();
-        w.begin_interchange("S", "R", "REF", "D", "T");
+        w.begin_interchange("S", None, "R", None, "REF", "D", "T", true);
         w.begin_message("M", "TYPE");
         w.end_message();
         w.end_interchange();
 
         let bytes = w.into_bytes();
         assert!(!bytes.is_empty());
+    }
+
+    #[test]
+    fn test_document_writer_with_qualifiers() {
+        let mut w = EdifactDocumentWriter::new();
+        w.begin_interchange(
+            "9900123000002",
+            Some("500"),
+            "9900456000001",
+            Some("500"),
+            "REF001",
+            "251217",
+            "1229",
+            true,
+        );
+        w.begin_message("MSG001", "UTILMD:D:11A:UN:S2.1");
+        w.end_message();
+        w.end_interchange();
+
+        let output = w.output();
+        assert!(
+            output.contains("UNB+UNOC:3+9900123000002:500+9900456000001:500+251217:1229+REF001'"),
+            "UNB should have composites with qualifiers, got: {}",
+            output
+        );
     }
 }
