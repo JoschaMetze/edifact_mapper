@@ -5,7 +5,7 @@ title: "Coordinator Integration & Roundtrip Tests"
 depends_on: [missing-entity-mappers/E01, missing-entity-mappers/E02]
 estimated_tasks: 3
 crate: automapper-core
-status: in_progress
+status: complete
 ---
 
 # Epic 3: Coordinator Integration & Roundtrip Tests
@@ -551,3 +551,17 @@ Update the "Simplified ordering for generate()" section in `docs/mig-segment-ord
 git add crates/automapper-core/tests/roundtrip_bo4e_test.rs docs/mig-segment-ordering.md
 git commit -m "test(automapper-core): extend roundtrip tests for all 15 entity types"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 157 |
+| Passed | 157 |
+| Failed | 0 |
+| Skipped | 4 (doc-tests ignored) |
+
+Files tested:
+- crates/automapper-core/src/utilmd_coordinator.rs
+- crates/automapper-core/tests/roundtrip_bo4e_test.rs
+- docs/mig-segment-ordering.md
