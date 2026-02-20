@@ -2,7 +2,7 @@
 //! Antwort auf Beendigung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55241: Antwort auf Beendigung
 /// Kommunikation: LF an NB (VNB)

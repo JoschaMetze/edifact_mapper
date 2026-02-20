@@ -19,6 +19,7 @@ pub mod zeitscheibe;
 pub mod bilanzierung;
 pub mod lokationszuordnung;
 pub mod produktpaket;
+pub mod seq_groups;
 
 pub use geschaeftspartner::GeschaeftspartnerMapper;
 pub use mabis_zaehlpunkt::MabisZaehlpunktMapper;
@@ -36,3 +37,4 @@ pub use zeitscheibe::ZeitscheibeMapper;
 pub use bilanzierung::BilanzierungMapper;
 pub use lokationszuordnung::LokationszuordnungMapper;
 pub use produktpaket::ProduktpaketMapper;
+pub use seq_groups::SeqGroupMapper;

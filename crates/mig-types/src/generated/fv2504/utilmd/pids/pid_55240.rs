@@ -2,7 +2,7 @@
 //! Beendigung der Zuordnung zur MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55240: Beendigung der Zuordnung zur MaLo
 /// Kommunikation: NB (VNB)an LF

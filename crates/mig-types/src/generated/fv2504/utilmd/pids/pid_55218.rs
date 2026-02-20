@@ -2,7 +2,7 @@
 //! Abr.-Daten NNA
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55218: Abr.-Daten NNA
 /// Kommunikation: NB an LF NBA an NBN

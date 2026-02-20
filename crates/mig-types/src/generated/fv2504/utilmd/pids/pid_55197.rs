@@ -2,7 +2,7 @@
 //! Aktivierung ZP tägliche AAÜZ
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55197: Aktivierung ZP tägliche AAÜZ
 /// Kommunikation: NB (ANB) an ÜNB

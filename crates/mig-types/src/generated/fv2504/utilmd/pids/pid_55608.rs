@@ -2,7 +2,7 @@
 //! Bestätigung Zuordnung des LF zur erz. MaLo/ Tranche
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55608: Bestätigung Zuordnung des LF zur erz. MaLo/ Tranche
 /// Kommunikation: LF an NB

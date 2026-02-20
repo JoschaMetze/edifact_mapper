@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Abr.-Daten NNA
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55220: Rückmeldung/Anfrage Abr.-Daten NNA
 /// Kommunikation: LF an NB

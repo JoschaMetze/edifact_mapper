@@ -2,7 +2,7 @@
 //! Abr.-Daten BK-Abr. verb. Malo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55126: Abr.-Daten BK-Abr. verb. Malo
 /// Kommunikation: NB an LF NBA an NBN

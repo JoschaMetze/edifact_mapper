@@ -2,7 +2,7 @@
 //! Lokationsbündelstruktur und DB
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55690: Lokationsbündelstruktur und DB
 /// Kommunikation: NBA an NBN

@@ -2,7 +2,7 @@
 //! Daten auf individuelle Bestellung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55553: Daten auf individuelle Bestellung
 /// Kommunikation: MSB an NB / LF / MSB

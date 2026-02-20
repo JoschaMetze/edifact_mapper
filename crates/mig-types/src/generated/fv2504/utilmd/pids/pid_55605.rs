@@ -2,7 +2,7 @@
 //! Ablehnung Anmeldung neue erz. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55605: Ablehnung Anmeldung neue erz. MaLo
 /// Kommunikation: NB an LF

@@ -2,7 +2,7 @@
 //! Clearingliste DZR
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55069: Clearingliste DZR
 /// Kommunikation: BIKO an NB/ ÜNB

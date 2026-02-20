@@ -2,7 +2,7 @@
 //! Antwort auf Anmeldung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55239: Antwort auf Anmeldung
 /// Kommunikation: NB (VNB)an NB (LPB)

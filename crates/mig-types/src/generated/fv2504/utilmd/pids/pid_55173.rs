@@ -2,7 +2,7 @@
 //! Änderung der Lokationsbündelstruktur
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55173: Änderung der Lokationsbündelstruktur
 /// Kommunikation: NB an MSB

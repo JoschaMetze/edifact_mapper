@@ -2,7 +2,7 @@
 //! Ablehnung Kündigung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55018: Ablehnung Kündigung
 /// Kommunikation: LFA an LFN

@@ -2,7 +2,7 @@
 //! Lieferanten-clearingliste
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55065: Lieferanten-clearingliste
 /// Kommunikation: NB an LF ÜNB an LF

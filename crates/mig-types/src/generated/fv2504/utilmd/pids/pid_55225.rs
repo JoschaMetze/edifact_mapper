@@ -2,7 +2,7 @@
 //! Änderung Blindabr.-Daten der NeLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55225: Änderung Blindabr.-Daten der NeLo
 /// Kommunikation: NB an LF NBA an NBN

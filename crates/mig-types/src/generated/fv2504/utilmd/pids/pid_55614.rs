@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Abr.-Daten BK-Abr. verb. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55614: Rückmeldung/Anfrage Abr.-Daten BK-Abr. verb. MaLo
 /// Kommunikation: ÜNB an NB

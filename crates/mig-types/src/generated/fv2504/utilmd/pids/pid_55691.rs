@@ -2,7 +2,7 @@
 //! Änderung Paket-ID der Malo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55691: Änderung Paket-ID der Malo
 /// Kommunikation: NBA an LF/ MSB / NBN / ÜNB

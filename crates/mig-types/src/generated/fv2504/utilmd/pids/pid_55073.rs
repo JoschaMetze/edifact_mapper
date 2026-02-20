@@ -2,7 +2,7 @@
 //! Übermittlung der Profildefinitionen
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55073: Übermittlung der Profildefinitionen
 /// Kommunikation: NB an LF/ MSB

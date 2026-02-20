@@ -2,7 +2,7 @@
 //! Änderung Daten der MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55660: Änderung Daten der MaLo
 /// Kommunikation: MSB an weiteren MSB

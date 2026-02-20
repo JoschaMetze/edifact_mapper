@@ -2,7 +2,7 @@
 //! Beendigung der Zuordnung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55611: Beendigung der Zuordnung
 /// Kommunikation: NB an MSB / MSBZ

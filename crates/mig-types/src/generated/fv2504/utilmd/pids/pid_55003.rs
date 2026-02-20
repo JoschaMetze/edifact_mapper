@@ -2,7 +2,7 @@
 //! Ablehnung Anmeldung verb. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55003: Ablehnung Anmeldung verb. MaLo
 /// Kommunikation: NB an LF

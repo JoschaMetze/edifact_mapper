@@ -2,7 +2,7 @@
 //! Anfrage nach Stornierung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55022: Anfrage nach Stornierung
 /// Kommunikation: Beteiligte aus Ursprungs-nachricht

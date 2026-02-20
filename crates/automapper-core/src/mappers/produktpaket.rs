@@ -3,7 +3,7 @@
 //! Handles SEQ+Z79 group and PIA segments for product package data.
 
 use bo4e_extensions::{Produktpaket, ProduktpaketEdifact, WithValidity};
-use edifact_types::RawSegment;
+use edifact_types::{EdifactDelimiters, RawSegment};
 
 use crate::context::TransactionContext;
 use crate::traits::{Builder, SegmentHandler};
@@ -22,6 +22,7 @@ pub struct ProduktpaketMapper {
     has_data: bool,
     in_seq_z79: bool,
     items: Vec<WithValidity<Produktpaket, ProduktpaketEdifact>>,
+    delimiters: EdifactDelimiters,
 }
 
 impl ProduktpaketMapper {
@@ -32,7 +33,13 @@ impl ProduktpaketMapper {
             has_data: false,
             in_seq_z79: false,
             items: Vec::new(),
+            delimiters: EdifactDelimiters::default(),
         }
+    }
+
+    /// Set delimiters for raw segment serialization.
+    pub fn set_delimiters(&mut self, delimiters: EdifactDelimiters) {
+        self.delimiters = delimiters;
     }
 
     /// Finalizes the current item (if any) and pushes it to the items list.
@@ -64,9 +71,9 @@ impl SegmentHandler for ProduktpaketMapper {
         match segment.id {
             "SEQ" => {
                 let q = segment.get_element(0);
-                q == "Z79"
+                matches!(q, "Z79" | "ZH0") || self.in_seq_z79
             }
-            "PIA" => self.in_seq_z79,
+            "PIA" | "CCI" | "CAV" => self.in_seq_z79,
             _ => false,
         }
     }
@@ -75,10 +82,11 @@ impl SegmentHandler for ProduktpaketMapper {
         match segment.id {
             "SEQ" => {
                 let qualifier = segment.get_element(0);
-                if qualifier == "Z79" {
+                if matches!(qualifier, "Z79" | "ZH0") {
                     // Finalize previous item before starting new one
                     self.finalize_current();
                     self.in_seq_z79 = true;
+                    self.edifact.seq_qualifier = Some(qualifier.to_string());
                     // Extract produktpaket_id from SEQ element if present
                     let ref_val = segment.get_element(1);
                     if !ref_val.is_empty() {
@@ -93,15 +101,25 @@ impl SegmentHandler for ProduktpaketMapper {
                 if !self.in_seq_z79 {
                     return;
                 }
-                // PIA+5+name' -> product name
+                // PIA+5+name:typ' -> product name and type
                 let qualifier = segment.get_element(0);
                 if qualifier == "5" {
                     let name = segment.get_component(1, 0);
                     if !name.is_empty() {
                         self.edifact.produktpaket_name = Some(name.to_string());
+                        let raw = segment.to_raw_string(&self.delimiters);
+                        self.edifact.raw_pia = Some(raw);
                         self.has_data = true;
                     }
                 }
+            }
+            "CCI" | "CAV" => {
+                if !self.in_seq_z79 {
+                    return;
+                }
+                let raw = segment.to_raw_string(&self.delimiters);
+                self.edifact.raw_cci_cav.push(raw);
+                self.has_data = true;
             }
             _ => {}
         }

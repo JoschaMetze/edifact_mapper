@@ -2,7 +2,7 @@
 //! Deaktivierung ZP monatliche AAÜZ
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55206: Deaktivierung ZP monatliche AAÜZ
 /// Kommunikation: NB (ANB) an BIKO

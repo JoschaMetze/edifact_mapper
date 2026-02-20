@@ -2,7 +2,7 @@
 //! Ablehnung Anmeldung erz. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55080: Ablehnung Anmeldung erz. MaLo
 /// Kommunikation: NB an LF

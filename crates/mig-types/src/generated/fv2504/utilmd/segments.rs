@@ -26,12 +26,13 @@ pub struct SegCav {
     pub cc889: CompositeC889,
 }
 
-/// CCI segment — Dieses Segment wird zur Angabe des Bilanzkreises benutzt. Hier muss der vom BDEW vergebene EIC-Code verwendet werden. Es wird der Bilanzkreis bzw. das Konto angegeben, auf dem die Bilanzierung durchgeführt wird.
+/// CCI segment —
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SegCci {
     pub d7059: D7059Qualifier,
+    pub d4051: D4051Qualifier,
     pub cc502: Option<CompositeC502>,
-    pub cc240: CompositeC240,
+    pub cc240: Option<CompositeC240>,
 }
 
 /// COM segment — Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient.
@@ -76,11 +77,18 @@ pub struct SegLoc {
     pub cc517: CompositeC517,
 }
 
-/// NAD segment — DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben.
+/// NAD segment — In diesem Segment wird die Korrespondenzanschrift des Endverbrauchers/Kunden übertragen. Falls ein gesetzlicher Vertreter und/oder Bevollmächtigter eingesetzt ist, der dann auch in den zusätzlichen Namensangaben genannt ist, kann hier dessen Korrespondenzanschrift angegeben werden. Hierdurch ist gewährleistet, dass die Information über die Korrespondenzanschrift des Kunden bzw. des gesetzlichen Vertreters und/oder Bevollmächtigten übermittelt werden kann, da diese nicht mit der Marktlokationsadresse übereinstimmen muss. Weiterführende Informationen zur Anwendung der Datenelementgruppen C059 sind aus den Allgemeinen Festlegungen zu entnehmen.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SegNad {
     pub d3035: D3035Qualifier,
-    pub cc082: CompositeC082,
+    pub d3164: String,
+    pub d3251: Option<String>,
+    pub d3207: String,
+    pub cc082: Option<CompositeC082>,
+    pub cc058: Option<CompositeC058>,
+    pub cc080: CompositeC080,
+    pub cc059: CompositeC059,
+    pub cc819: Option<CompositeC819>,
 }
 
 /// PIA segment — Die Produkt-Codes sind in der Codeliste der Konfigurationen beschrieben
@@ -102,18 +110,21 @@ pub struct SegRff {
     pub cc506: CompositeC506,
 }
 
-/// SEQ segment — Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Meldepunkt zuzuordnen. Die SG8 Daten des MaBiS-ZP eines Vorgangs enthält alle Informationen, die sich auf eine einzelne MaBiS-ZP in einem Vorgang beziehen.
+/// SEQ segment — Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Die Segmentgruppe dient dazu, alle Lokationsbündelstrukturen, welche sich hinter einer Netzlokation befinden, anzugeben.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SegSeq {
     pub d1229: D1229Qualifier,
+    pub cc286: Option<CompositeC286>,
 }
 
-/// STS segment — DE9013 Diesem Datenelement werden Codes aus den Codelisten des Dokumentes „Entscheidungsbaum-Diagramme“ verwendet. Jeder Entscheidungsbaum gilt als Codeliste. Die relevante Codeliste wird im DE1131 angegeben. Somit sind nur die Codes in einem Anwendungsfall möglich, welche in dem zugehörigen Entscheidungsbaum aufgeführt sind.  DE1131 des Segments ist genutzt und enthält die Codes der Entscheidungsbaumdiagramme bzw. die Codes der im Dokument Entscheidungsbaum-Diagramme enthaltenen Code-Tabellen, die in der Nachricht verwendet werden.
+/// STS segment — Zur Angabe eines Status. Dieses Segment wird benutzt um den Transaktionsgrund mitzuteilen. Der Transaktionsgrund beschreibt den Geschäftsvorfall zur Kategorie genauer. Dies dient der Plausibilisierung und Prozesssteuerung. Die Erläuterung zu den einzelnen Transaktionsgründen ist im DE9013 beschrieben.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SegSts {
     pub cc601: CompositeC601,
     pub cc555: Option<CompositeC555>,
-    pub cc556: CompositeC556,
+    pub cc556_1: CompositeC556,
+    pub cc556_2: Option<CompositeC556>,
+    pub cc556_3: Option<CompositeC556>,
 }
 
 /// UNA segment — Dieses Segment wird benutzt, um den Empfänger der Übertragungsdatei darüber zu unterrichten, dass andere Trennzeichen als die Standardtrennzeichen benutzt werden. Bei Anwendung der Standardtrennzeichen braucht das UNA-Segment nicht gesendet werden. Wenn es gesendet wird, muss es unmittelbar dem UNB-Segment vorangehen und die sechs vom Absender gewählten Trennzeichen enthalten. Unabhängig davon, ob alle Trennzeichen geändert wurden, muss jedes Datenelement innerhalb dieses Segmentes gefüllt werden, d. h. wenn Standardzeichen mit nutzerdefinierten Zeichen gemischt verwendet werden, müssen alle verwendeten Trennzeichen angegeben werden. Die Angabe der Trennzeichen im UNA-Segment erfolgt ohne Verwendung von Trennzeichen zwischen den Datenelementen.

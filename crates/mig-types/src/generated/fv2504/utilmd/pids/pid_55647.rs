@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Daten der Tranche
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55647: Rückmeldung/Anfrage Daten der Tranche
 /// Kommunikation: NB an MSB

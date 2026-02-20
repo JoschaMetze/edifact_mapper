@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Daten der TR
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55635: Rückmeldung/Anfrage Daten der TR
 /// Kommunikation: MSB an NB

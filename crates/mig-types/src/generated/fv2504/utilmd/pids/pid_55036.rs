@@ -2,7 +2,7 @@
 //! Existierende Zuordnung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55036: Existierende Zuordnung
 /// Kommunikation: NB an LF

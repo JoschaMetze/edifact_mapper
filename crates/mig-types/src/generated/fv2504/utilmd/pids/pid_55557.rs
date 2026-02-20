@@ -2,7 +2,7 @@
 //! Änderung MSB-Abr.-Daten der MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55557: Änderung MSB-Abr.-Daten der MaLo
 /// Kommunikation: MSB an NB

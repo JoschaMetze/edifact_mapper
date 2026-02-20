@@ -2,7 +2,7 @@
 //! Stammdaten BK-Treue
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55670: Stammdaten BK-Treue
 /// Kommunikation: NB an ÜNB

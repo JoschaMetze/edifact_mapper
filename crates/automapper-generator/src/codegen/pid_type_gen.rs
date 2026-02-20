@@ -49,13 +49,15 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
 
         if parts[0].starts_with("SG") {
             let group_id = parts[0].to_string();
-            let entry = group_map.entry(group_id.clone()).or_insert_with(|| PidGroupInfo {
-                group_id: group_id.clone(),
-                qualifier_values: Vec::new(),
-                ahb_status: field.ahb_status.clone(),
-                child_groups: Vec::new(),
-                segments: BTreeSet::new(),
-            });
+            let entry = group_map
+                .entry(group_id.clone())
+                .or_insert_with(|| PidGroupInfo {
+                    group_id: group_id.clone(),
+                    qualifier_values: Vec::new(),
+                    ahb_status: field.ahb_status.clone(),
+                    child_groups: Vec::new(),
+                    segments: BTreeSet::new(),
+                });
 
             if parts.len() > 1 && !parts[1].starts_with("SG") {
                 entry.segments.insert(parts[1].to_string());
@@ -77,8 +79,10 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                         segments: child_segments,
                     });
                 } else if parts.len() > 2 && !parts[2].starts_with("SG") {
-                    if let Some(child) =
-                        entry.child_groups.iter_mut().find(|c| c.group_id == child_id)
+                    if let Some(child) = entry
+                        .child_groups
+                        .iter_mut()
+                        .find(|c| c.group_id == child_id)
                     {
                         child.segments.insert(parts[2].to_string());
                     }
@@ -180,11 +184,7 @@ pub fn analyze_pid_structure_with_qualifiers(
                         let codes: Vec<String> = field
                             .codes
                             .iter()
-                            .filter(|c| {
-                                c.ahb_status
-                                    .as_deref()
-                                    .is_some_and(|s| s.contains('X'))
-                            })
+                            .filter(|c| c.ahb_status.as_deref().is_some_and(|s| s.contains('X')))
                             .map(|c| c.value.clone())
                             .collect();
 
@@ -203,10 +203,7 @@ pub fn analyze_pid_structure_with_qualifiers(
 
                 // Check for group-level field (path is just "SG4/SG8" — marks occurrence start)
                 if parts.len() == 2 {
-                    tracker.mark_child_occurrence_boundary(
-                        &child_id,
-                        field.ahb_status.clone(),
-                    );
+                    tracker.mark_child_occurrence_boundary(&child_id, field.ahb_status.clone());
                     continue;
                 }
 
@@ -232,7 +229,10 @@ pub fn analyze_pid_structure_with_qualifiers(
         pid_id: pid.id.clone(),
         beschreibung: pid.beschreibung.clone(),
         kommunikation_von: pid.kommunikation_von.clone(),
-        groups: group_map.into_values().map(|t| t.into_group_info()).collect(),
+        groups: group_map
+            .into_values()
+            .map(|t| t.into_group_info())
+            .collect(),
         top_level_segments: top_level_segments.into_iter().collect(),
     }
 }
@@ -333,9 +333,7 @@ impl GroupOccurrenceTracker {
     fn add_child_nested_group(&mut self, child_id: &str, nested_id: &str) {
         let tracker = self.ensure_child(child_id);
         if let Some(occ) = tracker.occurrences.last_mut() {
-            occ.nested_groups
-                .entry(nested_id.to_string())
-                .or_default();
+            occ.nested_groups.entry(nested_id.to_string()).or_default();
         }
     }
 
@@ -357,7 +355,12 @@ impl GroupOccurrenceTracker {
                 // Single occurrence — merge into one PidGroupInfo
                 let occ = tracker.occurrences.into_iter().next();
                 let (qualifier_values, ahb_status, segments, nested) = match occ {
-                    Some(o) => (o.qualifier_values, o.ahb_status, o.segments, o.nested_groups),
+                    Some(o) => (
+                        o.qualifier_values,
+                        o.ahb_status,
+                        o.segments,
+                        o.nested_groups,
+                    ),
                     None => (Vec::new(), String::new(), BTreeSet::new(), BTreeMap::new()),
                 };
 
@@ -425,11 +428,7 @@ fn sanitize_doc(s: &str) -> String {
 }
 
 /// Generate a Rust struct source for a specific PID that composes shared segment group types.
-pub fn generate_pid_struct(
-    pid: &Pruefidentifikator,
-    mig: &MigSchema,
-    ahb: &AhbSchema,
-) -> String {
+pub fn generate_pid_struct(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbSchema) -> String {
     let structure = analyze_pid_structure_with_qualifiers(pid, mig, ahb);
     let mut out = String::new();
 
@@ -485,10 +484,7 @@ fn make_group_field_name(group: &PidGroupInfo) -> String {
         format!(
             "{}_{}",
             group.group_id.to_lowercase(),
-            group
-                .qualifier_values
-                .join("_")
-                .to_lowercase()
+            group.qualifier_values.join("_").to_lowercase()
         )
     }
 }
@@ -535,7 +531,7 @@ pub fn generate_pid_types(
             "//! Auto-generated PID {} types.\n\
              //! {}\n\
              //! Do not edit manually.\n\n\
-             use serde::{{Serialize, Deserialize}};\n\n\
+             use serde::{{Deserialize, Serialize}};\n\n\
              {source}",
             pid.id,
             sanitize_doc(&pid.beschreibung)
@@ -554,6 +550,16 @@ pub fn generate_pid_types(
         mod_rs.push_str(&format!("pub mod {module};\n"));
     }
     std::fs::write(pids_dir.join("mod.rs"), mod_rs)?;
+
+    // Ensure the parent mod.rs includes `pub mod pids;`
+    let parent_mod_path = output_dir.join(&fv_lower).join(&msg_lower).join("mod.rs");
+    if parent_mod_path.exists() {
+        let parent_mod = std::fs::read_to_string(&parent_mod_path)?;
+        if !parent_mod.contains("pub mod pids;") {
+            let updated = format!("{parent_mod}pub mod pids;\n");
+            std::fs::write(&parent_mod_path, updated)?;
+        }
+    }
 
     Ok(())
 }

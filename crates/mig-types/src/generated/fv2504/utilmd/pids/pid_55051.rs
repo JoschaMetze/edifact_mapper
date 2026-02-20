@@ -2,7 +2,7 @@
 //! Ende MSB
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55051: Ende MSB
 /// Kommunikation: MSB an NB

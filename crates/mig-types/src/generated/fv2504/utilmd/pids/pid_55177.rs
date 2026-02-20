@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Lokationsbündelstruktur
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55177: Rückmeldung/Anfrage Lokationsbündelstruktur
 /// Kommunikation: MSB an NB

@@ -12,6 +12,12 @@ pub struct MarktlokationEdifact {
     pub datenqualitaet: Option<DataQuality>,
     pub referenz_netzlokation: Option<String>,
     pub vorgelagerte_lokations_ids: Option<Vec<LokationsTypZuordnung>>,
+    /// Raw NAD+DP/Z63 segment strings for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub raw_nad_address: Vec<String>,
+    /// Raw LOC+Z16 segment string for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub raw_loc: Option<String>,
 }
 
 /// EDIFACT companion for Messlokation.
@@ -21,6 +27,9 @@ pub struct MesslokationEdifact {
     pub datenqualitaet: Option<DataQuality>,
     pub referenz_netzlokation: Option<String>,
     pub vorgelagerte_lokations_ids: Option<Vec<LokationsTypZuordnung>>,
+    /// Raw LOC+Z17 segment string for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub raw_loc: Option<String>,
 }
 
 /// EDIFACT companion for Zaehler.
@@ -31,12 +40,27 @@ pub struct ZaehlerEdifact {
     pub produktpaket_id: Option<String>,
     pub is_smartmeter_gateway: Option<bool>,
     pub smartmeter_gateway_zuordnung: Option<String>,
+    /// SEQ sub-ID (e.g. the "1" in SEQ+Z03+1) for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub seq_sub_id: Option<String>,
+    /// Raw CCI/CAV segments within SEQ+Z03 for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub raw_cci_cav: Vec<String>,
+    /// Raw QTY segments within SEQ+Z03 for roundtrip fidelity (Z33, Z34, 31, etc.).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub raw_qty: Vec<String>,
 }
 
 /// EDIFACT companion for Geschaeftspartner.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct GeschaeftspartnerEdifact {
     pub nad_qualifier: Option<String>,
+    /// Raw NAD segment string for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub raw_nad: Option<String>,
+    /// Raw RFF segments following this NAD (e.g. RFF+Z18:ref, RFF+Z01:ref).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub raw_rffs: Vec<String>,
 }
 
 /// EDIFACT companion for Vertrag.
@@ -53,6 +77,9 @@ pub struct NetzlokationEdifact {
     pub datenqualitaet: Option<DataQuality>,
     pub referenz_marktlokation: Option<String>,
     pub zugeordnete_messlokationen: Option<Vec<LokationsTypZuordnung>>,
+    /// Raw LOC+Z18 segment string for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub raw_loc: Option<String>,
 }
 
 /// EDIFACT companion for TechnischeRessource.
@@ -63,6 +90,9 @@ pub struct TechnischeRessourceEdifact {
     pub referenz_marktlokation: Option<String>,
     pub referenz_steuerbare_ressource: Option<String>,
     pub referenz_messlokation: Option<String>,
+    /// Raw LOC+Z20 segment string for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub raw_loc: Option<String>,
 }
 
 /// EDIFACT companion for SteuerbareRessource.
@@ -71,18 +101,27 @@ pub struct SteuerbareRessourceEdifact {
     pub lokationsbuendel_objektcode: Option<String>,
     pub datenqualitaet: Option<DataQuality>,
     pub produktpaket_id: Option<String>,
+    /// Raw LOC+Z19 segment string for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub raw_loc: Option<String>,
 }
 
 /// EDIFACT companion for Tranche (placeholder).
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct TrancheEdifact {
     pub lokationsbuendel_objektcode: Option<String>,
+    /// Raw LOC+Z21 segment string for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub raw_loc: Option<String>,
 }
 
 /// EDIFACT companion for MabisZaehlpunkt (placeholder).
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct MabisZaehlpunktEdifact {
     pub zaehlpunkt_typ: Option<String>,
+    /// Raw LOC+Z15 segment string for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub raw_loc: Option<String>,
 }
 
 /// EDIFACT companion for Bilanzierung.
@@ -90,18 +129,45 @@ pub struct MabisZaehlpunktEdifact {
 pub struct BilanzierungEdifact {
     pub temperatur_arbeit: Option<f64>,
     pub jahresverbrauchsprognose: Option<f64>,
+    /// SEQ qualifier used for this Bilanzierung (Z98 or Z81).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub seq_qualifier: Option<String>,
+    /// SEQ sub-ID (e.g. the "1" in SEQ+Z81+1) for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub seq_sub_id: Option<String>,
+    /// Raw QTY segments for roundtrip fidelity (preserves unit codes like :Z16).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub raw_qty: Vec<String>,
+    /// All raw segments (CCI, CAV, QTY, RFF) in original order for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub raw_segments: Vec<String>,
 }
 
 /// EDIFACT companion for Produktpaket.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ProduktpaketEdifact {
     pub produktpaket_name: Option<String>,
+    /// SEQ qualifier used for this Produktpaket (Z79 or ZH0).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub seq_qualifier: Option<String>,
+    /// Raw PIA segment for roundtrip fidelity (e.g. "PIA+5+9991000002082:Z11").
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub raw_pia: Option<String>,
+    /// Raw CCI/CAV segments in Z79/ZH0 group for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub raw_cci_cav: Vec<String>,
 }
 
 /// EDIFACT companion for Lokationszuordnung.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct LokationszuordnungEdifact {
     pub zuordnungstyp: Option<String>,
+    /// SEQ sub-ID (e.g. "1" in SEQ+Z78+1) for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub seq_sub_id: Option<String>,
+    /// Raw RFF segments inside the Z78 group for roundtrip fidelity.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub raw_rffs: Vec<String>,
 }
 
 /// A location type assignment (used in vorgelagerte_lokations_ids).

@@ -2,7 +2,7 @@
 //! Bestätigung Anmeldung MSB
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55043: Bestätigung Anmeldung MSB
 /// Kommunikation: NB an MSB

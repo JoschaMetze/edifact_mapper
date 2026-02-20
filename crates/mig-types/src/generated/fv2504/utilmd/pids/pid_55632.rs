@@ -2,7 +2,7 @@
 //! Änderung Daten der MeLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55632: Änderung Daten der MeLo
 /// Kommunikation: NB an MSB

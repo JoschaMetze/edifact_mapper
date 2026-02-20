@@ -2,7 +2,7 @@
 //! Anmeldung verb. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55001: Anmeldung verb. MaLo
 /// Kommunikation: LF an NB

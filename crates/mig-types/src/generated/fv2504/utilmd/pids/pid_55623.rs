@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Daten der TR
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55623: Rückmeldung/Anfrage Daten der TR
 /// Kommunikation: LF an NB

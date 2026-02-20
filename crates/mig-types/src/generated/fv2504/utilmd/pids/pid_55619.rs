@@ -2,7 +2,7 @@
 //! Änderung Daten der Tranche
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55619: Änderung Daten der Tranche
 /// Kommunikation: NB an LF NBA an NBN

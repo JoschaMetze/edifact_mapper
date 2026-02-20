@@ -18,7 +18,11 @@ pub struct CompositeC056 {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CompositeC058 {
-    pub d3124: Option<String>,
+    pub d3124_1: String,
+    pub d3124_2: Option<String>,
+    pub d3124_3: Option<String>,
+    pub d3124_4: Option<String>,
+    pub d3124_5: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -93,7 +97,12 @@ pub struct CompositeC212 {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CompositeC240 {
+    /// Maßeinheit
     pub d7037: D7037Qualifier,
+    pub d1131: Option<D1131Qualifier>,
+    pub d3055: Option<D3055Qualifier>,
+    /// Preisangabe für Singulär genutztes Betriebsmittel je Menge aus QTY+Z33 (Menge der Singulär genutzen Betriebsmittel) der selben SG9
+    pub d7036: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -109,7 +118,8 @@ pub struct CompositeC502 {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CompositeC506 {
     pub d1153: D1153Qualifier,
-    pub d1154: D1154Qualifier,
+    pub d1154: Option<D1154Qualifier>,
+    pub d1156: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -122,6 +132,9 @@ pub struct CompositeC507 {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CompositeC517 {
     pub d3225: String,
+    pub d1131: Option<D1131Qualifier>,
+    pub d3055: Option<D3055Qualifier>,
+    pub d3224: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -139,6 +152,8 @@ pub struct CompositeC555 {
 pub struct CompositeC556 {
     pub d9013: D9013Qualifier,
     pub d1131: D1131Qualifier,
+    pub d3055: Option<D3055Qualifier>,
+    pub d9012: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -154,9 +169,10 @@ pub struct CompositeC819 {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CompositeC889 {
     pub d7111: D7111Qualifier,
-    pub d1131: Option<D1131Qualifier>,
+    pub d1131: D1131Qualifier,
     pub d3055: Option<D3055Qualifier>,
-    pub d7110: D7110Qualifier,
+    pub d7110_1: Option<D7110Qualifier>,
+    pub d7110_2: Option<D7110Qualifier>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

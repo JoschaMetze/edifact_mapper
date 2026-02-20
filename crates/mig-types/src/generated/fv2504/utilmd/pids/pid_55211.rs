@@ -2,7 +2,7 @@
 //! Weiterleitung Aktivierung ZP
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55211: Weiterleitung Aktivierung ZP
 /// Kommunikation: BIKO an BKV (des anfNB)

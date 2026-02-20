@@ -2,7 +2,7 @@
 //! Bestätigung Anfrage Stornierung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55023: Bestätigung Anfrage Stornierung
 /// Kommunikation: zurück an den Absender

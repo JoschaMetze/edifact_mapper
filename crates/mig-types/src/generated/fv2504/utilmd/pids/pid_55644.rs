@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Daten der NeLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55644: Rückmeldung/Anfrage Daten der NeLo
 /// Kommunikation: NB an MSB

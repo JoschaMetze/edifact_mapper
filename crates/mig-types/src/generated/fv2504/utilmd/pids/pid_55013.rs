@@ -2,7 +2,7 @@
 //! Anmeldung / Zuordnung EOG
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55013: Anmeldung / Zuordnung EOG
 /// Kommunikation: NB an LF

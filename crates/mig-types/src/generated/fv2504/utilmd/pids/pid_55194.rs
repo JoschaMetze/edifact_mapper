@@ -2,7 +2,7 @@
 //! Antwort auf GDA (Strom an Gas)
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55194: Antwort auf GDA (Strom an Gas)
 /// Kommunikation: NB an MSB

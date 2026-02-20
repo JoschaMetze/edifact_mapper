@@ -2,7 +2,7 @@
 //! Antwort auf Abmeldung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55243: Antwort auf Abmeldung
 /// Kommunikation: NB (VNB)an NB (LPB)

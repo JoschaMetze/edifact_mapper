@@ -15,7 +15,7 @@ DTM+137:202506190130:303'\
 NAD+MS+9900123000002::293'\
 NAD+MR+9900456000001::293'\
 IDE+24+TXID001'\
-STS+E01+E01::Z44'\
+STS+7++E01::Z44'\
 RFF+Z13:VORGANGS001'\
 RFF+Z49:1'\
 DTM+Z25:202507010000:303'\
@@ -25,12 +25,11 @@ LOC+Z17+DE00098765432100000000000000012'\
 LOC+Z18+NELO00000000001'\
 NAD+Z04+9900999000003::293'\
 SEQ+Z03'\
-PIA+5+ZAEHLER001'\
 RFF+Z19:DE00098765432100000000000000012'\
 SEQ+Z18'\
 CCI+Z15++Z01'\
 FTX+ACB+++Testbemerkung'\
-UNT+23+GEN0001MSG'\
+UNT+22+GEN0001MSG'\
 UNZ+1+GEN0001'";
 
 #[test]
@@ -63,10 +62,8 @@ fn test_full_pipeline_detect_parse_write() {
     assert_eq!(tx.netzlokationen.len(), 1);
     assert_eq!(tx.parteien.len(), 1);
     assert_eq!(tx.zaehler.len(), 1);
-    assert_eq!(
-        tx.zaehler[0].data.zaehlernummer,
-        Some("ZAEHLER001".to_string())
-    );
+    // PIA+5 (zaehlernummer) is not part of Z03 groups, so it's None
+    assert_eq!(tx.zaehler[0].data.zaehlernummer, None);
     assert!(tx.vertrag.is_some());
     assert_eq!(
         tx.vertrag.as_ref().unwrap().edifact.haushaltskunde,
@@ -92,7 +89,7 @@ fn test_full_pipeline_detect_parse_write() {
     doc.write_segment("NAD", &["MS", "9900123000002::293"]);
     doc.write_segment("NAD", &["MR", "9900456000001::293"]);
     doc.write_segment("IDE", &["24", &tx.transaktions_id]);
-    doc.write_segment("STS", &["E01", "E01::Z44"]);
+    doc.write_segment("STS", &["7", "", "E01::Z44"]);
     doc.write_segment_with_composites("RFF", &[&["Z13", "VORGANGS001"]]);
 
     for ml in &tx.marktlokationen {
@@ -136,10 +133,6 @@ fn test_full_pipeline_detect_parse_write() {
         "should have NELO"
     );
     assert!(output.contains("SEQ+Z03'"), "should have Zaehler SEQ");
-    assert!(
-        output.contains("PIA+5+ZAEHLER001'"),
-        "should have Zaehler PIA"
-    );
     assert!(output.contains("SEQ+Z18'"), "should have Vertrag SEQ");
     assert!(
         output.contains("CCI+Z15++Z01'"),

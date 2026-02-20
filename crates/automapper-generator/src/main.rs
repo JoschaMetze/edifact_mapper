@@ -12,6 +12,48 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// Generate shared MIG types (enums, composites, segments, groups)
+    GenerateMigTypes {
+        /// Path to MIG XML file
+        #[arg(long)]
+        mig_path: PathBuf,
+
+        /// Output directory for generated files (e.g., crates/mig-types/src/generated)
+        #[arg(long)]
+        output_dir: PathBuf,
+
+        /// Format version (e.g., "FV2504")
+        #[arg(long)]
+        format_version: String,
+
+        /// EDIFACT message type (e.g., "UTILMD")
+        #[arg(long)]
+        message_type: String,
+    },
+
+    /// Generate per-PID composition types from AHB + MIG XML
+    GeneratePidTypes {
+        /// Path to MIG XML file
+        #[arg(long)]
+        mig_path: PathBuf,
+
+        /// Path to AHB XML file
+        #[arg(long)]
+        ahb_path: PathBuf,
+
+        /// Output directory for generated files (e.g., crates/mig-types/src/generated)
+        #[arg(long)]
+        output_dir: PathBuf,
+
+        /// Format version (e.g., "FV2504")
+        #[arg(long)]
+        format_version: String,
+
+        /// EDIFACT message type (e.g., "UTILMD")
+        #[arg(long)]
+        message_type: String,
+    },
+
     /// Generate mapper code from MIG XML schemas
     GenerateMappers {
         /// Path to MIG XML file
@@ -86,6 +128,17 @@ enum Commands {
     },
 }
 
+/// Infer energy variant (Strom/Gas) from a filename.
+fn infer_variant(filename: &str) -> Option<&'static str> {
+    if filename.contains("Strom") {
+        Some("Strom")
+    } else if filename.contains("Gas") {
+        Some("Gas")
+    } else {
+        None
+    }
+}
+
 fn main() {
     let cli = Cli::parse();
 
@@ -97,6 +150,66 @@ fn main() {
 
 fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
     match cli.command {
+        Commands::GenerateMigTypes {
+            mig_path,
+            output_dir,
+            format_version,
+            message_type,
+        } => {
+            let variant = infer_variant(mig_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
+            eprintln!(
+                "Generating MIG types for {} {} from {:?}",
+                message_type, format_version, mig_path
+            );
+            automapper_generator::codegen::mig_type_gen::generate_mig_types(
+                &mig_path,
+                &message_type,
+                variant,
+                &format_version,
+                &output_dir,
+            )?;
+            eprintln!("MIG types generated to {:?}", output_dir);
+            Ok(())
+        }
+        Commands::GeneratePidTypes {
+            mig_path,
+            ahb_path,
+            output_dir,
+            format_version,
+            message_type,
+        } => {
+            let mig_variant = infer_variant(mig_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
+            let ahb_variant = infer_variant(ahb_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
+            let variant = mig_variant.or(ahb_variant);
+            eprintln!(
+                "Generating PID types for {} {} from {:?} + {:?}",
+                message_type, format_version, mig_path, ahb_path
+            );
+            let mig = automapper_generator::parsing::mig_parser::parse_mig(
+                &mig_path,
+                &message_type,
+                variant,
+                &format_version,
+            )?;
+            let ahb = automapper_generator::parsing::ahb_parser::parse_ahb(
+                &ahb_path,
+                &message_type,
+                variant,
+                &format_version,
+            )?;
+            automapper_generator::codegen::pid_type_gen::generate_pid_types(
+                &mig,
+                &ahb,
+                &format_version,
+                &output_dir,
+            )?;
+            eprintln!(
+                "Generated {} PID types to {:?}",
+                ahb.workflows.len(),
+                output_dir
+            );
+            Ok(())
+        }
         Commands::GenerateMappers {
             mig_path,
             ahb_path,
@@ -133,14 +246,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             );
 
             // Parse AHB
-            let ahb_filename = ahb_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
-            let variant = if ahb_filename.contains("Strom") {
-                Some("Strom")
-            } else if ahb_filename.contains("Gas") {
-                Some("Gas")
-            } else {
-                None
-            };
+            let variant = infer_variant(ahb_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
 
             let ahb_schema = automapper_generator::parsing::ahb_parser::parse_ahb(
                 &ahb_path,

@@ -2,7 +2,7 @@
 //! Aktivierung ZP monatliche AAÜZ
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55209: Aktivierung ZP monatliche AAÜZ
 /// Kommunikation: NB (ANB) an BIKO

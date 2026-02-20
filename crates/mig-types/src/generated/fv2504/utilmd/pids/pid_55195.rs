@@ -2,7 +2,7 @@
 //! Bilanzierungs-gebiets-clearing-liste
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55195: Bilanzierungs-gebiets-clearing-liste
 /// Kommunikation: ÜNB an NB

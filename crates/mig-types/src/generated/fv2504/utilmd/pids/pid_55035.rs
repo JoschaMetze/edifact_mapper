@@ -2,7 +2,7 @@
 //! Antwort auf GDA verb. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55035: Antwort auf GDA verb. MaLo
 /// Kommunikation: NB an LF

@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Daten der MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55655: Rückmeldung/Anfrage Daten der MaLo
 /// Kommunikation: LF an MSB

@@ -2,7 +2,7 @@
 //! Antwort auf Aktivierung ZP
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55204: Antwort auf Aktivierung ZP
 /// Kommunikation: BIKO an NB (ANB)

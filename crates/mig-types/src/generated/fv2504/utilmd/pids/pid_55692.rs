@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Paket-ID der Malo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55692: Rückmeldung/Anfrage Paket-ID der Malo
 /// Kommunikation: LF/ MSB / ÜNB an NBA

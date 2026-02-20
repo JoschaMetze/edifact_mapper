@@ -2,7 +2,7 @@
 //! Ablehnung Ende MSB
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55053: Ablehnung Ende MSB
 /// Kommunikation: NB an MSB

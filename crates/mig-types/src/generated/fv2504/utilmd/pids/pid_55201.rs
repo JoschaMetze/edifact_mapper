@@ -2,7 +2,7 @@
 //! LF-AACL
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55201: LF-AACL
 /// Kommunikation: NB (ANB) an LF

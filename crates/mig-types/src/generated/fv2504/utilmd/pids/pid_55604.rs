@@ -2,7 +2,7 @@
 //! Ablehnung Anmeldung neue verb. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55604: Ablehnung Anmeldung neue verb. MaLo
 /// Kommunikation: NB an LF

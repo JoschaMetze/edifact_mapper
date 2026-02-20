@@ -2,7 +2,7 @@
 //! Ablehnung Anmeldung MSB
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55044: Ablehnung Anmeldung MSB
 /// Kommunikation: NB an MSB

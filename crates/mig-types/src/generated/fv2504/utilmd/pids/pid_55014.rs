@@ -2,7 +2,7 @@
 //! Bestätigung EOG Anmeldung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55014: Bestätigung EOG Anmeldung
 /// Kommunikation: LF an NB

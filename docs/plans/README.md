@@ -2,7 +2,7 @@
 
 ## Overview
 
-Full Rust port of the C# edifact_bo4e_automapper. Four features, 17 epics.
+Full Rust port of the C# edifact_bo4e_automapper. Five features, 20 epics.
 
 **Design Document:** [2026-02-18-rust-port-design.md](./2026-02-18-rust-port-design.md)
 
@@ -18,6 +18,7 @@ Full Rust port of the C# edifact_bo4e_automapper. Four features, 17 epics.
 | 2 | [validation](./validation-implementation/) | 3 | AHB condition parser, evaluator, validator | Feature 1 |
 | 3 | [generator](./generator-implementation/) | 3 | MIG/AHB XML parsing, Rust codegen, Claude CLI | Feature 1 |
 | 4 | [web-stack](./web-stack-implementation/) | 3 | Axum REST API, tonic gRPC, Leptos frontend | Feature 1 |
+| 5 | [missing-entity-mappers](./missing-entity-mappers/) | 3 | 7 remaining entity mappers/writers for complete roundtrip | Feature 1 |
 
 ## Dependency Graph
 

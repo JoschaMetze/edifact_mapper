@@ -2,7 +2,7 @@
 //! Aktivierung von ZP
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55062: Aktivierung von ZP
 /// Kommunikation: NB an BIKO/ LF/ NB/ ÜNB ÜNB an BIKO/ LF/ NB/ BKV BIKO an BKV/ NB/ ÜNB

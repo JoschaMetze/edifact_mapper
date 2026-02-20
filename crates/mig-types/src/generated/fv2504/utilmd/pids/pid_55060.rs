@@ -2,7 +2,7 @@
 //! Antwort auf GDA
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55060: Antwort auf GDA
 /// Kommunikation: NB an MSB

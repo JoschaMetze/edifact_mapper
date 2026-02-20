@@ -2,7 +2,7 @@
 //! Kündigung MSB
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55039: Kündigung MSB
 /// Kommunikation: MSBN an MSBA

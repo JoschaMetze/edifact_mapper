@@ -2,7 +2,7 @@
 //! Änderung Daten der Tranche
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55662: Änderung Daten der Tranche
 /// Kommunikation: MSB an weiteren MSB

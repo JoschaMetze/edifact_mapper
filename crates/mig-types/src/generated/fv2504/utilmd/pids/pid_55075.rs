@@ -2,7 +2,7 @@
 //! Stammdaten aufgrund einer Änderung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55075: Stammdaten aufgrund einer Änderung
 /// Kommunikation: NB an UBA

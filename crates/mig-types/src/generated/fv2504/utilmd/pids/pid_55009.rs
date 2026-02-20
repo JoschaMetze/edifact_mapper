@@ -2,7 +2,7 @@
 //! Ablehnung Abmeldung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55009: Ablehnung Abmeldung
 /// Kommunikation: LF an NB

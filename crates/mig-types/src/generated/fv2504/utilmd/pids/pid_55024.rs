@@ -2,7 +2,7 @@
 //! Ablehnung Anfrage Stornierung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55024: Ablehnung Anfrage Stornierung
 /// Kommunikation: zurück an den Absender

@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Daten der MeLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55648: Rückmeldung/Anfrage Daten der MeLo
 /// Kommunikation: NB an MSB

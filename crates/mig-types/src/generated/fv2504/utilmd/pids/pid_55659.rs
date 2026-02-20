@@ -2,7 +2,7 @@
 //! Änderung Daten der NeLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55659: Änderung Daten der NeLo
 /// Kommunikation: MSB an weiteren MSB

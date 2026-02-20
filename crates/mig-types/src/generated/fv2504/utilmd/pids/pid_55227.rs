@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Blindabr.-Daten der NeLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55227: Rückmeldung/Anfrage Blindabr.-Daten der NeLo
 /// Kommunikation: LF an NB

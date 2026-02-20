@@ -2,7 +2,7 @@
 //! Deaktivierung der Zuordnungs-ermächtigung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55072: Deaktivierung der Zuordnungs-ermächtigung
 /// Kommunikation: BKV an NB

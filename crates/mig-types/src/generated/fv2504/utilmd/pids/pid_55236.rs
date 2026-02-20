@@ -2,7 +2,7 @@
 //! Beendigung Zuordnung ZP der NGZ zur NZR
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55236: Beendigung Zuordnung ZP der NGZ zur NZR
 /// Kommunikation: NB an NB NB an ÜNB

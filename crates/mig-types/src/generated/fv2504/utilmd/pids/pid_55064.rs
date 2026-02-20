@@ -2,7 +2,7 @@
 //! Antwort
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55064: Antwort
 /// Kommunikation: BIKO an NB BIKO an ÜNB NB an NB

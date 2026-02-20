@@ -83,14 +83,9 @@ impl<'a> RawSegment<'a> {
 
         for element in &self.elements {
             result.push(elem_sep);
-            // Trim trailing empty components
-            let last_non_empty = element
-                .iter()
-                .rposition(|s| !s.is_empty())
-                .map(|i| i + 1)
-                .unwrap_or(0);
-            let trimmed = &element[..last_non_empty];
-            for (j, component) in trimmed.iter().enumerate() {
+            // Preserve ALL components including trailing empty ones for roundtrip fidelity.
+            // E.g. CAV+SA::::' must keep the trailing colons.
+            for (j, component) in element.iter().enumerate() {
                 if j > 0 {
                     result.push(comp_sep);
                 }

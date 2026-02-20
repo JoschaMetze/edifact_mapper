@@ -2,7 +2,7 @@
 //! Deaktivierung ZP LF-AASZR
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55200: Deaktivierung ZP LF-AASZR
 /// Kommunikation: NB (ANB) an LF

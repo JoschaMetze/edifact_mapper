@@ -2,7 +2,7 @@
 //! Weiterleitung Deaktivierung ZP
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55208: Weiterleitung Deaktivierung ZP
 /// Kommunikation: BIKO an BKV (des LF)

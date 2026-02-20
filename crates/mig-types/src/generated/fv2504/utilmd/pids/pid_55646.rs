@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Daten der SR
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55646: Rückmeldung/Anfrage Daten der SR
 /// Kommunikation: NB an MSB

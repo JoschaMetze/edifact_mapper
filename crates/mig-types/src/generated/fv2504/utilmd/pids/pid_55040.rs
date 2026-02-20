@@ -2,7 +2,7 @@
 //! Bestätigung Kündigung MSB
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55040: Bestätigung Kündigung MSB
 /// Kommunikation: MSBA an MSBN

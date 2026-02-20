@@ -2,7 +2,7 @@
 //! Änderung Daten der TR
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55629: Änderung Daten der TR
 /// Kommunikation: NB an MSB

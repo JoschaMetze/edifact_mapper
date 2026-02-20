@@ -2,7 +2,7 @@
 //! Bestätigung Beendigung der Zuordnung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55011: Bestätigung Beendigung der Zuordnung
 /// Kommunikation: LF an NB

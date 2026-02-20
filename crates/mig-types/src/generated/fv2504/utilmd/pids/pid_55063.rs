@@ -2,7 +2,7 @@
 //! Deaktivier-ung von ZP
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55063: Deaktivier-ung von ZP
 /// Kommunikation: NB an BIKO/ LF/ NB/ ÜNB ÜNB an BIKO/ LF/ NB/ BKV BIKO an BKV/ NB/ ÜNB

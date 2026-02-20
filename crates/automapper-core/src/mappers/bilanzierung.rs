@@ -4,7 +4,7 @@
 //! Minimal implementation covering modeled fields only.
 
 use bo4e_extensions::{Bilanzierung, BilanzierungEdifact, WithValidity};
-use edifact_types::RawSegment;
+use edifact_types::{EdifactDelimiters, RawSegment};
 
 use crate::context::TransactionContext;
 use crate::traits::{Builder, SegmentHandler};
@@ -23,6 +23,7 @@ pub struct BilanzierungMapper {
     edifact: BilanzierungEdifact,
     has_data: bool,
     in_bilanzierung_seq: bool,
+    delimiters: EdifactDelimiters,
 }
 
 impl BilanzierungMapper {
@@ -34,7 +35,13 @@ impl BilanzierungMapper {
             edifact: BilanzierungEdifact::default(),
             has_data: false,
             in_bilanzierung_seq: false,
+            delimiters: EdifactDelimiters::default(),
         }
+    }
+
+    /// Set delimiters for raw segment serialization.
+    pub fn set_delimiters(&mut self, delimiters: EdifactDelimiters) {
+        self.delimiters = delimiters;
     }
 }
 
@@ -49,9 +56,11 @@ impl SegmentHandler for BilanzierungMapper {
         match segment.id {
             "SEQ" => {
                 let q = segment.get_element(0);
-                matches!(q, "Z98" | "Z81")
+                // Handle Z98/Z81 directly; also handle other SEQ qualifiers
+                // when in_bilanzierung_seq is true so we can reset the flag.
+                matches!(q, "Z98" | "Z81") || self.in_bilanzierung_seq
             }
-            "CCI" | "CAV" | "QTY" => self.in_bilanzierung_seq,
+            "CCI" | "CAV" | "QTY" | "RFF" => self.in_bilanzierung_seq,
             _ => false,
         }
     }
@@ -61,6 +70,14 @@ impl SegmentHandler for BilanzierungMapper {
             "SEQ" => {
                 let qualifier = segment.get_element(0);
                 self.in_bilanzierung_seq = matches!(qualifier, "Z98" | "Z81");
+                if self.in_bilanzierung_seq {
+                    self.edifact.seq_qualifier = Some(qualifier.to_string());
+                    let sub_id = segment.get_element(1);
+                    if !sub_id.is_empty() {
+                        self.edifact.seq_sub_id = Some(sub_id.to_string());
+                    }
+                    self.has_data = true;
+                }
             }
             "CCI" => {
                 if !self.in_bilanzierung_seq {
@@ -83,6 +100,18 @@ impl SegmentHandler for BilanzierungMapper {
                     self.bilanzierungsgebiet = Some(code.to_string());
                     self.has_data = true;
                 }
+                // Store raw segment for roundtrip fidelity (preserves order)
+                let raw = segment.to_raw_string(&self.delimiters);
+                self.edifact.raw_segments.push(raw);
+            }
+            "CAV" => {
+                if !self.in_bilanzierung_seq {
+                    return;
+                }
+                // Store raw segment for roundtrip fidelity
+                let raw = segment.to_raw_string(&self.delimiters);
+                self.edifact.raw_segments.push(raw);
+                self.has_data = true;
             }
             "QTY" => {
                 if !self.in_bilanzierung_seq {
@@ -93,6 +122,10 @@ impl SegmentHandler for BilanzierungMapper {
                 if value.is_empty() {
                     return;
                 }
+                // Store raw segment for roundtrip fidelity (preserves order and unit codes)
+                let raw = segment.to_raw_string(&self.delimiters);
+                self.edifact.raw_qty.push(raw.clone());
+                self.edifact.raw_segments.push(raw);
                 match qualifier {
                     "Z09" => {
                         if let Ok(v) = value.parse::<f64>() {
@@ -108,6 +141,15 @@ impl SegmentHandler for BilanzierungMapper {
                     }
                     _ => {}
                 }
+            }
+            "RFF" => {
+                if !self.in_bilanzierung_seq {
+                    return;
+                }
+                // Store raw RFF for roundtrip fidelity
+                let raw = segment.to_raw_string(&self.delimiters);
+                self.edifact.raw_segments.push(raw);
+                self.has_data = true;
             }
             _ => {}
         }

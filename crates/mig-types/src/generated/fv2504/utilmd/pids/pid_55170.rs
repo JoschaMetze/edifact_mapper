@@ -2,7 +2,7 @@
 //! Ablehnung Verpflicht-ungsanfrage
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55170: Ablehnung Verpflicht-ungsanfrage
 /// Kommunikation: gMSB an NB

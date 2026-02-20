@@ -2,7 +2,7 @@
 //! Anmeldung in Modell 2
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55238: Anmeldung in Modell 2
 /// Kommunikation: NB (LPB) an NB (VNB)

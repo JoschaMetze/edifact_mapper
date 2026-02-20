@@ -73,6 +73,10 @@ just serve        # Start the API server
 just bench        # Run benchmarks
 just snap-test    # Run snapshot tests
 just snap-review  # Review snapshot changes
+
+just generate-utilmd-fv2504                   # Regenerate all UTILMD FV2504 types
+just generate-mig-types FV2504 UTILMD mig.xml # Generate shared MIG types
+just generate-pid-types FV2504 UTILMD mig.xml ahb.xml # Generate PID types
 ```
 
 ## Testing
@@ -159,17 +163,42 @@ Proto definitions are in `proto/`. Services:
 
 ### Code Generator CLI
 
-Generate Rust mapper code from MIG/AHB XML schemas:
+Generate typed Rust code from MIG/AHB XML schemas:
 
 ```bash
-# Generate mapper code
+# Generate shared MIG types (enums, composites, segments, groups)
+cargo run -p automapper-generator -- generate-mig-types \
+  --mig-path xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml \
+  --message-type UTILMD --format-version FV2504 \
+  --output-dir crates/mig-types/src/generated
+
+# Generate per-PID composition types (requires MIG + AHB)
+cargo run -p automapper-generator -- generate-pid-types \
+  --mig-path xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml \
+  --ahb-path xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml \
+  --message-type UTILMD --format-version FV2504 \
+  --output-dir crates/mig-types/src/generated
+
+# Generate mapper stubs + coordinator + VersionConfig
 cargo run -p automapper-generator -- generate-mappers \
-  --mig-path xml-migs-and-ahbs/mig.xml \
+  --mig-path xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml \
+  --ahb-path xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml \
+  --message-type UTILMD --format-version FV2504 \
   --output-dir generated/
 
-# Analyze XML structure
-cargo run -p automapper-generator -- analyze-structure \
-  --mig-path xml-migs-and-ahbs/mig.xml
+# Generate condition evaluators from AHB rules (calls Claude API)
+cargo run -p automapper-generator -- generate-conditions \
+  --ahb-path xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml \
+  --message-type UTILMD --format-version FV2504 \
+  --output-dir generated/ --dry-run
+
+# Validate generated code against BO4E schema
+cargo run -p automapper-generator -- validate-schema \
+  --stammdatenmodell-path stammdatenmodell/ \
+  --generated-dir generated/
+
+# Or use just shortcuts:
+just generate-utilmd-fv2504  # Regenerate all UTILMD FV2504 MIG + PID types
 ```
 
 ## Architecture

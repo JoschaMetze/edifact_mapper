@@ -3,7 +3,7 @@
 //! Handles SEQ+Z78 group and RFF segments for location bundle references.
 
 use bo4e_extensions::{Lokationszuordnung, LokationszuordnungEdifact, WithValidity};
-use edifact_types::RawSegment;
+use edifact_types::{EdifactDelimiters, RawSegment};
 
 use crate::context::TransactionContext;
 use crate::traits::{Builder, SegmentHandler};
@@ -19,6 +19,7 @@ pub struct LokationszuordnungMapper {
     has_data: bool,
     in_seq_z78: bool,
     items: Vec<WithValidity<Lokationszuordnung, LokationszuordnungEdifact>>,
+    delimiters: EdifactDelimiters,
 }
 
 impl LokationszuordnungMapper {
@@ -30,7 +31,13 @@ impl LokationszuordnungMapper {
             has_data: false,
             in_seq_z78: false,
             items: Vec::new(),
+            delimiters: EdifactDelimiters::default(),
         }
+    }
+
+    /// Set delimiters for raw segment serialization.
+    pub fn set_delimiters(&mut self, delimiters: EdifactDelimiters) {
+        self.delimiters = delimiters;
     }
 
     /// Finalizes the current item (if any) and pushes it to the items list.
@@ -63,28 +70,30 @@ impl SegmentHandler for LokationszuordnungMapper {
         match segment.id {
             "SEQ" => {
                 let q = segment.get_element(0);
-                q == "Z78"
+                // Handle Z78 directly; also handle other SEQ qualifiers
+                // when in_seq_z78 is true so we can reset the flag.
+                q == "Z78" || self.in_seq_z78
             }
-            "RFF" => {
-                if !self.in_seq_z78 {
-                    return false;
-                }
-                let q = segment.get_component(0, 0);
-                matches!(q, "Z18" | "Z19")
-            }
+            // Accept ALL RFF within Z78 context (not just Z18/Z19)
+            "RFF" => self.in_seq_z78,
+            // NAD marks end of the SEQ section — reset Z78 context
+            "NAD" => self.in_seq_z78,
             _ => false,
         }
     }
 
     fn handle(&mut self, segment: &RawSegment, _ctx: &mut TransactionContext) {
         match segment.id {
+            "NAD" => {
+                // NAD marks the end of the SEQ section
+                self.in_seq_z78 = false;
+            }
             "SEQ" => {
                 let qualifier = segment.get_element(0);
                 if qualifier == "Z78" {
                     self.finalize_current();
                     self.in_seq_z78 = true;
                     self.has_data = true;
-                    // Extract zuordnungstyp from SEQ element if present
                     let ref_val = segment.get_element(1);
                     if !ref_val.is_empty() {
                         self.edifact.zuordnungstyp = Some(ref_val.to_string());
@@ -97,19 +106,22 @@ impl SegmentHandler for LokationszuordnungMapper {
                 if !self.in_seq_z78 {
                     return;
                 }
+                // Store raw for roundtrip fidelity
+                let raw = segment.to_raw_string(&self.delimiters);
+                self.edifact.raw_rffs.push(raw);
+
                 let qualifier = segment.get_component(0, 0);
                 let value = segment.get_component(0, 1);
-                if value.is_empty() {
-                    return;
-                }
-                match qualifier {
-                    "Z18" => {
-                        self.marktlokations_id = Some(value.to_string());
+                if !value.is_empty() {
+                    match qualifier {
+                        "Z18" => {
+                            self.marktlokations_id = Some(value.to_string());
+                        }
+                        "Z19" => {
+                            self.messlokations_id = Some(value.to_string());
+                        }
+                        _ => {}
                     }
-                    "Z19" => {
-                        self.messlokations_id = Some(value.to_string());
-                    }
-                    _ => {}
                 }
             }
             _ => {}

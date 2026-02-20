@@ -2,7 +2,7 @@
 //! Ablehnung EOG Anmeldung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55015: Ablehnung EOG Anmeldung
 /// Kommunikation: LF an NB

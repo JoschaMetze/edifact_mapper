@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Daten der individuellen Bestellung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55555: Rückmeldung/Anfrage Daten der individuellen Bestellung
 /// Kommunikation: NB / LF / MSB an MSB

@@ -2,7 +2,7 @@
 //! Bestätigung Ende MSB
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55052: Bestätigung Ende MSB
 /// Kommunikation: NB an MSB

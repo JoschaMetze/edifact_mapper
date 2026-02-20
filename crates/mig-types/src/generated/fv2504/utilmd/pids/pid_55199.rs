@@ -2,7 +2,7 @@
 //! Aktivierung ZP LF-AASZR
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55199: Aktivierung ZP LF-AASZR
 /// Kommunikation: NB (ANB) an LF

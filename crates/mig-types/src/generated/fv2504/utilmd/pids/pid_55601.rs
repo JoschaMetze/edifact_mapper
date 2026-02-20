@@ -2,7 +2,7 @@
 //! Anmeldung neue erz. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55601: Anmeldung neue erz. MaLo
 /// Kommunikation: LF an NB

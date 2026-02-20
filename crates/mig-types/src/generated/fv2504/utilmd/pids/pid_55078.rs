@@ -2,7 +2,7 @@
 //! Bestätigung Anmeldung erz. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55078: Bestätigung Anmeldung erz. MaLo
 /// Kommunikation: NB an LF

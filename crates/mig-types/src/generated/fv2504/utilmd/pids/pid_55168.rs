@@ -2,7 +2,7 @@
 //! Verpflicht-ungsanfrage / Aufforderung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55168: Verpflicht-ungsanfrage / Aufforderung
 /// Kommunikation: NB an gMSB

@@ -2,7 +2,7 @@
 //! Bilanzkreiszuordnungsliste
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55067: Bilanzkreiszuordnungsliste
 /// Kommunikation: NB an BKV ÜNB an BKV

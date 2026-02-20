@@ -2,7 +2,7 @@
 //! Bestätigung Anmeldung neue verb. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55602: Bestätigung Anmeldung neue verb. MaLo
 /// Kommunikation: NB an LF

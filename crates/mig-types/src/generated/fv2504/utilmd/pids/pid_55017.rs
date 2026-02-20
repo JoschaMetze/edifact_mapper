@@ -2,7 +2,7 @@
 //! Bestätigung Kündigung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55017: Bestätigung Kündigung
 /// Kommunikation: LFA an LFN

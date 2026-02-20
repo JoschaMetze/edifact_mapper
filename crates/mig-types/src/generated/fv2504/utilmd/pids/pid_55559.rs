@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage MSB-Abr.-Daten der MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55559: Rückmeldung/Anfrage MSB-Abr.-Daten der MaLo
 /// Kommunikation: NB an MSB

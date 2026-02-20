@@ -2,7 +2,7 @@
 //! Antwort auf DZÜ Liste
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55224: Antwort auf DZÜ Liste
 /// Kommunikation: NB an ÜNB

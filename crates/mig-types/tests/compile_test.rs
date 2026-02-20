@@ -12,6 +12,17 @@ fn test_generated_types_compile() {
     let _ = std::mem::size_of::<CompositeC082>();
     let _ = std::mem::size_of::<SegNad>();
     let _ = std::mem::size_of::<Sg2>();
+
+    // Verify previously-missing groups now exist
+    let _ = std::mem::size_of::<Sg9>();
+    let _ = std::mem::size_of::<Sg12>();
+
+    // Verify segments that were missing from groups are now present
+    let _ = std::mem::size_of::<SegAgr>();
+    let _ = std::mem::size_of::<SegFtx>();
+    let _ = std::mem::size_of::<SegPia>();
+    let _ = std::mem::size_of::<SegQty>();
+    let _ = std::mem::size_of::<SegCav>();
 }
 
 #[test]
@@ -42,7 +53,5 @@ fn test_enum_serde_roundtrip() {
 #[test]
 fn test_pid_types_instantiable() {
     // Verify a few PID types can be referenced and are real types
-    let _ = std::mem::size_of::<
-        mig_types::generated::fv2504::utilmd::pids::pid_55035::Pid55035,
-    >();
+    let _ = std::mem::size_of::<mig_types::generated::fv2504::utilmd::pids::pid_55035::Pid55035>();
 }

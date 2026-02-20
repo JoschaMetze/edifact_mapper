@@ -70,6 +70,31 @@ serve-release:
 generate *args:
     cargo run -p automapper-generator -- {{args}}
 
+# Generate shared MIG types (enums, composites, segments, groups)
+generate-mig-types fv msg mig_xml:
+    cargo run -p automapper-generator -- generate-mig-types \
+        --mig-path {{mig_xml}} \
+        --message-type {{msg}} \
+        --format-version {{fv}} \
+        --output-dir crates/mig-types/src/generated
+
+# Generate per-PID composition types from AHB + MIG XML
+generate-pid-types fv msg mig_xml ahb_xml:
+    cargo run -p automapper-generator -- generate-pid-types \
+        --mig-path {{mig_xml}} \
+        --ahb-path {{ahb_xml}} \
+        --message-type {{msg}} \
+        --format-version {{fv}} \
+        --output-dir crates/mig-types/src/generated
+
+# Generate all MIG + PID types for UTILMD FV2504 (Strom)
+generate-utilmd-fv2504:
+    just generate-mig-types FV2504 UTILMD \
+        xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml
+    just generate-pid-types FV2504 UTILMD \
+        xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml \
+        xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml
+
 # --- Benchmarks ---
 
 # Run benchmarks

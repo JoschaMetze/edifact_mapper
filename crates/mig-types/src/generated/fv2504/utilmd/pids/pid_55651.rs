@@ -2,7 +2,7 @@
 //! Änderung Daten der SR
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55651: Änderung Daten der SR
 /// Kommunikation: MSB an LF

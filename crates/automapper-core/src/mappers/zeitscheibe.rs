@@ -88,14 +88,20 @@ impl ZeitscheibeMapper {
 
     fn handle_rff(&mut self, segment: &RawSegment) {
         let qualifier = segment.get_component(0, 0);
-        let value = segment.get_component(0, 1);
+        let mut value = segment.get_component(0, 1);
 
+        // Handle 3-component RFF format: RFF+Z47::1 → component 1 is empty, ID is at component 2
         if value.is_empty() {
-            return;
+            let comp2 = segment.get_component(0, 2);
+            if !comp2.is_empty() {
+                value = comp2;
+            } else {
+                return;
+            }
         }
 
         match qualifier {
-            "Z49" | "Z50" | "Z53" => {
+            "Z47" | "Z49" | "Z50" | "Z52" | "Z53" => {
                 // New Zeitscheibe reference -- finalize previous if any
                 self.finalize_current();
                 self.current_id = Some(value.to_string());
@@ -135,7 +141,7 @@ impl SegmentHandler for ZeitscheibeMapper {
         match segment.id {
             "RFF" => {
                 let q = segment.get_component(0, 0);
-                matches!(q, "Z49" | "Z50" | "Z53")
+                matches!(q, "Z47" | "Z49" | "Z50" | "Z52" | "Z53")
             }
             "DTM" => {
                 // Only handle DTM in Zeitscheibe context (after RFF+Z49/Z50/Z53)

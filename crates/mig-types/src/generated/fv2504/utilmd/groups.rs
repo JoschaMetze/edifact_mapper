@@ -20,18 +20,29 @@ pub struct Sg2 {
 /// SG3 — Kontaktinformationen
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Sg3 {
-    pub cta: SegCta,
     pub com: Vec<SegCom>,
+    pub cta: SegCta,
 }
 
 /// SG4 — Identifikation einer Liste
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Sg4 {
+    pub agr: Vec<SegAgr>,
+    pub dtm: Vec<SegDtm>,
+    pub ftx: Vec<SegFtx>,
     pub ide: SegIde,
     pub sts: Vec<SegSts>,
+    pub sg12: Vec<Sg12>,
     pub sg5: Vec<Sg5>,
     pub sg6: Vec<Sg6>,
     pub sg8: Vec<Sg8>,
+}
+
+/// SG12 — Kunde des Lieferanten
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Sg12 {
+    pub nad: SegNad,
+    pub rff: Vec<SegRff>,
 }
 
 /// SG5 — MaBiS-Zählpunkt
@@ -43,19 +54,30 @@ pub struct Sg5 {
 /// SG6 — Prüfidentifikator
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Sg6 {
+    pub dtm: Vec<SegDtm>,
     pub rff: SegRff,
 }
 
 /// SG8 — Daten der Summenzeitreihe
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Sg8 {
-    pub seq: SegSeq,
+    pub pia: Vec<SegPia>,
     pub rff: Vec<SegRff>,
+    pub seq: SegSeq,
     pub sg10: Vec<Sg10>,
+    pub sg9: Vec<Sg9>,
 }
 
 /// SG10 — Bilanzkreis
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Sg10 {
+    pub cav: Vec<SegCav>,
     pub cci: SegCci,
+}
+
+/// SG9 — Arbeit / Leistung für tagesparameterabhängige Marktlokation
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Sg9 {
+    pub dtm: Vec<SegDtm>,
+    pub qty: SegQty,
 }

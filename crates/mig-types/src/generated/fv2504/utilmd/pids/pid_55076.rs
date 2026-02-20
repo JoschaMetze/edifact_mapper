@@ -2,7 +2,7 @@
 //! Antwort auf Stammdaten-änderung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55076: Antwort auf Stammdaten-änderung
 /// Kommunikation: UBA an NB

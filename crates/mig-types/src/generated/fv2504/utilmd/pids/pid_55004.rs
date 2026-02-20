@@ -2,7 +2,7 @@
 //! Abmeldung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55004: Abmeldung
 /// Kommunikation: LF an NB

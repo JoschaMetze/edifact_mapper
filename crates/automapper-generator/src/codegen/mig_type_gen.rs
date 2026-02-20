@@ -70,8 +70,12 @@ fn collect_code_elements(mig: &MigSchema) -> BTreeMap<String, Vec<CodeDefinition
 
 /// Trim trailing whitespace/newlines from generated code, ensuring a single trailing newline.
 fn trim_trailing(s: String) -> String {
-    let trimmed = s.trim_end();
-    format!("{trimmed}\n")
+    let trimmed: String = s
+        .lines()
+        .map(|line| line.trim_end())
+        .collect::<Vec<_>>()
+        .join("\n");
+    format!("{}\n", trimmed.trim_end())
 }
 
 /// Sanitize a string for use in a `///` doc comment — collapse newlines and trim.
@@ -149,14 +153,24 @@ fn is_optional(status_spec: &Option<String>, status_std: &Option<String>) -> boo
 // ---------------------------------------------------------------------------
 
 /// Collect all unique composites from the MIG tree.
+/// When the same composite ID appears multiple times, keeps the definition with
+/// the most data elements (richest definition).
 fn collect_composites(mig: &MigSchema) -> BTreeMap<String, MigComposite> {
     let mut result: BTreeMap<String, MigComposite> = BTreeMap::new();
 
     fn visit_segment(seg: &MigSegment, result: &mut BTreeMap<String, MigComposite>) {
         for comp in &seg.composites {
-            result
-                .entry(comp.id.clone())
-                .or_insert_with(|| comp.clone());
+            let entry = result.entry(comp.id.clone());
+            match entry {
+                std::collections::btree_map::Entry::Vacant(v) => {
+                    v.insert(comp.clone());
+                }
+                std::collections::btree_map::Entry::Occupied(mut o) => {
+                    if comp.data_elements.len() > o.get().data_elements.len() {
+                        o.insert(comp.clone());
+                    }
+                }
+            }
         }
     }
 
@@ -179,12 +193,32 @@ fn collect_composites(mig: &MigSchema) -> BTreeMap<String, MigComposite> {
 }
 
 /// Collect all unique segments from the MIG tree.
+/// When the same segment ID appears multiple times, keeps the definition with
+/// the most fields (data elements + composites).
 fn collect_segments(mig: &MigSchema) -> BTreeMap<String, MigSegment> {
     let mut result: BTreeMap<String, MigSegment> = BTreeMap::new();
 
+    fn field_count(seg: &MigSegment) -> usize {
+        seg.data_elements.len() + seg.composites.len()
+    }
+
+    fn insert_or_keep_richest(result: &mut BTreeMap<String, MigSegment>, seg: &MigSegment) {
+        let entry = result.entry(seg.id.clone());
+        match entry {
+            std::collections::btree_map::Entry::Vacant(v) => {
+                v.insert(seg.clone());
+            }
+            std::collections::btree_map::Entry::Occupied(mut o) => {
+                if field_count(seg) > field_count(o.get()) {
+                    o.insert(seg.clone());
+                }
+            }
+        }
+    }
+
     fn visit_group(group: &MigSegmentGroup, result: &mut BTreeMap<String, MigSegment>) {
         for seg in &group.segments {
-            result.entry(seg.id.clone()).or_insert_with(|| seg.clone());
+            insert_or_keep_richest(result, seg);
         }
         for nested in &group.nested_groups {
             visit_group(nested, result);
@@ -192,7 +226,7 @@ fn collect_segments(mig: &MigSchema) -> BTreeMap<String, MigSegment> {
     }
 
     for seg in &mig.segments {
-        result.entry(seg.id.clone()).or_insert_with(|| seg.clone());
+        insert_or_keep_richest(&mut result, seg);
     }
     for group in &mig.segment_groups {
         visit_group(group, &mut result);
@@ -301,6 +335,28 @@ fn build_de_field_names(data_elements: &[MigDataElement]) -> Vec<String> {
         .collect()
 }
 
+/// Build field names for composites, disambiguating duplicates by appending `_N`.
+fn build_composite_field_names(composites: &[MigComposite]) -> Vec<String> {
+    let mut id_counts: BTreeMap<&str, usize> = BTreeMap::new();
+    for comp in composites {
+        *id_counts.entry(&comp.id).or_insert(0) += 1;
+    }
+    let mut id_seen: BTreeMap<&str, usize> = BTreeMap::new();
+    composites
+        .iter()
+        .map(|comp| {
+            let count = id_counts[comp.id.as_str()];
+            if count > 1 {
+                let idx = id_seen.entry(&comp.id).or_insert(0);
+                *idx += 1;
+                format!("c{}_{}", comp.id.to_lowercase(), idx)
+            } else {
+                format!("c{}", comp.id.to_lowercase())
+            }
+        })
+        .collect()
+}
+
 /// Generate Rust struct definitions for all composites in the MIG.
 pub fn generate_composites(mig: &MigSchema) -> String {
     let composites = collect_composites(mig);
@@ -378,9 +434,9 @@ pub fn generate_segments(mig: &MigSchema) -> String {
             }
         }
 
-        // Composites
-        for comp in &seg.composites {
-            let field_name = format!("c{}", comp.id.to_lowercase());
+        // Composites — disambiguate duplicate IDs by appending _N
+        let comp_field_names = build_composite_field_names(&seg.composites);
+        for (comp, field_name) in seg.composites.iter().zip(comp_field_names.iter()) {
             let comp_type = format!("Composite{}", comp.id);
             let optional = is_optional(&comp.status_spec, &comp.status_std);
 
@@ -401,8 +457,68 @@ pub fn generate_segments(mig: &MigSchema) -> String {
 // Code Generation: Groups
 // ---------------------------------------------------------------------------
 
+/// Merged view of a segment group, combining segments and nested groups from all
+/// MIG XML occurrences of the same group ID.
+struct MergedGroup {
+    id: String,
+    name: String,
+    /// Union of all segments across all occurrences, keyed by segment ID.
+    /// Each segment keeps the richest definition (most data elements/composites).
+    segments: BTreeMap<String, MigSegment>,
+    /// Recursively merged nested groups.
+    nested: BTreeMap<String, MergedGroup>,
+}
+
+/// Build a merged map of all segment groups from the MIG tree.
+///
+/// The MIG XML can define the same group ID (e.g., G_SG4) multiple times with
+/// different contents — once for each variant (e.g., IDE+Z01 vs IDE+24). This
+/// function merges them into a single definition per group ID, collecting the
+/// union of all segments and nested groups.
+fn build_merged_groups(groups: &[MigSegmentGroup]) -> BTreeMap<String, MergedGroup> {
+    let mut map: BTreeMap<String, MergedGroup> = BTreeMap::new();
+
+    fn merge_into(map: &mut BTreeMap<String, MergedGroup>, group: &MigSegmentGroup) {
+        let entry = map.entry(group.id.clone()).or_insert_with(|| MergedGroup {
+            id: group.id.clone(),
+            name: group.name.clone(),
+            segments: BTreeMap::new(),
+            nested: BTreeMap::new(),
+        });
+
+        // Merge segments — keep the richest definition per segment ID
+        for seg in &group.segments {
+            let seg_entry = entry.segments.entry(seg.id.clone());
+            match seg_entry {
+                std::collections::btree_map::Entry::Vacant(v) => {
+                    v.insert(seg.clone());
+                }
+                std::collections::btree_map::Entry::Occupied(mut o) => {
+                    let existing_count = o.get().data_elements.len() + o.get().composites.len();
+                    let new_count = seg.data_elements.len() + seg.composites.len();
+                    if new_count > existing_count {
+                        o.insert(seg.clone());
+                    }
+                }
+            }
+        }
+
+        // Recursively merge nested groups
+        for nested in &group.nested_groups {
+            merge_into(&mut entry.nested, nested);
+        }
+    }
+
+    for group in groups {
+        merge_into(&mut map, group);
+    }
+
+    map
+}
+
 /// Generate Rust struct definitions for all segment groups in the MIG.
 pub fn generate_groups(mig: &MigSchema) -> String {
+    let merged = build_merged_groups(&mig.segment_groups);
     let mut out = String::new();
     let mut emitted: BTreeSet<String> = BTreeSet::new();
 
@@ -411,11 +527,10 @@ pub fn generate_groups(mig: &MigSchema) -> String {
     out.push_str("use super::segments::*;\n");
     out.push_str("use serde::{Deserialize, Serialize};\n\n");
 
-    fn emit_group(group: &MigSegmentGroup, out: &mut String, emitted: &mut BTreeSet<String>) {
+    fn emit_merged_group(group: &MergedGroup, out: &mut String, emitted: &mut BTreeSet<String>) {
         let group_num = group.id.trim_start_matches("SG");
         let struct_name = format!("Sg{group_num}");
 
-        // Skip if already emitted (same group nested in multiple parents)
         if !emitted.insert(struct_name.clone()) {
             return;
         }
@@ -427,8 +542,8 @@ pub fn generate_groups(mig: &MigSchema) -> String {
         out.push_str("#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]\n");
         out.push_str(&format!("pub struct {struct_name} {{\n"));
 
-        // Segments in this group
-        for seg in &group.segments {
+        // Segments in this group (sorted by segment ID for deterministic output)
+        for seg in group.segments.values() {
             let field_name = seg.id.to_lowercase();
             let seg_type = format!("Seg{}", capitalize_segment_id(&seg.id));
             let optional = is_optional(&seg.status_spec, &seg.status_std);
@@ -443,47 +558,26 @@ pub fn generate_groups(mig: &MigSchema) -> String {
             }
         }
 
-        // Nested groups (deduplicate by ID — same group nested multiple times
-        // means it's repeating)
-        let mut nested_seen: BTreeSet<String> = BTreeSet::new();
-        for nested in &group.nested_groups {
+        // Nested groups (sorted by group ID for deterministic output)
+        for nested in group.nested.values() {
             let nested_num = nested.id.trim_start_matches("SG");
             let nested_name = format!("sg{nested_num}");
             let nested_type = format!("Sg{nested_num}");
 
-            if !nested_seen.insert(nested.id.clone()) {
-                // Already emitted this group field — skip duplicate
-                continue;
-            }
-
-            // Count how many times this nested group appears
-            let count = group
-                .nested_groups
-                .iter()
-                .filter(|g| g.id == nested.id)
-                .count();
-            let repeating = nested.max_rep_spec > 1 || nested.max_rep_std > 1 || count > 1;
-            let optional = is_optional(&nested.status_spec, &nested.status_std);
-
-            if repeating {
-                out.push_str(&format!("    pub {nested_name}: Vec<{nested_type}>,\n"));
-            } else if optional {
-                out.push_str(&format!("    pub {nested_name}: Option<{nested_type}>,\n"));
-            } else {
-                out.push_str(&format!("    pub {nested_name}: {nested_type},\n"));
-            }
+            // Nested groups in a MIG are always repeatable (Vec)
+            out.push_str(&format!("    pub {nested_name}: Vec<{nested_type}>,\n"));
         }
 
         out.push_str("}\n\n");
 
         // Recurse into nested groups
-        for nested in &group.nested_groups {
-            emit_group(nested, out, emitted);
+        for nested in group.nested.values() {
+            emit_merged_group(nested, out, emitted);
         }
     }
 
-    for group in &mig.segment_groups {
-        emit_group(group, &mut out, &mut emitted);
+    for group in merged.values() {
+        emit_merged_group(group, &mut out, &mut emitted);
     }
 
     out

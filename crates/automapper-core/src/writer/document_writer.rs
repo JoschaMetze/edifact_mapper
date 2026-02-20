@@ -191,13 +191,31 @@ impl EdifactDocumentWriter {
 
     /// Ends the current message with the UNT segment.
     pub fn end_message(&mut self) {
+        self.end_message_with_raw_unt(None, None);
+    }
+
+    /// Ends the current message with the UNT segment, using pre-specified
+    /// count and reference for byte-identical roundtrip.
+    pub fn end_message_with_raw_unt(
+        &mut self,
+        override_count: Option<&str>,
+        override_reference: Option<&str>,
+    ) {
         self.message_segment_count += 1; // Count UNT itself
 
-        let reference = self.message_ref.take().unwrap_or_default();
+        let count_str = match override_count {
+            Some(c) => c.to_string(),
+            None => self.message_segment_count.to_string(),
+        };
+        let reference = match override_reference {
+            Some(r) => r.to_string(),
+            None => self.message_ref.take().unwrap_or_default(),
+        };
         self.writer.begin_segment("UNT");
-        self.writer
-            .add_element(&self.message_segment_count.to_string());
-        self.writer.add_element(&reference);
+        self.writer.add_element(&count_str);
+        if !reference.is_empty() {
+            self.writer.add_element(&reference);
+        }
         self.writer.end_segment();
 
         self.message_count += 1;

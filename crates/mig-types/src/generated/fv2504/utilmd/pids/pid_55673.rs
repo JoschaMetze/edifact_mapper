@@ -2,7 +2,7 @@
 //! Rückmeldung/Anfrage Abr.-Daten BK-Abr. erz. Malo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55673: Rückmeldung/Anfrage Abr.-Daten BK-Abr. erz. Malo
 /// Kommunikation: LF an NB

@@ -2,7 +2,7 @@
 //! Stammdaten auf eine ORDERS
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55074: Stammdaten auf eine ORDERS
 /// Kommunikation: NB an UBA

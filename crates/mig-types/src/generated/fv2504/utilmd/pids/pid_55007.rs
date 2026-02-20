@@ -2,7 +2,7 @@
 //! Abmeldung / Beendig-ung der Zuordnung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55007: Abmeldung / Beendig-ung der Zuordnung
 /// Kommunikation: NB an LF

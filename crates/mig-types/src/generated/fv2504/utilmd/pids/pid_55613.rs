@@ -2,7 +2,7 @@
 //! Abr.-Daten BK-Abr. verb. MaLo
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55613: Abr.-Daten BK-Abr. verb. MaLo
 /// Kommunikation: NB an ÜNB

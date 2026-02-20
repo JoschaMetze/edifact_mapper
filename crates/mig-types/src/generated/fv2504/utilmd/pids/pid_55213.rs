@@ -2,7 +2,7 @@
 //! Antwort auf Deaktivierung ZP
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55213: Antwort auf Deaktivierung ZP
 /// Kommunikation: BIKO an NB (ANB)

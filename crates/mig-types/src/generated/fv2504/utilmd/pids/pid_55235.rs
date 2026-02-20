@@ -2,7 +2,7 @@
 //! Zuordnung ZP der NGZ zur NZR
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55235: Zuordnung ZP der NGZ zur NZR
 /// Kommunikation: NB an NB NB an ÜNB

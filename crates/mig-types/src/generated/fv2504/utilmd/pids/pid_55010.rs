@@ -2,7 +2,7 @@
 //! Anfrage zur Beendigung der Zuordnung
 //! Do not edit manually.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// PID 55010: Anfrage zur Beendigung der Zuordnung
 /// Kommunikation: NB an LF

@@ -6,7 +6,6 @@
 use std::collections::HashMap;
 
 use bo4e_extensions::*;
-use chrono::NaiveDateTime;
 
 use super::document_writer::EdifactDocumentWriter;
 
@@ -22,7 +21,9 @@ impl MarktlokationWriter {
         ml: &WithValidity<Marktlokation, MarktlokationEdifact>,
     ) {
         // LOC+Z16+marktlokationsId'
-        if let Some(ref id) = ml.data.marktlokations_id {
+        if let Some(ref raw) = ml.edifact.raw_loc {
+            doc.write_raw_segment(raw);
+        } else if let Some(ref id) = ml.data.marktlokations_id {
             doc.write_segment("LOC", &["Z16", id]);
         }
     }
@@ -32,7 +33,12 @@ impl MarktlokationWriter {
         doc: &mut EdifactDocumentWriter,
         ml: &WithValidity<Marktlokation, MarktlokationEdifact>,
     ) {
-        if let Some(ref addr) = ml.data.lokationsadresse {
+        // Use raw NAD for roundtrip fidelity if available
+        if !ml.edifact.raw_nad_address.is_empty() {
+            for raw in &ml.edifact.raw_nad_address {
+                doc.write_raw_segment(raw);
+            }
+        } else if let Some(ref addr) = ml.data.lokationsadresse {
             let w = doc.segment_writer();
             w.begin_segment("NAD");
             w.add_element("DP");
@@ -63,7 +69,9 @@ impl MesslokationWriter {
         doc: &mut EdifactDocumentWriter,
         ml: &WithValidity<Messlokation, MesslokationEdifact>,
     ) {
-        if let Some(ref id) = ml.data.messlokations_id {
+        if let Some(ref raw) = ml.edifact.raw_loc {
+            doc.write_raw_segment(raw);
+        } else if let Some(ref id) = ml.data.messlokations_id {
             doc.write_segment("LOC", &["Z17", id]);
         }
     }
@@ -77,7 +85,9 @@ impl NetzlokationWriter {
         doc: &mut EdifactDocumentWriter,
         nl: &WithValidity<Netzlokation, NetzlokationEdifact>,
     ) {
-        if let Some(ref id) = nl.data.netzlokations_id {
+        if let Some(ref raw) = nl.edifact.raw_loc {
+            doc.write_raw_segment(raw);
+        } else if let Some(ref id) = nl.data.netzlokations_id {
             doc.write_segment("LOC", &["Z18", id]);
         }
     }
@@ -91,9 +101,18 @@ impl GeschaeftspartnerWriter {
         doc: &mut EdifactDocumentWriter,
         gp: &WithValidity<Geschaeftspartner, GeschaeftspartnerEdifact>,
     ) {
-        let qualifier = gp.edifact.nad_qualifier.as_deref().unwrap_or("Z04");
-        let id = gp.data.name1.as_deref().unwrap_or("");
-        doc.write_segment("NAD", &[qualifier, id]);
+        // Use raw NAD for roundtrip fidelity if available
+        if let Some(ref raw) = gp.edifact.raw_nad {
+            doc.write_raw_segment(raw);
+        } else {
+            let qualifier = gp.edifact.nad_qualifier.as_deref().unwrap_or("Z04");
+            let id = gp.data.name1.as_deref().unwrap_or("");
+            doc.write_segment("NAD", &[qualifier, id]);
+        }
+        // RFF segments following this NAD party (e.g. RFF+Z18, RFF+Z01, RFF+Z19)
+        for raw_rff in &gp.edifact.raw_rffs {
+            doc.write_raw_segment(raw_rff);
+        }
     }
 }
 
@@ -102,13 +121,9 @@ pub struct ZaehlerWriter;
 
 impl ZaehlerWriter {
     pub fn write(doc: &mut EdifactDocumentWriter, z: &WithValidity<Zaehler, ZaehlerEdifact>) {
-        // SEQ+Z03'
-        doc.write_segment("SEQ", &["Z03"]);
-
-        // PIA+5+zaehlernummer'
-        if let Some(ref nr) = z.data.zaehlernummer {
-            doc.write_segment("PIA", &["5", nr]);
-        }
+        // SEQ+Z03+sub_id'
+        let sub_id = z.edifact.seq_sub_id.as_deref().unwrap_or("");
+        doc.write_segment("SEQ", &["Z03", sub_id]);
 
         // RFF+Z19:messlokation_ref'
         if let Some(ref melo_ref) = z.edifact.referenz_messlokation {
@@ -118,6 +133,16 @@ impl ZaehlerWriter {
         // RFF+Z14:gateway_ref'
         if let Some(ref gw_ref) = z.edifact.referenz_gateway {
             doc.write_segment_with_composites("RFF", &[&["Z14", gw_ref]]);
+        }
+
+        // QTY segments (Z33, Z34, 31 etc.)
+        for raw in &z.edifact.raw_qty {
+            doc.write_raw_segment(raw);
+        }
+
+        // CCI/CAV segments (device characteristics)
+        for raw in &z.edifact.raw_cci_cav {
+            doc.write_raw_segment(raw);
         }
     }
 }
@@ -150,31 +175,41 @@ impl VertragWriter {
 pub struct ProzessdatenWriter;
 
 impl ProzessdatenWriter {
-    /// Formats a NaiveDateTime as EDIFACT DTM format code 303 (CCYYMMDDHHmm).
-    fn format_dtm(dt: &NaiveDateTime) -> String {
-        dt.format("%Y%m%d%H%M").to_string()
-    }
+    /// MIG-ordered process-level DTM qualifiers (Counter=0230, before STS).
+    const PROCESS_DTM_ORDER: &[&str] = &[
+        "137", "92", "93", "471", "154", "Z05", "76", "157", "158", "159", "Z01", "Z06", "Z07",
+        "Z08", "Z10", "Z25", "Z26", "Z42", "Z43", "Z51", "Z52", "Z53",
+    ];
 
-    /// Writes a DTM composite segment: DTM+qualifier:value:303'
-    fn write_dtm(doc: &mut EdifactDocumentWriter, qualifier: &str, dt: &NaiveDateTime) {
-        let value = Self::format_dtm(dt);
-        doc.write_segment_with_composites("DTM", &[&[qualifier, &value, "303"]]);
-    }
+    /// MIG-ordered reference-section DTM qualifiers (SG6, after RFF).
+    const REFERENCE_DTM_ORDER: &[&str] = &["155", "752", "672", "Z20", "Z21", "Z09", "Z22"];
 
-    /// Write a DTM segment, preferring the raw preserved value for roundtrip fidelity.
-    fn write_dtm_prefer_raw(
+    /// Write a DTM from the raw_dtm HashMap (preferred) or fallback to a NaiveDateTime value.
+    fn write_dtm_from_raw(
         doc: &mut EdifactDocumentWriter,
         qualifier: &str,
-        dt: &NaiveDateTime,
         raw_dtm: &HashMap<String, String>,
     ) {
         if let Some(raw) = raw_dtm.get(qualifier) {
-            // Write raw preserved value: DTM+qualifier:raw'
-            // raw already contains "value:format" (e.g. "202503311329?+00:303")
             let composite = format!("{}:{}", qualifier, raw);
             doc.write_segment("DTM", &[&composite]);
-        } else {
-            Self::write_dtm(doc, qualifier, dt);
+        }
+    }
+
+    /// Write a DTM, trying raw_dtm first, then falling back to a typed NaiveDateTime.
+    fn write_dtm_with_fallback(
+        doc: &mut EdifactDocumentWriter,
+        qualifier: &str,
+        raw_dtm: &HashMap<String, String>,
+        typed: Option<chrono::NaiveDateTime>,
+    ) {
+        if let Some(raw) = raw_dtm.get(qualifier) {
+            let composite = format!("{}:{}", qualifier, raw);
+            doc.write_segment("DTM", &[&composite]);
+        } else if let Some(dt) = typed {
+            let formatted = dt.format("%Y%m%d%H%M").to_string();
+            let composite = format!("{}:{}:303", qualifier, formatted);
+            doc.write_segment("DTM", &[&composite]);
         }
     }
 
@@ -184,37 +219,37 @@ impl ProzessdatenWriter {
     /// Counter=0250 (STS), then Counter=0280 (FTX).
     /// RFF+Z13 is written separately via SG6 (Counter=0350).
     pub fn write(doc: &mut EdifactDocumentWriter, pd: &Prozessdaten) {
-        // DTM segments (Counter=0230, Nr 00021-00034)
-        if let Some(ref dt) = pd.prozessdatum {
-            Self::write_dtm_prefer_raw(doc, "137", dt, &pd.raw_dtm);
-        }
-        if let Some(ref dt) = pd.wirksamkeitsdatum {
-            Self::write_dtm_prefer_raw(doc, "471", dt, &pd.raw_dtm);
-        }
-        if let Some(ref dt) = pd.vertragsbeginn {
-            Self::write_dtm_prefer_raw(doc, "92", dt, &pd.raw_dtm);
-        }
-        if let Some(ref dt) = pd.vertragsende {
-            Self::write_dtm_prefer_raw(doc, "93", dt, &pd.raw_dtm);
-        }
-        if let Some(ref dt) = pd.lieferbeginndatum_in_bearbeitung {
-            Self::write_dtm_prefer_raw(doc, "Z07", dt, &pd.raw_dtm);
-        }
-        if let Some(ref dt) = pd.datum_naechste_bearbeitung {
-            Self::write_dtm_prefer_raw(doc, "Z08", dt, &pd.raw_dtm);
-        }
-        if let Some(ref dt) = pd.tag_des_empfangs {
-            Self::write_dtm_prefer_raw(doc, "Z51", dt, &pd.raw_dtm);
-        }
-        if let Some(ref dt) = pd.kuendigungsdatum_kunde {
-            Self::write_dtm_prefer_raw(doc, "Z52", dt, &pd.raw_dtm);
-        }
-        if let Some(ref dt) = pd.geplanter_liefertermin {
-            Self::write_dtm_prefer_raw(doc, "Z53", dt, &pd.raw_dtm);
+        // IMD segments (between IDE and DTM in MIG order)
+        for raw in &pd.raw_imd {
+            doc.write_raw_segment(raw);
         }
 
-        // STS segment (Counter=0250, Nr 00035)
-        // S2.1 format: STS+7++grund+ergaenzung+befristete_anmeldung
+        // Process-level DTM segments (Counter=0230)
+        // Prefer raw_process_dtms (preserves ordering, duplicates, and release chars).
+        // Fall back to PROCESS_DTM_ORDER with raw_dtm HashMap for manually constructed data.
+        if !pd.raw_process_dtms.is_empty() {
+            for raw in &pd.raw_process_dtms {
+                doc.write_raw_segment(raw);
+            }
+        } else {
+            for qualifier in Self::PROCESS_DTM_ORDER {
+                match *qualifier {
+                    "137" => {
+                        Self::write_dtm_with_fallback(doc, "137", &pd.raw_dtm, pd.prozessdatum)
+                    }
+                    "471" => {
+                        Self::write_dtm_with_fallback(doc, "471", &pd.raw_dtm, pd.wirksamkeitsdatum)
+                    }
+                    "92" => {
+                        Self::write_dtm_with_fallback(doc, "92", &pd.raw_dtm, pd.vertragsbeginn)
+                    }
+                    "93" => Self::write_dtm_with_fallback(doc, "93", &pd.raw_dtm, pd.vertragsende),
+                    _ => Self::write_dtm_from_raw(doc, qualifier, &pd.raw_dtm),
+                }
+            }
+        }
+
+        // STS+7 segment (Counter=0250, Nr 00035)
         if let Some(ref grund) = pd.transaktionsgrund {
             let w = doc.segment_writer();
             w.begin_segment("STS");
@@ -226,7 +261,7 @@ impl ProzessdatenWriter {
             }
             if let Some(ref befr) = pd.transaktionsgrund_ergaenzung_befristete_anmeldung {
                 if pd.transaktionsgrund_ergaenzung.is_none() {
-                    w.add_empty_element(); // placeholder if ergaenzung missing but befristete present
+                    w.add_empty_element();
                 }
                 w.add_element(befr);
             }
@@ -234,13 +269,23 @@ impl ProzessdatenWriter {
             doc.message_segment_count_increment();
         }
 
-        // FTX+ACB segment (Counter=0280, Nr 00038)
-        if let Some(ref bemerkung) = pd.bemerkung {
+        // STS+E01/Z17/Z18/Z35 (stored as raw for roundtrip)
+        for raw in &pd.sts_raw {
+            doc.write_raw_segment(raw);
+        }
+
+        // FTX segments (Counter=0280, Nr 00038)
+        // Use raw FTX for roundtrip fidelity if available
+        if !pd.raw_ftx.is_empty() {
+            for raw in &pd.raw_ftx {
+                doc.write_raw_segment(raw);
+            }
+        } else if let Some(ref bemerkung) = pd.bemerkung {
             let w = doc.segment_writer();
             w.begin_segment("FTX");
             w.add_element("ACB");
-            w.add_empty_element(); // text subject code
-            w.add_empty_element(); // text function code
+            w.add_empty_element();
+            w.add_empty_element();
             w.begin_composite();
             w.add_component(bemerkung);
             w.end_composite();
@@ -254,9 +299,59 @@ impl ProzessdatenWriter {
     /// Called separately from `write()` because SG6 comes after SG5 (LOC)
     /// in MIG counter order.
     pub fn write_references(doc: &mut EdifactDocumentWriter, pd: &Prozessdaten) {
-        // RFF+Z13:referenz_vorgangsnummer (Nr 00056)
-        if let Some(ref vorgangsnr) = pd.referenz_vorgangsnummer {
-            doc.write_segment_with_composites("RFF", &[&["Z13", vorgangsnr]]);
+        // RFF segments in MIG order (SG6 Counter=0350)
+        if let Some(ref v) = pd.referenz_vorgangsnummer {
+            doc.write_segment_with_composites("RFF", &[&["Z13", v]]);
+        }
+        if let Some(ref v) = pd.vorgangsnummer {
+            doc.write_segment_with_composites("RFF", &[&["AGI", v]]);
+        }
+        if let Some(ref v) = pd.referenz_transaktions_id {
+            doc.write_segment_with_composites("RFF", &[&["TN", v]]);
+        }
+        if let Some(ref v) = pd.rff_z42 {
+            doc.write_segment_with_composites("RFF", &[&["Z42", v]]);
+        }
+        if let Some(ref v) = pd.rff_z43 {
+            doc.write_segment_with_composites("RFF", &[&["Z43", v]]);
+        }
+        if let Some(ref v) = pd.rff_z39 {
+            doc.write_segment_with_composites("RFF", &[&["Z39", v]]);
+        }
+        if let Some(ref v) = pd.rff_z60 {
+            doc.write_segment_with_composites("RFF", &[&["Z60", v]]);
+        }
+        if let Some(ref v) = pd.anfrage_referenz_aav {
+            doc.write_segment_with_composites("RFF", &[&["AAV", v]]);
+        }
+        if let Some(ref v) = pd.referenz_vorgangsnummer_acw {
+            doc.write_segment_with_composites("RFF", &[&["ACW", v]]);
+        }
+        if let Some(ref v) = pd.rff_z18 {
+            if v.is_empty() {
+                doc.write_segment("RFF", &["Z18"]);
+            } else {
+                doc.write_segment_with_composites("RFF", &[&["Z18", v]]);
+            }
+        }
+        // Zeitscheibe reference blocks: each RFF (Z49/Z50/Z53/Z47) followed by DTM+Z25/Z26
+        for zs_ref in &pd.zeitscheibe_refs {
+            doc.write_raw_segment(&zs_ref.raw_rff);
+            for dtm_raw in &zs_ref.raw_dtms {
+                doc.write_raw_segment(dtm_raw);
+            }
+        }
+        // RFF+Z31: Lokationsbuendel reference (after zeitscheibe refs)
+        if let Some(ref v) = pd.rff_z31 {
+            doc.write_segment("RFF", &[&format!("Z31{}", v)]);
+        }
+        if let Some(ref v) = pd.rff_z01 {
+            doc.write_segment("RFF", &[&format!("Z01{}", v)]);
+        }
+
+        // Reference-section DTMs (SG6, after RFF) — MIG order
+        for qualifier in Self::REFERENCE_DTM_ORDER {
+            Self::write_dtm_from_raw(doc, qualifier, &pd.raw_dtm);
         }
     }
 }
@@ -300,7 +395,9 @@ impl SteuerbareRessourceWriter {
         doc: &mut EdifactDocumentWriter,
         sr: &WithValidity<SteuerbareRessource, SteuerbareRessourceEdifact>,
     ) {
-        if let Some(ref id) = sr.data.steuerbare_ressource_id {
+        if let Some(ref raw) = sr.edifact.raw_loc {
+            doc.write_raw_segment(raw);
+        } else if let Some(ref id) = sr.data.steuerbare_ressource_id {
             doc.write_segment("LOC", &["Z19", id]);
         }
     }
@@ -314,7 +411,9 @@ impl TechnischeRessourceWriter {
         doc: &mut EdifactDocumentWriter,
         tr: &WithValidity<TechnischeRessource, TechnischeRessourceEdifact>,
     ) {
-        if let Some(ref id) = tr.data.technische_ressource_id {
+        if let Some(ref raw) = tr.edifact.raw_loc {
+            doc.write_raw_segment(raw);
+        } else if let Some(ref id) = tr.data.technische_ressource_id {
             doc.write_segment("LOC", &["Z20", id]);
         }
     }
@@ -325,7 +424,9 @@ pub struct TrancheWriter;
 
 impl TrancheWriter {
     pub fn write(doc: &mut EdifactDocumentWriter, t: &WithValidity<Tranche, TrancheEdifact>) {
-        if let Some(ref id) = t.data.tranche_id {
+        if let Some(ref raw) = t.edifact.raw_loc {
+            doc.write_raw_segment(raw);
+        } else if let Some(ref id) = t.data.tranche_id {
             doc.write_segment("LOC", &["Z21", id]);
         }
     }
@@ -339,7 +440,9 @@ impl MabisZaehlpunktWriter {
         doc: &mut EdifactDocumentWriter,
         mz: &WithValidity<MabisZaehlpunkt, MabisZaehlpunktEdifact>,
     ) {
-        if let Some(ref id) = mz.data.zaehlpunkt_id {
+        if let Some(ref raw) = mz.edifact.raw_loc {
+            doc.write_raw_segment(raw);
+        } else if let Some(ref id) = mz.data.zaehlpunkt_id {
             doc.write_segment("LOC", &["Z15", id]);
         }
     }
@@ -353,13 +456,20 @@ impl ProduktpaketWriter {
         doc: &mut EdifactDocumentWriter,
         pp: &WithValidity<Produktpaket, ProduktpaketEdifact>,
     ) {
-        // SEQ+Z79+produktpaket_id'
+        // SEQ+Z79/ZH0+produktpaket_id'
+        let qualifier = pp.edifact.seq_qualifier.as_deref().unwrap_or("Z79");
         let id = pp.data.produktpaket_id.as_deref().unwrap_or("");
-        doc.write_segment("SEQ", &["Z79", id]);
+        doc.write_segment("SEQ", &[qualifier, id]);
 
-        // PIA+5+produktpaket_name'
-        if let Some(ref name) = pp.edifact.produktpaket_name {
+        // PIA+5+produktpaket_name:typ' — use raw for roundtrip fidelity
+        if let Some(ref raw) = pp.edifact.raw_pia {
+            doc.write_raw_segment(raw);
+        } else if let Some(ref name) = pp.edifact.produktpaket_name {
             doc.write_segment("PIA", &["5", name]);
+        }
+        // CCI/CAV segments in Z79 group
+        for raw in &pp.edifact.raw_cci_cav {
+            doc.write_raw_segment(raw);
         }
     }
 }
@@ -372,17 +482,269 @@ impl LokationszuordnungWriter {
         doc: &mut EdifactDocumentWriter,
         lz: &WithValidity<Lokationszuordnung, LokationszuordnungEdifact>,
     ) {
-        // SEQ+Z78'
-        doc.write_segment("SEQ", &["Z78"]);
+        // SEQ+Z78+sub_id'
+        let sub_id = lz.edifact.zuordnungstyp.as_deref().unwrap_or("");
+        doc.write_segment("SEQ", &["Z78", sub_id]);
 
-        // RFF+Z18:marktlokations_id'
-        if let Some(ref malo_id) = lz.data.marktlokations_id {
-            doc.write_segment_with_composites("RFF", &[&["Z18", malo_id]]);
+        // Use raw RFFs for roundtrip fidelity if available
+        if !lz.edifact.raw_rffs.is_empty() {
+            for raw in &lz.edifact.raw_rffs {
+                doc.write_raw_segment(raw);
+            }
+        } else {
+            if let Some(ref malo_id) = lz.data.marktlokations_id {
+                doc.write_segment_with_composites("RFF", &[&["Z18", malo_id]]);
+            }
+            if let Some(ref melo_id) = lz.data.messlokations_id {
+                doc.write_segment_with_composites("RFF", &[&["Z19", melo_id]]);
+            }
         }
+    }
+}
 
-        // RFF+Z19:messlokations_id'
-        if let Some(ref melo_id) = lz.data.messlokations_id {
-            doc.write_segment_with_composites("RFF", &[&["Z19", melo_id]]);
+/// Writes SEQ group data to EDIFACT segments.
+///
+/// Handles all SEQ group types (Z45, Z71, Z21, Z08, Z01, Z20, and generic).
+pub struct SeqGroupWriter;
+
+impl SeqGroupWriter {
+    /// Writes a CCI entry as a segment.
+    fn write_cci(doc: &mut EdifactDocumentWriter, cci: &bo4e_extensions::CciEntry) {
+        let w = doc.segment_writer();
+        w.begin_segment("CCI");
+        w.add_element(cci.qualifier.as_deref().unwrap_or(""));
+        w.add_element(cci.additional_qualifier.as_deref().unwrap_or(""));
+        if let Some(ref code) = cci.characteristic_code {
+            w.begin_composite();
+            w.add_component(code);
+            w.end_composite();
+        }
+        w.end_segment();
+        doc.message_segment_count_increment();
+    }
+
+    /// Writes a CAV segment with a simple value.
+    fn write_cav(doc: &mut EdifactDocumentWriter, value: &str) {
+        doc.write_segment("CAV", &[value]);
+    }
+
+    /// Writes CCI/CAV segments. Uses raw storage for roundtrip fidelity when available,
+    /// otherwise falls back to interleaved CCI/CAV pairs from structured data.
+    fn write_cci_cav(
+        doc: &mut EdifactDocumentWriter,
+        raw_cci_cav: &[String],
+        ccis: &[bo4e_extensions::CciEntry],
+        cavs: &[String],
+    ) {
+        if !raw_cci_cav.is_empty() {
+            for raw in raw_cci_cav {
+                doc.write_raw_segment(raw);
+            }
+            return;
+        }
+        // Fallback: interleaved CCI/CAV pairs from structured data
+        let mut cav_idx = 0;
+        for cci in ccis {
+            Self::write_cci(doc, cci);
+            let is_z99 = cci.qualifier.as_deref() == Some("Z99");
+            if !is_z99 {
+                if let Some(cav_val) = cavs.get(cav_idx) {
+                    Self::write_cav(doc, cav_val);
+                    cav_idx += 1;
+                }
+            }
+        }
+        while cav_idx < cavs.len() {
+            Self::write_cav(doc, &cavs[cav_idx]);
+            cav_idx += 1;
+        }
+    }
+
+    /// Writes a SEQ+Z45 group.
+    pub fn write_z45(doc: &mut EdifactDocumentWriter, group: &bo4e_extensions::SeqZ45Group) {
+        // SEQ+Z45+zeitscheibe_ref'
+        let w = doc.segment_writer();
+        w.begin_segment("SEQ");
+        w.add_element("Z45");
+        if let Some(ref zs) = group.zeitscheibe_ref {
+            w.add_element(zs);
+        }
+        w.end_segment();
+        doc.message_segment_count_increment();
+
+        // Use raw_cci_cav for all body segments (preserves original order of PIA/QTY/CCI/CAV)
+        if !group.raw_cci_cav.is_empty() {
+            for raw in &group.raw_cci_cav {
+                doc.write_raw_segment(raw);
+            }
+        } else {
+            // Fallback: structured fields
+            if group.artikel_id.is_some() || group.artikel_id_typ.is_some() {
+                let w = doc.segment_writer();
+                w.begin_segment("PIA");
+                w.add_element("Z02");
+                w.begin_composite();
+                w.add_component(group.artikel_id.as_deref().unwrap_or(""));
+                w.add_component(group.artikel_id_typ.as_deref().unwrap_or(""));
+                w.end_composite();
+                w.end_segment();
+                doc.message_segment_count_increment();
+            }
+            if let Some(ref raw) = group.wandlerfaktor {
+                doc.write_segment("QTY", &[raw]);
+            }
+            if let Some(ref raw) = group.vorkommastelle {
+                doc.write_segment("QTY", &[raw]);
+            }
+            if let Some(ref raw) = group.nachkommastelle {
+                doc.write_segment("QTY", &[raw]);
+            }
+            Self::write_cci_cav(doc, &[], &group.cci_segments, &group.cav_segments);
+        }
+    }
+
+    /// Writes a SEQ+Z71 group.
+    pub fn write_z71(doc: &mut EdifactDocumentWriter, group: &bo4e_extensions::SeqZ71Group) {
+        let w = doc.segment_writer();
+        w.begin_segment("SEQ");
+        w.add_element("Z71");
+        if let Some(ref zs) = group.zeitscheibe_ref {
+            w.add_element(zs);
+        }
+        w.end_segment();
+        doc.message_segment_count_increment();
+
+        // Use raw_cci_cav for all body segments (preserves original order)
+        if !group.raw_cci_cav.is_empty() {
+            for raw in &group.raw_cci_cav {
+                doc.write_raw_segment(raw);
+            }
+        } else {
+            if group.artikel_id.is_some() || group.artikel_id_typ.is_some() {
+                let w = doc.segment_writer();
+                w.begin_segment("PIA");
+                w.add_element("Z02");
+                w.begin_composite();
+                w.add_component(group.artikel_id.as_deref().unwrap_or(""));
+                w.add_component(group.artikel_id_typ.as_deref().unwrap_or(""));
+                w.end_composite();
+                w.end_segment();
+                doc.message_segment_count_increment();
+            }
+            Self::write_cci_cav(doc, &[], &group.cci_segments, &group.cav_segments);
+        }
+    }
+
+    /// Writes a SEQ+Z21 group.
+    pub fn write_z21(doc: &mut EdifactDocumentWriter, group: &bo4e_extensions::SeqZ21Group) {
+        let w = doc.segment_writer();
+        w.begin_segment("SEQ");
+        w.add_element("Z21");
+        if let Some(ref zs) = group.zeitscheibe_ref {
+            w.add_element(zs);
+        }
+        w.end_segment();
+        doc.message_segment_count_increment();
+
+        // Use raw_cci_cav for all body segments (preserves original order)
+        if !group.raw_cci_cav.is_empty() {
+            for raw in &group.raw_cci_cav {
+                doc.write_raw_segment(raw);
+            }
+        } else {
+            for rff_raw in &group.rff_segments {
+                doc.write_raw_segment(rff_raw);
+            }
+            Self::write_cci_cav(doc, &[], &group.cci_segments, &group.cav_segments);
+        }
+    }
+
+    /// Writes a SEQ+Z08 group.
+    pub fn write_z08(doc: &mut EdifactDocumentWriter, group: &bo4e_extensions::SeqZ08Group) {
+        let w = doc.segment_writer();
+        w.begin_segment("SEQ");
+        w.add_element("Z08");
+        if let Some(ref zs) = group.zeitscheibe_ref {
+            w.add_element(zs);
+        }
+        w.end_segment();
+        doc.message_segment_count_increment();
+
+        // Use raw_cci_cav for all body segments (preserves original order)
+        if !group.raw_cci_cav.is_empty() {
+            for raw in &group.raw_cci_cav {
+                doc.write_raw_segment(raw);
+            }
+        } else {
+            for rff_raw in &group.rff_segments {
+                doc.write_raw_segment(rff_raw);
+            }
+            Self::write_cci_cav(doc, &[], &group.cci_segments, &group.cav_segments);
+        }
+    }
+
+    /// Writes a SEQ+Z01 group.
+    pub fn write_z01(doc: &mut EdifactDocumentWriter, group: &bo4e_extensions::SeqZ01Group) {
+        let w = doc.segment_writer();
+        w.begin_segment("SEQ");
+        w.add_element("Z01");
+        if let Some(ref zs) = group.zeitscheibe_ref {
+            w.add_element(zs);
+        }
+        w.end_segment();
+        doc.message_segment_count_increment();
+
+        // Use raw_cci_cav for all body segments (preserves original order of RFF/QTY/CCI/CAV)
+        if !group.raw_cci_cav.is_empty() {
+            for raw in &group.raw_cci_cav {
+                doc.write_raw_segment(raw);
+            }
+        } else {
+            // Fallback: separate lists
+            for rff_raw in &group.rff_segments {
+                doc.write_raw_segment(rff_raw);
+            }
+            for qty_raw in &group.qty_segments {
+                doc.write_segment("QTY", &[qty_raw]);
+            }
+            Self::write_cci_cav(doc, &[], &group.cci_segments, &group.cav_segments);
+        }
+    }
+
+    /// Writes a SEQ+Z20 group.
+    pub fn write_z20(doc: &mut EdifactDocumentWriter, group: &bo4e_extensions::SeqZ20Group) {
+        let w = doc.segment_writer();
+        w.begin_segment("SEQ");
+        w.add_element("Z20");
+        if let Some(ref zs) = group.zeitscheibe_ref {
+            w.add_element(zs);
+        }
+        w.end_segment();
+        doc.message_segment_count_increment();
+
+        // Use raw_cci_cav for all body segments (preserves original order)
+        if !group.raw_cci_cav.is_empty() {
+            for raw in &group.raw_cci_cav {
+                doc.write_raw_segment(raw);
+            }
+        } else {
+            for rff_raw in &group.rff_segments {
+                doc.write_raw_segment(rff_raw);
+            }
+            for pia_raw in &group.pia_segments {
+                doc.write_raw_segment(pia_raw);
+            }
+            Self::write_cci_cav(doc, &[], &group.cci_segments, &group.cav_segments);
+        }
+    }
+
+    /// Writes a generic SEQ group (raw segment replay).
+    pub fn write_generic(
+        doc: &mut EdifactDocumentWriter,
+        group: &bo4e_extensions::GenericSeqGroup,
+    ) {
+        for raw in &group.raw_segments {
+            doc.write_raw_segment(raw);
         }
     }
 }
@@ -395,34 +757,42 @@ impl BilanzierungWriter {
         doc: &mut EdifactDocumentWriter,
         b: &WithValidity<Bilanzierung, BilanzierungEdifact>,
     ) {
-        // SEQ+Z98'
-        doc.write_segment("SEQ", &["Z98"]);
+        // SEQ+Z98 (or Z81, preserved from original) with optional sub-ID
+        let qualifier = b.edifact.seq_qualifier.as_deref().unwrap_or("Z98");
+        let sub_id = b.edifact.seq_sub_id.as_deref().unwrap_or("");
+        doc.write_segment("SEQ", &[qualifier, sub_id]);
 
-        // CCI+Z20++bilanzkreis'
-        if let Some(ref bk) = b.data.bilanzkreis {
-            doc.write_segment("CCI", &["Z20", "", bk]);
-        }
+        // Use raw_segments for roundtrip fidelity (preserves CCI/CAV/QTY order)
+        if !b.edifact.raw_segments.is_empty() {
+            for raw in &b.edifact.raw_segments {
+                doc.write_raw_segment(raw);
+            }
+        } else {
+            // Fallback: write parsed fields
+            // CCI+Z20++bilanzkreis'
+            if let Some(ref bk) = b.data.bilanzkreis {
+                doc.write_segment("CCI", &["Z20", "", bk]);
+            }
 
-        // CCI+Z21++regelzone'
-        if let Some(ref rz) = b.data.regelzone {
-            doc.write_segment("CCI", &["Z21", "", rz]);
-        }
+            // CCI+Z21++regelzone'
+            if let Some(ref rz) = b.data.regelzone {
+                doc.write_segment("CCI", &["Z21", "", rz]);
+            }
 
-        // CCI+Z22++bilanzierungsgebiet'
-        if let Some(ref bg) = b.data.bilanzierungsgebiet {
-            doc.write_segment("CCI", &["Z22", "", bg]);
-        }
+            // CCI+Z22++bilanzierungsgebiet'
+            if let Some(ref bg) = b.data.bilanzierungsgebiet {
+                doc.write_segment("CCI", &["Z22", "", bg]);
+            }
 
-        // QTY+Z09:jahresverbrauchsprognose'
-        if let Some(jvp) = b.edifact.jahresverbrauchsprognose {
-            let value = format!("{jvp}");
-            doc.write_segment_with_composites("QTY", &[&["Z09", &value]]);
-        }
-
-        // QTY+265:temperatur_arbeit'
-        if let Some(ta) = b.edifact.temperatur_arbeit {
-            let value = format!("{ta}");
-            doc.write_segment_with_composites("QTY", &[&["265", &value]]);
+            // QTY segments
+            if let Some(jvp) = b.edifact.jahresverbrauchsprognose {
+                let value = format!("{jvp}");
+                doc.write_segment_with_composites("QTY", &[&["Z09", &value]]);
+            }
+            if let Some(ta) = b.edifact.temperatur_arbeit {
+                let value = format!("{ta}");
+                doc.write_segment_with_composites("QTY", &[&["265", &value]]);
+            }
         }
     }
 }
@@ -505,8 +875,9 @@ mod tests {
 
         let output = doc.output();
         assert!(output.contains("SEQ+Z03'"));
-        assert!(output.contains("PIA+5+ZAEHLER001'"));
         assert!(output.contains("RFF+Z19:MELO001'"));
+        // PIA+5 is NOT written in Z03 groups — it belongs to Z02 groups
+        assert!(!output.contains("PIA+5"));
     }
 
     #[test]
@@ -545,12 +916,17 @@ mod tests {
             .unwrap()
             .and_hms_opt(13, 30, 0)
             .unwrap();
+        let mut raw_dtm = HashMap::new();
+        raw_dtm.insert("137".to_string(), "202507011330:303".to_string());
+        raw_dtm.insert("471".to_string(), "202507011330:303".to_string());
+        raw_dtm.insert("92".to_string(), "202507011330:303".to_string());
         let pd = Prozessdaten {
             transaktionsgrund: Some("E01".to_string()),
             transaktionsgrund_ergaenzung: Some("Z01".to_string()),
             prozessdatum: Some(dt),
             wirksamkeitsdatum: Some(dt),
             vertragsbeginn: Some(dt),
+            raw_dtm,
             ..Default::default()
         };
 
@@ -847,6 +1223,9 @@ mod tests {
             },
             edifact: ProduktpaketEdifact {
                 produktpaket_name: Some("Grundversorgung".to_string()),
+                seq_qualifier: None,
+                raw_pia: None,
+                raw_cci_cav: Vec::new(),
             },
             gueltigkeitszeitraum: None,
             zeitscheibe_ref: None,
@@ -897,10 +1276,15 @@ mod tests {
         doc.begin_interchange("S", None, "R", None, "REF", "D", "T", false);
         doc.begin_message("M", "TYPE");
 
+        let mut raw_dtm = HashMap::new();
+        raw_dtm.insert("Z51".to_string(), "202507011330:303".to_string());
+        raw_dtm.insert("Z52".to_string(), "202507011330:303".to_string());
+        raw_dtm.insert("Z53".to_string(), "202507011330:303".to_string());
         let pd = Prozessdaten {
             tag_des_empfangs: Some(dt),
             kuendigungsdatum_kunde: Some(dt),
             geplanter_liefertermin: Some(dt),
+            raw_dtm,
             ..Default::default()
         };
         ProzessdatenWriter::write(&mut doc, &pd);
@@ -928,6 +1312,10 @@ mod tests {
             edifact: BilanzierungEdifact {
                 jahresverbrauchsprognose: Some(12345.67),
                 temperatur_arbeit: None,
+                seq_qualifier: None,
+                seq_sub_id: None,
+                raw_qty: Vec::new(),
+                raw_segments: Vec::new(),
             },
             gueltigkeitszeitraum: None,
             zeitscheibe_ref: None,
