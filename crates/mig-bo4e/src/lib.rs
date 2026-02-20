@@ -8,9 +8,10 @@
 //!
 //! # Usage
 //! ```ignore
-//! let engine = MappingEngine::load("mappings/")?;
-//! let bo4e = engine.to_bo4e(&assembled_tree)?;
-//! let tree = engine.from_bo4e(&bo4e, "55001")?;
+//! let engine = MappingEngine::load("mappings/FV2504/UTILMD_Strom")?;
+//! let def = engine.definition_for_entity("Marktlokation").unwrap();
+//! let bo4e = engine.map_forward(&tree, def, 0);
+//! let instance = engine.map_reverse(&bo4e, def);
 //! ```
 
 pub mod definition;

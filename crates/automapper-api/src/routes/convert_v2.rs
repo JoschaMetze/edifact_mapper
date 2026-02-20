@@ -68,19 +68,28 @@ async fn convert_v2(
             })?;
 
             // Apply TOML mapping engine to convert tree → BO4E
-            let engine = state.mig_registry.mapping_engine();
+            // TODO: detect message type/variant from EDIFACT UNH segment
+            let mapping_key = format!("{}/UTILMD_Strom", req.format_version);
             let tree_json = serde_json::to_value(&tree).map_err(|e| ApiError::Internal {
                 message: format!("serialization error: {e}"),
             })?;
 
             // If mapping definitions exist, apply them; otherwise return the tree
-            let bo4e_result = if engine.definitions().is_empty() {
+            let bo4e_result = if let Some(engine) = state.mig_registry.mapping_engine(&mapping_key)
+            {
+                if engine.definitions().is_empty() {
+                    serde_json::json!({
+                        "note": "No TOML mapping definitions loaded; returning assembled tree",
+                        "tree": tree_json
+                    })
+                } else {
+                    tree_json
+                }
+            } else {
                 serde_json::json!({
-                    "note": "No TOML mapping definitions loaded; returning assembled tree",
+                    "note": format!("No mappings available for {mapping_key}; returning assembled tree"),
                     "tree": tree_json
                 })
-            } else {
-                tree_json
             };
 
             Ok(Json(ConvertV2Response {

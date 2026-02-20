@@ -1,4 +1,7 @@
 //! Mapping engine — loads TOML definitions and provides bidirectional conversion.
+//!
+//! Supports nested group paths (e.g., "SG4.SG5") for navigating the assembled tree
+//! and provides `map_forward` / `map_reverse` for full entity conversion.
 
 use std::path::Path;
 
@@ -6,7 +9,7 @@ use mig_assembly::assembler::{
     AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree,
 };
 
-use crate::definition::MappingDefinition;
+use crate::definition::{FieldMapping, MappingDefinition};
 use crate::error::MappingError;
 
 /// The mapping engine holds all loaded mapping definitions
@@ -52,20 +55,60 @@ impl MappingEngine {
         self.definitions.iter().find(|d| d.meta.entity == entity)
     }
 
+    // ── Forward mapping: tree → BO4E ──
+
     /// Extract a field value from an assembled tree using a mapping path.
     ///
+    /// `group_path` supports dotted notation for nested groups (e.g., "SG4.SG5").
+    /// Parent groups default to repetition 0; `repetition` applies to the leaf group.
+    ///
     /// Path format: "segment.composite.data_element" e.g., "loc.c517.d3225"
-    /// The segment is found within the specified group at the given repetition index.
     pub fn extract_field(
         &self,
         tree: &AssembledTree,
-        group_id: &str,
+        group_path: &str,
         path: &str,
         repetition: usize,
     ) -> Option<String> {
-        let group = tree.groups.iter().find(|g| g.group_id == group_id)?;
-        let instance = group.repetitions.get(repetition)?;
+        let instance = Self::resolve_group_instance(tree, group_path, repetition)?;
         Self::extract_from_instance(instance, path)
+    }
+
+    /// Navigate a potentially nested group path to find a group instance.
+    ///
+    /// For "SG4.SG5", finds SG4\[0\] then SG5 at the given repetition within it.
+    /// For "SG8", finds SG8 at the given repetition in the top-level groups.
+    pub fn resolve_group_instance<'a>(
+        tree: &'a AssembledTree,
+        group_path: &str,
+        repetition: usize,
+    ) -> Option<&'a AssembledGroupInstance> {
+        let parts: Vec<&str> = group_path.split('.').collect();
+
+        let first_group = tree.groups.iter().find(|g| g.group_id == parts[0])?;
+
+        if parts.len() == 1 {
+            return first_group.repetitions.get(repetition);
+        }
+
+        // Navigate through parent groups using repetition 0
+        let mut current_instance = first_group.repetitions.first()?;
+
+        for (i, part) in parts[1..].iter().enumerate() {
+            let child_group = current_instance
+                .child_groups
+                .iter()
+                .find(|g| g.group_id == *part)?;
+
+            if i == parts.len() - 2 {
+                // Last part — use the specified repetition
+                return child_group.repetitions.get(repetition);
+            }
+            // Intermediate — use repetition 0
+            current_instance = child_group.repetitions.first()?;
+        }
+
+        None
     }
 
     /// Extract a field from a group instance by path.
@@ -85,6 +128,122 @@ impl MappingEngine {
         Self::resolve_field_path(segment, &parts[1..])
     }
 
+    /// Map all fields in a definition from the assembled tree to a BO4E JSON object.
+    ///
+    /// `group_path` is the definition's `source_group` (may be dotted, e.g., "SG4.SG5").
+    /// Returns a flat JSON object with target field names as keys.
+    pub fn map_forward(
+        &self,
+        tree: &AssembledTree,
+        def: &MappingDefinition,
+        repetition: usize,
+    ) -> serde_json::Value {
+        let mut result = serde_json::Map::new();
+
+        let instance = Self::resolve_group_instance(tree, &def.meta.source_group, repetition);
+
+        if let Some(instance) = instance {
+            for (path, field_mapping) in &def.fields {
+                let target = match field_mapping {
+                    FieldMapping::Simple(t) => t.clone(),
+                    FieldMapping::Structured(s) => s.target.clone(),
+                    FieldMapping::Nested(_) => continue,
+                };
+                if target.is_empty() {
+                    continue;
+                }
+                if let Some(val) = Self::extract_from_instance(instance, path) {
+                    set_nested_value(&mut result, &target, val);
+                }
+            }
+        }
+
+        serde_json::Value::Object(result)
+    }
+
+    // ── Reverse mapping: BO4E → tree ──
+
+    /// Map a BO4E JSON object back to an assembled group instance.
+    ///
+    /// Uses the definition's field mappings to populate segment elements.
+    /// Fields with `default` values are used when no BO4E value is present
+    /// (useful for fixed qualifiers like LOC qualifier "Z16").
+    ///
+    /// Element placement follows the forward mapping convention:
+    /// - 1-part sub-path (e.g., "d3227") → element\[0\]
+    /// - 2-part sub-path (e.g., "c517.d3225") → element\[1\]
+    pub fn map_reverse(
+        &self,
+        bo4e_value: &serde_json::Value,
+        def: &MappingDefinition,
+    ) -> AssembledGroupInstance {
+        // Collect (segment_tag, element_index, value) tuples first,
+        // then build segments in correct element order.
+        let mut field_values: Vec<(String, usize, String)> = Vec::new();
+
+        for (path, field_mapping) in &def.fields {
+            let (target, default) = match field_mapping {
+                FieldMapping::Simple(t) => (t.clone(), None),
+                FieldMapping::Structured(s) => (s.target.clone(), s.default.clone()),
+                FieldMapping::Nested(_) => continue,
+            };
+
+            let parts: Vec<&str> = path.split('.').collect();
+            if parts.len() < 2 {
+                continue;
+            }
+            let seg_tag = parts[0].to_uppercase();
+
+            // Determine element index from sub-path length
+            // (matching resolve_field_path convention)
+            let sub_path_len = parts.len() - 1; // parts after segment tag
+            let element_idx = match sub_path_len {
+                1 => 0, // "d3227" → element[0]
+                2 => 1, // "c517.d3225" → element[1]
+                _ => continue,
+            };
+
+            // Try BO4E value first, fall back to default
+            let val = if target.is_empty() {
+                default
+            } else {
+                self.populate_field(bo4e_value, &target, path).or(default)
+            };
+
+            if let Some(val) = val {
+                field_values.push((seg_tag, element_idx, val));
+            }
+        }
+
+        // Build segments with elements in correct positions
+        let mut segments: Vec<AssembledSegment> = Vec::new();
+
+        for (seg_tag, element_idx, val) in field_values {
+            let seg = segments.iter_mut().find(|s| s.tag == seg_tag);
+            let seg = match seg {
+                Some(existing) => existing,
+                None => {
+                    segments.push(AssembledSegment {
+                        tag: seg_tag.clone(),
+                        elements: vec![],
+                    });
+                    segments.last_mut().unwrap()
+                }
+            };
+
+            // Extend elements vector if needed
+            while seg.elements.len() <= element_idx {
+                seg.elements.push(vec![]);
+            }
+            seg.elements[element_idx] = vec![val];
+        }
+
+        AssembledGroupInstance {
+            segments,
+            child_groups: vec![],
+        }
+    }
+
     fn resolve_field_path(segment: &AssembledSegment, path: &[&str]) -> Option<String> {
         // Path navigation through composites and data elements.
         // For now, use positional access: path parts map to element indices.
@@ -102,16 +261,14 @@ impl MappingEngine {
         }
     }
 
-    /// Extract a value from a BO4E JSON object by target field name,
-    /// for populating back into a tree at the given path.
+    /// Extract a value from a BO4E JSON object by target field name.
+    /// Supports dotted paths like "nested.field_name".
     pub fn populate_field(
         &self,
         bo4e_value: &serde_json::Value,
         target_field: &str,
         _source_path: &str,
     ) -> Option<String> {
-        // Navigate the BO4E JSON to find the target field.
-        // Supports dotted paths like "nested.field_name".
         let parts: Vec<&str> = target_field.split('.').collect();
         let mut current = bo4e_value;
         for part in &parts {
@@ -121,9 +278,6 @@ impl MappingEngine {
     }
 
     /// Build a segment from BO4E values using the reverse mapping.
-    ///
-    /// Given a mapping definition and a BO4E JSON value, creates an
-    /// `AssembledSegment` with elements populated from the BO4E fields.
     pub fn build_segment_from_bo4e(
         &self,
         bo4e_value: &serde_json::Value,
@@ -148,46 +302,40 @@ impl MappingEngine {
         bo4e_value: &serde_json::Value,
         def: &MappingDefinition,
     ) -> AssembledGroup {
-        let mut segments = Vec::new();
-
-        for (path, field_mapping) in &def.fields {
-            let target = match field_mapping {
-                crate::definition::FieldMapping::Simple(t) => t.clone(),
-                crate::definition::FieldMapping::Structured(s) => s.target.clone(),
-                crate::definition::FieldMapping::Nested(_) => continue,
-            };
-
-            let parts: Vec<&str> = path.split('.').collect();
-            if parts.is_empty() {
-                continue;
-            }
-            let seg_tag = parts[0].to_uppercase();
-
-            if let Some(val) = self.populate_field(bo4e_value, &target, path) {
-                // Find existing segment or create new
-                let seg = segments
-                    .iter_mut()
-                    .find(|s: &&mut AssembledSegment| s.tag == seg_tag);
-                match seg {
-                    Some(existing) => {
-                        existing.elements.push(vec![val]);
-                    }
-                    None => {
-                        segments.push(AssembledSegment {
-                            tag: seg_tag,
-                            elements: vec![vec![val]],
-                        });
-                    }
-                }
-            }
-        }
+        let instance = self.map_reverse(bo4e_value, def);
+        let leaf_group = def
+            .meta
+            .source_group
+            .rsplit('.')
+            .next()
+            .unwrap_or(&def.meta.source_group);
 
         AssembledGroup {
-            group_id: def.meta.source_group.clone(),
-            repetitions: vec![AssembledGroupInstance {
-                segments,
-                child_groups: vec![],
-            }],
+            group_id: leaf_group.to_string(),
+            repetitions: vec![instance],
         }
     }
+}
+
+/// Set a value in a nested JSON map using a dotted path.
+/// E.g., "address.city" sets `{"address": {"city": "value"}}`.
+fn set_nested_value(map: &mut serde_json::Map<String, serde_json::Value>, path: &str, val: String) {
+    let parts: Vec<&str> = path.split('.').collect();
+    if parts.len() == 1 {
+        map.insert(parts[0].to_string(), serde_json::Value::String(val));
+        return;
+    }
+
+    // Navigate/create intermediate objects
+    let mut current = map;
+    for part in &parts[..parts.len() - 1] {
+        let entry = current
+            .entry(part.to_string())
+            .or_insert_with(|| serde_json::Value::Object(serde_json::Map::new()));
+        current = entry.as_object_mut().expect("expected object in path");
+    }
+    current.insert(
+        parts.last().unwrap().to_string(),
+        serde_json::Value::String(val),
+    );
 }

@@ -3,7 +3,7 @@ use std::path::Path;
 
 #[test]
 fn test_load_real_mapping_files() {
-    let mappings_dir = Path::new("../../mappings");
+    let mappings_dir = Path::new("../../mappings/FV2504/UTILMD_Strom");
     if !mappings_dir.exists() {
         eprintln!("mappings/ dir not found, skipping");
         return;
@@ -22,7 +22,7 @@ fn test_load_real_mapping_files() {
 
 #[test]
 fn test_marktlokation_mapping_structure() {
-    let mappings_dir = Path::new("../../mappings");
+    let mappings_dir = Path::new("../../mappings/FV2504/UTILMD_Strom");
     if !mappings_dir.exists() {
         return;
     }
@@ -30,20 +30,15 @@ fn test_marktlokation_mapping_structure() {
     let engine = MappingEngine::load(mappings_dir).unwrap();
     let def = engine.definition_for_entity("Marktlokation").unwrap();
 
-    assert_eq!(def.meta.bo4e_type, "bo4e::Marktlokation");
-    assert_eq!(
-        def.meta.companion_type.as_deref(),
-        Some("MarktlokationEdifact")
-    );
-    assert_eq!(def.meta.source_group, "SG8");
-    assert!(def.meta.discriminator.is_some());
+    assert_eq!(def.meta.bo4e_type, "Marktlokation");
+    assert_eq!(def.meta.source_group, "SG4.SG5");
     assert!(def.fields.contains_key("loc.c517.d3225"));
-    assert!(def.companion_fields.is_some());
+    assert!(def.fields.contains_key("loc.d3227"));
 }
 
 #[test]
 fn test_geschaeftspartner_mapping_fields() {
-    let mappings_dir = Path::new("../../mappings");
+    let mappings_dir = Path::new("../../mappings/FV2504/UTILMD_Strom");
     if !mappings_dir.exists() {
         return;
     }

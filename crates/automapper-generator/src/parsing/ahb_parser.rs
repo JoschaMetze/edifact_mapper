@@ -112,6 +112,7 @@ fn parse_workflow(
     let kommunikation_von = get_attr(start, "Kommunikation_von");
 
     let mut fields = Vec::new();
+    let mut segment_numbers = Vec::new();
     let mut path_stack: Vec<String> = Vec::new();
     let mut buf = Vec::new();
 
@@ -124,6 +125,13 @@ fn parse_workflow(
 
                 if let Some(stripped) = prefix_stripped {
                     path_stack.push(stripped.to_string());
+
+                    // Capture MIG segment Number for S_* elements
+                    if name.starts_with("S_") {
+                        if let Some(number) = get_attr(e, "Number") {
+                            segment_numbers.push(number);
+                        }
+                    }
 
                     // Capture group-level conditional AHB_Status
                     if let Some(ahb_status) = get_attr(e, "AHB_Status") {
@@ -230,6 +238,7 @@ fn parse_workflow(
         beschreibung,
         kommunikation_von,
         fields,
+        segment_numbers,
     })
 }
 

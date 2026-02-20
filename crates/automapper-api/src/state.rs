@@ -36,7 +36,7 @@ impl AppState {
 /// Registry for MIG-driven conversion services, keyed by format version.
 pub struct MigServiceRegistry {
     services: HashMap<String, ConversionService>,
-    mapping_engine: MappingEngine,
+    mapping_engines: HashMap<String, MappingEngine>,
 }
 
 impl MigServiceRegistry {
@@ -65,29 +65,50 @@ impl MigServiceRegistry {
             );
         }
 
-        // Load TOML mapping definitions if available
-        let mappings_dir = std::path::Path::new("mappings");
-        let mapping_engine = if mappings_dir.exists() {
-            match MappingEngine::load(mappings_dir) {
-                Ok(engine) => {
-                    tracing::info!(
-                        "Loaded {} TOML mapping definitions",
-                        engine.definitions().len()
-                    );
-                    engine
-                }
-                Err(e) => {
-                    tracing::warn!("Failed to load mapping definitions: {e}");
-                    MappingEngine::from_definitions(vec![])
+        // Load TOML mapping definitions per format version
+        let mut mapping_engines = HashMap::new();
+        let mappings_base = std::path::Path::new("mappings");
+        if mappings_base.exists() {
+            if let Ok(entries) = std::fs::read_dir(mappings_base) {
+                for entry in entries.flatten() {
+                    let fv_path = entry.path();
+                    if !fv_path.is_dir() {
+                        continue;
+                    }
+                    let fv = entry.file_name().to_string_lossy().to_string();
+                    // Load all .toml files recursively from FV subdirectories
+                    for sub_entry in std::fs::read_dir(&fv_path).into_iter().flatten().flatten() {
+                        let sub_path = sub_entry.path();
+                        if sub_path.is_dir() {
+                            match MappingEngine::load(&sub_path) {
+                                Ok(engine) => {
+                                    let key = format!(
+                                        "{}/{}",
+                                        fv,
+                                        sub_entry.file_name().to_string_lossy()
+                                    );
+                                    tracing::info!(
+                                        "Loaded {} TOML mapping definitions for {key}",
+                                        engine.definitions().len()
+                                    );
+                                    mapping_engines.insert(key, engine);
+                                }
+                                Err(e) => {
+                                    tracing::warn!(
+                                        "Failed to load mappings from {}: {e}",
+                                        sub_path.display()
+                                    );
+                                }
+                            }
+                        }
+                    }
                 }
             }
-        } else {
-            MappingEngine::from_definitions(vec![])
-        };
+        }
 
         Self {
             services,
-            mapping_engine,
+            mapping_engines,
         }
     }
 
@@ -96,9 +117,10 @@ impl MigServiceRegistry {
         self.services.get(format_version)
     }
 
-    /// Get the mapping engine.
-    pub fn mapping_engine(&self) -> &MappingEngine {
-        &self.mapping_engine
+    /// Get a mapping engine for the given format version and message type/variant key.
+    /// Key format: "FV2504/UTILMD_Strom"
+    pub fn mapping_engine(&self, key: &str) -> Option<&MappingEngine> {
+        self.mapping_engines.get(key)
     }
 
     /// Check if any MIG services are available.

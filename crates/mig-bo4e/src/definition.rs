@@ -1,7 +1,7 @@
 //! TOML mapping definition types.
 //!
 //! These types are deserialized from TOML mapping files
-//! in the `mappings/` directory.
+//! in the `mappings/{format_version}/{message_type}_{variant}/` directory.
 
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;

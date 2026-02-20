@@ -166,6 +166,23 @@ Key correspondences:
 - **gRPC streaming** uses tonic's `Streaming<T>` for both request and response sides. Proto files live in `proto/`.
 - **Leptos WASM frontend** communicates via REST to the Axum backend. The `static/` directory holds build output served as a fallback route.
 
+### PID-Specific Assembly via AHB-MIG Number Linkage
+
+The MIG XML defines ALL possible segments/groups for a message type (e.g., UTILMD has two SG4 variants, dozens of SG8 variants, many SG12 variants). The AHB for a specific PID references exactly which subset to use. The link between them is the `Number` attribute on `S_*` segment elements — it's the same value in both MIG and AHB XMLs.
+
+**How to add a new PID to the MIG-driven pipeline:**
+
+1. **Get AHB segment numbers**: Parse the AHB XML for the PID → `Pruefidentifikator.segment_numbers` gives you all `Number` values (e.g., PID 55001 has 30 Numbers).
+2. **Filter MIG**: Call `pid_filter::filter_mig_for_pid(mig, ahb_numbers)` — this produces a PID-specific MIG with no ambiguous duplicate groups.
+3. **Assemble**: The existing `Assembler::assemble_generic()` works unchanged on the filtered MIG, capturing all nested groups correctly.
+4. **Roundtrip**: `EDIFACT → tokenize → assemble(filtered_mig) → disassemble → render` is byte-identical for well-formed fixtures.
+
+**Key details:**
+- Transport segments (UNA, UNB, UNZ) are always kept — the AHB only covers message content (UNH→UNT).
+- The filter works recursively: it resolves ambiguity at all nesting levels (SG4 variants, SG8 variants within SG4, SG10 variants within SG8, etc.).
+- Entry segment `Number` determines group selection — if the first segment's Number isn't in the AHB set, the entire group variant is dropped.
+- The assembled tree preserves the full group hierarchy: `SG4 → [SG5, SG6, SG8 → [SG10], SG12]`.
+
 ## Implementation Plans
 
 Detailed task-level plans in `docs/plans/` — 5 features, 23 epics:

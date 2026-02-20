@@ -8,17 +8,22 @@
 //! PIDs) that the assembler can only partially match. Full byte-identical
 //! roundtrip requires unified MIG group variants.
 
+use automapper_generator::parsing::ahb_parser::parse_ahb;
 use automapper_generator::parsing::mig_parser::parse_mig;
 use automapper_generator::schema::mig::MigSchema;
 use mig_assembly::assembler::Assembler;
 use mig_assembly::disassembler::Disassembler;
+use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::renderer::render_edifact;
 use mig_assembly::roundtrip::roundtrip;
 use mig_assembly::tokenize::parse_to_segments;
+use std::collections::HashSet;
 use std::path::Path;
 
 const MIG_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml";
+const AHB_XML_PATH: &str =
+    "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml";
 const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 
 fn load_real_mig() -> Option<MigSchema> {
@@ -28,6 +33,16 @@ fn load_real_mig() -> Option<MigSchema> {
         return None;
     }
     Some(parse_mig(path, "UTILMD", Some("Strom"), "FV2504").expect("Failed to parse MIG XML"))
+}
+
+fn load_pid_numbers(pid_id: &str) -> Option<HashSet<String>> {
+    let path = Path::new(AHB_XML_PATH);
+    if !path.exists() {
+        return None;
+    }
+    let ahb = parse_ahb(path, "UTILMD", Some("Strom"), "FV2504").ok()?;
+    let pid = ahb.workflows.iter().find(|w| w.id == pid_id)?;
+    Some(pid.segment_numbers.iter().cloned().collect())
 }
 
 #[test]
@@ -200,5 +215,66 @@ fn test_roundtrip_coverage_all_fixtures() {
         coverage > 0.3,
         "Segment coverage too low: {:.1}%",
         coverage * 100.0
+    );
+}
+
+/// PID-filtered roundtrip: uses AHB segment numbers to filter the MIG,
+/// then performs roundtrip on the 55001 fixture.
+#[test]
+fn test_pid_filtered_roundtrip_55001() {
+    let Some(mig) = load_real_mig() else { return };
+    let Some(ahb_numbers) = load_pid_numbers("55001") else {
+        return;
+    };
+
+    let filtered_mig = filter_mig_for_pid(&mig, &ahb_numbers);
+
+    let fixture_path = Path::new(FIXTURE_DIR).join("55001_UTILMD_S2.1_ALEXANDE121980.edi");
+    if !fixture_path.exists() {
+        eprintln!("Fixture not found, skipping");
+        return;
+    }
+
+    let content = std::fs::read(&fixture_path).unwrap();
+    let result = roundtrip(&content, &filtered_mig);
+    assert!(result.is_ok(), "Roundtrip failed: {:?}", result.err());
+
+    let output = result.unwrap();
+    let input_str = String::from_utf8_lossy(&content);
+
+    if output == input_str.as_ref() {
+        eprintln!("PID-filtered roundtrip: BYTE-IDENTICAL!");
+    } else {
+        let diff_pos = input_str
+            .bytes()
+            .zip(output.bytes())
+            .position(|(a, b)| a != b)
+            .unwrap_or(input_str.len().min(output.len()));
+        let context_start = diff_pos.saturating_sub(20);
+        let context_end = (diff_pos + 40).min(input_str.len()).min(output.len());
+        eprintln!(
+            "PID-filtered roundtrip: diff at byte {diff_pos}, input_len={}, output_len={}",
+            input_str.len(),
+            output.len()
+        );
+        eprintln!(
+            "  input:  {:?}",
+            &input_str[context_start..context_end.min(input_str.len())]
+        );
+        eprintln!(
+            "  output: {:?}",
+            &output[context_start..context_end.min(output.len())]
+        );
+    }
+
+    // With PID-filtered MIG, all segments should be captured
+    let input_segments = parse_to_segments(&content).unwrap();
+    let output_segments = parse_to_segments(output.as_bytes()).unwrap();
+    assert_eq!(
+        input_segments.len(),
+        output_segments.len(),
+        "Segment count mismatch: input={} output={}",
+        input_segments.len(),
+        output_segments.len()
     );
 }

@@ -2,14 +2,19 @@
 //!
 //! Uses insta for snapshot testing to detect regressions in assembly output.
 
+use automapper_generator::parsing::ahb_parser::parse_ahb;
 use automapper_generator::parsing::mig_parser::parse_mig;
 use automapper_generator::schema::mig::MigSchema;
 use mig_assembly::assembler::{AssembledGroup, AssembledTree, Assembler};
+use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::tokenize::parse_to_segments;
+use std::collections::HashSet;
 use std::path::Path;
 
 const MIG_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml";
+const AHB_XML_PATH: &str =
+    "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml";
 const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 
 fn load_real_mig() -> Option<MigSchema> {
@@ -19,6 +24,21 @@ fn load_real_mig() -> Option<MigSchema> {
         return None;
     }
     Some(parse_mig(path, "UTILMD", Some("Strom"), "FV2504").expect("Failed to parse MIG XML"))
+}
+
+fn load_pid_numbers(pid_id: &str) -> Option<HashSet<String>> {
+    let path = Path::new(AHB_XML_PATH);
+    if !path.exists() {
+        eprintln!("AHB XML not found at {AHB_XML_PATH}, skipping");
+        return None;
+    }
+    let ahb = parse_ahb(path, "UTILMD", Some("Strom"), "FV2504").expect("Failed to parse AHB XML");
+    let pid = ahb
+        .workflows
+        .iter()
+        .find(|w| w.id == pid_id)
+        .expect("PID not found in AHB");
+    Some(pid.segment_numbers.iter().cloned().collect())
 }
 
 #[test]
@@ -35,6 +55,31 @@ fn test_assembled_tree_snapshot() {
     let segments = parse_to_segments(&content).unwrap();
 
     let assembler = Assembler::new(&mig);
+    let tree = assembler.assemble_generic(&segments).unwrap();
+
+    let summary = summarize_tree(&tree);
+    insta::assert_snapshot!(summary);
+}
+
+#[test]
+fn test_pid_filtered_assembled_tree_55001() {
+    let Some(mig) = load_real_mig() else { return };
+    let Some(ahb_numbers) = load_pid_numbers("55001") else {
+        return;
+    };
+
+    let filtered_mig = filter_mig_for_pid(&mig, &ahb_numbers);
+
+    let fixture_path = Path::new(FIXTURE_DIR).join("55001_UTILMD_S2.1_ALEXANDE121980.edi");
+    if !fixture_path.exists() {
+        eprintln!("Fixture not found, skipping");
+        return;
+    }
+
+    let content = std::fs::read(&fixture_path).unwrap();
+    let segments = parse_to_segments(&content).unwrap();
+
+    let assembler = Assembler::new(&filtered_mig);
     let tree = assembler.assemble_generic(&segments).unwrap();
 
     let summary = summarize_tree(&tree);

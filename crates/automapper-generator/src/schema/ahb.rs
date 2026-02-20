@@ -31,6 +31,10 @@ pub struct Pruefidentifikator {
     pub kommunikation_von: Option<String>,
     /// All fields required/allowed for this PID.
     pub fields: Vec<AhbFieldDefinition>,
+    /// MIG segment Number attributes referenced by this PID.
+    /// Links AHB segments to their MIG counterparts for PID-specific assembly.
+    #[serde(default)]
+    pub segment_numbers: Vec<String>,
 }
 
 /// A field definition extracted from an AHB for a specific Pruefidentifikator.

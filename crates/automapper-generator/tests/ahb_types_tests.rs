@@ -76,6 +76,7 @@ fn test_ahb_schema_serialization_roundtrip() {
             id: "55001".to_string(),
             beschreibung: "Lieferantenwechsel".to_string(),
             kommunikation_von: Some("NB an LF".to_string()),
+            segment_numbers: vec![],
             fields: vec![AhbFieldDefinition {
                 segment_path: "SG2/NAD/3035".to_string(),
                 name: "Qualifier".to_string(),
@@ -109,6 +110,7 @@ fn test_pruefidentifikator_summary() {
         id: "55001".to_string(),
         beschreibung: "Lieferantenwechsel".to_string(),
         kommunikation_von: Some("NB an LF".to_string()),
+        segment_numbers: vec![],
         fields: vec![
             AhbFieldDefinition {
                 segment_path: "BGM/1001".to_string(),

@@ -1,0 +1,62 @@
+---
+source: crates/mig-assembly/tests/snapshot_test.rs
+expression: summary
+---
+Top-level segments: 6
+  Pre-group: 4
+  Post-group: 2
+  UNB: 5 elements
+  UNH: 2 elements
+  BGM: 2 elements
+  DTM: 1 elements
+  UNT: 2 elements
+  UNZ: 2 elements
+Groups: 2
+  SG2: 2 repetitions
+    rep[0]: 1 segments, 0 child groups
+      NAD
+    rep[1]: 1 segments, 0 child groups
+      NAD
+  SG4: 1 repetitions
+    rep[0]: 4 segments, 4 child groups
+      IDE
+      DTM
+      DTM
+      STS
+      SG5: 1 repetitions
+        rep[0]: 1 segments, 0 child groups
+          LOC
+      SG6: 1 repetitions
+        rep[0]: 1 segments, 0 child groups
+          RFF
+      SG8: 4 repetitions
+        rep[0]: 2 segments, 1 child groups
+          SEQ
+          PIA
+          SG10: 1 repetitions
+            rep[0]: 3 segments, 0 child groups
+              CCI
+              CAV
+              CAV
+        rep[1]: 1 segments, 1 child groups
+          SEQ
+          SG10: 1 repetitions
+            rep[0]: 2 segments, 0 child groups
+              CCI
+              CAV
+        rep[2]: 1 segments, 1 child groups
+          SEQ
+          SG10: 1 repetitions
+            rep[0]: 1 segments, 0 child groups
+              CCI
+        rep[3]: 1 segments, 1 child groups
+          SEQ
+          SG10: 1 repetitions
+            rep[0]: 2 segments, 0 child groups
+              CCI
+              CAV
+      SG12: 2 repetitions
+        rep[0]: 1 segments, 0 child groups
+          NAD
+        rep[1]: 1 segments, 0 child groups
+          NAD
