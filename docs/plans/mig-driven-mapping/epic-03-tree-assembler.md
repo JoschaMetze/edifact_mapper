@@ -5,7 +5,7 @@ title: "mig-assembly Crate — Tree Assembler"
 depends_on: [mig-driven-mapping/E02]
 estimated_tasks: 6
 crate: mig-assembly
-status: in_progress
+status: completed
 ---
 
 # Epic 3: mig-assembly Crate — Tree Assembler
