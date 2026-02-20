@@ -12,9 +12,12 @@
 
 pub mod assembler;
 pub mod cursor;
+pub mod disassembler;
 pub mod error;
 pub mod matcher;
 pub mod pid_detect;
+pub mod renderer;
+pub mod roundtrip;
 pub mod tokenize;
 
 pub use error::AssemblyError;
