@@ -116,6 +116,33 @@ enum Commands {
         dry_run: bool,
     },
 
+    /// Generate TOML mapping scaffolds from PID schema
+    GenerateTomlScaffolds {
+        /// Path to MIG XML file
+        #[arg(long)]
+        mig_path: PathBuf,
+
+        /// Path to AHB XML file
+        #[arg(long)]
+        ahb_path: PathBuf,
+
+        /// Output directory for generated TOML files
+        #[arg(long)]
+        output_dir: PathBuf,
+
+        /// Format version (e.g., "FV2504")
+        #[arg(long)]
+        format_version: String,
+
+        /// EDIFACT message type (e.g., "UTILMD")
+        #[arg(long)]
+        message_type: String,
+
+        /// Generate scaffolds only for this PID (e.g., "55001")
+        #[arg(long)]
+        pid: Option<String>,
+    },
+
     /// Validate generated code against BO4E schema
     ValidateSchema {
         /// Path to stammdatenmodell directory
@@ -465,6 +492,59 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             eprintln!("Metadata: {:?}", metadata_path);
             eprintln!("Generation complete!");
 
+            Ok(())
+        }
+        Commands::GenerateTomlScaffolds {
+            mig_path,
+            ahb_path,
+            output_dir,
+            format_version,
+            message_type,
+            pid,
+        } => {
+            let mig_variant =
+                infer_variant(mig_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
+            let ahb_variant =
+                infer_variant(ahb_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
+            let variant = mig_variant.or(ahb_variant);
+            let mig = automapper_generator::parsing::mig_parser::parse_mig(
+                &mig_path,
+                &message_type,
+                variant,
+                &format_version,
+            )?;
+            let ahb = automapper_generator::parsing::ahb_parser::parse_ahb(
+                &ahb_path,
+                &message_type,
+                variant,
+                &format_version,
+            )?;
+
+            let pids: Vec<&str> = if let Some(ref p) = pid {
+                vec![p.as_str()]
+            } else {
+                ahb.workflows.iter().map(|w| w.id.as_str()).collect()
+            };
+
+            std::fs::create_dir_all(&output_dir)?;
+            let mut total = 0;
+
+            for pid_id in pids {
+                let pid_dir = output_dir.join(format!("pid_{}", pid_id.to_lowercase()));
+                std::fs::create_dir_all(&pid_dir)?;
+
+                let scaffolds = automapper_generator::codegen::toml_scaffold_gen::generate_pid_scaffolds(
+                    pid_id, &mig, &ahb,
+                );
+
+                for (filename, content) in &scaffolds {
+                    std::fs::write(pid_dir.join(filename), content)?;
+                }
+                total += scaffolds.len();
+                eprintln!("PID {}: {} scaffolds", pid_id, scaffolds.len());
+            }
+
+            eprintln!("Generated {} total TOML scaffolds to {:?}", total, output_dir);
             Ok(())
         }
         Commands::ValidateSchema {
