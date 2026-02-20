@@ -44,7 +44,7 @@ pub fn parse_ahb(
             Ok(Event::Start(ref e)) => {
                 let name = elem_name(e);
 
-                if name.starts_with("AHB_") {
+                if name == "AHB" || name.starts_with("AHB_") {
                     if let Some(v) = get_attr(e, "Versionsnummer") {
                         schema.version = v;
                     }
@@ -71,7 +71,7 @@ pub fn parse_ahb(
     if schema.version.is_empty() {
         return Err(GeneratorError::MissingAttribute {
             path: path.to_path_buf(),
-            element: format!("AHB_{}", message_type),
+            element: format!("AHB or AHB_{}", message_type),
             attribute: "Versionsnummer".to_string(),
         });
     }

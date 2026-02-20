@@ -6,11 +6,11 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::schema::ahb::Pruefidentifikator;
-use crate::schema::mig::MigSchema;
+use crate::schema::ahb::{AhbSchema, Pruefidentifikator};
+use crate::schema::mig::{MigSchema, MigSegmentGroup};
 
 /// Analyzed structure of a single PID.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PidStructure {
     pub pid_id: String,
     pub beschreibung: String,
@@ -22,10 +22,10 @@ pub struct PidStructure {
 }
 
 /// Information about a segment group's usage within a PID.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PidGroupInfo {
     pub group_id: String,
-    /// Qualifier values that disambiguate this group (e.g., SEQ+Z01).
+    /// Qualifier values that disambiguate this group (e.g., "ZD5", "ZD6").
     /// Empty if the group is not qualifier-disambiguated.
     pub qualifier_values: Vec<String>,
     /// AHB status for this group occurrence ("Muss", "Kann", etc.)
@@ -47,7 +47,6 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
             continue;
         }
 
-        // Determine if path starts with a group (SGn) or a segment
         if parts[0].starts_with("SG") {
             let group_id = parts[0].to_string();
             let entry = group_map.entry(group_id.clone()).or_insert_with(|| PidGroupInfo {
@@ -58,7 +57,6 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                 segments: BTreeSet::new(),
             });
 
-            // Find the first non-SG part as the segment within this group
             if parts.len() > 1 && !parts[1].starts_with("SG") {
                 entry.segments.insert(parts[1].to_string());
             }
@@ -87,7 +85,6 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                 }
             }
         } else {
-            // Top-level segment (not in a group)
             top_level_segments.insert(parts[0].to_string());
         }
     }
@@ -99,4 +96,464 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
         groups: group_map.into_values().collect(),
         top_level_segments: top_level_segments.into_iter().collect(),
     }
+}
+
+/// Find the trigger segment and qualifying data element for a group from the MIG.
+///
+/// Returns `(segment_id, data_element_id)` — e.g., `("SEQ", "1229")` for SG8.
+fn find_group_qualifier(group_id: &str, mig: &MigSchema) -> Option<(String, String)> {
+    fn find_in_group(target_id: &str, group: &MigSegmentGroup) -> Option<(String, String)> {
+        if group.id == target_id {
+            if let Some(seg) = group.segments.first() {
+                for de in &seg.data_elements {
+                    if !de.codes.is_empty() {
+                        return Some((seg.id.clone(), de.id.clone()));
+                    }
+                }
+                for comp in &seg.composites {
+                    for de in &comp.data_elements {
+                        if !de.codes.is_empty() {
+                            return Some((seg.id.clone(), de.id.clone()));
+                        }
+                    }
+                }
+            }
+            return None;
+        }
+        for nested in &group.nested_groups {
+            if let Some(result) = find_in_group(target_id, nested) {
+                return Some(result);
+            }
+        }
+        None
+    }
+
+    for group in &mig.segment_groups {
+        if let Some(result) = find_in_group(group_id, group) {
+            return Some(result);
+        }
+    }
+    None
+}
+
+/// Enhanced analysis that detects qualifier disambiguation for repeated segment groups.
+///
+/// When the same group (e.g., SG8) appears multiple times under a parent with different
+/// qualifying values (e.g., SEQ+ZD5 vs SEQ+ZD6), this function splits them into separate
+/// `PidGroupInfo` entries with their respective `qualifier_values`.
+pub fn analyze_pid_structure_with_qualifiers(
+    pid: &Pruefidentifikator,
+    mig: &MigSchema,
+    _ahb: &AhbSchema,
+) -> PidStructure {
+    let mut top_level_segments: BTreeSet<String> = BTreeSet::new();
+    let mut group_map: BTreeMap<String, GroupOccurrenceTracker> = BTreeMap::new();
+
+    for field in &pid.fields {
+        let parts: Vec<&str> = field.segment_path.split('/').collect();
+        if parts.is_empty() {
+            continue;
+        }
+
+        if parts[0].starts_with("SG") {
+            let group_id = parts[0].to_string();
+            let tracker = group_map
+                .entry(group_id.clone())
+                .or_insert_with(|| GroupOccurrenceTracker::new(group_id.clone()));
+
+            if parts.len() > 1 && !parts[1].starts_with("SG") {
+                tracker.add_segment(parts[1]);
+            }
+
+            // Handle nested groups with qualifier tracking
+            if parts.len() > 1 && parts[1].starts_with("SG") {
+                let child_id = parts[1].to_string();
+
+                // Check if this field is a qualifying field for the child group
+                if let Some((trigger_seg, trigger_de)) = find_group_qualifier(&child_id, mig) {
+                    // Build the full qualifying path: SG4/SG8/SEQ/1229
+                    let qual_suffix = format!("{}/{}", trigger_seg, trigger_de);
+                    let remaining: String = parts[2..].join("/");
+
+                    if remaining == qual_suffix && !field.codes.is_empty() {
+                        // This is a qualifying field — extract code values
+                        let codes: Vec<String> = field
+                            .codes
+                            .iter()
+                            .filter(|c| {
+                                c.ahb_status
+                                    .as_deref()
+                                    .is_some_and(|s| s.contains('X'))
+                            })
+                            .map(|c| c.value.clone())
+                            .collect();
+
+                        if !codes.is_empty() {
+                            tracker.start_child_occurrence(
+                                &child_id,
+                                codes,
+                                field.ahb_status.clone(),
+                            );
+                            // Also add the trigger segment
+                            tracker.add_child_segment(&child_id, &trigger_seg);
+                            continue;
+                        }
+                    }
+                }
+
+                // Check for group-level field (path is just "SG4/SG8" — marks occurrence start)
+                if parts.len() == 2 {
+                    tracker.mark_child_occurrence_boundary(
+                        &child_id,
+                        field.ahb_status.clone(),
+                    );
+                    continue;
+                }
+
+                // Regular child group field — add segment to current occurrence
+                if parts.len() > 2 && !parts[2].starts_with("SG") {
+                    tracker.add_child_segment(&child_id, parts[2]);
+                }
+
+                // Handle deeply nested groups (SG4/SG8/SG10/...)
+                if parts.len() > 2 && parts[2].starts_with("SG") {
+                    tracker.add_child_nested_group(&child_id, parts[2]);
+                    if parts.len() > 3 && !parts[3].starts_with("SG") {
+                        tracker.add_child_nested_segment(&child_id, parts[2], parts[3]);
+                    }
+                }
+            }
+        } else {
+            top_level_segments.insert(parts[0].to_string());
+        }
+    }
+
+    PidStructure {
+        pid_id: pid.id.clone(),
+        beschreibung: pid.beschreibung.clone(),
+        kommunikation_von: pid.kommunikation_von.clone(),
+        groups: group_map.into_values().map(|t| t.into_group_info()).collect(),
+        top_level_segments: top_level_segments.into_iter().collect(),
+    }
+}
+
+/// Tracks multiple occurrences of child groups under a parent.
+struct GroupOccurrenceTracker {
+    group_id: String,
+    segments: BTreeSet<String>,
+    child_trackers: BTreeMap<String, ChildGroupTracker>,
+}
+
+struct ChildGroupTracker {
+    group_id: String,
+    /// Each occurrence is (qualifier_values, ahb_status, segments, nested_groups)
+    occurrences: Vec<ChildOccurrence>,
+}
+
+struct ChildOccurrence {
+    qualifier_values: Vec<String>,
+    ahb_status: String,
+    segments: BTreeSet<String>,
+    nested_groups: BTreeMap<String, BTreeSet<String>>,
+}
+
+impl GroupOccurrenceTracker {
+    fn new(group_id: String) -> Self {
+        Self {
+            group_id,
+            segments: BTreeSet::new(),
+            child_trackers: BTreeMap::new(),
+        }
+    }
+
+    fn add_segment(&mut self, seg_id: &str) {
+        self.segments.insert(seg_id.to_string());
+    }
+
+    fn ensure_child(&mut self, child_id: &str) -> &mut ChildGroupTracker {
+        self.child_trackers
+            .entry(child_id.to_string())
+            .or_insert_with(|| ChildGroupTracker {
+                group_id: child_id.to_string(),
+                occurrences: Vec::new(),
+            })
+    }
+
+    fn start_child_occurrence(
+        &mut self,
+        child_id: &str,
+        qualifier_values: Vec<String>,
+        ahb_status: String,
+    ) {
+        let tracker = self.ensure_child(child_id);
+        tracker.occurrences.push(ChildOccurrence {
+            qualifier_values,
+            ahb_status,
+            segments: BTreeSet::new(),
+            nested_groups: BTreeMap::new(),
+        });
+    }
+
+    fn mark_child_occurrence_boundary(&mut self, child_id: &str, ahb_status: String) {
+        let tracker = self.ensure_child(child_id);
+        // If no occurrences yet, or the last occurrence already has qualifier values,
+        // this group-level field starts a new (potentially qualifier-less) occurrence
+        if tracker.occurrences.is_empty()
+            || !tracker
+                .occurrences
+                .last()
+                .unwrap()
+                .qualifier_values
+                .is_empty()
+        {
+            tracker.occurrences.push(ChildOccurrence {
+                qualifier_values: Vec::new(),
+                ahb_status,
+                segments: BTreeSet::new(),
+                nested_groups: BTreeMap::new(),
+            });
+        }
+    }
+
+    fn add_child_segment(&mut self, child_id: &str, seg_id: &str) {
+        let tracker = self.ensure_child(child_id);
+        if let Some(occ) = tracker.occurrences.last_mut() {
+            occ.segments.insert(seg_id.to_string());
+        } else {
+            // No occurrence started yet — create a default one
+            tracker.occurrences.push(ChildOccurrence {
+                qualifier_values: Vec::new(),
+                ahb_status: String::new(),
+                segments: BTreeSet::from([seg_id.to_string()]),
+                nested_groups: BTreeMap::new(),
+            });
+        }
+    }
+
+    fn add_child_nested_group(&mut self, child_id: &str, nested_id: &str) {
+        let tracker = self.ensure_child(child_id);
+        if let Some(occ) = tracker.occurrences.last_mut() {
+            occ.nested_groups
+                .entry(nested_id.to_string())
+                .or_default();
+        }
+    }
+
+    fn add_child_nested_segment(&mut self, child_id: &str, nested_id: &str, seg_id: &str) {
+        let tracker = self.ensure_child(child_id);
+        if let Some(occ) = tracker.occurrences.last_mut() {
+            occ.nested_groups
+                .entry(nested_id.to_string())
+                .or_default()
+                .insert(seg_id.to_string());
+        }
+    }
+
+    fn into_group_info(self) -> PidGroupInfo {
+        let mut child_groups = Vec::new();
+
+        for (_child_id, tracker) in self.child_trackers {
+            if tracker.occurrences.len() <= 1 {
+                // Single occurrence — merge into one PidGroupInfo
+                let occ = tracker.occurrences.into_iter().next();
+                let (qualifier_values, ahb_status, segments, nested) = match occ {
+                    Some(o) => (o.qualifier_values, o.ahb_status, o.segments, o.nested_groups),
+                    None => (Vec::new(), String::new(), BTreeSet::new(), BTreeMap::new()),
+                };
+
+                child_groups.push(PidGroupInfo {
+                    group_id: tracker.group_id,
+                    qualifier_values,
+                    ahb_status,
+                    child_groups: nested
+                        .into_iter()
+                        .map(|(nid, segs)| PidGroupInfo {
+                            group_id: nid,
+                            qualifier_values: Vec::new(),
+                            ahb_status: String::new(),
+                            child_groups: Vec::new(),
+                            segments: segs,
+                        })
+                        .collect(),
+                    segments,
+                });
+            } else {
+                // Multiple occurrences — create separate entries
+                for occ in tracker.occurrences {
+                    child_groups.push(PidGroupInfo {
+                        group_id: tracker.group_id.clone(),
+                        qualifier_values: occ.qualifier_values,
+                        ahb_status: occ.ahb_status,
+                        child_groups: occ
+                            .nested_groups
+                            .into_iter()
+                            .map(|(nid, segs)| PidGroupInfo {
+                                group_id: nid,
+                                qualifier_values: Vec::new(),
+                                ahb_status: String::new(),
+                                child_groups: Vec::new(),
+                                segments: segs,
+                            })
+                            .collect(),
+                        segments: occ.segments,
+                    });
+                }
+            }
+        }
+
+        PidGroupInfo {
+            group_id: self.group_id,
+            qualifier_values: Vec::new(),
+            ahb_status: String::new(),
+            child_groups,
+            segments: self.segments,
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Code Generation: PID Structs
+// ---------------------------------------------------------------------------
+
+/// Sanitize text for use in a `///` doc comment — collapse newlines and trim.
+fn sanitize_doc(s: &str) -> String {
+    s.replace('\r', "")
+        .replace('\n', " ")
+        .replace("  ", " ")
+        .trim()
+        .to_string()
+}
+
+/// Generate a Rust struct source for a specific PID that composes shared segment group types.
+pub fn generate_pid_struct(
+    pid: &Pruefidentifikator,
+    mig: &MigSchema,
+    ahb: &AhbSchema,
+) -> String {
+    let structure = analyze_pid_structure_with_qualifiers(pid, mig, ahb);
+    let mut out = String::new();
+
+    let struct_name = format!("Pid{}", pid.id);
+
+    out.push_str(&format!(
+        "/// PID {}: {}\n",
+        pid.id,
+        sanitize_doc(&pid.beschreibung)
+    ));
+    if let Some(ref komm) = pid.kommunikation_von {
+        out.push_str(&format!("/// Kommunikation: {}\n", sanitize_doc(komm)));
+    }
+    out.push_str("#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]\n");
+    out.push_str(&format!("pub struct {struct_name} {{\n"));
+
+    // Top-level segments — use super::super:: since PID files are in pids/ subdir
+    for seg_id in &structure.top_level_segments {
+        let field_name = seg_id.to_lowercase();
+        let seg_type = format!(
+            "super::super::segments::Seg{}",
+            capitalize_segment_id(seg_id)
+        );
+        out.push_str(&format!("    pub {field_name}: {seg_type},\n"));
+    }
+
+    // Top-level groups
+    for group in &structure.groups {
+        emit_pid_group_field(group, &mut out, "    ");
+    }
+
+    out.push_str("}\n");
+
+    out
+}
+
+/// Capitalize a segment ID for struct naming: "NAD" -> "Nad", "UNH" -> "Unh"
+fn capitalize_segment_id(id: &str) -> String {
+    let mut chars = id.chars();
+    match chars.next() {
+        None => String::new(),
+        Some(first) => {
+            let rest: String = chars.map(|c| c.to_ascii_lowercase()).collect();
+            format!("{}{}", first.to_ascii_uppercase(), rest)
+        }
+    }
+}
+
+fn make_group_field_name(group: &PidGroupInfo) -> String {
+    if group.qualifier_values.is_empty() {
+        group.group_id.to_lowercase()
+    } else {
+        format!(
+            "{}_{}",
+            group.group_id.to_lowercase(),
+            group
+                .qualifier_values
+                .join("_")
+                .to_lowercase()
+        )
+    }
+}
+
+fn emit_pid_group_field(group: &PidGroupInfo, out: &mut String, indent: &str) {
+    let group_num = group.group_id.trim_start_matches("SG");
+    let group_type = format!("super::super::groups::Sg{group_num}");
+    let field_name = make_group_field_name(group);
+
+    // Always Vec for groups (they can repeat per MIG)
+    out.push_str(&format!("{indent}pub {field_name}: Vec<{group_type}>,\n"));
+}
+
+// ---------------------------------------------------------------------------
+// Orchestrator: File Generation
+// ---------------------------------------------------------------------------
+
+use std::path::Path;
+
+use crate::error::GeneratorError;
+
+/// Generate all PID composition type files for a given AHB and write to disk.
+///
+/// Creates: `{output_dir}/{fv_lower}/{msg_lower}/pids/pid_{id}.rs` + `mod.rs`
+pub fn generate_pid_types(
+    mig: &MigSchema,
+    ahb: &AhbSchema,
+    format_version: &str,
+    output_dir: &Path,
+) -> Result<(), GeneratorError> {
+    let fv_lower = format_version.to_lowercase();
+    let msg_lower = ahb.message_type.to_lowercase();
+    let pids_dir = output_dir.join(&fv_lower).join(&msg_lower).join("pids");
+    std::fs::create_dir_all(&pids_dir)?;
+
+    let mut mod_entries = Vec::new();
+
+    for pid in &ahb.workflows {
+        let source = generate_pid_struct(pid, mig, ahb);
+        let module_name = format!("pid_{}", pid.id.to_lowercase());
+        let filename = format!("{module_name}.rs");
+
+        let full_source = format!(
+            "//! Auto-generated PID {} types.\n\
+             //! {}\n\
+             //! Do not edit manually.\n\n\
+             use serde::{{Serialize, Deserialize}};\n\n\
+             {source}",
+            pid.id,
+            sanitize_doc(&pid.beschreibung)
+        );
+
+        std::fs::write(pids_dir.join(&filename), full_source)?;
+        mod_entries.push(module_name);
+    }
+
+    // Write mod.rs
+    let mut mod_rs = String::from(
+        "//! Per-PID composition types.\n\
+         //! Do not edit manually.\n\n",
+    );
+    for module in &mod_entries {
+        mod_rs.push_str(&format!("pub mod {module};\n"));
+    }
+    std::fs::write(pids_dir.join("mod.rs"), mod_rs)?;
+
+    Ok(())
 }

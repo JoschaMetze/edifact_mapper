@@ -11,3 +11,4 @@
 //! - `pids` — per-PID composition structs
 
 pub mod generated;
+pub mod traits;
