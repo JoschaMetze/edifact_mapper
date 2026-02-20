@@ -5,7 +5,7 @@ title: "mig-assembly — Tree Disassembler & Roundtrip"
 depends_on: [mig-driven-mapping/E03]
 estimated_tasks: 5
 crate: mig-assembly
-status: pending
+status: in_progress
 ---
 
 # Epic 4: mig-assembly — Tree Disassembler & Roundtrip
