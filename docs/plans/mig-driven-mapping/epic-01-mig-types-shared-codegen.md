@@ -5,7 +5,7 @@ title: "mig-types Crate & Shared Segment Codegen"
 depends_on: []
 estimated_tasks: 7
 crate: mig-types, automapper-generator
-status: in_progress
+status: complete
 ---
 
 # Epic 1: mig-types Crate & Shared Segment Codegen
@@ -909,15 +909,23 @@ git commit -m "feat(mig-types): generate and commit shared UTILMD types for FV25
 
 | Metric | Value |
 |--------|-------|
-| Tests | ~5 (enum gen, composite gen, segment gen, group gen, file write) |
+| Tests | 8 |
+| Passed | 8 |
+| Failed | 0 |
+| Skipped | 0 |
 | cargo check --workspace | PASS |
-| cargo clippy --workspace | PASS |
+| cargo clippy --workspace -D warnings | PASS |
+| cargo fmt --all -- --check | PASS |
+
+Files tested:
+- `crates/automapper-generator/tests/mig_type_gen_test.rs` (5 tests: enum gen, composite gen, segment gen, group gen, file write)
+- `crates/mig-types/tests/compile_test.rs` (3 tests: compile check, Display+FromStr roundtrip, serde roundtrip)
 
 Generated files:
-- `crates/mig-types/src/generated/fv2504/utilmd/enums.rs`
-- `crates/mig-types/src/generated/fv2504/utilmd/composites.rs`
-- `crates/mig-types/src/generated/fv2504/utilmd/segments.rs`
-- `crates/mig-types/src/generated/fv2504/utilmd/groups.rs`
+- `crates/mig-types/src/generated/fv2504/utilmd/enums.rs` (124KB, ~4100 lines)
+- `crates/mig-types/src/generated/fv2504/utilmd/composites.rs` (5.5KB)
+- `crates/mig-types/src/generated/fv2504/utilmd/segments.rs` (13.5KB)
+- `crates/mig-types/src/generated/fv2504/utilmd/groups.rs` (2.3KB)
 - `crates/mig-types/src/generated/fv2504/utilmd/mod.rs`
 - `crates/mig-types/src/generated/fv2504/mod.rs`
 - `crates/mig-types/src/generated/mod.rs`
