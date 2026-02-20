@@ -5,7 +5,7 @@ title: "PID-Specific Composition Codegen"
 depends_on: [mig-driven-mapping/E01]
 estimated_tasks: 6
 crate: mig-types, automapper-generator
-status: in_progress
+status: complete
 ---
 
 # Epic 2: PID-Specific Composition Codegen
@@ -641,7 +641,19 @@ git commit -m "feat(mig-types): generate and commit PID-specific composition typ
 
 | Metric | Value |
 |--------|-------|
-| Tests | ~5 (structure analysis, qualifier disambiguation, struct gen, file write, compile smoke) |
-| Generated PID files | ~187 (one per UTILMD Strom PID) |
+| Tests | 9 |
+| Passed | 9 |
+| Failed | 0 |
+| Skipped | 1 (generate_real_pid_types - run manually) |
+| Generated PID files | 187 (one per UTILMD Strom PID) |
 | cargo check --workspace | PASS |
-| cargo clippy --workspace | PASS |
+| cargo clippy -p automapper-generator -p mig-types -- -D warnings | PASS |
+
+Files tested:
+- `crates/automapper-generator/src/codegen/pid_type_gen.rs`
+- `crates/automapper-generator/src/parsing/ahb_parser.rs`
+- `crates/automapper-generator/tests/pid_type_gen_test.rs`
+- `crates/mig-types/src/traits.rs`
+- `crates/mig-types/src/generated/fv2504/utilmd/pids/*.rs` (187 generated files)
+- `crates/mig-types/tests/pid_tree_trait_test.rs`
+- `crates/mig-types/tests/compile_test.rs`
