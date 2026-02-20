@@ -5,7 +5,7 @@ title: "mig-bo4e Crate — TOML Mapping Engine"
 depends_on: [mig-driven-mapping/E04]
 estimated_tasks: 7
 crate: mig-bo4e
-status: pending
+status: in_progress
 ---
 
 # Epic 5: mig-bo4e Crate — TOML Mapping Engine
