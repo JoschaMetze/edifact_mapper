@@ -629,15 +629,19 @@ fn collect_wrapper_defs(
         ));
     }
 
-    // Build child field lines
+    // Build child field lines (deduplicated — same qualifier group can appear multiple times)
     let mut child_fields = Vec::new();
+    let mut seen_child_fields = BTreeSet::new();
     for child in &group.child_groups {
         if is_empty_group(child) {
             continue;
         }
         let child_type = make_wrapper_type_name(pid_struct_name, child);
         let child_field = make_wrapper_field_name(child);
-        child_fields.push(format!("    pub {child_field}: Vec<{child_type}>,"));
+        let line = format!("    pub {child_field}: Vec<{child_type}>,");
+        if seen_child_fields.insert(line.clone()) {
+            child_fields.push(line);
+        }
     }
 
     // Merge with existing definition (union of segments + child fields)

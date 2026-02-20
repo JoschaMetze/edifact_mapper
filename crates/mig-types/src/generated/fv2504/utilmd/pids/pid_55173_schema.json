@@ -1,0 +1,164 @@
+{
+  "beschreibung": "Änderung der Lokationsbündelstruktur",
+  "fields": {
+    "sg2": {
+      "children": {
+        "sg3_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            "COM",
+            "CTA"
+          ],
+          "source_group": "SG3"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        "NAD"
+      ],
+      "source_group": "SG2"
+    },
+    "sg4": {
+      "children": {
+        "sg5_z16": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z16"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg5_z17": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z17"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg5_z18": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z18"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg5_z19": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z19"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg5_z20": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z20"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg5_z22": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z22"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg6": {
+          "discriminator": {
+            "element": "1153",
+            "segment": "RFF"
+          },
+          "segments": [
+            "DTM",
+            "RFF"
+          ],
+          "source_group": "SG6"
+        },
+        "sg8_z58": {
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z58"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_z78": {
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z78"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        }
+      },
+      "discriminator": {
+        "element": "7495",
+        "segment": "IDE"
+      },
+      "segments": [
+        "IDE",
+        "STS"
+      ],
+      "source_group": "SG4"
+    }
+  },
+  "format_version": "FV2504",
+  "kommunikation_von": "NB an MSB",
+  "pid": "55173"
+}

@@ -1,0 +1,124 @@
+{
+  "beschreibung": "Antwort auf GDA (Strom an Gas)",
+  "fields": {
+    "sg2": {
+      "children": {
+        "sg3_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            "COM",
+            "CTA"
+          ],
+          "source_group": "SG3"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        "NAD"
+      ],
+      "source_group": "SG2"
+    },
+    "sg4": {
+      "children": {
+        "sg12_z64": {
+          "discriminator": {
+            "element": "3035",
+            "segment": "NAD",
+            "values": [
+              "Z64"
+            ]
+          },
+          "segments": [
+            "NAD",
+            "RFF"
+          ],
+          "source_group": "SG12"
+        },
+        "sg6": {
+          "discriminator": {
+            "element": "1153",
+            "segment": "RFF"
+          },
+          "segments": [
+            "RFF"
+          ],
+          "source_group": "SG6"
+        },
+        "sg8_zf3": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZF3"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_zg0": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZG0"
+            ]
+          },
+          "segments": [
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        }
+      },
+      "discriminator": {
+        "element": "7495",
+        "segment": "IDE"
+      },
+      "segments": [
+        "IDE",
+        "STS"
+      ],
+      "source_group": "SG4"
+    }
+  },
+  "format_version": "FV2504",
+  "kommunikation_von": "NB an MSB",
+  "pid": "55194"
+}

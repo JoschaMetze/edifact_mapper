@@ -1,0 +1,354 @@
+{
+  "beschreibung": "Rückmeldung/Anfrage Daten der MeLo ",
+  "fields": {
+    "sg2": {
+      "children": {
+        "sg3_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            "COM",
+            "CTA"
+          ],
+          "source_group": "SG3"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        "NAD"
+      ],
+      "source_group": "SG2"
+    },
+    "sg4": {
+      "children": {
+        "sg12_z39_z40": {
+          "discriminator": {
+            "element": "3035",
+            "segment": "NAD",
+            "values": [
+              "Z39",
+              "Z40"
+            ]
+          },
+          "segments": [
+            "NAD",
+            "RFF"
+          ],
+          "source_group": "SG12"
+        },
+        "sg12_z41_z42": {
+          "discriminator": {
+            "element": "3035",
+            "segment": "NAD",
+            "values": [
+              "Z41",
+              "Z42"
+            ]
+          },
+          "segments": [
+            "NAD",
+            "RFF"
+          ],
+          "source_group": "SG12"
+        },
+        "sg12_z43_z44": {
+          "discriminator": {
+            "element": "3035",
+            "segment": "NAD",
+            "values": [
+              "Z43",
+              "Z44"
+            ]
+          },
+          "segments": [
+            "NAD",
+            "RFF"
+          ],
+          "source_group": "SG12"
+        },
+        "sg12_z45_z46": {
+          "discriminator": {
+            "element": "3035",
+            "segment": "NAD",
+            "values": [
+              "Z45",
+              "Z46"
+            ]
+          },
+          "segments": [
+            "NAD",
+            "RFF"
+          ],
+          "source_group": "SG12"
+        },
+        "sg5_z17": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z17"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg6": {
+          "discriminator": {
+            "element": "1153",
+            "segment": "RFF"
+          },
+          "segments": [
+            "DTM",
+            "RFF"
+          ],
+          "source_group": "SG6"
+        },
+        "sg8_za3_za4": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZA3",
+              "ZA4"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_za5_za6": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZA5",
+              "ZA6"
+            ]
+          },
+          "segments": [
+            "PIA",
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_zb7_zb8": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZB7",
+              "ZB8"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_zb9_zc0": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZB9",
+              "ZC0"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_zc1_zc2": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZC1",
+              "ZC2"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_zc3_zc4": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZC3",
+              "ZC4"
+            ]
+          },
+          "segments": [
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_zg6_zg7": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZG6",
+              "ZG7"
+            ]
+          },
+          "segments": [
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_zh3_zh4": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZH3",
+              "ZH4"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        }
+      },
+      "discriminator": {
+        "element": "7495",
+        "segment": "IDE"
+      },
+      "segments": [
+        "IDE",
+        "STS"
+      ],
+      "source_group": "SG4"
+    }
+  },
+  "format_version": "FV2504",
+  "kommunikation_von": "weiterer MSB an MSB",
+  "pid": "55669"
+}

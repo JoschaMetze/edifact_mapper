@@ -1,0 +1,57 @@
+{
+  "beschreibung": "Ablehnung Beendigung der Zuordnung",
+  "fields": {
+    "sg2": {
+      "children": {
+        "sg3_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            "COM",
+            "CTA"
+          ],
+          "source_group": "SG3"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        "NAD"
+      ],
+      "source_group": "SG2"
+    },
+    "sg4": {
+      "children": {
+        "sg6": {
+          "discriminator": {
+            "element": "1153",
+            "segment": "RFF"
+          },
+          "segments": [
+            "RFF"
+          ],
+          "source_group": "SG6"
+        }
+      },
+      "discriminator": {
+        "element": "7495",
+        "segment": "IDE"
+      },
+      "segments": [
+        "IDE",
+        "STS"
+      ],
+      "source_group": "SG4"
+    }
+  },
+  "format_version": "FV2504",
+  "kommunikation_von": "LF an NB",
+  "pid": "55012"
+}

@@ -1,0 +1,348 @@
+{
+  "beschreibung": "Stammdaten auf eine ORDERS",
+  "fields": {
+    "sg1": {
+      "discriminator": {
+        "element": "1153",
+        "segment": "RFF"
+      },
+      "segments": [
+        "RFF"
+      ],
+      "source_group": "SG1"
+    },
+    "sg2": {
+      "children": {
+        "sg3_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            "COM",
+            "CTA"
+          ],
+          "source_group": "SG3"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        "NAD"
+      ],
+      "source_group": "SG2"
+    },
+    "sg4": {
+      "children": {
+        "sg12_dp": {
+          "discriminator": {
+            "element": "3035",
+            "segment": "NAD",
+            "values": [
+              "DP"
+            ]
+          },
+          "segments": [
+            "NAD"
+          ],
+          "source_group": "SG12"
+        },
+        "sg5_z16": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z16"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg5_z17": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z17"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg5_z21": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z21"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg6": {
+          "discriminator": {
+            "element": "1153",
+            "segment": "RFF"
+          },
+          "segments": [
+            "RFF"
+          ],
+          "source_group": "SG6"
+        },
+        "sg8_z01": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z01"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_z02": {
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z02"
+            ]
+          },
+          "segments": [
+            "PIA",
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_z03": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z03"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_z04": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z04"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_z13": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z13"
+            ]
+          },
+          "segments": [
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_z14": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z14"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_z15": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            },
+            "sg9": {
+              "discriminator": {
+                "element": "6063",
+                "segment": "QTY"
+              },
+              "segments": [
+                "QTY"
+              ],
+              "source_group": "SG9"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z15"
+            ]
+          },
+          "segments": [
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_z17": {
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z17"
+            ]
+          },
+          "segments": [
+            "PIA",
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_z20": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z20"
+            ]
+          },
+          "segments": [
+            "PIA",
+            "RFF",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        }
+      },
+      "discriminator": {
+        "element": "7495",
+        "segment": "IDE"
+      },
+      "segments": [
+        "DTM",
+        "IDE"
+      ],
+      "source_group": "SG4"
+    }
+  },
+  "format_version": "FV2504",
+  "kommunikation_von": "NB an UBA",
+  "pid": "55074"
+}

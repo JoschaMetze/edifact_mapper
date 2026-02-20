@@ -1,0 +1,83 @@
+{
+  "beschreibung": "Bestätigung Kündigung",
+  "fields": {
+    "sg2": {
+      "children": {
+        "sg3_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            "COM",
+            "CTA"
+          ],
+          "source_group": "SG3"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        "NAD"
+      ],
+      "source_group": "SG2"
+    },
+    "sg4": {
+      "children": {
+        "sg6": {
+          "discriminator": {
+            "element": "1153",
+            "segment": "RFF"
+          },
+          "segments": [
+            "RFF"
+          ],
+          "source_group": "SG6"
+        },
+        "sg8_z01": {
+          "children": {
+            "sg9": {
+              "discriminator": {
+                "element": "6063",
+                "segment": "QTY"
+              },
+              "segments": [
+                "QTY"
+              ],
+              "source_group": "SG9"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z01"
+            ]
+          },
+          "segments": [
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        }
+      },
+      "discriminator": {
+        "element": "7495",
+        "segment": "IDE"
+      },
+      "segments": [
+        "DTM",
+        "IDE",
+        "STS"
+      ],
+      "source_group": "SG4"
+    }
+  },
+  "format_version": "FV2504",
+  "kommunikation_von": "LFA an LFN",
+  "pid": "55017"
+}

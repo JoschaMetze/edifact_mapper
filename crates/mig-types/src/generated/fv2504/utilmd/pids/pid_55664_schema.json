@@ -1,0 +1,153 @@
+{
+  "beschreibung": "Rückmeldung/Anfrage Daten der NeLo",
+  "fields": {
+    "sg2": {
+      "children": {
+        "sg3_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            "COM",
+            "CTA"
+          ],
+          "source_group": "SG3"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        "NAD"
+      ],
+      "source_group": "SG2"
+    },
+    "sg4": {
+      "children": {
+        "sg5_z18": {
+          "discriminator": {
+            "element": "3227",
+            "segment": "LOC",
+            "values": [
+              "Z18"
+            ]
+          },
+          "segments": [
+            "LOC"
+          ],
+          "source_group": "SG5"
+        },
+        "sg6": {
+          "discriminator": {
+            "element": "1153",
+            "segment": "RFF"
+          },
+          "segments": [
+            "DTM",
+            "RFF"
+          ],
+          "source_group": "SG6"
+        },
+        "sg8_za7_za8": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZA7",
+              "ZA8"
+            ]
+          },
+          "segments": [
+            "PIA",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_za9_zb0": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZA9",
+              "ZB0"
+            ]
+          },
+          "segments": [
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_zg8_zg9": {
+          "children": {
+            "sg10": {
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "segments": [
+                "CAV",
+                "CCI"
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZG8",
+              "ZG9"
+            ]
+          },
+          "segments": [
+            "PIA",
+            "SEQ"
+          ],
+          "source_group": "SG8"
+        }
+      },
+      "discriminator": {
+        "element": "7495",
+        "segment": "IDE"
+      },
+      "segments": [
+        "IDE",
+        "STS"
+      ],
+      "source_group": "SG4"
+    }
+  },
+  "format_version": "FV2504",
+  "kommunikation_von": "weiterer MSB an MSB",
+  "pid": "55664"
+}
