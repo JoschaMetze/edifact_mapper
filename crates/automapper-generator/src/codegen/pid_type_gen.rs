@@ -709,6 +709,163 @@ fn emit_pid_group_field_v2(
 }
 
 // ---------------------------------------------------------------------------
+// Assembly Code Generation: from_segments()
+// ---------------------------------------------------------------------------
+
+/// Generate a `from_segments()` impl block for a PID type.
+///
+/// The generated code walks segments using `SegmentCursor` and populates
+/// typed fields with qualifier discrimination.
+pub fn generate_pid_from_segments(
+    pid: &Pruefidentifikator,
+    mig: &MigSchema,
+    ahb: &AhbSchema,
+) -> String {
+    let structure = analyze_pid_structure_with_qualifiers(pid, mig, ahb);
+    let struct_name = format!("Pid{}", pid.id);
+    let mut out = String::new();
+
+    // Generate from_segments() for each wrapper struct
+    let mut defs: BTreeMap<String, WrapperDef> = BTreeMap::new();
+    for group in &structure.groups {
+        collect_wrapper_defs(&struct_name, group, &mut defs);
+    }
+
+    for (wrapper_name, def) in &defs {
+        out.push_str(&format!("impl {wrapper_name} {{\n"));
+        out.push_str("    /// Try to assemble this group from segments at the cursor position.\n");
+        out.push_str("    pub fn from_segments(\n");
+        out.push_str("        segments: &[OwnedSegment],\n");
+        out.push_str("        cursor: &mut SegmentCursor,\n");
+        out.push_str("    ) -> Option<Self> {\n");
+        out.push_str("        let saved = cursor.save();\n");
+
+        // Consume optional segments
+        for seg_id in &def.segments {
+            let field = seg_id.to_lowercase();
+            out.push_str(&format!(
+                "        let {field} = if peek_is(segments, cursor, \"{seg_id}\") {{\n"
+            ));
+            out.push_str(&format!(
+                "            Some(Seg{}::from_owned(consume(segments, cursor)?))\n",
+                capitalize_segment_id(seg_id)
+            ));
+            out.push_str("        } else {\n");
+            out.push_str("            None\n");
+            out.push_str("        };\n");
+        }
+
+        // Check if any segment was matched (at least one non-None)
+        if !def.segments.is_empty() {
+            let checks: Vec<String> = def
+                .segments
+                .iter()
+                .map(|s| format!("{}.is_none()", s.to_lowercase()))
+                .collect();
+            out.push_str(&format!(
+                "        if {} {{\n",
+                checks.join(" && ")
+            ));
+            out.push_str("            cursor.restore(saved);\n");
+            out.push_str("            return None;\n");
+            out.push_str("        }\n");
+        }
+
+        // Collect child groups
+        for child_line in &def.child_fields {
+            // Extract field name and type from the line: "    pub field_name: Vec<TypeName>,"
+            if let Some((field, type_name)) = parse_child_field_line(child_line) {
+                out.push_str(&format!("        let mut {field} = Vec::new();\n"));
+                out.push_str(&format!(
+                    "        while let Some(item) = {type_name}::from_segments(segments, cursor) {{\n"
+                ));
+                out.push_str(&format!("            {field}.push(item);\n"));
+                out.push_str("        }\n");
+            }
+        }
+
+        // Build result
+        out.push_str("        Some(Self {\n");
+        for seg_id in &def.segments {
+            let field = seg_id.to_lowercase();
+            out.push_str(&format!("            {field},\n"));
+        }
+        for child_line in &def.child_fields {
+            if let Some((field, _)) = parse_child_field_line(child_line) {
+                out.push_str(&format!("            {field},\n"));
+            }
+        }
+        out.push_str("        })\n");
+        out.push_str("    }\n");
+        out.push_str("}\n\n");
+    }
+
+    // Generate from_segments() for the main PID struct
+    out.push_str(&format!("impl {struct_name} {{\n"));
+    out.push_str("    /// Assemble this PID from a pre-tokenized segment list.\n");
+    out.push_str("    pub fn from_segments(\n");
+    out.push_str("        segments: &[OwnedSegment],\n");
+    out.push_str("    ) -> Result<Self, AssemblyError> {\n");
+    out.push_str("        let mut cursor = SegmentCursor::new(segments.len());\n\n");
+
+    // Top-level segments
+    for seg_id in &structure.top_level_segments {
+        let field = seg_id.to_lowercase();
+        out.push_str(&format!(
+            "        let {field} = Seg{}::from_owned(expect_segment(segments, &mut cursor, \"{seg_id}\")?);\n",
+            capitalize_segment_id(seg_id)
+        ));
+    }
+
+    // Top-level groups
+    for group in &structure.groups {
+        if is_empty_group(group) {
+            continue;
+        }
+        let field = make_wrapper_field_name(group);
+        let type_name = make_wrapper_type_name(&struct_name, group);
+        out.push_str(&format!("        let mut {field} = Vec::new();\n"));
+        out.push_str(&format!(
+            "        while let Some(item) = {type_name}::from_segments(segments, &mut cursor) {{\n"
+        ));
+        out.push_str(&format!("            {field}.push(item);\n"));
+        out.push_str("        }\n");
+    }
+
+    // Build result
+    out.push_str(&format!("\n        Ok({struct_name} {{\n"));
+    for seg_id in &structure.top_level_segments {
+        let field = seg_id.to_lowercase();
+        out.push_str(&format!("            {field},\n"));
+    }
+    for group in &structure.groups {
+        if is_empty_group(group) {
+            continue;
+        }
+        let field = make_wrapper_field_name(group);
+        out.push_str(&format!("            {field},\n"));
+    }
+    out.push_str("        })\n");
+    out.push_str("    }\n");
+    out.push_str("}\n");
+
+    out
+}
+
+/// Parse a child field line like "    pub sg8_z79: Vec<Pid55001Sg8Z79>," into (field, type).
+fn parse_child_field_line(line: &str) -> Option<(String, String)> {
+    let trimmed = line.trim().trim_end_matches(',');
+    // Format: "pub field_name: Vec<TypeName>"
+    let after_pub = trimmed.strip_prefix("pub ")?;
+    let colon_pos = after_pub.find(':')?;
+    let field = after_pub[..colon_pos].trim().to_string();
+    let type_part = after_pub[colon_pos + 1..].trim();
+    // Extract type from "Vec<TypeName>"
+    let inner = type_part.strip_prefix("Vec<")?.strip_suffix('>')?;
+    Some((field, inner.to_string()))
+}
+
+// ---------------------------------------------------------------------------
 // JSON Schema Generation
 // ---------------------------------------------------------------------------
 
@@ -977,5 +1134,13 @@ mod tests {
         let pid = ahb.workflows.iter().find(|p| p.id == "55001").unwrap();
         let schema = generate_pid_schema(pid, &mig, &ahb);
         insta::assert_snapshot!("pid_55001_schema", schema);
+    }
+
+    #[test]
+    fn test_generate_pid_55001_from_segments_snapshot() {
+        let (mig, ahb) = load_mig_ahb();
+        let pid = ahb.workflows.iter().find(|p| p.id == "55001").unwrap();
+        let source = generate_pid_from_segments(pid, &mig, &ahb);
+        insta::assert_snapshot!("pid_55001_from_segments", source);
     }
 }
