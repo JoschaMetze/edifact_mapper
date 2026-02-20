@@ -38,3 +38,11 @@ fn test_enum_serde_roundtrip() {
     let parsed: D3035Qualifier = serde_json::from_str(&json).unwrap();
     assert_eq!(parsed, q);
 }
+
+#[test]
+fn test_pid_types_instantiable() {
+    // Verify a few PID types can be referenced and are real types
+    let _ = std::mem::size_of::<
+        mig_types::generated::fv2504::utilmd::pids::pid_55035::Pid55035,
+    >();
+}

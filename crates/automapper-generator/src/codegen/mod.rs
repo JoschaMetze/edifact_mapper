@@ -1,6 +1,7 @@
 pub mod coordinator_gen;
 pub mod mapper_gen;
 pub mod mig_type_gen;
+pub mod pid_type_gen;
 pub mod segment_order;
 pub mod version_config_gen;
 
