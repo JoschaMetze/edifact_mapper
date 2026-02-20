@@ -809,7 +809,20 @@ git commit -m "test(mig-assembly): add fixture integration tests for real UTILMD
 
 | Metric | Value |
 |--------|-------|
-| Tests | ~6 (PID detection, cursor, matcher, assembler core, fixture integration) |
-| Fixture success rate | >90% of UTILMD fixtures assemble |
+| Unit Tests | 28 |
+| Integration Tests | 7 |
+| Total Tests | 35 |
+| Passed | 35 |
+| Failed | 0 |
+| PID detection rate | 100% (108/108 real fixtures) |
+| Assembly success rate | 100% (108/108 real fixtures with real MIG XML) |
 | cargo check --workspace | PASS |
-| cargo clippy --workspace | PASS |
+| cargo clippy -p mig-assembly -- -D warnings | PASS |
+
+Files tested:
+- `crates/mig-assembly/src/tokenize.rs` — OwnedSegment, parse_to_segments
+- `crates/mig-assembly/src/cursor.rs` — SegmentCursor
+- `crates/mig-assembly/src/matcher.rs` — segment/qualifier matching
+- `crates/mig-assembly/src/pid_detect.rs` — PID detection from segments
+- `crates/mig-assembly/src/assembler.rs` — recursive descent assembler
+- `crates/mig-assembly/tests/integration_test.rs` — end-to-end with real MIG XML + 108 UTILMD fixtures

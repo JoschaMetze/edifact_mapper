@@ -1,0 +1,19 @@
+[package]
+name = "mig-assembly"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "MIG-guided EDIFACT tree assembly — parse RawSegments into typed MIG trees"
+
+[dependencies]
+edifact-types.workspace = true
+edifact-parser.workspace = true
+mig-types = { path = "../mig-types" }
+automapper-generator = { path = "../automapper-generator" }
+thiserror.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+insta.workspace = true
