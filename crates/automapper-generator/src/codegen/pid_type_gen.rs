@@ -30,6 +30,11 @@ pub struct PidGroupInfo {
     pub qualifier_values: Vec<String>,
     /// AHB status for this group occurrence ("Muss", "Kann", etc.)
     pub ahb_status: String,
+    /// Human-readable AHB-derived field name (e.g., "Absender", "Summenzeitreihe Arbeit/Leistung").
+    pub ahb_name: Option<String>,
+    /// Trigger segment + data element for qualifier discrimination.
+    /// E.g., ("NAD", "3035") for SG2, ("SEQ", "1229") for SG8.
+    pub discriminator: Option<(String, String)>,
     /// Nested child groups present in this PID's usage.
     pub child_groups: Vec<PidGroupInfo>,
     /// Segments present in this group for this PID.
@@ -55,6 +60,8 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                     group_id: group_id.clone(),
                     qualifier_values: Vec::new(),
                     ahb_status: field.ahb_status.clone(),
+                    ahb_name: None,
+                    discriminator: None,
                     child_groups: Vec::new(),
                     segments: BTreeSet::new(),
                 });
@@ -75,6 +82,8 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                         group_id: child_id,
                         qualifier_values: Vec::new(),
                         ahb_status: field.ahb_status.clone(),
+                        ahb_name: None,
+                        discriminator: None,
                         child_groups: Vec::new(),
                         segments: child_segments,
                     });
@@ -368,12 +377,16 @@ impl GroupOccurrenceTracker {
                     group_id: tracker.group_id,
                     qualifier_values,
                     ahb_status,
+                    ahb_name: None,
+                    discriminator: None,
                     child_groups: nested
                         .into_iter()
                         .map(|(nid, segs)| PidGroupInfo {
                             group_id: nid,
                             qualifier_values: Vec::new(),
                             ahb_status: String::new(),
+                            ahb_name: None,
+                            discriminator: None,
                             child_groups: Vec::new(),
                             segments: segs,
                         })
@@ -387,6 +400,8 @@ impl GroupOccurrenceTracker {
                         group_id: tracker.group_id.clone(),
                         qualifier_values: occ.qualifier_values,
                         ahb_status: occ.ahb_status,
+                        ahb_name: None,
+                        discriminator: None,
                         child_groups: occ
                             .nested_groups
                             .into_iter()
@@ -394,6 +409,8 @@ impl GroupOccurrenceTracker {
                                 group_id: nid,
                                 qualifier_values: Vec::new(),
                                 ahb_status: String::new(),
+                                ahb_name: None,
+                                discriminator: None,
                                 child_groups: Vec::new(),
                                 segments: segs,
                             })
@@ -408,6 +425,8 @@ impl GroupOccurrenceTracker {
             group_id: self.group_id,
             qualifier_values: Vec::new(),
             ahb_status: String::new(),
+            ahb_name: None,
+            discriminator: None,
             child_groups,
             segments: self.segments,
         }
@@ -562,4 +581,65 @@ pub fn generate_pid_types(
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::parsing::{ahb_parser, mig_parser};
+    use std::path::PathBuf;
+
+    fn load_mig_ahb() -> (MigSchema, AhbSchema) {
+        let mig_path = PathBuf::from(
+            "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml",
+        );
+        let ahb_path = PathBuf::from(
+            "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml",
+        );
+        if !mig_path.exists() || !ahb_path.exists() {
+            panic!("MIG/AHB XML files not found — run from workspace root");
+        }
+        let mig =
+            mig_parser::parse_mig(&mig_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+        let ahb =
+            ahb_parser::parse_ahb(&ahb_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+        (mig, ahb)
+    }
+
+    #[test]
+    fn test_pid_55001_structure_has_named_groups() {
+        let (mig, ahb) = load_mig_ahb();
+        let pid = ahb.workflows.iter().find(|p| p.id == "55001").unwrap();
+        let structure = analyze_pid_structure_with_qualifiers(pid, &mig, &ahb);
+
+        // SG2 should exist
+        let _sg2 = structure
+            .groups
+            .iter()
+            .find(|g| g.group_id == "SG2")
+            .unwrap();
+        assert!(!structure.groups.is_empty());
+
+        // SG4 should exist with child groups
+        let sg4 = structure
+            .groups
+            .iter()
+            .find(|g| g.group_id == "SG4")
+            .unwrap();
+        assert!(!sg4.child_groups.is_empty());
+
+        // SG4's child SG8 groups should have qualifier discrimination
+        let sg8_children: Vec<_> = sg4
+            .child_groups
+            .iter()
+            .filter(|c| c.group_id == "SG8")
+            .collect();
+        let has_qualified = sg8_children
+            .iter()
+            .any(|c| !c.qualifier_values.is_empty());
+        assert!(
+            has_qualified,
+            "SG8 groups should have qualifier discrimination"
+        );
+    }
 }
