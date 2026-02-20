@@ -533,9 +533,10 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 let pid_dir = output_dir.join(format!("pid_{}", pid_id.to_lowercase()));
                 std::fs::create_dir_all(&pid_dir)?;
 
-                let scaffolds = automapper_generator::codegen::toml_scaffold_gen::generate_pid_scaffolds(
-                    pid_id, &mig, &ahb,
-                );
+                let scaffolds =
+                    automapper_generator::codegen::toml_scaffold_gen::generate_pid_scaffolds(
+                        pid_id, &mig, &ahb,
+                    );
 
                 for (filename, content) in &scaffolds {
                     std::fs::write(pid_dir.join(filename), content)?;
@@ -544,7 +545,10 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 eprintln!("PID {}: {} scaffolds", pid_id, scaffolds.len());
             }
 
-            eprintln!("Generated {} total TOML scaffolds to {:?}", total, output_dir);
+            eprintln!(
+                "Generated {} total TOML scaffolds to {:?}",
+                total, output_dir
+            );
             Ok(())
         }
         Commands::ValidateSchema {

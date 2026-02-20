@@ -173,7 +173,12 @@ fn derive_ahb_name(
 }
 
 /// Populate discriminator and ahb_name on top-level groups and their children.
-fn enrich_group_info(group: &mut PidGroupInfo, pid: &Pruefidentifikator, mig: &MigSchema, parent_path: &str) {
+fn enrich_group_info(
+    group: &mut PidGroupInfo,
+    pid: &Pruefidentifikator,
+    mig: &MigSchema,
+    parent_path: &str,
+) {
     let group_path = if parent_path.is_empty() {
         group.group_id.clone()
     } else {
@@ -614,7 +619,11 @@ fn collect_wrapper_defs(
     // Build doc comment
     let mut doc = String::new();
     if let Some(ref name) = group.ahb_name {
-        doc.push_str(&format!("/// {} — {}\n", group.group_id, sanitize_doc(name)));
+        doc.push_str(&format!(
+            "/// {} — {}\n",
+            group.group_id,
+            sanitize_doc(name)
+        ));
     } else {
         doc.push_str(&format!("/// {}\n", group.group_id));
     }
@@ -752,10 +761,7 @@ pub fn generate_pid_from_segments(
                 .iter()
                 .map(|s| format!("{}.is_none()", s.to_lowercase()))
                 .collect();
-            out.push_str(&format!(
-                "        if {} {{\n",
-                checks.join(" && ")
-            ));
+            out.push_str(&format!("        if {} {{\n", checks.join(" && ")));
             out.push_str("            cursor.restore(saved);\n");
             out.push_str("            return None;\n");
             out.push_str("        }\n");
@@ -859,17 +865,10 @@ fn parse_child_field_line(line: &str) -> Option<(String, String)> {
 // ---------------------------------------------------------------------------
 
 /// Generate a JSON schema describing a PID's structure for runtime use.
-pub fn generate_pid_schema(
-    pid: &Pruefidentifikator,
-    mig: &MigSchema,
-    ahb: &AhbSchema,
-) -> String {
+pub fn generate_pid_schema(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbSchema) -> String {
     let structure = analyze_pid_structure_with_qualifiers(pid, mig, ahb);
     let mut root = serde_json::Map::new();
-    root.insert(
-        "pid".to_string(),
-        serde_json::Value::String(pid.id.clone()),
-    );
+    root.insert("pid".to_string(), serde_json::Value::String(pid.id.clone()));
     root.insert(
         "beschreibung".to_string(),
         serde_json::Value::String(pid.beschreibung.clone()),
@@ -1051,10 +1050,8 @@ mod tests {
         if !mig_path.exists() || !ahb_path.exists() {
             panic!("MIG/AHB XML files not found — run from workspace root");
         }
-        let mig =
-            mig_parser::parse_mig(&mig_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
-        let ahb =
-            ahb_parser::parse_ahb(&ahb_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+        let mig = mig_parser::parse_mig(&mig_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+        let ahb = ahb_parser::parse_ahb(&ahb_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
         (mig, ahb)
     }
 
@@ -1086,9 +1083,7 @@ mod tests {
             .iter()
             .filter(|c| c.group_id == "SG8")
             .collect();
-        let has_qualified = sg8_children
-            .iter()
-            .any(|c| !c.qualifier_values.is_empty());
+        let has_qualified = sg8_children.iter().any(|c| !c.qualifier_values.is_empty());
         assert!(
             has_qualified,
             "SG8 groups should have qualifier discrimination"

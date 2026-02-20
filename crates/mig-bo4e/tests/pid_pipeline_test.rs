@@ -14,8 +14,7 @@ const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/pid_55001";
 
 #[test]
 fn test_full_pid_pipeline_55001() {
-    let fixture_path =
-        Path::new(FIXTURE_DIR).join("55001_UTILMD_S2.1_ALEXANDE121980.edi");
+    let fixture_path = Path::new(FIXTURE_DIR).join("55001_UTILMD_S2.1_ALEXANDE121980.edi");
     if !fixture_path.exists() {
         eprintln!("Skipping: fixture not found at {:?}", fixture_path);
         return;
@@ -48,14 +47,8 @@ fn test_full_pid_pipeline_55001() {
             assert_eq!(pid.bgm.id, "BGM", "Should have BGM segment");
 
             // Verify segments are OwnedSegments with real data
-            assert!(
-                !pid.unh.elements.is_empty(),
-                "UNH should have element data"
-            );
-            assert!(
-                !pid.bgm.elements.is_empty(),
-                "BGM should have element data"
-            );
+            assert!(!pid.unh.elements.is_empty(), "UNH should have element data");
+            assert!(!pid.bgm.elements.is_empty(), "BGM should have element data");
 
             eprintln!(
                 "PID 55001 assembled: {} SG2 groups, {} SG4 groups",

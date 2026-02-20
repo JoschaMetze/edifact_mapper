@@ -169,7 +169,11 @@ mod tests {
         };
         let pid = ahb.workflows.iter().find(|p| p.id == "55001").unwrap();
         let structure = analyze_pid_structure_with_qualifiers(pid, &mig, &ahb);
-        let sg2 = structure.groups.iter().find(|g| g.group_id == "SG2").unwrap();
+        let sg2 = structure
+            .groups
+            .iter()
+            .find(|g| g.group_id == "SG2")
+            .unwrap();
 
         let scaffold = generate_group_scaffold(sg2, "sg2", "Marktteilnehmer", &mig);
         assert!(
