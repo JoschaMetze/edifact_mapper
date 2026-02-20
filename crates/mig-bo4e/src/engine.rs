@@ -156,16 +156,22 @@ impl MappingEngine {
 
         if let Some(instance) = instance {
             for (path, field_mapping) in &def.fields {
-                let target = match field_mapping {
-                    FieldMapping::Simple(t) => t.clone(),
-                    FieldMapping::Structured(s) => s.target.clone(),
+                let (target, enum_map) = match field_mapping {
+                    FieldMapping::Simple(t) => (t.clone(), None),
+                    FieldMapping::Structured(s) => (s.target.clone(), s.enum_map.as_ref()),
                     FieldMapping::Nested(_) => continue,
                 };
                 if target.is_empty() {
                     continue;
                 }
                 if let Some(val) = Self::extract_from_instance(instance, path) {
-                    set_nested_value(&mut result, &target, val);
+                    // Apply enum_map forward: EDIFACT value → BO4E value
+                    let mapped_val = if let Some(map) = enum_map {
+                        map.get(&val).cloned().unwrap_or(val)
+                    } else {
+                        val
+                    };
+                    set_nested_value(&mut result, &target, mapped_val);
                 }
             }
         }
@@ -195,9 +201,11 @@ impl MappingEngine {
         let mut field_values: Vec<(String, String, usize, usize, String)> = Vec::new();
 
         for (path, field_mapping) in &def.fields {
-            let (target, default) = match field_mapping {
-                FieldMapping::Simple(t) => (t.clone(), None),
-                FieldMapping::Structured(s) => (s.target.clone(), s.default.clone()),
+            let (target, default, enum_map) = match field_mapping {
+                FieldMapping::Simple(t) => (t.clone(), None, None),
+                FieldMapping::Structured(s) => {
+                    (s.target.clone(), s.default.clone(), s.enum_map.as_ref())
+                }
                 FieldMapping::Nested(_) => continue,
             };
 
@@ -231,7 +239,19 @@ impl MappingEngine {
             let val = if target.is_empty() {
                 default
             } else {
-                self.populate_field(bo4e_value, &target, path).or(default)
+                let bo4e_val = self.populate_field(bo4e_value, &target, path);
+                // Apply reverse enum_map: BO4E value → EDIFACT value
+                let mapped_val = match (bo4e_val, enum_map) {
+                    (Some(v), Some(map)) => {
+                        // Reverse lookup: find EDIFACT key for BO4E value
+                        map.iter()
+                            .find(|(_, bo4e_v)| *bo4e_v == &v)
+                            .map(|(edifact_k, _)| edifact_k.clone())
+                            .or(Some(v))
+                    }
+                    (v, _) => v,
+                };
+                mapped_val.or(default)
             };
 
             if let Some(val) = val {

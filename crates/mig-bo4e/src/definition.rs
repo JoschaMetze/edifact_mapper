@@ -44,6 +44,11 @@ pub struct StructuredFieldMapping {
     pub transform: Option<String>,
     pub when: Option<String>,
     pub default: Option<String>,
+    /// Bidirectional enum translation map (EDIFACT value → BO4E value).
+    /// Forward: looks up extracted EDIFACT value to produce BO4E value.
+    /// Reverse: reverse-looks up BO4E value to produce EDIFACT value.
+    /// Uses BTreeMap for deterministic reverse lookup (first key alphabetically wins).
+    pub enum_map: Option<BTreeMap<String, String>>,
 }
 
 /// Reference to a complex handler function.

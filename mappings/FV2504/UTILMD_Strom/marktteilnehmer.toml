@@ -1,9 +1,10 @@
 # Marktteilnehmer (market participant) mapping for PID 55001.
 #
 # Source: SG2 → NAD segment (qualifiers MS = sender, MR = recipient)
-# NAD+MS+9978842000002::293  →  qualifier, mp_id, code_list_agency
+# NAD+MS+9978842000002::293  →  rollencodenummer, rollencodetyp
 #
 # Uses numeric index paths for multi-component composite access.
+# D3055 code (293/500 → BDEW, 332 → DVGW) is translated via enum_map.
 
 [meta]
 entity = "Marktteilnehmer"
@@ -11,6 +12,9 @@ bo4e_type = "Marktteilnehmer"
 source_group = "SG2"
 
 [fields]
-"nad.0" = "qualifier"
-"nad.1.0" = "mp_id"
-"nad.1.2" = "code_list_agency"
+"nad.0" = "marktrolle"
+"nad.1.0" = "rollencodenummer"
+
+[fields."nad.1.2"]
+target = "rollencodetyp"
+enum_map = { "293" = "BDEW", "332" = "DVGW", "500" = "GLN" }

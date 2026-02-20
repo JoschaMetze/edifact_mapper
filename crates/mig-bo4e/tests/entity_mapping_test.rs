@@ -230,9 +230,9 @@ fn test_prozessdaten_forward_mapping() {
         "Should extract valid-to date from DTM+93"
     );
     assert_eq!(
-        bo4e.get("sts_e01").and_then(|v| v.as_str()),
+        bo4e.get("transaktionsgrund").and_then(|v| v.as_str()),
         Some("E01"),
-        "Should extract STS status code"
+        "Should extract Transaktionsgrund from STS"
     );
 }
 
@@ -248,9 +248,9 @@ fn test_prozessdaten_reverse_mapping() {
         "vorgang_id": "TEST123",
         "gueltig_ab": "202505312200+00",
         "gueltig_bis": "202512312300+00",
-        "sts_e01": "E01",
-        "sts_zw4": "ZW4",
-        "sts_e03": "E03"
+        "transaktionsgrund": "E01",
+        "transaktionsgrund_ergaenzung": "ZW4",
+        "transaktionsgrund_ergaenzung_befristete_anmeldung": "E03"
     });
 
     let instance = engine.map_reverse(&bo4e, def);
@@ -431,19 +431,19 @@ fn test_marktteilnehmer_forward_mapping_ms() {
     let bo4e = engine.map_forward(&tree, def, 0);
 
     assert_eq!(
-        bo4e.get("qualifier").and_then(|v| v.as_str()),
+        bo4e.get("marktrolle").and_then(|v| v.as_str()),
         Some("MS"),
-        "Should extract qualifier MS"
+        "Should extract marktrolle MS"
     );
     assert_eq!(
-        bo4e.get("mp_id").and_then(|v| v.as_str()),
+        bo4e.get("rollencodenummer").and_then(|v| v.as_str()),
         Some("9978842000002"),
-        "Should extract sender MP ID"
+        "Should extract sender MP ID as rollencodenummer"
     );
     assert_eq!(
-        bo4e.get("code_list_agency").and_then(|v| v.as_str()),
-        Some("293"),
-        "Should extract code list agency"
+        bo4e.get("rollencodetyp").and_then(|v| v.as_str()),
+        Some("BDEW"),
+        "Should translate 293 → BDEW via enum_map"
     );
 }
 
@@ -465,19 +465,19 @@ fn test_marktteilnehmer_forward_mapping_mr() {
     let bo4e = engine.map_forward(&tree, def, 1);
 
     assert_eq!(
-        bo4e.get("qualifier").and_then(|v| v.as_str()),
+        bo4e.get("marktrolle").and_then(|v| v.as_str()),
         Some("MR"),
-        "Should extract qualifier MR"
+        "Should extract marktrolle MR"
     );
     assert_eq!(
-        bo4e.get("mp_id").and_then(|v| v.as_str()),
+        bo4e.get("rollencodenummer").and_then(|v| v.as_str()),
         Some("9900269000000"),
-        "Should extract recipient MP ID"
+        "Should extract recipient MP ID as rollencodenummer"
     );
     assert_eq!(
-        bo4e.get("code_list_agency").and_then(|v| v.as_str()),
-        Some("293"),
-        "Should extract code list agency"
+        bo4e.get("rollencodetyp").and_then(|v| v.as_str()),
+        Some("BDEW"),
+        "Should translate 293 → BDEW via enum_map"
     );
 }
 
@@ -490,9 +490,9 @@ fn test_marktteilnehmer_reverse_mapping() {
         .expect("Marktteilnehmer definition should exist");
 
     let bo4e = serde_json::json!({
-        "qualifier": "MS",
-        "mp_id": "9978842000002",
-        "code_list_agency": "293"
+        "marktrolle": "MS",
+        "rollencodenummer": "9978842000002",
+        "rollencodetyp": "BDEW"
     });
 
     let instance = engine.map_reverse(&bo4e, def);
@@ -506,7 +506,10 @@ fn test_marktteilnehmer_reverse_mapping() {
     assert_eq!(nad.elements[1].len(), 3);
     assert_eq!(nad.elements[1][0], "9978842000002");
     assert_eq!(nad.elements[1][1], "", "Middle component should be empty");
-    assert_eq!(nad.elements[1][2], "293");
+    assert_eq!(
+        nad.elements[1][2], "293",
+        "BDEW should reverse-map to 293"
+    );
 }
 
 #[test]

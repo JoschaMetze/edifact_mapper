@@ -29,8 +29,8 @@ source_group = "SG4"
 "dtm[93].0.1" = "gueltig_bis"
 "dtm[93].0.2" = { target = "", default = "303" }
 
-# STS segment — multiple elements
+# STS segment — C601.D9015 Statustyp, C556.D9013 Transaktionsgrund
 "sts.0" = { target = "", default = "7" }
-"sts.2" = "sts_e01"
-"sts.3" = "sts_zw4"
-"sts.4" = "sts_e03"
+"sts.2" = "transaktionsgrund"
+"sts.3" = "transaktionsgrund_ergaenzung"
+"sts.4" = "transaktionsgrund_ergaenzung_befristete_anmeldung"
