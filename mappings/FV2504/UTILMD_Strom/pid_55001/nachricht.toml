@@ -1,0 +1,18 @@
+# Nachricht (message header) mapping for PID 55001.
+#
+# Source: Root-level segments (outside any SG group)
+# BGM+E01+ALEXANDE951842BGM  → nachrichtentyp, nachrichtennummer
+# DTM+137:202503311329+00:303 → erstellungsdatum
+
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+source_group = ""
+source_path = ""
+
+[fields]
+"bgm.0" = "nachrichtentyp"
+"bgm.1" = "nachrichtennummer"
+"dtm[137].0.0" = { target = "", default = "137" }
+"dtm[137].0.1" = "erstellungsdatum"
+"dtm[137].0.2" = { target = "", default = "303" }

@@ -1,0 +1,14 @@
+# Messstellenbetrieb mapping for PID 55001 (SG8 variant ZH0).
+#
+# Source: SG4.SG8 repetition with SEQ qualifier ZH0
+# SEQ+ZH0+1  → position
+
+[meta]
+entity = "Messstellenbetrieb"
+bo4e_type = "Messstellenbetrieb"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zh0"
+
+[fields]
+"seq.0" = { target = "", default = "ZH0" }
+"seq.1" = "position"

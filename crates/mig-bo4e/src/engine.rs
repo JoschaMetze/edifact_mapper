@@ -79,6 +79,10 @@ impl MappingEngine {
     ///
     /// For "SG4.SG5", finds SG4\[0\] then SG5 at the given repetition within it.
     /// For "SG8", finds SG8 at the given repetition in the top-level groups.
+    ///
+    /// Supports intermediate repetition with colon syntax: "SG4.SG8:1.SG10"
+    /// means SG4\[0\] → SG8\[1\] → SG10\[repetition\]. Without a colon suffix,
+    /// intermediate groups default to repetition 0.
     pub fn resolve_group_instance<'a>(
         tree: &'a AssembledTree,
         group_path: &str,
@@ -86,27 +90,33 @@ impl MappingEngine {
     ) -> Option<&'a AssembledGroupInstance> {
         let parts: Vec<&str> = group_path.split('.').collect();
 
-        let first_group = tree.groups.iter().find(|g| g.group_id == parts[0])?;
+        let (first_id, first_rep) = parse_group_spec(parts[0]);
+        let first_group = tree.groups.iter().find(|g| g.group_id == first_id)?;
 
         if parts.len() == 1 {
-            return first_group.repetitions.get(repetition);
+            // Single part — use the explicit rep from spec or the `repetition` param
+            let rep = first_rep.unwrap_or(repetition);
+            return first_group.repetitions.get(rep);
         }
 
-        // Navigate through parent groups using repetition 0
-        let mut current_instance = first_group.repetitions.first()?;
+        // Navigate through groups; intermediate parts default to rep 0
+        // unless explicitly specified via `:N` suffix
+        let mut current_instance = first_group.repetitions.get(first_rep.unwrap_or(0))?;
 
         for (i, part) in parts[1..].iter().enumerate() {
+            let (group_id, explicit_rep) = parse_group_spec(part);
             let child_group = current_instance
                 .child_groups
                 .iter()
-                .find(|g| g.group_id == *part)?;
+                .find(|g| g.group_id == group_id)?;
 
             if i == parts.len() - 2 {
-                // Last part — use the specified repetition
-                return child_group.repetitions.get(repetition);
+                // Last part — use explicit rep, or fall back to `repetition`
+                let rep = explicit_rep.unwrap_or(repetition);
+                return child_group.repetitions.get(rep);
             }
-            // Intermediate — use repetition 0
-            current_instance = child_group.repetitions.first()?;
+            // Intermediate — use explicit rep or 0
+            current_instance = child_group.repetitions.get(explicit_rep.unwrap_or(0))?;
         }
 
         None
@@ -127,10 +137,14 @@ impl MappingEngine {
         let (segment_tag, qualifier) = parse_tag_qualifier(parts[0]);
 
         let segment = if let Some(q) = qualifier {
-            instance
-                .segments
-                .iter()
-                .find(|s| s.tag.eq_ignore_ascii_case(&segment_tag) && s.elements.first().and_then(|e| e.first()).map(|v| v.as_str()) == Some(q))?
+            instance.segments.iter().find(|s| {
+                s.tag.eq_ignore_ascii_case(&segment_tag)
+                    && s.elements
+                        .first()
+                        .and_then(|e| e.first())
+                        .map(|v| v.as_str())
+                        == Some(q)
+            })?
         } else {
             instance
                 .segments
@@ -144,6 +158,7 @@ impl MappingEngine {
     /// Map all fields in a definition from the assembled tree to a BO4E JSON object.
     ///
     /// `group_path` is the definition's `source_group` (may be dotted, e.g., "SG4.SG5").
+    /// An empty `source_group` maps root-level segments (BGM, DTM, etc.).
     /// Returns a flat JSON object with target field names as keys.
     pub fn map_forward(
         &self,
@@ -153,31 +168,49 @@ impl MappingEngine {
     ) -> serde_json::Value {
         let mut result = serde_json::Map::new();
 
+        // Root-level mapping: source_group is empty → use tree's own segments
+        if def.meta.source_group.is_empty() {
+            let root_instance = AssembledGroupInstance {
+                segments: tree.segments[..tree.post_group_start].to_vec(),
+                child_groups: vec![],
+            };
+            Self::extract_fields_from_instance(&root_instance, &def.fields, &mut result);
+            return serde_json::Value::Object(result);
+        }
+
         let instance = Self::resolve_group_instance(tree, &def.meta.source_group, repetition);
 
         if let Some(instance) = instance {
-            for (path, field_mapping) in &def.fields {
-                let (target, enum_map) = match field_mapping {
-                    FieldMapping::Simple(t) => (t.clone(), None),
-                    FieldMapping::Structured(s) => (s.target.clone(), s.enum_map.as_ref()),
-                    FieldMapping::Nested(_) => continue,
-                };
-                if target.is_empty() {
-                    continue;
-                }
-                if let Some(val) = Self::extract_from_instance(instance, path) {
-                    // Apply enum_map forward: EDIFACT value → BO4E value
-                    let mapped_val = if let Some(map) = enum_map {
-                        map.get(&val).cloned().unwrap_or(val)
-                    } else {
-                        val
-                    };
-                    set_nested_value(&mut result, &target, mapped_val);
-                }
-            }
+            Self::extract_fields_from_instance(instance, &def.fields, &mut result);
         }
 
         serde_json::Value::Object(result)
+    }
+
+    /// Extract all fields from an instance into a result map (shared logic).
+    fn extract_fields_from_instance(
+        instance: &AssembledGroupInstance,
+        fields: &std::collections::BTreeMap<String, FieldMapping>,
+        result: &mut serde_json::Map<String, serde_json::Value>,
+    ) {
+        for (path, field_mapping) in fields {
+            let (target, enum_map) = match field_mapping {
+                FieldMapping::Simple(t) => (t.clone(), None),
+                FieldMapping::Structured(s) => (s.target.clone(), s.enum_map.as_ref()),
+                FieldMapping::Nested(_) => continue,
+            };
+            if target.is_empty() {
+                continue;
+            }
+            if let Some(val) = Self::extract_from_instance(instance, path) {
+                let mapped_val = if let Some(map) = enum_map {
+                    map.get(&val).cloned().unwrap_or(val)
+                } else {
+                    val
+                };
+                set_nested_value(result, &target, mapped_val);
+            }
+        }
     }
 
     /// Map a PID struct field's segments to BO4E JSON.
@@ -447,6 +480,17 @@ impl MappingEngine {
             group_id: leaf_group.to_string(),
             repetitions: vec![instance],
         }
+    }
+}
+
+/// Parse a group path part with optional repetition: "SG8:1" → ("SG8", Some(1)).
+fn parse_group_spec(part: &str) -> (&str, Option<usize>) {
+    if let Some(colon_pos) = part.find(':') {
+        let id = &part[..colon_pos];
+        let rep = part[colon_pos + 1..].parse::<usize>().ok();
+        (id, rep)
+    } else {
+        (part, None)
     }
 }
 

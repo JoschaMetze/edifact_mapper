@@ -296,8 +296,8 @@ fn test_prozessdaten_roundtrip() {
         .definition_for_entity("Prozessdaten")
         .expect("Prozessdaten definition should exist");
 
-    let original = MappingEngine::resolve_group_instance(&tree, "SG4", 0)
-        .expect("SG4 should exist");
+    let original =
+        MappingEngine::resolve_group_instance(&tree, "SG4", 0).expect("SG4 should exist");
 
     // Forward
     let bo4e = engine.map_forward(&tree, def, 0);
@@ -312,7 +312,10 @@ fn test_prozessdaten_roundtrip() {
         .iter()
         .find(|s| s.tag == "IDE")
         .unwrap();
-    assert_eq!(orig_ide.elements, recon_ide.elements, "IDE should roundtrip");
+    assert_eq!(
+        orig_ide.elements, recon_ide.elements,
+        "IDE should roundtrip"
+    );
 
     // Compare DTM segments by qualifier
     for qualifier in &["92", "93"] {
@@ -393,8 +396,8 @@ fn test_prozess_referenz_roundtrip() {
         .definition_for_entity("ProzessReferenz")
         .expect("ProzessReferenz definition should exist");
 
-    let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG6", 0)
-        .expect("SG4.SG6 should exist");
+    let original =
+        MappingEngine::resolve_group_instance(&tree, "SG4.SG6", 0).expect("SG4.SG6 should exist");
 
     let bo4e = engine.map_forward(&tree, def, 0);
     let reconstructed = engine.map_reverse(&bo4e, def);
@@ -507,10 +510,7 @@ fn test_marktteilnehmer_reverse_mapping() {
     assert_eq!(nad.elements[1].len(), 3);
     assert_eq!(nad.elements[1][0], "9978842000002");
     assert_eq!(nad.elements[1][1], "", "Middle component should be empty");
-    assert_eq!(
-        nad.elements[1][2], "293",
-        "BDEW should reverse-map to 293"
-    );
+    assert_eq!(nad.elements[1][2], "293", "BDEW should reverse-map to 293");
 }
 
 #[test]

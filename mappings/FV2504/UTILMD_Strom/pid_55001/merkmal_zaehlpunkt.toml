@@ -1,0 +1,23 @@
+# Merkmal for Zaehlpunkt (SG10 within SG8 Z79).
+#
+# Source: SG4.SG8:0.SG10 (CCI/CAV characteristics for Z79 group)
+# CCI+Z66                       → merkmal_code (Zaehlpunkttyp)
+# CAV+ZH9:::9991000002107       → messlokation_ref
+# CAV+ZV4:::4000                → jahresverbrauch
+
+[meta]
+entity = "MerkmalZaehlpunkt"
+bo4e_type = "Merkmal"
+source_group = "SG4.SG8:0.SG10"
+source_path = "sg4.sg8_z79.sg10"
+
+[fields]
+"cci.0" = "merkmal_code"
+"cav[ZH9].0.0" = { target = "", default = "ZH9" }
+"cav[ZH9].0.1" = "messlokation_ref_sub_1"
+"cav[ZH9].0.2" = "messlokation_ref_sub_2"
+"cav[ZH9].0.3" = "messlokation_ref"
+"cav[ZV4].0.0" = { target = "", default = "ZV4" }
+"cav[ZV4].0.1" = "jahresverbrauch_sub_1"
+"cav[ZV4].0.2" = "jahresverbrauch_sub_2"
+"cav[ZV4].0.3" = "jahresverbrauch"
