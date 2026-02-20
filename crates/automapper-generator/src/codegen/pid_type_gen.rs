@@ -149,6 +149,53 @@ fn find_group_qualifier(group_id: &str, mig: &MigSchema) -> Option<(String, Stri
     None
 }
 
+/// Derive the AHB field name for a group from its entry segment's AHB definition.
+///
+/// Looks for the AHB field that references this group's entry segment path
+/// (e.g., "SG2/NAD" for SG2, "SG4/SG8/SEQ" for SG8 under SG4).
+fn derive_ahb_name(
+    pid: &Pruefidentifikator,
+    group_path: &str,
+    entry_segment: &str,
+) -> Option<String> {
+    let target_prefix = format!("{}/{}", group_path, entry_segment);
+    pid.fields
+        .iter()
+        .find(|f| f.segment_path.starts_with(&target_prefix))
+        .and_then(|f| {
+            let name = f.name.trim();
+            if name.is_empty() {
+                None
+            } else {
+                Some(name.to_string())
+            }
+        })
+}
+
+/// Populate discriminator and ahb_name on top-level groups and their children.
+fn enrich_group_info(group: &mut PidGroupInfo, pid: &Pruefidentifikator, mig: &MigSchema, parent_path: &str) {
+    let group_path = if parent_path.is_empty() {
+        group.group_id.clone()
+    } else {
+        format!("{}/{}", parent_path, group.group_id)
+    };
+
+    // Set discriminator from MIG qualifier detection
+    if let Some((seg, de)) = find_group_qualifier(&group.group_id, mig) {
+        group.discriminator = Some((seg.clone(), de));
+
+        // Derive AHB name from the trigger segment's first field definition
+        if group.ahb_name.is_none() {
+            group.ahb_name = derive_ahb_name(pid, &group_path, &seg);
+        }
+    }
+
+    // Recursively enrich child groups
+    for child in &mut group.child_groups {
+        enrich_group_info(child, pid, mig, &group_path);
+    }
+}
+
 /// Enhanced analysis that detects qualifier disambiguation for repeated segment groups.
 ///
 /// When the same group (e.g., SG8) appears multiple times under a parent with different
@@ -234,14 +281,21 @@ pub fn analyze_pid_structure_with_qualifiers(
         }
     }
 
+    let mut groups: Vec<PidGroupInfo> = group_map
+        .into_values()
+        .map(|t| t.into_group_info())
+        .collect();
+
+    // Enrich all groups with discriminator and AHB name info
+    for group in &mut groups {
+        enrich_group_info(group, pid, mig, "");
+    }
+
     PidStructure {
         pid_id: pid.id.clone(),
         beschreibung: pid.beschreibung.clone(),
         kommunikation_von: pid.kommunikation_von.clone(),
-        groups: group_map
-            .into_values()
-            .map(|t| t.into_group_info())
-            .collect(),
+        groups,
         top_level_segments: top_level_segments.into_iter().collect(),
     }
 }
@@ -640,6 +694,24 @@ mod tests {
         assert!(
             has_qualified,
             "SG8 groups should have qualifier discrimination"
+        );
+    }
+
+    #[test]
+    fn test_pid_55001_sg2_has_ahb_names() {
+        let (mig, ahb) = load_mig_ahb();
+        let pid = ahb.workflows.iter().find(|p| p.id == "55001").unwrap();
+        let structure = analyze_pid_structure_with_qualifiers(pid, &mig, &ahb);
+
+        let sg2 = structure
+            .groups
+            .iter()
+            .find(|g| g.group_id == "SG2")
+            .unwrap();
+        // SG2 should have a discriminator (NAD qualifier)
+        assert!(
+            sg2.discriminator.is_some(),
+            "SG2 should have NAD discriminator"
         );
     }
 }
