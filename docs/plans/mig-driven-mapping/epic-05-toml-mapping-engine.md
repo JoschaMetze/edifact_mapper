@@ -5,7 +5,7 @@ title: "mig-bo4e Crate — TOML Mapping Engine"
 depends_on: [mig-driven-mapping/E04]
 estimated_tasks: 7
 crate: mig-bo4e
-status: in_progress
+status: complete
 ---
 
 # Epic 5: mig-bo4e Crate — TOML Mapping Engine
@@ -824,7 +824,17 @@ git commit -m "feat(mig-bo4e): add initial TOML mapping files for MaLo, MeLo, GP
 
 | Metric | Value |
 |--------|-------|
-| Tests | ~7 (definition parse, loader, forward map, handler registry, reverse map, mapping files) |
-| Mapping files | 3 initial (Marktlokation, Messlokation, Geschaeftspartner) |
+| Tests | 24 |
+| Passed | 24 |
+| Failed | 0 |
+| Skipped | 0 |
+| Mapping files | 3 (Marktlokation, Messlokation, Geschaeftspartner) |
 | cargo check --workspace | PASS |
 | cargo clippy --workspace | PASS |
+
+Files tested:
+- crates/mig-bo4e/tests/definition_test.rs (6 tests: TOML parsing, loader, error handling)
+- crates/mig-bo4e/tests/forward_mapping_test.rs (5 tests: field extraction from assembled tree)
+- crates/mig-bo4e/tests/handler_test.rs (5 tests: handler registry, invocation, data passing)
+- crates/mig-bo4e/tests/reverse_mapping_test.rs (5 tests: BO4E field population, segment/group building)
+- crates/mig-bo4e/tests/mapping_files_test.rs (3 tests: real TOML file loading, structure validation)
