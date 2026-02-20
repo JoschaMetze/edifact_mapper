@@ -5,7 +5,7 @@ title: "Integration & Dual API"
 depends_on: [mig-driven-mapping/E05]
 estimated_tasks: 5
 crate: automapper-api, mig-assembly, mig-bo4e
-status: in_progress
+status: complete
 ---
 
 # Epic 6: Integration & Dual API
@@ -467,10 +467,22 @@ git commit -m "docs: update CLAUDE.md and plans README for MIG-driven mapping ar
 
 | Metric | Value |
 |--------|-------|
-| Tests | ~5 (conversion service, dual API endpoints, migration comparison, benchmarks, docs) |
+| Tests | 11 new (3 service + 5 API v2 + 3 migration comparison) |
+| Passed | 11 |
+| Failed | 0 |
+| Skipped | 0 |
+| Workspace total | 717 |
 | API modes | 3 (mig-tree, bo4e, legacy) |
+| Migration comparison | 108/108 fixtures: both pipelines succeed |
 | cargo check --workspace | PASS |
 | cargo clippy --workspace | PASS |
+| cargo fmt --check | PASS |
+
+Files tested:
+- crates/mig-assembly/tests/service_test.rs (3 tests)
+- crates/automapper-api/tests/convert_v2_test.rs (5 tests)
+- crates/mig-bo4e/tests/migration_comparison_test.rs (3 tests)
+- crates/mig-assembly/benches/assembly_throughput.rs (benchmarks compile, 3 groups)
 
 ## Migration Completion Criteria
 
