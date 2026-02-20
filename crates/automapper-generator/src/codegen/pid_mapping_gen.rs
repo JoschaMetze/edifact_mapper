@@ -401,9 +401,10 @@ fn generate_group_mappings(
 
     if !group.segments.is_empty() {
         let entity_name = derive_entity_name(group);
-        let filename = derive_filename(group);
 
         if let Some(rm) = index.get(&key) {
+            // Use the reference entity name for filename (e.g., "zaehlpunkt" not "sg8_z79")
+            let filename = derive_filename_from_entity(&rm.definition.meta.entity);
             // Clone and adapt the reference mapping
             let mut def = rm.definition.clone();
             adapt_mapping(&mut def, group, source_path);
@@ -411,6 +412,8 @@ fn generate_group_mappings(
             files.push((filename, content));
             report.matched.push((entity_name, rm.source_pid.clone()));
         } else {
+            // Use source_path-derived filename for unique scaffolds
+            let filename = derive_filename_from_path(source_path);
             // Generate scaffold fallback
             let content = generate_scaffold_fallback(group, source_path, &entity_name);
             files.push((filename, content));
@@ -460,11 +463,30 @@ fn derive_entity_name(group: &SchemaGroup) -> String {
     group.field_name.to_uppercase().replace("_", "")
 }
 
-/// Derive output filename from group field_name.
-fn derive_filename(group: &SchemaGroup) -> String {
-    // Use the entity name from the reference mapping if possible,
-    // otherwise use the field_name
-    format!("{}.toml", group.field_name)
+/// Derive filename from the reference entity name (e.g., "Zaehlpunkt" → "zaehlpunkt.toml").
+fn derive_filename_from_entity(entity: &str) -> String {
+    // Convert PascalCase entity to snake_case filename
+    let mut result = String::new();
+    for (i, ch) in entity.chars().enumerate() {
+        if ch.is_uppercase() && i > 0 {
+            result.push('_');
+        }
+        result.push(ch.to_ascii_lowercase());
+    }
+    format!("{result}.toml")
+}
+
+/// Derive filename from source_path for scaffolded groups (ensures uniqueness).
+/// "sg4.sg8_z98.sg10" → "sg8_z98_sg10.toml", "sg4" → "sg4.toml"
+fn derive_filename_from_path(source_path: &str) -> String {
+    let parts: Vec<&str> = source_path.split('.').collect();
+    // Skip the top-level "sg4" prefix for children to keep names shorter
+    let name = if parts.len() > 2 {
+        parts[1..].join("_")
+    } else {
+        parts.join("_")
+    };
+    format!("{name}.toml")
 }
 
 /// Adapt a cloned reference mapping for the target PID's schema.
@@ -670,8 +692,9 @@ mod tests {
             "Should have nachricht.toml"
         );
         assert!(
-            filenames.contains(&"sg4.toml"),
-            "Should have sg4.toml (Prozessdaten)"
+            filenames.contains(&"prozessdaten.toml"),
+            "Should have prozessdaten.toml (from Prozessdaten entity), got: {:?}",
+            filenames
         );
 
         eprintln!(
@@ -723,12 +746,12 @@ mod tests {
         // 55109 does NOT have SG8+Z79 or SG8+ZH0
         let all_filenames: Vec<&str> = files.iter().map(|(n, _)| n.as_str()).collect();
         assert!(
-            !all_filenames.contains(&"sg8_z79.toml"),
-            "55109 should not have sg8_z79.toml"
+            !all_filenames.contains(&"zaehlpunkt.toml"),
+            "55109 should not have zaehlpunkt.toml (Z79)"
         );
         assert!(
-            !all_filenames.contains(&"sg8_zh0.toml"),
-            "55109 should not have sg8_zh0.toml"
+            !all_filenames.contains(&"messstellenbetrieb.toml"),
+            "55109 should not have messstellenbetrieb.toml (ZH0)"
         );
     }
 }
