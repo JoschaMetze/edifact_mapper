@@ -1,0 +1,13 @@
+[package]
+name = "mig-types"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Generated MIG-tree types for EDIFACT messages — shared segments, composites, enums, and PID-specific compositions"
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+
+[dev-dependencies]
+serde_json.workspace = true

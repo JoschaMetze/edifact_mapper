@@ -49,13 +49,15 @@ pub fn parse_mig(
             Ok(Event::Start(ref e)) => {
                 let name = elem_name(e);
 
-                if name.starts_with("M_") {
+                if name.starts_with("M_") || name == "Uebertragungsdatei" {
                     for attr in e.attributes().flatten() {
                         let key = std::str::from_utf8(attr.key.as_ref()).unwrap_or("");
                         let val = attr.unescape_value().unwrap_or_default().to_string();
                         match key {
-                            "Versionsnummer" => schema.version = val,
-                            "Veroeffentlichungsdatum" => schema.publication_date = val,
+                            "Versionsnummer" if schema.version.is_empty() => schema.version = val,
+                            "Veroeffentlichungsdatum" if schema.publication_date.is_empty() => {
+                                schema.publication_date = val
+                            }
                             "Author" => schema.author = val,
                             _ => {}
                         }
