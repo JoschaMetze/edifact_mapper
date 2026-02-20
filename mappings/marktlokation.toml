@@ -1,0 +1,18 @@
+[meta]
+entity = "Marktlokation"
+bo4e_type = "bo4e::Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG8"
+discriminator = "seq.d1245.qualifier == 'Z01'"
+
+[fields]
+"loc.c517.d3225" = "marktlokations_id"
+"loc.d3227" = { target = "lokationstyp", transform = "loc_qualifier_to_type" }
+
+[fields."sg9_characteristics"]
+"cci.c240.d7037" = "characteristic_code"
+"cav.c889.d7111" = "characteristic_value"
+
+[companion_fields]
+"dtm_157.c507.d2380" = { target = "gueltig_ab", when = "dtm.c507.d2005 == '157'" }
+"dtm_158.c507.d2380" = { target = "gueltig_bis", when = "dtm.c507.d2005 == '158'" }

@@ -18,4 +18,6 @@ pub mod engine;
 pub mod error;
 pub mod handlers;
 
+pub use engine::MappingEngine;
 pub use error::MappingError;
+pub use handlers::HandlerRegistry;
