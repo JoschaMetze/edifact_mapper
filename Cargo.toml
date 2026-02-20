@@ -9,6 +9,7 @@ members = [
     "crates/automapper-generator",
     "crates/mig-types",
     "crates/mig-assembly",
+    "crates/mig-bo4e",
     "crates/automapper-api",
     "crates/automapper-web",
 ]
@@ -70,3 +71,6 @@ automapper-api = { path = "crates/automapper-api" }
 automapper-web = { path = "crates/automapper-web" }
 mig-types = { path = "crates/mig-types" }
 mig-assembly = { path = "crates/mig-assembly" }
+mig-bo4e = { path = "crates/mig-bo4e" }
+toml = "0.8"
+tempfile = "3"
