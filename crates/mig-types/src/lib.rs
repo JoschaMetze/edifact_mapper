@@ -9,6 +9,12 @@
 //! - `enums` — code list enums (NadQualifier, LocQualifier, etc.)
 //! - `groups` — segment group structs (Sg2Party, Sg8SeqGroup, etc.)
 //! - `pids` — per-PID composition structs
+//!
+//! Also provides crate-independent primitives:
+//! - `segment` — `OwnedSegment` for parsed EDIFACT segments
+//! - `cursor` — `SegmentCursor` and helpers for sequential segment consumption
 
+pub mod cursor;
 pub mod generated;
+pub mod segment;
 pub mod traits;

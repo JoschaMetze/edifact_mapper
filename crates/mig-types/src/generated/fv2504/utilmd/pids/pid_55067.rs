@@ -3,31 +3,33 @@
 //! Do not edit manually.
 
 use serde::{Deserialize, Serialize};
+use crate::segment::OwnedSegment;
+use crate::cursor::{SegmentCursor, SegmentNotFound, peek_is, consume, expect_segment};
 
 /// SG1 — Referenz, Qualifier
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067Sg1 {
-    pub rff: Option<super::super::segments::SegRff>,
+    pub rff: Option<OwnedSegment>,
 }
 
 /// SG10 — Klassentyp, Code
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067Sg10 {
-    pub cav: Option<super::super::segments::SegCav>,
-    pub cci: Option<super::super::segments::SegCci>,
+    pub cav: Option<OwnedSegment>,
+    pub cci: Option<OwnedSegment>,
 }
 
 /// SG12 — Beteiligter, Qualifier
 /// Qualifiers: VY
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067Sg12Vy {
-    pub nad: Option<super::super::segments::SegNad>,
+    pub nad: Option<OwnedSegment>,
 }
 
 /// SG2 — Beteiligter, Qualifier
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067Sg2 {
-    pub nad: Option<super::super::segments::SegNad>,
+    pub nad: Option<OwnedSegment>,
     pub sg3_ic: Vec<Pid55067Sg3Ic>,
 }
 
@@ -35,15 +37,15 @@ pub struct Pid55067Sg2 {
 /// Qualifiers: IC
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067Sg3Ic {
-    pub com: Option<super::super::segments::SegCom>,
-    pub cta: Option<super::super::segments::SegCta>,
+    pub com: Option<OwnedSegment>,
+    pub cta: Option<OwnedSegment>,
 }
 
 /// SG4 — Objekt, Qualifier
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067Sg4 {
-    pub ide: Option<super::super::segments::SegIde>,
-    pub sts: Option<super::super::segments::SegSts>,
+    pub ide: Option<OwnedSegment>,
+    pub sts: Option<OwnedSegment>,
     pub sg12_vy: Vec<Pid55067Sg12Vy>,
     pub sg5_z15: Vec<Pid55067Sg5Z15>,
     pub sg6: Vec<Pid55067Sg6>,
@@ -55,21 +57,21 @@ pub struct Pid55067Sg4 {
 /// Qualifiers: Z15
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067Sg5Z15 {
-    pub loc: Option<super::super::segments::SegLoc>,
+    pub loc: Option<OwnedSegment>,
 }
 
 /// SG6 — Referenz, Qualifier
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067Sg6 {
-    pub rff: Option<super::super::segments::SegRff>,
+    pub rff: Option<OwnedSegment>,
 }
 
 /// SG8 — Handlung, Code
 /// Qualifiers: Z22
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067Sg8Z22 {
-    pub rff: Option<super::super::segments::SegRff>,
-    pub seq: Option<super::super::segments::SegSeq>,
+    pub rff: Option<OwnedSegment>,
+    pub seq: Option<OwnedSegment>,
     pub sg10: Vec<Pid55067Sg10>,
 }
 
@@ -77,19 +79,340 @@ pub struct Pid55067Sg8Z22 {
 /// Qualifiers: Z23
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067Sg8Z23 {
-    pub pia: Option<super::super::segments::SegPia>,
-    pub seq: Option<super::super::segments::SegSeq>,
+    pub pia: Option<OwnedSegment>,
+    pub seq: Option<OwnedSegment>,
 }
 
 /// PID 55067: Bilanzkreiszuordnungsliste
 /// Kommunikation: NB an BKV ÜNB an BKV
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55067 {
-    pub bgm: super::super::segments::SegBgm,
-    pub dtm: super::super::segments::SegDtm,
-    pub unh: super::super::segments::SegUnh,
-    pub unt: super::super::segments::SegUnt,
+    pub bgm: OwnedSegment,
+    pub dtm: OwnedSegment,
+    pub unh: OwnedSegment,
+    pub unt: OwnedSegment,
     pub sg1: Vec<Pid55067Sg1>,
     pub sg2: Vec<Pid55067Sg2>,
     pub sg4: Vec<Pid55067Sg4>,
+}
+
+impl Pid55067Sg1 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let rff = if peek_is(segments, cursor, "RFF") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if rff.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            rff,
+        })
+    }
+}
+
+impl Pid55067Sg10 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let cav = if peek_is(segments, cursor, "CAV") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        let cci = if peek_is(segments, cursor, "CCI") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if cav.is_none() && cci.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            cav,
+            cci,
+        })
+    }
+}
+
+impl Pid55067Sg12Vy {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let nad = if peek_is(segments, cursor, "NAD") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if nad.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            nad,
+        })
+    }
+}
+
+impl Pid55067Sg2 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let nad = if peek_is(segments, cursor, "NAD") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if nad.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        let mut sg3_ic = Vec::new();
+        while let Some(item) = Pid55067Sg3Ic::from_segments(segments, cursor) {
+            sg3_ic.push(item);
+        }
+        Some(Self {
+            nad,
+            sg3_ic,
+        })
+    }
+}
+
+impl Pid55067Sg3Ic {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let com = if peek_is(segments, cursor, "COM") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        let cta = if peek_is(segments, cursor, "CTA") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if com.is_none() && cta.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            com,
+            cta,
+        })
+    }
+}
+
+impl Pid55067Sg4 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let ide = if peek_is(segments, cursor, "IDE") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        let sts = if peek_is(segments, cursor, "STS") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if ide.is_none() && sts.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        let mut sg12_vy = Vec::new();
+        while let Some(item) = Pid55067Sg12Vy::from_segments(segments, cursor) {
+            sg12_vy.push(item);
+        }
+        let mut sg5_z15 = Vec::new();
+        while let Some(item) = Pid55067Sg5Z15::from_segments(segments, cursor) {
+            sg5_z15.push(item);
+        }
+        let mut sg6 = Vec::new();
+        while let Some(item) = Pid55067Sg6::from_segments(segments, cursor) {
+            sg6.push(item);
+        }
+        let mut sg8_z22 = Vec::new();
+        while let Some(item) = Pid55067Sg8Z22::from_segments(segments, cursor) {
+            sg8_z22.push(item);
+        }
+        let mut sg8_z23 = Vec::new();
+        while let Some(item) = Pid55067Sg8Z23::from_segments(segments, cursor) {
+            sg8_z23.push(item);
+        }
+        Some(Self {
+            ide,
+            sts,
+            sg12_vy,
+            sg5_z15,
+            sg6,
+            sg8_z22,
+            sg8_z23,
+        })
+    }
+}
+
+impl Pid55067Sg5Z15 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let loc = if peek_is(segments, cursor, "LOC") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if loc.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            loc,
+        })
+    }
+}
+
+impl Pid55067Sg6 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let rff = if peek_is(segments, cursor, "RFF") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if rff.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            rff,
+        })
+    }
+}
+
+impl Pid55067Sg8Z22 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let rff = if peek_is(segments, cursor, "RFF") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        let seq = if peek_is(segments, cursor, "SEQ") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if rff.is_none() && seq.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        let mut sg10 = Vec::new();
+        while let Some(item) = Pid55067Sg10::from_segments(segments, cursor) {
+            sg10.push(item);
+        }
+        Some(Self {
+            rff,
+            seq,
+            sg10,
+        })
+    }
+}
+
+impl Pid55067Sg8Z23 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let pia = if peek_is(segments, cursor, "PIA") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        let seq = if peek_is(segments, cursor, "SEQ") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if pia.is_none() && seq.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            pia,
+            seq,
+        })
+    }
+}
+
+impl Pid55067 {
+    /// Assemble this PID from a pre-tokenized segment list.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+    ) -> Result<Self, SegmentNotFound> {
+        let mut cursor = SegmentCursor::new(segments.len());
+
+        let bgm = expect_segment(segments, &mut cursor, "BGM")?.clone();
+        let dtm = expect_segment(segments, &mut cursor, "DTM")?.clone();
+        let unh = expect_segment(segments, &mut cursor, "UNH")?.clone();
+        let unt = expect_segment(segments, &mut cursor, "UNT")?.clone();
+        let mut sg1 = Vec::new();
+        while let Some(item) = Pid55067Sg1::from_segments(segments, &mut cursor) {
+            sg1.push(item);
+        }
+        let mut sg2 = Vec::new();
+        while let Some(item) = Pid55067Sg2::from_segments(segments, &mut cursor) {
+            sg2.push(item);
+        }
+        let mut sg4 = Vec::new();
+        while let Some(item) = Pid55067Sg4::from_segments(segments, &mut cursor) {
+            sg4.push(item);
+        }
+
+        Ok(Pid55067 {
+            bgm,
+            dtm,
+            unh,
+            unt,
+            sg1,
+            sg2,
+            sg4,
+        })
+    }
 }

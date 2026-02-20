@@ -10,12 +10,12 @@ impl Pid55001Sg10 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let cav = if peek_is(segments, cursor, "CAV") {
-            Some(SegCav::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
         let cci = if peek_is(segments, cursor, "CCI") {
-            Some(SegCci::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -38,7 +38,7 @@ impl Pid55001Sg12Z04 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let nad = if peek_is(segments, cursor, "NAD") {
-            Some(SegNad::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -60,7 +60,7 @@ impl Pid55001Sg12Z09 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let nad = if peek_is(segments, cursor, "NAD") {
-            Some(SegNad::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -82,7 +82,7 @@ impl Pid55001Sg2 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let nad = if peek_is(segments, cursor, "NAD") {
-            Some(SegNad::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -109,12 +109,12 @@ impl Pid55001Sg3Ic {
     ) -> Option<Self> {
         let saved = cursor.save();
         let com = if peek_is(segments, cursor, "COM") {
-            Some(SegCom::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
         let cta = if peek_is(segments, cursor, "CTA") {
-            Some(SegCta::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -137,17 +137,17 @@ impl Pid55001Sg4 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let dtm = if peek_is(segments, cursor, "DTM") {
-            Some(SegDtm::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
         let ide = if peek_is(segments, cursor, "IDE") {
-            Some(SegIde::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
         let sts = if peek_is(segments, cursor, "STS") {
-            Some(SegSts::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -216,7 +216,7 @@ impl Pid55001Sg5Z16 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let loc = if peek_is(segments, cursor, "LOC") {
-            Some(SegLoc::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -238,7 +238,7 @@ impl Pid55001Sg5Z22 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let loc = if peek_is(segments, cursor, "LOC") {
-            Some(SegLoc::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -260,7 +260,7 @@ impl Pid55001Sg6 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let rff = if peek_is(segments, cursor, "RFF") {
-            Some(SegRff::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -282,7 +282,7 @@ impl Pid55001Sg8Z01 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let seq = if peek_is(segments, cursor, "SEQ") {
-            Some(SegSeq::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -309,7 +309,7 @@ impl Pid55001Sg8Z75 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let seq = if peek_is(segments, cursor, "SEQ") {
-            Some(SegSeq::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -336,12 +336,12 @@ impl Pid55001Sg8Z79 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let pia = if peek_is(segments, cursor, "PIA") {
-            Some(SegPia::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
         let seq = if peek_is(segments, cursor, "SEQ") {
-            Some(SegSeq::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -369,7 +369,7 @@ impl Pid55001Sg8Zh0 {
     ) -> Option<Self> {
         let saved = cursor.save();
         let seq = if peek_is(segments, cursor, "SEQ") {
-            Some(SegSeq::from_owned(consume(segments, cursor)?))
+            Some(consume(segments, cursor)?.clone())
         } else {
             None
         };
@@ -392,13 +392,13 @@ impl Pid55001 {
     /// Assemble this PID from a pre-tokenized segment list.
     pub fn from_segments(
         segments: &[OwnedSegment],
-    ) -> Result<Self, AssemblyError> {
+    ) -> Result<Self, SegmentNotFound> {
         let mut cursor = SegmentCursor::new(segments.len());
 
-        let bgm = SegBgm::from_owned(expect_segment(segments, &mut cursor, "BGM")?);
-        let dtm = SegDtm::from_owned(expect_segment(segments, &mut cursor, "DTM")?);
-        let unh = SegUnh::from_owned(expect_segment(segments, &mut cursor, "UNH")?);
-        let unt = SegUnt::from_owned(expect_segment(segments, &mut cursor, "UNT")?);
+        let bgm = expect_segment(segments, &mut cursor, "BGM")?.clone();
+        let dtm = expect_segment(segments, &mut cursor, "DTM")?.clone();
+        let unh = expect_segment(segments, &mut cursor, "UNH")?.clone();
+        let unt = expect_segment(segments, &mut cursor, "UNT")?.clone();
         let mut sg2 = Vec::new();
         while let Some(item) = Pid55001Sg2::from_segments(segments, &mut cursor) {
             sg2.push(item);

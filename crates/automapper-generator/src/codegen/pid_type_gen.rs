@@ -522,14 +522,10 @@ pub fn generate_pid_struct(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbS
     out.push_str("#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]\n");
     out.push_str(&format!("pub struct {struct_name} {{\n"));
 
-    // Top-level segments — use super::super:: since PID files are in pids/ subdir
+    // Top-level segments — mandatory, stored as OwnedSegment
     for seg_id in &structure.top_level_segments {
         let field_name = seg_id.to_lowercase();
-        let seg_type = format!(
-            "super::super::segments::Seg{}",
-            capitalize_segment_id(seg_id)
-        );
-        out.push_str(&format!("    pub {field_name}: {seg_type},\n"));
+        out.push_str(&format!("    pub {field_name}: OwnedSegment,\n"));
     }
 
     // Groups with wrapper type names
@@ -677,11 +673,8 @@ fn emit_wrapper_structs(pid_struct_name: &str, groups: &[PidGroupInfo], out: &mu
         out.push_str(&format!("pub struct {name} {{\n"));
         for seg_id in &def.segments {
             let field_name = seg_id.to_lowercase();
-            let seg_type = format!(
-                "super::super::segments::Seg{}",
-                capitalize_segment_id(seg_id)
-            );
-            out.push_str(&format!("    pub {field_name}: Option<{seg_type}>,\n"));
+            // Use OwnedSegment for segment fields — keeps raw data, avoids typed Seg* dependency
+            out.push_str(&format!("    pub {field_name}: Option<OwnedSegment>,\n"));
         }
         for field_line in &def.child_fields {
             out.push_str(field_line);
@@ -746,10 +739,7 @@ pub fn generate_pid_from_segments(
             out.push_str(&format!(
                 "        let {field} = if peek_is(segments, cursor, \"{seg_id}\") {{\n"
             ));
-            out.push_str(&format!(
-                "            Some(Seg{}::from_owned(consume(segments, cursor)?))\n",
-                capitalize_segment_id(seg_id)
-            ));
+            out.push_str("            Some(consume(segments, cursor)?.clone())\n");
             out.push_str("        } else {\n");
             out.push_str("            None\n");
             out.push_str("        };\n");
@@ -805,15 +795,14 @@ pub fn generate_pid_from_segments(
     out.push_str("    /// Assemble this PID from a pre-tokenized segment list.\n");
     out.push_str("    pub fn from_segments(\n");
     out.push_str("        segments: &[OwnedSegment],\n");
-    out.push_str("    ) -> Result<Self, AssemblyError> {\n");
+    out.push_str("    ) -> Result<Self, SegmentNotFound> {\n");
     out.push_str("        let mut cursor = SegmentCursor::new(segments.len());\n\n");
 
-    // Top-level segments
+    // Top-level segments (mandatory — error if missing)
     for seg_id in &structure.top_level_segments {
         let field = seg_id.to_lowercase();
         out.push_str(&format!(
-            "        let {field} = Seg{}::from_owned(expect_segment(segments, &mut cursor, \"{seg_id}\")?);\n",
-            capitalize_segment_id(seg_id)
+            "        let {field} = expect_segment(segments, &mut cursor, \"{seg_id}\")?.clone();\n"
         ));
     }
 
@@ -993,7 +982,8 @@ pub fn generate_pid_types(
     let mut mod_entries = Vec::new();
 
     for pid in &ahb.workflows {
-        let source = generate_pid_struct(pid, mig, ahb);
+        let struct_source = generate_pid_struct(pid, mig, ahb);
+        let assembly_source = generate_pid_from_segments(pid, mig, ahb);
         let module_name = format!("pid_{}", pid.id.to_lowercase());
         let filename = format!("{module_name}.rs");
 
@@ -1001,8 +991,11 @@ pub fn generate_pid_types(
             "//! Auto-generated PID {} types.\n\
              //! {}\n\
              //! Do not edit manually.\n\n\
-             use serde::{{Deserialize, Serialize}};\n\n\
-             {source}",
+             use serde::{{Deserialize, Serialize}};\n\
+             use crate::segment::OwnedSegment;\n\
+             use crate::cursor::{{SegmentCursor, SegmentNotFound, peek_is, consume, expect_segment}};\n\n\
+             {struct_source}\n\
+             {assembly_source}",
             pid.id,
             sanitize_doc(&pid.beschreibung)
         );

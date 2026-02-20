@@ -5,28 +5,28 @@ expression: source
 /// SG10 — Klassentyp, Code
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg10 {
-    pub cav: Option<super::super::segments::SegCav>,
-    pub cci: Option<super::super::segments::SegCci>,
+    pub cav: Option<OwnedSegment>,
+    pub cci: Option<OwnedSegment>,
 }
 
 /// SG12 — Beteiligter, Qualifier
 /// Qualifiers: Z04
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg12Z04 {
-    pub nad: Option<super::super::segments::SegNad>,
+    pub nad: Option<OwnedSegment>,
 }
 
 /// SG12 — Beteiligter, Qualifier
 /// Qualifiers: Z09
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg12Z09 {
-    pub nad: Option<super::super::segments::SegNad>,
+    pub nad: Option<OwnedSegment>,
 }
 
 /// SG2 — Beteiligter, Qualifier
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg2 {
-    pub nad: Option<super::super::segments::SegNad>,
+    pub nad: Option<OwnedSegment>,
     pub sg3_ic: Vec<Pid55001Sg3Ic>,
 }
 
@@ -34,16 +34,16 @@ pub struct Pid55001Sg2 {
 /// Qualifiers: IC
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg3Ic {
-    pub com: Option<super::super::segments::SegCom>,
-    pub cta: Option<super::super::segments::SegCta>,
+    pub com: Option<OwnedSegment>,
+    pub cta: Option<OwnedSegment>,
 }
 
 /// SG4 — Objekt, Qualifier
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg4 {
-    pub dtm: Option<super::super::segments::SegDtm>,
-    pub ide: Option<super::super::segments::SegIde>,
-    pub sts: Option<super::super::segments::SegSts>,
+    pub dtm: Option<OwnedSegment>,
+    pub ide: Option<OwnedSegment>,
+    pub sts: Option<OwnedSegment>,
     pub sg12_z09: Vec<Pid55001Sg12Z09>,
     pub sg12_z04: Vec<Pid55001Sg12Z04>,
     pub sg5_z16: Vec<Pid55001Sg5Z16>,
@@ -59,27 +59,27 @@ pub struct Pid55001Sg4 {
 /// Qualifiers: Z16
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg5Z16 {
-    pub loc: Option<super::super::segments::SegLoc>,
+    pub loc: Option<OwnedSegment>,
 }
 
 /// SG5 — Ortsangabe, Qualifier
 /// Qualifiers: Z22
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg5Z22 {
-    pub loc: Option<super::super::segments::SegLoc>,
+    pub loc: Option<OwnedSegment>,
 }
 
 /// SG6 — Referenz, Qualifier
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg6 {
-    pub rff: Option<super::super::segments::SegRff>,
+    pub rff: Option<OwnedSegment>,
 }
 
 /// SG8 — Handlung, Code
 /// Qualifiers: Z01
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg8Z01 {
-    pub seq: Option<super::super::segments::SegSeq>,
+    pub seq: Option<OwnedSegment>,
     pub sg10: Vec<Pid55001Sg10>,
 }
 
@@ -87,7 +87,7 @@ pub struct Pid55001Sg8Z01 {
 /// Qualifiers: Z75
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg8Z75 {
-    pub seq: Option<super::super::segments::SegSeq>,
+    pub seq: Option<OwnedSegment>,
     pub sg10: Vec<Pid55001Sg10>,
 }
 
@@ -95,8 +95,8 @@ pub struct Pid55001Sg8Z75 {
 /// Qualifiers: Z79
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg8Z79 {
-    pub pia: Option<super::super::segments::SegPia>,
-    pub seq: Option<super::super::segments::SegSeq>,
+    pub pia: Option<OwnedSegment>,
+    pub seq: Option<OwnedSegment>,
     pub sg10: Vec<Pid55001Sg10>,
 }
 
@@ -104,7 +104,7 @@ pub struct Pid55001Sg8Z79 {
 /// Qualifiers: ZH0
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001Sg8Zh0 {
-    pub seq: Option<super::super::segments::SegSeq>,
+    pub seq: Option<OwnedSegment>,
     pub sg10: Vec<Pid55001Sg10>,
 }
 
@@ -112,10 +112,10 @@ pub struct Pid55001Sg8Zh0 {
 /// Kommunikation: LF an NB
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid55001 {
-    pub bgm: super::super::segments::SegBgm,
-    pub dtm: super::super::segments::SegDtm,
-    pub unh: super::super::segments::SegUnh,
-    pub unt: super::super::segments::SegUnt,
+    pub bgm: OwnedSegment,
+    pub dtm: OwnedSegment,
+    pub unh: OwnedSegment,
+    pub unt: OwnedSegment,
     pub sg2: Vec<Pid55001Sg2>,
     pub sg4: Vec<Pid55001Sg4>,
 }

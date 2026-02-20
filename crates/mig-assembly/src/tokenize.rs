@@ -3,61 +3,14 @@
 //! The `edifact-parser` crate uses an event-driven (SAX-style) API.
 //! This module provides a convenience function that collects all parsed
 //! segments into an owned `Vec<OwnedSegment>` for two-pass processing.
+//!
+//! `OwnedSegment` itself lives in `mig-types::segment` — re-exported here
+//! for backward compatibility.
 
 use edifact_types::{Control, EdifactDelimiters, RawSegment};
 
-/// An owned version of `RawSegment` — stores String data instead of borrows.
-///
-/// Used for the two-pass assembler: pass 1 collects segments into this
-/// type, pass 2 consumes them guided by the MIG schema.
-#[derive(Debug, Clone)]
-pub struct OwnedSegment {
-    /// Segment identifier (e.g., "NAD", "LOC", "DTM").
-    pub id: String,
-    /// Elements, where each element is a vector of component strings.
-    /// `elements[i][j]` = component `j` of element `i`.
-    pub elements: Vec<Vec<String>>,
-    /// 1-based segment number within the message.
-    pub segment_number: u32,
-}
-
-impl OwnedSegment {
-    /// Creates an OwnedSegment from a borrowed RawSegment.
-    pub fn from_raw(raw: &RawSegment<'_>) -> Self {
-        Self {
-            id: raw.id.to_string(),
-            elements: raw
-                .elements
-                .iter()
-                .map(|e| e.iter().map(|c| c.to_string()).collect())
-                .collect(),
-            segment_number: raw.position.segment_number,
-        }
-    }
-
-    /// Gets the first component of element at `index`, or empty string if missing.
-    pub fn get_element(&self, index: usize) -> &str {
-        self.elements
-            .get(index)
-            .and_then(|e| e.first())
-            .map(|s| s.as_str())
-            .unwrap_or("")
-    }
-
-    /// Gets a specific component within an element, or empty string if missing.
-    pub fn get_component(&self, element_index: usize, component_index: usize) -> &str {
-        self.elements
-            .get(element_index)
-            .and_then(|e| e.get(component_index))
-            .map(|s| s.as_str())
-            .unwrap_or("")
-    }
-
-    /// Checks if the segment has the given ID (case-insensitive).
-    pub fn is(&self, segment_id: &str) -> bool {
-        self.id.eq_ignore_ascii_case(segment_id)
-    }
-}
+// Re-export OwnedSegment from mig-types so existing `use crate::tokenize::OwnedSegment` paths work.
+pub use mig_types::segment::OwnedSegment;
 
 /// Handler that collects all segments into owned copies.
 struct SegmentCollector {
@@ -66,7 +19,15 @@ struct SegmentCollector {
 
 impl edifact_parser::EdifactHandler for SegmentCollector {
     fn on_segment(&mut self, segment: &RawSegment<'_>) -> Control {
-        self.segments.push(OwnedSegment::from_raw(segment));
+        self.segments.push(OwnedSegment {
+            id: segment.id.to_string(),
+            elements: segment
+                .elements
+                .iter()
+                .map(|e| e.iter().map(|c| c.to_string()).collect())
+                .collect(),
+            segment_number: segment.position.segment_number,
+        });
         Control::Continue
     }
 

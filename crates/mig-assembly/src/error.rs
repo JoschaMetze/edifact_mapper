@@ -29,3 +29,11 @@ pub enum AssemblyError {
     #[error("Expected segment '{expected}' not found")]
     SegmentNotFound { expected: String },
 }
+
+impl From<mig_types::cursor::SegmentNotFound> for AssemblyError {
+    fn from(e: mig_types::cursor::SegmentNotFound) -> Self {
+        AssemblyError::SegmentNotFound {
+            expected: e.expected,
+        }
+    }
+}
