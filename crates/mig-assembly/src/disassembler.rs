@@ -24,21 +24,33 @@ impl<'a> Disassembler<'a> {
     }
 
     /// Disassemble a tree into ordered segments following MIG sequence.
+    ///
+    /// Emits segments in correct EDIFACT order:
+    /// 1. Pre-group top-level segments (e.g., UNB, UNH, BGM, DTM)
+    /// 2. Groups (recursively, in MIG order)
+    /// 3. Post-group top-level segments (e.g., UNT, UNZ)
     pub fn disassemble(&self, tree: &AssembledTree) -> Vec<DisassembledSegment> {
         let mut output = Vec::new();
 
-        // Emit top-level segments in MIG order
-        for mig_seg in &self.mig.segments {
-            if let Some(seg) = tree.segments.iter().find(|s| s.tag == mig_seg.id) {
-                output.push(assembled_to_disassembled(seg));
+        // 1. Emit pre-group segments (already in MIG order from assembler)
+        for seg in &tree.segments[..tree.post_group_start] {
+            output.push(assembled_to_disassembled(seg));
+        }
+
+        // 2. Emit groups in MIG order (using cursors for duplicate group IDs)
+        let mut group_cursor = 0;
+        for mig_group in &self.mig.segment_groups {
+            if group_cursor < tree.groups.len()
+                && tree.groups[group_cursor].group_id == mig_group.id
+            {
+                self.emit_group(&tree.groups[group_cursor], mig_group, &mut output);
+                group_cursor += 1;
             }
         }
 
-        // Emit groups in MIG order
-        for mig_group in &self.mig.segment_groups {
-            if let Some(group) = tree.groups.iter().find(|g| g.group_id == mig_group.id) {
-                self.emit_group(group, mig_group, &mut output);
-            }
+        // 3. Emit post-group segments (e.g., UNT, UNZ)
+        for seg in &tree.segments[tree.post_group_start..] {
+            output.push(assembled_to_disassembled(seg));
         }
 
         output
@@ -61,21 +73,30 @@ impl<'a> Disassembler<'a> {
         mig_group: &MigSegmentGroup,
         output: &mut Vec<DisassembledSegment>,
     ) {
-        // Emit segments within this group instance in MIG order
+        // Use cursors to handle duplicate tags in MIG (e.g., multiple DTMs).
+        // Segments in the instance are in MIG order from the assembler.
+        let mut seg_cursor = 0;
         for mig_seg in &mig_group.segments {
-            if let Some(seg) = instance.segments.iter().find(|s| s.tag == mig_seg.id) {
-                output.push(assembled_to_disassembled(seg));
+            if seg_cursor < instance.segments.len()
+                && instance.segments[seg_cursor].tag == mig_seg.id
+            {
+                output.push(assembled_to_disassembled(&instance.segments[seg_cursor]));
+                seg_cursor += 1;
             }
         }
 
-        // Emit nested groups in MIG order
+        // Child groups — also use cursor for duplicate group IDs
+        let mut group_cursor = 0;
         for nested_mig in &mig_group.nested_groups {
-            if let Some(nested) = instance
-                .child_groups
-                .iter()
-                .find(|g| g.group_id == nested_mig.id)
+            if group_cursor < instance.child_groups.len()
+                && instance.child_groups[group_cursor].group_id == nested_mig.id
             {
-                self.emit_group(nested, nested_mig, output);
+                self.emit_group(
+                    &instance.child_groups[group_cursor],
+                    nested_mig,
+                    output,
+                );
+                group_cursor += 1;
             }
         }
     }
@@ -171,6 +192,7 @@ mod tests {
                 },
             ],
             groups: vec![],
+            post_group_start: 2,
         };
 
         let disassembler = Disassembler::new(&mig);
@@ -207,6 +229,7 @@ mod tests {
                     elements: vec![vec!["E01".to_string()]],
                 },
             ],
+            post_group_start: 2,
             groups: vec![AssembledGroup {
                 group_id: "SG2".to_string(),
                 repetitions: vec![
@@ -260,6 +283,7 @@ mod tests {
                 tag: "UNH".to_string(),
                 elements: vec![vec!["1".to_string()]],
             }],
+            post_group_start: 1,
             groups: vec![AssembledGroup {
                 group_id: "SG2".to_string(),
                 repetitions: vec![AssembledGroupInstance {
@@ -314,6 +338,7 @@ mod tests {
         let tree = AssembledTree {
             segments: vec![],
             groups: vec![],
+            post_group_start: 0,
         };
 
         let disassembler = Disassembler::new(&mig);

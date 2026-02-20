@@ -16,6 +16,10 @@ use serde::{Deserialize, Serialize};
 pub struct AssembledTree {
     pub segments: Vec<AssembledSegment>,
     pub groups: Vec<AssembledGroup>,
+    /// Index in `segments` where post-group segments start (e.g., UNT, UNZ).
+    /// Segments before this index appear before groups in EDIFACT order.
+    #[serde(default)]
+    pub post_group_start: usize,
 }
 
 /// An assembled segment with its data elements.
@@ -62,15 +66,20 @@ impl<'a> Assembler<'a> {
         let mut tree = AssembledTree {
             segments: Vec::new(),
             groups: Vec::new(),
+            post_group_start: 0,
         };
 
-        // Process top-level segments
-        for mig_seg in &self.mig.segments {
+        // Track which MIG segment indices were matched in the first pass
+        let mut matched_seg_indices = Vec::new();
+
+        // Process top-level segments (first pass — before groups)
+        for (i, mig_seg) in self.mig.segments.iter().enumerate() {
             if cursor.is_exhausted() {
                 break;
             }
             if let Some(assembled) = self.try_consume_segment(segments, &mut cursor, mig_seg)? {
                 tree.segments.push(assembled);
+                matched_seg_indices.push(i);
             }
         }
 
@@ -81,6 +90,22 @@ impl<'a> Assembler<'a> {
             }
             if let Some(assembled) = self.try_consume_group(segments, &mut cursor, mig_group)? {
                 tree.groups.push(assembled);
+            }
+        }
+
+        // Mark where post-group segments start
+        tree.post_group_start = tree.segments.len();
+
+        // Second pass: try unmatched top-level segments (e.g., UNT, UNZ after groups)
+        for (i, mig_seg) in self.mig.segments.iter().enumerate() {
+            if cursor.is_exhausted() {
+                break;
+            }
+            if matched_seg_indices.contains(&i) {
+                continue;
+            }
+            if let Some(assembled) = self.try_consume_segment(segments, &mut cursor, mig_seg)? {
+                tree.segments.push(assembled);
             }
         }
 
