@@ -1864,6 +1864,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "mig-assembly"
+version = "0.1.0"
+dependencies = [
+ "automapper-generator",
+ "edifact-parser",
+ "edifact-types",
+ "insta",
+ "mig-types",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+]
+
+[[package]]
 name = "mig-types"
 version = "0.1.0"
 dependencies = [
