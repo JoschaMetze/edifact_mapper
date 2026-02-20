@@ -705,6 +705,109 @@ fn emit_pid_group_field_v2(
 }
 
 // ---------------------------------------------------------------------------
+// JSON Schema Generation
+// ---------------------------------------------------------------------------
+
+/// Generate a JSON schema describing a PID's structure for runtime use.
+pub fn generate_pid_schema(
+    pid: &Pruefidentifikator,
+    mig: &MigSchema,
+    ahb: &AhbSchema,
+) -> String {
+    let structure = analyze_pid_structure_with_qualifiers(pid, mig, ahb);
+    let mut root = serde_json::Map::new();
+    root.insert(
+        "pid".to_string(),
+        serde_json::Value::String(pid.id.clone()),
+    );
+    root.insert(
+        "beschreibung".to_string(),
+        serde_json::Value::String(pid.beschreibung.clone()),
+    );
+    root.insert(
+        "format_version".to_string(),
+        serde_json::Value::String(ahb.format_version.clone()),
+    );
+
+    if let Some(ref komm) = pid.kommunikation_von {
+        root.insert(
+            "kommunikation_von".to_string(),
+            serde_json::Value::String(komm.clone()),
+        );
+    }
+
+    let mut fields = serde_json::Map::new();
+    for group in &structure.groups {
+        if is_empty_group(group) {
+            continue;
+        }
+        let field_name = make_wrapper_field_name(group);
+        fields.insert(field_name, group_to_schema_value(group));
+    }
+    root.insert("fields".to_string(), serde_json::Value::Object(fields));
+
+    serde_json::to_string_pretty(&serde_json::Value::Object(root)).unwrap()
+}
+
+fn group_to_schema_value(group: &PidGroupInfo) -> serde_json::Value {
+    let mut obj = serde_json::Map::new();
+    obj.insert(
+        "source_group".to_string(),
+        serde_json::Value::String(group.group_id.clone()),
+    );
+
+    if let Some(ref disc) = group.discriminator {
+        let mut d = serde_json::Map::new();
+        d.insert(
+            "segment".to_string(),
+            serde_json::Value::String(disc.0.clone()),
+        );
+        d.insert(
+            "element".to_string(),
+            serde_json::Value::String(disc.1.clone()),
+        );
+        if !group.qualifier_values.is_empty() {
+            d.insert(
+                "values".to_string(),
+                serde_json::Value::Array(
+                    group
+                        .qualifier_values
+                        .iter()
+                        .map(|v| serde_json::Value::String(v.clone()))
+                        .collect(),
+                ),
+            );
+        }
+        obj.insert("discriminator".to_string(), serde_json::Value::Object(d));
+    } else {
+        obj.insert("discriminator".to_string(), serde_json::Value::Null);
+    }
+
+    let segments: Vec<_> = group
+        .segments
+        .iter()
+        .map(|s| serde_json::Value::String(s.clone()))
+        .collect();
+    obj.insert("segments".to_string(), serde_json::Value::Array(segments));
+
+    let non_empty_children: Vec<_> = group
+        .child_groups
+        .iter()
+        .filter(|c| !is_empty_group(c))
+        .collect();
+    if !non_empty_children.is_empty() {
+        let mut children = serde_json::Map::new();
+        for child in non_empty_children {
+            let name = make_wrapper_field_name(child);
+            children.insert(name, group_to_schema_value(child));
+        }
+        obj.insert("children".to_string(), serde_json::Value::Object(children));
+    }
+
+    serde_json::Value::Object(obj)
+}
+
+// ---------------------------------------------------------------------------
 // Orchestrator: File Generation
 // ---------------------------------------------------------------------------
 
@@ -744,6 +847,14 @@ pub fn generate_pid_types(
         );
 
         std::fs::write(pids_dir.join(&filename), full_source)?;
+
+        // Write companion JSON schema
+        let schema = generate_pid_schema(pid, mig, ahb);
+        std::fs::write(
+            pids_dir.join(format!("pid_{}_schema.json", pid.id.to_lowercase())),
+            schema,
+        )?;
+
         mod_entries.push(module_name);
     }
 
@@ -854,5 +965,13 @@ mod tests {
         let pid = ahb.workflows.iter().find(|p| p.id == "55001").unwrap();
         let source = generate_pid_struct(pid, &mig, &ahb);
         insta::assert_snapshot!("pid_55001_struct", source);
+    }
+
+    #[test]
+    fn test_generate_pid_55001_schema_snapshot() {
+        let (mig, ahb) = load_mig_ahb();
+        let pid = ahb.workflows.iter().find(|p| p.id == "55001").unwrap();
+        let schema = generate_pid_schema(pid, &mig, &ahb);
+        insta::assert_snapshot!("pid_55001_schema", schema);
     }
 }
