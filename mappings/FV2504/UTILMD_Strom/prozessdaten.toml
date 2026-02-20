@@ -1,0 +1,36 @@
+# Prozessdaten (process data) mapping for PID 55001.
+#
+# Source: SG4 top-level segments (IDE, DTM, STS)
+# IDE+24+ALEXANDE542328517       → vorgang_id
+# DTM+92:20250531...:303         → gueltig_ab (valid from)
+# DTM+93:20251231...:303         → gueltig_bis (valid to)
+# STS+7++E01+ZW4+E03             → status fields
+#
+# Uses qualifier-based segment selection: dtm[92] selects the DTM
+# where elements[0][0] == "92".
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+
+[fields]
+# IDE segment
+"ide.0" = { target = "", default = "24" }
+"ide.1" = "vorgang_id"
+
+# DTM+92 (valid from) — composite C507: qualifier, value, format
+"dtm[92].0.0" = { target = "", default = "92" }
+"dtm[92].0.1" = "gueltig_ab"
+"dtm[92].0.2" = { target = "", default = "303" }
+
+# DTM+93 (valid to)
+"dtm[93].0.0" = { target = "", default = "93" }
+"dtm[93].0.1" = "gueltig_bis"
+"dtm[93].0.2" = { target = "", default = "303" }
+
+# STS segment — multiple elements
+"sts.0" = { target = "", default = "7" }
+"sts.2" = "sts_e01"
+"sts.3" = "sts_zw4"
+"sts.4" = "sts_e03"

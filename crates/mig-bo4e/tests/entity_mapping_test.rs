@@ -194,6 +194,223 @@ fn test_nested_group_navigation() {
     assert!(sg2.is_some(), "SG2[1] should be navigable (NAD+MR)");
 }
 
+// ── Prozessdaten: SG4 → IDE+24, DTM+92, DTM+93, STS ──
+
+#[test]
+fn test_prozessdaten_forward_mapping() {
+    let Some((mig, _)) = load_pid_filtered_mig("55001") else {
+        return;
+    };
+    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
+        return;
+    };
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("Prozessdaten")
+        .expect("Prozessdaten definition should exist");
+
+    let bo4e = engine.map_forward(&tree, def, 0);
+
+    assert_eq!(
+        bo4e.get("vorgang_id").and_then(|v| v.as_str()),
+        Some("ALEXANDE542328517"),
+        "Should extract Vorgang ID from IDE"
+    );
+    assert!(
+        bo4e.get("gueltig_ab")
+            .and_then(|v| v.as_str())
+            .is_some_and(|v| v.starts_with("2025053")),
+        "Should extract valid-from date from DTM+92"
+    );
+    assert!(
+        bo4e.get("gueltig_bis")
+            .and_then(|v| v.as_str())
+            .is_some_and(|v| v.starts_with("2025123")),
+        "Should extract valid-to date from DTM+93"
+    );
+    assert_eq!(
+        bo4e.get("sts_e01").and_then(|v| v.as_str()),
+        Some("E01"),
+        "Should extract STS status code"
+    );
+}
+
+#[test]
+fn test_prozessdaten_reverse_mapping() {
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("Prozessdaten")
+        .expect("Prozessdaten definition should exist");
+
+    let bo4e = serde_json::json!({
+        "vorgang_id": "TEST123",
+        "gueltig_ab": "202505312200+00",
+        "gueltig_bis": "202512312300+00",
+        "sts_e01": "E01",
+        "sts_zw4": "ZW4",
+        "sts_e03": "E03"
+    });
+
+    let instance = engine.map_reverse(&bo4e, def);
+
+    // Should produce IDE, DTM (x2), STS segments
+    let tags: Vec<&str> = instance.segments.iter().map(|s| s.tag.as_str()).collect();
+    assert!(tags.contains(&"IDE"), "Should have IDE segment");
+    assert!(tags.contains(&"STS"), "Should have STS segment");
+
+    // Should have two separate DTM segments (one for [92], one for [93])
+    let dtm_count = tags.iter().filter(|&&t| t == "DTM").count();
+    assert_eq!(dtm_count, 2, "Should have two DTM segments (92 and 93)");
+
+    // Check DTM qualifiers
+    let dtms: Vec<&mig_assembly::assembler::AssembledSegment> = instance
+        .segments
+        .iter()
+        .filter(|s| s.tag == "DTM")
+        .collect();
+    let dtm_qualifiers: Vec<&str> = dtms.iter().map(|d| d.elements[0][0].as_str()).collect();
+    assert!(
+        dtm_qualifiers.contains(&"92"),
+        "Should have DTM with qualifier 92"
+    );
+    assert!(
+        dtm_qualifiers.contains(&"93"),
+        "Should have DTM with qualifier 93"
+    );
+}
+
+#[test]
+fn test_prozessdaten_roundtrip() {
+    let Some((mig, _)) = load_pid_filtered_mig("55001") else {
+        return;
+    };
+    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
+        return;
+    };
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("Prozessdaten")
+        .expect("Prozessdaten definition should exist");
+
+    let original = MappingEngine::resolve_group_instance(&tree, "SG4", 0)
+        .expect("SG4 should exist");
+
+    // Forward
+    let bo4e = engine.map_forward(&tree, def, 0);
+
+    // Reverse
+    let reconstructed = engine.map_reverse(&bo4e, def);
+
+    // Compare IDE segment
+    let orig_ide = original.segments.iter().find(|s| s.tag == "IDE").unwrap();
+    let recon_ide = reconstructed
+        .segments
+        .iter()
+        .find(|s| s.tag == "IDE")
+        .unwrap();
+    assert_eq!(orig_ide.elements, recon_ide.elements, "IDE should roundtrip");
+
+    // Compare DTM segments by qualifier
+    for qualifier in &["92", "93"] {
+        let orig_dtm = original
+            .segments
+            .iter()
+            .find(|s| {
+                s.tag == "DTM" && s.elements[0].first().map(|v| v.as_str()) == Some(qualifier)
+            })
+            .unwrap_or_else(|| panic!("Original should have DTM+{qualifier}"));
+        let recon_dtm = reconstructed
+            .segments
+            .iter()
+            .find(|s| {
+                s.tag == "DTM" && s.elements[0].first().map(|v| v.as_str()) == Some(qualifier)
+            })
+            .unwrap_or_else(|| panic!("Reconstructed should have DTM+{qualifier}"));
+        assert_eq!(
+            orig_dtm.elements, recon_dtm.elements,
+            "DTM+{qualifier} should roundtrip"
+        );
+    }
+}
+
+// ── ProzessReferenz: SG4.SG6 → RFF+Z13 ──
+
+#[test]
+fn test_prozess_referenz_forward_mapping() {
+    let Some((mig, _)) = load_pid_filtered_mig("55001") else {
+        return;
+    };
+    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
+        return;
+    };
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("ProzessReferenz")
+        .expect("ProzessReferenz definition should exist");
+
+    let bo4e = engine.map_forward(&tree, def, 0);
+
+    assert_eq!(
+        bo4e.get("pid_id").and_then(|v| v.as_str()),
+        Some("55001"),
+        "Should extract PID reference from RFF+Z13"
+    );
+}
+
+#[test]
+fn test_prozess_referenz_reverse_mapping() {
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("ProzessReferenz")
+        .expect("ProzessReferenz definition should exist");
+
+    let bo4e = serde_json::json!({ "pid_id": "55001" });
+    let instance = engine.map_reverse(&bo4e, def);
+
+    assert_eq!(instance.segments.len(), 1);
+    let rff = &instance.segments[0];
+    assert_eq!(rff.tag, "RFF");
+    assert_eq!(rff.elements[0], vec!["Z13", "55001"]);
+}
+
+#[test]
+fn test_prozess_referenz_roundtrip() {
+    let Some((mig, _)) = load_pid_filtered_mig("55001") else {
+        return;
+    };
+    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
+        return;
+    };
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("ProzessReferenz")
+        .expect("ProzessReferenz definition should exist");
+
+    let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG6", 0)
+        .expect("SG4.SG6 should exist");
+
+    let bo4e = engine.map_forward(&tree, def, 0);
+    let reconstructed = engine.map_reverse(&bo4e, def);
+
+    let original_rff = original.segments.iter().find(|s| s.tag == "RFF").unwrap();
+    let reconstructed_rff = reconstructed
+        .segments
+        .iter()
+        .find(|s| s.tag == "RFF")
+        .unwrap();
+
+    assert_eq!(
+        original_rff.elements, reconstructed_rff.elements,
+        "RFF elements should roundtrip identically"
+    );
+}
+
 // ── Marktteilnehmer: SG2 → NAD+MS / NAD+MR ──
 
 #[test]

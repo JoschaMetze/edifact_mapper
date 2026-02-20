@@ -112,18 +112,30 @@ impl MappingEngine {
     }
 
     /// Extract a field from a group instance by path.
+    ///
+    /// Supports qualifier-based segment selection with `tag[qualifier]` syntax:
+    /// - `"dtm.0.1"` → first DTM segment, elements\[0\]\[1\]
+    /// - `"dtm[92].0.1"` → DTM where elements\[0\]\[0\] == "92", then elements\[0\]\[1\]
     pub fn extract_from_instance(instance: &AssembledGroupInstance, path: &str) -> Option<String> {
         let parts: Vec<&str> = path.split('.').collect();
         if parts.is_empty() {
             return None;
         }
 
-        // First part is the segment tag
-        let segment_tag = parts[0].to_uppercase();
-        let segment = instance
-            .segments
-            .iter()
-            .find(|s| s.tag.eq_ignore_ascii_case(&segment_tag))?;
+        // Parse segment tag and optional qualifier: "dtm[92]" → ("DTM", Some("92"))
+        let (segment_tag, qualifier) = parse_tag_qualifier(parts[0]);
+
+        let segment = if let Some(q) = qualifier {
+            instance
+                .segments
+                .iter()
+                .find(|s| s.tag.eq_ignore_ascii_case(&segment_tag) && s.elements.first().and_then(|e| e.first()).map(|v| v.as_str()) == Some(q))?
+        } else {
+            instance
+                .segments
+                .iter()
+                .find(|s| s.tag.eq_ignore_ascii_case(&segment_tag))?
+        };
 
         Self::resolve_field_path(segment, &parts[1..])
     }
@@ -169,16 +181,18 @@ impl MappingEngine {
     /// Fields with `default` values are used when no BO4E value is present
     /// (useful for fixed qualifiers like LOC qualifier "Z16").
     ///
-    /// Supports both named and numeric index paths:
-    /// - Named: `"d3227"` → element\[0\]\[0\], `"c517.d3225"` → element\[1\]\[0\]
-    /// - Numeric: `"0"` → element\[0\]\[0\], `"1.2"` → element\[1\]\[2\]
+    /// Supports:
+    /// - Named paths: `"d3227"` → element\[0\]\[0\], `"c517.d3225"` → element\[1\]\[0\]
+    /// - Numeric index: `"0"` → element\[0\]\[0\], `"1.2"` → element\[1\]\[2\]
+    /// - Qualifier selection: `"dtm[92].0.1"` → DTM segment with qualifier "92"
     pub fn map_reverse(
         &self,
         bo4e_value: &serde_json::Value,
         def: &MappingDefinition,
     ) -> AssembledGroupInstance {
-        // Collect (segment_tag, element_index, component_index, value) tuples.
-        let mut field_values: Vec<(String, usize, usize, String)> = Vec::new();
+        // Collect (segment_key, element_index, component_index, value) tuples.
+        // segment_key includes qualifier for disambiguation: "DTM" or "DTM[92]".
+        let mut field_values: Vec<(String, String, usize, usize, String)> = Vec::new();
 
         for (path, field_mapping) in &def.fields {
             let (target, default) = match field_mapping {
@@ -191,12 +205,14 @@ impl MappingEngine {
             if parts.len() < 2 {
                 continue;
             }
-            let seg_tag = parts[0].to_uppercase();
+
+            let (seg_tag, qualifier) = parse_tag_qualifier(parts[0]);
+            // Use the raw first part as segment key to group fields by segment instance
+            let seg_key = parts[0].to_uppercase();
             let sub_path = &parts[1..];
 
             // Determine (element_idx, component_idx) from path
             let (element_idx, component_idx) = if let Ok(ei) = sub_path[0].parse::<usize>() {
-                // Numeric index path
                 let ci = if sub_path.len() > 1 {
                     sub_path[1].parse::<usize>().unwrap_or(0)
                 } else {
@@ -204,10 +220,9 @@ impl MappingEngine {
                 };
                 (ei, ci)
             } else {
-                // Named path convention
                 match sub_path.len() {
-                    1 => (0, 0), // "d3227" → element[0][0]
-                    2 => (1, 0), // "c517.d3225" → element[1][0]
+                    1 => (0, 0),
+                    2 => (1, 0),
                     _ => continue,
                 }
             };
@@ -220,35 +235,51 @@ impl MappingEngine {
             };
 
             if let Some(val) = val {
-                field_values.push((seg_tag, element_idx, component_idx, val));
+                field_values.push((
+                    seg_key.clone(),
+                    seg_tag.clone(),
+                    element_idx,
+                    component_idx,
+                    val,
+                ));
+            }
+
+            // If there's a qualifier, also inject it at elements[0][0]
+            if let Some(q) = qualifier {
+                let key_upper = seg_key.clone();
+                let already_has = field_values
+                    .iter()
+                    .any(|(k, _, ei, ci, _)| *k == key_upper && *ei == 0 && *ci == 0);
+                if !already_has {
+                    field_values.push((seg_key, seg_tag, 0, 0, q.to_string()));
+                }
             }
         }
 
-        // Build segments with elements/components in correct positions
+        // Build segments with elements/components in correct positions.
+        // Group by segment_key to create separate segments for "DTM[92]" vs "DTM[93]".
         let mut segments: Vec<AssembledSegment> = Vec::new();
+        let mut seen_keys: Vec<String> = Vec::new();
 
-        for (seg_tag, element_idx, component_idx, val) in field_values {
-            let seg = segments.iter_mut().find(|s| s.tag == seg_tag);
-            let seg = match seg {
-                Some(existing) => existing,
-                None => {
-                    segments.push(AssembledSegment {
-                        tag: seg_tag.clone(),
-                        elements: vec![],
-                    });
-                    segments.last_mut().unwrap()
-                }
+        for (seg_key, seg_tag, element_idx, component_idx, val) in &field_values {
+            let seg = if let Some(pos) = seen_keys.iter().position(|k| k == seg_key) {
+                &mut segments[pos]
+            } else {
+                seen_keys.push(seg_key.clone());
+                segments.push(AssembledSegment {
+                    tag: seg_tag.clone(),
+                    elements: vec![],
+                });
+                segments.last_mut().unwrap()
             };
 
-            // Extend elements vector if needed
-            while seg.elements.len() <= element_idx {
+            while seg.elements.len() <= *element_idx {
                 seg.elements.push(vec![]);
             }
-            // Extend components vector if needed
-            while seg.elements[element_idx].len() <= component_idx {
-                seg.elements[element_idx].push(String::new());
+            while seg.elements[*element_idx].len() <= *component_idx {
+                seg.elements[*element_idx].push(String::new());
             }
-            seg.elements[element_idx][component_idx] = val;
+            seg.elements[*element_idx][*component_idx] = val.clone();
         }
 
         AssembledGroupInstance {
@@ -349,6 +380,17 @@ impl MappingEngine {
             group_id: leaf_group.to_string(),
             repetitions: vec![instance],
         }
+    }
+}
+
+/// Parse a segment tag with optional qualifier: "dtm[92]" → ("DTM", Some("92")).
+fn parse_tag_qualifier(tag_part: &str) -> (String, Option<&str>) {
+    if let Some(bracket_start) = tag_part.find('[') {
+        let tag = tag_part[..bracket_start].to_uppercase();
+        let qualifier = tag_part[bracket_start + 1..].trim_end_matches(']');
+        (tag, Some(qualifier))
+    } else {
+        (tag_part.to_uppercase(), None)
     }
 }
 

@@ -1,0 +1,15 @@
+# Prozess-Referenz mapping for PID 55001.
+#
+# Source: SG4.SG6 → RFF segment (qualifier Z13 = PID reference)
+# RFF+Z13:55001  →  qualifier, pid_id
+#
+# The RFF composite C506 has qualifier at [0][0] and reference at [0][1].
+
+[meta]
+entity = "ProzessReferenz"
+bo4e_type = "ProzessReferenz"
+source_group = "SG4.SG6"
+
+[fields]
+"rff.0.0" = { target = "", default = "Z13" }
+"rff.0.1" = "pid_id"
