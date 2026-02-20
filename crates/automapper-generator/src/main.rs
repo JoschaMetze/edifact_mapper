@@ -143,6 +143,33 @@ enum Commands {
         pid: Option<String>,
     },
 
+    /// Generate TOML mappings for a PID using reference mappings from existing PIDs
+    GeneratePidMappings {
+        /// PID to generate mappings for (e.g., "55109")
+        #[arg(long)]
+        pid: String,
+
+        /// Directory containing pid_*_schema.json files
+        #[arg(long)]
+        schema_dir: PathBuf,
+
+        /// Base directory for TOML mappings (e.g., "mappings")
+        #[arg(long)]
+        mappings_dir: PathBuf,
+
+        /// Format version (e.g., "FV2504")
+        #[arg(long)]
+        format_version: String,
+
+        /// Message type variant (e.g., "UTILMD_Strom")
+        #[arg(long)]
+        message_type: String,
+
+        /// Overwrite existing mapping files
+        #[arg(long, default_value = "false")]
+        overwrite: bool,
+    },
+
     /// Validate generated code against BO4E schema
     ValidateSchema {
         /// Path to stammdatenmodell directory
@@ -549,6 +576,79 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 "Generated {} total TOML scaffolds to {:?}",
                 total, output_dir
             );
+            Ok(())
+        }
+        Commands::GeneratePidMappings {
+            pid,
+            schema_dir,
+            mappings_dir,
+            format_version,
+            message_type,
+            overwrite,
+        } => {
+            eprintln!(
+                "Generating TOML mappings for PID {} ({} {})",
+                pid, message_type, format_version
+            );
+
+            // Find schema JSON
+            let schema_path = schema_dir.join(format!("pid_{}_schema.json", pid.to_lowercase()));
+            if !schema_path.exists() {
+                return Err(automapper_generator::GeneratorError::FileNotFound(
+                    schema_path,
+                ));
+            }
+
+            // Generate mappings
+            let (files, report) =
+                automapper_generator::codegen::pid_mapping_gen::generate_pid_mappings(
+                    &pid,
+                    &schema_path,
+                    &mappings_dir,
+                    &format_version,
+                    &message_type,
+                )?;
+
+            // Write output files
+            let output_dir = mappings_dir
+                .join(&format_version)
+                .join(&message_type)
+                .join(format!("pid_{}", pid.to_lowercase()));
+            std::fs::create_dir_all(&output_dir)?;
+
+            let mut written = 0;
+            let mut skipped = 0;
+            for (filename, content) in &files {
+                let path = output_dir.join(filename);
+                if path.exists() && !overwrite {
+                    eprintln!("  SKIP (exists): {}", filename);
+                    skipped += 1;
+                } else {
+                    std::fs::write(&path, content)?;
+                    written += 1;
+                }
+            }
+
+            // Print report
+            eprintln!("\n=== Generation Report ===");
+            eprintln!(
+                "Written: {}, Skipped: {}, Total: {}",
+                written,
+                skipped,
+                files.len()
+            );
+            eprintln!(
+                "Matched: {}, Scaffolded: {}",
+                report.matched.len(),
+                report.scaffolded.len()
+            );
+            for (entity, source_pid) in &report.matched {
+                eprintln!("  MATCH: {} (from pid_{})", entity, source_pid);
+            }
+            for (entity, reason) in &report.scaffolded {
+                eprintln!("  SCAFFOLD: {} ({})", entity, reason);
+            }
+            eprintln!("\nOutput: {:?}", output_dir);
             Ok(())
         }
         Commands::ValidateSchema {
