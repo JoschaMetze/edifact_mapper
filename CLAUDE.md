@@ -10,15 +10,18 @@ C# reference repo: `../edifact_bo4e_automapper/` (commit cee0b09)
 
 ## Workspace Structure
 
-8 crates in dependency order:
+11 crates in dependency order:
 1. `edifact-types` — zero-dep EDIFACT primitives
 2. `edifact-parser` — standalone streaming parser (publishable)
 3. `bo4e-extensions` — BO4E companion types for EDIFACT domain data
-4. `automapper-core` — coordinators, mappers, builders, writers
+4. `automapper-core` — coordinators, mappers, builders, writers (legacy pipeline)
 5. `automapper-validation` — AHB condition parser/evaluator
 6. `automapper-generator` — CLI code generator from MIG/AHB XML
-7. `automapper-api` — Axum REST + tonic gRPC server
-8. `automapper-web` — Leptos WASM frontend
+7. `mig-types` — generated typed MIG-tree types (segments, composites, enums, PIDs)
+8. `mig-assembly` — MIG-guided EDIFACT tree assembly/disassembly, ConversionService
+9. `mig-bo4e` — declarative TOML-based MIG-tree to BO4E mapping engine
+10. `automapper-api` — Axum REST + tonic gRPC server (dual API: v1 legacy + v2 MIG-driven)
+11. `automapper-web` — Leptos WASM frontend
 
 ## Commands
 
@@ -30,13 +33,14 @@ cargo test -p edifact-parser test_una_detection  # Run a single test
 cargo clippy --workspace -- -D warnings  # Lint (warnings are errors)
 cargo fmt --all -- --check       # Format check
 cargo fmt --all                  # Auto-format
-cargo bench -p automapper-core   # Benchmarks
+cargo bench -p automapper-core   # Legacy pipeline benchmarks
+cargo bench -p mig-assembly      # MIG-driven pipeline benchmarks
 cargo build --release --workspace
 ```
 
 ## Architecture
 
-Eight-crate Cargo workspace under `crates/`, ordered by dependency:
+Eleven-crate Cargo workspace under `crates/`, ordered by dependency:
 
 ```
 edifact-types          Zero-copy EDIFACT primitives (RawSegment<'a>, EdifactDelimiters)
@@ -45,11 +49,16 @@ edifact-parser         SAX-style streaming parser, EdifactHandler trait, UNA det
     ↓
 bo4e-extensions        WithValidity<T,E> wrapper, *Edifact companion types, LinkRegistry
     ↓                  (depends on external bo4e-rust crate for standard BO4E types)
-automapper-core        Coordinators, entity mappers, builders, writers, batch (rayon)
+automapper-core        Coordinators, entity mappers, builders, writers, batch (rayon) [LEGACY]
+automapper-generator   CLI: MIG/AHB XML → Rust codegen, claude CLI for conditions
+    ↓
+mig-types              Generated typed MIG-tree types (segments, composites, enums, PIDs)
+mig-assembly           MIG-guided tree assembly/disassembly, ConversionService [NEW]
+    ↓
+mig-bo4e               TOML-based MIG-tree → BO4E mapping engine [NEW]
     ↓
 ├── automapper-validation   AHB condition parser/evaluator, EdifactValidator
-├── automapper-generator    CLI: MIG/AHB XML → Rust codegen, claude CLI for conditions
-└── automapper-api          Axum REST + tonic gRPC server
+└── automapper-api          Axum REST + tonic gRPC (dual API: v1 legacy + v2 MIG-driven)
         ↓
     automapper-web          Leptos WASM frontend (served as static files by api)
 ```
@@ -65,6 +74,28 @@ automapper-core        Coordinators, entity mappers, builders, writers, batch (r
 **Companion types**: `*Edifact` structs (e.g. `MarktlokationEdifact`) store functional domain data that exists in EDIFACT but not in standard BO4E (data quality, cross-references, qualifiers). They do NOT store transport/ordering data — roundtrip ordering is handled by deterministic MIG-derived rules in writers.
 
 **WithValidity<T, E>**: Wraps a standard BO4E object (`T`) with its EDIFACT companion (`E`), a validity period (`Zeitraum`), and optional Zeitscheibe reference.
+
+### MIG-Driven Pipeline (New)
+
+Alternative to `automapper-core`, data-driven from MIG XML schemas rather than hand-coded mappers:
+
+```
+EDIFACT bytes → parse_to_segments() → Vec<OwnedSegment>
+  → Assembler::assemble_generic() → AssembledTree
+  → MappingEngine (TOML definitions) → BO4E JSON
+  → MappingEngine (reverse) → AssembledTree
+  → Disassembler::disassemble() → Vec<DisassembledSegment>
+  → render_edifact() → EDIFACT string
+```
+
+**ConversionService** (`mig-assembly::service`): High-level facade that loads a MIG XML, tokenizes EDIFACT, and assembles into `AssembledTree` or JSON. Used by the v2 API.
+
+**MappingEngine** (`mig-bo4e::engine`): Loads declarative TOML mapping files to convert between `AssembledTree` and BO4E JSON. Supports forward (tree→BO4E) and reverse (BO4E→tree) mappings with `HandlerRegistry` for complex cases.
+
+**Dual API** (`automapper-api`): `POST /api/v2/convert` accepts `mode` parameter:
+- `mig-tree` — returns the MIG-assembled tree as JSON
+- `bo4e` — assembles + applies TOML mappings → BO4E JSON
+- `legacy` — uses the `automapper-core` pipeline (backward compatible)
 
 ## Coding Conventions
 
@@ -108,7 +139,7 @@ Key correspondences:
 
 ## Implementation Status
 
-All 4 features (17 epics, 99 tasks) are **complete**. ~15,800 LOC, 333 tests.
+5 features (23 epics) implemented. ~17,000 LOC, 350+ tests.
 
 | Crate | Tests | Notes |
 |-------|-------|-------|
@@ -118,7 +149,10 @@ All 4 features (17 epics, 99 tasks) are **complete**. ~15,800 LOC, 333 tests.
 | automapper-core | 94 | 8 entity mappers, writers, roundtrip, batch |
 | automapper-validation | 143 | Condition parser, evaluator, validator |
 | automapper-generator | 1 | Snapshot tests (insta) |
-| automapper-api | 0 | Routes exercised via integration |
+| mig-types | 6 | Generated typed MIG-tree types |
+| mig-assembly | 40+ | Assembler, disassembler, roundtrip, ConversionService |
+| mig-bo4e | 27+ | TOML mapping engine, migration comparison tests |
+| automapper-api | 12 | REST v1/v2, gRPC, integration tests |
 | automapper-web | 0 | WASM components |
 
 ### Implementation Learnings
@@ -134,10 +168,11 @@ All 4 features (17 epics, 99 tasks) are **complete**. ~15,800 LOC, 333 tests.
 
 ## Implementation Plans
 
-Detailed task-level plans in `docs/plans/` — 4 features, 17 epics, 99 tasks (all complete):
+Detailed task-level plans in `docs/plans/` — 5 features, 23 epics:
 - Feature 1: `edifact-core-implementation/` (8 epics) — foundation
 - Feature 2: `validation-implementation/` (3 epics) — AHB conditions & validation
 - Feature 3: `generator-implementation/` (3 epics) — MIG/AHB XML codegen
 - Feature 4: `web-stack-implementation/` (3 epics) — REST, gRPC, WASM frontend
+- Feature 5: `mig-driven-mapping/` (6 epics) — MIG-driven pipeline, typed trees, TOML mapping, dual API
 
 Design document: `docs/plans/2026-02-18-rust-port-design.md`

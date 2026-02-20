@@ -156,7 +156,8 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             format_version,
             message_type,
         } => {
-            let variant = infer_variant(mig_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
+            let variant =
+                infer_variant(mig_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
             eprintln!(
                 "Generating MIG types for {} {} from {:?}",
                 message_type, format_version, mig_path
@@ -178,8 +179,10 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             format_version,
             message_type,
         } => {
-            let mig_variant = infer_variant(mig_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
-            let ahb_variant = infer_variant(ahb_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
+            let mig_variant =
+                infer_variant(mig_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
+            let ahb_variant =
+                infer_variant(ahb_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
             let variant = mig_variant.or(ahb_variant);
             eprintln!(
                 "Generating PID types for {} {} from {:?} + {:?}",
@@ -246,7 +249,8 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             );
 
             // Parse AHB
-            let variant = infer_variant(ahb_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
+            let variant =
+                infer_variant(ahb_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
 
             let ahb_schema = automapper_generator::parsing::ahb_parser::parse_ahb(
                 &ahb_path,

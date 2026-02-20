@@ -4,6 +4,8 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use automapper_core::{create_coordinator, FormatVersion};
+use mig_assembly::ConversionService;
+use mig_bo4e::MappingEngine;
 
 use crate::contracts::coordinators::CoordinatorInfo;
 
@@ -11,6 +13,7 @@ use crate::contracts::coordinators::CoordinatorInfo;
 #[derive(Clone)]
 pub struct AppState {
     pub registry: Arc<CoordinatorRegistry>,
+    pub mig_registry: Arc<MigServiceRegistry>,
     pub startup: std::time::Instant,
 }
 
@@ -24,8 +27,83 @@ impl AppState {
     pub fn new() -> Self {
         Self {
             registry: Arc::new(CoordinatorRegistry::discover()),
+            mig_registry: Arc::new(MigServiceRegistry::discover()),
             startup: std::time::Instant::now(),
         }
+    }
+}
+
+/// Registry for MIG-driven conversion services, keyed by format version.
+pub struct MigServiceRegistry {
+    services: HashMap<String, ConversionService>,
+    mapping_engine: MappingEngine,
+}
+
+impl MigServiceRegistry {
+    /// Discover and load available MIG schemas.
+    pub fn discover() -> Self {
+        let mut services = HashMap::new();
+
+        // Try to load the UTILMD Strom MIG for FV2504
+        let mig_path = std::path::Path::new(
+            "xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml",
+        );
+        if mig_path.exists() {
+            match ConversionService::new(mig_path, "UTILMD", Some("Strom"), "FV2504") {
+                Ok(svc) => {
+                    tracing::info!("Loaded MIG conversion service for FV2504");
+                    services.insert("FV2504".to_string(), svc);
+                }
+                Err(e) => {
+                    tracing::warn!("Failed to load MIG for FV2504: {e}");
+                }
+            }
+        } else {
+            tracing::info!(
+                "MIG XML not found at {}, MIG-driven modes unavailable",
+                mig_path.display()
+            );
+        }
+
+        // Load TOML mapping definitions if available
+        let mappings_dir = std::path::Path::new("mappings");
+        let mapping_engine = if mappings_dir.exists() {
+            match MappingEngine::load(mappings_dir) {
+                Ok(engine) => {
+                    tracing::info!(
+                        "Loaded {} TOML mapping definitions",
+                        engine.definitions().len()
+                    );
+                    engine
+                }
+                Err(e) => {
+                    tracing::warn!("Failed to load mapping definitions: {e}");
+                    MappingEngine::from_definitions(vec![])
+                }
+            }
+        } else {
+            MappingEngine::from_definitions(vec![])
+        };
+
+        Self {
+            services,
+            mapping_engine,
+        }
+    }
+
+    /// Get a conversion service for the given format version.
+    pub fn service(&self, format_version: &str) -> Option<&ConversionService> {
+        self.services.get(format_version)
+    }
+
+    /// Get the mapping engine.
+    pub fn mapping_engine(&self) -> &MappingEngine {
+        &self.mapping_engine
+    }
+
+    /// Check if any MIG services are available.
+    pub fn has_services(&self) -> bool {
+        !self.services.is_empty()
     }
 }
 

@@ -9,8 +9,7 @@ use std::path::Path;
 
 const MIG_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml";
-const FIXTURE_DIR: &str =
-    "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
+const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 
 fn load_real_mig() -> Option<MigSchema> {
     let path = Path::new(MIG_XML_PATH);
@@ -41,17 +40,17 @@ fn test_disassemble_real_fixture() {
     let dis_segments = disassembler.disassemble(&tree);
 
     // Should produce segments
-    assert!(!dis_segments.is_empty(), "Disassembly should produce segments");
+    assert!(
+        !dis_segments.is_empty(),
+        "Disassembly should produce segments"
+    );
 
     // All tags should be non-empty
     for seg in &dis_segments {
         assert!(!seg.tag.is_empty(), "Segment tag should be non-empty");
     }
 
-    eprintln!(
-        "Disassembled {} segments from fixture",
-        dis_segments.len()
-    );
+    eprintln!("Disassembled {} segments from fixture", dis_segments.len());
     for seg in &dis_segments {
         eprintln!("  {}", seg.tag);
     }

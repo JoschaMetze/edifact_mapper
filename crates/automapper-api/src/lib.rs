@@ -49,6 +49,7 @@ pub fn build_router_with_static_dir(state: state::AppState, static_dir: &str) ->
     // Build REST routes with state first, then merge stateless gRPC router
     let rest_router = Router::new()
         .nest("/api/v1", routes::api_routes())
+        .nest("/api/v2", routes::api_v2_routes())
         .route("/health", axum::routing::get(routes::health::health_check))
         .with_state(state);
 
@@ -68,6 +69,7 @@ pub fn build_http_router(state: state::AppState) -> Router {
 
     Router::new()
         .nest("/api/v1", routes::api_routes())
+        .nest("/api/v2", routes::api_v2_routes())
         .route("/health", axum::routing::get(routes::health::health_check))
         .with_state(state)
         .layer(TraceLayer::new_for_http())

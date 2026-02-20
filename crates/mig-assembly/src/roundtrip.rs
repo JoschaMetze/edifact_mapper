@@ -21,8 +21,8 @@ pub fn roundtrip(input: &[u8], mig: &MigSchema) -> Result<String, AssemblyError>
 
     // Detect if the input uses newlines after segment terminators
     let seg_term = delimiters.segment as char;
-    let input_str = std::str::from_utf8(input)
-        .map_err(|e| AssemblyError::ParseError(e.to_string()))?;
+    let input_str =
+        std::str::from_utf8(input).map_err(|e| AssemblyError::ParseError(e.to_string()))?;
     let uses_newlines = detect_newline_style(input_str, seg_term);
 
     // Pass 1: tokenize
@@ -161,10 +161,7 @@ mod tests {
             author: "".to_string(),
             format_version: "FV2504".to_string(),
             source_file: "test".to_string(),
-            segments: vec![
-                make_mig_segment("UNH"),
-                make_mig_segment("BGM"),
-            ],
+            segments: vec![make_mig_segment("UNH"), make_mig_segment("BGM")],
             segment_groups: vec![
                 make_mig_group("SG2", vec!["NAD"], vec![]),
                 make_mig_group("SG99", vec!["UNT"], vec![]),

@@ -31,7 +31,10 @@ fn test_marktlokation_mapping_structure() {
     let def = engine.definition_for_entity("Marktlokation").unwrap();
 
     assert_eq!(def.meta.bo4e_type, "bo4e::Marktlokation");
-    assert_eq!(def.meta.companion_type.as_deref(), Some("MarktlokationEdifact"));
+    assert_eq!(
+        def.meta.companion_type.as_deref(),
+        Some("MarktlokationEdifact")
+    );
     assert_eq!(def.meta.source_group, "SG8");
     assert!(def.meta.discriminator.is_some());
     assert!(def.fields.contains_key("loc.c517.d3225"));

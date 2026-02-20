@@ -91,11 +91,7 @@ impl<'a> Disassembler<'a> {
             if group_cursor < instance.child_groups.len()
                 && instance.child_groups[group_cursor].group_id == nested_mig.id
             {
-                self.emit_group(
-                    &instance.child_groups[group_cursor],
-                    nested_mig,
-                    output,
-                );
+                self.emit_group(&instance.child_groups[group_cursor], nested_mig, output);
                 group_cursor += 1;
             }
         }
@@ -112,7 +108,9 @@ fn assembled_to_disassembled(seg: &AssembledSegment) -> DisassembledSegment {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::assembler::{AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree};
+    use crate::assembler::{
+        AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree,
+    };
     use automapper_generator::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 
     fn make_mig_segment(id: &str) -> MigSegment {
@@ -301,7 +299,10 @@ mod tests {
                                 },
                                 AssembledSegment {
                                     tag: "COM".to_string(),
-                                    elements: vec![vec!["040@ex.com".to_string(), "EM".to_string()]],
+                                    elements: vec![vec![
+                                        "040@ex.com".to_string(),
+                                        "EM".to_string(),
+                                    ]],
                                 },
                             ],
                             child_groups: vec![],

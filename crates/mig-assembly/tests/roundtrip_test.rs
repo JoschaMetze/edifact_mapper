@@ -19,8 +19,7 @@ use std::path::Path;
 
 const MIG_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml";
-const FIXTURE_DIR: &str =
-    "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
+const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 
 fn load_real_mig() -> Option<MigSchema> {
     let path = Path::new(MIG_XML_PATH);
@@ -113,9 +112,10 @@ fn test_roundtrip_assembled_segments_preserved() {
 
         // Each disassembled segment should match the re-parsed segment
         if dis_segments.len() == re_segments.len() {
-            let all_match = dis_segments.iter().zip(re_segments.iter()).all(|(dis, re)| {
-                dis.tag == re.id && dis.elements == re.elements
-            });
+            let all_match = dis_segments
+                .iter()
+                .zip(re_segments.iter())
+                .all(|(dis, re)| dis.tag == re.id && dis.elements == re.elements);
             if all_match {
                 perfect += 1;
             }
@@ -192,10 +192,7 @@ fn test_roundtrip_coverage_all_fixtures() {
     eprintln!("  Coverage: {:.1}%", coverage * 100.0);
 
     // All files should at least roundtrip without errors
-    assert_eq!(
-        roundtrip_ok, file_count,
-        "Some files failed to roundtrip"
-    );
+    assert_eq!(roundtrip_ok, file_count, "Some files failed to roundtrip");
 
     // Segment coverage: assembler captures header segments (UNB, UNH, BGM, DTM)
     // plus some group content. Coverage improves as assembler handles more MIG variants.

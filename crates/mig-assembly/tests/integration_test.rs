@@ -31,11 +31,7 @@ fn make_mig_segment(id: &str) -> MigSegment {
     }
 }
 
-fn make_mig_group(
-    id: &str,
-    segments: Vec<&str>,
-    nested: Vec<MigSegmentGroup>,
-) -> MigSegmentGroup {
+fn make_mig_group(id: &str, segments: Vec<&str>, nested: Vec<MigSegmentGroup>) -> MigSegmentGroup {
     MigSegmentGroup {
         id: id.to_string(),
         name: id.to_string(),
@@ -98,8 +94,7 @@ fn make_utilmd_mig() -> MigSchema {
 
 const MIG_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml";
-const FIXTURE_DIR: &str =
-    "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
+const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 
 fn load_real_mig() -> Option<MigSchema> {
     let path = Path::new(MIG_XML_PATH);
@@ -235,7 +230,10 @@ fn test_load_real_mig_schema() {
     );
 
     // Print MIG structure for debugging
-    eprintln!("Top-level segments: {:?}", mig.segments.iter().map(|s| &s.id).collect::<Vec<_>>());
+    eprintln!(
+        "Top-level segments: {:?}",
+        mig.segments.iter().map(|s| &s.id).collect::<Vec<_>>()
+    );
     eprintln!(
         "Segment groups: {:?}",
         mig.segment_groups.iter().map(|g| &g.id).collect::<Vec<_>>()
@@ -280,8 +278,11 @@ fn test_assemble_real_fixture_with_real_mig() {
         "Should have BGM"
     );
 
-    eprintln!("Assembled tree: {} top-level segments, {} groups",
-        tree.segments.len(), tree.groups.len());
+    eprintln!(
+        "Assembled tree: {} top-level segments, {} groups",
+        tree.segments.len(),
+        tree.groups.len()
+    );
     for group in &tree.groups {
         eprintln!(
             "  Group {}: {} repetitions",
@@ -338,10 +339,7 @@ fn test_pid_detection_on_real_fixtures() {
                 *pid_counts.entry(pid).or_insert(0) += 1;
             }
             Err(_) => {
-                eprintln!(
-                    "PID detection failed for {:?}",
-                    path.file_name().unwrap()
-                );
+                eprintln!("PID detection failed for {:?}", path.file_name().unwrap());
             }
         }
     }
@@ -418,9 +416,7 @@ fn test_assemble_all_real_fixtures_with_real_mig() {
         }
     }
 
-    eprintln!(
-        "\nAssembly results: {success}/{total} succeeded, {parse_fail} parse failures"
-    );
+    eprintln!("\nAssembly results: {success}/{total} succeeded, {parse_fail} parse failures");
 
     if total > 0 {
         let rate = success as f64 / total as f64;
