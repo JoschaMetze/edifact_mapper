@@ -5,7 +5,7 @@ title: "Integration & Dual API"
 depends_on: [mig-driven-mapping/E05]
 estimated_tasks: 5
 crate: automapper-api, mig-assembly, mig-bo4e
-status: pending
+status: in_progress
 ---
 
 # Epic 6: Integration & Dual API
