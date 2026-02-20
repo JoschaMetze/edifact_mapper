@@ -2,7 +2,9 @@
 
 use std::path::Path;
 
-use mig_assembly::assembler::{AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree};
+use mig_assembly::assembler::{
+    AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree,
+};
 
 use crate::definition::MappingDefinition;
 use crate::error::MappingError;
@@ -23,12 +25,11 @@ impl MappingEngine {
             let path = entry.path();
             if path.extension().map(|e| e == "toml").unwrap_or(false) {
                 let content = std::fs::read_to_string(&path)?;
-                let def: MappingDefinition = toml::from_str(&content).map_err(|e| {
-                    MappingError::TomlParse {
+                let def: MappingDefinition =
+                    toml::from_str(&content).map_err(|e| MappingError::TomlParse {
                         file: path.display().to_string(),
                         message: e.to_string(),
-                    }
-                })?;
+                    })?;
                 definitions.push(def);
             }
         }

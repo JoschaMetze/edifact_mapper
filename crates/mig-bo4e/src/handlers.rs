@@ -9,9 +9,8 @@ use mig_assembly::assembler::AssembledGroupInstance;
 
 use crate::error::MappingError;
 
-type HandlerFn = Box<
-    dyn Fn(&AssembledGroupInstance) -> Result<serde_json::Value, MappingError> + Send + Sync,
->;
+type HandlerFn =
+    Box<dyn Fn(&AssembledGroupInstance) -> Result<serde_json::Value, MappingError> + Send + Sync>;
 
 /// Registry of named complex mapping handlers.
 pub struct HandlerRegistry {
@@ -47,13 +46,13 @@ impl HandlerRegistry {
         name: &str,
         instance: &AssembledGroupInstance,
     ) -> Result<serde_json::Value, MappingError> {
-        let handler =
-            self.handlers
-                .get(name)
-                .ok_or_else(|| MappingError::UnknownHandler {
-                    name: name.to_string(),
-                    file: String::new(),
-                })?;
+        let handler = self
+            .handlers
+            .get(name)
+            .ok_or_else(|| MappingError::UnknownHandler {
+                name: name.to_string(),
+                file: String::new(),
+            })?;
         handler(instance)
     }
 

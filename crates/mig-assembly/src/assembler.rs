@@ -159,9 +159,7 @@ impl<'a> Assembler<'a> {
                 if cursor.is_exhausted() {
                     break;
                 }
-                if let Some(assembled) =
-                    self.try_consume_segment(segments, cursor, group_seg)?
-                {
+                if let Some(assembled) = self.try_consume_segment(segments, cursor, group_seg)? {
                     instance.segments.push(assembled);
                 }
             }
@@ -219,7 +217,11 @@ mod tests {
         }
     }
 
-    fn make_mig_group(id: &str, segments: Vec<&str>, nested: Vec<MigSegmentGroup>) -> MigSegmentGroup {
+    fn make_mig_group(
+        id: &str,
+        segments: Vec<&str>,
+        nested: Vec<MigSegmentGroup>,
+    ) -> MigSegmentGroup {
         MigSegmentGroup {
             id: id.to_string(),
             name: id.to_string(),
@@ -408,10 +410,7 @@ mod tests {
         let input = b"UNA:+.? 'UNB+UNOC:3+SENDER+RECEIVER+210101:1200+REF001'UNH+MSG001+UTILMD:D:11A:UN:S2.1'BGM+E01+DOC001+9'DTM+137:20250101:102'UNT+3+MSG001'UNZ+1+REF001'";
         let segments = crate::tokenize::parse_to_segments(input).unwrap();
 
-        let mig = make_mig_schema(
-            vec!["UNB", "UNH", "BGM", "DTM", "UNT", "UNZ"],
-            vec![],
-        );
+        let mig = make_mig_schema(vec!["UNB", "UNH", "BGM", "DTM", "UNT", "UNZ"], vec![]);
 
         let assembler = Assembler::new(&mig);
         let result = assembler.assemble_generic(&segments).unwrap();

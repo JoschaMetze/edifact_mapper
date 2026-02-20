@@ -12,8 +12,8 @@ fn make_test_tree() -> AssembledTree {
                 segments: vec![AssembledSegment {
                     tag: "LOC".to_string(),
                     elements: vec![
-                        vec!["Z16".to_string()],              // qualifier (element 0)
-                        vec!["DE0001234567890".to_string()],   // C517.3225 (element 1)
+                        vec!["Z16".to_string()],             // qualifier (element 0)
+                        vec!["DE0001234567890".to_string()], // C517.3225 (element 1)
                     ],
                 }],
                 child_groups: vec![],
@@ -119,7 +119,10 @@ source_group = "SG8"
     let tree = make_test_tree();
 
     let result = engine.extract_field(&tree, "SG8", "loc.c517.d3225", 5);
-    assert!(result.is_none(), "Out-of-range repetition should return None");
+    assert!(
+        result.is_none(),
+        "Out-of-range repetition should return None"
+    );
 }
 
 #[test]
@@ -127,10 +130,7 @@ fn test_extract_from_instance_directly() {
     let instance = AssembledGroupInstance {
         segments: vec![AssembledSegment {
             tag: "NAD".to_string(),
-            elements: vec![
-                vec!["MS".to_string()],
-                vec!["9876543210".to_string()],
-            ],
+            elements: vec![vec!["MS".to_string()], vec!["9876543210".to_string()]],
         }],
         child_groups: vec![],
     };

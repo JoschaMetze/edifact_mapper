@@ -13,7 +13,12 @@ mig-types = { path = "../mig-types" }
 automapper-generator = { path = "../automapper-generator" }
 thiserror.workspace = true
 serde.workspace = true
+serde_json.workspace = true
 
 [dev-dependencies]
-serde_json.workspace = true
 insta.workspace = true
+criterion.workspace = true
+
+[[bench]]
+name = "assembly_throughput"
+harness = false

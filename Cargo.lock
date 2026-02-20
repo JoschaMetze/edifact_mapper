@@ -235,6 +235,8 @@ dependencies = [
  "edifact-types",
  "http",
  "http-body-util",
+ "mig-assembly",
+ "mig-bo4e",
  "prost",
  "protox",
  "serde",
@@ -1868,6 +1870,7 @@ name = "mig-assembly"
 version = "0.1.0"
 dependencies = [
  "automapper-generator",
+ "criterion",
  "edifact-parser",
  "edifact-types",
  "insta",
@@ -1881,6 +1884,8 @@ dependencies = [
 name = "mig-bo4e"
 version = "0.1.0"
 dependencies = [
+ "automapper-core",
+ "automapper-generator",
  "bo4e-extensions",
  "insta",
  "mig-assembly",

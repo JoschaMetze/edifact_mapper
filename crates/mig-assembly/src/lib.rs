@@ -18,6 +18,8 @@ pub mod matcher;
 pub mod pid_detect;
 pub mod renderer;
 pub mod roundtrip;
+pub mod service;
 pub mod tokenize;
 
 pub use error::AssemblyError;
+pub use service::ConversionService;

@@ -2,7 +2,9 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum AssemblyError {
-    #[error("Unexpected segment '{segment_id}' at position {position}, expected one of: {expected:?}")]
+    #[error(
+        "Unexpected segment '{segment_id}' at position {position}, expected one of: {expected:?}"
+    )]
     UnexpectedSegment {
         segment_id: String,
         position: usize,

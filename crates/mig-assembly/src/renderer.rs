@@ -55,11 +55,7 @@ mod tests {
                 tag: "UNH".to_string(),
                 elements: vec![
                     vec!["1".to_string()],
-                    vec![
-                        "UTILMD".to_string(),
-                        "D".to_string(),
-                        "11A".to_string(),
-                    ],
+                    vec!["UTILMD".to_string(), "D".to_string(), "11A".to_string()],
                 ],
             },
             DisassembledSegment {

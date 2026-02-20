@@ -1,0 +1,186 @@
+//! Integration tests for the v2 dual-mode conversion endpoint.
+
+use axum::body::Body;
+use axum::http::{Request, StatusCode};
+use http_body_util::BodyExt;
+use tower::ServiceExt;
+
+use automapper_api::contracts::convert_v2::ConvertV2Response;
+use automapper_api::state::AppState;
+
+fn app() -> axum::Router {
+    let state = AppState::new();
+    automapper_api::build_http_router(state)
+}
+
+// --- Legacy mode (always available) ---
+
+#[tokio::test]
+async fn test_convert_v2_legacy_mode() {
+    let app = app();
+
+    let body = serde_json::json!({
+        "input": "UNB+UNOC:3+sender+receiver+231215:1200+ref001'UNH+1+UTILMD:D:11A:UN:5.2e'BGM+E01+DOC001'UNT+3+1'UNZ+1+ref001'",
+        "mode": "legacy",
+        "format_version": "FV2504"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/api/v2/convert")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_string(&body).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    // Legacy mode should succeed (or fail gracefully with conversion error)
+    assert!(
+        response.status() == StatusCode::OK
+            || response.status() == StatusCode::UNPROCESSABLE_ENTITY,
+        "Unexpected status: {}",
+        response.status()
+    );
+
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let resp: ConvertV2Response = serde_json::from_slice(&body).unwrap();
+    assert_eq!(resp.mode, "legacy");
+    assert!(resp.duration_ms >= 0.0);
+}
+
+// --- Invalid mode ---
+
+#[tokio::test]
+async fn test_convert_v2_invalid_mode_returns_422() {
+    let app = app();
+
+    let body = serde_json::json!({
+        "input": "UNH+1+UTILMD:D:11A:UN:S2.1'BGM+E01'UNT+2+1'",
+        "mode": "invalid-mode",
+        "format_version": "FV2504"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/api/v2/convert")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_string(&body).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    // Invalid mode should return 422 (unprocessable)
+    assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+}
+
+// --- MIG-tree mode ---
+
+#[tokio::test]
+async fn test_convert_v2_mig_tree_mode() {
+    let app = app();
+
+    let body = serde_json::json!({
+        "input": "UNA:+.? 'UNB+UNOC:3+SENDER+RECEIVER+210101:1200+REF001'UNH+MSG001+UTILMD:D:11A:UN:S2.1'BGM+E01+DOC001+9'UNT+3+MSG001'UNZ+1+REF001'",
+        "mode": "mig-tree",
+        "format_version": "FV2504"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/api/v2/convert")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_string(&body).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    // MIG tree mode succeeds if MIG XML is available, otherwise returns 400
+    let status = response.status();
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+
+    if status == StatusCode::OK {
+        let resp: ConvertV2Response = serde_json::from_slice(&body).unwrap();
+        assert_eq!(resp.mode, "mig-tree");
+        assert!(
+            resp.result.get("tree").is_some(),
+            "Response should contain 'tree' key"
+        );
+        assert!(resp.duration_ms >= 0.0);
+    } else {
+        // MIG XML not available — acceptable in CI
+        assert_eq!(status, StatusCode::BAD_REQUEST);
+    }
+}
+
+// --- BO4E mode ---
+
+#[tokio::test]
+async fn test_convert_v2_bo4e_mode() {
+    let app = app();
+
+    let body = serde_json::json!({
+        "input": "UNA:+.? 'UNB+UNOC:3+SENDER+RECEIVER+210101:1200+REF001'UNH+MSG001+UTILMD:D:11A:UN:S2.1'BGM+E01+DOC001+9'UNT+3+MSG001'UNZ+1+REF001'",
+        "mode": "bo4e",
+        "format_version": "FV2504"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/api/v2/convert")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_string(&body).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    let status = response.status();
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+
+    if status == StatusCode::OK {
+        let resp: ConvertV2Response = serde_json::from_slice(&body).unwrap();
+        assert_eq!(resp.mode, "bo4e");
+        assert!(resp.duration_ms >= 0.0);
+    } else {
+        // MIG XML not available — acceptable in CI
+        assert_eq!(status, StatusCode::BAD_REQUEST);
+    }
+}
+
+// --- Missing fields ---
+
+#[tokio::test]
+async fn test_convert_v2_missing_required_fields_returns_422() {
+    let app = app();
+
+    // Missing 'mode' field
+    let body = serde_json::json!({
+        "input": "UNH+1+UTILMD'BGM+E01'UNT+2+1'",
+        "format_version": "FV2504"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/api/v2/convert")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_string(&body).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+}

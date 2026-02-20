@@ -10,8 +10,7 @@ use std::path::Path;
 
 const MIG_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml";
-const FIXTURE_DIR: &str =
-    "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
+const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 
 fn load_real_mig() -> Option<MigSchema> {
     let path = Path::new(MIG_XML_PATH);
@@ -45,10 +44,7 @@ fn test_assembled_tree_snapshot() {
 fn summarize_tree(tree: &AssembledTree) -> String {
     let mut out = String::new();
     out.push_str(&format!("Top-level segments: {}\n", tree.segments.len()));
-    out.push_str(&format!(
-        "  Pre-group: {}\n",
-        tree.post_group_start
-    ));
+    out.push_str(&format!("  Pre-group: {}\n", tree.post_group_start));
     out.push_str(&format!(
         "  Post-group: {}\n",
         tree.segments.len() - tree.post_group_start

@@ -237,8 +237,11 @@ fn test_every_pid_struct_has_groups_from_ahb_fields() {
     for pid in &ahb.workflows {
         let ahb_groups = extract_ahb_group_ids(pid);
         let structure = pid_type_gen::analyze_pid_structure(pid, &mig);
-        let struct_groups: BTreeSet<String> =
-            structure.groups.iter().map(|g| g.group_id.clone()).collect();
+        let struct_groups: BTreeSet<String> = structure
+            .groups
+            .iter()
+            .map(|g| g.group_id.clone())
+            .collect();
 
         // Every group referenced in AHB fields should appear in the analyzed structure
         let missing: BTreeSet<_> = ahb_groups.difference(&struct_groups).collect();
@@ -266,8 +269,7 @@ fn test_every_pid_struct_has_top_level_segments_from_ahb() {
     for pid in &ahb.workflows {
         let ahb_segs = extract_ahb_top_level_segments(pid);
         let structure = pid_type_gen::analyze_pid_structure(pid, &mig);
-        let struct_segs: BTreeSet<String> =
-            structure.top_level_segments.iter().cloned().collect();
+        let struct_segs: BTreeSet<String> = structure.top_level_segments.iter().cloned().collect();
 
         let missing: BTreeSet<_> = ahb_segs.difference(&struct_segs).collect();
         if !missing.is_empty() {
@@ -290,10 +292,11 @@ fn test_sg1_presence_matches_ahb_fields() {
     let (mig, ahb) = load_utilmd();
 
     // These 7 PIDs should have SG1 based on AHB analysis
-    let expected_sg1_pids: BTreeSet<&str> =
-        ["55065", "55067", "55069", "55070", "55074", "55195", "55201"]
-            .into_iter()
-            .collect();
+    let expected_sg1_pids: BTreeSet<&str> = [
+        "55065", "55067", "55069", "55070", "55074", "55195", "55201",
+    ]
+    .into_iter()
+    .collect();
 
     let mut actual_sg1_pids = BTreeSet::new();
     let mut wrong_presence = Vec::new();
@@ -314,10 +317,7 @@ fn test_sg1_presence_matches_ahb_fields() {
             wrong_absence.push(format!("PID {} has SG1 in AHB but not in struct", pid.id));
         }
         if !has_sg1_in_ahb && has_sg1_in_struct {
-            wrong_presence.push(format!(
-                "PID {} has SG1 in struct but not in AHB",
-                pid.id
-            ));
+            wrong_presence.push(format!("PID {} has SG1 in struct but not in AHB", pid.id));
         }
     }
 

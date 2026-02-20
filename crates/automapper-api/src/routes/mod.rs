@@ -1,6 +1,7 @@
 //! Route handlers for the REST API.
 
 pub mod convert;
+pub mod convert_v2;
 pub mod coordinators;
 pub mod health;
 pub mod inspect;
@@ -15,4 +16,9 @@ pub fn api_routes() -> Router<AppState> {
         .merge(convert::routes())
         .merge(inspect::routes())
         .merge(coordinators::routes())
+}
+
+/// Build all `/api/v2/*` routes.
+pub fn api_v2_routes() -> Router<AppState> {
+    Router::new().merge(convert_v2::routes())
 }

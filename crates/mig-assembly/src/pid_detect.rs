@@ -52,10 +52,7 @@ pub fn detect_pid(segments: &[OwnedSegment]) -> Result<String, AssemblyError> {
 /// - E01 (Anmeldung) + various STS reasons -> 55001-55009
 /// - E02 (Abmeldung) + various STS reasons -> 55101-55109
 /// - E03 (Bestellung) -> 55201-55209
-fn resolve_utilmd_pid(
-    doc_code: &str,
-    reason: &str,
-) -> Result<String, AssemblyError> {
+fn resolve_utilmd_pid(doc_code: &str, reason: &str) -> Result<String, AssemblyError> {
     // For UTILMD, common PID mappings based on BGM doc code + STS reason
     // These are the most common ones; this can be extended as needed
     match (doc_code, reason) {

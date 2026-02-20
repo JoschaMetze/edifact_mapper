@@ -2,7 +2,7 @@
 
 ## Overview
 
-Full Rust port of the C# edifact_bo4e_automapper. Five features, 20 epics.
+Full Rust port of the C# edifact_bo4e_automapper. Six features, 26 epics.
 
 **Design Document:** [2026-02-18-rust-port-design.md](./2026-02-18-rust-port-design.md)
 
@@ -19,6 +19,7 @@ Full Rust port of the C# edifact_bo4e_automapper. Five features, 20 epics.
 | 3 | [generator](./generator-implementation/) | 3 | MIG/AHB XML parsing, Rust codegen, Claude CLI | Feature 1 |
 | 4 | [web-stack](./web-stack-implementation/) | 3 | Axum REST API, tonic gRPC, Leptos frontend | Feature 1 |
 | 5 | [missing-entity-mappers](./missing-entity-mappers/) | 3 | 7 remaining entity mappers/writers for complete roundtrip | Feature 1 |
+| 6 | [mig-driven-mapping](./mig-driven-mapping/) | 6 | MIG-driven pipeline: typed trees, TOML mapping, dual API | Features 1, 3 |
 
 ## Dependency Graph
 
@@ -31,6 +32,7 @@ Feature 1: edifact-core-implementation
 ```
 
 Features 2, 3, and 4 are fully independent and can be developed in parallel once Feature 1 is complete.
+Feature 6 depends on Features 1 and 3 (uses automapper-generator for MIG parsing).
 
 ---
 
@@ -44,8 +46,11 @@ Features 2, 3, and 4 are fully independent and can be developed in parallel once
 | `automapper-core` | 1 | Epics 6-8 |
 | `automapper-validation` | 2 | Epics 1-3 |
 | `automapper-generator` | 3 | Epics 1-3 |
-| `automapper-api` | 4 | Epics 1-2 |
+| `automapper-api` | 4, 6 | Epics 1-2, Epic 6 |
 | `automapper-web` | 4 | Epic 3 |
+| `mig-types` | 6 | Epics 1-2 |
+| `mig-assembly` | 6 | Epics 3-4, 6 |
+| `mig-bo4e` | 6 | Epics 5-6 |
 
 ## Branch Naming
 

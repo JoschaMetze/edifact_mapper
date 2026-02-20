@@ -208,7 +208,7 @@ fn test_roundtrip_sample_files() {
     let mut seen_types = std::collections::HashSet::new();
     let mut sample_files = Vec::new();
     for file in &files {
-        if let Some(rel) = file.strip_prefix(&fixture_path).ok() {
+        if let Ok(rel) = file.strip_prefix(&fixture_path) {
             if let Some(msg_type) = rel.components().next() {
                 let msg_type_str = msg_type.as_os_str().to_string_lossy().to_string();
                 if seen_types.insert(msg_type_str) {

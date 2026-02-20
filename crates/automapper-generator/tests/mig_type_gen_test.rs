@@ -433,11 +433,7 @@ fn test_all_segment_tags_in_fixtures_have_generated_types() {
         if path.extension().is_some_and(|e| e == "edi") {
             let content = std::fs::read_to_string(&path).unwrap_or_default();
             for segment_str in content.split('\'') {
-                let tag = segment_str
-                    .split(|c| c == '+' || c == ':')
-                    .next()
-                    .unwrap_or("")
-                    .trim();
+                let tag = segment_str.split(['+', ':']).next().unwrap_or("").trim();
                 if !tag.is_empty()
                     && tag.chars().all(|c| c.is_ascii_alphanumeric())
                     && tag.len() <= 4
