@@ -169,17 +169,16 @@ impl MappingEngine {
     /// Fields with `default` values are used when no BO4E value is present
     /// (useful for fixed qualifiers like LOC qualifier "Z16").
     ///
-    /// Element placement follows the forward mapping convention:
-    /// - 1-part sub-path (e.g., "d3227") → element\[0\]
-    /// - 2-part sub-path (e.g., "c517.d3225") → element\[1\]
+    /// Supports both named and numeric index paths:
+    /// - Named: `"d3227"` → element\[0\]\[0\], `"c517.d3225"` → element\[1\]\[0\]
+    /// - Numeric: `"0"` → element\[0\]\[0\], `"1.2"` → element\[1\]\[2\]
     pub fn map_reverse(
         &self,
         bo4e_value: &serde_json::Value,
         def: &MappingDefinition,
     ) -> AssembledGroupInstance {
-        // Collect (segment_tag, element_index, value) tuples first,
-        // then build segments in correct element order.
-        let mut field_values: Vec<(String, usize, String)> = Vec::new();
+        // Collect (segment_tag, element_index, component_index, value) tuples.
+        let mut field_values: Vec<(String, usize, usize, String)> = Vec::new();
 
         for (path, field_mapping) in &def.fields {
             let (target, default) = match field_mapping {
@@ -193,14 +192,24 @@ impl MappingEngine {
                 continue;
             }
             let seg_tag = parts[0].to_uppercase();
+            let sub_path = &parts[1..];
 
-            // Determine element index from sub-path length
-            // (matching resolve_field_path convention)
-            let sub_path_len = parts.len() - 1; // parts after segment tag
-            let element_idx = match sub_path_len {
-                1 => 0, // "d3227" → element[0]
-                2 => 1, // "c517.d3225" → element[1]
-                _ => continue,
+            // Determine (element_idx, component_idx) from path
+            let (element_idx, component_idx) = if let Ok(ei) = sub_path[0].parse::<usize>() {
+                // Numeric index path
+                let ci = if sub_path.len() > 1 {
+                    sub_path[1].parse::<usize>().unwrap_or(0)
+                } else {
+                    0
+                };
+                (ei, ci)
+            } else {
+                // Named path convention
+                match sub_path.len() {
+                    1 => (0, 0), // "d3227" → element[0][0]
+                    2 => (1, 0), // "c517.d3225" → element[1][0]
+                    _ => continue,
+                }
             };
 
             // Try BO4E value first, fall back to default
@@ -211,14 +220,14 @@ impl MappingEngine {
             };
 
             if let Some(val) = val {
-                field_values.push((seg_tag, element_idx, val));
+                field_values.push((seg_tag, element_idx, component_idx, val));
             }
         }
 
-        // Build segments with elements in correct positions
+        // Build segments with elements/components in correct positions
         let mut segments: Vec<AssembledSegment> = Vec::new();
 
-        for (seg_tag, element_idx, val) in field_values {
+        for (seg_tag, element_idx, component_idx, val) in field_values {
             let seg = segments.iter_mut().find(|s| s.tag == seg_tag);
             let seg = match seg {
                 Some(existing) => existing,
@@ -235,7 +244,11 @@ impl MappingEngine {
             while seg.elements.len() <= element_idx {
                 seg.elements.push(vec![]);
             }
-            seg.elements[element_idx] = vec![val];
+            // Extend components vector if needed
+            while seg.elements[element_idx].len() <= component_idx {
+                seg.elements[element_idx].push(String::new());
+            }
+            seg.elements[element_idx][component_idx] = val;
         }
 
         AssembledGroupInstance {
@@ -244,19 +257,41 @@ impl MappingEngine {
         }
     }
 
+    /// Resolve a field path within a segment to extract a value.
+    ///
+    /// Two path conventions are supported:
+    ///
+    /// **Named paths** (backward compatible):
+    /// - 1-part `"d3227"` → elements\[0\]\[0\]
+    /// - 2-part `"c517.d3225"` → elements\[1\]\[0\]
+    ///
+    /// **Numeric index paths** (for multi-component access):
+    /// - `"0"` → elements\[0\]\[0\]
+    /// - `"1.0"` → elements\[1\]\[0\]
+    /// - `"1.2"` → elements\[1\]\[2\]
     fn resolve_field_path(segment: &AssembledSegment, path: &[&str]) -> Option<String> {
-        // Path navigation through composites and data elements.
-        // For now, use positional access: path parts map to element indices.
-        // A single remaining part -> element[0][0], two parts -> element[1][0].
+        if path.is_empty() {
+            return None;
+        }
+
+        // Check if the first sub-path part is numeric → use index-based resolution
+        if let Ok(element_idx) = path[0].parse::<usize>() {
+            let component_idx = if path.len() > 1 {
+                path[1].parse::<usize>().unwrap_or(0)
+            } else {
+                0
+            };
+            return segment
+                .elements
+                .get(element_idx)?
+                .get(component_idx)
+                .cloned();
+        }
+
+        // Named path convention
         match path.len() {
-            1 => {
-                // Direct data element: e.g. "d3227" -> element[0][0]
-                segment.elements.first()?.first().cloned()
-            }
-            2 => {
-                // Composite + data element: e.g. "c517.d3225" -> element[1][0]
-                segment.elements.get(1)?.first().cloned()
-            }
+            1 => segment.elements.first()?.first().cloned(),
+            2 => segment.elements.get(1)?.first().cloned(),
             _ => None,
         }
     }

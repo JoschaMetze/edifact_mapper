@@ -193,3 +193,144 @@ fn test_nested_group_navigation() {
     let sg2 = MappingEngine::resolve_group_instance(&tree, "SG2", 1);
     assert!(sg2.is_some(), "SG2[1] should be navigable (NAD+MR)");
 }
+
+// ── Marktteilnehmer: SG2 → NAD+MS / NAD+MR ──
+
+#[test]
+fn test_marktteilnehmer_forward_mapping_ms() {
+    let Some((mig, _)) = load_pid_filtered_mig("55001") else {
+        return;
+    };
+    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
+        return;
+    };
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("Marktteilnehmer")
+        .expect("Marktteilnehmer definition should exist");
+
+    // SG2[0] = NAD+MS (sender)
+    let bo4e = engine.map_forward(&tree, def, 0);
+
+    assert_eq!(
+        bo4e.get("qualifier").and_then(|v| v.as_str()),
+        Some("MS"),
+        "Should extract qualifier MS"
+    );
+    assert_eq!(
+        bo4e.get("mp_id").and_then(|v| v.as_str()),
+        Some("9978842000002"),
+        "Should extract sender MP ID"
+    );
+    assert_eq!(
+        bo4e.get("code_list_agency").and_then(|v| v.as_str()),
+        Some("293"),
+        "Should extract code list agency"
+    );
+}
+
+#[test]
+fn test_marktteilnehmer_forward_mapping_mr() {
+    let Some((mig, _)) = load_pid_filtered_mig("55001") else {
+        return;
+    };
+    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
+        return;
+    };
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("Marktteilnehmer")
+        .expect("Marktteilnehmer definition should exist");
+
+    // SG2[1] = NAD+MR (recipient)
+    let bo4e = engine.map_forward(&tree, def, 1);
+
+    assert_eq!(
+        bo4e.get("qualifier").and_then(|v| v.as_str()),
+        Some("MR"),
+        "Should extract qualifier MR"
+    );
+    assert_eq!(
+        bo4e.get("mp_id").and_then(|v| v.as_str()),
+        Some("9900269000000"),
+        "Should extract recipient MP ID"
+    );
+    assert_eq!(
+        bo4e.get("code_list_agency").and_then(|v| v.as_str()),
+        Some("293"),
+        "Should extract code list agency"
+    );
+}
+
+#[test]
+fn test_marktteilnehmer_reverse_mapping() {
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("Marktteilnehmer")
+        .expect("Marktteilnehmer definition should exist");
+
+    let bo4e = serde_json::json!({
+        "qualifier": "MS",
+        "mp_id": "9978842000002",
+        "code_list_agency": "293"
+    });
+
+    let instance = engine.map_reverse(&bo4e, def);
+
+    assert_eq!(instance.segments.len(), 1, "Should have one NAD segment");
+    let nad = &instance.segments[0];
+    assert_eq!(nad.tag, "NAD");
+    assert_eq!(nad.elements.len(), 2, "NAD should have qualifier + C082");
+    assert_eq!(nad.elements[0], vec!["MS"]);
+    // C082: party_id at [0], empty at [1], agency at [2]
+    assert_eq!(nad.elements[1].len(), 3);
+    assert_eq!(nad.elements[1][0], "9978842000002");
+    assert_eq!(nad.elements[1][1], "", "Middle component should be empty");
+    assert_eq!(nad.elements[1][2], "293");
+}
+
+#[test]
+fn test_marktteilnehmer_roundtrip() {
+    let Some((mig, _)) = load_pid_filtered_mig("55001") else {
+        return;
+    };
+    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
+        return;
+    };
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("Marktteilnehmer")
+        .expect("Marktteilnehmer definition should exist");
+
+    // Test both repetitions (MS and MR)
+    for rep in 0..2 {
+        let original = MappingEngine::resolve_group_instance(&tree, "SG2", rep)
+            .unwrap_or_else(|| panic!("SG2[{rep}] should exist"));
+
+        // Forward: tree → BO4E
+        let bo4e = engine.map_forward(&tree, def, rep);
+
+        // Reverse: BO4E → tree instance
+        let reconstructed = engine.map_reverse(&bo4e, def);
+
+        let original_nad = original
+            .segments
+            .iter()
+            .find(|s| s.tag == "NAD")
+            .unwrap_or_else(|| panic!("SG2[{rep}] should have NAD"));
+        let reconstructed_nad = reconstructed
+            .segments
+            .iter()
+            .find(|s| s.tag == "NAD")
+            .expect("Reconstructed should have NAD");
+
+        assert_eq!(
+            original_nad.elements, reconstructed_nad.elements,
+            "NAD elements should roundtrip identically for SG2[{rep}]"
+        );
+    }
+}

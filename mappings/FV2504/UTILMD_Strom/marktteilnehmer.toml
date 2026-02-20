@@ -1,0 +1,16 @@
+# Marktteilnehmer (market participant) mapping for PID 55001.
+#
+# Source: SG2 → NAD segment (qualifiers MS = sender, MR = recipient)
+# NAD+MS+9978842000002::293  →  qualifier, mp_id, code_list_agency
+#
+# Uses numeric index paths for multi-component composite access.
+
+[meta]
+entity = "Marktteilnehmer"
+bo4e_type = "Marktteilnehmer"
+source_group = "SG2"
+
+[fields]
+"nad.0" = "qualifier"
+"nad.1.0" = "mp_id"
+"nad.1.2" = "code_list_agency"

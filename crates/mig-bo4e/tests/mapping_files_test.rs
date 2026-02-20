@@ -11,11 +11,12 @@ fn test_load_real_mapping_files() {
 
     let engine = MappingEngine::load(mappings_dir).unwrap();
     assert!(
-        engine.definitions().len() >= 3,
-        "Expected at least 3 mapping files, got {}",
+        engine.definitions().len() >= 4,
+        "Expected at least 4 mapping files, got {}",
         engine.definitions().len()
     );
     assert!(engine.definition_for_entity("Marktlokation").is_some());
+    assert!(engine.definition_for_entity("Marktteilnehmer").is_some());
     assert!(engine.definition_for_entity("Messlokation").is_some());
     assert!(engine.definition_for_entity("Geschaeftspartner").is_some());
 }
