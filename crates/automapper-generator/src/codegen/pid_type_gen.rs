@@ -500,13 +500,17 @@ fn sanitize_doc(s: &str) -> String {
         .to_string()
 }
 
-/// Generate a Rust struct source for a specific PID that composes shared segment group types.
+/// Generate a Rust struct source for a specific PID that composes PID-specific wrapper types.
 pub fn generate_pid_struct(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbSchema) -> String {
     let structure = analyze_pid_structure_with_qualifiers(pid, mig, ahb);
     let mut out = String::new();
 
     let struct_name = format!("Pid{}", pid.id);
 
+    // First, emit wrapper structs for all groups (deduplicated)
+    emit_wrapper_structs(&struct_name, &structure.groups, &mut out);
+
+    // Then emit the main PID struct
     out.push_str(&format!(
         "/// PID {}: {}\n",
         pid.id,
@@ -528,9 +532,9 @@ pub fn generate_pid_struct(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbS
         out.push_str(&format!("    pub {field_name}: {seg_type},\n"));
     }
 
-    // Top-level groups
+    // Groups with wrapper type names
     for group in &structure.groups {
-        emit_pid_group_field(group, &mut out, "    ");
+        emit_pid_group_field_v2(&struct_name, group, &mut out, "    ");
     }
 
     out.push_str("}\n");
@@ -550,7 +554,8 @@ fn capitalize_segment_id(id: &str) -> String {
     }
 }
 
-fn make_group_field_name(group: &PidGroupInfo) -> String {
+/// Make a Rust field name for a group (snake_case).
+pub fn make_wrapper_field_name(group: &PidGroupInfo) -> String {
     if group.qualifier_values.is_empty() {
         group.group_id.to_lowercase()
     } else {
@@ -562,13 +567,141 @@ fn make_group_field_name(group: &PidGroupInfo) -> String {
     }
 }
 
-fn emit_pid_group_field(group: &PidGroupInfo, out: &mut String, indent: &str) {
-    let group_num = group.group_id.trim_start_matches("SG");
-    let group_type = format!("super::super::groups::Sg{group_num}");
-    let field_name = make_group_field_name(group);
+/// Make a Rust wrapper type name for a group (PascalCase).
+fn make_wrapper_type_name(pid_struct_name: &str, group: &PidGroupInfo) -> String {
+    let suffix = capitalize_segment_id(&group.group_id);
+    if group.qualifier_values.is_empty() {
+        format!("{pid_struct_name}{suffix}")
+    } else {
+        let qual_suffix: String = group
+            .qualifier_values
+            .iter()
+            .map(|v| capitalize_segment_id(v))
+            .collect::<Vec<_>>()
+            .join("");
+        format!("{pid_struct_name}{suffix}{qual_suffix}")
+    }
+}
 
-    // Always Vec for groups (they can repeat per MIG)
-    out.push_str(&format!("{indent}pub {field_name}: Vec<{group_type}>,\n"));
+/// Check if a group is an empty boundary marker (no segments, no qualifiers, no useful children).
+fn is_empty_group(group: &PidGroupInfo) -> bool {
+    group.segments.is_empty()
+        && group.qualifier_values.is_empty()
+        && group.child_groups.iter().all(is_empty_group)
+}
+
+/// Collected wrapper struct definition: name → (doc_comment, segments, child_field_lines).
+/// Used to deduplicate child types (e.g., SG10) that appear under multiple parent instances.
+struct WrapperDef {
+    doc: String,
+    segments: BTreeSet<String>,
+    child_fields: Vec<String>,
+}
+
+/// Collect all wrapper struct definitions recursively, merging duplicates.
+fn collect_wrapper_defs(
+    pid_struct_name: &str,
+    group: &PidGroupInfo,
+    defs: &mut BTreeMap<String, WrapperDef>,
+) {
+    if is_empty_group(group) {
+        return;
+    }
+
+    // Collect children first (depth-first)
+    for child in &group.child_groups {
+        collect_wrapper_defs(pid_struct_name, child, defs);
+    }
+
+    let wrapper_name = make_wrapper_type_name(pid_struct_name, group);
+
+    // Build doc comment
+    let mut doc = String::new();
+    if let Some(ref name) = group.ahb_name {
+        doc.push_str(&format!("/// {} — {}\n", group.group_id, sanitize_doc(name)));
+    } else {
+        doc.push_str(&format!("/// {}\n", group.group_id));
+    }
+    if !group.qualifier_values.is_empty() {
+        doc.push_str(&format!(
+            "/// Qualifiers: {}\n",
+            group.qualifier_values.join(", ")
+        ));
+    }
+
+    // Build child field lines
+    let mut child_fields = Vec::new();
+    for child in &group.child_groups {
+        if is_empty_group(child) {
+            continue;
+        }
+        let child_type = make_wrapper_type_name(pid_struct_name, child);
+        let child_field = make_wrapper_field_name(child);
+        child_fields.push(format!("    pub {child_field}: Vec<{child_type}>,"));
+    }
+
+    // Merge with existing definition (union of segments + child fields)
+    if let Some(existing) = defs.get_mut(&wrapper_name) {
+        existing.segments.extend(group.segments.iter().cloned());
+        for field in &child_fields {
+            if !existing.child_fields.contains(field) {
+                existing.child_fields.push(field.clone());
+            }
+        }
+    } else {
+        defs.insert(
+            wrapper_name,
+            WrapperDef {
+                doc,
+                segments: group.segments.clone(),
+                child_fields,
+            },
+        );
+    }
+}
+
+/// Emit all wrapper structs (deduplicated) for the PID's groups.
+fn emit_wrapper_structs(pid_struct_name: &str, groups: &[PidGroupInfo], out: &mut String) {
+    let mut defs: BTreeMap<String, WrapperDef> = BTreeMap::new();
+    for group in groups {
+        collect_wrapper_defs(pid_struct_name, group, &mut defs);
+    }
+
+    for (name, def) in &defs {
+        out.push_str(&def.doc);
+        out.push_str("#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]\n");
+        out.push_str(&format!("pub struct {name} {{\n"));
+        for seg_id in &def.segments {
+            let field_name = seg_id.to_lowercase();
+            let seg_type = format!(
+                "super::super::segments::Seg{}",
+                capitalize_segment_id(seg_id)
+            );
+            out.push_str(&format!("    pub {field_name}: Option<{seg_type}>,\n"));
+        }
+        for field_line in &def.child_fields {
+            out.push_str(field_line);
+            out.push('\n');
+        }
+        out.push_str("}\n\n");
+    }
+}
+
+/// Emit a field in the containing struct that references the wrapper type.
+fn emit_pid_group_field_v2(
+    pid_struct_name: &str,
+    group: &PidGroupInfo,
+    out: &mut String,
+    indent: &str,
+) {
+    if is_empty_group(group) {
+        return;
+    }
+    let wrapper_type = make_wrapper_type_name(pid_struct_name, group);
+    let field_name = make_wrapper_field_name(group);
+
+    // Groups can repeat per MIG
+    out.push_str(&format!("{indent}pub {field_name}: Vec<{wrapper_type}>,\n"));
 }
 
 // ---------------------------------------------------------------------------
@@ -713,5 +846,13 @@ mod tests {
             sg2.discriminator.is_some(),
             "SG2 should have NAD discriminator"
         );
+    }
+
+    #[test]
+    fn test_generate_pid_55001_struct_snapshot() {
+        let (mig, ahb) = load_mig_ahb();
+        let pid = ahb.workflows.iter().find(|p| p.id == "55001").unwrap();
+        let source = generate_pid_struct(pid, &mig, &ahb);
+        insta::assert_snapshot!("pid_55001_struct", source);
     }
 }
