@@ -462,6 +462,163 @@ impl MappingEngine {
         }
     }
 
+    // ── Multi-entity forward mapping ──
+
+    /// Parse a discriminator string (e.g., "SEQ.0.0=Z79") and find the matching
+    /// repetition index within the given group path.
+    ///
+    /// Discriminator format: `"TAG.element_idx.component_idx=expected_value"`
+    /// Scans all repetitions of the leaf group and returns the first rep index
+    /// where the entry segment matches.
+    pub fn resolve_repetition(
+        tree: &AssembledTree,
+        group_path: &str,
+        discriminator: &str,
+    ) -> Option<usize> {
+        let (spec, expected) = discriminator.split_once('=')?;
+        let parts: Vec<&str> = spec.split('.').collect();
+        if parts.len() != 3 {
+            return None;
+        }
+        let tag = parts[0];
+        let element_idx: usize = parts[1].parse().ok()?;
+        let component_idx: usize = parts[2].parse().ok()?;
+
+        // Navigate to the parent and get the leaf group with all its repetitions
+        let path_parts: Vec<&str> = group_path.split('.').collect();
+
+        let leaf_group = if path_parts.len() == 1 {
+            let (group_id, _) = parse_group_spec(path_parts[0]);
+            tree.groups.iter().find(|g| g.group_id == group_id)?
+        } else {
+            // Navigate to the parent instance, then find the leaf group
+            let parent_parts = &path_parts[..path_parts.len() - 1];
+            let mut current_instance = {
+                let (first_id, first_rep) = parse_group_spec(parent_parts[0]);
+                let first_group = tree.groups.iter().find(|g| g.group_id == first_id)?;
+                first_group.repetitions.get(first_rep.unwrap_or(0))?
+            };
+            for part in &parent_parts[1..] {
+                let (group_id, explicit_rep) = parse_group_spec(part);
+                let child_group = current_instance
+                    .child_groups
+                    .iter()
+                    .find(|g| g.group_id == group_id)?;
+                current_instance = child_group.repetitions.get(explicit_rep.unwrap_or(0))?;
+            }
+            let (leaf_id, _) = parse_group_spec(path_parts.last()?);
+            current_instance
+                .child_groups
+                .iter()
+                .find(|g| g.group_id == leaf_id)?
+        };
+
+        // Scan all repetitions for the matching discriminator
+        for (rep_idx, instance) in leaf_group.repetitions.iter().enumerate() {
+            let matches = instance.segments.iter().any(|s| {
+                s.tag.eq_ignore_ascii_case(tag)
+                    && s.elements
+                        .get(element_idx)
+                        .and_then(|e| e.get(component_idx))
+                        .map(|v| v == expected)
+                        .unwrap_or(false)
+            });
+            if matches {
+                return Some(rep_idx);
+            }
+        }
+
+        None
+    }
+
+    /// Map all definitions against a tree, returning a JSON object with entity names as keys.
+    ///
+    /// For each definition:
+    /// - Has discriminator → find matching rep via `resolve_repetition`, map single instance
+    /// - Root-level (empty source_group) → map rep 0 as single object
+    /// - No discriminator, 1 rep in tree → map as single object
+    /// - No discriminator, multiple reps in tree → map ALL reps into a JSON array
+    pub fn map_all_forward(&self, tree: &AssembledTree) -> serde_json::Value {
+        let mut result = serde_json::Map::new();
+
+        for def in &self.definitions {
+            let entity = &def.meta.entity;
+
+            if let Some(ref disc) = def.meta.discriminator {
+                // Has discriminator — resolve to specific rep
+                if let Some(rep) = Self::resolve_repetition(tree, &def.meta.source_group, disc) {
+                    let bo4e = self.map_forward(tree, def, rep);
+                    result.insert(entity.clone(), bo4e);
+                }
+            } else if def.meta.source_group.is_empty() {
+                // Root-level mapping — always single object
+                let bo4e = self.map_forward(tree, def, 0);
+                result.insert(entity.clone(), bo4e);
+            } else {
+                let num_reps = Self::count_repetitions(tree, &def.meta.source_group);
+                if num_reps <= 1 {
+                    // Single rep — map as object
+                    let bo4e = self.map_forward(tree, def, 0);
+                    result.insert(entity.clone(), bo4e);
+                } else {
+                    // Multiple reps, no discriminator — map all into array
+                    let mut items = Vec::new();
+                    for rep in 0..num_reps {
+                        let bo4e = self.map_forward(tree, def, rep);
+                        items.push(bo4e);
+                    }
+                    result.insert(entity.clone(), serde_json::Value::Array(items));
+                }
+            }
+        }
+
+        serde_json::Value::Object(result)
+    }
+
+    /// Count the number of repetitions available for a group path in the tree.
+    fn count_repetitions(tree: &AssembledTree, group_path: &str) -> usize {
+        let parts: Vec<&str> = group_path.split('.').collect();
+
+        let (first_id, first_rep) = parse_group_spec(parts[0]);
+        let first_group = match tree.groups.iter().find(|g| g.group_id == first_id) {
+            Some(g) => g,
+            None => return 0,
+        };
+
+        if parts.len() == 1 {
+            return first_group.repetitions.len();
+        }
+
+        // Navigate to parent, then count leaf group reps
+        let mut current_instance = match first_group.repetitions.get(first_rep.unwrap_or(0)) {
+            Some(i) => i,
+            None => return 0,
+        };
+
+        for (i, part) in parts[1..].iter().enumerate() {
+            let (group_id, explicit_rep) = parse_group_spec(part);
+            let child_group = match current_instance
+                .child_groups
+                .iter()
+                .find(|g| g.group_id == group_id)
+            {
+                Some(g) => g,
+                None => return 0,
+            };
+
+            if i == parts.len() - 2 {
+                // Last part — return rep count
+                return child_group.repetitions.len();
+            }
+            current_instance = match child_group.repetitions.get(explicit_rep.unwrap_or(0)) {
+                Some(i) => i,
+                None => return 0,
+            };
+        }
+
+        0
+    }
+
     /// Build an assembled group from BO4E values and a definition.
     pub fn build_group_from_bo4e(
         &self,

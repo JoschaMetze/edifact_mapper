@@ -4,6 +4,8 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use automapper_core::{create_coordinator, FormatVersion};
+use automapper_generator::parsing::ahb_parser::parse_ahb;
+use automapper_generator::schema::ahb::AhbSchema;
 use mig_assembly::ConversionService;
 use mig_bo4e::MappingEngine;
 
@@ -37,6 +39,7 @@ impl AppState {
 pub struct MigServiceRegistry {
     services: HashMap<String, ConversionService>,
     mapping_engines: HashMap<String, MappingEngine>,
+    ahb_schemas: HashMap<String, AhbSchema>,
 }
 
 impl MigServiceRegistry {
@@ -65,41 +68,87 @@ impl MigServiceRegistry {
             );
         }
 
-        // Load TOML mapping definitions per format version
+        // Load TOML mapping definitions: mappings/{FV}/{msg_variant}/{pid}/
         let mut mapping_engines = HashMap::new();
         let mappings_base = std::path::Path::new("mappings");
         if mappings_base.exists() {
-            if let Ok(entries) = std::fs::read_dir(mappings_base) {
-                for entry in entries.flatten() {
-                    let fv_path = entry.path();
+            if let Ok(fv_entries) = std::fs::read_dir(mappings_base) {
+                for fv_entry in fv_entries.flatten() {
+                    let fv_path = fv_entry.path();
                     if !fv_path.is_dir() {
                         continue;
                     }
-                    let fv = entry.file_name().to_string_lossy().to_string();
-                    // Load all .toml files recursively from FV subdirectories
-                    for sub_entry in std::fs::read_dir(&fv_path).into_iter().flatten().flatten() {
-                        let sub_path = sub_entry.path();
-                        if sub_path.is_dir() {
-                            match MappingEngine::load(&sub_path) {
-                                Ok(engine) => {
-                                    let key = format!(
-                                        "{}/{}",
-                                        fv,
-                                        sub_entry.file_name().to_string_lossy()
-                                    );
+                    let fv = fv_entry.file_name().to_string_lossy().to_string();
+                    // Iterate msg_variant dirs (e.g., UTILMD_Strom)
+                    if let Ok(variant_entries) = std::fs::read_dir(&fv_path) {
+                        for variant_entry in variant_entries.flatten() {
+                            let variant_path = variant_entry.path();
+                            if !variant_path.is_dir() {
+                                continue;
+                            }
+                            let variant = variant_entry.file_name().to_string_lossy().to_string();
+                            // Iterate PID dirs (e.g., pid_55001)
+                            if let Ok(pid_entries) = std::fs::read_dir(&variant_path) {
+                                for pid_entry in pid_entries.flatten() {
+                                    let pid_path = pid_entry.path();
+                                    if !pid_path.is_dir() {
+                                        continue;
+                                    }
+                                    let pid = pid_entry.file_name().to_string_lossy().to_string();
+                                    match MappingEngine::load(&pid_path) {
+                                        Ok(engine) => {
+                                            let key = format!("{}/{}/{}", fv, variant, pid);
+                                            tracing::info!(
+                                                "Loaded {} TOML mapping definitions for {key}",
+                                                engine.definitions().len()
+                                            );
+                                            mapping_engines.insert(key, engine);
+                                        }
+                                        Err(e) => {
+                                            tracing::warn!(
+                                                "Failed to load mappings from {}: {e}",
+                                                pid_path.display()
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Load AHB schemas for PID lookup
+        let mut ahb_schemas = HashMap::new();
+        let ahb_base = std::path::Path::new("xml-migs-and-ahbs");
+        if ahb_base.exists() {
+            // Known format versions and their AHB configs
+            let ahb_configs: Vec<(&str, &str, &str, &str)> =
+                vec![("FV2504", "UTILMD", "Strom", "UTILMD_AHB_Strom_")];
+            for (fv, msg_type, variant, prefix) in &ahb_configs {
+                let fv_dir = ahb_base.join(fv);
+                if let Ok(entries) = std::fs::read_dir(&fv_dir) {
+                    for entry in entries.flatten() {
+                        let fname = entry.file_name().to_string_lossy().to_string();
+                        if fname.starts_with(prefix) && fname.ends_with(".xml") {
+                            match parse_ahb(&entry.path(), msg_type, Some(variant), fv) {
+                                Ok(schema) => {
+                                    let key = format!("{}/{}_{}", fv, msg_type, variant);
                                     tracing::info!(
-                                        "Loaded {} TOML mapping definitions for {key}",
-                                        engine.definitions().len()
+                                        "Loaded AHB schema for {key} with {} workflows",
+                                        schema.workflows.len()
                                     );
-                                    mapping_engines.insert(key, engine);
+                                    ahb_schemas.insert(key, schema);
                                 }
                                 Err(e) => {
                                     tracing::warn!(
-                                        "Failed to load mappings from {}: {e}",
-                                        sub_path.display()
+                                        "Failed to load AHB from {}: {e}",
+                                        entry.path().display()
                                     );
                                 }
                             }
+                            break; // Only load first matching AHB per config
                         }
                     }
                 }
@@ -109,6 +158,7 @@ impl MigServiceRegistry {
         Self {
             services,
             mapping_engines,
+            ahb_schemas,
         }
     }
 
@@ -118,9 +168,28 @@ impl MigServiceRegistry {
     }
 
     /// Get a mapping engine for the given format version and message type/variant key.
-    /// Key format: "FV2504/UTILMD_Strom"
+    /// Key format: "FV2504/UTILMD_Strom/pid_55001"
     pub fn mapping_engine(&self, key: &str) -> Option<&MappingEngine> {
         self.mapping_engines.get(key)
+    }
+
+    /// Get a mapping engine for a specific PID.
+    /// Constructs key as "{fv}/{msg_variant}/pid_{pid}" (e.g., "FV2504/UTILMD_Strom/pid_55001").
+    pub fn mapping_engine_for_pid(
+        &self,
+        fv: &str,
+        msg_variant: &str,
+        pid: &str,
+    ) -> Option<&MappingEngine> {
+        let key = format!("{}/{}/pid_{}", fv, msg_variant, pid);
+        self.mapping_engines.get(&key)
+    }
+
+    /// Get an AHB schema for the given format version and message type/variant.
+    /// Key format: "FV2504/UTILMD_Strom"
+    pub fn ahb_schema(&self, fv: &str, msg_variant: &str) -> Option<&AhbSchema> {
+        let key = format!("{}/{}", fv, msg_variant);
+        self.ahb_schemas.get(&key)
     }
 
     /// Check if any MIG services are available.
