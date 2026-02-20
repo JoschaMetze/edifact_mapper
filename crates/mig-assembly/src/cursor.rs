@@ -1,5 +1,7 @@
 //! Segment cursor for tracking position during MIG-guided assembly.
 
+use crate::tokenize::OwnedSegment;
+
 /// A cursor that tracks position within a segment slice during assembly.
 ///
 /// The cursor is the core state machine of the assembler. It advances
@@ -45,9 +47,62 @@ impl SegmentCursor {
     }
 }
 
+/// Check if the segment at the cursor's current position matches a tag.
+pub fn peek_is(segments: &[OwnedSegment], cursor: &SegmentCursor, tag: &str) -> bool {
+    if cursor.is_exhausted() {
+        return false;
+    }
+    segments[cursor.position()].is(tag)
+}
+
+/// Consume the segment at the cursor's current position, advancing the cursor.
+/// Returns None if the cursor is exhausted.
+pub fn consume<'a>(
+    segments: &'a [OwnedSegment],
+    cursor: &mut SegmentCursor,
+) -> Option<&'a OwnedSegment> {
+    if cursor.is_exhausted() {
+        return None;
+    }
+    let seg = &segments[cursor.position()];
+    cursor.advance();
+    Some(seg)
+}
+
+/// Consume the segment at cursor if it matches the expected tag.
+/// Returns Err if exhausted or tag mismatch.
+pub fn expect_segment<'a>(
+    segments: &'a [OwnedSegment],
+    cursor: &mut SegmentCursor,
+    tag: &str,
+) -> Result<&'a OwnedSegment, crate::AssemblyError> {
+    if cursor.is_exhausted() {
+        return Err(crate::AssemblyError::SegmentNotFound {
+            expected: tag.to_string(),
+        });
+    }
+    let seg = &segments[cursor.position()];
+    if !seg.is(tag) {
+        return Err(crate::AssemblyError::SegmentNotFound {
+            expected: tag.to_string(),
+        });
+    }
+    cursor.advance();
+    Ok(seg)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tokenize::OwnedSegment;
+
+    fn make_segment(id: &str) -> OwnedSegment {
+        OwnedSegment {
+            id: id.to_string(),
+            elements: vec![],
+            segment_number: 0,
+        }
+    }
 
     #[test]
     fn test_cursor_peek_and_advance() {
@@ -95,5 +150,61 @@ mod tests {
         let cursor = SegmentCursor::new(0);
         assert!(cursor.is_exhausted());
         assert_eq!(cursor.remaining(), 0);
+    }
+
+    #[test]
+    fn test_peek_is_helper() {
+        let segments = vec![make_segment("NAD"), make_segment("IDE")];
+        let cursor = SegmentCursor::new(segments.len());
+        assert!(peek_is(&segments, &cursor, "NAD"));
+        assert!(!peek_is(&segments, &cursor, "IDE"));
+    }
+
+    #[test]
+    fn test_peek_is_exhausted() {
+        let segments: Vec<OwnedSegment> = vec![];
+        let cursor = SegmentCursor::new(0);
+        assert!(!peek_is(&segments, &cursor, "NAD"));
+    }
+
+    #[test]
+    fn test_consume_helper() {
+        let segments = vec![make_segment("UNH"), make_segment("BGM")];
+        let mut cursor = SegmentCursor::new(segments.len());
+
+        let seg = consume(&segments, &mut cursor).unwrap();
+        assert_eq!(seg.id, "UNH");
+        assert_eq!(cursor.position(), 1);
+
+        let seg = consume(&segments, &mut cursor).unwrap();
+        assert_eq!(seg.id, "BGM");
+        assert!(cursor.is_exhausted());
+
+        assert!(consume(&segments, &mut cursor).is_none());
+    }
+
+    #[test]
+    fn test_expect_segment_helper() {
+        let segments = vec![make_segment("UNH"), make_segment("BGM")];
+        let mut cursor = SegmentCursor::new(segments.len());
+        let seg = expect_segment(&segments, &mut cursor, "UNH").unwrap();
+        assert_eq!(seg.id, "UNH");
+        assert_eq!(cursor.position(), 1);
+    }
+
+    #[test]
+    fn test_expect_segment_wrong_tag() {
+        let segments = vec![make_segment("UNH")];
+        let mut cursor = SegmentCursor::new(segments.len());
+        let result = expect_segment(&segments, &mut cursor, "BGM");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_expect_segment_exhausted() {
+        let segments: Vec<OwnedSegment> = vec![];
+        let mut cursor = SegmentCursor::new(0);
+        let result = expect_segment(&segments, &mut cursor, "UNH");
+        assert!(result.is_err());
     }
 }

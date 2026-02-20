@@ -25,4 +25,7 @@ pub enum AssemblyError {
 
     #[error("Parse error: {0}")]
     ParseError(String),
+
+    #[error("Expected segment '{expected}' not found")]
+    SegmentNotFound { expected: String },
 }
