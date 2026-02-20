@@ -8,6 +8,7 @@ use std::path::Path;
 use mig_assembly::assembler::{
     AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree,
 };
+use mig_types::segment::OwnedSegment;
 
 use crate::definition::{FieldMapping, MappingDefinition};
 use crate::error::MappingError;
@@ -173,6 +174,52 @@ impl MappingEngine {
                     };
                     set_nested_value(&mut result, &target, mapped_val);
                 }
+            }
+        }
+
+        serde_json::Value::Object(result)
+    }
+
+    /// Map a PID struct field's segments to BO4E JSON.
+    ///
+    /// `segments` are the `OwnedSegment`s from a PID wrapper field.
+    /// Converts to `AssembledSegment` format for compatibility with existing
+    /// field extraction logic, then applies the definition's field mappings.
+    pub fn map_forward_from_segments(
+        &self,
+        segments: &[OwnedSegment],
+        def: &MappingDefinition,
+    ) -> serde_json::Value {
+        let assembled_segments: Vec<AssembledSegment> = segments
+            .iter()
+            .map(|s| AssembledSegment {
+                tag: s.id.clone(),
+                elements: s.elements.clone(),
+            })
+            .collect();
+
+        let instance = AssembledGroupInstance {
+            segments: assembled_segments,
+            child_groups: vec![],
+        };
+
+        let mut result = serde_json::Map::new();
+        for (path, field_mapping) in &def.fields {
+            let (target, enum_map) = match field_mapping {
+                FieldMapping::Simple(t) => (t.clone(), None),
+                FieldMapping::Structured(s) => (s.target.clone(), s.enum_map.as_ref()),
+                FieldMapping::Nested(_) => continue,
+            };
+            if target.is_empty() {
+                continue;
+            }
+            if let Some(val) = Self::extract_from_instance(&instance, path) {
+                let mapped_val = if let Some(map) = enum_map {
+                    map.get(&val).cloned().unwrap_or(val)
+                } else {
+                    val
+                };
+                set_nested_value(&mut result, &target, mapped_val);
             }
         }
 

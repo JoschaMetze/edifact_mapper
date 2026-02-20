@@ -22,6 +22,11 @@ pub struct MappingMeta {
     pub bo4e_type: String,
     pub companion_type: Option<String>,
     pub source_group: String,
+    /// PID struct field path (e.g., "sg2", "sg4.sg8_z79").
+    /// When present, the mapping engine can use PID-direct navigation
+    /// instead of AssembledTree group resolution.
+    #[serde(default)]
+    pub source_path: Option<String>,
     pub discriminator: Option<String>,
 }
 

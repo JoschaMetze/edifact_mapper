@@ -12,6 +12,7 @@ use mig_assembly::assembler::{AssembledTree, Assembler};
 use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::tokenize::parse_to_segments;
 use mig_bo4e::engine::MappingEngine;
+use mig_types::segment::OwnedSegment;
 use std::collections::HashSet;
 use std::path::Path;
 
@@ -553,4 +554,47 @@ fn test_marktteilnehmer_roundtrip() {
             "NAD elements should roundtrip identically for SG2[{rep}]"
         );
     }
+}
+
+// ── PID-direct forward mapping via OwnedSegment ──
+
+#[test]
+fn test_map_forward_from_segments_marktteilnehmer() {
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definition_for_entity("Marktteilnehmer")
+        .expect("Marktteilnehmer definition should exist");
+
+    // Construct OwnedSegments mimicking a NAD+MS segment
+    let segments = vec![OwnedSegment {
+        id: "NAD".to_string(),
+        elements: vec![
+            vec!["MS".to_string()],
+            vec![
+                "9978842000002".to_string(),
+                "".to_string(),
+                "293".to_string(),
+            ],
+        ],
+        segment_number: 1,
+    }];
+
+    let bo4e = engine.map_forward_from_segments(&segments, def);
+
+    assert_eq!(
+        bo4e.get("marktrolle").and_then(|v| v.as_str()),
+        Some("MS"),
+        "Should extract marktrolle from OwnedSegment"
+    );
+    assert_eq!(
+        bo4e.get("rollencodenummer").and_then(|v| v.as_str()),
+        Some("9978842000002"),
+        "Should extract MP ID from OwnedSegment"
+    );
+    assert_eq!(
+        bo4e.get("rollencodetyp").and_then(|v| v.as_str()),
+        Some("BDEW"),
+        "Should translate 293 → BDEW via enum_map from OwnedSegment"
+    );
 }
