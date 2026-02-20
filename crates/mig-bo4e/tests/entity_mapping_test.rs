@@ -21,7 +21,7 @@ const MIG_XML_PATH: &str =
 const AHB_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml";
 const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
-const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom";
+const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/pid_55001";
 
 fn load_pid_filtered_mig(pid_id: &str) -> Option<(MigSchema, HashSet<String>)> {
     let mig_path = Path::new(MIG_XML_PATH);

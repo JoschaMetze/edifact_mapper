@@ -10,7 +10,7 @@ use mig_types::generated::fv2504::utilmd::pids::pid_55001::Pid55001;
 use std::path::Path;
 
 const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
-const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom";
+const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/pid_55001";
 
 #[test]
 fn test_full_pid_pipeline_55001() {

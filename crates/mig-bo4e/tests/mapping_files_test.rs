@@ -3,7 +3,7 @@ use std::path::Path;
 
 #[test]
 fn test_load_real_mapping_files() {
-    let mappings_dir = Path::new("../../mappings/FV2504/UTILMD_Strom");
+    let mappings_dir = Path::new("../../mappings/FV2504/UTILMD_Strom/pid_55001");
     if !mappings_dir.exists() {
         eprintln!("mappings/ dir not found, skipping");
         return;
@@ -23,7 +23,7 @@ fn test_load_real_mapping_files() {
 
 #[test]
 fn test_marktlokation_mapping_structure() {
-    let mappings_dir = Path::new("../../mappings/FV2504/UTILMD_Strom");
+    let mappings_dir = Path::new("../../mappings/FV2504/UTILMD_Strom/pid_55001");
     if !mappings_dir.exists() {
         return;
     }
@@ -39,7 +39,7 @@ fn test_marktlokation_mapping_structure() {
 
 #[test]
 fn test_geschaeftspartner_mapping_fields() {
-    let mappings_dir = Path::new("../../mappings/FV2504/UTILMD_Strom");
+    let mappings_dir = Path::new("../../mappings/FV2504/UTILMD_Strom/pid_55001");
     if !mappings_dir.exists() {
         return;
     }

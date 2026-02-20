@@ -8,7 +8,7 @@
 //!
 //! # Usage
 //! ```ignore
-//! let engine = MappingEngine::load("mappings/FV2504/UTILMD_Strom")?;
+//! let engine = MappingEngine::load("mappings/FV2504/UTILMD_Strom/pid_55001")?;
 //! let def = engine.definition_for_entity("Marktlokation").unwrap();
 //! let bo4e = engine.map_forward(&tree, def, 0);
 //! let instance = engine.map_reverse(&bo4e, def);
