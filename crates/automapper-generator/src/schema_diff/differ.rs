@@ -38,6 +38,7 @@ pub fn diff_pid_schemas(input: &DiffInput) -> PidSchemaDiff {
 
 /// A flattened representation of a schema group for diffing.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 struct FlatGroup {
     field_name: String,
     source_group: String,
