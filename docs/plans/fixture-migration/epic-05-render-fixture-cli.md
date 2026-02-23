@@ -5,7 +5,7 @@ title: "render-fixture CLI Subcommand"
 depends_on: []
 estimated_tasks: 4
 crate: automapper-generator
-status: pending
+status: in_progress
 ---
 
 # Epic 5: `render-fixture` CLI Subcommand
