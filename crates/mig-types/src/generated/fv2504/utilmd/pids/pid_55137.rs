@@ -2,9 +2,9 @@
 //! Rückmeldung/Anfrage Daten der MaLo
 //! Do not edit manually.
 
-use serde::{Deserialize, Serialize};
+use crate::cursor::{consume, expect_segment, peek_is, SegmentCursor, SegmentNotFound};
 use crate::segment::OwnedSegment;
-use crate::cursor::{SegmentCursor, SegmentNotFound, peek_is, consume, expect_segment};
+use serde::{Deserialize, Serialize};
 
 /// SG10 — Merkmal, Code
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -101,10 +101,7 @@ pub struct Pid55137 {
 
 impl Pid55137Sg10 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-        cursor: &mut SegmentCursor,
-    ) -> Option<Self> {
+    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
         let saved = cursor.save();
         let cav = if peek_is(segments, cursor, "CAV") {
             Some(consume(segments, cursor)?.clone())
@@ -120,19 +117,13 @@ impl Pid55137Sg10 {
             cursor.restore(saved);
             return None;
         }
-        Some(Self {
-            cav,
-            cci,
-        })
+        Some(Self { cav, cci })
     }
 }
 
 impl Pid55137Sg12Z47Z48 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-        cursor: &mut SegmentCursor,
-    ) -> Option<Self> {
+    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
         let saved = cursor.save();
         let nad = if peek_is(segments, cursor, "NAD") {
             Some(consume(segments, cursor)?.clone())
@@ -148,19 +139,13 @@ impl Pid55137Sg12Z47Z48 {
             cursor.restore(saved);
             return None;
         }
-        Some(Self {
-            nad,
-            rff,
-        })
+        Some(Self { nad, rff })
     }
 }
 
 impl Pid55137Sg12Z49Z50 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-        cursor: &mut SegmentCursor,
-    ) -> Option<Self> {
+    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
         let saved = cursor.save();
         let nad = if peek_is(segments, cursor, "NAD") {
             Some(consume(segments, cursor)?.clone())
@@ -176,19 +161,13 @@ impl Pid55137Sg12Z49Z50 {
             cursor.restore(saved);
             return None;
         }
-        Some(Self {
-            nad,
-            rff,
-        })
+        Some(Self { nad, rff })
     }
 }
 
 impl Pid55137Sg2 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-        cursor: &mut SegmentCursor,
-    ) -> Option<Self> {
+    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
         let saved = cursor.save();
         let nad = if peek_is(segments, cursor, "NAD") {
             Some(consume(segments, cursor)?.clone())
@@ -203,19 +182,13 @@ impl Pid55137Sg2 {
         while let Some(item) = Pid55137Sg3Ic::from_segments(segments, cursor) {
             sg3_ic.push(item);
         }
-        Some(Self {
-            nad,
-            sg3_ic,
-        })
+        Some(Self { nad, sg3_ic })
     }
 }
 
 impl Pid55137Sg3Ic {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-        cursor: &mut SegmentCursor,
-    ) -> Option<Self> {
+    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
         let saved = cursor.save();
         let com = if peek_is(segments, cursor, "COM") {
             Some(consume(segments, cursor)?.clone())
@@ -231,19 +204,13 @@ impl Pid55137Sg3Ic {
             cursor.restore(saved);
             return None;
         }
-        Some(Self {
-            com,
-            cta,
-        })
+        Some(Self { com, cta })
     }
 }
 
 impl Pid55137Sg4 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-        cursor: &mut SegmentCursor,
-    ) -> Option<Self> {
+    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
         let saved = cursor.save();
         let ide = if peek_is(segments, cursor, "IDE") {
             Some(consume(segments, cursor)?.clone())
@@ -298,10 +265,7 @@ impl Pid55137Sg4 {
 
 impl Pid55137Sg5Z16 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-        cursor: &mut SegmentCursor,
-    ) -> Option<Self> {
+    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
         let saved = cursor.save();
         let loc = if peek_is(segments, cursor, "LOC") {
             Some(consume(segments, cursor)?.clone())
@@ -312,18 +276,13 @@ impl Pid55137Sg5Z16 {
             cursor.restore(saved);
             return None;
         }
-        Some(Self {
-            loc,
-        })
+        Some(Self { loc })
     }
 }
 
 impl Pid55137Sg6 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-        cursor: &mut SegmentCursor,
-    ) -> Option<Self> {
+    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
         let saved = cursor.save();
         let dtm = if peek_is(segments, cursor, "DTM") {
             Some(consume(segments, cursor)?.clone())
@@ -339,19 +298,13 @@ impl Pid55137Sg6 {
             cursor.restore(saved);
             return None;
         }
-        Some(Self {
-            dtm,
-            rff,
-        })
+        Some(Self { dtm, rff })
     }
 }
 
 impl Pid55137Sg8Z80Z81 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-        cursor: &mut SegmentCursor,
-    ) -> Option<Self> {
+    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
         let saved = cursor.save();
         let seq = if peek_is(segments, cursor, "SEQ") {
             Some(consume(segments, cursor)?.clone())
@@ -366,19 +319,13 @@ impl Pid55137Sg8Z80Z81 {
         while let Some(item) = Pid55137Sg10::from_segments(segments, cursor) {
             sg10.push(item);
         }
-        Some(Self {
-            seq,
-            sg10,
-        })
+        Some(Self { seq, sg10 })
     }
 }
 
 impl Pid55137Sg8Z92Z93 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-        cursor: &mut SegmentCursor,
-    ) -> Option<Self> {
+    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
         let saved = cursor.save();
         let seq = if peek_is(segments, cursor, "SEQ") {
             Some(consume(segments, cursor)?.clone())
@@ -393,18 +340,13 @@ impl Pid55137Sg8Z92Z93 {
         while let Some(item) = Pid55137Sg10::from_segments(segments, cursor) {
             sg10.push(item);
         }
-        Some(Self {
-            seq,
-            sg10,
-        })
+        Some(Self { seq, sg10 })
     }
 }
 
 impl Pid55137 {
     /// Assemble this PID from a pre-tokenized segment list.
-    pub fn from_segments(
-        segments: &[OwnedSegment],
-    ) -> Result<Self, SegmentNotFound> {
+    pub fn from_segments(segments: &[OwnedSegment]) -> Result<Self, SegmentNotFound> {
         let mut cursor = SegmentCursor::new(segments.len());
 
         let bgm = expect_segment(segments, &mut cursor, "BGM")?.clone();

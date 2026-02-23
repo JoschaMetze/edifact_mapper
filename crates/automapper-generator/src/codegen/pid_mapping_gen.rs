@@ -576,8 +576,7 @@ fn generate_group_mappings(
             adapt_mapping(&mut def, group, source_path);
 
             // Validate element paths against target schema
-            let validation_warnings =
-                validate_mapping_against_schema(&def, group, &entity_name);
+            let validation_warnings = validate_mapping_against_schema(&def, group, &entity_name);
             for w in &validation_warnings {
                 eprintln!("WARN: {w}");
             }

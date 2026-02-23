@@ -103,9 +103,15 @@ fn test_load_pid_55002_mapping_files() {
     assert!(engine.definition_for_entity("Marktlokation").is_some());
     assert!(engine.definition_for_entity("Messlokation").is_some());
     assert!(engine.definition_for_entity("Netzlokation").is_some());
-    assert!(engine.definition_for_entity("SteuerbareRessource").is_some());
-    assert!(engine.definition_for_entity("TechnischeRessource").is_some());
-    assert!(engine.definition_for_entity("RuhendeMarktlokation").is_some());
+    assert!(engine
+        .definition_for_entity("SteuerbareRessource")
+        .is_some());
+    assert!(engine
+        .definition_for_entity("TechnischeRessource")
+        .is_some());
+    assert!(engine
+        .definition_for_entity("RuhendeMarktlokation")
+        .is_some());
 
     // Other entities
     assert!(engine.definition_for_entity("Nachricht").is_some());
@@ -141,7 +147,10 @@ fn test_load_pid_55002_mapping_files() {
     for i in 0..4 {
         let sg = format!("SG4.SG8:{i}.SG10");
         assert!(
-            engine.definitions().iter().any(|d| d.meta.source_group == sg),
+            engine
+                .definitions()
+                .iter()
+                .any(|d| d.meta.source_group == sg),
             "Should have SG10 zuordnung at {sg}"
         );
     }
