@@ -18,8 +18,10 @@ pub mod definition;
 pub mod engine;
 pub mod error;
 pub mod handlers;
+pub mod model;
 pub mod segment_structure;
 
 pub use engine::MappingEngine;
 pub use error::MappingError;
 pub use handlers::HandlerRegistry;
+pub use model::{Interchange, Nachricht, Transaktion};
