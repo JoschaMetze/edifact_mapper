@@ -577,3 +577,21 @@ Expected: Clean
 git add crates/mig-bo4e/tests/interchange_integration_test.rs
 git commit -m "test(mig-bo4e): add end-to-end interchange integration test"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 600 |
+| Passed | 600 |
+| Failed | 0 |
+| Skipped | 7 |
+
+Files changed:
+- `crates/mig-assembly/src/service.rs` — added `convert_interchange_to_trees()` method
+- `crates/mig-assembly/tests/interchange_service_test.rs` — new test file for interchange service
+- `crates/mig-bo4e/src/model.rs` — added `extract_nachrichtendaten()` function
+- `crates/mig-bo4e/tests/interchange_integration_test.rs` — new end-to-end integration test
+- `crates/automapper-api/src/routes/convert_v2.rs` — updated v2 Bo4e mode for hierarchical response
+- `crates/automapper-api/src/state.rs` — added transaction-only engine storage and `mapping_engines_split()` method
+- `crates/automapper-api/tests/convert_v2_test.rs` — updated tests for new hierarchical response format

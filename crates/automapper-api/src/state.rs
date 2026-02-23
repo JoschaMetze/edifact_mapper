@@ -44,6 +44,9 @@ pub struct MigServiceRegistry {
     /// Message-level engines per variant (shared across PIDs).
     /// Key: "{fv}/{variant}" e.g. "FV2504/UTILMD_Strom"
     message_engines: HashMap<String, MappingEngine>,
+    /// Transaction-only engines per PID (without message-level defs).
+    /// Key: "{fv}/{variant}/pid_{pid}" e.g. "FV2504/UTILMD_Strom/pid_55001"
+    transaction_engines: HashMap<String, MappingEngine>,
     ahb_schemas: HashMap<String, AhbSchema>,
 }
 
@@ -77,6 +80,7 @@ impl MigServiceRegistry {
         // Also loads shared message-level definitions from mappings/{FV}/{msg_variant}/message/
         let mut mapping_engines = HashMap::new();
         let mut message_engines = HashMap::new();
+        let mut transaction_engines = HashMap::new();
         let mappings_base = std::path::Path::new("mappings");
         if mappings_base.exists() {
             if let Ok(fv_entries) = std::fs::read_dir(mappings_base) {
@@ -148,8 +152,7 @@ impl MigServiceRegistry {
                                             } else {
                                                 engine
                                             };
-                                            let key =
-                                                format!("{}/{}/{}", fv, variant, dirname);
+                                            let key = format!("{}/{}/{}", fv, variant, dirname);
                                             tracing::info!(
                                                 "Loaded {} TOML mapping definitions for {key}",
                                                 engine.definitions().len()
@@ -159,6 +162,27 @@ impl MigServiceRegistry {
                                         Err(e) => {
                                             tracing::warn!(
                                                 "Failed to load mappings from {}: {e}",
+                                                pid_path.display()
+                                            );
+                                        }
+                                    }
+
+                                    // Also load transaction-only engine (PID dir only, no message defs)
+                                    match MappingEngine::load(&pid_path) {
+                                        Ok(tx_engine) => {
+                                            let tx_engine = if let Some(svc) = services.get(&fv) {
+                                                tx_engine.with_segment_structure(
+                                                    SegmentStructure::from_mig(svc.mig()),
+                                                )
+                                            } else {
+                                                tx_engine
+                                            };
+                                            let key = format!("{}/{}/{}", fv, variant, dirname);
+                                            transaction_engines.insert(key, tx_engine);
+                                        }
+                                        Err(e) => {
+                                            tracing::warn!(
+                                                "Failed to load transaction mappings from {}: {e}",
                                                 pid_path.display()
                                             );
                                         }
@@ -211,6 +235,7 @@ impl MigServiceRegistry {
             services,
             mapping_engines,
             message_engines,
+            transaction_engines,
             ahb_schemas,
         }
     }
@@ -256,6 +281,26 @@ impl MigServiceRegistry {
         let msg = self.message_engines.get(&msg_key)?;
         let combined = self.mapping_engines.get(&combined_key)?;
         Some((msg, combined))
+    }
+
+    /// Get split mapping engines for hierarchical mapping (message + transaction separately).
+    ///
+    /// Returns `(message_engine, transaction_engine)` where:
+    /// - `message_engine` contains only message-level definitions (SG2/SG3/root)
+    /// - `transaction_engine` contains only PID-specific transaction definitions (SG4+)
+    ///
+    /// Use with `MappingEngine::map_interchange()` for the hierarchical pipeline.
+    pub fn mapping_engines_split(
+        &self,
+        fv: &str,
+        msg_variant: &str,
+        pid: &str,
+    ) -> Option<(&MappingEngine, &MappingEngine)> {
+        let msg_key = format!("{}/{}", fv, msg_variant);
+        let tx_key = format!("{}/{}/pid_{}", fv, msg_variant, pid);
+        let msg = self.message_engines.get(&msg_key)?;
+        let tx = self.transaction_engines.get(&tx_key)?;
+        Some((msg, tx))
     }
 
     /// Get the message-level mapping engine for a variant.

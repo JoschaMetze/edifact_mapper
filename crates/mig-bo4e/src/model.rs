@@ -75,6 +75,55 @@ pub fn extract_unh_fields(unh: &OwnedSegment) -> (String, String) {
     (referenz, typ)
 }
 
+/// Extract interchange-level metadata from envelope segments (UNB).
+pub fn extract_nachrichtendaten(envelope: &[OwnedSegment]) -> serde_json::Value {
+    let mut result = serde_json::Map::new();
+
+    for seg in envelope {
+        if seg.is("UNB") {
+            // UNB+syntax+sender+recipient+date+ref
+            if !seg.get_component(0, 0).is_empty() {
+                result.insert(
+                    "syntaxKennung".to_string(),
+                    serde_json::Value::String(seg.get_component(0, 0).to_string()),
+                );
+            }
+            if !seg.get_component(1, 0).is_empty() {
+                result.insert(
+                    "absenderCode".to_string(),
+                    serde_json::Value::String(seg.get_component(1, 0).to_string()),
+                );
+            }
+            if !seg.get_component(2, 0).is_empty() {
+                result.insert(
+                    "empfaengerCode".to_string(),
+                    serde_json::Value::String(seg.get_component(2, 0).to_string()),
+                );
+            }
+            if !seg.get_component(3, 0).is_empty() {
+                result.insert(
+                    "datum".to_string(),
+                    serde_json::Value::String(seg.get_component(3, 0).to_string()),
+                );
+            }
+            if !seg.get_component(3, 1).is_empty() {
+                result.insert(
+                    "zeit".to_string(),
+                    serde_json::Value::String(seg.get_component(3, 1).to_string()),
+                );
+            }
+            if !seg.get_element(4).is_empty() {
+                result.insert(
+                    "interchangeRef".to_string(),
+                    serde_json::Value::String(seg.get_element(4).to_string()),
+                );
+            }
+        }
+    }
+
+    serde_json::Value::Object(result)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -93,10 +142,7 @@ mod tests {
 
         let json = serde_json::to_string(&tx).unwrap();
         let de: Transaktion = serde_json::from_str(&json).unwrap();
-        assert_eq!(
-            de.transaktionsdaten["vorgangId"].as_str().unwrap(),
-            "TX001"
-        );
+        assert_eq!(de.transaktionsdaten["vorgangId"].as_str().unwrap(), "TX001");
         assert!(de.stammdaten["Marktlokation"].is_object());
     }
 
@@ -142,6 +188,31 @@ mod tests {
         let de: Interchange = serde_json::from_str(&json).unwrap();
         assert_eq!(de.nachrichten.len(), 1);
         assert_eq!(de.nachrichten[0].unh_referenz, "00001");
+    }
+
+    #[test]
+    fn test_extract_envelope_from_segments() {
+        use mig_types::segment::OwnedSegment;
+
+        let envelope = vec![OwnedSegment {
+            id: "UNB".to_string(),
+            elements: vec![
+                vec!["UNOC".to_string(), "3".to_string()],
+                vec!["9900123456789".to_string(), "500".to_string()],
+                vec!["9900987654321".to_string(), "500".to_string()],
+                vec!["210101".to_string(), "1200".to_string()],
+                vec!["REF001".to_string()],
+            ],
+            segment_number: 0,
+        }];
+
+        let nd = extract_nachrichtendaten(&envelope);
+        assert_eq!(nd["absenderCode"].as_str().unwrap(), "9900123456789");
+        assert_eq!(nd["empfaengerCode"].as_str().unwrap(), "9900987654321");
+        assert_eq!(nd["interchangeRef"].as_str().unwrap(), "REF001");
+        assert_eq!(nd["syntaxKennung"].as_str().unwrap(), "UNOC");
+        assert_eq!(nd["datum"].as_str().unwrap(), "210101");
+        assert_eq!(nd["zeit"].as_str().unwrap(), "1200");
     }
 
     #[test]

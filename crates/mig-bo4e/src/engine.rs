@@ -1039,10 +1039,7 @@ mod tests {
                 },
                 AssembledSegment {
                     tag: "BGM".to_string(),
-                    elements: vec![
-                        vec!["E01".to_string()],
-                        vec!["DOC001".to_string()],
-                    ],
+                    elements: vec![vec!["E01".to_string()], vec!["DOC001".to_string()]],
                 },
             ],
             groups: vec![
@@ -1051,10 +1048,7 @@ mod tests {
                     repetitions: vec![AssembledGroupInstance {
                         segments: vec![AssembledSegment {
                             tag: "NAD".to_string(),
-                            elements: vec![
-                                vec!["MS".to_string()],
-                                vec!["9900123".to_string()],
-                            ],
+                            elements: vec![vec!["MS".to_string()], vec!["9900123".to_string()]],
                         }],
                         child_groups: vec![],
                     }],
@@ -1064,10 +1058,7 @@ mod tests {
                     repetitions: vec![AssembledGroupInstance {
                         segments: vec![AssembledSegment {
                             tag: "IDE".to_string(),
-                            elements: vec![
-                                vec!["24".to_string()],
-                                vec!["TX001".to_string()],
-                            ],
+                            elements: vec![vec!["24".to_string()], vec!["TX001".to_string()]],
                         }],
                         child_groups: vec![AssembledGroup {
                             group_id: "SG5".to_string(),
@@ -1257,10 +1248,7 @@ mod tests {
                     repetitions: vec![AssembledGroupInstance {
                         segments: vec![AssembledSegment {
                             tag: "NAD".to_string(),
-                            elements: vec![
-                                vec!["MS".to_string()],
-                                vec!["9900123".to_string()],
-                            ],
+                            elements: vec![vec!["MS".to_string()], vec!["9900123".to_string()]],
                         }],
                         child_groups: vec![],
                     }],
@@ -1270,10 +1258,7 @@ mod tests {
                     repetitions: vec![AssembledGroupInstance {
                         segments: vec![AssembledSegment {
                             tag: "IDE".to_string(),
-                            elements: vec![
-                                vec!["24".to_string()],
-                                vec!["TX001".to_string()],
-                            ],
+                            elements: vec![vec!["24".to_string()], vec!["TX001".to_string()]],
                         }],
                         child_groups: vec![],
                     }],
@@ -1337,10 +1322,7 @@ mod tests {
                 repetitions: vec![AssembledGroupInstance {
                     segments: vec![AssembledSegment {
                         tag: "IDE".to_string(),
-                        elements: vec![
-                            vec!["24".to_string()],
-                            vec!["TX001".to_string()],
-                        ],
+                        elements: vec![vec!["24".to_string()], vec!["TX001".to_string()]],
                     }],
                     child_groups: vec![AssembledGroup {
                         group_id: "SG5".to_string(),
@@ -1416,7 +1398,9 @@ mod tests {
 
         // Should contain Marktlokation from SG5 within SG4
         assert_eq!(
-            result["Marktlokation"]["marktlokationsId"].as_str().unwrap(),
+            result["Marktlokation"]["marktlokationsId"]
+                .as_str()
+                .unwrap(),
             "DE000111222333"
         );
     }
@@ -1443,10 +1427,7 @@ mod tests {
                     repetitions: vec![AssembledGroupInstance {
                         segments: vec![AssembledSegment {
                             tag: "NAD".to_string(),
-                            elements: vec![
-                                vec!["MS".to_string()],
-                                vec!["9900123".to_string()],
-                            ],
+                            elements: vec![vec!["MS".to_string()], vec!["9900123".to_string()]],
                         }],
                         child_groups: vec![],
                     }],
@@ -1457,20 +1438,14 @@ mod tests {
                         AssembledGroupInstance {
                             segments: vec![AssembledSegment {
                                 tag: "IDE".to_string(),
-                                elements: vec![
-                                    vec!["24".to_string()],
-                                    vec!["TX001".to_string()],
-                                ],
+                                elements: vec![vec!["24".to_string()], vec!["TX001".to_string()]],
                             }],
                             child_groups: vec![],
                         },
                         AssembledGroupInstance {
                             segments: vec![AssembledSegment {
                                 tag: "IDE".to_string(),
-                                elements: vec![
-                                    vec!["24".to_string()],
-                                    vec!["TX002".to_string()],
-                                ],
+                                elements: vec![vec!["24".to_string()], vec!["TX002".to_string()]],
                             }],
                             child_groups: vec![],
                         },

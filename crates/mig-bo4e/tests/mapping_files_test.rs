@@ -51,7 +51,9 @@ fn test_load_real_mapping_files() {
 
     // Transaction engine should have transaction-level entities
     assert!(tx_engine.definition_for_entity("Marktlokation").is_some());
-    assert!(tx_engine.definition_for_entity("Geschaeftspartner").is_some());
+    assert!(tx_engine
+        .definition_for_entity("Geschaeftspartner")
+        .is_some());
     assert!(tx_engine.definition_for_entity("Ansprechpartner").is_some());
     assert!(tx_engine.definition_for_entity("Produktpaket").is_some());
     assert!(tx_engine
@@ -73,7 +75,9 @@ fn test_load_real_mapping_files() {
     assert!(combined.definition_for_entity("Nachricht").is_some());
     assert!(combined.definition_for_entity("Kontakt").is_some());
     assert!(combined.definition_for_entity("Marktlokation").is_some());
-    assert!(combined.definition_for_entity("Geschaeftspartner").is_some());
+    assert!(combined
+        .definition_for_entity("Geschaeftspartner")
+        .is_some());
 
     // SG10 zuordnung definitions
     assert!(

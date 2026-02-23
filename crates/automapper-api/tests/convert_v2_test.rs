@@ -125,40 +125,63 @@ async fn test_convert_v2_bo4e_mode() {
         assert_eq!(resp.mode, "bo4e");
         assert!(resp.duration_ms >= 0.0);
 
-        // Verify response structure
+        // Verify hierarchical response structure: Interchange → Nachricht → Transaktion
         assert!(
-            resp.result.get("pid").is_some(),
-            "Response should contain 'pid' key"
+            resp.result.get("nachrichtendaten").is_some(),
+            "Response should contain 'nachrichtendaten' key"
         );
         assert!(
-            resp.result.get("formatVersion").is_some(),
-            "Response should contain 'formatVersion' key"
-        );
-        assert!(
-            resp.result.get("stammdaten").is_some(),
-            "Response should contain 'stammdaten' key"
-        );
-        assert!(
-            resp.result.get("transaktionsdaten").is_some(),
-            "Response should contain 'transaktionsdaten' key"
+            resp.result.get("nachrichten").is_some(),
+            "Response should contain 'nachrichten' key"
         );
 
-        // If we used a real fixture, verify entity content
+        let nachrichten = resp.result.get("nachrichten").unwrap().as_array().unwrap();
+        assert!(
+            !nachrichten.is_empty(),
+            "Should have at least one Nachricht"
+        );
+
+        let first_msg = &nachrichten[0];
+        assert!(
+            first_msg.get("unhReferenz").is_some(),
+            "Nachricht should have unhReferenz"
+        );
+        assert!(
+            first_msg.get("nachrichtenTyp").is_some(),
+            "Nachricht should have nachrichtenTyp"
+        );
+        assert!(
+            first_msg.get("stammdaten").is_some(),
+            "Nachricht should have stammdaten"
+        );
+        assert!(
+            first_msg.get("transaktionen").is_some(),
+            "Nachricht should have transaktionen"
+        );
+
+        // If we used a real fixture, verify deeper content
         if fixture_path.exists() {
-            let stammdaten = resp.result.get("stammdaten").unwrap();
+            let transaktionen = first_msg.get("transaktionen").unwrap().as_array().unwrap();
             assert!(
-                stammdaten.get("nachricht").is_some(),
-                "Should contain nachricht in stammdaten"
+                !transaktionen.is_empty(),
+                "Should have at least one Transaktion"
+            );
+
+            let first_tx = &transaktionen[0];
+            assert!(
+                first_tx.get("stammdaten").is_some(),
+                "Transaktion should have stammdaten"
             );
             assert!(
-                stammdaten.get("marktlokation").is_some(),
-                "Should contain marktlokation in stammdaten"
+                first_tx.get("transaktionsdaten").is_some(),
+                "Transaktion should have transaktionsdaten"
             );
-            // Prozessdaten should be at top level as transaktionsdaten
-            let transaktionsdaten = resp.result.get("transaktionsdaten").unwrap();
+
+            // Verify nachrichtendaten has envelope data
+            let nd = resp.result.get("nachrichtendaten").unwrap();
             assert!(
-                !transaktionsdaten.is_null(),
-                "transaktionsdaten should not be null"
+                nd.get("absenderCode").is_some(),
+                "Should have absenderCode in nachrichtendaten"
             );
         }
     } else {
