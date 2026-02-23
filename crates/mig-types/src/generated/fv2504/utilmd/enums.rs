@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0001Qualifier {
+    /// UN/ECE-Zeichensatz C
     UNOC,
     /// Unrecognized code value
     Unknown(String),
@@ -34,6 +35,7 @@ impl std::str::FromStr for D0001Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0002Qualifier {
+    /// Version 3
     _3,
     /// Unrecognized code value
     Unknown(String),
@@ -61,7 +63,9 @@ impl std::str::FromStr for D0002Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0007Qualifier {
+    /// GS1
     _14,
+    /// DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)
     _500,
     /// Unrecognized code value
     Unknown(String),
@@ -91,6 +95,7 @@ impl std::str::FromStr for D0007Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0029Qualifier {
+    /// Höchste Priorität
     A,
     /// Unrecognized code value
     Unknown(String),
@@ -118,6 +123,7 @@ impl std::str::FromStr for D0029Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0035Qualifier {
+    /// Übertragungsdatei ist ein Test
     _1,
     /// Unrecognized code value
     Unknown(String),
@@ -145,6 +151,7 @@ impl std::str::FromStr for D0035Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0051Qualifier {
+    /// UN/CEFACT
     UN,
     /// Unrecognized code value
     Unknown(String),
@@ -172,6 +179,7 @@ impl std::str::FromStr for D0051Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0052Qualifier {
+    /// Entwurfs-Version
     D,
     /// Unrecognized code value
     Unknown(String),
@@ -199,6 +207,7 @@ impl std::str::FromStr for D0052Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0054Qualifier {
+    /// Ausgabe 2011 - A
     _11A,
     /// Unrecognized code value
     Unknown(String),
@@ -226,6 +235,7 @@ impl std::str::FromStr for D0054Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0057Qualifier {
+    /// Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung
     S2_1,
     /// Unrecognized code value
     Unknown(String),
@@ -253,6 +263,7 @@ impl std::str::FromStr for D0057Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0065Qualifier {
+    /// Netzanschluss-Stammdaten
     UTILMD,
     /// Unrecognized code value
     Unknown(String),
@@ -280,7 +291,9 @@ impl std::str::FromStr for D0065Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D0073Qualifier {
+    /// Beginn
     C,
+    /// Ende
     F,
     /// Unrecognized code value
     Unknown(String),
@@ -328,13 +341,21 @@ pub enum D1001Qualifier {
     Z05,
     /// Unter dieser Kategorie werden die Aktivierungen und Deaktivierungen der Bilanzierungszeitreihen mit ihrer entsprechenden Kennzeichnung des Zeitreihentypen versendet.
     Z07,
+    /// Zuordnungsermächtigung
     Z17,
+    /// Profildefinition
     Z18,
+    /// DZÜ-Liste
     Z37,
+    /// Aufforderung
     Z40,
+    /// Zuordnung ZP der NGZ zur NZR
     Z71,
+    /// Anfrage Datenclearing
     Z88,
+    /// Zuordnung zur Lokation
     Z89,
+    /// Beendigung der Zuordnung zur Lokation
     Z90,
     /// Unrecognized code value
     Unknown(String),
@@ -394,79 +415,153 @@ impl std::str::FromStr for D1001Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D1131Qualifier {
+    /// EBD Nr. E_0004
     E_0004,
+    /// EBD Nr. E_0014
     E_0014,
+    /// EBD Nr. E_0017
     E_0017,
+    /// EBD Nr. E_0039
     E_0039,
+    /// EBD Nr. E_0047
     E_0047,
+    /// EBD Nr. E_0049
     E_0049,
+    /// EBD Nr. E_0052
     E_0052,
+    /// EBD Nr. E_0068
     E_0068,
+    /// EBD Nr. E_0070
     E_0070,
+    /// EBD Nr. E_0096
     E_0096,
+    /// EBD Nr. E_0097
     E_0097,
+    /// EBD Nr. E_0104
     E_0104,
+    /// EBD Nr. E_0105
     E_0105,
+    /// EBD Nr. E_0009
     E_0009,
+    /// EBD Nr. E_0010
     E_0010,
+    /// EBD Nr. E_0011
     E_0011,
+    /// EBD Nr. E_0012
     E_0012,
+    /// EBD Nr. E_0015
     E_0015,
+    /// EBD Nr. E_0018
     E_0018,
+    /// EBD Nr. E_0020
     E_0020,
+    /// EBD Nr. E_0024
     E_0024,
+    /// EBD Nr. E_0027
     E_0027,
+    /// EBD Nr. E_0028
     E_0028,
+    /// EBD Nr. E_0034
     E_0034,
+    /// EBD Nr. E_0035
     E_0035,
+    /// EBD Nr. E_0071
     E_0071,
+    /// EBD Nr. E_0072
     E_0072,
+    /// EBD Nr. E_0078
     E_0078,
+    /// EBD Nr. E_0079
     E_0079,
+    /// EBD Nr. E_0102
     E_0102,
+    /// EBD Nr. E_0103
     E_0103,
+    /// EBD Nr. E_0408
     E_0408,
+    /// EBD Nr. E_0409
     E_0409,
+    /// EBD Nr. E_0410
     E_0410,
+    /// EBD Nr. E_0412
     E_0412,
+    /// EBD Nr. E_0415
     E_0415,
+    /// EBD Nr. E_0510
     E_0510,
+    /// EBD Nr. E_0511
     E_0511,
+    /// EBD Nr. E_0512
     E_0512,
+    /// EBD Nr. E_0513
     E_0513,
+    /// EBD Nr. E_0572
     E_0572,
+    /// EBD Nr. E_0574
     E_0574,
+    /// EBD Nr. E_0578
     E_0578,
+    /// EBD Nr. E_0583
     E_0583,
+    /// EBD Nr. E_0603
     E_0603,
+    /// EBD Nr. E_0604
     E_0604,
+    /// EBD Nr. E_0605
     E_0605,
+    /// EBD Nr. E_0606
     E_0606,
+    /// EBD Nr. E_0607
     E_0607,
+    /// EBD Nr. E_0608
     E_0608,
+    /// EBD Nr. E_0609
     E_0609,
+    /// EBD Nr. E_0610
     E_0610,
+    /// EBD Nr. E_0611
     E_0611,
+    /// EBD Nr. E_0612
     E_0612,
+    /// EBD Nr. E_0614
     E_0614,
+    /// EBD Nr. E_0615
     E_0615,
+    /// EBD Nr. E_0622
     E_0622,
+    /// EBD Nr. E_0623
     E_0623,
+    /// EBD Nr. E_0624
     E_0624,
+    /// EBD Nr. E_0639
     E_0639,
+    /// Codeliste Strom Nr. S_0054
     S_0054,
+    /// Codeliste Strom Nr. S_0055
     S_0055,
+    /// Codeliste Strom Nr. S_0056
     S_0056,
+    /// Codeliste Strom Nr. S_0059
     S_0059,
+    /// Codeliste Strom Nr. S_0060
     S_0060,
+    /// Codeliste Strom Nr. S_0063
     S_0063,
+    /// Codeliste Strom Nr. S_0064
     S_0064,
+    /// Codeliste Strom Nr. S_0086
     S_0086,
+    /// Codeliste Strom Nr. S_0087
     S_0087,
+    /// Codeliste Strom Nr. S_0090
     S_0090,
+    /// Codeliste Strom Nr. S_0091
     S_0091,
+    /// EDI@Energy Codeliste der europäischen Ländercodes
     LAND,
+    /// An/Aus
     Z14,
+    /// Gestuft
     Z15,
     /// Unrecognized code value
     Unknown(String),
@@ -640,44 +735,83 @@ impl std::str::FromStr for D1131Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D1153Qualifier {
+    /// Nummer der Anfrage
     AAV,
+    /// Prüfidentifikator
     Z13,
+    /// Transaktions-Referenznummer
     TN,
+    /// Referenz auf eine Zeitreihe
     AUU,
+    /// Referenznummer einer vorangegangenen Nachricht
     ACW,
+    /// Referenznummer der Nachricht der betroffenen Antwort auf Bestellung (Bestellbestätigung)
     Z42,
+    /// Referenznummer des Vorgangs der betroffenen Antwort auf Bestellung (Bestellbestätigung)
     Z43,
+    /// Informativ zur Umsetzung geplantes Produktpaket
     Z60,
+    /// Beteiligte Marktrolle
     Z22,
+    /// Im System vorhandene Daten
     Z47,
+    /// Erwartete Daten
     Z48,
+    /// Gültige Daten
     Z49,
+    /// Keine Daten
     Z53,
+    /// Im System keine Daten vorhanden
     Z54,
+    /// Keine Daten erwartet
     Z55,
+    /// Termindaten der Marktlokation
     Z50,
+    /// Erwartete Termindaten der Marktlokation
     Z51,
+    /// Im System vorhandene Termindaten der Marktlokation
     Z52,
+    /// Lokationsbündelstruktur
     Z31,
+    /// Keine standardisierte Lokationsbündelstruktur vorhanden
     Z39,
+    /// Netzlokation
     Z32,
+    /// Marktlokation
     Z18,
+    /// Messlokation
     Z19,
+    /// Technische Ressource
     Z37,
+    /// Objektcode der Lokation in der Lokationsbündelstruktur
     Z33,
+    /// vorgelagerte Messlokation
     Z34,
+    /// vorgelagerte Netzlokation
     Z35,
+    /// zugeordnete Marktlokation
     Z16,
+    /// OBIS-Kennzahl
     Z10,
+    /// Tranche
     Z20,
+    /// Steuerbare Ressource
     Z38,
+    /// Abrechnung des Messstellenbetriebs über NNE
     Z05,
+    /// Smartmeter-Gateway
     Z14,
+    /// Gerätenummer des Zählers
     MG,
+    /// Anwendungsreferenznummer
     AGK,
+    /// Referenz auf ein Profil
     Z12,
+    /// Meldepunkt
     AVE,
+    /// Referenz auf Zeitraum-ID
     Z46,
+    /// Kundennummer beim Lieferanten
     AVC,
     /// Unrecognized code value
     Unknown(String),
@@ -781,192 +915,379 @@ impl std::str::FromStr for D1153Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D1154Qualifier {
+    /// MaBiS / Lieferantenclearingliste
     _55065,
+    /// MaBiS / Korrekturliste zu Lieferantenclearingliste
     _55066,
+    /// MaBiS / Bilanzkreiszuordnungsliste
     _55067,
+    /// MaBiS / Clearingliste DZR
     _55069,
+    /// MaBiS / Clearingliste BAS
     _55070,
+    /// MaBiS / Übermittlung der Profildefinitionen
     _55073,
+    /// MaBiS / Bilanzierungsgebietsclearingliste
     _55195,
+    /// MaBiS / Antwort auf die Bilanzierungsgebietsclearingliste
     _55196,
+    /// Redispatch / LF-AACL
     _55201,
+    /// Redispatch / Korrekturliste LF-AACL
     _55202,
+    /// MaBiS / DZÜ Liste
     _55223,
+    /// MaBiS / Antwort auf DZÜ Liste
     _55224,
+    /// GPKE / Anmeldung verbrauchende MaLo
     _55001,
+    /// GPKE / Bestätigung Anmeldung verbrauchende MaLo
     _55002,
+    /// GPKE / Ablehnung Anmeldung verbrauchende MaLo
     _55003,
+    /// GPKE / Abmeldung
     _55004,
+    /// GPKE / Bestätigung Abmeldung
     _55005,
+    /// GPKE / Ablehnung Abmeldung
     _55006,
+    /// GPKE / Abmeldung / Beendigung der Zuordnung vom NB
     _55007,
+    /// GPKE / Bestätigung Abmeldung vom NB
     _55008,
+    /// GPKE / Ablehnung Abmeldung vom NB
     _55009,
+    /// GPKE / Abmeldeanfrage des NB
     _55010,
+    /// GPKE / Bestätigung Abmeldeanfrage
     _55011,
+    /// GPKE / Ablehnung Abmeldeanfrage
     _55012,
+    /// GPKE / Anmeldung EoG
     _55013,
+    /// GPKE / Bestätigung EoG Anmeldung
     _55014,
+    /// GPKE / Ablehnung EoG Anmeldung
     _55015,
+    /// GPKE / Kündigung beim alten Lieferanten
     _55016,
+    /// GPKE / Bestätigung Kündigung
     _55017,
+    /// GPKE / Ablehnung Kündigung
     _55018,
+    /// GPKE / Anfrage nach Stornierung
     _55022,
+    /// GPKE / Bestätigung Anfrage Stornierung
     _55023,
+    /// GPKE / Ablehnung Anfrage Stornierung
     _55024,
+    /// GPKE / Antwort auf   GDA zu verbrauchender MaLo
     _55035,
+    /// GPKE / Informationsmeldung über existierende Zuordnung
     _55036,
+    /// GPKE / Informationsmeldung zur Beendigung der Zuordnung
     _55037,
+    /// GPKE / Informationsmeldung zur Aufhebung einer zuk. Zuordnung
     _55038,
+    /// WiM Strom / Kündigung MSB
     _55039,
+    /// WiM Strom / Bestätigung Kündigung MSB
     _55040,
+    /// WiM Strom / Ablehnung Kündigung MSB
     _55041,
+    /// WiM Strom / Anmeldung MSB
     _55042,
+    /// WiM Strom / Bestätigung Anmeldung MSB
     _55043,
+    /// WiM Strom / Ablehnung Anmeldung MSB
     _55044,
+    /// WiM Strom / Ende MSB
     _55051,
+    /// WiM Strom / Bestätigung Ende MSB
     _55052,
+    /// WiM Strom / Ablehnung Ende MSB
     _55053,
+    /// WiM Strom / Antwort auf die MSB GDA
     _55060,
+    /// MaBiS / Aktivierung von MaBiS-ZP
     _55062,
+    /// MaBiS / Deaktivierung von MaBiS-ZP
     _55063,
+    /// MaBiS / Antwort auf Aktivierung / Deaktivierung von MaBiS-ZP
     _55064,
+    /// MaBiS / Aktivierung der Zuordnungsermächtigung
     _55071,
+    /// MaBiS / Deaktivierung der Zuordnungsermächtigung
     _55072,
+    /// HKNR / Stammdaten auf eine ORDERS
     _55074,
+    /// HKNR / Stammdaten aufgrund einer Änderung
     _55075,
+    /// HKNR / Antwort auf Stammdatenänderung
     _55076,
+    /// GPKE / Anmeldung erzeugende Marktlokation
     _55077,
+    /// GPKE / Bestätigung Anmeldung erzeugende Marktlokation
     _55078,
+    /// GPKE / Ablehnung Anmeldung erzeugende Marktlokation
     _55080,
+    /// GPKE / Antwort auf GDA zu erzeugender MaLo
     _55095,
+    /// GPKE / Änderung Daten der MaLo vom LF an NB
     _55109,
+    /// GPKE / Änderung Daten der MaLo vom LF an MSB
     _55110,
+    /// GPKE / Abrechnungsdaten Bilanzkreisabrechnung verbrauchender MaLo an LF
     _55126,
+    /// GPKE / Rückmeldung / Anfrage Daten der MaLo vom MSB an LF
     _55136,
+    /// GPKE / Rückmeldung / Anfrage Daten der MaLo vom NB an LF
     _55137,
+    /// GPKE / Rückmeldung/Anfrage Abrechnungsdaten Bilanzkreisabrechnung verbrauchender MaLo vom LF
     _55156,
+    /// WiM Strom / Verpflichtungsanfrage / Aufforderung
     _55168,
+    /// WiM Strom / Bestätigung Verpflichtungsanfrage
     _55169,
+    /// WiM Strom / Ablehnung Verpflichtungsanfrage
     _55170,
+    /// GPKE / Änderung der Lokationsbündelstruktur NB an MSB
     _55173,
+    /// GPKE / Änderung der Lokationsbündelstruktur NB an LF
     _55175,
+    /// GPKE / Rückmeldung / Anfrage der Lokationsbündelstruktur MSB an NB
     _55177,
+    /// GPKE / Rückmeldung / Anfrage der Lokationsbündelstruktur LF an NB
     _55180,
+    /// GPKE / Antwort auf die MSB Gas GDA
     _55194,
+    /// Redispatch / Aktivierung ZP tägliche AAÜZ
     _55197,
+    /// Redispatch / Deaktivierung tägliche AAÜZ
     _55198,
+    /// Redispatch / Aktivierung ZP LF-AASZR
     _55199,
+    /// Redispatch / Deaktivierung ZP LF-AASZR
     _55200,
+    /// Redispatch / Aktivierung ZP monatliche AAÜZ
     _55203,
+    /// Redispatch / Antwort auf Aktivierung ZP
     _55204,
+    /// Redispatch / Weiterleitung Aktivierung ZP
     _55205,
+    /// Redispatch / Deaktivierung ZP monatliche AAÜZ
     _55206,
+    /// Redispatch / Antwort auf Deaktivierung ZP
     _55207,
+    /// Redispatch / Weiterleitung Deaktivierung ZP
     _55208,
+    /// Redispatch / Aktivierung ZP monatliche AAÜZ
     _55209,
+    /// Redispatch / Antwort auf Aktivierung ZP
     _55210,
+    /// Redispatch / Weiterleitung Aktivierung ZP
     _55211,
+    /// Redispatch / Deaktivierung ZP monatliche AAÜZ
     _55212,
+    /// Redispatch / Antwort auf Deaktivierung ZP
     _55213,
+    /// Redispatch / Weiterleitung Deaktivierung ZP
     _55214,
+    /// GPKE / Abrechnungsdaten Netznutzungsabrechnung
     _55218,
+    /// GPKE / Rückmeldung/Anfrage Abrechnungsdaten Netznutzungsabrechnung
     _55220,
+    /// GPKE / Änderung Abrechnung Blindarbeit vom NB
     _55225,
+    /// GPKE / Rückmeldung / Anfrage Abrechnung Blindarbeit an NB
     _55227,
+    /// GPKE / Änderung Abrechnung Blindarbeit vom LF
     _55230,
+    /// GPKE / Rückmeldung / Anfrage Abrechnung Blindarbeit an LF
     _55232,
+    /// MaBiS / Zuordnung ZP der NGZ zur NZR
     _55235,
+    /// MaBiS / Beendigung Zuordnung ZP der NGZ zur NZR
     _55236,
+    /// MaBiS / Antwort auf Zuordnung / Beendigung Zuordnung ZP der NGZ zur NZR
     _55237,
+    /// E-Mob / Anmeldung in Modell 2
     _55238,
+    /// E-Mob / Antwort auf Anmeldung in Modell 2
     _55239,
+    /// E-Mob / Beendigung der Zuordnung zur Marktlokation
     _55240,
+    /// E-Mob / Antwort auf Beendigung der Zuordnung zur Marktlokation
     _55241,
+    /// E-Mob / Abmeldung aus dem Modell 2
     _55242,
+    /// E-Mob / Antwort auf Abmeldung aus dem Modell 2
     _55243,
+    /// GPKE / Stammdaten auf individuelle Bestellung
     _55553,
+    /// GPKE / Anfrage Stammdaten auf individuelle Bestellung
     _55555,
+    /// GPKE / Änderung von MSB Abrechnungsdaten
     _55557,
+    /// GPKE / Rückmeldung / Anfrage von MSB Abrechnungsdaten
     _55559,
+    /// GPKE / Anmeldung neue verbrauchende Marktlokation
     _55600,
+    /// GPKE / Anmeldung neue erzeugende Marktlokation
     _55601,
+    /// GPKE / Bestätigung Anmeldung neue verbrauchende Marktlokation
     _55602,
+    /// GPKE / Bestätigung Anmeldung neue erzeugende Marktlokation
     _55603,
+    /// GPKE / Ablehnung Anmeldung neue verbrauchende Marktlokation
     _55604,
+    /// GPKE / Ablehnung Anmeldung neue erzeugende Marktlokation
     _55605,
+    /// GPKE / Ankündigung Zuordnung / Zuordnung des LF zur erz. MaLo/ Tranche
     _55607,
+    /// GPKE / Bestätigung Zuordnung des LF zur erz. MaLo/ Tranche
     _55608,
+    /// GPKE / Ablehnung Zuordnung des LF zur erz. MaLo/ Tranche
     _55609,
+    /// GPKE / Beendigung der Zuordnung des MSB zur MaLo / MeLo
     _55611,
+    /// GPKE / Abrechnungsdaten Bilanzkreisabrechnung verbrauchender MaLo an ÜNB
     _55613,
+    /// GPKE / Rückmeldung / Anfrage Abrechnungsdaten Bilanzkreisabrechnung verbrauchender MaLo vom ÜNB
     _55614,
+    /// GPKE / Änderung Daten der NeLo vom NB an LF
     _55615,
+    /// GPKE / Änderung Daten der MaLo vom NB an LF
     _55616,
+    /// GPKE / Änderung Daten der TR vom NB an LF
     _55617,
+    /// GPKE / Änderung Daten der SR vom NB an LF
     _55618,
+    /// GPKE / Änderung Daten der Tranche vom NB an LF
     _55619,
+    /// GPKE / Änderung Daten der MeLo von NB an LF
     _55620,
+    /// GPKE / Rückmeldung / Anfrage Daten zur NeLo vom LF an NB
     _55621,
+    /// GPKE / Rückmeldung / Anfrage Daten der MaLo vom LF an NB
     _55622,
+    /// GPKE / Rückmeldung / Anfrage Daten der TR vom LF an NB
     _55623,
+    /// GPKE / Rückmeldung / Anfrage Daten der SR vom LF an NB
     _55624,
+    /// GPKE / Rückmeldung / Anfrage Daten der Tranche vom LF an NB
     _55625,
+    /// GPKE / Rückmeldung / Anfrage Daten der MeLo vom LF an NB
     _55626,
+    /// GPKE / Änderung Daten der NeLo vom NB an MSB
     _55627,
+    /// GPKE / Änderung Daten der MaLo vom NB an MSB
     _55628,
+    /// GPKE / Änderung Daten der TR vom NB an MSB
     _55629,
+    /// GPKE / Änderung Daten der SR vom NB an MSB
     _55630,
+    /// GPKE / Änderung Daten der MeLo vom NB an MSB
     _55632,
+    /// GPKE / Rückmeldung / Anfrage Daten zur NeLo vom MSB an NB
     _55633,
+    /// GPKE / Rückmeldung / Anfrage Daten der MaLo vom MSB an NB
     _55634,
+    /// GPKE / Rückmeldung / Anfrage Daten der TR vom MSB an NB
     _55635,
+    /// GPKE / Rückmeldung / Anfrage Daten der SR vom MSB an NB
     _55636,
+    /// GPKE / Rückmeldung / Anfrage Daten der MeLo vom MSB an NB
     _55638,
+    /// GPKE / Änderung Daten der NeLo vom MSB an NB
     _55639,
+    /// GPKE / Änderung Daten der MaLo vom MSB an NB
     _55640,
+    /// GPKE / Änderung Daten der SR vom MSB an NB
     _55641,
+    /// GPKE / Änderung Daten der Tranche vom MSB an NB
     _55642,
+    /// GPKE / Änderung Daten der MeLo vom MSB an NB
     _55643,
+    /// GPKE / Rückmeldung / Anfrage Daten der NeLo vom NB an MSB
     _55644,
+    /// GPKE / Rückmeldung / Anfrage Daten der MaLo vom NB an MSB
     _55645,
+    /// GPKE / Rückmeldung / Anfrage Daten der SR vom NB an MSB
     _55646,
+    /// GPKE / Rückmeldung / Anfrage Daten der Tranche vom NB an MSB
     _55647,
+    /// GPKE / Rückmeldung / Anfrage Daten der MeLo vom NB an MSB
     _55648,
+    /// GPKE / Änderung Daten der NeLo vom MSB an LF
     _55649,
+    /// GPKE / Änderung Daten der MaLo vom MSB an LF
     _55650,
+    /// GPKE / Änderung Daten der SR vom MSB an LF
     _55651,
+    /// GPKE / Änderung Daten der Tranche vom MSB an LF
     _55652,
+    /// GPKE / Änderung Daten der MeLo vom MSB an LF
     _55653,
+    /// GPKE / Rückmeldung / Anfrage Daten der NeLo vom LF an MSB
     _55654,
+    /// GPKE / Rückmeldung / Anfrage Daten der MaLo vom LF an MSB
     _55655,
+    /// GPKE / Rückmeldung / Anfrage Daten der SR vom LF an MSB
     _55656,
+    /// GPKE / Rückmeldung / Anfrage Daten der Tranche vom LF an MSB
     _55657,
+    /// GPKE / Rückmeldung / Anfrage Daten der MeLo vom LF an MSB
     _55658,
+    /// GPKE / Änderung Daten der NeLo vom MSB an wMSB
     _55659,
+    /// GPKE / Änderung Daten der MaLo vom MSB an wMSB
     _55660,
+    /// GPKE / Änderung Daten der SR vom MSB an wMSB
     _55661,
+    /// GPKE / Änderung Daten der Tranche vom MSB an wMSB
     _55662,
+    /// GPKE / Änderung Daten der MeLo vom MSB an wMSB
     _55663,
+    /// GPKE / Rückmeldung / Anfrage Daten der NeLo vom wMSB an MSB
     _55664,
+    /// GPKE / Rückmeldung / Anfrage Daten der MaLo wMSB an MSB
     _55665,
+    /// GPKE / Rückmeldung / Anfrage Daten der SR vom wMSB an MSB
     _55666,
+    /// GPKE / Rückmeldung / Anfrage Daten der Tranche vom wMSB an MSB
     _55667,
+    /// GPKE / Rückmeldung / Anfrage Daten der MeLo vom wMSB an MSB
     _55669,
+    /// GPKE / Stammdaten Bilanzkreistreue
     _55670,
+    /// GPKE / Rückmeldung auf Stammdaten Bilanzkreistreue
     _55671,
+    /// GPKE / Abrechnungsdaten Bilanzkreisabrechnung erzeugender MaLo an LF
     _55672,
+    /// GPKE / Rückmeldung / Anfrage Abrechnungsdaten Bilanzkreisabrechnung erzeugender MaLo vom LF
     _55673,
+    /// GPKE / Abrechnungsdaten Bilanzkreisabrechnung erzeugender MaLo an ÜNB
     _55674,
+    /// GPKE / Rückmeldung / Anfrage Abrechnungsdaten Bilanzkreisabrechnung erzeugender MaLo vom ÜNB
     _55675,
+    /// GPKE / Änderung Daten der MaLo vom MSB an ÜNB
     _55684,
+    /// GPKE / Rückmeldung / Anfrage Daten der MaLo vom ÜNB an MSB
     _55685,
+    /// GPKE / Änderung Daten der Tranche vom MSB an ÜNB
     _55686,
+    /// GPKE / Rückmeldung / Anfrage Daten der Tranche vom ÜNB an MSB
     _55687,
+    /// GPKE / Änderung Daten der MaLo vom NB an ÜNB
     _55688,
+    /// GPKE / Rückmeldung / Anfrage Daten der MaLo vom ÜNB an NB
     _55689,
+    /// NBW / Lokationsbündelstruktur und DB
     _55690,
+    /// GPKE / Änderung Paket-ID der MaLo
     _55691,
+    /// GPKE / Rückmeldung / Anfrage Paket-ID der MaLo
     _55692,
     /// Unrecognized code value
     Unknown(String),
@@ -1366,146 +1687,286 @@ impl std::str::FromStr for D1154Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D1229Qualifier {
+    /// Daten der Summenzeitreihe
     Z22,
+    /// Referenz auf die Lokationsbündelstruktur
     Z78,
+    /// Erwartete Referenz auf die Lokationsbündelstruktur
     ZC7,
+    /// Im System vorhandene Referenz auf die Lokationsbündelstruktur
     ZC8,
+    /// Informative Referenz auf die Lokationsbündelstruktur
     ZD5,
+    /// Zuordnung Lokation zum Objektcode des Lokationsbündels
     Z58,
+    /// Erwartete Zuordnung Lokation zum Objektcode des Lokationsbündels
     ZC9,
+    /// Im System vorhandene Zuordnung Lokation zum Objektcode des Lokationsbündels
     ZD0,
+    /// Informative Zuordnung Lokation zum Objektcode des Lokationsbündels
     ZD6,
+    /// Bestandteil eines Produktpakets
     Z79,
+    /// Priorisierung erforderliches Produktpaket
     ZH0,
+    /// Daten der Netzlokation
     Z51,
+    /// Erwartete Daten der Netzlokation
     ZA9,
+    /// Im System vorhandene Daten der Netzlokation
     ZB0,
+    /// Informative Daten der Netzlokation
     ZD7,
+    /// Abrechnungsdaten der Netzlokation
     Z71,
+    /// Informative Abrechnungsdaten der Netzlokation
     ZD8,
+    /// Erwartete Abrechnungsdaten der Netzlokation
     ZH1,
+    /// Im System vorhandene Abrechnungsdaten der Netzlokation
     ZH2,
+    /// OBIS-Daten der Netzlokation
     Z57,
+    /// Erwartete OBIS-Daten der Netzlokation
     ZA7,
+    /// Im System vorhandene OBIS-Daten der Netzlokation
     ZA8,
+    /// Informative OBIS-Daten der Netzlokation
     ZD9,
+    /// Produkt-Daten der Netzlokation
     Z60,
+    /// Informative Produkt-Daten der Netzlokation
     ZE0,
+    /// Erwartete Produkt-Daten der NeLo
     ZG8,
+    /// Im System vorhandene Produkt-Daten der NeLo
     ZG9,
+    /// Daten der Marktlokation
     Z01,
+    /// Erwartete Daten der Marktlokation
     Z80,
+    /// Im System vorhandene Daten der Marktlokation
     Z81,
+    /// Informative Daten der Marktlokation
     Z98,
+    /// Daten der Marktlokation der beteiligten Marktrolle
     Z29,
+    /// Netznutzungsabrechnungsdaten der Marktlokation
     Z45,
+    /// Erwartete Netznutzungsabrechnungsdaten der Marktlokation
     Z82,
+    /// Im System vorhandene Netznutzungsabrechnungsdaten der Marktlokation
     Z83,
     Z84,
+    /// Erwartete Differenz-Netznutzungsabrechnungsdaten der Marktlokation
     Z96,
+    /// Im System vorhandene Differenz-Netznutzungsabrechnungsdaten der Marktlokation
     Z97,
+    /// Informative Netznutzungsabrechnungsdaten der Marktlokation
     ZE1,
+    /// Messstellenbetriebsabrechnungsdaten der Marktlokation
     Z76,
+    /// Erwartete Messstellenbetriebsabrechnungsdaten der Marktlokation
     ZC5,
+    /// Im System vorhandene Messstellenbetriebsabrechnungsdaten der Marktlokation
     ZC6,
+    /// Erforderliches Messprodukt der Marktlokation
     Z27,
+    /// Informative Erforderliches Messprodukt der Marktlokation
     ZE2,
+    /// OBIS-Daten der Marktlokation
     Z02,
+    /// Erwartete OBIS-Daten der Marktlokation
     ZA1,
+    /// Im System vorhandene OBIS-Daten der Marktlokation
     ZA2,
+    /// Informative OBIS-Daten der Marktlokation
     ZE3,
+    /// Produkt-Daten der Marktlokation
     Z59,
+    /// Erwartete Produkt-Daten der Marktlokation
     ZB5,
+    /// Im System vorhandene Produkt-Daten der Marktlokation
     ZB6,
+    /// Informative Produkt-Daten der Marktlokation
     ZE4,
+    /// Verbrauchsart und Nutzung der OBIS-Kennzahl an der Marktlokation
     Z44,
+    /// Erwartete Verbrauchsart und Nutzung der OBIS-Kennzahl der Marktlokation
     ZD1,
+    /// Im System vorhandene Verbrauchsart und Nutzung der OBIS-Kennzahl der Marktlokation
     ZD2,
+    /// Informative Verbrauchsart und Nutzung der OBIS-Kennzahl an der Marktlokation
     ZE5,
+    /// OBIS-Daten der Marktlokation der beteiligten Marktrolle
     Z30,
+    /// Produkt-Daten der Marktlokation des NB
     Z40,
+    /// Erwartete Produkt-Daten der Marktlokation des NB
     ZD3,
+    /// Im System vorhandene Produkt-Daten der Marktlokation des NB
     ZD4,
+    /// Informative Produkt-Daten der Marktlokation des NB
     ZE6,
+    /// Daten der Tranche
     Z15,
+    /// Erwartete Daten der Tranche
     Z94,
+    /// Im System vorhandene Daten der Tranche
     Z95,
+    /// Informative Daten der Tranche
     ZE7,
+    /// Daten der Tranche der beteiligten Marktrolle
     Z31,
+    /// Erforderliches Produkt der Tranche
     Z16,
+    /// Informative Erforderliches Produkt der Tranche
     ZE8,
+    /// OBIS-Daten der Tranche
     Z17,
+    /// Erwartete OBIS-Daten der Tranche
     Z99,
+    /// Im System vorhandene OBIS-Daten der Tranche
     ZA0,
+    /// Informative OBIS-Daten der Tranche
     ZE9,
+    /// OBIS-Daten der Tranche der beteiligten Marktrolle
     Z32,
+    /// Daten der Technischen Ressource
     Z52,
+    /// Informative Daten der Technischen Ressource
     ZF0,
+    /// Erwartete Daten der Technischen Ressource
     ZG4,
+    /// Im System vorhandene Daten der Technischen Ressource
     ZG5,
+    /// Daten der Steuerbaren Ressource
     Z62,
+    /// Erwartete Daten der Steuerbaren Ressource
     ZB1,
+    /// Im System vorhandene Daten der Steuerbaren Ressource
     ZB2,
+    /// Informative Daten der Steuerbaren Ressource
     ZF1,
+    /// Produkt-Daten der Steuerbaren Ressource
     Z61,
+    /// Erwartete Produkt-Daten der Steuerbaren Ressource
     ZB3,
+    /// Im System vorhandene Produkt-Daten der Steuerbaren Ressource
     ZB4,
+    /// Informative Produkt-Daten der Steuerbaren Ressource
     ZF2,
+    /// Daten der Messlokation
     Z18,
+    /// Erwartete Daten der Messlokation
     ZG6,
+    /// Im System vorhandene Daten der Messlokation
     ZG7,
+    /// Informative Daten der Messlokation
     ZF3,
+    /// Erforderliches Produkt der Messlokation
     Z19,
+    /// Informative Erforderliches Produkt der Messlokation
     ZF4,
+    /// Zähleinrichtungsdaten
     Z03,
+    /// Erwartete Zähleinrichtungsdaten
     ZA3,
+    /// Im System vorhandene Zähleinrichtungsdaten
     ZA4,
+    /// Informative Zähleinrichtungsdaten
     ZF5,
+    /// OBIS-Daten der Zähleinrichtung
     Z20,
+    /// Erwartete OBIS-Daten der Zähleinrichtung
     ZA5,
+    /// Im System vorhandene OBIS-Daten der Zähleinrichtung
     ZA6,
+    /// Informative OBIS-Daten der Zähleinrichtung
     ZF6,
+    /// Wandlerdaten
     Z04,
+    /// Erwartete Wandlerdaten
     ZB9,
+    /// Im System vorhandene Wandlerdaten
     ZC0,
+    /// Informative Wandlerdaten
     ZF7,
+    /// Kommunikationseinrichtungsdaten
     Z05,
+    /// Erwartete Kommunikationseinrichtungsdaten
     ZB7,
+    /// Im System vorhandene Kommunikationseinrichtungsdaten
     ZB8,
+    /// Informative Kommunikationseinrichtungsdaten
     ZF8,
+    /// Daten der technischen Steuereinrichtung
     Z06,
+    /// Erwartete Daten der technischen Steuereinrichtung
     ZC1,
+    /// Im System vorhandene Daten der technischen Steuereinrichtung
     ZC2,
+    /// Informative Daten der technischen Steuereinrichtung
     ZF9,
+    /// Smartmeter-Gateway
     Z13,
+    /// Erwartetes Smartmeter-Gateway
     ZC3,
+    /// Im System vorhandenes Smartmeter-Gateway
     ZC4,
+    /// Informative Smartmeter-Gateway
     ZG0,
+    /// Steuerbox
     Z14,
+    /// Erwartete Daten der Steuerbox
     ZH3,
+    /// Im System vorhandene Daten der Steuerbox
     ZH4,
+    /// Profildaten
     Z21,
+    /// Erwartete Profildaten
     Z85,
+    /// Im System vorhandene Profildaten
     Z86,
+    /// Informative Profildaten
     ZG1,
+    /// Profildaten der beteiligten Marktrolle
     Z33,
+    /// Profilschardaten
     Z08,
+    /// Erwartete Profilschardaten
     Z87,
+    /// Im System vorhandene Profilschardaten
     Z88,
+    /// Informative Profilschardaten
     ZG2,
+    /// Referenzprofildaten
     Z38,
+    /// Erwartete Referenzprofildaten
     Z89,
+    /// Im System vorhandene Referenzprofildaten
     Z90,
+    /// Informative Referenzprofildaten
     ZG3,
+    /// Produkt-Daten der Summenzeitreihe
     Z23,
+    /// Daten der Überführungszeitreihe
     Z24,
+    /// Produkt-Daten der Überführungszeitreihe
     Z25,
+    /// Datenstand des ÜNB
     Z47,
+    /// Datenstand des NB
     Z72,
+    /// Abgerechnete Daten der Bilanzkreissummenzeitreihe des ÜNB
     Z48,
+    /// Abgerechnete Daten der Bilanzierungsgebietssummenzeitreihe des ÜNB
     Z49,
+    /// Daten des Kunden des Lieferanten
     Z75,
+    /// Erwartete Daten des Kunden des Lieferanten
     Z92,
+    /// Im System vorhandene Daten des Kunden des Lieferanten
     Z93,
     /// Unrecognized code value
     Unknown(String),
@@ -1813,31 +2274,57 @@ impl std::str::FromStr for D1229Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D2005Qualifier {
+    /// Dokumenten-/Nachrichtendatum/-zeit
     _137,
+    /// Gültigkeit, Beginndatum
     _157,
+    /// Lieferdatum/-zeit, geplant
     _76,
+    /// Datum/Zeit der Übergabe, geplant
     _294,
+    /// Datum Vertragsbeginn
     _92,
+    /// Datum Vertragsende
     _93,
+    /// gegenüber Kunde bestätigtes Kündigungsdatum
     Z05,
+    /// gegenüber Lieferant bestätigtes Kündigungsdatum
     Z06,
+    /// Ende zum (nächstmöglichem Termin)
     _471,
+    /// Bilanzierungsbeginn
     _158,
+    /// Bilanzierungsende
     _159,
+    /// Annahmedatum eines Dokument
     _154,
+    /// Kündigungsfrist
     Z01,
+    /// Kündigungstermin
     Z10,
+    /// Lieferbeginndatum in Bearbeitung
     Z07,
+    /// Datum für nächste Bearbeitung
     Z08,
+    /// "Bilanzierungsbeginn" aus Daten der beteiligten Marktrolle
     Z15,
+    /// "Bilanzierungsende" aus Daten der beteiligten Marktrolle
     Z16,
+    /// Verwendung der Daten ab
     Z25,
+    /// Verwendung der Daten bis
     Z26,
+    /// Turnusablesung
     _752,
+    /// Termin der Netznutzungsabrechnung
     Z21,
+    /// Nächste Netznutzungsabrechnung
     Z09,
+    /// Netznutzungsabrechnungs- bzw. Einspeisevergütungsintervall des NB
     Z22,
+    /// Verarbeitung, Beginndatum/-zeit
     _163,
+    /// Verarbeitung, Endedatum/-zeit
     _164,
     /// Unrecognized code value
     Unknown(String),
@@ -1915,13 +2402,21 @@ impl std::str::FromStr for D2005Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D2379Qualifier {
+    /// CCYYMMDDHHMMZZZ
     _303,
+    /// CCYYMM
     _610,
+    /// CCYYMMDD
     _102,
+    /// ZZRB
     Z01,
+    /// MMDD
     _106,
+    /// MMWW-MMWW
     _104,
+    /// CCYY
     _602,
+    /// Monat
     _802,
     /// Unrecognized code value
     Unknown(String),
@@ -1963,49 +2458,93 @@ impl std::str::FromStr for D2379Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D3035Qualifier {
+    /// Dokumenten-/Nachrichtenaussteller bzw. -absender
     MS,
+    /// Nachrichtenempfänger
     MR,
+    /// Kunde des LF
     Z09,
+    /// Erwarteter Kunde des LF
     Z47,
+    /// Im System vorhandener Kunde des LF
     Z48,
+    /// Informativer Kunde des LF
     Z65,
+    /// Korrespondenzanschrift des Kunden des LF
     Z04,
+    /// Erwartete Korrespondenzanschrift des Kunden des LF
     Z49,
+    /// Im System vorhandene Korrespondenzanschrift des Kunden des LF
     Z50,
+    /// Informative Korrespondenzanschrift des Kunden des LF
     Z66,
+    /// Kunde des MSB
     Z07,
+    /// Erwarteter Kunde des MSB
     Z39,
+    /// Im System vorhandener Kunde des MSB
     Z40,
+    /// Korrespondenzanschrift des Kunden des MSB
     Z08,
+    /// Erwartete Korrespondenzanschrift des Kunden des MSB
     Z41,
+    /// Im System vorhandene Korrespondenzanschrift des Kunden des MSB
     Z42,
+    /// Kunde des NB
     Z25,
+    /// Erwarteter Kunde des Netzbetreibers
     Z51,
+    /// Im System vorhandener Kunde des Netzbetreibers
     Z52,
+    /// Informativer Kundenname des NB
     Z67,
+    /// Korrespondenzanschrift des Kunden des NB
     Z26,
+    /// Erwartete Korrespondenzanschrift des Kunden des Netzbetreibers
     Z53,
+    /// Im System vorhandene Korrespondenzanschrift des Kunden des Netzbetreibers
     Z54,
+    /// Informative Korrespondenzanschrift des Kunde des NB
     Z68,
+    /// Anschlussnehmer
     EO,
+    /// Erwarteter Anschlussnehmer
     Z55,
+    /// Im System vorhandener Anschlussnehmer
     Z56,
+    /// Informative Daten des Anschlussnehmers
     Z69,
+    /// Hausverwalter
     DDO,
+    /// Erwarteter Hausverwalter
     Z57,
+    /// Im System vorhandener Hausverwalter
     Z58,
+    /// Informative Daten des Hausverwalters
     Z70,
+    /// andere zugehörige Partei
     VY,
+    /// Lieferanschrift
     DP,
+    /// Erwartete Marktlokationsanschrift
     Z59,
+    /// Im System vorhandene Marktlokationsanschrift
     Z60,
+    /// Informative Marktlokationsanschrift
     Z63,
+    /// Messlokationsadresse
     Z03,
+    /// Erwartete Messlokationsadresse
     Z43,
+    /// Im System vorhandene Messlokationsadresse
     Z44,
+    /// Informative Messlokationsadresse
     Z64,
+    /// Name und Adresse für die Ablesekarte
     Z05,
+    /// Erwarteter Name und Adresse für die Ablesekarte
     Z45,
+    /// Im System vorhandener Name und Adresse für die Ablesekarte
     Z46,
     /// Unrecognized code value
     Unknown(String),
@@ -2119,7 +2658,9 @@ impl std::str::FromStr for D3035Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D3045Qualifier {
+    /// Struktur von Personennamen
     Z01,
+    /// Struktur der Firmenbezeichnung
     Z02,
     /// Unrecognized code value
     Unknown(String),
@@ -2149,9 +2690,13 @@ impl std::str::FromStr for D3045Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D3055Qualifier {
+    /// GS1
     _9,
+    /// DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)
     _293,
+    /// DE, DVGW Service & Consult GmbH
     _332,
+    /// Vergeben vom Händler (hier Netzbetreiber)
     _89,
     /// Unrecognized code value
     Unknown(String),
@@ -2185,6 +2730,7 @@ impl std::str::FromStr for D3055Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D3139Qualifier {
+    /// Informationskontakt
     IC,
     /// Unrecognized code value
     Unknown(String),
@@ -2212,10 +2758,15 @@ impl std::str::FromStr for D3139Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D3155Qualifier {
+    /// Elektronische Post
     EM,
+    /// Telefax
     FX,
+    /// Telefon
     TE,
+    /// weiteres Telefon
     AJ,
+    /// Handy
     AL,
     /// Unrecognized code value
     Unknown(String),
@@ -2251,13 +2802,21 @@ impl std::str::FromStr for D3155Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D3227Qualifier {
+    /// MaBiS-Zählpunkt
     Z15,
+    /// Netzlokation
     Z18,
+    /// Marktlokation
     Z16,
+    /// Ruhende Marktlokation
     Z22,
+    /// Technische Ressource
     Z20,
+    /// Steuerbare Ressource
     Z19,
+    /// Tranche
     Z21,
+    /// Messlokation
     Z17,
     /// Unrecognized code value
     Unknown(String),
@@ -2331,9 +2890,13 @@ impl std::str::FromStr for D4051Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D4347Qualifier {
+    /// Produktidentifikation
     _5,
+    /// Gruppenartikel-ID / Artikel-ID
     Z02,
+    /// Es wird keine Messstellenbetriebsabrechnung über diese Marktlokation vorgenommen
     Z03,
+    /// Berechnung Tagesmitteltemperatur
     Z01,
     /// Unrecognized code value
     Unknown(String),
@@ -2367,14 +2930,23 @@ impl std::str::FromStr for D4347Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D4451Qualifier {
+    /// Zusätzliche Informationen (für allgemeine Hinweise)
     ACB,
+    /// Profilbeschreibung
     Z01,
+    /// Zieladresse URI
     Z17,
+    /// IP-Adresse des Absenders
     Z27,
+    /// IP-Range des Absenders
     Z28,
+    /// Aussteller (Issuer)
     Z24,
+    /// Zertifikatsnutzer (Subject)
     Z23,
+    /// IP-Adresse für das CLS-Device
     Z18,
+    /// Internetseite
     Z13,
     /// Unrecognized code value
     Unknown(String),
@@ -2418,32 +2990,59 @@ impl std::str::FromStr for D4451Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D6063Qualifier {
+    /// Leistung der Marktlokation
     Z10,
+    /// Veranschlagte Jahresmenge Gesamt/Jahresverbrauchsprognose für spezifische Arbeit für tagesparameterabhängige Marktlokation
     _265,
+    /// Angepasste elektrische Arbeit nach Anhang D der VDN-Richtlinie "Lastprofile für unterbrechbare Verbrauchseinrichtungen"
     Z08,
+    /// Veranschlagte Jahresmenge Gesamt
     _31,
+    /// Tatsächlich bilanzierte Energiemenge
     Z07,
+    /// Tatsächlich bilanzierte Ausfallarbeit
     Z32,
+    /// Vorjahresverbrauch
     Z09,
+    /// Anzahl der abzurechenden Positionen der Gruppenartikel-ID / Artikel-ID
     Z38,
+    /// Gemeinderabatt
     Z16,
+    /// Zuschlag
     Z34,
+    /// Abschlag
     Z35,
+    /// Kein Zu-/Abschlag
     Z37,
+    /// Singulär genutzte Betriebsmittel
     Z33,
+    /// kein Abschlag
     Z46,
+    /// Aufteilungsmenge
     _11,
+    /// Nennleistung (Aufnahme)
     Z43,
+    /// Nennleistung (Abgabe)
     Z44,
+    /// Speicherkapazität
     Z42,
+    /// Anteil A
     Z11,
+    /// Anteil B
     Z12,
+    /// Anteil C
     Z13,
+    /// Anteil D
     Z14,
+    /// Bezugstemperatur
     Z15,
+    /// Energiemenge summiert (Summenwert, Bilanzsumme)
     _79,
+    /// Korrekturfaktor
     Z17,
+    /// Energiemenge: DZÜ-Anteil
     Z36,
+    /// Zu bilanzierende Energiemenge
     Z45,
     /// Unrecognized code value
     Unknown(String),
@@ -2523,10 +3122,15 @@ impl std::str::FromStr for D6063Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D6411Qualifier {
+    /// kWh/K (Kilowatt-Stunde/Kelvin)
     Z16,
+    /// Kilowattstunde
     KWH,
+    /// Kilowatt
     KWT,
+    /// Stück
     H87,
+    /// Prozent
     P1,
     /// Unrecognized code value
     Unknown(String),
@@ -2566,6 +3170,7 @@ pub enum D7037Qualifier {
     ZF2,
     /// Der Code ZF3 wird verwendet wenn ein Steuerkanal der Netzlokation zugeordnet ist und somit die Netzlokation gesteuert werden kann.
     ZF3,
+    /// Zugeordneter Marktpartner
     ZB3,
     /// Der NB rechnet die Blindarbeit an der genannten Netzlokation ab
     ZD9,
@@ -2575,24 +3180,38 @@ pub enum D7037Qualifier {
     ZE1,
     /// Der LF teilt hiermit keine Bereitschaft zur Zahlung der Blindarbeit mit.
     ZE2,
+    /// NB
     ZA8,
+    /// LF
     ZA7,
+    /// Kein Produkt zugeordnet
     ZF6,
     /// Marktlokation liefert Energie ins Netz. --> Erzeugende Marktlokation
     Z06,
     /// Marktlokation entnimmt Energie aus dem Netz. --> Verbrauchende Marktlokation
     Z07,
+    /// Verbrauchsaufteilung (in %) für temperaturabhängige Marktlokation
     E17,
+    /// Summenzeitreihentyp
     Z21,
+    /// Spannungsebene der Marktlokation
     E03,
+    /// Messtechnische Einordnung der Marktlokation
     Z83,
+    /// ÜNB
     ZA9,
+    /// Prognose auf Basis von Werten
     ZC0,
     ZA6,
+    /// Art der erzeugenden Marktlokation
     Z34,
+    /// Haushaltskunde gem. EnWG
     Z15,
+    /// Kein Haushaltskunde gem. EnWG
     Z18,
+    /// Netznutzung
     Z88,
+    /// Empfänger der Vergütung
     Z89,
     /// Veräußerungsform nach § 20 Abs. 1 Nr. 3 EEG 2014 („Einspeisevergütung nach § 37“) bzw. § 21 Abs. 2 EEG 2017 oder § 20 Abs. 1 Nr. 4 EEG 2014 („Einspeisevergütung nach § 38“) bzw. § 21b Abs. 1 Nr. 2 EEG 2017 (Ausfallvergütung)
     Z90,
@@ -2600,6 +3219,7 @@ pub enum D7037Qualifier {
     Z91,
     /// Veräußerungsform ohne gesetzliche Vergütung (z.B. nach § 20 Abs. 1 Nr. 2 EEG 2014 („Sonstige Direktvermarktung") bzw. § 21b Abs. 1 Nr. 3 EEG 2017 ...)
     Z92,
+    /// KWKG-Vergütung
     Z94,
     /// Der NB bestätigt mit der Anmeldung einer erzeugenden Marktlokation zur Direktvermarktung, dass die Anlage nicht mit einer Fernsteuerung ausgestattet ist und nicht fernsteuerbar ist. Die Voraussetzung zur Zahlung der Managementprämie für fernsteuerbare Anlagen ist nicht gegeben.
     Z96,
@@ -2607,72 +3227,139 @@ pub enum D7037Qualifier {
     Z97,
     /// Der NB bestätigt mit der Anmeldung einer Marktlokation zur Direktvermarktung, dass die Marktlokation mit einer Fernsteuerung ausgestattet ist und der LF diese auch fernsteuern kann. Die Voraussetzung zur Zahlung der Managementprämie für fernsteuerbare Marktlokationen ist gegeben.
     Z98,
+    /// Ersatzversorgung
     ZC9,
+    /// Grundversorgung
     ZD0,
+    /// Ersatzbelieferung
     ZE3,
+    /// Marktlokation gesperrt
     ZB9,
+    /// Marktlokation im Regelbetrieb
     ZD3,
+    /// Modell 1 "Bilanzierung an der Marktlokation"
     ZE9,
+    /// Modell 2 "Bilanzierung im Bilanzierungsgebiet (BG) des LPB"
     ZF0,
+    /// Tag
     ZD8,
+    /// Wertegranularität
     ZE4,
+    /// Prozentual
     ZD1,
+    /// Aufteilungsfaktor auf Basis von Referenzenträger/installierter Leistung
     ZD2,
+    /// Spannungsebene der Messlokation
     E04,
+    /// ID der prozessual behandelten Messlokation
     Z82,
+    /// ID der Messlokation im Lokationsbündel
     Z81,
+    /// Messlokation gesperrt und darf nicht entsperrt werden
     ZC1,
+    /// Messlokation gesperrt und darf entsperrt werden
     ZC2,
+    /// Messlokation im Regelbetrieb
     ZC3,
+    /// Zählertyp
     E13,
+    /// Befestigungsart Zähleinrichtung
     Z28,
+    /// Messwerterfassung an der Zähleinrichtung
     E12,
+    /// Vor- und Nachkommastellen des Zählwerkes
     Z33,
+    /// Lokale Kennzeichnung zu Kontrollzwecken
     Z63,
+    /// Nicht-Schwachlast fähig
     Z59,
+    /// Schwachlast fähig
     Z60,
+    /// Wandler
     Z25,
+    /// Kommunikationseinrichtung
     Z26,
+    /// Technische Steuereinrichtung
     Z27,
+    /// Smartmeter-Gateway
     Z75,
+    /// Steuerbox
     Z76,
+    /// Gewerbe allgemein
     Z38,
+    /// Gewerbe werktags 8 - 18 Uhr
     Z39,
+    /// Gewerbe mit starkem bis überwiegendem Verbrauch in den Abendstunden
     Z40,
+    /// Gewerbe durchlaufend
     Z41,
+    /// Gewerbe Laden/Friseur
     Z42,
+    /// Gewerbe Bäckerei mit Backstube
     Z43,
+    /// Gewerbe Wochenendbetrieb
     Z44,
+    /// Landwirtschaftsbetriebe allgemein
     Z45,
+    /// Landwirtschaftsbetriebe mit Milchwirtschaft/Nebenerwerbs-Tierzucht
     Z46,
+    /// Landwirtschaft ohne Milchvieh
     Z47,
+    /// Haushalt
     Z48,
+    /// Bandlast
     Z49,
+    /// unterbrechbare Verbrauchseinrichtung
     Z50,
+    /// Heizwärmespeicher
     Z51,
+    /// Straßenbeleuchtung
     Z52,
+    /// Photovoltaik-Marktlokation
     Z53,
+    /// Blockheizkraftwerk
     Z54,
+    /// sonstige verbrauchende Marktlokation
     Z55,
+    /// sonstige erzeugende Marktlokation
     Z56,
+    /// E-Mobilität Ladepunkt im öffentlichen Bereich
     ZC6,
+    /// E-Mobilität Ladepunkt eines Haushalts
     ZC7,
+    /// E-Mobilität Ladepunkt eines Gewerbes
     ZC8,
+    /// synthetisches Verfahren
     E01,
+    /// analytisches Verfahren
     Z10,
+    /// 1.000.000 kWh/a
     Z35,
+    /// 1.000.000 kW
     Z37,
+    /// Profilschar
     Z12,
+    /// 300 kWh/K
     Z36,
+    /// 0
     Z61,
+    /// 1
     Z62,
+    /// Bezeichnung der Summenzeitreihe
     ZB4,
+    /// BIKO
     ZB7,
+    /// Bezugszeitraum der Summenzeitreihe
     ZB6,
+    /// Spannungsebene der Summenzeitreihe
     ZB5,
+    /// Abrechnungsdaten
     Z01,
+    /// Abgerechnete Daten
     Z03,
+    /// Abrechnungsdaten Korrektur-BKA
     Z04,
+    /// Abgerechnete Daten Korrektur-BKA
     ZA5,
     /// Die Werte, die mit der OBIS Kennzahl des ZP der NGZ übermittelt werden, werden den Werten der selben OBIS Kennzahl der NZR zugerechnet
     ZE7,
@@ -2914,54 +3601,103 @@ impl std::str::FromStr for D7037Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D7059Qualifier {
+    /// Bilanzkreis
     Z19,
+    /// Produkteigenschaft
     Z66,
+    /// Umsetzungsgradvorgabe des Produktpakets
     Z65,
+    /// Steuerkanal
     Z49,
+    /// Abrechnung der Blindarbeit
     Z45,
+    /// Zahlung der Blindarbeit durch Lieferanten
     Z46,
+    /// Produkt
     _11,
+    /// Code der Leistungskurvendefinition
     Z53,
+    /// Lieferrichtung
     Z30,
+    /// Regelzone
     Z18,
+    /// Bilanzierungsgebiet
     Z20,
+    /// Struktur
     _15,
+    /// Verantwortlicher
     _6,
+    /// Bereits ausgetauschte Aggregationsverantwortung in MaBiS
     Z31,
+    /// Gesetzliche Kategorie
     Z22,
+    /// Land der Förderung
     Z23,
+    /// Status der Fernsteuerbarkeit
     Z24,
+    /// Versorgungsart der Marktlokation
     Z36,
+    /// Betriebszustand der Marktlokation
     Z42,
+    /// Abwicklungsmodell
     ZA2,
+    /// Paket-ID
     Z67,
+    /// Berechnungspreis
     Z44,
+    /// Code der Zählzeitdefinition
     Z39,
+    /// Code des Zählzeitregisters
     Z38,
+    /// Keine Zählzeit für Messprodukt erforderlich
     Z41,
+    /// Stromverbrauchsart
     Z17,
+    /// Basis zur Bildung der Tranchengröße
     Z37,
+    /// Stromerzeugungsart
     Z50,
+    /// Speicher
     Z56,
+    /// Information zu weiteren technischen Einrichtungen
     Z63,
+    /// Code der Schaltzeitdefinition
     Z52,
+    /// Verwendungsumfang
     Z01,
+    /// Betriebszustand der Messlokation
     Z32,
+    /// Beschreibung erforderlicher Wert
     Z35,
+    /// Schwachlastfähigkeit
     Z10,
+    /// Profiltyp
     Z07,
+    /// Standardlastprofil
     Z02,
+    /// Standardeinspeiseprofil
     Z04,
+    /// Normierungsfaktor
     Z06,
+    /// tagesparameterabhängiges Lastprofil
     Z03,
+    /// tagesparameterabhängiges Einspeiseprofil
     Z05,
+    /// Begrenzungskonstante
     Z11,
+    /// Messstelle des Tagesparameters (derzeit ist nur die Temperatur ein erlaubter Tagesparameter)
     Z99,
+    /// Klimazone des Tagesparameters (derzeit ist Tagesparameter)
     ZA0,
+    /// Datenstatus zur Zeitreihe
     Z25,
+    /// Zuordnungsregel des ZP der NGZ zur NZR
     Z48,
+    /// Bilanzkreis "an"
     Z28,
+    /// Bilanzkreis "von"
     Z29,
+    /// Grundlage zur Verringerung der Umlagen nach EnFG
     Z61,
     /// Unrecognized code value
     Unknown(String),
@@ -3085,8 +3821,11 @@ impl std::str::FromStr for D7059Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D7110Qualifier {
+    /// Grundzuständiger Messstellenbetreiber
     Z39,
+    /// Wettbewerblicher Messstellenbetreiber
     Z40,
+    /// Auffangmessstellenbetreiber
     Z41,
     /// Der NB rechnet die Blindarbeit gegenüber dem Anschlussnutzer ab.
     Z36,
@@ -3094,20 +3833,35 @@ pub enum D7110Qualifier {
     Z37,
     /// Der NB hat noch nicht festgelegt gegenüber wem er die Blindarbeit abrechnet.
     Z38,
+    /// Auf vertraglicher Grundlage gegenüber Anschlussnutzer / Anschlussnehmer
     Z19,
+    /// In der Ausübung der Weiterverpflichtung durch den gMSB
     Z20,
+    /// Direkter Vertrag zwischen Kunden und NB
     Z08,
+    /// Vertrag zwischen Lieferanten und NB
     Z09,
+    /// Kunde
     Z10,
+    /// Lieferant
     Z11,
+    /// In der Marktkommunikation ausgetauschte Daten
     Z12,
+    /// Abweichend vertraglich mit Anschlussnutzer vereinbarte Grundlage
     Z13,
+    /// vorhanden
     Z06,
+    /// nicht vorhanden
     Z07,
+    /// EDL40
     Z01,
+    /// EDL21
     Z02,
+    /// sonstiger EHZ
     Z03,
+    /// Standard
     Z04,
+    /// MeDa-Zähler
     Z05,
     /// Unrecognized code value
     Unknown(String),
@@ -3175,28 +3929,50 @@ impl std::str::FromStr for D7110Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D7111Qualifier {
+    /// Code der Produkteigenschaft
     ZH9,
+    /// Wertedetails zum Produkt
     ZV4,
+    /// 1. Priorität
     Z75,
+    /// 2. Priorität
     Z76,
+    /// 3. Priorität
     Z77,
+    /// 4. Priorität
     Z78,
+    /// 5. Priorität
     Z79,
+    /// MSB
     Z91,
+    /// Zahler der Blindarbeit
     ZE4,
+    /// Blindarbeitabrechnung / Betriebsführung
     ZD1,
     Z47,
+    /// NB
     Z88,
+    /// LF
     Z89,
+    /// ÜNB
     Z90,
+    /// Verbrauchsaufteilung in %
     Z22,
+    /// Beispielcode
     XYZ,
+    /// Höchstspannung
     E03,
+    /// Hochspannung
     E04,
+    /// Mittelspannung
     E05,
+    /// Niederspannung
     E06,
+    /// Hös/HS Umspannung
     E07,
+    /// HS/MS Umspannung
     E08,
+    /// MS/NS Umspannung
     E09,
     /// Anzuwenden wenn alle Messlokationen, die zur Erfassung der Energiewerte der Marktlokation erforderlich sind mit iMS ausgestattet sind.
     Z52,
@@ -3205,32 +3981,51 @@ pub enum D7111Qualifier {
     /// Anzuwenden wenn keine Messlokation, zur Erfassung der Energiewerte der Marktlokation vorhanden ist (Pauschale-Marktlokation).
     Z68,
     E02,
+    /// TLP/TEP
     E14,
+    /// TEP mit Referenzmessung
     Z36,
+    /// EEG-Marktlokation ohne DV-Pflicht
     Z33,
+    /// KWKG-Marktlokation ohne DV-Pflicht
     Z34,
+    /// sonstige Marktlokation
     Z35,
+    /// EEG-Marktlokation mit DV-Pflicht
     Z37,
+    /// KWKG-Marktlokation mit DV-Pflicht
     Z46,
+    /// Netznutzungsvertrag
     Z74,
+    /// Zahlung der Netznutzung
     Z73,
+    /// Grundlage für Lieferscheinprüfung
     ZA7,
     Z84,
     Z85,
+    /// Mehrmindermengenabrechnung
     Z86,
     Z92,
+    /// Es liegt kein Verwendungszweck vor
     ZE1,
     ZB5,
+    /// Jährlich
     ZD9,
+    /// Halbjährlich
     ZE8,
+    /// Quartalsweise
     ZE9,
+    /// Monatlich
     ZB7,
     /// Hierunter ist Strom zu verstehen, der ausschließlich zum Betrieb von Endverbrauchsgeräten (z.B. Radio, Fernseher, Kühlschrank, Beleuchtung...) genutzt wird.
     Z64,
     /// Hierunter ist Strom zu verstehen, der zur Wärmebedarfsdeckung (z.B. Standspeicherheizung, Fußbodenspeicherheizungen, Wärmepumpe....) eingesetzt wird.
     Z65,
+    /// E-Mobilität
     ZE5,
+    /// Straßenbeleuchtung
     ZA8,
+    /// Steuerung Wärmeabgabe
     ZB3,
     /// Netzbetreiber kann die Verbrauchseinrichtung einer Marktlokation unterbrechen. Es kommen gesonderte Netzentgelte für die Marktlokation zum Tragen.
     Z62,
@@ -3242,8 +4037,11 @@ pub enum D7111Qualifier {
     Z57,
     /// Hierunter fallen Heizungsanlagen, die direkt und damit zeitgleich elektrische Energie in Wärme umwandeln (z.B. Konvektionsheizung, Infrarotheizung, Flächenheizung).
     Z61,
+    /// Wärmepumpe (Wärme und Kälte)
     ZV5,
+    /// Wärmepumpe (Kälte)
     ZV6,
+    /// Wärmepumpe (Wärme)
     ZV7,
     /// An der Marktlokation ist eine nicht öffentlliche Lademöglichkeit vorhanden
     ZE6,
@@ -3251,88 +4049,167 @@ pub enum D7111Qualifier {
     Z87,
     /// Es handelt sich um mehr als eine öffentliche Ladesäule an der Marktlokation
     ZE7,
+    /// Solar
     ZF5,
+    /// Wind
     ZF6,
+    /// Gas
     ZG0,
+    /// Wasser
     ZG1,
+    /// Sonstige Erzeugungsart
     ZG5,
+    /// Wasserstoffspeicher
     ZF7,
+    /// Pumpspeicher
     ZF8,
+    /// Batteriespeicher
     ZF9,
+    /// Sonstige Speicherart
     ZG6,
+    /// Technischen Ressource fällt unter § 14a EnWG
     ZG8,
+    /// Technischen Ressource fällt nicht unter § 14a EnWG
     ZG9,
+    /// Inbetriebsetzung der TR nach 2023
     ZH0,
+    /// Inbetriebsetzung der TR vor 2024
     ZH1,
+    /// Wechselmöglichkeit in das § 14a EnWG-Modell gem. Festlegung BK6-22-300 einmalig noch möglich
     ZH2,
+    /// Wechselmöglichkeit in das § 14a EnWG-Modell gem. Festlegung BK6-22-300 nicht möglich
     ZH3,
+    /// Befristet im alten § 14a EnWG-Modell bis 2028 ohne Wechselmöglichkeit
     ZH4,
+    /// Wechsel in das § 14a EnWG-Modell gem. Festlegung BK6-22-300 wurde durchgeführt
     ZH5,
     /// Dieser Code ist auszuwählen, wenn neben den genannten Technischen Ressourcen in der verbrauchenden Marktlokation weitere technische Einrichtungen (z. B. Kraft/ Licht) vorhanden sind
     ZH7,
     /// Dieser Code ist auszuwählen, wenn neben den genannten Technischen Ressourcen in der verbrauchenden Marktlokation keine weitere technische Einrichtung vorhanden ist.
     ZH8,
+    /// Leistungsbeschreibung des Steuerkanals
     ZF2,
+    /// gMSB
     ZF0,
+    /// MSBA
     ZB4,
+    /// Zweite Messung für Vergleichsmessung erforderlich
     ZC9,
+    /// analoger Haushaltszähler (Drehstrom)
     AHZ,
+    /// analoger Wechselstromzähler
     WSZ,
+    /// Lastgangzähler
     LAZ,
+    /// Maximumzähler
     MAZ,
+    /// moderne Messeinrichtung nach MsbG
     MME,
+    /// elektronischer Haushaltszähler
     EHZ,
+    /// Individuelle Abstimmung (Sonderausstattung)
     IVA,
+    /// Gerätenummer
     Z30,
+    /// Eintarif
     ETZ,
+    /// Zweitarif
     ZTZ,
+    /// Mehrtarif
     NTZ,
+    /// Einrichtungszähler
     ERZ,
+    /// Zweirichtungszähler
     ZRZ,
+    /// Fernschaltung der Zähleinrichtung
     Z58,
+    /// Stecktechnik (Befestigungs- und Kontaktierungseinrichtung)
     BKE,
+    /// 3-Dreipunktaufhängung
     DPA,
+    /// Hutschiene
     HUT,
+    /// fernauslesbare Zähler
     AMR,
+    /// manuell ausgelesene Zähler
     MMR,
+    /// Messwandlersatz Strom
     MIW,
+    /// Kombimesswandlersatz (Strom und Spannung)
     MPW,
+    /// Blockstromwandler
     MBW,
+    /// Messwandlersatz Spannung
     MUW,
+    /// GSM/GPRS/UMTS-Kom.-Einr.
     GSM,
+    /// Ethernet-Kom.-Einricht. LAN/WLAN
     ETH,
+    /// PLC-Kom.-Einrichtung
     PLC,
+    /// Festnetz-Kom.-Einricht. TAE
     PST,
+    /// DSL-Kom.Einr.
     DSL,
+    /// LTE-Kom.-Einr.
     LTE,
+    /// Rundsteuerempfänger
     RSU,
+    /// Tarifschaltuhr
     TSU,
+    /// BG-SZR (Kategorie B)
     Z95,
+    /// BG-SZR (Kategorie C)
     Z96,
+    /// BK-SZR (Kategorie A)
     Z97,
+    /// BK-SZR (Kategorie B) auf Ebene Regelzone
     Z98,
+    /// BK-SZR (Kategorie B) auf Ebene Bilanzierungsgebiet
     Z99,
+    /// BK-SZR (Kategorie C)
     ZA0,
+    /// LF-SZR (Kategorie A)
     ZA1,
+    /// LF-SZR (Kategorie B) auf Ebene Regelzone
     ZA2,
+    /// LF-SZR (Kategorie B) auf Ebene Bilanzierungsgebiet
     ZA3,
+    /// Deltazeitreihenübertrag (DZÜ)
     ZA4,
+    /// Netzzeitreihe (NZR)
     ZA5,
+    /// Abrechnungssummenzeitreihe
     ZA6,
+    /// Netzgangzeitreihe (NGZ)
     ZF1,
+    /// BK-SZR (eMob, täglich)
     ZG7,
+    /// Monat
     Z94,
+    /// Tag
     Z93,
+    /// Lokation im Regelbetrieb
     ZG3,
+    /// Lokation außerhalb des Regelbetriebs (Stilllegung)
     ZG4,
+    /// § 21 EnFG Stromspeicher und Verlustenergie
     ZU5,
+    /// § 22 EnFG elektrisch angetriebene Wärmepumpen
     ZU6,
+    /// § 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen
     ZU7,
+    /// § 24 EnFG Herstellung von Grünen Wasserstoff
     ZU8,
+    /// §§ 30 - 35 EnFG stromkostenintensive Unternehmen
     ZU9,
+    /// § 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen
     ZV0,
+    /// § 37 EnFG Schienenbahnen
     ZV1,
+    /// § 38 EnFG elektrische betriebene Bussen im Linienverkehr
     ZV2,
+    /// § 39 EnFG Landstromanlagen
     ZV3,
     /// Unrecognized code value
     Unknown(String),
@@ -3646,6 +4523,7 @@ impl std::str::FromStr for D7111Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D7140Qualifier {
+    /// Ausfallarbeit
     AUA,
     /// Unrecognized code value
     Unknown(String),
@@ -3673,14 +4551,23 @@ impl std::str::FromStr for D7140Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D7143Qualifier {
+    /// Produkt
     Z11,
+    /// Artikel-ID
     Z09,
+    /// Gruppenartikel-ID
     Z10,
+    /// OBIS-Kennzahl
     SRW,
+    /// Konfigurationsprodukt
     Z12,
+    /// Medium
     Z08,
+    /// 24h-Mittelwert
     Z03,
+    /// vom Anbieter zur Verfügung gestellte, äquivalente Tagesmitteltemperatur
     Z04,
+    /// Äquivalente Tagesmitteltemperatur
     Z05,
     /// Unrecognized code value
     Unknown(String),
@@ -3724,6 +4611,7 @@ impl std::str::FromStr for D7143Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D7431Qualifier {
+    /// Vertrag
     _9,
     /// Unrecognized code value
     Unknown(String),
@@ -3751,7 +4639,9 @@ impl std::str::FromStr for D7431Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D7433Qualifier {
+    /// Vertrag zwischen AN und MSB
     Z04,
+    /// Vertragsbeendigung liegt vor
     Z06,
     /// Unrecognized code value
     Unknown(String),
@@ -3781,7 +4671,9 @@ impl std::str::FromStr for D7433Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D7495Qualifier {
+    /// Liste
     Z01,
+    /// Transaktion
     _24,
     /// Unrecognized code value
     Unknown(String),
@@ -3819,8 +4711,11 @@ pub enum D9013Qualifier {
     E03,
     /// Dient dem Rückruf von abgegebenen Meldungen
     E05,
+    /// Ersatzbelieferung
     E06,
+    /// Kündigung Lieferantenrahmenvertrag
     Z02,
+    /// Zusätzlicher Datensatz
     Z15,
     /// Der NB informiert den LFN darüber, dass zum gewünschten Anmeldedatum noch ein anderer LFA der Marktlokation zugeordnet ist und deshalb eine Abmeldeanfrage an den LFA stellt.
     Z26,
@@ -3834,51 +4729,89 @@ pub enum D9013Qualifier {
     Z39,
     /// Verstreicht die gesetzliche 3 Monatsfrist der Ersatzversorgung ohne Aufnahme der Folgelieferung durch einen Lieferanten, kann der zuständigen LF die Marktlokation mit diesem Transaktionsgrund abmelden.
     Z41,
+    /// EoG aus Bilanzkreisschließung
     ZC6,
+    /// EoG aufgrund Erlöschen der Zuordnungsermächtigung
     ZC7,
+    /// Beendigung der Zuordnung
     ZC8,
     /// ZD9 wird angewendet in der Informationsmeldung des NB an den LF innerhalb der „GPKE“. Diese Meldung wird verwendet, wenn der EEG- bzw. KWK-G-Anlagenbetreiber über das entsprechende Formular 100% seiner Anlage wieder in die gesetzliche Förderung überführt hat.
     ZD9,
+    /// Aufhebung einer zukünftigen Zuordnung aufgrund §38 EEG 2014 bzw. § 21b Abs. 1 Nr. 2 EEG 2017
     ZG5,
+    /// Beendigung der Zuordnung aufgrund EEG 2014 §38
     ZG6,
+    /// Aufhebung einer zukünftigen Zuordnung wegen Auszug des Kunden
     ZG9,
+    /// Aufhebung einer zukünftigen Zuordnung wegen Anmeldung eines anderen Lieferanten zu einem früheren Termin
     ZH0,
+    /// Aufhebung einer zukünftigen Zuordnung wegen Stilllegung
     ZH1,
     /// Vertrag zwischen Absender des Geschäftsvorfalls und Kunde wurde aufgehoben, wird z. B. verwendet wenn der Kunde den Vertrag widerruft.
     ZH2,
+    /// Stammdatenänderung
     ZE3,
+    /// Übernahme aufgrund nicht erfolgtem iMS-Einbau
     ZJ4,
+    /// Stammdaten
     ZP3,
+    /// Werte
     ZP4,
+    /// Abmeldung wg. fehl. Zuordnungsermächtigung
     ZQ7,
+    /// Kündigung aufgrund Vertrag mit Anschlussnehmer
     ZR9,
+    /// Abmeldung wegen fehl. Zuordnungsermächtigung aufgrund Änderung ZRT
     ZT0,
     /// Anzuwenden wenn Ende wegen Kündigung durch bislang beliefernden LF (LFA) entsteht
     ZT4,
     /// Anzuwenden wenn Ende wegen - Kündigung durch den Kunden, - Kündigung durch LFN, - Keine Kündigung des Vertrages notwendig da Vertrag nur auf bestimmte Zeit gelaufen ist und von alleine ausläuft und - Kündigung durch Dritten z.B. unabhängige Berater entsteht.
     ZT5,
+    /// EoG wegen Kündigung durch LF
     ZT6,
+    /// EoG wegen Kündigung durch Kunde/LFN
     ZT7,
+    /// Änderung von MSB Abrechnungsdaten
     ZU1,
+    /// Abrechnungsdaten BK-Abrechnung erzeugender Malo
     ZX2,
+    /// Abrechnungsdaten BK-Abrechnung verbrauchender MaLo
     ZX3,
+    /// Abrechnungsdaten NNA
     ZX4,
+    /// Änderung Blindabrechnungsdaten der NeLo
     ZX5,
+    /// Änderung Daten der MaLo
     ZX6,
+    /// Änderung Daten der MeLo
     ZX7,
+    /// Änderung Daten der NeLo
     ZX8,
+    /// Änderung Daten der SR
     ZX9,
+    /// Änderung Daten der TR
     ZY0,
+    /// Änderung Daten der Tranche
     ZY1,
+    /// Änderung der Lokationsbündelstruktur
     ZY2,
+    /// Antwort auf GDA an MSB
     ZY4,
+    /// Antwort auf GDA (Strom an Gas)
     ZY5,
+    /// Antwort auf GDA erzeugende MaLo
     ZY6,
+    /// Antwort auf GDA verbrauchende MaLo
     ZY7,
+    /// Daten auf individuelle Bestellung
     ZY9,
+    /// Stammdaten BK-Treue
     ZAM,
+    /// Korrektur Abrechnungsdaten BK-Abrechnung verbrauchender MaLo
     ZAN,
+    /// Korrektur Abrechnungsdaten BK-Abrechnung erzeugender MaLo
     ZAO,
+    /// Änderung Paket-ID der MaLo
     ZZA,
     /// Der LFN wird einer Marktlokation vollständig zugeordnet (vollständige (100%ige) Zuordnung). Dieser Geschäftsvorfall ist auch für die Änderung von einer tranchierten Marktlokation in eine nicht tranchierte Marktlokation anzuwenden.
     ZW0,
@@ -3886,15 +4819,25 @@ pub enum D9013Qualifier {
     ZW1,
     /// Der LFN wird einer neu zu bildenden Tranche zugeordnet (anteiliger Zuordnungsvorgang unter Bildung neuer Tranchen
     ZW2,
+    /// Erzeugende Marktlokation
     ZW3,
+    /// Verbrauchende Marktlokation
     ZW4,
+    /// Tranche
     ZW5,
+    /// Pauschale Marktlokation
     ZW6,
+    /// Gemessene Marktlokation
     ZW7,
+    /// Fall 1
     ZW8,
+    /// Fall 2
     ZW9,
+    /// Fall 3
     ZX0,
+    /// Fall 4
     ZX1,
+    /// ruhende Marktlokation
     ZAP,
     /// Unrecognized code value
     Unknown(String),
@@ -4056,8 +4999,11 @@ impl std::str::FromStr for D9013Qualifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum D9015Qualifier {
+    /// Status der Antwort
     E01,
+    /// Transaktionsgrund
     _7,
+    /// Status der Antwort des dritten Marktbeteiligten
     Z35,
     /// Unrecognized code value
     Unknown(String),

@@ -7,7 +7,37 @@
         "segment": "RFF"
       },
       "segments": [
-        "RFF"
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Nummer der Anfrage",
+                      "value": "AAV"
+                    }
+                  ],
+                  "id": "1153",
+                  "name": "Referenz, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "1154",
+                  "name": "Referenz, Identifikation",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C506",
+              "index": 0,
+              "name": "Referenz"
+            }
+          ],
+          "id": "RFF",
+          "name": "Die Verwendung dieses Segments wird im jeweiligen Anwendungshandbuch beschrieben."
+        }
       ],
       "source_group": "SG1"
     },
@@ -22,8 +52,90 @@
             ]
           },
           "segments": [
-            "COM",
-            "CTA"
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "id": "3148",
+                      "name": "Nummer / Adresse",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "Elektronische Post",
+                          "value": "EM"
+                        },
+                        {
+                          "name": "Telefax",
+                          "value": "FX"
+                        },
+                        {
+                          "name": "Telefon",
+                          "value": "TE"
+                        },
+                        {
+                          "name": "weiteres Telefon",
+                          "value": "AJ"
+                        },
+                        {
+                          "name": "Handy",
+                          "value": "AL"
+                        }
+                      ],
+                      "id": "3155",
+                      "name": "Art des Kommunikationsmittels, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C076",
+                  "index": 0,
+                  "name": "Kommunikationsverbindung"
+                }
+              ],
+              "id": "COM",
+              "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            }
           ],
           "source_group": "SG3"
         }
@@ -33,7 +145,59 @@
         "segment": "NAD"
       },
       "segments": [
-        "NAD"
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Nachrichtenempfänger",
+                  "value": "MR"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        }
       ],
       "source_group": "SG2"
     },
@@ -48,7 +212,37 @@
             ]
           },
           "segments": [
-            "LOC"
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "MaBiS-Zählpunkt",
+                      "value": "Z15"
+                    }
+                  ],
+                  "id": "3227",
+                  "index": 0,
+                  "name": "Mit dem Code Z15 wird die ID des MaBiS-Zählpunkts beschrieben",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3225",
+                      "name": "Identifikator",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C517",
+                  "index": 1,
+                  "name": "Ortsangabe"
+                }
+              ],
+              "id": "LOC",
+              "name": "Dieses Segment wird zur Angabe der ID des MaBiS-Zählpunkts benutzt, für die die Stammdaten gelten. Die ID dient der eindeutigen Identifikation eines MaBiS-Zählpunkts. Die ID im SG5 LOC ist ein Identifikator, auf den sich eine SG8 SEQ über SG8 RFF+AVE beziehen kann."
+            }
           ],
           "source_group": "SG5"
         },
@@ -58,7 +252,43 @@
             "segment": "RFF"
           },
           "segments": [
-            "RFF"
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "MaBiS / Clearingliste BAS",
+                          "value": "55070"
+                        }
+                      ],
+                      "id": "1154",
+                      "name": "Prüfidentifikator",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Prüfidentifikator"
+            }
           ],
           "source_group": "SG6"
         },
@@ -70,8 +300,93 @@
                 "segment": "CCI"
               },
               "segments": [
-                "CAV",
-                "CCI"
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Beispielcode",
+                              "value": "XYZ"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Angabe des Codes aus der EDI@Energy Codeliste der Zeitreihentypen.",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Zeitreihentyp"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Datenstatus zur Zeitreihe",
+                          "value": "Z25"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Abrechnungsdaten",
+                              "value": "Z01"
+                            },
+                            {
+                              "name": "Abgerechnete Daten",
+                              "value": "Z03"
+                            },
+                            {
+                              "name": "Abrechnungsdaten Korrektur-BKA",
+                              "value": "Z04"
+                            },
+                            {
+                              "name": "Abgerechnete Daten Korrektur-BKA",
+                              "value": "ZA5"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Datenstatus zur Zeitreihe für Bilanzkreissummen",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Datenstatus zur Zeitreihe für Bilanzkreissummen"
+                }
               ],
               "source_group": "SG10"
             }
@@ -84,8 +399,55 @@
             ]
           },
           "segments": [
-            "RFF",
-            "SEQ"
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Referenz auf eine Zeitreihe",
+                          "value": "AUU"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Version der Zeitreihe",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Über dieses Segment erfolgt die Referenzierung auf die Version der betrachteten Zeitreihe. Es dient zur Angabe der Version der Zeitreihe nach MaBiS. Hinweis: Bei der Übermittlung von Summenzeitreihen in der MaBiS mittels MSCONS wird eine Version vergeben und als Zeitstempel in einem DTM+293 (Fertigstellungsdatum/ -zeit) übermittelt. Die Version wird im DE2380 und seit dem 1. Oktober 2022 im Format „CCYYMMDDHHMMSSZZZ“ und der Zeitzone UTC (Format: ZZZ = +00) übermittelt. Die Referenzangaben werden somit hier ebenfalls im Format „CCYYMMDDHHMMSSZZZ“ angegeben."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Daten der Summenzeitreihe",
+                      "value": "Z22"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Meldepunkt zuzuordnen. Die SG8 Daten des MaBiS-ZP eines Vorgangs enthält alle Informationen, die sich auf eine einzelne MaBiS-ZP in einem Vorgang beziehen.  Besonderheit bei MaBiS (BAS-Clearinglisten): In jedem Vorgang der BAS-Clearingliste sind genau zwei SG8 SEQ+Z22 anzugeben. Ein SG8 bezieht sich immer auf den MaBiS-ZP der BAS, die zweite SG8 SEQ+Z22 bezieht sich immer auf die der BAS zugeordneten Zeitreihe (entweder repräsentiert durch eine ID oder das 4er-Tupel der EUZ)."
+            }
           ],
           "source_group": "SG8"
         },
@@ -97,8 +459,92 @@
                 "segment": "QTY"
               },
               "segments": [
-                "DTM",
-                "QTY"
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Verarbeitung, Endedatum/-zeit",
+                              "value": "164"
+                            }
+                          ],
+                          "id": "2005",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "2380",
+                          "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "CCYYMMDDHHMMZZZ",
+                              "value": "303"
+                            }
+                          ],
+                          "id": "2379",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C507",
+                      "index": 0,
+                      "name": "Datum/Uhrzeit/Zeitspanne"
+                    }
+                  ],
+                  "id": "DTM",
+                  "name": "Dieses Segment wird verwendet um in der Clearingliste DZR/BAS das Endedatum der entstandenen Energiemenge im Betrachtungsmonat vom DTM+157 der einzelnen Zeitreihe zu übermitteln."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Energiemenge summiert (Summenwert, Bilanzsumme)",
+                              "value": "79"
+                            }
+                          ],
+                          "id": "6063",
+                          "name": "Menge, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "6060",
+                          "name": "Mengenangabe",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Kilowattstunde",
+                              "value": "KWH"
+                            }
+                          ],
+                          "id": "6411",
+                          "name": "Maßeinheit, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C186",
+                      "index": 0,
+                      "name": "Mengenangaben"
+                    }
+                  ],
+                  "id": "QTY",
+                  "name": "Dieses Segment wird verwendet, um in der Clearingliste DZR/BAS die entstandene Energiemenge im Betrachtungsmonat vom DTM+157 der einzelnen Zeitreihe zu übermitteln."
+                }
               ],
               "source_group": "SG9"
             }
@@ -111,8 +557,67 @@
             ]
           },
           "segments": [
-            "PIA",
-            "SEQ"
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Produktidentifikation",
+                      "value": "5"
+                    }
+                  ],
+                  "id": "4347",
+                  "index": 0,
+                  "name": "Produkt-/Erzeugnisnummer, Qualifier",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "7140",
+                      "name": "Produktidentifikation der Summenzeitreihe",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "OBIS-Kennzahl",
+                          "value": "SRW"
+                        }
+                      ],
+                      "id": "7143",
+                      "name": "Art der Produkt-/Leistungsnummer, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C212",
+                  "index": 1,
+                  "name": "Produktidentifikation der Summenzeitreihe"
+                }
+              ],
+              "id": "PIA",
+              "name": "Dieses Segment wird benutzt, um die Produktidentifikation beim Austausch von Daten zu Energiemengen innerhalb der deutschen Energiewirtschaft zu gewährleisten. Diese Identifikation, die Beschreibung und die strukturelle Zuordnung der Werte erfolgt durch Produktidentifikatoren."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Produkt-Daten der Summenzeitreihe",
+                      "value": "Z23"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die Produkt-Daten der Summenzeitreihe eines Vorgangs enthalten alle Informationen, die sich auf einen einzelnen Produktidentifikator einer Summenzeitreihe beziehen. Enthält ein Vorgang mehrere Produktidentifikatoren, so ist diese Segmentgruppe für jeden einzelnen Produktidentifikator zu wiederholen und zu übermitteln."
+            }
           ],
           "source_group": "SG8"
         },
@@ -124,8 +629,93 @@
                 "segment": "CCI"
               },
               "segments": [
-                "CAV",
-                "CCI"
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Beispielcode",
+                              "value": "XYZ"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Angabe des Codes aus der EDI@Energy Codeliste des Überführungszeitreihentyps",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Überführungszeitreihentyp"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Datenstatus zur Zeitreihe",
+                          "value": "Z25"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Abrechnungsdaten",
+                              "value": "Z01"
+                            },
+                            {
+                              "name": "Abgerechnete Daten",
+                              "value": "Z03"
+                            },
+                            {
+                              "name": "Abrechnungsdaten Korrektur-BKA",
+                              "value": "Z04"
+                            },
+                            {
+                              "name": "Abgerechnete Daten Korrektur-BKA",
+                              "value": "ZA5"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Datenstatus zur Überführungszeitreihe",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Datenstatus zur Überführungszeitreihe"
+                }
               ],
               "source_group": "SG10"
             }
@@ -138,8 +728,55 @@
             ]
           },
           "segments": [
-            "RFF",
-            "SEQ"
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Referenz auf eine Zeitreihe",
+                          "value": "AUU"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Version der Zeitreihe",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Über dieses Segment erfolgt die Referenzierung auf die Version der betrachteten Zeitreihe. Es dient zur Angabe der Version der Zeitreihe nach MaBiS. Hinweis: Bei der Übermittlung von Summenzeitreihen in der MaBiS mittels MSCONS wird eine Version vergeben und als Zeitstempel in einem DTM+293 (Fertigstellungsdatum/ -zeit) übermittelt. Die Version wird im DE2380 und seit dem 1. Oktober 2022 im Format „CCYYMMDDHHMMSSZZZ“ und der Zeitzone UTC (Format: ZZZ = +00) übermittelt. Die Referenzangaben werden somit hier ebenfalls im Format „CCYYMMDDHHMMSSZZZ“ angegeben."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Daten der Überführungszeitreihe",
+                      "value": "Z24"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Überführungszeitreihe zuzuordnen."
+            }
           ],
           "source_group": "SG8"
         },
@@ -151,8 +788,92 @@
                 "segment": "QTY"
               },
               "segments": [
-                "DTM",
-                "QTY"
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Verarbeitung, Endedatum/-zeit",
+                              "value": "164"
+                            }
+                          ],
+                          "id": "2005",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "2380",
+                          "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "CCYYMMDDHHMMZZZ",
+                              "value": "303"
+                            }
+                          ],
+                          "id": "2379",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C507",
+                      "index": 0,
+                      "name": "Datum/Uhrzeit/Zeitspanne"
+                    }
+                  ],
+                  "id": "DTM",
+                  "name": "Dieses Segment wird verwendet um in der Clearingliste DZR/BAS das Endedatum der entstandenen Energiemenge im Betrachtungsmonat vom DTM+157 der einzelnen Zeitreihe zu übermitteln."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Energiemenge summiert (Summenwert, Bilanzsumme)",
+                              "value": "79"
+                            }
+                          ],
+                          "id": "6063",
+                          "name": "Menge, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "6060",
+                          "name": "Mengenangabe",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Kilowattstunde",
+                              "value": "KWH"
+                            }
+                          ],
+                          "id": "6411",
+                          "name": "Maßeinheit, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C186",
+                      "index": 0,
+                      "name": "Mengenangaben"
+                    }
+                  ],
+                  "id": "QTY",
+                  "name": "Dieses Segment wird verwendet, um in der Clearingliste DZR/BAS die entstandene Energiemenge im Betrachtungsmonat vom DTM+157 der einzelnen Zeitreihe zu übermitteln."
+                }
               ],
               "source_group": "SG9"
             }
@@ -165,8 +886,71 @@
             ]
           },
           "segments": [
-            "PIA",
-            "SEQ"
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Produktidentifikation",
+                      "value": "5"
+                    }
+                  ],
+                  "id": "4347",
+                  "index": 0,
+                  "name": "Produkt-/Erzeugnisnummer, Qualifier",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "7140",
+                      "name": "Produktidentifikation der Überführungszeitreihe",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "Medium",
+                          "value": "Z08"
+                        },
+                        {
+                          "name": "OBIS-Kennzahl",
+                          "value": "SRW"
+                        }
+                      ],
+                      "id": "7143",
+                      "name": "Art der Produkt-/Leistungsnummer, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C212",
+                  "index": 1,
+                  "name": "Produktidentifikation der Überführungszeitreihe"
+                }
+              ],
+              "id": "PIA",
+              "name": "Dieses Segment wird benutzt, um die Produktidentifikation beim Austausch von Daten zu Energiemengen innerhalb der deutschen Energiewirtschaft zu gewährleisten. Diese Identifikation, die Beschreibung und die strukturelle Zuordnung der Werte erfolgt durch Produktidentifikatoren."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Produkt-Daten der Überführungszeitreihe",
+                      "value": "Z25"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die Produkt-Daten der Überführungszeitreihe eines Vorgangs enthalten alle Informationen, die sich auf eine einzelne Produktidentifikatoren einer Überführungszeitreihe beziehen."
+            }
           ],
           "source_group": "SG8"
         }
@@ -176,7 +960,37 @@
         "segment": "IDE"
       },
       "segments": [
-        "IDE"
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Transaktion",
+                  "value": "24"
+                }
+              ],
+              "id": "7495",
+              "index": 0,
+              "name": "Objekt, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "7402",
+                  "name": "Vorgangsnummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C206",
+              "index": 1,
+              "name": "Identifikationsnummer"
+            }
+          ],
+          "id": "IDE",
+          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
+        }
       ],
       "source_group": "SG4"
     }

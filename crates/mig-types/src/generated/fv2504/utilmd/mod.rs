@@ -4,5 +4,5 @@
 pub mod composites;
 pub mod enums;
 pub mod groups;
-pub mod pids;
 pub mod segments;
+pub mod pids;

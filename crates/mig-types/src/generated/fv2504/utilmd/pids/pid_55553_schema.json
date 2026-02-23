@@ -12,8 +12,90 @@
             ]
           },
           "segments": [
-            "COM",
-            "CTA"
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "id": "3148",
+                      "name": "Nummer / Adresse",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "Elektronische Post",
+                          "value": "EM"
+                        },
+                        {
+                          "name": "Telefax",
+                          "value": "FX"
+                        },
+                        {
+                          "name": "Telefon",
+                          "value": "TE"
+                        },
+                        {
+                          "name": "weiteres Telefon",
+                          "value": "AJ"
+                        },
+                        {
+                          "name": "Handy",
+                          "value": "AL"
+                        }
+                      ],
+                      "id": "3155",
+                      "name": "Art des Kommunikationsmittels, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C076",
+                  "index": 0,
+                  "name": "Kommunikationsverbindung"
+                }
+              ],
+              "id": "COM",
+              "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            }
           ],
           "source_group": "SG3"
         }
@@ -23,7 +105,59 @@
         "segment": "NAD"
       },
       "segments": [
-        "NAD"
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Nachrichtenempfänger",
+                  "value": "MR"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        }
       ],
       "source_group": "SG2"
     },
@@ -35,8 +169,90 @@
             "segment": "RFF"
           },
           "segments": [
-            "DTM",
-            "RFF"
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Verwendung der Daten bis",
+                          "value": "Z26"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYYMMDDHHMMZZZ",
+                          "value": "303"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Hier wird der Zeitpunkt genannt, bis zu dem die im Vorgang enthaltenen Daten zu verwenden sind."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Gültige Daten",
+                          "value": "Z49"
+                        },
+                        {
+                          "name": "Keine Daten",
+                          "value": "Z53"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Qualität des Zeitraums",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Referenz, Identifikation",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "id": "1156",
+                      "name": "Zeitraum-ID",
+                      "sub_index": 2,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Bemerkung: Im DE1156 \"Zeitraum-ID\" dieses RFF-Segments wird die Nummer des Zeitraums genannt, auf die sich die Daten der einzelnen SG6 RFF, SG8 SEQ, SG12 NAD beziehen (wobei mit dem voranstehenden und allen folgenden SG6 RFF alle SG6 gemeint sind, die nicht \"Verwendungszeitraum der Daten\" heißen, d. h. die nicht diese Segmentgruppe sind. Im jeweiligen SG6 RFF DE1154, SG8 SEQ DE1050, SG12 RFF DE1154 wird die Nummer des Zeitraums eingetragen, der den Zeitraum festlegt, für den die Daten beschrieben werden (d. h. für den sie z. B. \"gültig\", \"erwartet\", oder \"..\" sind). Die Nummer der Zeitraum-ID beginnt in jedem SG4 IDE+24 je untenstehender Kombinationsmöglichkeit mit der Nummer 1 und wird immer um eins hochgezählt, vom ältesten zum jüngsten Zeitraum (d. h. der älteste Zeitraum eines Vorgangs hat immer die Zeitraum-ID 1). Für die Codes des DE1153 gelten folgende Kombinationsmöglichkeiten: 1. Kombinationsmöglichkeit: Z47 Im System vorhandene Daten und Z54 Im System keine Daten vorhanden  2. Kombinationsmöglichkeit: Z48 Erwartete Daten und Z55 Keine Daten erwartet 3. Kombinationsmöglichkeit: Z49 Gültige Daten und Z53 Keine Daten"
+            }
           ],
           "source_group": "SG6"
         },
@@ -48,8 +264,87 @@
                 "segment": "CCI"
               },
               "segments": [
-                "CAV",
-                "CCI"
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Jährlich",
+                              "value": "ZD9"
+                            },
+                            {
+                              "name": "Halbjährlich",
+                              "value": "ZE8"
+                            },
+                            {
+                              "name": "Quartalsweise",
+                              "value": "ZE9"
+                            },
+                            {
+                              "name": "Monatlich",
+                              "value": "ZB7"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Wertegranularität"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Code des Zählzeitregisters",
+                          "value": "Z38"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "7037",
+                          "name": "Code des Zählzeitregisters",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Zugeordnetes Zählzeitregister"
+                }
               ],
               "source_group": "SG10"
             }
@@ -62,8 +357,80 @@
             ]
           },
           "segments": [
-            "PIA",
-            "SEQ"
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Produktidentifikation",
+                      "value": "5"
+                    }
+                  ],
+                  "id": "4347",
+                  "index": 0,
+                  "name": "Produkt-/Erzeugnisnummer, Qualifier",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "7140",
+                      "name": "OBIS-Kennzahl der Marktlokation",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "OBIS-Kennzahl",
+                          "value": "SRW"
+                        }
+                      ],
+                      "id": "7143",
+                      "name": "Art der Produkt-/Leistungsnummer, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C212",
+                  "index": 1,
+                  "name": "Art der Messwerte (OBIS-Kennzahlen)"
+                }
+              ],
+              "id": "PIA",
+              "name": "Dieses Segment wird benutzt, um die Produktidentifikation beim Austausch von Daten zu Energiemengen innerhalb der deutschen Energiewirtschaft zu gewährleisten. Diese Identifikation, die Beschreibung und die strukturelle Zuordnung der Werte erfolgt durch OBIS-Kennzahlen.  Weitere Details sind im entsprechenden Anwendungsfall geregelt. Die OBIS-Kennzahlen gehören immer zu der im Vorgang SG8 RFF angegebenen Marktlokation DE7140: Es wird die OBIS-Kennzahl gemäß EDI@Energy Codeliste der OBIS-Kennzahlen und Medien angegeben. Die Einheiten (kWh, kvarh) sind implizit in der OBIS-Kennzahl enthalten."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "OBIS-Daten der Marktlokation",
+                      "value": "Z02"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "1050",
+                      "name": "Referenz auf Zeitraum-ID",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C286",
+                  "index": 1,
+                  "name": "Information über eine Folge"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die OBIS-Daten eines Vorgangs enthalten alle Informationen, die sich auf das Register mit der angegebenen OBIS-Kennzahl einer Marktlokation beziehen. Enthält ein Vorgang mehrere Register und somit mehrere OBIS-Kennzahlen, so ist diese Segmentgruppe für jedes einzelne Register und damit jede einzelne OBIS-Kennzahl zu wiederholen und zu übermitteln."
+            }
           ],
           "source_group": "SG8"
         },
@@ -75,8 +442,99 @@
                 "segment": "CCI"
               },
               "segments": [
-                "CAV",
-                "CCI"
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Gerätenummer",
+                              "value": "Z30"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Code für die Nummer des Gerätes",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "1.Teil Nummer bzw. Zeichenfolge auf dem Gerät",
+                          "sub_index": 3,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "2.Teil Nummer bzw. Zeichenfolge auf dem Gerät",
+                          "sub_index": 4,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Wenn die Identifikationsnummer länger als 35 Zeichen ist erfolgt eine Fortführung im 2. DE7110."
+                },
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Zählertyp",
+                              "value": "E13"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Es wird ein Zählertyp angegeben, der in den nachfolgenden CAV-Segmenten spezifiziert wird."
+                }
               ],
               "source_group": "SG10"
             }
@@ -89,8 +547,68 @@
             ]
           },
           "segments": [
-            "RFF",
-            "SEQ"
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Smartmeter-Gateway",
+                          "value": "Z14"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Identifikation / Nummer des Smartmeter-Gateways",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zuordnung der Zähleinrichtung zu dem Smartmeter-Gateway worüber die Kommunikation erfolgt."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Zähleinrichtungsdaten",
+                      "value": "Z03"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "1050",
+                      "name": "Referenz auf Zeitraum-ID",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C286",
+                  "index": 1,
+                  "name": "Information über eine Folge"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die Zähleinrichtungsdaten eines Vorgangs enthalten alle Informationen, die sich auf eine einzelne Zähleinrichtung beziehen. Enthält ein Vorgang mehrere Zähleinrichtungen, so ist diese Segmentgruppe für jede einzelne Zähleinrichtung zu wiederholen und zu übermitteln. Jede Zähleinrichtung einer Messlokation wird separat in einer SG8 SEQ-Gruppe aufgelistet. Die Messlokation, dem die Zähleinrichtung zugeordnet ist, wird mit Hilfe des SG8 RFF „Referenz auf die Messlokation“ übermittelt."
+            }
           ],
           "source_group": "SG8"
         },
@@ -102,8 +620,111 @@
                 "segment": "CCI"
               },
               "segments": [
-                "CAV",
-                "CCI"
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "Angabe der Vorkommastelle",
+                          "sub_index": 3,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "Angabe der Nachkommastelle",
+                          "sub_index": 4,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Hinweis: DE7110: Der Wert muss eine natürliche Zahl oder 0 sein."
+                },
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Lokale Kennzeichnung zu Kontrollzwecken",
+                              "value": "Z63"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7036",
+                          "name": "Bezeichnung des Zählwerks auf dem Gerät",
+                          "sub_index": 3,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment dient zur Identifizierung und Beschreibung der lokalen Kennzeichnung auf dem Gerät (z. B. HT oder NT) zur Zuordnung der OBIS Kennzahl. Bei kME mit nicht registrierender Leistungsmessung oder mME an den Messlokationen enthält das DE7036 die Zählwerkskennzeichnung des Gerätes (HT, NT, T1, T2, T3, 1, 2, 3, 1.8.1, ...). Bei iMS sind jedem Register eine OBIS-Kennzahl und eine Registerbezeichnung im Smart Meter Gateway zugeordnet, was damit der lokalen Kennzeichnung auf dem Gerät entspricht. Von der mME, die mit dem Smartmetergateway verbunden ist und damit das iMS bildet, wird weder die OBIS-Kennzahl noch die Registerbezeichnung in der Marktkommunikation ausgetauscht."
+                }
               ],
               "source_group": "SG10"
             }
@@ -116,9 +737,111 @@
             ]
           },
           "segments": [
-            "PIA",
-            "RFF",
-            "SEQ"
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Produktidentifikation",
+                      "value": "5"
+                    }
+                  ],
+                  "id": "4347",
+                  "index": 0,
+                  "name": "Produkt-/Erzeugnisnummer, Qualifier",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "7140",
+                      "name": "OBIS-Kennzahl der Zähleinrichtung",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "OBIS-Kennzahl",
+                          "value": "SRW"
+                        }
+                      ],
+                      "id": "7143",
+                      "name": "Art der Produkt-/Leistungsnummer, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C212",
+                  "index": 1,
+                  "name": "Art der Messwerte (OBIS-Kennzahlen)"
+                }
+              ],
+              "id": "PIA",
+              "name": "Dieses Segment wird benutzt, um die Produktidentifikation beim Austausch von Daten zu Energiemengen innerhalb der deutschen Energiewirtschaft zu gewährleisten. Diese Identifikation, die Beschreibung und die strukturelle Zuordnung der Werte erfolgt durch OBIS-Kennzahlen.  DE7140: Es wird die OBIS-Kennzahl gemäß EDI@Energy Codeliste der OBIS-Kennzahlen und Medien angegeben. Die Einheiten (kWh, kvarh) sind implizit in der OBIS-Kennzahl enthalten."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Anwendungsreferenznummer",
+                          "value": "AGK"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Referenz, Identifikation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Dieses Segment dient zur Angabe der Konfigurations-ID. Details hierzu siehe EDI@Energy UTILMD Anwendungshandbuch \"Austausch von Stammdaten im Rahmen von Stammdatenänderungsprozessen\" Kapitel 5 \"Begriffsdefinitionen\""
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "OBIS-Daten der Zähleinrichtung",
+                      "value": "Z20"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "1050",
+                      "name": "Referenz auf Zeitraum-ID",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C286",
+                  "index": 1,
+                  "name": "Information über eine Folge"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die OBIS-Daten eines Vorgangs enthalten alle Informationen, die sich auf das Register mit der angegebenen OBIS-Kennzahl einer Zähleinrichtung / Smartmeter-Gateway beziehen, die im Rahmen der Marktkommunikation benötigt werden. Enthält ein Vorgang mehrere Register und somit mehrere OBIS-Kennzahlen, so ist diese Segmentgruppe für jede einzelne OBIS-Kennzahl/Objekt zu wiederholen und zu übermitteln."
+            }
           ],
           "source_group": "SG8"
         }
@@ -128,9 +851,206 @@
         "segment": "IDE"
       },
       "segments": [
-        "FTX",
-        "IDE",
-        "STS"
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "IP-Adresse für das CLS-Device",
+                  "value": "Z18"
+                }
+              ],
+              "id": "4451",
+              "index": 0,
+              "name": "Textbezug, Qualifier",
+              "type": "code"
+            },
+            {
+              "id": "4453",
+              "index": 1,
+              "name": "Textfunktion, Code",
+              "type": "data"
+            },
+            {
+              "components": [
+                {
+                  "id": "4441",
+                  "name": "Freier Text, Code",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C107",
+              "index": 2,
+              "name": "Text-Referenz"
+            },
+            {
+              "components": [
+                {
+                  "id": "4440",
+                  "name": "IP-Adresse für das CLS-Device",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 2,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 3,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 4,
+                  "type": "data"
+                }
+              ],
+              "composite": "C108",
+              "index": 3,
+              "name": "Text"
+            }
+          ],
+          "id": "FTX",
+          "name": "Dieses Segment wird für die Angabe der IP-Adresse für das CLS-Device verwendet."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Transaktion",
+                  "value": "24"
+                }
+              ],
+              "id": "7495",
+              "index": 0,
+              "name": "Objekt, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "7402",
+                  "name": "Vorgangsnummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C206",
+              "index": 1,
+              "name": "Identifikationsnummer"
+            }
+          ],
+          "id": "IDE",
+          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Transaktionsgrund",
+                      "value": "7"
+                    }
+                  ],
+                  "id": "9015",
+                  "name": "Statuskategorie, Code",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C601",
+              "index": 0,
+              "name": "Statuskategorie"
+            },
+            {
+              "components": [
+                {
+                  "id": "4405",
+                  "name": "Status, Code",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C555",
+              "index": 1,
+              "name": "Status"
+            },
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Daten auf individuelle Bestellung",
+                      "value": "ZY9"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Transaktionsgrund",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C556",
+              "index": 2,
+              "name": "Statusanlaß"
+            },
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Daten auf individuelle Bestellung",
+                      "value": "ZY9"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Dieses Datenelement definiert weitere Details zum Transaktionsgrund.",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C556",
+              "index": 3,
+              "name": "Statusanlaß"
+            },
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Daten auf individuelle Bestellung",
+                      "value": "ZY9"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Dieses Datenelement definiert den Transaktionsgrund für das Lieferende einer Marktlokation bzw. Tranche bei einer befristeten Anmeldung.",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C556",
+              "index": 4,
+              "name": "Statusanlaß"
+            }
+          ],
+          "id": "STS",
+          "name": "Zur Angabe eines Status. Dieses Segment wird benutzt um den Transaktionsgrund mitzuteilen. Der Transaktionsgrund beschreibt den Geschäftsvorfall zur Kategorie genauer. Dies dient der Plausibilisierung und Prozesssteuerung. Die Erläuterung zu den einzelnen Transaktionsgründen ist im DE9013 beschrieben."
+        }
       ],
       "source_group": "SG4"
     }
