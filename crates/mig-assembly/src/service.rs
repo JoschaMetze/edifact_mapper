@@ -53,6 +53,39 @@ impl ConversionService {
         assembler.assemble_generic(&segments)
     }
 
+    /// Convert a complete interchange into per-message assembled trees.
+    ///
+    /// Steps:
+    /// 1. Parse input to segments
+    /// 2. Split at UNH/UNT boundaries
+    /// 3. Assemble each message independently
+    ///
+    /// Returns the `InterchangeChunks` (for envelope access) and a `Vec<AssembledTree>`
+    /// (one per message, in order).
+    pub fn convert_interchange_to_trees(
+        &self,
+        input: &str,
+    ) -> Result<
+        (
+            crate::tokenize::InterchangeChunks,
+            Vec<crate::assembler::AssembledTree>,
+        ),
+        AssemblyError,
+    > {
+        let segments = parse_to_segments(input.as_bytes())?;
+        let chunks = crate::tokenize::split_messages(segments)?;
+
+        let mut trees = Vec::with_capacity(chunks.messages.len());
+        for msg in &chunks.messages {
+            let all_segments = msg.all_segments();
+            let assembler = Assembler::new(&self.mig);
+            let tree = assembler.assemble_generic(&all_segments)?;
+            trees.push(tree);
+        }
+
+        Ok((chunks, trees))
+    }
+
     /// Get a reference to the loaded MIG schema.
     pub fn mig(&self) -> &MigSchema {
         &self.mig
