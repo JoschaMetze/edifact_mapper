@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use clap::{Parser, Subcommand};
 
@@ -179,6 +179,44 @@ enum Commands {
         /// Path to generated code directory
         #[arg(long)]
         generated_dir: PathBuf,
+    },
+
+    /// Migrate an EDIFACT fixture file between format versions using a diff report.
+    MigrateFixture {
+        /// Path to the old .edi fixture file.
+        #[arg(long)]
+        old_fixture: PathBuf,
+
+        /// Path to the diff JSON file (output of mig-diff).
+        #[arg(long)]
+        diff: PathBuf,
+
+        /// Path to the new PID schema JSON.
+        #[arg(long)]
+        new_pid_schema: PathBuf,
+
+        /// Output path for the migrated .edi file. If omitted, derives from old fixture name.
+        #[arg(long)]
+        output: Option<PathBuf>,
+    },
+
+    /// Migrate all .edi fixtures in a directory between format versions.
+    MigrateFixtureDir {
+        /// Path to the directory containing old .edi fixture files.
+        #[arg(long)]
+        input_dir: PathBuf,
+
+        /// Path to the diff JSON file (output of mig-diff).
+        #[arg(long)]
+        diff: PathBuf,
+
+        /// Path to the new PID schema JSON.
+        #[arg(long)]
+        new_pid_schema: PathBuf,
+
+        /// Output directory for migrated .edi files.
+        #[arg(long)]
+        output_dir: PathBuf,
     },
 
     /// Compare two PID schemas and produce a structured diff report.
@@ -680,6 +718,111 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 eprintln!("  SCAFFOLD: {} ({})", entity, reason);
             }
             eprintln!("\nOutput: {:?}", output_dir);
+            Ok(())
+        }
+        Commands::MigrateFixture {
+            old_fixture,
+            diff,
+            new_pid_schema,
+            output,
+        } => {
+            use automapper_generator::fixture_migrator::migrate_fixture;
+            use automapper_generator::schema_diff::types::PidSchemaDiff;
+
+            // Load inputs
+            let old_edi = std::fs::read_to_string(&old_fixture)?;
+            let diff_json: PidSchemaDiff =
+                serde_json::from_str(&std::fs::read_to_string(&diff)?)?;
+            let new_schema: serde_json::Value =
+                serde_json::from_str(&std::fs::read_to_string(&new_pid_schema)?)?;
+
+            // Run migration
+            let result = migrate_fixture(&old_edi, &diff_json, &new_schema);
+
+            // Determine output path
+            let output_path = output.unwrap_or_else(|| {
+                let stem = old_fixture.file_stem().unwrap().to_string_lossy();
+                let parent = old_fixture.parent().unwrap_or(Path::new("."));
+                parent.join(format!("{}_migrated.edi", stem))
+            });
+
+            // Write migrated .edi
+            std::fs::create_dir_all(output_path.parent().unwrap_or(Path::new(".")))?;
+            std::fs::write(&output_path, &result.edifact)?;
+            println!("Wrote migrated fixture: {}", output_path.display());
+
+            // Write warnings file
+            if !result.warnings.is_empty() {
+                let warnings_path = output_path.with_extension("edi.warnings.txt");
+                let warnings_text: String = result
+                    .warnings
+                    .iter()
+                    .map(|w| w.to_string())
+                    .collect::<Vec<_>>()
+                    .join("\n");
+                std::fs::write(&warnings_path, &warnings_text)?;
+                println!(
+                    "Wrote {} warnings: {}",
+                    result.warnings.len(),
+                    warnings_path.display()
+                );
+            }
+
+            // Print summary
+            println!("\nMigration summary:");
+            println!("  Segments copied:    {}", result.stats.segments_copied);
+            println!("  Segments removed:   {}", result.stats.segments_removed);
+            println!("  Segments added:     {}", result.stats.segments_added);
+            println!("  Codes substituted:  {}", result.stats.codes_substituted);
+            println!(
+                "  Manual review items: {}",
+                result.stats.manual_review_items
+            );
+
+            Ok(())
+        }
+        Commands::MigrateFixtureDir {
+            input_dir,
+            diff,
+            new_pid_schema,
+            output_dir,
+        } => {
+            use automapper_generator::fixture_migrator::batch::migrate_directory;
+            use automapper_generator::schema_diff::types::PidSchemaDiff;
+
+            let diff_json: PidSchemaDiff =
+                serde_json::from_str(&std::fs::read_to_string(&diff)?)?;
+            let new_schema: serde_json::Value =
+                serde_json::from_str(&std::fs::read_to_string(&new_pid_schema)?)?;
+
+            let results = migrate_directory(&input_dir, &output_dir, &diff_json, &new_schema);
+
+            let mut success = 0;
+            let mut failed = 0;
+            let mut total_warnings = 0;
+
+            for result in &results {
+                match result {
+                    Ok((filename, mr)) => {
+                        success += 1;
+                        total_warnings += mr.warnings.len();
+                        if !mr.warnings.is_empty() {
+                            println!("  {} — {} warnings", filename, mr.warnings.len());
+                        }
+                    }
+                    Err(e) => {
+                        failed += 1;
+                        eprintln!("  FAILED: {}", e);
+                    }
+                }
+            }
+
+            println!("\nBatch migration complete:");
+            println!(
+                "  {} succeeded, {} failed, {} total warnings",
+                success, failed, total_warnings
+            );
+
             Ok(())
         }
         Commands::MigDiff {

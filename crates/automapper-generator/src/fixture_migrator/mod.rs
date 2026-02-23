@@ -1,3 +1,4 @@
+pub mod batch;
 pub mod migrator;
 pub mod skeleton;
 pub mod types;
