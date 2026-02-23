@@ -6,4 +6,5 @@ pub mod error;
 pub mod fixtures;
 pub mod health;
 pub mod inspect;
+pub mod reverse_v2;
 pub mod trace;
