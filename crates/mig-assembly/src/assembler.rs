@@ -44,6 +44,22 @@ pub struct AssembledGroupInstance {
     pub child_groups: Vec<AssembledGroup>,
 }
 
+impl AssembledGroupInstance {
+    /// Create a virtual `AssembledTree` scoped to this group instance.
+    ///
+    /// The instance's own segments become the tree's root segments,
+    /// and its child groups become the tree's groups. This enables
+    /// running `MappingEngine::map_all_forward()` on a single
+    /// transaction group as if it were a complete message.
+    pub fn as_assembled_tree(&self) -> AssembledTree {
+        AssembledTree {
+            segments: self.segments.clone(),
+            groups: self.child_groups.clone(),
+            post_group_start: self.segments.len(),
+        }
+    }
+}
+
 /// MIG-guided assembler.
 ///
 /// Takes a MIG schema and uses it as a grammar to guide consumption

@@ -54,6 +54,20 @@ pub struct Transaktion {
     pub transaktionsdaten: serde_json::Value,
 }
 
+/// Intermediate result from mapping a single message's assembled tree.
+///
+/// Contains message-level stammdaten and per-transaction results.
+/// Used by `MappingEngine::map_interchange()` before wrapping into `Nachricht`.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MappedMessage {
+    /// Message-level BO4E entities (e.g., Marktteilnehmer from SG2).
+    pub stammdaten: serde_json::Value,
+
+    /// Per-transaction results (one per SG4 instance).
+    pub transaktionen: Vec<Transaktion>,
+}
+
 /// Extract message reference and message type from a UNH segment.
 pub fn extract_unh_fields(unh: &OwnedSegment) -> (String, String) {
     let referenz = unh.get_element(0).to_string();

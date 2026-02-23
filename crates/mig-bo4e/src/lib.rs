@@ -24,4 +24,4 @@ pub mod segment_structure;
 pub use engine::MappingEngine;
 pub use error::MappingError;
 pub use handlers::HandlerRegistry;
-pub use model::{Interchange, Nachricht, Transaktion};
+pub use model::{Interchange, MappedMessage, Nachricht, Transaktion};
