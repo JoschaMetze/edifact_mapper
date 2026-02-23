@@ -51,24 +51,45 @@ pub fn ConverterPage() -> impl IntoView {
             }
 
             // Call convert endpoint
-            match api_client::convert(dir.api_path(), &input_val, None, true).await {
-                Ok(resp) => {
-                    set_duration_ms.set(resp.duration_ms);
-                    if resp.success {
-                        set_output.set(resp.result.unwrap_or_default());
-                        set_trace.set(resp.trace);
+            if dir == Direction::EdifactToBo4e {
+                // V2 MIG-driven pipeline
+                match api_client::convert_v2(&input_val, "bo4e", "FV2504").await {
+                    Ok(resp) => {
+                        set_duration_ms.set(resp.duration_ms);
+                        let pretty = serde_json::to_string_pretty(&resp.result)
+                            .unwrap_or_else(|_| resp.result.to_string());
+                        set_output.set(pretty);
                     }
-                    if !resp.errors.is_empty() {
-                        set_errors.set(resp.errors);
+                    Err(e) => {
+                        set_errors.set(vec![ApiErrorEntry {
+                            code: "CLIENT_ERROR".to_string(),
+                            message: e,
+                            location: None,
+                            severity: "error".to_string(),
+                        }]);
                     }
                 }
-                Err(e) => {
-                    set_errors.set(vec![ApiErrorEntry {
-                        code: "CLIENT_ERROR".to_string(),
-                        message: e,
-                        location: None,
-                        severity: "error".to_string(),
-                    }]);
+            } else {
+                // V1 legacy pipeline for BO4E → EDIFACT
+                match api_client::convert(dir.api_path(), &input_val, None, true).await {
+                    Ok(resp) => {
+                        set_duration_ms.set(resp.duration_ms);
+                        if resp.success {
+                            set_output.set(resp.result.unwrap_or_default());
+                            set_trace.set(resp.trace);
+                        }
+                        if !resp.errors.is_empty() {
+                            set_errors.set(resp.errors);
+                        }
+                    }
+                    Err(e) => {
+                        set_errors.set(vec![ApiErrorEntry {
+                            code: "CLIENT_ERROR".to_string(),
+                            message: e,
+                            location: None,
+                            severity: "error".to_string(),
+                        }]);
+                    }
                 }
             }
 

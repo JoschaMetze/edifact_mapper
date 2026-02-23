@@ -17,7 +17,7 @@ fn test_direction_labels() {
     let dir = Direction::EdifactToBo4e;
     assert_eq!(dir.input_label(), "EDIFACT");
     assert_eq!(dir.output_label(), "BO4E JSON");
-    assert_eq!(dir.api_path(), "/api/v1/convert/edifact-to-bo4e");
+    assert_eq!(dir.api_path(), "/api/v2/convert");
 
     let dir = Direction::Bo4eToEdifact;
     assert_eq!(dir.input_label(), "BO4E JSON");

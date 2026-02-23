@@ -7,6 +7,7 @@ use automapper_core::{create_coordinator, FormatVersion};
 use automapper_generator::parsing::ahb_parser::parse_ahb;
 use automapper_generator::schema::ahb::AhbSchema;
 use mig_assembly::ConversionService;
+use mig_bo4e::segment_structure::SegmentStructure;
 use mig_bo4e::MappingEngine;
 
 use crate::contracts::coordinators::CoordinatorInfo;
@@ -97,6 +98,14 @@ impl MigServiceRegistry {
                                     let pid = pid_entry.file_name().to_string_lossy().to_string();
                                     match MappingEngine::load(&pid_path) {
                                         Ok(engine) => {
+                                            // Attach MIG-derived SegmentStructure if available
+                                            let engine = if let Some(svc) = services.get(&fv) {
+                                                engine.with_segment_structure(
+                                                    SegmentStructure::from_mig(svc.mig()),
+                                                )
+                                            } else {
+                                                engine
+                                            };
                                             let key = format!("{}/{}/{}", fv, variant, pid);
                                             tracing::info!(
                                                 "Loaded {} TOML mapping definitions for {key}",

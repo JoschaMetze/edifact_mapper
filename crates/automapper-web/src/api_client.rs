@@ -6,14 +6,51 @@
 use gloo_net::http::Request;
 
 use crate::types::{
-    ConvertRequest, ConvertResponse, CoordinatorInfo, HealthResponse, InspectRequest,
-    InspectResponse,
+    ConvertRequest, ConvertResponse, ConvertV2Request, ConvertV2Response, CoordinatorInfo,
+    HealthResponse, InspectRequest, InspectResponse,
 };
 
 /// Base URL for API calls. Empty string means same origin.
 const API_BASE: &str = "";
 
-/// Convert content using the specified direction endpoint.
+/// Convert EDIFACT → BO4E using the v2 MIG-driven pipeline.
+pub async fn convert_v2(
+    input: &str,
+    mode: &str,
+    format_version: &str,
+) -> Result<ConvertV2Response, String> {
+    let request_body = ConvertV2Request {
+        input: input.to_string(),
+        mode: mode.to_string(),
+        format_version: format_version.to_string(),
+    };
+
+    let url = format!("{API_BASE}/api/v2/convert");
+
+    let response = Request::post(&url)
+        .header("Content-Type", "application/json")
+        .json(&request_body)
+        .map_err(|e| format!("failed to serialize request: {e}"))?
+        .send()
+        .await
+        .map_err(|e| format!("request failed: {e}"))?;
+
+    if response.ok() {
+        response
+            .json::<ConvertV2Response>()
+            .await
+            .map_err(|e| format!("failed to parse response: {e}"))
+    } else {
+        let status = response.status();
+        let body = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "unknown error".to_string());
+        Err(format!("HTTP {status}: {body}"))
+    }
+}
+
+/// Convert content using the v1 legacy pipeline.
 pub async fn convert(
     api_path: &str,
     content: &str,

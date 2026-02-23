@@ -40,7 +40,7 @@ impl Direction {
 
     pub fn api_path(&self) -> &'static str {
         match self {
-            Direction::EdifactToBo4e => "/api/v1/convert/edifact-to-bo4e",
+            Direction::EdifactToBo4e => "/api/v2/convert",
             Direction::Bo4eToEdifact => "/api/v1/convert/bo4e-to-edifact",
         }
     }
@@ -68,7 +68,23 @@ impl Direction {
     }
 }
 
-/// Conversion request (matches the REST API contract).
+/// V2 conversion request (EDIFACT → BO4E via MIG-driven pipeline).
+#[derive(Debug, Clone, Serialize)]
+pub struct ConvertV2Request {
+    pub input: String,
+    pub mode: String,
+    pub format_version: String,
+}
+
+/// V2 conversion response.
+#[derive(Debug, Clone, Deserialize)]
+pub struct ConvertV2Response {
+    pub mode: String,
+    pub result: serde_json::Value,
+    pub duration_ms: f64,
+}
+
+/// V1 conversion request (legacy pipeline, used for BO4E → EDIFACT).
 #[derive(Debug, Clone, Serialize)]
 pub struct ConvertRequest {
     pub content: String,
@@ -77,7 +93,7 @@ pub struct ConvertRequest {
     pub include_trace: bool,
 }
 
-/// Conversion response (matches the REST API contract).
+/// V1 conversion response (legacy pipeline).
 #[derive(Debug, Clone, Deserialize)]
 pub struct ConvertResponse {
     pub success: bool,
