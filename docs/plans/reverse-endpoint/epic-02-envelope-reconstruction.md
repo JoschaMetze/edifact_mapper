@@ -5,7 +5,7 @@ title: "Envelope Reconstruction"
 depends_on: []
 estimated_tasks: 3
 crate: mig-bo4e
-status: in_progress
+status: complete
 ---
 
 # Epic 2: Envelope Reconstruction
@@ -284,3 +284,23 @@ Expected: OK
 git add crates/mig-bo4e/src/lib.rs
 git commit -m "chore(mig-bo4e): ensure model envelope builders are exported"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 84 |
+| Passed | 84 |
+| Failed | 0 |
+| Skipped | 1 (doc-test) |
+
+New tests added (6):
+- `test_rebuild_unb_from_nachrichtendaten` — UNB from full nachrichtendaten JSON
+- `test_rebuild_unb_defaults` — UNB with empty JSON (default placeholders)
+- `test_rebuild_unh` — UNH with referenz + message type
+- `test_rebuild_unt` — UNT with segment count + referenz
+- `test_rebuild_unz` — UNZ with message count + interchange ref
+- `test_roundtrip_nachrichtendaten_rebuild` — extract → rebuild preserves fields
+
+Files tested:
+- `crates/mig-bo4e/src/model.rs`
