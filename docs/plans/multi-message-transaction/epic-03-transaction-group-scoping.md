@@ -5,7 +5,7 @@ title: "Transaction Group Scoping"
 depends_on: [multi-message-transaction/E01]
 estimated_tasks: 5
 crate: mig-bo4e
-status: in_progress
+status: complete
 ---
 
 # Epic 3: Transaction Group Scoping
