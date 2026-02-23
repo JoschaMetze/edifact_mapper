@@ -102,6 +102,31 @@ mod tests {
     }
 
     #[test]
+    fn test_message_chunk_struct_exists() {
+        let chunk = MessageChunk {
+            envelope: vec![],
+            unh: OwnedSegment { id: "UNH".to_string(), elements: vec![], segment_number: 0 },
+            body: vec![],
+            unt: OwnedSegment { id: "UNT".to_string(), elements: vec![], segment_number: 1 },
+        };
+        assert_eq!(chunk.unh.id, "UNH");
+        assert_eq!(chunk.unt.id, "UNT");
+        assert!(chunk.envelope.is_empty());
+        assert!(chunk.body.is_empty());
+    }
+
+    #[test]
+    fn test_interchange_chunks_struct_exists() {
+        let chunks = InterchangeChunks {
+            envelope: vec![],
+            messages: vec![],
+            unz: None,
+        };
+        assert!(chunks.messages.is_empty());
+        assert!(chunks.unz.is_none());
+    }
+
+    #[test]
     fn test_owned_segment_is_case_insensitive() {
         let input = b"UNA:+.? 'UNB+UNOC:3'UNZ+0'";
         let segments = parse_to_segments(input).unwrap();
