@@ -1,5 +1,7 @@
 //! Tests for PID schema diffing.
 
+use std::path::Path;
+
 use automapper_generator::schema_diff::{diff_pid_schemas, DiffInput, PidSchemaDiff};
 
 fn minimal_schema_json(groups: &[(&str, &str, &str)]) -> serde_json::Value {
@@ -263,4 +265,101 @@ fn test_diff_detects_added_element() {
     assert_eq!(diff.elements.added.len(), 1);
     assert_eq!(diff.elements.added[0].index, 4);
     assert_eq!(diff.elements.added[0].segment, "STS");
+}
+
+#[test]
+fn test_diff_real_55001_against_itself() {
+    let schema_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .join("mig-types/src/generated/fv2504/utilmd/pids/pid_55001_schema.json");
+
+    if !schema_path.exists() {
+        eprintln!("Skipping: schema not found at {:?}", schema_path);
+        return;
+    }
+
+    let schema: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&schema_path).unwrap()).unwrap();
+
+    let input = DiffInput {
+        old_schema: schema.clone(),
+        new_schema: schema,
+        old_version: "FV2504".into(),
+        new_version: "FV2504".into(),
+        message_type: "UTILMD".into(),
+        pid: "55001".into(),
+    };
+
+    let diff = diff_pid_schemas(&input);
+    assert!(
+        diff.is_empty(),
+        "Diffing a schema against itself should produce no changes, got: {} added groups, {} removed groups, {} code changes, {} added segments, {} removed segments",
+        diff.groups.added.len(),
+        diff.groups.removed.len(),
+        diff.codes.changed.len(),
+        diff.segments.added.len(),
+        diff.segments.removed.len(),
+    );
+}
+
+#[test]
+fn test_diff_55001_vs_55002_shows_differences() {
+    let base = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .join("mig-types/src/generated/fv2504/utilmd/pids");
+
+    let schema_55001_path = base.join("pid_55001_schema.json");
+    let schema_55002_path = base.join("pid_55002_schema.json");
+
+    if !schema_55001_path.exists() || !schema_55002_path.exists() {
+        eprintln!("Skipping: schemas not found");
+        return;
+    }
+
+    let schema_55001: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&schema_55001_path).unwrap()).unwrap();
+    let schema_55002: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&schema_55002_path).unwrap()).unwrap();
+
+    let input = DiffInput {
+        old_schema: schema_55001,
+        new_schema: schema_55002,
+        old_version: "FV2504".into(),
+        new_version: "FV2504".into(),
+        message_type: "UTILMD".into(),
+        pid: "55001-vs-55002".into(),
+    };
+
+    let diff = diff_pid_schemas(&input);
+    assert!(
+        !diff.is_empty(),
+        "55001 and 55002 should have structural differences"
+    );
+
+    // 55002 has more LOC groups (Z17, Z18, Z19, Z20) that 55001 doesn't
+    assert!(
+        !diff.groups.added.is_empty(),
+        "55002 should have groups not in 55001"
+    );
+
+    // Print diff summary for manual inspection
+    eprintln!(
+        "Groups added: {:?}",
+        diff.groups
+            .added
+            .iter()
+            .map(|g| &g.group)
+            .collect::<Vec<_>>()
+    );
+    eprintln!(
+        "Groups removed: {:?}",
+        diff.groups
+            .removed
+            .iter()
+            .map(|g| &g.group)
+            .collect::<Vec<_>>()
+    );
+    eprintln!("Code changes: {}", diff.codes.changed.len());
 }
