@@ -5,7 +5,7 @@ title: "Fixture Migrator Engine"
 depends_on: [1]
 estimated_tasks: 5
 crate: automapper-generator
-status: pending
+status: in_progress
 ---
 
 # Epic 3: Fixture Migrator Engine
