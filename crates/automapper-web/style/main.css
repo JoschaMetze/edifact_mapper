@@ -69,6 +69,60 @@ body {
     color: var(--color-primary);
 }
 
+/* === Fixture Selector === */
+.fixture-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+.fixture-selector .fixture-label {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+.fixture-selector .fixture-select {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.35rem 0.5rem;
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.fixture-selector .fixture-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.fixture-selector .btn-load {
+    white-space: nowrap;
+}
+
+.fixture-selector .fixture-loading {
+    font-size: 0.8rem;
+    color: var(--color-primary);
+}
+
+.fixture-selector .fixture-error {
+    font-size: 0.8rem;
+    color: var(--color-error);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* === Converter Layout === */
 .converter-layout {
     display: grid;

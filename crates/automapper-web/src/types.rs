@@ -162,6 +162,21 @@ pub struct ApiErrorEntry {
     pub severity: String,
 }
 
+/// A single fixture entry from the API.
+#[derive(Debug, Clone, Deserialize)]
+pub struct FixtureEntry {
+    pub name: String,
+    pub pid: String,
+    pub has_edi: bool,
+    pub has_bo4e: bool,
+}
+
+/// Response from `GET /api/v1/fixtures`.
+#[derive(Debug, Clone, Deserialize)]
+pub struct FixtureListResponse {
+    pub fixtures: Vec<FixtureEntry>,
+}
+
 /// Coordinator info.
 #[derive(Debug, Clone, Deserialize)]
 pub struct CoordinatorInfo {

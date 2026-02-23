@@ -7,7 +7,7 @@ use gloo_net::http::Request;
 
 use crate::types::{
     ConvertRequest, ConvertResponse, ConvertV2Request, ConvertV2Response, CoordinatorInfo,
-    HealthResponse, InspectRequest, InspectResponse,
+    FixtureListResponse, HealthResponse, InspectRequest, InspectResponse,
 };
 
 /// Base URL for API calls. Empty string means same origin.
@@ -132,6 +132,62 @@ pub async fn list_coordinators() -> Result<Vec<CoordinatorInfo>, String> {
     } else {
         let status = response.status();
         Err(format!("HTTP {status}"))
+    }
+}
+
+/// List available fixture files for a message type and format version.
+pub async fn list_fixtures(
+    message_type: &str,
+    format_version: &str,
+) -> Result<FixtureListResponse, String> {
+    let url = format!(
+        "{API_BASE}/api/v1/fixtures?message_type={message_type}&format_version={format_version}"
+    );
+
+    let response = Request::get(&url)
+        .send()
+        .await
+        .map_err(|e| format!("request failed: {e}"))?;
+
+    if response.ok() {
+        response
+            .json::<FixtureListResponse>()
+            .await
+            .map_err(|e| format!("failed to parse response: {e}"))
+    } else {
+        let status = response.status();
+        Err(format!("HTTP {status}"))
+    }
+}
+
+/// Fetch the content of a specific fixture file.
+pub async fn get_fixture_content(
+    message_type: &str,
+    format_version: &str,
+    name: &str,
+    file_type: &str,
+) -> Result<String, String> {
+    let url = format!(
+        "{API_BASE}/api/v1/fixtures/{message_type}/{format_version}/{name}?type={file_type}"
+    );
+
+    let response = Request::get(&url)
+        .send()
+        .await
+        .map_err(|e| format!("request failed: {e}"))?;
+
+    if response.ok() {
+        response
+            .text()
+            .await
+            .map_err(|e| format!("failed to read response: {e}"))
+    } else {
+        let status = response.status();
+        let body = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "unknown error".to_string());
+        Err(format!("HTTP {status}: {body}"))
     }
 }
 

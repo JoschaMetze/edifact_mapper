@@ -7,6 +7,7 @@ use crate::components::code_editor::CodeEditor;
 use crate::components::collapsible_panel::CollapsiblePanel;
 use crate::components::direction_toggle::DirectionToggle;
 use crate::components::error_list::ErrorList;
+use crate::components::fixture_selector::FixtureSelector;
 use crate::components::segment_tree::SegmentTreeView;
 use crate::components::trace_table::TraceTable;
 use crate::types::{ApiErrorEntry, Direction, SegmentNode, TraceEntry};
@@ -131,6 +132,13 @@ pub fn ConverterPage() -> impl IntoView {
 
     view! {
         <div class="app-container">
+            // Fixture selector bar
+            <FixtureSelector on_load=Callback::new(move |(content, dir): (String, Direction)| {
+                set_direction.set(dir);
+                set_input.set(content);
+                set_output.set(String::new());
+            }) />
+
             // Two-panel converter layout
             <div class="converter-layout">
                 <CodeEditor

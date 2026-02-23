@@ -3,6 +3,7 @@
 pub mod convert;
 pub mod convert_v2;
 pub mod coordinators;
+pub mod fixtures;
 pub mod health;
 pub mod inspect;
 
@@ -16,6 +17,7 @@ pub fn api_routes() -> Router<AppState> {
         .merge(convert::routes())
         .merge(inspect::routes())
         .merge(coordinators::routes())
+        .merge(fixtures::routes())
 }
 
 /// Build all `/api/v2/*` routes.
