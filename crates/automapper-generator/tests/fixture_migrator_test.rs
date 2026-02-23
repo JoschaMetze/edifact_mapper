@@ -240,7 +240,89 @@ fn test_generate_skeleton_with_composite() {
     );
 }
 
+use automapper_generator::fixture_migrator::batch::migrate_directory;
 use std::path::Path;
+
+#[test]
+fn test_migrate_directory_processes_multiple_fixtures() {
+    let tmp_old = tempfile::tempdir().unwrap();
+    let tmp_out = tempfile::tempdir().unwrap();
+
+    // Write two synthetic fixture files
+    std::fs::write(
+        tmp_old.path().join("55001_UTILMD_S2.1_test1.edi"),
+        "UNH+M1+UTILMD:D:11A:UN:S2.1'\nBGM+E01+M1'\nUNT+2+M1'",
+    )
+    .unwrap();
+    std::fs::write(
+        tmp_old.path().join("55001_UTILMD_S2.1_test2.edi"),
+        "UNH+M2+UTILMD:D:11A:UN:S2.1'\nBGM+E01+M2'\nUNT+2+M2'",
+    )
+    .unwrap();
+    // Write a non-.edi file that should be skipped
+    std::fs::write(
+        tmp_old.path().join("55001_UTILMD_S2.1_test1.bo.json"),
+        "{}",
+    )
+    .unwrap();
+
+    let diff = version_only_diff();
+    let schema = serde_json::json!({"pid": "55001", "fields": {}});
+
+    let results = migrate_directory(tmp_old.path(), tmp_out.path(), &diff, &schema);
+    assert_eq!(results.len(), 2, "Should process exactly 2 .edi files");
+    assert!(
+        results.iter().all(|r| r.is_ok()),
+        "All migrations should succeed"
+    );
+
+    // Check output files exist
+    let output_files: Vec<_> = std::fs::read_dir(tmp_out.path())
+        .unwrap()
+        .filter_map(|e| e.ok())
+        .filter(|e| {
+            e.path()
+                .extension()
+                .map(|ext| ext == "edi")
+                .unwrap_or(false)
+        })
+        .collect();
+    assert_eq!(output_files.len(), 2, "Should write 2 output .edi files");
+}
+
+#[test]
+fn test_migrate_directory_writes_warnings_file() {
+    let tmp_old = tempfile::tempdir().unwrap();
+    let tmp_out = tempfile::tempdir().unwrap();
+
+    std::fs::write(
+        tmp_old.path().join("55001_test.edi"),
+        "UNH+M1+UTILMD:D:11A:UN:S2.1'\nUNT+1+M1'",
+    )
+    .unwrap();
+
+    let mut diff = version_only_diff();
+    diff.groups.restructured.push(RestructuredGroup {
+        group: "sg10".into(),
+        description: "Moved".into(),
+        manual_review: true,
+    });
+
+    let schema = serde_json::json!({"pid": "55001", "fields": {}});
+
+    let results = migrate_directory(tmp_old.path(), tmp_out.path(), &diff, &schema);
+    assert_eq!(results.len(), 1);
+    assert!(results[0].is_ok());
+
+    // Check warnings file was written
+    let warnings_path = tmp_out.path().join("55001_test.edi.warnings.txt");
+    assert!(
+        warnings_path.exists(),
+        "Warnings file should be written when there are warnings"
+    );
+    let warnings_content = std::fs::read_to_string(&warnings_path).unwrap();
+    assert!(warnings_content.contains("sg10"));
+}
 
 #[test]
 fn test_migrate_real_55001_fixture_with_synthetic_diff() {
