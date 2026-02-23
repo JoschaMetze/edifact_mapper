@@ -5,7 +5,7 @@ title: "migrate-fixture CLI Subcommand"
 depends_on: [1, 3]
 estimated_tasks: 3
 crate: automapper-generator
-status: pending
+status: in_progress
 ---
 
 # Epic 4: `migrate-fixture` CLI Subcommand
