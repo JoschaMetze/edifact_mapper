@@ -271,8 +271,35 @@ async fn test_reverse_default_mode_is_edifact() {
 
 // --- Full roundtrip test (forward convert → reverse) ---
 
+/// Extract segment tags from an EDIFACT string by splitting on segment terminator.
+/// Skips UNA (optional service string) and trims whitespace from tags.
+fn extract_segment_tags(edifact: &str) -> Vec<String> {
+    edifact
+        .split('\'')
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .filter_map(|s| {
+            if s.starts_with("UNA") {
+                // Skip UNA — it's an optional service string, not a real segment
+                return None;
+            }
+            let tag = s.split('+').next().unwrap_or("").trim().to_string();
+            if tag.is_empty() {
+                None
+            } else {
+                Some(tag)
+            }
+        })
+        .collect()
+}
+
 #[tokio::test]
 async fn test_forward_then_reverse_roundtrip() {
+    // AppState loads MIG/TOML resources relative to CWD. Tests run from the crate
+    // directory but resources are at the workspace root. Change CWD for this test.
+    let workspace_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let _ = std::env::set_current_dir(&workspace_root);
+
     let fixture_path = std::path::Path::new(
         "example_market_communication_bo4e_transactions/UTILMD/FV2504/55001_UTILMD_S2.1_ALEXANDE121980.edi",
     );
@@ -335,9 +362,7 @@ async fn test_forward_then_reverse_roundtrip() {
     if reverse_resp.status() != StatusCode::OK {
         let body_bytes = reverse_resp.into_body().collect().await.unwrap().to_bytes();
         let body_str = String::from_utf8_lossy(&body_bytes);
-        eprintln!("Reverse convert returned error: {body_str}");
-        // Don't fail — reverse may not be fully implemented for all segments yet
-        return;
+        panic!("Reverse convert returned error: {body_str}");
     }
 
     let reverse_bytes = reverse_resp.into_body().collect().await.unwrap().to_bytes();
@@ -352,4 +377,43 @@ async fn test_forward_then_reverse_roundtrip() {
     assert!(result_edifact.contains("UNH"), "Should contain UNH");
     assert!(result_edifact.contains("UNT"), "Should contain UNT");
     assert!(result_edifact.contains("UNZ"), "Should contain UNZ");
+
+    // Compare segment tags (structural equivalence through the API layer)
+    let original_tags = extract_segment_tags(&input_edifact);
+    let reversed_tags = extract_segment_tags(result_edifact);
+
+    assert_eq!(
+        original_tags, reversed_tags,
+        "API roundtrip should preserve segment structure.\nOriginal: {:?}\nReversed: {:?}",
+        original_tags, reversed_tags
+    );
+
+    // Compare message body content (UNH through UNT) at the segment level.
+    // Normalize: strip newlines, trailing empty elements (e.g., CCI+Z66 vs CCI+Z66++),
+    // since the reverse mapper may pad segments with trailing empty elements.
+    fn extract_segments(edifact: &str) -> Vec<String> {
+        let start = edifact.find("UNH").unwrap_or(0);
+        let end = edifact
+            .rfind("UNT")
+            .map(|i| {
+                edifact[i..]
+                    .find('\'')
+                    .map(|j| i + j + 1)
+                    .unwrap_or(edifact.len())
+            })
+            .unwrap_or(edifact.len());
+        edifact[start..end]
+            .split('\'')
+            .map(|s| s.trim().trim_end_matches('+').to_string())
+            .filter(|s| !s.is_empty())
+            .collect()
+    }
+
+    let original_segs = extract_segments(&input_edifact);
+    let reversed_segs = extract_segments(result_edifact);
+
+    assert_eq!(
+        original_segs, reversed_segs,
+        "API roundtrip message body should be semantically identical"
+    );
 }

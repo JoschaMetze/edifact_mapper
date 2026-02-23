@@ -906,8 +906,17 @@ impl MappingEngine {
                 sg.repetitions
                     .iter()
                     .map(|instance| {
-                        let sub_tree = instance.as_assembled_tree();
-                        let tx_result = tx_engine.map_all_forward(&sub_tree);
+                        // Wrap the instance in its group so that definitions with
+                        // source_group paths like "SG4.SG5" can resolve correctly.
+                        let wrapped_tree = AssembledTree {
+                            segments: vec![],
+                            groups: vec![AssembledGroup {
+                                group_id: transaction_group.to_string(),
+                                repetitions: vec![instance.clone()],
+                            }],
+                            post_group_start: 0,
+                        };
+                        let tx_result = tx_engine.map_all_forward(&wrapped_tree);
 
                         // Split: "Prozessdaten" entity goes into transaktionsdaten,
                         // everything else into stammdaten
@@ -974,99 +983,106 @@ impl MappingEngine {
         // Step 2: Build transaction instances from each Transaktion
         let mut sg4_reps: Vec<AssembledGroupInstance> = Vec::new();
 
+        // Collect all definitions with their relative paths and sort by depth.
+        // Shallower paths (SG8) must be processed before deeper ones (SG8:0.SG10)
+        // so that parent group repetitions exist before children are added.
+        struct DefWithMeta<'a> {
+            def: &'a MappingDefinition,
+            relative: String,
+            depth: usize,
+            is_transaktionsdaten: bool,
+        }
+
+        let mut sorted_defs: Vec<DefWithMeta> = tx_engine
+            .definitions
+            .iter()
+            .map(|def| {
+                let relative = strip_tx_group_prefix(&def.meta.source_group, transaction_group);
+                let depth = if relative.is_empty() {
+                    0
+                } else {
+                    relative.chars().filter(|c| *c == '.').count() + 1
+                };
+                let is_transaktionsdaten =
+                    def.meta.entity == "Prozessdaten" || def.meta.entity == "Nachricht";
+                DefWithMeta {
+                    def,
+                    relative,
+                    depth,
+                    is_transaktionsdaten,
+                }
+            })
+            .collect();
+
+        // Build parent source_path → rep_index map from deeper definitions.
+        // SG10 defs like "SG4.SG8:0.SG10" with source_path "sg4.sg8_z79.sg10"
+        // tell us that the SG8 def with source_path "sg4.sg8_z79" should be rep 0.
+        let mut parent_rep_map: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
+        for dm in &sorted_defs {
+            if dm.depth >= 2 {
+                let parts: Vec<&str> = dm.relative.split('.').collect();
+                let (_, parent_rep) = parse_group_spec(parts[0]);
+                if let Some(rep_idx) = parent_rep {
+                    if let Some(sp) = &dm.def.meta.source_path {
+                        if let Some((parent_path, _)) = sp.rsplit_once('.') {
+                            parent_rep_map
+                                .entry(parent_path.to_string())
+                                .or_insert(rep_idx);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Augment shallow definitions with explicit rep indices from the map.
+        // E.g., SG8 def with source_path "sg4.sg8_z79" gets relative "SG8:0".
+        for dm in &mut sorted_defs {
+            if dm.depth == 1 && !dm.relative.contains(':') {
+                if let Some(sp) = &dm.def.meta.source_path {
+                    if let Some(rep_idx) = parent_rep_map.get(sp.as_str()) {
+                        dm.relative = format!("{}:{}", dm.relative, rep_idx);
+                    }
+                }
+            }
+        }
+
+        // Sort: shallower depth first, so SG8 defs create reps before SG8:N.SG10 defs.
+        // Within same depth, sort by relative path for deterministic ordering.
+        sorted_defs.sort_by(|a, b| a.depth.cmp(&b.depth).then(a.relative.cmp(&b.relative)));
+
         for tx in &mapped.transaktionen {
-            // Pass 1: transaktionsdaten — filter to Prozessdaten/Nachricht definitions
-            let (root_segs, pass1_groups) = {
-                let prozess_defs: Vec<&MappingDefinition> = tx_engine
-                    .definitions
-                    .iter()
-                    .filter(|d| d.meta.entity == "Prozessdaten" || d.meta.entity == "Nachricht")
-                    .collect();
+            let mut root_segs: Vec<AssembledSegment> = Vec::new();
+            let mut child_groups: Vec<AssembledGroup> = Vec::new();
 
-                let mut root_segs = Vec::new();
-                let mut child_groups: Vec<AssembledGroup> = Vec::new();
-
-                for def in &prozess_defs {
-                    let instance = tx_engine.map_reverse(&tx.transaktionsdaten, def);
-
-                    let leaf_group = def
-                        .meta
-                        .source_group
-                        .rsplit('.')
-                        .next()
-                        .unwrap_or(&def.meta.source_group);
-
-                    if leaf_group.is_empty() || def.meta.source_group.is_empty() {
-                        root_segs.extend(instance.segments);
-                    } else if let Some(existing) =
-                        child_groups.iter_mut().find(|g| g.group_id == leaf_group)
-                    {
-                        existing.repetitions.push(instance);
-                    } else {
-                        child_groups.push(AssembledGroup {
-                            group_id: leaf_group.to_string(),
-                            repetitions: vec![instance],
-                        });
+            for dm in &sorted_defs {
+                // Determine the BO4E value to reverse-map from
+                let bo4e_value = if dm.is_transaktionsdaten {
+                    &tx.transaktionsdaten
+                } else {
+                    match tx.stammdaten.get(&dm.def.meta.entity) {
+                        Some(v) => v,
+                        None => continue,
                     }
+                };
+
+                let instance = tx_engine.map_reverse(bo4e_value, dm.def);
+
+                if dm.relative.is_empty() {
+                    root_segs.extend(instance.segments);
+                } else {
+                    place_in_groups(&mut child_groups, &dm.relative, instance);
                 }
-
-                (root_segs, child_groups)
-            };
-
-            // Pass 2: stammdaten — filter to non-Prozessdaten/Nachricht definitions
-            let stamm_groups = {
-                let stamm_defs: Vec<&MappingDefinition> = tx_engine
-                    .definitions
-                    .iter()
-                    .filter(|d| d.meta.entity != "Prozessdaten" && d.meta.entity != "Nachricht")
-                    .collect();
-
-                let mut child_groups: Vec<AssembledGroup> = Vec::new();
-
-                for def in &stamm_defs {
-                    let entity = &def.meta.entity;
-                    let entity_value = tx.stammdaten.get(entity);
-
-                    if entity_value.is_none() {
-                        continue;
-                    }
-                    let entity_value = entity_value.unwrap();
-
-                    let leaf_group = def
-                        .meta
-                        .source_group
-                        .rsplit('.')
-                        .next()
-                        .unwrap_or(&def.meta.source_group);
-
-                    let instance = tx_engine.map_reverse(entity_value, def);
-
-                    if let Some(existing) =
-                        child_groups.iter_mut().find(|g| g.group_id == leaf_group)
-                    {
-                        existing.repetitions.push(instance);
-                    } else {
-                        child_groups.push(AssembledGroup {
-                            group_id: leaf_group.to_string(),
-                            repetitions: vec![instance],
-                        });
-                    }
-                }
-
-                child_groups
-            };
-
-            // Merge: root segments from pass 1, child groups from both passes
-            let mut all_child_groups = pass1_groups;
-            all_child_groups.extend(stamm_groups);
+            }
 
             sg4_reps.push(AssembledGroupInstance {
                 segments: root_segs,
-                child_groups: all_child_groups,
+                child_groups,
             });
         }
 
         // Step 3: Combine message tree with transaction group
+        let pre_group_count = msg_tree.segments.len();
         let mut all_groups = msg_tree.groups;
         if !sg4_reps.is_empty() {
             all_groups.push(AssembledGroup {
@@ -1078,7 +1094,7 @@ impl MappingEngine {
         AssembledTree {
             segments: msg_tree.segments,
             groups: all_groups,
-            post_group_start: 0,
+            post_group_start: pre_group_count,
         }
     }
 
@@ -1111,6 +1127,99 @@ fn parse_group_spec(part: &str) -> (&str, Option<usize>) {
         (id, rep)
     } else {
         (part, None)
+    }
+}
+
+/// Strip the transaction group prefix from a source_group path.
+///
+/// Given `source_group = "SG4.SG8:0.SG10"` and `tx_group = "SG4"`,
+/// returns `"SG8:0.SG10"`.
+/// Given `source_group = "SG4"` and `tx_group = "SG4"`, returns `""`.
+fn strip_tx_group_prefix(source_group: &str, tx_group: &str) -> String {
+    if source_group == tx_group || source_group.is_empty() {
+        String::new()
+    } else if let Some(rest) = source_group.strip_prefix(tx_group) {
+        rest.strip_prefix('.').unwrap_or(rest).to_string()
+    } else {
+        source_group.to_string()
+    }
+}
+
+/// Place a reverse-mapped group instance into the correct nesting position.
+///
+/// `relative_path` is the group path relative to the transaction group:
+/// - `"SG5"` → top-level child group
+/// - `"SG8:0.SG10"` → SG10 inside SG8 repetition 0
+fn place_in_groups(
+    groups: &mut Vec<AssembledGroup>,
+    relative_path: &str,
+    instance: AssembledGroupInstance,
+) {
+    let parts: Vec<&str> = relative_path.split('.').collect();
+
+    if parts.len() == 1 {
+        // Leaf group: "SG5", "SG8", "SG12", or with explicit index "SG8:0"
+        let (id, rep) = parse_group_spec(parts[0]);
+
+        // Find or create the group
+        let group = if let Some(g) = groups.iter_mut().find(|g| g.group_id == id) {
+            g
+        } else {
+            groups.push(AssembledGroup {
+                group_id: id.to_string(),
+                repetitions: vec![],
+            });
+            groups.last_mut().unwrap()
+        };
+
+        if let Some(rep_idx) = rep {
+            // Explicit index: place at specific position, merging into existing
+            while group.repetitions.len() <= rep_idx {
+                group.repetitions.push(AssembledGroupInstance {
+                    segments: vec![],
+                    child_groups: vec![],
+                });
+            }
+            group.repetitions[rep_idx]
+                .segments
+                .extend(instance.segments);
+            group.repetitions[rep_idx]
+                .child_groups
+                .extend(instance.child_groups);
+        } else {
+            // No index: append new repetition
+            group.repetitions.push(instance);
+        }
+    } else {
+        // Nested path: e.g., "SG8:0.SG10" → place SG10 inside SG8 rep 0
+        let (parent_id, parent_rep) = parse_group_spec(parts[0]);
+        let rep_idx = parent_rep.unwrap_or(0);
+
+        // Find or create the parent group
+        let parent_group = if let Some(g) = groups.iter_mut().find(|g| g.group_id == parent_id) {
+            g
+        } else {
+            groups.push(AssembledGroup {
+                group_id: parent_id.to_string(),
+                repetitions: vec![],
+            });
+            groups.last_mut().unwrap()
+        };
+
+        // Ensure the target repetition exists (extend with empty instances if needed)
+        while parent_group.repetitions.len() <= rep_idx {
+            parent_group.repetitions.push(AssembledGroupInstance {
+                segments: vec![],
+                child_groups: vec![],
+            });
+        }
+
+        let remaining = parts[1..].join(".");
+        place_in_groups(
+            &mut parent_group.repetitions[rep_idx].child_groups,
+            &remaining,
+            instance,
+        );
     }
 }
 
@@ -1308,7 +1417,7 @@ mod tests {
                     entity: "Prozessdaten".to_string(),
                     bo4e_type: "Prozessdaten".to_string(),
                     companion_type: None,
-                    source_group: "".to_string(),
+                    source_group: "SG4".to_string(),
                     source_path: None,
                     discriminator: None,
                 },
@@ -1321,7 +1430,7 @@ mod tests {
                     entity: "Marktlokation".to_string(),
                     bo4e_type: "Marktlokation".to_string(),
                     companion_type: None,
-                    source_group: "SG5".to_string(),
+                    source_group: "SG4.SG5".to_string(),
                     source_path: None,
                     discriminator: None,
                 },
@@ -1683,7 +1792,7 @@ mod tests {
             complex_handlers: None,
         }];
 
-        // Transaction-level definitions
+        // Transaction-level definitions (source_group includes SG4 prefix)
         let mut tx_fields = BTreeMap::new();
         tx_fields.insert(
             "ide.1".to_string(),
@@ -1694,7 +1803,7 @@ mod tests {
                 entity: "Prozessdaten".to_string(),
                 bo4e_type: "Prozessdaten".to_string(),
                 companion_type: None,
-                source_group: "".to_string(),
+                source_group: "SG4".to_string(),
                 source_path: None,
                 discriminator: None,
             },
