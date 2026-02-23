@@ -827,7 +827,7 @@ fn inject_bo4e_metadata(mut value: serde_json::Value, bo4e_type: &str) -> serde_
     match &mut value {
         serde_json::Value::Object(map) => {
             map.entry("boTyp")
-                .or_insert_with(|| serde_json::Value::String(bo4e_type.to_string()));
+                .or_insert_with(|| serde_json::Value::String(bo4e_type.to_uppercase()));
             map.entry("versionStruktur")
                 .or_insert_with(|| serde_json::Value::String("1".to_string()));
         }
@@ -835,7 +835,7 @@ fn inject_bo4e_metadata(mut value: serde_json::Value, bo4e_type: &str) -> serde_
             for item in items {
                 if let serde_json::Value::Object(map) = item {
                     map.entry("boTyp")
-                        .or_insert_with(|| serde_json::Value::String(bo4e_type.to_string()));
+                        .or_insert_with(|| serde_json::Value::String(bo4e_type.to_uppercase()));
                     map.entry("versionStruktur")
                         .or_insert_with(|| serde_json::Value::String("1".to_string()));
                 }
