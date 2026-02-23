@@ -5,7 +5,7 @@ title: "Roundtrip Integration Test"
 depends_on: [reverse-endpoint/E01, reverse-endpoint/E02, reverse-endpoint/E03]
 estimated_tasks: 3
 crate: mig-bo4e, automapper-api
-status: pending
+status: in_progress
 ---
 
 # Epic 4: Roundtrip Integration Test
