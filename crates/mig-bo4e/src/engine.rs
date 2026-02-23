@@ -762,6 +762,80 @@ impl MappingEngine {
         serde_json::Value::Object(result)
     }
 
+    /// Reverse-map a BO4E entity map back to an AssembledTree.
+    ///
+    /// For each definition:
+    /// 1. Look up entity in input by `meta.entity` name
+    /// 2. If entity value is an array, map each element as a separate group repetition
+    /// 3. Place results by `source_group`: `""` → root segments, `"SGn"` → groups
+    ///
+    /// This is the inverse of `map_all_forward()`.
+    pub fn map_all_reverse(&self, entities: &serde_json::Value) -> AssembledTree {
+        let mut root_segments: Vec<AssembledSegment> = Vec::new();
+        let mut groups: Vec<AssembledGroup> = Vec::new();
+
+        for def in &self.definitions {
+            let entity = &def.meta.entity;
+
+            // Look up entity value
+            let entity_value = entities.get(entity);
+
+            if entity_value.is_none() {
+                continue;
+            }
+            let entity_value = entity_value.unwrap();
+
+            // Determine target group from source_group (use leaf part after last dot)
+            let leaf_group = def
+                .meta
+                .source_group
+                .rsplit('.')
+                .next()
+                .unwrap_or(&def.meta.source_group);
+
+            if def.meta.source_group.is_empty() {
+                // Root-level: reverse into root segments
+                let instance = self.map_reverse(entity_value, def);
+                root_segments.extend(instance.segments);
+            } else if entity_value.is_array() {
+                // Array entity: each element becomes a group repetition
+                let arr = entity_value.as_array().unwrap();
+                let mut reps = Vec::new();
+                for item in arr {
+                    reps.push(self.map_reverse(item, def));
+                }
+
+                // Merge into existing group or create new one
+                if let Some(existing) = groups.iter_mut().find(|g| g.group_id == leaf_group) {
+                    existing.repetitions.extend(reps);
+                } else {
+                    groups.push(AssembledGroup {
+                        group_id: leaf_group.to_string(),
+                        repetitions: reps,
+                    });
+                }
+            } else {
+                // Single object: one repetition
+                let instance = self.map_reverse(entity_value, def);
+
+                if let Some(existing) = groups.iter_mut().find(|g| g.group_id == leaf_group) {
+                    existing.repetitions.push(instance);
+                } else {
+                    groups.push(AssembledGroup {
+                        group_id: leaf_group.to_string(),
+                        repetitions: vec![instance],
+                    });
+                }
+            }
+        }
+
+        AssembledTree {
+            segments: root_segments,
+            groups,
+            post_group_start: 0,
+        }
+    }
+
     /// Count the number of repetitions available for a group path in the tree.
     fn count_repetitions(tree: &AssembledTree, group_path: &str) -> usize {
         let parts: Vec<&str> = group_path.split('.').collect();
@@ -871,6 +945,140 @@ impl MappingEngine {
         crate::model::MappedMessage {
             stammdaten,
             transaktionen,
+        }
+    }
+
+    /// Reverse-map a `MappedMessage` back to an `AssembledTree`.
+    ///
+    /// Two-engine approach mirroring `map_interchange()`:
+    /// - `msg_engine` handles message-level stammdaten → SG2/SG3 groups
+    /// - `tx_engine` handles per-transaction stammdaten + transaktionsdaten → SG4 instances
+    ///
+    /// For each transaction, performs two passes:
+    /// - **Pass 1**: Reverse-map transaktionsdaten (entities named "Prozessdaten" or "Nachricht")
+    ///   → root segments (IDE, STS, DTM) + SG6 groups (RFF)
+    /// - **Pass 2**: Reverse-map stammdaten (all other entities)
+    ///   → SG5, SG8, SG10, SG12 groups
+    ///
+    /// Results are merged into one `AssembledGroupInstance` per transaction,
+    /// collected into an SG4 `AssembledGroup`, then combined with message-level groups.
+    pub fn map_interchange_reverse(
+        msg_engine: &MappingEngine,
+        tx_engine: &MappingEngine,
+        mapped: &crate::model::MappedMessage,
+        transaction_group: &str,
+    ) -> AssembledTree {
+        // Step 1: Reverse message-level stammdaten
+        let msg_tree = msg_engine.map_all_reverse(&mapped.stammdaten);
+
+        // Step 2: Build transaction instances from each Transaktion
+        let mut sg4_reps: Vec<AssembledGroupInstance> = Vec::new();
+
+        for tx in &mapped.transaktionen {
+            // Pass 1: transaktionsdaten — filter to Prozessdaten/Nachricht definitions
+            let (root_segs, pass1_groups) = {
+                let prozess_defs: Vec<&MappingDefinition> = tx_engine
+                    .definitions
+                    .iter()
+                    .filter(|d| d.meta.entity == "Prozessdaten" || d.meta.entity == "Nachricht")
+                    .collect();
+
+                let mut root_segs = Vec::new();
+                let mut child_groups: Vec<AssembledGroup> = Vec::new();
+
+                for def in &prozess_defs {
+                    let instance = tx_engine.map_reverse(&tx.transaktionsdaten, def);
+
+                    let leaf_group = def
+                        .meta
+                        .source_group
+                        .rsplit('.')
+                        .next()
+                        .unwrap_or(&def.meta.source_group);
+
+                    if leaf_group.is_empty() || def.meta.source_group.is_empty() {
+                        root_segs.extend(instance.segments);
+                    } else if let Some(existing) =
+                        child_groups.iter_mut().find(|g| g.group_id == leaf_group)
+                    {
+                        existing.repetitions.push(instance);
+                    } else {
+                        child_groups.push(AssembledGroup {
+                            group_id: leaf_group.to_string(),
+                            repetitions: vec![instance],
+                        });
+                    }
+                }
+
+                (root_segs, child_groups)
+            };
+
+            // Pass 2: stammdaten — filter to non-Prozessdaten/Nachricht definitions
+            let stamm_groups = {
+                let stamm_defs: Vec<&MappingDefinition> = tx_engine
+                    .definitions
+                    .iter()
+                    .filter(|d| d.meta.entity != "Prozessdaten" && d.meta.entity != "Nachricht")
+                    .collect();
+
+                let mut child_groups: Vec<AssembledGroup> = Vec::new();
+
+                for def in &stamm_defs {
+                    let entity = &def.meta.entity;
+                    let entity_value = tx.stammdaten.get(entity);
+
+                    if entity_value.is_none() {
+                        continue;
+                    }
+                    let entity_value = entity_value.unwrap();
+
+                    let leaf_group = def
+                        .meta
+                        .source_group
+                        .rsplit('.')
+                        .next()
+                        .unwrap_or(&def.meta.source_group);
+
+                    let instance = tx_engine.map_reverse(entity_value, def);
+
+                    if let Some(existing) =
+                        child_groups.iter_mut().find(|g| g.group_id == leaf_group)
+                    {
+                        existing.repetitions.push(instance);
+                    } else {
+                        child_groups.push(AssembledGroup {
+                            group_id: leaf_group.to_string(),
+                            repetitions: vec![instance],
+                        });
+                    }
+                }
+
+                child_groups
+            };
+
+            // Merge: root segments from pass 1, child groups from both passes
+            let mut all_child_groups = pass1_groups;
+            all_child_groups.extend(stamm_groups);
+
+            sg4_reps.push(AssembledGroupInstance {
+                segments: root_segs,
+                child_groups: all_child_groups,
+            });
+        }
+
+        // Step 3: Combine message tree with transaction group
+        let mut all_groups = msg_tree.groups;
+        if !sg4_reps.is_empty() {
+            all_groups.push(AssembledGroup {
+                group_id: transaction_group.to_string(),
+                repetitions: sg4_reps,
+            });
+        }
+
+        AssembledTree {
+            segments: msg_tree.segments,
+            groups: all_groups,
+            post_group_start: 0,
         }
     }
 

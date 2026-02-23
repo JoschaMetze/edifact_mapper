@@ -461,3 +461,17 @@ Expected: OK
 git add crates/mig-bo4e/src/engine.rs crates/mig-bo4e/tests/interchange_reverse_test.rs
 git commit -m "feat(mig-bo4e): add map_interchange_reverse() for two-pass reverse mapping"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 80 |
+| Passed | 80 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- crates/mig-bo4e/src/engine.rs
+- crates/mig-bo4e/tests/reverse_all_test.rs (new — 2 tests)
+- crates/mig-bo4e/tests/interchange_reverse_test.rs (new — 1 test)
