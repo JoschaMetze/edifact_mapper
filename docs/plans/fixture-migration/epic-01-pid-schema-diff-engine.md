@@ -5,7 +5,7 @@ title: "PID Schema Diff Engine"
 depends_on: []
 estimated_tasks: 5
 crate: automapper-generator
-status: in_progress
+status: complete
 ---
 
 # Epic 1: PID Schema Diff Engine
