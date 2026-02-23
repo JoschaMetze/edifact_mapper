@@ -22,6 +22,7 @@ const AHB_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml";
 const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/pid_55001";
+const MESSAGE_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/message";
 
 fn load_pid_filtered_mig(pid_id: &str) -> Option<(MigSchema, HashSet<String>)> {
     let mig_path = Path::new(MIG_XML_PATH);
@@ -50,11 +51,12 @@ fn assemble_fixture(mig: &MigSchema, fixture_name: &str) -> Option<AssembledTree
 }
 
 fn load_engine() -> Option<MappingEngine> {
-    let dir = Path::new(MAPPINGS_DIR);
-    if !dir.exists() {
+    let msg_dir = Path::new(MESSAGE_DIR);
+    let tx_dir = Path::new(MAPPINGS_DIR);
+    if !msg_dir.exists() || !tx_dir.exists() {
         return None;
     }
-    MappingEngine::load(dir).ok()
+    MappingEngine::load_merged(&[msg_dir, tx_dir]).ok()
 }
 
 // ── Marktlokation: SG4.SG5 → LOC+Z16 ──

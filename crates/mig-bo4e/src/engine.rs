@@ -46,6 +46,36 @@ impl MappingEngine {
         })
     }
 
+    /// Load message-level and transaction-level TOML mappings from separate directories.
+    ///
+    /// Returns `(message_engine, transaction_engine)` where:
+    /// - `message_engine` maps SG2/SG3/root-level definitions (shared across PIDs)
+    /// - `transaction_engine` maps SG4+ definitions (PID-specific)
+    pub fn load_split(
+        message_dir: &Path,
+        transaction_dir: &Path,
+    ) -> Result<(Self, Self), MappingError> {
+        let msg_engine = Self::load(message_dir)?;
+        let tx_engine = Self::load(transaction_dir)?;
+        Ok((msg_engine, tx_engine))
+    }
+
+    /// Load TOML mapping files from multiple directories into a single engine.
+    ///
+    /// Useful for combining message-level and transaction-level mappings
+    /// when a single engine with all definitions is needed.
+    pub fn load_merged(dirs: &[&Path]) -> Result<Self, MappingError> {
+        let mut definitions = Vec::new();
+        for dir in dirs {
+            let engine = Self::load(dir)?;
+            definitions.extend(engine.definitions);
+        }
+        Ok(Self {
+            definitions,
+            segment_structure: None,
+        })
+    }
+
     /// Create an engine from an already-parsed list of definitions.
     pub fn from_definitions(definitions: Vec<MappingDefinition>) -> Self {
         Self {

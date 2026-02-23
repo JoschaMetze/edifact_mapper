@@ -97,12 +97,22 @@ pub struct ReferenceIndex {
 }
 
 impl ReferenceIndex {
-    /// Load all existing TOML mappings from `mappings_base/{fv}/{variant}/pid_*/`.
+    /// Load all existing TOML mappings from `mappings_base/{fv}/{variant}/message/`
+    /// and `mappings_base/{fv}/{variant}/pid_*/`.
     pub fn load(mappings_base: &Path, fv: &str, variant: &str) -> Result<Self, GeneratorError> {
         let mut entries = HashMap::new();
         let variant_dir = mappings_base.join(fv).join(variant);
         if !variant_dir.exists() {
             return Ok(Self { entries });
+        }
+
+        // Collect directories to scan: message/ first, then pid_* dirs
+        let mut scan_dirs: Vec<(PathBuf, String)> = Vec::new();
+
+        // Shared message-level directory
+        let message_dir = variant_dir.join("message");
+        if message_dir.is_dir() {
+            scan_dirs.push((message_dir, "message".to_string()));
         }
 
         // Find all pid_* directories
@@ -116,7 +126,7 @@ impl ReferenceIndex {
             .filter(|p| p.is_dir())
             .collect();
 
-        for pid_dir in &pid_dirs {
+        for pid_dir in pid_dirs {
             let pid_id = pid_dir
                 .file_name()
                 .and_then(|n| n.to_str())
@@ -124,8 +134,11 @@ impl ReferenceIndex {
                 .strip_prefix("pid_")
                 .unwrap_or("")
                 .to_string();
+            scan_dirs.push((pid_dir, pid_id));
+        }
 
-            let toml_pattern = pid_dir.join("*.toml");
+        for (dir, source_id) in &scan_dirs {
+            let toml_pattern = dir.join("*.toml");
             let toml_str = toml_pattern.to_string_lossy().to_string();
             let toml_files: Vec<PathBuf> = glob::glob(&toml_str)
                 .map_err(|e| GeneratorError::Validation {
@@ -147,7 +160,7 @@ impl ReferenceIndex {
                 let key = derive_index_key(&def, toml_path);
                 let rm = ReferenceMapping {
                     definition: def,
-                    source_pid: pid_id.clone(),
+                    source_pid: source_id.clone(),
                 };
 
                 // Also register a no-qualifier fallback for the leaf group.
@@ -1020,14 +1033,14 @@ mod tests {
         let (files, report) =
             generate_pid_mappings("55001", &schema, &base, "FV2504", "UTILMD_Strom").unwrap();
 
-        // Some groups have no TOML mappings (SG3 contact, SG5_Z22 Messlokation)
-        // and will be scaffolded. All entities that DO have mappings should match.
+        // Some groups have no TOML mappings (SG5_Z22 Messlokation)
+        // and will be scaffolded. SG3IC is now matched from message/ directory.
         let scaffolded_names: Vec<&str> =
             report.scaffolded.iter().map(|(e, _)| e.as_str()).collect();
         for name in &scaffolded_names {
             assert!(
-                *name == "SG3IC" || *name == "SG5Z22",
-                "Unexpected scaffolded entity: {} (expected only SG3IC, SG5Z22)",
+                *name == "SG5Z22",
+                "Unexpected scaffolded entity: {} (expected only SG5Z22)",
                 name
             );
         }

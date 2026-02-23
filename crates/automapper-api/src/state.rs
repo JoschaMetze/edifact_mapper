@@ -38,7 +38,12 @@ impl AppState {
 /// Registry for MIG-driven conversion services, keyed by format version.
 pub struct MigServiceRegistry {
     services: HashMap<String, ConversionService>,
+    /// Combined engines (message + transaction) per PID, for backward compat.
+    /// Key: "{fv}/{variant}/pid_{pid}" e.g. "FV2504/UTILMD_Strom/pid_55001"
     mapping_engines: HashMap<String, MappingEngine>,
+    /// Message-level engines per variant (shared across PIDs).
+    /// Key: "{fv}/{variant}" e.g. "FV2504/UTILMD_Strom"
+    message_engines: HashMap<String, MappingEngine>,
     ahb_schemas: HashMap<String, AhbSchema>,
 }
 
@@ -69,7 +74,9 @@ impl MigServiceRegistry {
         }
 
         // Load TOML mapping definitions: mappings/{FV}/{msg_variant}/{pid}/
+        // Also loads shared message-level definitions from mappings/{FV}/{msg_variant}/message/
         let mut mapping_engines = HashMap::new();
+        let mut message_engines = HashMap::new();
         let mappings_base = std::path::Path::new("mappings");
         if mappings_base.exists() {
             if let Ok(fv_entries) = std::fs::read_dir(mappings_base) {
@@ -87,15 +94,51 @@ impl MigServiceRegistry {
                                 continue;
                             }
                             let variant = variant_entry.file_name().to_string_lossy().to_string();
-                            // Iterate PID dirs (e.g., pid_55001)
+
+                            // Load message-level engine (shared across PIDs)
+                            let message_dir = variant_path.join("message");
+                            if message_dir.is_dir() {
+                                match MappingEngine::load(&message_dir) {
+                                    Ok(engine) => {
+                                        let key = format!("{}/{}", fv, variant);
+                                        tracing::info!(
+                                            "Loaded {} message-level TOML mappings for {key}",
+                                            engine.definitions().len()
+                                        );
+                                        message_engines.insert(key, engine);
+                                    }
+                                    Err(e) => {
+                                        tracing::warn!(
+                                            "Failed to load message mappings from {}: {e}",
+                                            message_dir.display()
+                                        );
+                                    }
+                                }
+                            }
+
+                            // Iterate PID dirs (e.g., pid_55001), skip message/
                             if let Ok(pid_entries) = std::fs::read_dir(&variant_path) {
                                 for pid_entry in pid_entries.flatten() {
                                     let pid_path = pid_entry.path();
                                     if !pid_path.is_dir() {
                                         continue;
                                     }
-                                    let pid = pid_entry.file_name().to_string_lossy().to_string();
-                                    match MappingEngine::load(&pid_path) {
+                                    let dirname =
+                                        pid_entry.file_name().to_string_lossy().to_string();
+                                    // Skip message/ directory (already loaded above)
+                                    if dirname == "message" {
+                                        continue;
+                                    }
+                                    // Load combined engine (message + PID transaction defs)
+                                    let load_result = if message_dir.is_dir() {
+                                        MappingEngine::load_merged(&[
+                                            message_dir.as_path(),
+                                            pid_path.as_path(),
+                                        ])
+                                    } else {
+                                        MappingEngine::load(&pid_path)
+                                    };
+                                    match load_result {
                                         Ok(engine) => {
                                             // Attach MIG-derived SegmentStructure if available
                                             let engine = if let Some(svc) = services.get(&fv) {
@@ -105,7 +148,8 @@ impl MigServiceRegistry {
                                             } else {
                                                 engine
                                             };
-                                            let key = format!("{}/{}/{}", fv, variant, pid);
+                                            let key =
+                                                format!("{}/{}/{}", fv, variant, dirname);
                                             tracing::info!(
                                                 "Loaded {} TOML mapping definitions for {key}",
                                                 engine.definitions().len()
@@ -166,6 +210,7 @@ impl MigServiceRegistry {
         Self {
             services,
             mapping_engines,
+            message_engines,
             ahb_schemas,
         }
     }
@@ -181,7 +226,7 @@ impl MigServiceRegistry {
         self.mapping_engines.get(key)
     }
 
-    /// Get a mapping engine for a specific PID.
+    /// Get a combined mapping engine (message + transaction) for a specific PID.
     /// Constructs key as "{fv}/{msg_variant}/pid_{pid}" (e.g., "FV2504/UTILMD_Strom/pid_55001").
     pub fn mapping_engine_for_pid(
         &self,
@@ -191,6 +236,33 @@ impl MigServiceRegistry {
     ) -> Option<&MappingEngine> {
         let key = format!("{}/{}/pid_{}", fv, msg_variant, pid);
         self.mapping_engines.get(&key)
+    }
+
+    /// Get split mapping engines for a specific PID.
+    ///
+    /// Returns `(message_engine, combined_engine)` where:
+    /// - `message_engine` contains only message-level definitions (SG2/SG3/root)
+    /// - `combined_engine` contains all definitions (message + transaction)
+    ///
+    /// Use the message engine with `map_interchange()` for multi-transaction mapping.
+    pub fn mapping_engines_for_pid(
+        &self,
+        fv: &str,
+        msg_variant: &str,
+        pid: &str,
+    ) -> Option<(&MappingEngine, &MappingEngine)> {
+        let msg_key = format!("{}/{}", fv, msg_variant);
+        let combined_key = format!("{}/{}/pid_{}", fv, msg_variant, pid);
+        let msg = self.message_engines.get(&msg_key)?;
+        let combined = self.mapping_engines.get(&combined_key)?;
+        Some((msg, combined))
+    }
+
+    /// Get the message-level mapping engine for a variant.
+    /// Key format: "FV2504/UTILMD_Strom"
+    pub fn message_engine(&self, fv: &str, msg_variant: &str) -> Option<&MappingEngine> {
+        let key = format!("{}/{}", fv, msg_variant);
+        self.message_engines.get(&key)
     }
 
     /// Get an AHB schema for the given format version and message type/variant.

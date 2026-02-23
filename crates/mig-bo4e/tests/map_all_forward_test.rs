@@ -18,6 +18,7 @@ const AHB_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml";
 const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/pid_55001";
+const MESSAGE_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/message";
 
 #[test]
 fn test_map_all_forward_55001() {
@@ -34,8 +35,9 @@ fn test_map_all_forward_55001() {
         return;
     }
 
-    let mappings_dir = Path::new(MAPPINGS_DIR);
-    if !mappings_dir.exists() {
+    let msg_dir = Path::new(MESSAGE_DIR);
+    let tx_dir = Path::new(MAPPINGS_DIR);
+    if !msg_dir.exists() || !tx_dir.exists() {
         eprintln!("Skipping: mappings not found");
         return;
     }
@@ -53,8 +55,8 @@ fn test_map_all_forward_55001() {
     let assembler = Assembler::new(&filtered_mig);
     let tree = assembler.assemble_generic(&segments).unwrap();
 
-    // Load mapping engine and call map_all_forward
-    let engine = MappingEngine::load(mappings_dir).unwrap();
+    // Load combined mapping engine (message + transaction) and call map_all_forward
+    let engine = MappingEngine::load_merged(&[msg_dir, tx_dir]).unwrap();
     let result = engine.map_all_forward(&tree);
 
     eprintln!(
@@ -73,6 +75,8 @@ fn test_map_all_forward_55001() {
         "EnfgDaten",
         "Ansprechpartner",
         "Geschaeftspartner",
+        // Note: "Kontakt" (SG2.SG3) is defined in the message-level mappings but
+        // won't appear here because this fixture has no CTA+IC segment in SG3.
     ];
 
     let obj = result.as_object().expect("result should be JSON object");
