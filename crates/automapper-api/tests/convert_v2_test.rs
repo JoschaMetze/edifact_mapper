@@ -169,24 +169,34 @@ async fn test_convert_v2_bo4e_mode() {
             "Response should contain 'pid' key"
         );
         assert!(
-            resp.result.get("entities").is_some(),
-            "Response should contain 'entities' key"
+            resp.result.get("formatVersion").is_some(),
+            "Response should contain 'formatVersion' key"
+        );
+        assert!(
+            resp.result.get("stammdaten").is_some(),
+            "Response should contain 'stammdaten' key"
+        );
+        assert!(
+            resp.result.get("transaktionsdaten").is_some(),
+            "Response should contain 'transaktionsdaten' key"
         );
 
         // If we used a real fixture, verify entity content
         if fixture_path.exists() {
-            let entities = resp.result.get("entities").unwrap();
+            let stammdaten = resp.result.get("stammdaten").unwrap();
             assert!(
-                entities.get("Nachricht").is_some(),
-                "Should contain Nachricht entity"
+                stammdaten.get("nachricht").is_some(),
+                "Should contain nachricht in stammdaten"
             );
             assert!(
-                entities.get("Prozessdaten").is_some(),
-                "Should contain Prozessdaten entity"
+                stammdaten.get("marktlokation").is_some(),
+                "Should contain marktlokation in stammdaten"
             );
+            // Prozessdaten should be at top level as transaktionsdaten
+            let transaktionsdaten = resp.result.get("transaktionsdaten").unwrap();
             assert!(
-                entities.get("Marktlokation").is_some(),
-                "Should contain Marktlokation entity"
+                !transaktionsdaten.is_null(),
+                "transaktionsdaten should not be null"
             );
         }
     } else {

@@ -25,6 +25,16 @@ pub fn routes() -> Router<AppState> {
     Router::new().route("/convert", post(convert_v2))
 }
 
+/// Convert PascalCase to camelCase: "Marktlokation" → "marktlokation",
+/// "ProduktpaketPriorisierung" → "produktpaketPriorisierung".
+fn to_camel_case(s: &str) -> String {
+    let mut chars = s.chars();
+    match chars.next() {
+        None => String::new(),
+        Some(c) => c.to_lowercase().to_string() + chars.as_str(),
+    }
+}
+
 /// `POST /api/v2/convert` — Dual-mode conversion endpoint.
 async fn convert_v2(
     State(state): State<AppState>,
@@ -123,12 +133,27 @@ async fn convert_v2(
 
             let entities = engine.map_all_forward(&tree);
 
+            // Restructure: extract Prozessdaten as transaktionsdaten, rest goes into stammdaten
+            let mut stammdaten = serde_json::Map::new();
+            let mut transaktionsdaten = serde_json::Value::Null;
+
+            if let Some(obj) = entities.as_object() {
+                for (key, value) in obj {
+                    if key == "Prozessdaten" {
+                        transaktionsdaten = value.clone();
+                    } else {
+                        stammdaten.insert(to_camel_case(key), value.clone());
+                    }
+                }
+            }
+
             Ok(Json(ConvertV2Response {
                 mode: "bo4e".to_string(),
                 result: serde_json::json!({
                     "pid": pid,
-                    "format_version": req.format_version,
-                    "entities": entities
+                    "formatVersion": req.format_version,
+                    "transaktionsdaten": transaktionsdaten,
+                    "stammdaten": stammdaten,
                 }),
                 duration_ms: start.elapsed().as_secs_f64() * 1000.0,
             }))
