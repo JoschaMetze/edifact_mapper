@@ -465,3 +465,20 @@ Expected: All PASS
 git add crates/automapper-generator/tests/schema_diff_test.rs
 git commit -m "test(generator): add integration test for mig-diff JSON and markdown output"
 ```
+
+---
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 12 |
+| Passed | 12 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/automapper-generator/src/main.rs`
+- `crates/automapper-generator/src/schema_diff/mod.rs`
+- `crates/automapper-generator/src/schema_diff/markdown.rs`
+- `crates/automapper-generator/tests/schema_diff_test.rs`

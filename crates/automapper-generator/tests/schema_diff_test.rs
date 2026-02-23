@@ -2,7 +2,9 @@
 
 use std::path::Path;
 
-use automapper_generator::schema_diff::{diff_pid_schemas, DiffInput, PidSchemaDiff};
+use automapper_generator::schema_diff::{
+    diff_pid_schemas, render_diff_markdown, DiffInput, PidSchemaDiff,
+};
 
 fn minimal_schema_json(groups: &[(&str, &str, &str)]) -> serde_json::Value {
     // Build a minimal PID schema JSON with specified groups.
@@ -401,4 +403,109 @@ fn test_diff_serializes_to_json() {
     // Verify round-trip: deserialize back
     let parsed: PidSchemaDiff = serde_json::from_str(&json).unwrap();
     assert_eq!(parsed.segments.added.len(), 1);
+}
+
+#[test]
+fn test_render_diff_markdown_includes_sections() {
+    let old = schema_with_segments(&[(
+        "sg5_z16",
+        "SG5",
+        "LOC:Z16",
+        &[("LOC", &[(0, "3227", "code", &["Z16"])])],
+    )]);
+    let new = schema_with_segments(&[(
+        "sg5_z16",
+        "SG5",
+        "LOC:Z16",
+        &[
+            ("LOC", &[(0, "3227", "code", &["Z16", "Z17"])]),
+            ("MEA", &[(0, "6311", "code", &["AAA"])]),
+        ],
+    )]);
+
+    let input = DiffInput {
+        old_schema: old,
+        new_schema: new,
+        old_version: "FV2504".into(),
+        new_version: "FV2510".into(),
+        message_type: "UTILMD".into(),
+        pid: "55001".into(),
+    };
+
+    let diff = diff_pid_schemas(&input);
+    let md = render_diff_markdown(&diff);
+
+    assert!(md.contains("# PID Schema Diff"));
+    assert!(md.contains("FV2504"));
+    assert!(md.contains("FV2510"));
+    assert!(md.contains("MEA")); // added segment
+    assert!(md.contains("Z17")); // added code
+}
+
+#[test]
+fn test_render_diff_markdown_empty_diff() {
+    let schema = minimal_schema_json(&[("sg5_z16", "SG5", "LOC:Z16")]);
+
+    let input = DiffInput {
+        old_schema: schema.clone(),
+        new_schema: schema,
+        old_version: "FV2504".into(),
+        new_version: "FV2510".into(),
+        message_type: "UTILMD".into(),
+        pid: "55001".into(),
+    };
+
+    let diff = diff_pid_schemas(&input);
+    let md = render_diff_markdown(&diff);
+
+    assert!(md.contains("# PID Schema Diff"));
+    assert!(md.contains("No differences found."));
+}
+
+#[test]
+fn test_diff_real_schemas_produces_valid_json_and_markdown() {
+    let base = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .join("mig-types/src/generated/fv2504/utilmd/pids");
+
+    let schema_55001 = base.join("pid_55001_schema.json");
+    let schema_55002 = base.join("pid_55002_schema.json");
+
+    if !schema_55001.exists() || !schema_55002.exists() {
+        eprintln!("Skipping: schemas not found");
+        return;
+    }
+
+    let old_json: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&schema_55001).unwrap()).unwrap();
+    let new_json: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&schema_55002).unwrap()).unwrap();
+
+    let input = DiffInput {
+        old_schema: old_json,
+        new_schema: new_json,
+        old_version: "FV2504".into(),
+        new_version: "FV2504".into(),
+        message_type: "UTILMD".into(),
+        pid: "55001-vs-55002".into(),
+    };
+
+    let diff = diff_pid_schemas(&input);
+
+    // Verify JSON serialization
+    let json = serde_json::to_string_pretty(&diff).unwrap();
+    assert!(json.len() > 50, "JSON should have meaningful content");
+
+    // Verify markdown rendering
+    let md = render_diff_markdown(&diff);
+    assert!(md.contains("# PID Schema Diff"));
+    assert!(md.contains("55001-vs-55002"));
+
+    // Write to temp dir for manual inspection
+    let tmp = tempfile::tempdir().unwrap();
+    std::fs::write(tmp.path().join("diff.json"), &json).unwrap();
+    std::fs::write(tmp.path().join("diff.md"), &md).unwrap();
+    eprintln!("Diff output written to: {:?}", tmp.path());
+    eprintln!("Markdown preview:\n{}", &md[..md.len().min(500)]);
 }

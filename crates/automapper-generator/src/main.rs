@@ -180,6 +180,37 @@ enum Commands {
         #[arg(long)]
         generated_dir: PathBuf,
     },
+
+    /// Compare two PID schemas and produce a structured diff report.
+    MigDiff {
+        /// Path to the old PID schema JSON (e.g., pid_55001_schema.json from FV2504).
+        #[arg(long)]
+        old_schema: PathBuf,
+
+        /// Path to the new PID schema JSON (e.g., pid_55001_schema.json from FV2510).
+        #[arg(long)]
+        new_schema: PathBuf,
+
+        /// Old format version identifier (e.g., "FV2504").
+        #[arg(long)]
+        old_version: String,
+
+        /// New format version identifier (e.g., "FV2510").
+        #[arg(long)]
+        new_version: String,
+
+        /// Message type (e.g., "UTILMD").
+        #[arg(long)]
+        message_type: String,
+
+        /// PID identifier (e.g., "55001").
+        #[arg(long)]
+        pid: String,
+
+        /// Output directory for diff files. Creates <pid>_diff.json and <pid>_diff.md.
+        #[arg(long)]
+        output_dir: PathBuf,
+    },
 }
 
 /// Infer energy variant (Strom/Gas) from a filename.
@@ -649,6 +680,76 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 eprintln!("  SCAFFOLD: {} ({})", entity, reason);
             }
             eprintln!("\nOutput: {:?}", output_dir);
+            Ok(())
+        }
+        Commands::MigDiff {
+            old_schema,
+            new_schema,
+            old_version,
+            new_version,
+            message_type,
+            pid,
+            output_dir,
+        } => {
+            use automapper_generator::schema_diff::{diff_pid_schemas, render_diff_markdown, DiffInput};
+
+            let old_json: serde_json::Value =
+                serde_json::from_str(&std::fs::read_to_string(&old_schema)?)?;
+            let new_json: serde_json::Value =
+                serde_json::from_str(&std::fs::read_to_string(&new_schema)?)?;
+
+            let input = DiffInput {
+                old_schema: old_json,
+                new_schema: new_json,
+                old_version: old_version.clone(),
+                new_version: new_version.clone(),
+                message_type,
+                pid: pid.clone(),
+            };
+
+            let diff = diff_pid_schemas(&input);
+
+            std::fs::create_dir_all(&output_dir)?;
+
+            // Write JSON diff
+            let json_path = output_dir.join(format!("pid_{}_diff.json", pid));
+            let json = serde_json::to_string_pretty(&diff)?;
+            std::fs::write(&json_path, &json)?;
+            println!("Wrote diff JSON: {}", json_path.display());
+
+            // Write markdown summary
+            let md_path = output_dir.join(format!("pid_{}_diff.md", pid));
+            let md = render_diff_markdown(&diff);
+            std::fs::write(&md_path, &md)?;
+            println!("Wrote diff summary: {}", md_path.display());
+
+            // Print summary
+            println!(
+                "\nDiff summary ({} → {}, PID {}):",
+                old_version, new_version, pid
+            );
+            println!(
+                "  Groups:   +{} -{} ~{}",
+                diff.groups.added.len(),
+                diff.groups.removed.len(),
+                diff.groups.restructured.len(),
+            );
+            println!(
+                "  Segments: +{} -{}",
+                diff.segments.added.len(),
+                diff.segments.removed.len(),
+            );
+            println!("  Codes:    {} changes", diff.codes.changed.len());
+            println!(
+                "  Elements: +{} -{}",
+                diff.elements.added.len(),
+                diff.elements.removed.len(),
+            );
+
+            if diff.is_empty() {
+                println!("\nNo differences found.");
+            }
+
             Ok(())
         }
         Commands::ValidateSchema {
