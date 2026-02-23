@@ -5,7 +5,7 @@
 //! and copies matching reference mappings (updating `source_path` and `source_group`
 //! as needed). Unmatched groups fall back to scaffold generation.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
@@ -150,6 +150,15 @@ impl ReferenceIndex {
                     source_pid: pid_id.clone(),
                 };
 
+                // Also register a no-qualifier fallback for the leaf group.
+                // This handles intra-group discriminators (e.g., multiple RFFs
+                // within SG6) where the schema has no qualifier values.
+                let leaf = key.0.clone();
+                if !key.1.is_empty() && !leaf.is_empty() {
+                    let fallback_key = (leaf, String::new());
+                    entries.entry(fallback_key).or_insert(rm.clone());
+                }
+
                 // First mapping found wins
                 entries.entry(key).or_insert(rm);
             }
@@ -242,8 +251,52 @@ pub struct SchemaGroup {
     pub source_group: String,
     pub qualifier: Option<String>,
     pub disc_segment: Option<String>,
-    pub segments: Vec<String>,
+    pub segments: Vec<SchemaSegmentInfo>,
     pub children: Vec<SchemaGroup>,
+}
+
+/// Rich segment info from the PID schema JSON.
+#[derive(Debug, Clone)]
+pub struct SchemaSegmentInfo {
+    pub id: String,
+    pub name: Option<String>,
+    pub elements: Vec<SchemaElementInfo>,
+}
+
+/// Element info within a segment.
+#[derive(Debug, Clone)]
+pub struct SchemaElementInfo {
+    pub index: usize,
+    pub id: String,
+    pub name: String,
+    pub element_type: String,
+    pub composite_id: Option<String>,
+    pub codes: Vec<SchemaCodeInfo>,
+    pub components: Vec<SchemaComponentInfo>,
+}
+
+/// Code value info.
+#[derive(Debug, Clone)]
+pub struct SchemaCodeInfo {
+    pub value: String,
+    pub name: String,
+}
+
+/// Component within a composite element.
+#[derive(Debug, Clone)]
+pub struct SchemaComponentInfo {
+    pub sub_index: usize,
+    pub id: String,
+    pub name: String,
+    pub element_type: String,
+    pub codes: Vec<SchemaCodeInfo>,
+}
+
+impl SchemaSegmentInfo {
+    /// Get just the segment ID string.
+    pub fn id(&self) -> &str {
+        &self.id
+    }
 }
 
 /// Intermediate JSON structures matching the schema format.
@@ -258,11 +311,65 @@ struct SchemaJson {
 struct SchemaFieldJson {
     source_group: String,
     #[serde(default)]
-    segments: Vec<String>,
+    segments: Vec<SchemaSegmentJson>,
     #[serde(default)]
     discriminator: Option<SchemaDiscriminatorJson>,
     #[serde(default)]
     children: Option<HashMap<String, SchemaFieldJson>>,
+}
+
+/// Handles both old format (plain string) and new format (rich object).
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+enum SchemaSegmentJson {
+    Rich(SchemaSegmentRichJson),
+    Simple(String),
+}
+
+#[derive(Debug, Deserialize)]
+struct SchemaSegmentRichJson {
+    id: String,
+    #[serde(default)]
+    name: Option<String>,
+    #[serde(default)]
+    elements: Vec<SchemaElementJson>,
+}
+
+#[derive(Debug, Deserialize)]
+struct SchemaElementJson {
+    index: usize,
+    #[serde(default)]
+    id: Option<String>,
+    #[serde(default)]
+    name: Option<String>,
+    #[serde(default, rename = "type")]
+    element_type: Option<String>,
+    #[serde(default)]
+    composite: Option<String>,
+    #[serde(default)]
+    codes: Vec<SchemaCodeJson>,
+    #[serde(default)]
+    components: Vec<SchemaComponentJson>,
+}
+
+#[derive(Debug, Deserialize)]
+struct SchemaCodeJson {
+    value: String,
+    #[serde(default)]
+    name: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct SchemaComponentJson {
+    sub_index: usize,
+    #[serde(default)]
+    id: Option<String>,
+    #[serde(default)]
+    name: Option<String>,
+    #[serde(default, rename = "type")]
+    element_type: Option<String>,
+    #[serde(default)]
+    codes: Vec<SchemaCodeJson>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -311,12 +418,69 @@ fn parse_schema_field(name: String, field: SchemaFieldJson) -> SchemaGroup {
         .map(|(cname, cfield)| parse_schema_field(cname, cfield))
         .collect();
 
+    let segments = field
+        .segments
+        .into_iter()
+        .map(|s| match s {
+            SchemaSegmentJson::Simple(id) => SchemaSegmentInfo {
+                id,
+                name: None,
+                elements: Vec::new(),
+            },
+            SchemaSegmentJson::Rich(rich) => SchemaSegmentInfo {
+                id: rich.id,
+                name: rich.name,
+                elements: rich
+                    .elements
+                    .into_iter()
+                    .map(|el| {
+                        let codes: Vec<SchemaCodeInfo> = el
+                            .codes
+                            .into_iter()
+                            .map(|c| SchemaCodeInfo {
+                                value: c.value,
+                                name: c.name.unwrap_or_default(),
+                            })
+                            .collect();
+                        let components: Vec<SchemaComponentInfo> = el
+                            .components
+                            .into_iter()
+                            .map(|c| SchemaComponentInfo {
+                                sub_index: c.sub_index,
+                                id: c.id.unwrap_or_default(),
+                                name: c.name.unwrap_or_default(),
+                                element_type: c.element_type.unwrap_or_default(),
+                                codes: c
+                                    .codes
+                                    .into_iter()
+                                    .map(|cc| SchemaCodeInfo {
+                                        value: cc.value,
+                                        name: cc.name.unwrap_or_default(),
+                                    })
+                                    .collect(),
+                            })
+                            .collect();
+                        SchemaElementInfo {
+                            index: el.index,
+                            id: el.id.unwrap_or_default(),
+                            name: el.name.unwrap_or_default(),
+                            element_type: el.element_type.unwrap_or_default(),
+                            composite_id: el.composite,
+                            codes,
+                            components,
+                        }
+                    })
+                    .collect(),
+            },
+        })
+        .collect();
+
     SchemaGroup {
         field_name: name,
         source_group: field.source_group,
         qualifier,
         disc_segment,
-        segments: field.segments,
+        segments,
         children,
     }
 }
@@ -339,6 +503,7 @@ fn sort_children_recursive(group: &mut SchemaGroup) {
 pub struct GenerationReport {
     pub matched: Vec<(String, String)>,
     pub scaffolded: Vec<(String, String)>,
+    pub warnings: Vec<String>,
 }
 
 /// Generate TOML mapping files for a PID by reusing reference mappings.
@@ -358,6 +523,7 @@ pub fn generate_pid_mappings(
     let mut report = GenerationReport {
         matched: Vec::new(),
         scaffolded: Vec::new(),
+        warnings: Vec::new(),
     };
 
     // 1. Root mapping (nachricht)
@@ -408,6 +574,15 @@ fn generate_group_mappings(
             // Clone and adapt the reference mapping
             let mut def = rm.definition.clone();
             adapt_mapping(&mut def, group, source_path);
+
+            // Validate element paths against target schema
+            let validation_warnings =
+                validate_mapping_against_schema(&def, group, &entity_name);
+            for w in &validation_warnings {
+                eprintln!("WARN: {w}");
+            }
+            report.warnings.extend(validation_warnings);
+
             let content = serialize_mapping(&def);
             files.push((filename, content));
             report.matched.push((entity_name, rm.source_pid.clone()));
@@ -489,6 +664,133 @@ fn derive_filename_from_path(source_path: &str) -> String {
     format!("{name}.toml")
 }
 
+/// Validate a reference mapping's element paths against the target schema.
+///
+/// Checks that:
+/// 1. Segment IDs referenced in field paths exist in the schema group
+/// 2. CAV discriminator codes (e.g., `cav[ZH9]`) exist in the schema's CAV segment
+/// 3. Element indices don't exceed the schema's element count
+fn validate_mapping_against_schema(
+    def: &MappingDefinition,
+    group: &SchemaGroup,
+    entity_name: &str,
+) -> Vec<String> {
+    let mut warnings = Vec::new();
+
+    // Build a lookup of schema segments by lowercase ID
+    let schema_segs: HashMap<String, &SchemaSegmentInfo> = group
+        .segments
+        .iter()
+        .map(|s| (s.id.to_lowercase(), s))
+        .collect();
+
+    // Collect CAV codes from schema (first component codes of composite C889)
+    let cav_codes: HashSet<String> = schema_segs
+        .get("cav")
+        .map(|seg| {
+            seg.elements
+                .iter()
+                .flat_map(|el| {
+                    // Check composite-level codes (e.g., C889 discriminator)
+                    el.components
+                        .iter()
+                        .filter(|c| c.sub_index == 0)
+                        .flat_map(|c| c.codes.iter().map(|code| code.value.clone()))
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
+    // Validate both fields and companion_fields sections
+    let empty = BTreeMap::new();
+    let sections: Vec<(&str, &BTreeMap<String, FieldMapping>)> = vec![
+        ("fields", &def.fields),
+        (
+            "companion_fields",
+            def.companion_fields.as_ref().unwrap_or(&empty),
+        ),
+    ];
+
+    for (section, fields) in sections {
+        for path in fields.keys() {
+            // Parse "seg_id" and optional "[CODE]" from paths like "cav[ZH9].0.3" or "cci.0"
+            let (seg_id, disc_code) = parse_element_path(path);
+
+            // Check segment exists in schema
+            if !seg_id.is_empty() && !schema_segs.contains_key(&seg_id) {
+                warnings.push(format!(
+                    "{entity_name}: [{section}] \"{path}\" references segment '{}' \
+                     not found in schema (available: {})",
+                    seg_id.to_uppercase(),
+                    schema_segs
+                        .keys()
+                        .map(|k| k.to_uppercase())
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                ));
+            }
+
+            // Check CAV discriminator code exists
+            if let Some(code) = disc_code {
+                if !cav_codes.is_empty() && !cav_codes.contains(&code) {
+                    warnings.push(format!(
+                        "{entity_name}: [{section}] \"{path}\" uses CAV discriminator code '{}' \
+                         not found in schema (available: {})",
+                        code,
+                        cav_codes.iter().cloned().collect::<Vec<_>>().join(", ")
+                    ));
+                }
+            }
+
+            // Check element index against schema
+            if let Some(seg_info) = schema_segs.get(&seg_id) {
+                if let Some(idx) = parse_element_index(path) {
+                    let max_idx = seg_info.elements.iter().map(|e| e.index).max().unwrap_or(0);
+                    if idx > max_idx {
+                        warnings.push(format!(
+                            "{entity_name}: [{section}] \"{path}\" references element index {idx} \
+                             but {} only has indices 0..{max_idx}",
+                            seg_id.to_uppercase()
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
+    warnings
+}
+
+/// Parse segment ID and optional discriminator code from an element path.
+///
+/// Examples:
+/// - `"cci.0"` → `("cci", None)`
+/// - `"cav[ZH9].0.3"` → `("cav", Some("ZH9"))`
+/// - `"loc.1.0"` → `("loc", None)`
+fn parse_element_path(path: &str) -> (String, Option<String>) {
+    let dot_pos = path.find('.').unwrap_or(path.len());
+    let seg_part = &path[..dot_pos];
+
+    if let Some(bracket_start) = seg_part.find('[') {
+        let seg_id = seg_part[..bracket_start].to_lowercase();
+        let bracket_end = seg_part.find(']').unwrap_or(seg_part.len());
+        let code = seg_part[bracket_start + 1..bracket_end].to_string();
+        (seg_id, Some(code))
+    } else {
+        (seg_part.to_lowercase(), None)
+    }
+}
+
+/// Parse the first element index from a path like "cci.3" → Some(3), "cav[ZV4].0.3" → Some(0).
+fn parse_element_index(path: &str) -> Option<usize> {
+    // Skip segment part (before first dot)
+    let after_seg = path.find('.')?.checked_add(1)?;
+    let rest = &path[after_seg..];
+    // Take the first numeric component
+    let idx_str = rest.split('.').next()?;
+    idx_str.parse().ok()
+}
+
 /// Adapt a cloned reference mapping for the target PID's schema.
 fn adapt_mapping(def: &mut MappingDefinition, group: &SchemaGroup, source_path: &str) {
     // Update source_path to match the new PID's field hierarchy
@@ -540,15 +842,64 @@ fn generate_scaffold_fallback(group: &SchemaGroup, source_path: &str, entity_nam
     }
 
     out.push_str("\n[fields]\n");
-    // List known segments as comments
-    for seg in &group.segments {
-        out.push_str(&format!(
-            "# \"{}.0\" = {{ target = \"\" }}\n",
-            seg.to_lowercase()
-        ));
+    // List known segments with element metadata as comments
+    for seg_info in &group.segments {
+        if seg_info.elements.is_empty() {
+            // No metadata — plain comment
+            out.push_str(&format!(
+                "# \"{}.0\" = {{ target = \"\" }}\n",
+                seg_info.id.to_lowercase()
+            ));
+        } else {
+            let seg_lower = seg_info.id.to_lowercase();
+            let seg_name = seg_info.name.as_deref().unwrap_or(&seg_info.id);
+            out.push_str(&format!("# --- {} ({}) ---\n", seg_info.id, seg_name));
+            for el in &seg_info.elements {
+                if let Some(ref comp_id) = el.composite_id {
+                    // Composite element
+                    out.push_str(&format!("# {} {}\n", comp_id, el.name));
+                    for comp in &el.components {
+                        let codes_hint = format_codes_hint(&comp.codes);
+                        out.push_str(&format!("#   D{} {}{}\n", comp.id, comp.name, codes_hint));
+                        out.push_str(&format!(
+                            "# \"{}.{}.{}\" = {{ target = \"\" }}\n",
+                            seg_lower, el.index, comp.sub_index
+                        ));
+                    }
+                } else {
+                    // Direct data element
+                    let codes_hint = format_codes_hint(&el.codes);
+                    out.push_str(&format!("# D{} {}{}\n", el.id, el.name, codes_hint));
+                    out.push_str(&format!(
+                        "# \"{}.{}\" = {{ target = \"\" }}\n",
+                        seg_lower, el.index
+                    ));
+                }
+            }
+        }
     }
 
     out
+}
+
+/// Format a short codes hint like ` [Z18=Regelzone, Z66=Zaehlpunkttyp]`.
+fn format_codes_hint(codes: &[SchemaCodeInfo]) -> String {
+    if codes.is_empty() {
+        return String::new();
+    }
+    let entries: Vec<String> = codes
+        .iter()
+        .take(5) // Limit for readability
+        .map(|c| {
+            if c.name.is_empty() {
+                c.value.clone()
+            } else {
+                format!("{}={}", c.value, c.name)
+            }
+        })
+        .collect();
+    let suffix = if codes.len() > 5 { ", ..." } else { "" };
+    format!(" [{}{}]", entries.join(", "), suffix)
 }
 
 /// Build dotted source_group from source_path.
@@ -640,13 +991,13 @@ mod tests {
             index
                 .get(&("SG10".to_string(), "parent:Z79".to_string()))
                 .is_some(),
-            "Should have SG10+parent:Z79 (MerkmalZaehlpunkt)"
+            "Should have SG10+parent:Z79 (Zaehlpunkt zuordnung)"
         );
         assert!(
             index
                 .get(&("SG10".to_string(), "parent:ZH0".to_string()))
                 .is_some(),
-            "Should have SG10+parent:ZH0 (MerkmalMessstellenbetrieb)"
+            "Should have SG10+parent:ZH0 (Messstellenbetrieb zuordnung)"
         );
         assert!(
             index.get(&("SG4".to_string(), "".to_string())).is_some(),

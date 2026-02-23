@@ -8,6 +8,7 @@ fn test_ahb_field_is_mandatory() {
         ahb_status: "Muss".to_string(),
         description: None,
         codes: vec![],
+        mig_number: None,
     };
     assert!(field_muss.is_mandatory());
 
@@ -17,6 +18,7 @@ fn test_ahb_field_is_mandatory() {
         ahb_status: "X".to_string(),
         description: None,
         codes: vec![],
+        mig_number: None,
     };
     assert!(field_x.is_mandatory());
 
@@ -26,6 +28,7 @@ fn test_ahb_field_is_mandatory() {
         ahb_status: "X [931]".to_string(),
         description: None,
         codes: vec![],
+        mig_number: None,
     };
     assert!(!field_conditional.is_mandatory());
 }
@@ -38,6 +41,7 @@ fn test_ahb_field_condition_ids() {
         ahb_status: "Muss [1] \u{2227} [2]".to_string(), // "Muss [1] ∧ [2]"
         description: None,
         codes: vec![],
+        mig_number: None,
     };
     let ids = field.condition_ids();
     assert_eq!(ids, vec!["1".to_string(), "2".to_string()]);
@@ -51,6 +55,7 @@ fn test_ahb_field_no_conditions() {
         ahb_status: "Muss".to_string(),
         description: None,
         codes: vec![],
+        mig_number: None,
     };
     assert!(field.condition_ids().is_empty());
 }
@@ -88,6 +93,7 @@ fn test_ahb_schema_serialization_roundtrip() {
                     description: None,
                     ahb_status: Some("X".to_string()),
                 }],
+                mig_number: None,
             }],
         }],
         bedingungen: vec![BedingungDefinition {
@@ -118,6 +124,7 @@ fn test_pruefidentifikator_summary() {
                 ahb_status: "Muss".to_string(),
                 description: None,
                 codes: vec![],
+                mig_number: None,
             },
             AhbFieldDefinition {
                 segment_path: "SG2/NAD/3035".to_string(),
@@ -125,6 +132,7 @@ fn test_pruefidentifikator_summary() {
                 ahb_status: "X [931]".to_string(),
                 description: None,
                 codes: vec![],
+                mig_number: None,
             },
         ],
     };

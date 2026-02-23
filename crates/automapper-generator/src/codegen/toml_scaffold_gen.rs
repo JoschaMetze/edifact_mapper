@@ -3,11 +3,15 @@
 //! Produces one `.toml` file per entity path with MIG segment paths pre-filled.
 //! Developers fill in `target` (BO4E field name) and optional `enum_map`.
 
+use std::collections::HashMap;
+
 use crate::codegen::pid_type_gen::{
-    analyze_pid_structure_with_qualifiers, make_wrapper_field_name, PidGroupInfo,
+    analyze_pid_structure_with_qualifiers, build_mig_number_index, make_wrapper_field_name,
+    PidGroupInfo,
 };
 use crate::schema::ahb::AhbSchema;
-use crate::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
+use crate::schema::common::CodeDefinition;
+use crate::schema::mig::{MigSchema, MigSegment};
 
 /// Generate TOML scaffold for a single PID group field.
 pub fn generate_group_scaffold(
@@ -15,6 +19,7 @@ pub fn generate_group_scaffold(
     field_name: &str,
     entity_hint: &str,
     mig: &MigSchema,
+    number_index: &HashMap<String, &MigSegment>,
 ) -> String {
     let mut out = String::new();
     out.push_str(&format!(
@@ -28,18 +33,55 @@ pub fn generate_group_scaffold(
     out.push_str(&format!("source_path = \"{field_name}\"\n\n"));
     out.push_str("[fields]\n");
 
-    // For each segment in the group, enumerate its element paths using numeric indices
+    // For each segment in the group, enumerate its element paths with metadata comments
     for seg_id in &group.segments {
-        if let Some(mig_seg) = find_segment_in_mig(seg_id, &group.group_id, mig) {
+        // Direct Number-based lookup, fall back to top-level MIG search
+        let mig_seg = group
+            .segment_mig_numbers
+            .get(seg_id)
+            .and_then(|num| number_index.get(num).copied())
+            .or_else(|| {
+                mig.segments
+                    .iter()
+                    .find(|s| s.id.eq_ignore_ascii_case(seg_id))
+            });
+        if let Some(mig_seg) = mig_seg {
             let seg_lower = seg_id.to_lowercase();
-            // Emit data element paths
-            for (ei, _de) in mig_seg.data_elements.iter().enumerate() {
+            let seg_name = mig_seg
+                .description
+                .as_deref()
+                .filter(|d| !d.is_empty())
+                .unwrap_or(&mig_seg.name);
+            out.push_str(&format!("# --- {} ({}) ---\n", seg_id, seg_name));
+
+            // Emit data element paths with name/code comments
+            for (ei, de) in mig_seg.data_elements.iter().enumerate() {
+                let de_name = de
+                    .description
+                    .as_deref()
+                    .filter(|d| !d.is_empty())
+                    .unwrap_or(&de.name);
+                let codes_hint = format_codes_hint_from_mig(&de.codes);
+                out.push_str(&format!("# D{} {}{}\n", de.id, de_name, codes_hint));
                 out.push_str(&format!("\"{seg_lower}.{ei}\" = {{ target = \"\" }}\n"));
             }
-            // Emit composite element paths
+            // Emit composite element paths with name/code comments
             for (ci, comp) in mig_seg.composites.iter().enumerate() {
                 let elem_idx = mig_seg.data_elements.len() + ci;
-                for (di, _de) in comp.data_elements.iter().enumerate() {
+                let comp_name = comp
+                    .description
+                    .as_deref()
+                    .filter(|d| !d.is_empty())
+                    .unwrap_or(&comp.name);
+                out.push_str(&format!("# {} {}\n", comp.id, comp_name));
+                for (di, de) in comp.data_elements.iter().enumerate() {
+                    let de_name = de
+                        .description
+                        .as_deref()
+                        .filter(|d| !d.is_empty())
+                        .unwrap_or(&de.name);
+                    let codes_hint = format_codes_hint_from_mig(&de.codes);
+                    out.push_str(&format!("#   D{} {}{}\n", de.id, de_name, codes_hint));
                     out.push_str(&format!(
                         "\"{seg_lower}.{elem_idx}.{di}\" = {{ target = \"\" }}\n"
                     ));
@@ -63,12 +105,14 @@ pub fn generate_pid_scaffolds(
     };
 
     let structure = analyze_pid_structure_with_qualifiers(pid, mig, ahb);
+    let number_index = build_mig_number_index(mig);
     let mut results = Vec::new();
 
-    fn collect_scaffolds(
+    fn collect_scaffolds<'a>(
         group: &PidGroupInfo,
         field_name: &str,
-        mig: &MigSchema,
+        mig: &'a MigSchema,
+        number_index: &HashMap<String, &'a MigSegment>,
         results: &mut Vec<(String, String)>,
     ) {
         if group.segments.is_empty() && group.child_groups.is_empty() {
@@ -82,63 +126,48 @@ pub fn generate_pid_scaffolds(
                 .replace(", ", "_")
                 .replace(' ', "_");
             let filename = format!("{field_name}.toml");
-            let content = generate_group_scaffold(group, field_name, &entity_hint, mig);
+            let content =
+                generate_group_scaffold(group, field_name, &entity_hint, mig, number_index);
             results.push((filename, content));
         }
         for child in &group.child_groups {
             let child_field = make_wrapper_field_name(child);
             let child_path = format!("{field_name}.{child_field}");
-            collect_scaffolds(child, &child_path, mig, results);
+            collect_scaffolds(child, &child_path, mig, number_index, results);
         }
     }
 
     for group in &structure.groups {
         let field_name = make_wrapper_field_name(group);
-        collect_scaffolds(group, &field_name, mig, &mut results);
+        collect_scaffolds(group, &field_name, mig, &number_index, &mut results);
     }
 
     results
 }
 
-fn find_segment_in_mig<'a>(
-    seg_id: &str,
-    group_id: &str,
-    mig: &'a MigSchema,
-) -> Option<&'a MigSegment> {
-    fn find_in_group<'a>(
-        seg_id: &str,
-        target_group: &str,
-        group: &'a MigSegmentGroup,
-    ) -> Option<&'a MigSegment> {
-        if group.id == target_group {
-            return group
-                .segments
-                .iter()
-                .find(|s| s.id.eq_ignore_ascii_case(seg_id));
-        }
-        for nested in &group.nested_groups {
-            if let Some(s) = find_in_group(seg_id, target_group, nested) {
-                return Some(s);
-            }
-        }
-        None
+/// Format a short codes hint like ` [Z18=Regelzone, Z66=Zaehlpunkttyp]`.
+fn format_codes_hint_from_mig(codes: &[CodeDefinition]) -> String {
+    if codes.is_empty() {
+        return String::new();
     }
-
-    // Check top-level segments first
-    if let Some(seg) = mig
-        .segments
+    let entries: Vec<String> = codes
         .iter()
-        .find(|s| s.id.eq_ignore_ascii_case(seg_id))
-    {
-        return Some(seg);
-    }
-    // Check groups
-    for group in &mig.segment_groups {
-        if let Some(seg) = find_in_group(seg_id, group_id, group) {
-            return Some(seg);
-        }
-    }
-    None
+        .take(5)
+        .map(|c| {
+            let name = c
+                .description
+                .as_deref()
+                .filter(|d| !d.is_empty())
+                .unwrap_or(&c.name);
+            if name.is_empty() {
+                c.value.clone()
+            } else {
+                format!("{}={}", c.value, name)
+            }
+        })
+        .collect();
+    let suffix = if codes.len() > 5 { ", ..." } else { "" };
+    format!(" [{}{}]", entries.join(", "), suffix)
 }
 
 #[cfg(test)]
@@ -175,7 +204,8 @@ mod tests {
             .find(|g| g.group_id == "SG2")
             .unwrap();
 
-        let scaffold = generate_group_scaffold(sg2, "sg2", "Marktteilnehmer", &mig);
+        let number_index = build_mig_number_index(&mig);
+        let scaffold = generate_group_scaffold(sg2, "sg2", "Marktteilnehmer", &mig, &number_index);
         assert!(
             scaffold.contains("source_path = \"sg2\""),
             "Should have source_path"

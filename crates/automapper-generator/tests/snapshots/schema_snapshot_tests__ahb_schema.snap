@@ -21,6 +21,7 @@ workflows:
             name: UTILMD
             description: ~
             ahb_status: X
+        mig_number: ~
       - segment_path: SG2/NAD/3035
         name: Qualifier
         ahb_status: X
@@ -34,21 +35,25 @@ workflows:
             name: Empfaenger
             description: ~
             ahb_status: X
+        mig_number: ~
       - segment_path: SG2/NAD/C082/3039
         name: MP-ID
         ahb_status: X
         description: ~
         codes: []
+        mig_number: ~
       - segment_path: SG8
         name: Segment Gruppe 8
         ahb_status: "[166] ∧ [2351]"
         description: ~
         codes: []
+        mig_number: ~
       - segment_path: SG8/SEQ/1245
         name: Statusanzeiger
         ahb_status: "X [931]"
         description: ~
         codes: []
+        mig_number: ~
     segment_numbers: []
   - id: "55002"
     beschreibung: Ein-/Auszug
@@ -59,6 +64,7 @@ workflows:
         ahb_status: Muss
         description: ~
         codes: []
+        mig_number: ~
     segment_numbers: []
 bedingungen:
   - id: "1"

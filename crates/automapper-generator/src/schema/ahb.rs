@@ -50,6 +50,9 @@ pub struct AhbFieldDefinition {
     pub description: Option<String>,
     /// Valid code values for this field (if restricted).
     pub codes: Vec<AhbCodeValue>,
+    /// MIG Number of the parent S_* segment (links to MigSegment.number).
+    #[serde(default)]
+    pub mig_number: Option<String>,
 }
 
 /// A valid code value for an AHB field.

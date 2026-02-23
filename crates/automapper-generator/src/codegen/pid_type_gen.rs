@@ -4,10 +4,10 @@
 //! to determine which segment groups, segments, and fields
 //! exist for each PID.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use crate::schema::ahb::{AhbSchema, Pruefidentifikator};
-use crate::schema::mig::{MigSchema, MigSegmentGroup};
+use crate::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 
 /// Analyzed structure of a single PID.
 #[derive(Debug, Clone)]
@@ -39,6 +39,8 @@ pub struct PidGroupInfo {
     pub child_groups: Vec<PidGroupInfo>,
     /// Segments present in this group for this PID.
     pub segments: BTreeSet<String>,
+    /// MIG Number for each segment (seg_id → Number). Used for direct MIG segment lookup.
+    pub segment_mig_numbers: BTreeMap<String, String>,
 }
 
 /// Analyze which MIG tree nodes a PID uses, based on its AHB field definitions.
@@ -64,6 +66,7 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                     discriminator: None,
                     child_groups: Vec::new(),
                     segments: BTreeSet::new(),
+                    segment_mig_numbers: BTreeMap::new(),
                 });
 
             if parts.len() > 1 && !parts[1].starts_with("SG") {
@@ -86,6 +89,7 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                         discriminator: None,
                         child_groups: Vec::new(),
                         segments: child_segments,
+                        segment_mig_numbers: BTreeMap::new(),
                     });
                 } else if parts.len() > 2 && !parts[2].starts_with("SG") {
                     if let Some(child) = entry
@@ -227,7 +231,7 @@ pub fn analyze_pid_structure_with_qualifiers(
                 .or_insert_with(|| GroupOccurrenceTracker::new(group_id.clone()));
 
             if parts.len() > 1 && !parts[1].starts_with("SG") {
-                tracker.add_segment(parts[1]);
+                tracker.add_segment(parts[1], field.mig_number.as_deref());
             }
 
             // Handle nested groups with qualifier tracking
@@ -256,7 +260,11 @@ pub fn analyze_pid_structure_with_qualifiers(
                                 field.ahb_status.clone(),
                             );
                             // Also add the trigger segment
-                            tracker.add_child_segment(&child_id, &trigger_seg);
+                            tracker.add_child_segment(
+                                &child_id,
+                                &trigger_seg,
+                                field.mig_number.as_deref(),
+                            );
                             continue;
                         }
                     }
@@ -270,14 +278,19 @@ pub fn analyze_pid_structure_with_qualifiers(
 
                 // Regular child group field — add segment to current occurrence
                 if parts.len() > 2 && !parts[2].starts_with("SG") {
-                    tracker.add_child_segment(&child_id, parts[2]);
+                    tracker.add_child_segment(&child_id, parts[2], field.mig_number.as_deref());
                 }
 
                 // Handle deeply nested groups (SG4/SG8/SG10/...)
                 if parts.len() > 2 && parts[2].starts_with("SG") {
                     tracker.add_child_nested_group(&child_id, parts[2]);
                     if parts.len() > 3 && !parts[3].starts_with("SG") {
-                        tracker.add_child_nested_segment(&child_id, parts[2], parts[3]);
+                        tracker.add_child_nested_segment(
+                            &child_id,
+                            parts[2],
+                            parts[3],
+                            field.mig_number.as_deref(),
+                        );
                     }
                 }
             }
@@ -309,6 +322,7 @@ pub fn analyze_pid_structure_with_qualifiers(
 struct GroupOccurrenceTracker {
     group_id: String,
     segments: BTreeSet<String>,
+    segment_numbers: BTreeMap<String, String>,
     child_trackers: BTreeMap<String, ChildGroupTracker>,
 }
 
@@ -322,7 +336,9 @@ struct ChildOccurrence {
     qualifier_values: Vec<String>,
     ahb_status: String,
     segments: BTreeSet<String>,
+    segment_numbers: BTreeMap<String, String>,
     nested_groups: BTreeMap<String, BTreeSet<String>>,
+    nested_segment_numbers: BTreeMap<String, BTreeMap<String, String>>,
 }
 
 impl GroupOccurrenceTracker {
@@ -330,12 +346,17 @@ impl GroupOccurrenceTracker {
         Self {
             group_id,
             segments: BTreeSet::new(),
+            segment_numbers: BTreeMap::new(),
             child_trackers: BTreeMap::new(),
         }
     }
 
-    fn add_segment(&mut self, seg_id: &str) {
+    fn add_segment(&mut self, seg_id: &str, mig_number: Option<&str>) {
         self.segments.insert(seg_id.to_string());
+        if let Some(num) = mig_number {
+            self.segment_numbers
+                .insert(seg_id.to_string(), num.to_string());
+        }
     }
 
     fn ensure_child(&mut self, child_id: &str) -> &mut ChildGroupTracker {
@@ -358,7 +379,9 @@ impl GroupOccurrenceTracker {
             qualifier_values,
             ahb_status,
             segments: BTreeSet::new(),
+            segment_numbers: BTreeMap::new(),
             nested_groups: BTreeMap::new(),
+            nested_segment_numbers: BTreeMap::new(),
         });
     }
 
@@ -378,22 +401,34 @@ impl GroupOccurrenceTracker {
                 qualifier_values: Vec::new(),
                 ahb_status,
                 segments: BTreeSet::new(),
+                segment_numbers: BTreeMap::new(),
                 nested_groups: BTreeMap::new(),
+                nested_segment_numbers: BTreeMap::new(),
             });
         }
     }
 
-    fn add_child_segment(&mut self, child_id: &str, seg_id: &str) {
+    fn add_child_segment(&mut self, child_id: &str, seg_id: &str, mig_number: Option<&str>) {
         let tracker = self.ensure_child(child_id);
         if let Some(occ) = tracker.occurrences.last_mut() {
             occ.segments.insert(seg_id.to_string());
+            if let Some(num) = mig_number {
+                occ.segment_numbers
+                    .insert(seg_id.to_string(), num.to_string());
+            }
         } else {
             // No occurrence started yet — create a default one
+            let mut segment_numbers = BTreeMap::new();
+            if let Some(num) = mig_number {
+                segment_numbers.insert(seg_id.to_string(), num.to_string());
+            }
             tracker.occurrences.push(ChildOccurrence {
                 qualifier_values: Vec::new(),
                 ahb_status: String::new(),
                 segments: BTreeSet::from([seg_id.to_string()]),
+                segment_numbers,
                 nested_groups: BTreeMap::new(),
+                nested_segment_numbers: BTreeMap::new(),
             });
         }
     }
@@ -405,13 +440,25 @@ impl GroupOccurrenceTracker {
         }
     }
 
-    fn add_child_nested_segment(&mut self, child_id: &str, nested_id: &str, seg_id: &str) {
+    fn add_child_nested_segment(
+        &mut self,
+        child_id: &str,
+        nested_id: &str,
+        seg_id: &str,
+        mig_number: Option<&str>,
+    ) {
         let tracker = self.ensure_child(child_id);
         if let Some(occ) = tracker.occurrences.last_mut() {
             occ.nested_groups
                 .entry(nested_id.to_string())
                 .or_default()
                 .insert(seg_id.to_string());
+            if let Some(num) = mig_number {
+                occ.nested_segment_numbers
+                    .entry(nested_id.to_string())
+                    .or_default()
+                    .insert(seg_id.to_string(), num.to_string());
+            }
         }
     }
 
@@ -422,14 +469,30 @@ impl GroupOccurrenceTracker {
             if tracker.occurrences.len() <= 1 {
                 // Single occurrence — merge into one PidGroupInfo
                 let occ = tracker.occurrences.into_iter().next();
-                let (qualifier_values, ahb_status, segments, nested) = match occ {
+                let (
+                    qualifier_values,
+                    ahb_status,
+                    segments,
+                    segment_numbers,
+                    nested,
+                    nested_numbers,
+                ) = match occ {
                     Some(o) => (
                         o.qualifier_values,
                         o.ahb_status,
                         o.segments,
+                        o.segment_numbers,
                         o.nested_groups,
+                        o.nested_segment_numbers,
                     ),
-                    None => (Vec::new(), String::new(), BTreeSet::new(), BTreeMap::new()),
+                    None => (
+                        Vec::new(),
+                        String::new(),
+                        BTreeSet::new(),
+                        BTreeMap::new(),
+                        BTreeMap::new(),
+                        BTreeMap::new(),
+                    ),
                 };
 
                 child_groups.push(PidGroupInfo {
@@ -440,17 +503,22 @@ impl GroupOccurrenceTracker {
                     discriminator: None,
                     child_groups: nested
                         .into_iter()
-                        .map(|(nid, segs)| PidGroupInfo {
-                            group_id: nid,
-                            qualifier_values: Vec::new(),
-                            ahb_status: String::new(),
-                            ahb_name: None,
-                            discriminator: None,
-                            child_groups: Vec::new(),
-                            segments: segs,
+                        .map(|(nid, segs)| {
+                            let nums = nested_numbers.get(&nid).cloned().unwrap_or_default();
+                            PidGroupInfo {
+                                group_id: nid,
+                                qualifier_values: Vec::new(),
+                                ahb_status: String::new(),
+                                ahb_name: None,
+                                discriminator: None,
+                                child_groups: Vec::new(),
+                                segments: segs,
+                                segment_mig_numbers: nums,
+                            }
                         })
                         .collect(),
                     segments,
+                    segment_mig_numbers: segment_numbers,
                 });
             } else {
                 // Multiple occurrences — create separate entries
@@ -464,17 +532,26 @@ impl GroupOccurrenceTracker {
                         child_groups: occ
                             .nested_groups
                             .into_iter()
-                            .map(|(nid, segs)| PidGroupInfo {
-                                group_id: nid,
-                                qualifier_values: Vec::new(),
-                                ahb_status: String::new(),
-                                ahb_name: None,
-                                discriminator: None,
-                                child_groups: Vec::new(),
-                                segments: segs,
+                            .map(|(nid, segs)| {
+                                let nums = occ
+                                    .nested_segment_numbers
+                                    .get(&nid)
+                                    .cloned()
+                                    .unwrap_or_default();
+                                PidGroupInfo {
+                                    group_id: nid,
+                                    qualifier_values: Vec::new(),
+                                    ahb_status: String::new(),
+                                    ahb_name: None,
+                                    discriminator: None,
+                                    child_groups: Vec::new(),
+                                    segments: segs,
+                                    segment_mig_numbers: nums,
+                                }
                             })
                             .collect(),
                         segments: occ.segments,
+                        segment_mig_numbers: occ.segment_numbers,
                     });
                 }
             }
@@ -488,6 +565,7 @@ impl GroupOccurrenceTracker {
             discriminator: None,
             child_groups,
             segments: self.segments,
+            segment_mig_numbers: self.segment_numbers,
         }
     }
 }
@@ -866,7 +944,30 @@ fn parse_child_field_line(line: &str) -> Option<(String, String)> {
 
 /// Generate a JSON schema describing a PID's structure for runtime use.
 pub fn generate_pid_schema(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbSchema) -> String {
+    use crate::schema::ahb::AhbCodeValue;
+
     let structure = analyze_pid_structure_with_qualifiers(pid, mig, ahb);
+
+    // Build direct Number → MigSegment index for O(1) lookups
+    let number_index = build_mig_number_index(mig);
+
+    // Build AHB code index: (mig_number, data_element_id) → AHB-filtered codes.
+    // AHB field paths look like "SG4/SG5/LOC/3227" or "SG2/NAD/C082/3039".
+    // The last path component is always the data element ID.
+    let mut ahb_codes: HashMap<(String, String), Vec<AhbCodeValue>> = HashMap::new();
+    for field in &pid.fields {
+        if field.codes.is_empty() {
+            continue;
+        }
+        let Some(ref mig_num) = field.mig_number else {
+            continue;
+        };
+        // Extract the last path component as the data element ID
+        if let Some(de_id) = field.segment_path.rsplit('/').next() {
+            ahb_codes.insert((mig_num.clone(), de_id.to_string()), field.codes.clone());
+        }
+    }
+
     let mut root = serde_json::Map::new();
     root.insert("pid".to_string(), serde_json::Value::String(pid.id.clone()));
     root.insert(
@@ -891,14 +992,44 @@ pub fn generate_pid_schema(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbS
             continue;
         }
         let field_name = make_wrapper_field_name(group);
-        fields.insert(field_name, group_to_schema_value(group));
+        fields.insert(
+            field_name,
+            group_to_schema_value(group, &number_index, mig, &ahb_codes),
+        );
     }
     root.insert("fields".to_string(), serde_json::Value::Object(fields));
 
     serde_json::to_string_pretty(&serde_json::Value::Object(root)).unwrap()
 }
 
-fn group_to_schema_value(group: &PidGroupInfo) -> serde_json::Value {
+/// Build an index from MIG segment Number → &MigSegment for direct lookups.
+pub fn build_mig_number_index(mig: &MigSchema) -> HashMap<String, &MigSegment> {
+    let mut index = HashMap::new();
+    for seg in &mig.segments {
+        if let Some(ref num) = seg.number {
+            index.insert(num.clone(), seg);
+        }
+    }
+    fn walk_groups<'a>(groups: &'a [MigSegmentGroup], index: &mut HashMap<String, &'a MigSegment>) {
+        for g in groups {
+            for seg in &g.segments {
+                if let Some(ref num) = seg.number {
+                    index.insert(num.clone(), seg);
+                }
+            }
+            walk_groups(&g.nested_groups, index);
+        }
+    }
+    walk_groups(&mig.segment_groups, &mut index);
+    index
+}
+
+fn group_to_schema_value(
+    group: &PidGroupInfo,
+    number_index: &HashMap<String, &MigSegment>,
+    mig: &MigSchema,
+    ahb_codes: &HashMap<(String, String), Vec<crate::schema::ahb::AhbCodeValue>>,
+) -> serde_json::Value {
     let mut obj = serde_json::Map::new();
     obj.insert(
         "source_group".to_string(),
@@ -935,7 +1066,22 @@ fn group_to_schema_value(group: &PidGroupInfo) -> serde_json::Value {
     let segments: Vec<_> = group
         .segments
         .iter()
-        .map(|s| serde_json::Value::String(s.clone()))
+        .map(|seg_id| {
+            let mig_number = group.segment_mig_numbers.get(seg_id);
+
+            // Direct Number-based lookup (precise), fall back to group search
+            let mig_seg = mig_number
+                .and_then(|num| number_index.get(num).copied())
+                .or_else(|| find_segment_in_mig(seg_id, &group.group_id, mig));
+
+            if let Some(mig_seg) = mig_seg {
+                segment_to_schema_value(mig_seg, mig_number, ahb_codes)
+            } else {
+                let mut s = serde_json::Map::new();
+                s.insert("id".to_string(), serde_json::Value::String(seg_id.clone()));
+                serde_json::Value::Object(s)
+            }
+        })
         .collect();
     obj.insert("segments".to_string(), serde_json::Value::Array(segments));
 
@@ -948,12 +1094,249 @@ fn group_to_schema_value(group: &PidGroupInfo) -> serde_json::Value {
         let mut children = serde_json::Map::new();
         for child in non_empty_children {
             let name = make_wrapper_field_name(child);
-            children.insert(name, group_to_schema_value(child));
+            children.insert(
+                name,
+                group_to_schema_value(child, number_index, mig, ahb_codes),
+            );
         }
         obj.insert("children".to_string(), serde_json::Value::Object(children));
     }
 
     serde_json::Value::Object(obj)
+}
+
+/// Convert a MIG segment definition into a rich JSON schema value.
+///
+/// When `mig_number` is available, AHB-filtered codes are used (only codes the PID allows)
+/// instead of the full MIG code list.
+fn segment_to_schema_value(
+    seg: &MigSegment,
+    mig_number: Option<&String>,
+    ahb_codes: &HashMap<(String, String), Vec<crate::schema::ahb::AhbCodeValue>>,
+) -> serde_json::Value {
+    let mut obj = serde_json::Map::new();
+    obj.insert("id".to_string(), serde_json::Value::String(seg.id.clone()));
+    let name = seg
+        .description
+        .as_deref()
+        .filter(|d| !d.is_empty())
+        .unwrap_or(&seg.name);
+    obj.insert(
+        "name".to_string(),
+        serde_json::Value::String(sanitize_doc(name)),
+    );
+
+    let mut elements = Vec::new();
+
+    // Direct data elements
+    for (i, de) in seg.data_elements.iter().enumerate() {
+        let mut el = serde_json::Map::new();
+        el.insert(
+            "index".to_string(),
+            serde_json::Value::Number((i as u64).into()),
+        );
+        el.insert("id".to_string(), serde_json::Value::String(de.id.clone()));
+        let de_name = de
+            .description
+            .as_deref()
+            .filter(|d| !d.is_empty())
+            .unwrap_or(&de.name);
+        el.insert(
+            "name".to_string(),
+            serde_json::Value::String(sanitize_doc(de_name)),
+        );
+
+        emit_element_codes(&mut el, &de.codes, &de.id, mig_number, ahb_codes);
+
+        elements.push(serde_json::Value::Object(el));
+    }
+
+    // Composite elements
+    for (ci, comp) in seg.composites.iter().enumerate() {
+        let elem_idx = seg.data_elements.len() + ci;
+        let mut el = serde_json::Map::new();
+        el.insert(
+            "index".to_string(),
+            serde_json::Value::Number((elem_idx as u64).into()),
+        );
+        el.insert(
+            "composite".to_string(),
+            serde_json::Value::String(comp.id.clone()),
+        );
+        let comp_name = comp
+            .description
+            .as_deref()
+            .filter(|d| !d.is_empty())
+            .unwrap_or(&comp.name);
+        el.insert(
+            "name".to_string(),
+            serde_json::Value::String(sanitize_doc(comp_name)),
+        );
+
+        // Sub-components
+        let mut components = Vec::new();
+        for (di, de) in comp.data_elements.iter().enumerate() {
+            let mut sub = serde_json::Map::new();
+            sub.insert(
+                "sub_index".to_string(),
+                serde_json::Value::Number((di as u64).into()),
+            );
+            sub.insert("id".to_string(), serde_json::Value::String(de.id.clone()));
+            let de_name = de
+                .description
+                .as_deref()
+                .filter(|d| !d.is_empty())
+                .unwrap_or(&de.name);
+            sub.insert(
+                "name".to_string(),
+                serde_json::Value::String(sanitize_doc(de_name)),
+            );
+
+            emit_element_codes(&mut sub, &de.codes, &de.id, mig_number, ahb_codes);
+
+            components.push(serde_json::Value::Object(sub));
+        }
+        el.insert(
+            "components".to_string(),
+            serde_json::Value::Array(components),
+        );
+
+        elements.push(serde_json::Value::Object(el));
+    }
+
+    obj.insert("elements".to_string(), serde_json::Value::Array(elements));
+    serde_json::Value::Object(obj)
+}
+
+/// Emit type + codes for a data element, using AHB-filtered codes when available.
+fn emit_element_codes(
+    el: &mut serde_json::Map<String, serde_json::Value>,
+    mig_codes: &[crate::schema::common::CodeDefinition],
+    de_id: &str,
+    mig_number: Option<&String>,
+    ahb_codes: &HashMap<(String, String), Vec<crate::schema::ahb::AhbCodeValue>>,
+) {
+    // Try AHB-filtered codes first (only codes this PID allows)
+    let ahb_filtered = mig_number.and_then(|num| ahb_codes.get(&(num.clone(), de_id.to_string())));
+
+    if let Some(ahb) = ahb_filtered {
+        if !ahb.is_empty() {
+            el.insert(
+                "type".to_string(),
+                serde_json::Value::String("code".to_string()),
+            );
+            el.insert("codes".to_string(), ahb_codes_to_json(ahb));
+            return;
+        }
+    }
+
+    // Fall back to full MIG codes
+    if !mig_codes.is_empty() {
+        el.insert(
+            "type".to_string(),
+            serde_json::Value::String("code".to_string()),
+        );
+        el.insert("codes".to_string(), codes_to_json(mig_codes));
+    } else {
+        el.insert(
+            "type".to_string(),
+            serde_json::Value::String("data".to_string()),
+        );
+    }
+}
+
+/// Convert AHB code values to a JSON array of `{value, name}` objects.
+fn ahb_codes_to_json(codes: &[crate::schema::ahb::AhbCodeValue]) -> serde_json::Value {
+    serde_json::Value::Array(
+        codes
+            .iter()
+            .map(|c| {
+                let mut obj = serde_json::Map::new();
+                obj.insert(
+                    "value".to_string(),
+                    serde_json::Value::String(c.value.clone()),
+                );
+                let name = c
+                    .description
+                    .as_deref()
+                    .filter(|d| !d.is_empty())
+                    .unwrap_or(&c.name);
+                obj.insert(
+                    "name".to_string(),
+                    serde_json::Value::String(name.to_string()),
+                );
+                serde_json::Value::Object(obj)
+            })
+            .collect(),
+    )
+}
+
+/// Convert code definitions to a JSON array of `{value, name}` objects.
+fn codes_to_json(codes: &[crate::schema::common::CodeDefinition]) -> serde_json::Value {
+    serde_json::Value::Array(
+        codes
+            .iter()
+            .map(|c| {
+                let mut obj = serde_json::Map::new();
+                obj.insert(
+                    "value".to_string(),
+                    serde_json::Value::String(c.value.clone()),
+                );
+                let name = c
+                    .description
+                    .as_deref()
+                    .filter(|d| !d.is_empty())
+                    .unwrap_or(&c.name);
+                obj.insert(
+                    "name".to_string(),
+                    serde_json::Value::String(name.to_string()),
+                );
+                serde_json::Value::Object(obj)
+            })
+            .collect(),
+    )
+}
+
+/// Find a segment definition in the MIG tree, searching within the specified group.
+fn find_segment_in_mig<'a>(
+    seg_id: &str,
+    group_id: &str,
+    mig: &'a MigSchema,
+) -> Option<&'a MigSegment> {
+    fn find_in_group<'a>(
+        seg_id: &str,
+        target_group: &str,
+        group: &'a MigSegmentGroup,
+    ) -> Option<&'a MigSegment> {
+        if group.id == target_group {
+            return group
+                .segments
+                .iter()
+                .find(|s| s.id.eq_ignore_ascii_case(seg_id));
+        }
+        for nested in &group.nested_groups {
+            if let Some(s) = find_in_group(seg_id, target_group, nested) {
+                return Some(s);
+            }
+        }
+        None
+    }
+
+    // Check top-level segments first
+    if let Some(seg) = mig
+        .segments
+        .iter()
+        .find(|s| s.id.eq_ignore_ascii_case(seg_id))
+    {
+        return Some(seg);
+    }
+    // Check groups
+    for group in &mig.segment_groups {
+        if let Some(seg) = find_in_group(seg_id, group_id, group) {
+            return Some(seg);
+        }
+    }
+    None
 }
 
 // ---------------------------------------------------------------------------

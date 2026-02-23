@@ -78,10 +78,11 @@ fn trim_trailing(s: String) -> String {
     format!("{}\n", trimmed.trim_end())
 }
 
-/// Sanitize a string for use in a `///` doc comment — collapse newlines and trim.
+/// Sanitize a string for use in a `///` doc comment — collapse newlines/tabs and trim.
 fn sanitize_doc(s: &str) -> String {
     s.replace('\r', "")
         .replace('\n', " ")
+        .replace('\t', "    ")
         .replace("  ", " ")
         .trim()
         .to_string()
@@ -257,12 +258,15 @@ pub fn generate_enums(mig: &MigSchema) -> String {
 
         for code in codes {
             let variant = sanitize_variant_name(&code.value);
-            if let Some(desc) = &code.description {
-                if !desc.is_empty() {
-                    emit_doc(&mut out, desc);
-                }
-            } else if !code.name.is_empty() {
-                emit_doc(&mut out, &code.name);
+            let doc_text = code
+                .description
+                .as_ref()
+                .filter(|d| !d.is_empty())
+                .map(|d| d.as_str())
+                .or(Some(&code.name))
+                .filter(|s| !s.is_empty());
+            if let Some(text) = doc_text {
+                emit_doc(&mut out, text);
             }
             out.push_str(&format!("    {variant},\n"));
         }
@@ -372,6 +376,16 @@ pub fn generate_composites(mig: &MigSchema) -> String {
         let struct_name = format!("Composite{comp_id}");
         let field_names = build_de_field_names(&comp.data_elements);
 
+        let doc = comp
+            .description
+            .as_ref()
+            .filter(|d| !d.is_empty())
+            .map(|d| d.as_str())
+            .unwrap_or(&comp.name);
+        if !doc.is_empty() {
+            let sanitized = sanitize_doc(doc);
+            out.push_str(&format!("/// {comp_id} — {sanitized}\n"));
+        }
         out.push_str("#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]\n");
         out.push_str(&format!("pub struct {struct_name} {{\n"));
 
@@ -427,6 +441,15 @@ pub fn generate_segments(mig: &MigSchema) -> String {
             let base_type = data_element_type(de, &code_elements);
             let optional = is_optional(&de.status_spec, &de.status_std);
 
+            let doc = de
+                .description
+                .as_ref()
+                .filter(|d| !d.is_empty())
+                .map(|d| d.as_str())
+                .unwrap_or(&de.name);
+            if !doc.is_empty() {
+                emit_doc(&mut out, doc);
+            }
             if optional {
                 out.push_str(&format!("    pub {field_name}: Option<{base_type}>,\n"));
             } else {
@@ -440,6 +463,15 @@ pub fn generate_segments(mig: &MigSchema) -> String {
             let comp_type = format!("Composite{}", comp.id);
             let optional = is_optional(&comp.status_spec, &comp.status_std);
 
+            let doc = comp
+                .description
+                .as_ref()
+                .filter(|d| !d.is_empty())
+                .map(|d| d.as_str())
+                .unwrap_or(&comp.name);
+            if !doc.is_empty() {
+                emit_doc(&mut out, doc);
+            }
             if optional {
                 out.push_str(&format!("    pub {field_name}: Option<{comp_type}>,\n"));
             } else {

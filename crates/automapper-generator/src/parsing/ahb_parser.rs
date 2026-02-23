@@ -114,6 +114,7 @@ fn parse_workflow(
     let mut fields = Vec::new();
     let mut segment_numbers = Vec::new();
     let mut path_stack: Vec<String> = Vec::new();
+    let mut current_segment_number: Option<String> = None;
     let mut buf = Vec::new();
 
     loop {
@@ -128,9 +129,13 @@ fn parse_workflow(
 
                     // Capture MIG segment Number for S_* elements
                     if name.starts_with("S_") {
-                        if let Some(number) = get_attr(e, "Number") {
-                            segment_numbers.push(number);
+                        let number = get_attr(e, "Number");
+                        if let Some(ref num) = number {
+                            segment_numbers.push(num.clone());
                         }
+                        current_segment_number = number;
+                    } else {
+                        current_segment_number = None;
                     }
 
                     // Capture group-level conditional AHB_Status
@@ -145,6 +150,7 @@ fn parse_workflow(
                                 ahb_status,
                                 description: None,
                                 codes: Vec::new(),
+                                mig_number: current_segment_number.clone(),
                             });
                         }
                     }
@@ -179,6 +185,7 @@ fn parse_workflow(
                             ahb_status: effective_status,
                             description: None,
                             codes,
+                            mig_number: current_segment_number.clone(),
                         });
                     }
                     // Note: we already consumed the end tag in parse_ahb_codes
@@ -206,6 +213,7 @@ fn parse_workflow(
                             ahb_status,
                             description: None,
                             codes: Vec::new(),
+                            mig_number: current_segment_number.clone(),
                         });
                     }
                 }
@@ -217,6 +225,9 @@ fn parse_workflow(
                     break;
                 } else if name.starts_with("S_") || name.starts_with("G_") || name.starts_with("C_")
                 {
+                    if name.starts_with("S_") {
+                        current_segment_number = None;
+                    }
                     path_stack.pop();
                 }
             }
