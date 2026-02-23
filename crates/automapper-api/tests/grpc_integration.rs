@@ -70,7 +70,7 @@ async fn test_grpc_inspect_edifact() {
 }
 
 #[tokio::test]
-async fn test_grpc_convert_edifact_to_bo4e() {
+async fn test_grpc_convert_edifact_to_bo4e_returns_unimplemented() {
     let addr = start_test_server().await;
     let url = format!("http://{addr}");
 
@@ -84,18 +84,18 @@ async fn test_grpc_convert_edifact_to_bo4e() {
         "UNZ+1+ref001'"
     );
 
-    let response = client
+    let result = client
         .convert_edifact_to_bo4e(EdifactToBo4eRequest {
             edifact: edifact.to_string(),
             format_version: "FV2504".to_string(),
             include_trace: false,
         })
-        .await
-        .unwrap();
+        .await;
 
-    let inner = response.into_inner();
-    // The response should be well-formed (success or conversion error, not gRPC error)
-    assert!(inner.duration_ms >= 0.0);
+    // Legacy pipeline removed — should return UNIMPLEMENTED
+    assert!(result.is_err());
+    let status = result.unwrap_err();
+    assert_eq!(status.code(), tonic::Code::Unimplemented);
 }
 
 #[tokio::test]

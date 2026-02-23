@@ -1,29 +1,21 @@
-//! Direction toggle component for switching between EDIFACT->BO4E and BO4E->EDIFACT.
+//! Direction label component showing the current conversion direction.
+//!
+//! Currently only EDIFACT -> BO4E is supported. This component displays
+//! the direction as a static label. When BO4E -> EDIFACT is added via the
+//! MIG reverse pipeline, this can be restored to a toggle.
 
 use leptos::prelude::*;
 
 use crate::types::Direction;
 
 #[component]
-pub fn DirectionToggle(
+pub fn DirectionLabel(
     /// Current direction.
-    direction: ReadSignal<Direction>,
-    /// Callback when direction is toggled.
-    on_toggle: WriteSignal<Direction>,
+    direction: Direction,
 ) -> impl IntoView {
-    let toggle = move |_| {
-        on_toggle.update(|d| *d = d.toggle());
-    };
-
     view! {
-        <div class="direction-toggle">
-            <button class="btn btn-small" on:click=toggle>
-                {move || match direction.get() {
-                    Direction::EdifactToBo4e => "EDIFACT -> BO4E",
-                    Direction::Bo4eToEdifact => "BO4E -> EDIFACT",
-                }}
-            </button>
-            <span class="label">"click to swap"</span>
+        <div class="direction-label">
+            <span class="label">{direction.label()}</span>
         </div>
     }
 }

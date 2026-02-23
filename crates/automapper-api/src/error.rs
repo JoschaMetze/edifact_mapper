@@ -50,11 +50,3 @@ impl IntoResponse for ApiError {
         (status, Json(body)).into_response()
     }
 }
-
-impl From<automapper_core::AutomapperError> for ApiError {
-    fn from(err: automapper_core::AutomapperError) -> Self {
-        ApiError::ConversionError {
-            message: err.to_string(),
-        }
-    }
-}

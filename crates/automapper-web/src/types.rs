@@ -3,45 +3,36 @@
 use serde::{Deserialize, Serialize};
 
 /// Conversion direction.
+///
+/// Currently only EDIFACT -> BO4E is supported via the MIG-driven v2 pipeline.
+/// BO4E -> EDIFACT reverse mapping will be added when the MIG reverse pipeline is ready.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Direction {
     EdifactToBo4e,
-    Bo4eToEdifact,
 }
 
 impl Direction {
     pub fn label(&self) -> &'static str {
         match self {
             Direction::EdifactToBo4e => "EDIFACT -> BO4E",
-            Direction::Bo4eToEdifact => "BO4E -> EDIFACT",
-        }
-    }
-
-    pub fn toggle(&self) -> Self {
-        match self {
-            Direction::EdifactToBo4e => Direction::Bo4eToEdifact,
-            Direction::Bo4eToEdifact => Direction::EdifactToBo4e,
         }
     }
 
     pub fn input_label(&self) -> &'static str {
         match self {
             Direction::EdifactToBo4e => "EDIFACT",
-            Direction::Bo4eToEdifact => "BO4E JSON",
         }
     }
 
     pub fn output_label(&self) -> &'static str {
         match self {
             Direction::EdifactToBo4e => "BO4E JSON",
-            Direction::Bo4eToEdifact => "EDIFACT",
         }
     }
 
     pub fn api_path(&self) -> &'static str {
         match self {
             Direction::EdifactToBo4e => "/api/v2/convert",
-            Direction::Bo4eToEdifact => "/api/v1/convert/bo4e-to-edifact",
         }
     }
 
@@ -55,14 +46,6 @@ impl Direction {
                 "...\n",
                 "UNT+42+1'\n",
                 "UNZ+1+123456789'"
-            ),
-            Direction::Bo4eToEdifact => concat!(
-                "{\n",
-                "  \"transaktions_id\": \"TXN001\",\n",
-                "  \"absender\": { ... },\n",
-                "  \"empfaenger\": { ... },\n",
-                "  \"marktlokationen\": [ ... ]\n",
-                "}"
             ),
         }
     }
@@ -81,25 +64,6 @@ pub struct ConvertV2Request {
 pub struct ConvertV2Response {
     pub mode: String,
     pub result: serde_json::Value,
-    pub duration_ms: f64,
-}
-
-/// V1 conversion request (legacy pipeline, used for BO4E → EDIFACT).
-#[derive(Debug, Clone, Serialize)]
-pub struct ConvertRequest {
-    pub content: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub format_version: Option<String>,
-    pub include_trace: bool,
-}
-
-/// V1 conversion response (legacy pipeline).
-#[derive(Debug, Clone, Deserialize)]
-pub struct ConvertResponse {
-    pub success: bool,
-    pub result: Option<String>,
-    pub trace: Vec<TraceEntry>,
-    pub errors: Vec<ApiErrorEntry>,
     pub duration_ms: f64,
 }
 

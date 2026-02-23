@@ -3,7 +3,6 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use automapper_core::{create_coordinator, FormatVersion};
 use automapper_generator::parsing::ahb_parser::parse_ahb;
 use automapper_generator::schema::ahb::AhbSchema;
 use mig_assembly::ConversionService;
@@ -207,13 +206,13 @@ impl MigServiceRegistry {
     }
 }
 
-/// Discovers and manages available coordinators from automapper-core.
+/// Discovers and manages available coordinators.
 pub struct CoordinatorRegistry {
     coordinators: HashMap<String, CoordinatorInfo>,
 }
 
 impl CoordinatorRegistry {
-    /// Discover all available coordinators by probing automapper-core.
+    /// Discover all available coordinators.
     pub fn discover() -> Self {
         let mut coordinators = HashMap::new();
 
@@ -249,106 +248,6 @@ impl CoordinatorRegistry {
     /// Get coordinator info for a specific message type.
     pub fn get(&self, message_type: &str) -> Option<&CoordinatorInfo> {
         self.coordinators.get(&message_type.to_uppercase())
-    }
-
-    /// Convert EDIFACT content to BO4E JSON.
-    pub fn convert_edifact_to_bo4e(
-        &self,
-        edifact: &str,
-        format_version: Option<&str>,
-        include_trace: bool,
-    ) -> Result<crate::contracts::convert::ConvertResponse, crate::error::ApiError> {
-        let start = std::time::Instant::now();
-
-        let fv = match format_version {
-            Some("FV2510") => FormatVersion::FV2510,
-            _ => FormatVersion::FV2504,
-        };
-
-        let mut coordinator =
-            create_coordinator(fv).map_err(|e| crate::error::ApiError::Internal {
-                message: e.to_string(),
-            })?;
-        let input = edifact.as_bytes();
-
-        let transactions =
-            coordinator
-                .parse(input)
-                .map_err(|e| crate::error::ApiError::ConversionError {
-                    message: e.to_string(),
-                })?;
-
-        let result_json = serde_json::to_string_pretty(&transactions).map_err(|e| {
-            crate::error::ApiError::Internal {
-                message: format!("serialization error: {e}"),
-            }
-        })?;
-
-        let duration_ms = start.elapsed().as_secs_f64() * 1000.0;
-
-        let trace = if include_trace {
-            vec![crate::contracts::trace::TraceEntry {
-                mapper: "UtilmdCoordinator".to_string(),
-                source_segment: "UNH..UNT".to_string(),
-                target_path: "transactions".to_string(),
-                value: Some(format!("{} transaction(s)", transactions.len())),
-                note: None,
-            }]
-        } else {
-            vec![]
-        };
-
-        Ok(crate::contracts::convert::ConvertResponse {
-            success: true,
-            result: Some(result_json),
-            trace,
-            errors: vec![],
-            duration_ms,
-        })
-    }
-
-    /// Convert BO4E JSON content to EDIFACT.
-    pub fn convert_bo4e_to_edifact(
-        &self,
-        bo4e_json: &str,
-        format_version: Option<&str>,
-    ) -> Result<crate::contracts::convert::ConvertResponse, crate::error::ApiError> {
-        let start = std::time::Instant::now();
-
-        let fv = match format_version {
-            Some("FV2510") => FormatVersion::FV2510,
-            _ => FormatVersion::FV2504,
-        };
-
-        // Deserialize the BO4E message (full Nachricht with envelope + transactions)
-        let nachricht: bo4e_extensions::UtilmdNachricht =
-            serde_json::from_str(bo4e_json).map_err(|e| crate::error::ApiError::BadRequest {
-                message: format!("invalid BO4E JSON: {e}"),
-            })?;
-
-        let coordinator = create_coordinator(fv).map_err(|e| crate::error::ApiError::Internal {
-            message: e.to_string(),
-        })?;
-        let edifact_bytes = coordinator.generate(&nachricht).map_err(|e| {
-            crate::error::ApiError::ConversionError {
-                message: e.to_string(),
-            }
-        })?;
-
-        let edifact_string =
-            String::from_utf8(edifact_bytes).map_err(|e| crate::error::ApiError::Internal {
-                message: format!("UTF-8 conversion error: {e}"),
-            })?;
-
-        let duration_ms = start.elapsed().as_secs_f64() * 1000.0;
-
-        Ok(crate::contracts::convert::ConvertResponse {
-            success: true,
-            result: Some(edifact_string),
-            trace: vec![],
-            errors: vec![],
-            duration_ms,
-        })
     }
 
     /// Inspect EDIFACT content, returning a segment tree.

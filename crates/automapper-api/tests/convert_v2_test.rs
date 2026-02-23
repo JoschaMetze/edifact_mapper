@@ -1,4 +1,4 @@
-//! Integration tests for the v2 dual-mode conversion endpoint.
+//! Integration tests for the v2 MIG-driven conversion endpoint.
 
 use axum::body::Body;
 use axum::http::{Request, StatusCode};
@@ -11,44 +11,6 @@ use automapper_api::state::AppState;
 fn app() -> axum::Router {
     let state = AppState::new();
     automapper_api::build_http_router(state)
-}
-
-// --- Legacy mode (always available) ---
-
-#[tokio::test]
-async fn test_convert_v2_legacy_mode() {
-    let app = app();
-
-    let body = serde_json::json!({
-        "input": "UNB+UNOC:3+sender+receiver+231215:1200+ref001'UNH+1+UTILMD:D:11A:UN:5.2e'BGM+E01+DOC001'UNT+3+1'UNZ+1+ref001'",
-        "mode": "legacy",
-        "format_version": "FV2504"
-    });
-
-    let response = app
-        .oneshot(
-            Request::builder()
-                .method("POST")
-                .uri("/api/v2/convert")
-                .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_string(&body).unwrap()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    // Legacy mode should succeed (or fail gracefully with conversion error)
-    assert!(
-        response.status() == StatusCode::OK
-            || response.status() == StatusCode::UNPROCESSABLE_ENTITY,
-        "Unexpected status: {}",
-        response.status()
-    );
-
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    let resp: ConvertV2Response = serde_json::from_slice(&body).unwrap();
-    assert_eq!(resp.mode, "legacy");
-    assert!(resp.duration_ms >= 0.0);
 }
 
 // --- Invalid mode ---

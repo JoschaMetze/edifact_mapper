@@ -1,9 +1,8 @@
-//! V2 dual-mode conversion endpoint.
+//! V2 conversion endpoint.
 //!
-//! Supports three conversion modes:
+//! Supports two conversion modes:
 //! - `mig-tree`: tokenize + assemble → return tree as JSON
 //! - `bo4e`: tokenize + assemble + TOML mapping → return BO4E JSON
-//! - `legacy`: use the existing automapper-core pipeline
 
 use std::collections::HashSet;
 
@@ -35,7 +34,7 @@ fn to_camel_case(s: &str) -> String {
     }
 }
 
-/// `POST /api/v2/convert` — Dual-mode conversion endpoint.
+/// `POST /api/v2/convert` — MIG-driven conversion endpoint.
 async fn convert_v2(
     State(state): State<AppState>,
     Json(req): Json<ConvertV2Request>,
@@ -156,26 +155,6 @@ async fn convert_v2(
                     "stammdaten": stammdaten,
                 }),
                 duration_ms: start.elapsed().as_secs_f64() * 1000.0,
-            }))
-        }
-        ConvertMode::Legacy => {
-            let response = state.registry.convert_edifact_to_bo4e(
-                &req.input,
-                Some(&req.format_version),
-                false,
-            )?;
-
-            let result = match response.result {
-                Some(json_str) => {
-                    serde_json::from_str(&json_str).unwrap_or(serde_json::json!(null))
-                }
-                None => serde_json::json!(null),
-            };
-
-            Ok(Json(ConvertV2Response {
-                mode: "legacy".to_string(),
-                result,
-                duration_ms: response.duration_ms,
             }))
         }
     }

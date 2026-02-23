@@ -7,7 +7,6 @@ use axum::http::{Request, StatusCode};
 use http_body_util::BodyExt;
 use tower::ServiceExt;
 
-use automapper_api::contracts::convert::ConvertResponse;
 use automapper_api::contracts::coordinators::CoordinatorInfo;
 use automapper_api::contracts::health::HealthResponse;
 use automapper_api::contracts::inspect::InspectResponse;
@@ -121,72 +120,6 @@ async fn test_inspect_empty_edifact_returns_400() {
         .unwrap();
 
     // Empty content should return 400 or error
-    assert!(
-        response.status() == StatusCode::BAD_REQUEST
-            || response.status() == StatusCode::UNPROCESSABLE_ENTITY
-    );
-}
-
-// --- Convert EDIFACT to BO4E ---
-
-#[tokio::test]
-async fn test_convert_edifact_to_bo4e_accepts_valid_json() {
-    let app = app();
-
-    // Minimal EDIFACT that at minimum exercises the endpoint
-    let body = serde_json::json!({
-        "content": "UNB+UNOC:3+sender+receiver+231215:1200+ref001'UNH+1+UTILMD:D:11A:UN:5.2e'BGM+E01+DOC001'UNT+3+1'UNZ+1+ref001'",
-        "include_trace": true
-    });
-
-    let response = app
-        .oneshot(
-            Request::builder()
-                .method("POST")
-                .uri("/api/v1/convert/edifact-to-bo4e")
-                .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_string(&body).unwrap()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    // Should return 200 (success) or 422 (conversion error) — not 500
-    assert!(
-        response.status() == StatusCode::OK
-            || response.status() == StatusCode::UNPROCESSABLE_ENTITY
-    );
-
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    let resp: ConvertResponse = serde_json::from_slice(&body).unwrap();
-
-    // Response should be well-formed regardless of success
-    assert!(resp.duration_ms >= 0.0);
-}
-
-// --- Convert BO4E to EDIFACT ---
-
-#[tokio::test]
-async fn test_convert_bo4e_to_edifact_rejects_invalid_json() {
-    let app = app();
-
-    let body = serde_json::json!({
-        "content": "this is not valid json for bo4e",
-    });
-
-    let response = app
-        .oneshot(
-            Request::builder()
-                .method("POST")
-                .uri("/api/v1/convert/bo4e-to-edifact")
-                .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_string(&body).unwrap()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    // Should return an error, not 500
     assert!(
         response.status() == StatusCode::BAD_REQUEST
             || response.status() == StatusCode::UNPROCESSABLE_ENTITY

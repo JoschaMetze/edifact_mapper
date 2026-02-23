@@ -3,84 +3,12 @@
 //! These tests ensure the API contract is stable — any accidental field rename
 //! or type change will break these tests.
 
-use automapper_api::contracts::convert::{ConvertRequest, ConvertResponse};
 use automapper_api::contracts::coordinators::CoordinatorInfo;
-use automapper_api::contracts::error::{ApiErrorEntry, ErrorSeverity};
+use automapper_api::contracts::error::ErrorSeverity;
 use automapper_api::contracts::health::HealthResponse;
 use automapper_api::contracts::inspect::{
     ComponentElement, DataElement, InspectRequest, InspectResponse, SegmentNode,
 };
-use automapper_api::contracts::trace::TraceEntry;
-
-#[test]
-fn test_convert_request_deserialization() {
-    let json = r#"{
-        "content": "UNH+1+UTILMD:D:11A:UN:5.2e'",
-        "format_version": "FV2504",
-        "include_trace": true
-    }"#;
-
-    let req: ConvertRequest = serde_json::from_str(json).unwrap();
-    assert_eq!(req.content, "UNH+1+UTILMD:D:11A:UN:5.2e'");
-    assert_eq!(req.format_version, Some("FV2504".to_string()));
-    assert!(req.include_trace);
-}
-
-#[test]
-fn test_convert_request_defaults() {
-    let json = r#"{ "content": "hello" }"#;
-
-    let req: ConvertRequest = serde_json::from_str(json).unwrap();
-    assert_eq!(req.content, "hello");
-    assert_eq!(req.format_version, None);
-    assert!(!req.include_trace);
-}
-
-#[test]
-fn test_convert_response_serialization() {
-    let resp = ConvertResponse {
-        success: true,
-        result: Some("{}".to_string()),
-        trace: vec![TraceEntry {
-            mapper: "UtilmdCoordinator".to_string(),
-            source_segment: "UNH".to_string(),
-            target_path: "transactions".to_string(),
-            value: Some("1".to_string()),
-            note: None,
-        }],
-        errors: vec![],
-        duration_ms: 42.5,
-    };
-
-    let json = serde_json::to_value(&resp).unwrap();
-    assert_eq!(json["success"], true);
-    assert_eq!(json["result"], "{}");
-    assert_eq!(json["duration_ms"], 42.5);
-    assert_eq!(json["trace"][0]["mapper"], "UtilmdCoordinator");
-    assert!(json["errors"].as_array().unwrap().is_empty());
-}
-
-#[test]
-fn test_convert_response_with_errors() {
-    let resp = ConvertResponse {
-        success: false,
-        result: None,
-        trace: vec![],
-        errors: vec![ApiErrorEntry {
-            code: "PARSE_ERROR".to_string(),
-            message: "unterminated segment at byte 42".to_string(),
-            location: Some("byte 42".to_string()),
-            severity: ErrorSeverity::Error,
-        }],
-        duration_ms: 1.2,
-    };
-
-    let json = serde_json::to_value(&resp).unwrap();
-    assert_eq!(json["success"], false);
-    assert!(json["result"].is_null());
-    assert_eq!(json["errors"][0]["code"], "PARSE_ERROR");
-    assert_eq!(json["errors"][0]["severity"], "error");
-}
 
 #[test]
 fn test_inspect_request_deserialization() {

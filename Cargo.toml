@@ -4,7 +4,6 @@ members = [
     "crates/edifact-types",
     "crates/edifact-parser",
     "crates/bo4e-extensions",
-    "crates/automapper-core",
     "crates/automapper-validation",
     "crates/automapper-generator",
     "crates/mig-types",
@@ -31,9 +30,6 @@ chrono = { version = "0.4", features = ["serde"] }
 
 # Error handling
 thiserror = "2"
-
-# Parallelism
-rayon = "1"
 
 # CLI
 clap = { version = "4", features = ["derive"] }
@@ -64,7 +60,6 @@ test-case = "3"
 edifact-types = { path = "crates/edifact-types" }
 edifact-parser = { path = "crates/edifact-parser" }
 bo4e-extensions = { path = "crates/bo4e-extensions" }
-automapper-core = { path = "crates/automapper-core" }
 automapper-validation = { path = "crates/automapper-validation" }
 automapper-generator = { path = "crates/automapper-generator" }
 automapper-api = { path = "crates/automapper-api" }
@@ -72,5 +67,6 @@ automapper-web = { path = "crates/automapper-web" }
 mig-types = { path = "crates/mig-types" }
 mig-assembly = { path = "crates/mig-assembly" }
 mig-bo4e = { path = "crates/mig-bo4e" }
+rayon = "1"
 toml = "0.8"
 tempfile = "3"

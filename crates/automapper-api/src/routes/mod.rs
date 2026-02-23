@@ -1,6 +1,5 @@
 //! Route handlers for the REST API.
 
-pub mod convert;
 pub mod convert_v2;
 pub mod coordinators;
 pub mod fixtures;
@@ -14,7 +13,6 @@ use crate::state::AppState;
 /// Build all `/api/v1/*` routes.
 pub fn api_routes() -> Router<AppState> {
     Router::new()
-        .merge(convert::routes())
         .merge(inspect::routes())
         .merge(coordinators::routes())
         .merge(fixtures::routes())

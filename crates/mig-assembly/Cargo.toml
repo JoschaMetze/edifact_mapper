@@ -18,6 +18,7 @@ serde_json.workspace = true
 [dev-dependencies]
 insta.workspace = true
 criterion.workspace = true
+rayon.workspace = true
 
 [[bench]]
 name = "assembly_throughput"

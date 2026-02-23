@@ -5,10 +5,10 @@ use leptos::prelude::*;
 use crate::api_client;
 use crate::types::{Direction, FixtureEntry};
 
-/// A horizontal bar with a fixture dropdown and load buttons.
+/// A horizontal bar with a fixture dropdown and a load button.
 ///
-/// Fetches the fixture list on mount. "Load EDI" sets direction to EdifactToBo4e,
-/// "Load BO4E" sets direction to Bo4eToEdifact, and both populate the input editor.
+/// Fetches the fixture list on mount. "Load EDI" populates the input editor
+/// with EDIFACT content for conversion via the v2 MIG-driven pipeline.
 #[component]
 pub fn FixtureSelector(
     /// Callback receiving `(content, direction)` when a fixture is loaded.
@@ -45,12 +45,7 @@ pub fn FixtureSelector(
                     .await
                 {
                     Ok(content) => {
-                        let direction = if file_type == "edi" {
-                            Direction::EdifactToBo4e
-                        } else {
-                            Direction::Bo4eToEdifact
-                        };
-                        on_load.run((content, direction));
+                        on_load.run((content, Direction::EdifactToBo4e));
                     }
                     Err(e) => set_error.set(Some(e)),
                 }
@@ -90,14 +85,6 @@ pub fn FixtureSelector(
                 on:click=move |_| load_fixture("edi")
             >
                 "Load EDI"
-            </button>
-
-            <button
-                class="btn btn-small btn-load"
-                disabled=move || selected_fixture.get().is_none_or(|f| !f.has_bo4e) || loading.get()
-                on:click=move |_| load_fixture("bo4e")
-            >
-                "Load BO4E"
             </button>
 
             {move || loading.get().then(|| view! { <span class="fixture-loading">"Loading..."</span> })}

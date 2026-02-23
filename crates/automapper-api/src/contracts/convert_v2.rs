@@ -1,4 +1,4 @@
-//! V2 conversion request/response types supporting dual API modes.
+//! V2 conversion request/response types for MIG-driven conversion modes.
 
 use serde::{Deserialize, Serialize};
 
@@ -10,8 +10,6 @@ pub enum ConvertMode {
     MigTree,
     /// Run MIG assembly + TOML mapping to produce BO4E JSON.
     Bo4e,
-    /// Use the legacy automapper-core pipeline.
-    Legacy,
 }
 
 /// Request body for `POST /api/v2/convert`.
@@ -20,7 +18,7 @@ pub struct ConvertV2Request {
     /// The raw EDIFACT content to convert.
     pub input: String,
 
-    /// Conversion mode: "mig-tree", "bo4e", or "legacy".
+    /// Conversion mode: "mig-tree" or "bo4e".
     pub mode: ConvertMode,
 
     /// Format version (e.g., "FV2504", "FV2510").
@@ -33,7 +31,7 @@ pub struct ConvertV2Response {
     /// The mode used for conversion.
     pub mode: String,
 
-    /// The converted result (tree JSON, BO4E JSON, or legacy result).
+    /// The converted result (tree JSON or BO4E JSON).
     pub result: serde_json::Value,
 
     /// Conversion duration in milliseconds.

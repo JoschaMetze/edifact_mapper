@@ -6,8 +6,8 @@
 use gloo_net::http::Request;
 
 use crate::types::{
-    ConvertRequest, ConvertResponse, ConvertV2Request, ConvertV2Response, CoordinatorInfo,
-    FixtureListResponse, HealthResponse, InspectRequest, InspectResponse,
+    ConvertV2Request, ConvertV2Response, CoordinatorInfo, FixtureListResponse, HealthResponse,
+    InspectRequest, InspectResponse,
 };
 
 /// Base URL for API calls. Empty string means same origin.
@@ -38,44 +38,6 @@ pub async fn convert_v2(
     if response.ok() {
         response
             .json::<ConvertV2Response>()
-            .await
-            .map_err(|e| format!("failed to parse response: {e}"))
-    } else {
-        let status = response.status();
-        let body = response
-            .text()
-            .await
-            .unwrap_or_else(|_| "unknown error".to_string());
-        Err(format!("HTTP {status}: {body}"))
-    }
-}
-
-/// Convert content using the v1 legacy pipeline.
-pub async fn convert(
-    api_path: &str,
-    content: &str,
-    format_version: Option<String>,
-    include_trace: bool,
-) -> Result<ConvertResponse, String> {
-    let request_body = ConvertRequest {
-        content: content.to_string(),
-        format_version,
-        include_trace,
-    };
-
-    let url = format!("{API_BASE}{api_path}");
-
-    let response = Request::post(&url)
-        .header("Content-Type", "application/json")
-        .json(&request_body)
-        .map_err(|e| format!("failed to serialize request: {e}"))?
-        .send()
-        .await
-        .map_err(|e| format!("request failed: {e}"))?;
-
-    if response.ok() {
-        response
-            .json::<ConvertResponse>()
             .await
             .map_err(|e| format!("failed to parse response: {e}"))
     } else {

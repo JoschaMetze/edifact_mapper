@@ -228,7 +228,6 @@ name = "automapper-api"
 version = "0.1.0"
 dependencies = [
  "async-stream",
- "automapper-core",
  "automapper-generator",
  "axum",
  "bo4e-extensions",
@@ -255,22 +254,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "automapper-core"
-version = "0.1.0"
-dependencies = [
- "bo4e-extensions",
- "chrono",
- "criterion",
- "edifact-parser",
- "edifact-types",
- "insta",
- "rayon",
- "serde_json",
- "test-case",
- "thiserror 2.0.18",
-]
-
-[[package]]
 name = "automapper-generator"
 version = "0.1.0"
 dependencies = [
@@ -294,7 +277,6 @@ dependencies = [
 name = "automapper-validation"
 version = "0.1.0"
 dependencies = [
- "automapper-core",
  "bo4e-extensions",
  "edifact-parser",
  "edifact-types",
@@ -1877,6 +1859,7 @@ dependencies = [
  "edifact-types",
  "insta",
  "mig-types",
+ "rayon",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
@@ -1886,7 +1869,6 @@ dependencies = [
 name = "mig-bo4e"
 version = "0.1.0"
 dependencies = [
- "automapper-core",
  "automapper-generator",
  "bo4e-extensions",
  "insta",
