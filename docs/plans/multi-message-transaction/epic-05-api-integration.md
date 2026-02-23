@@ -5,7 +5,7 @@ title: "API Integration"
 depends_on: [multi-message-transaction/E01, multi-message-transaction/E02, multi-message-transaction/E03, multi-message-transaction/E04]
 estimated_tasks: 5
 crate: automapper-api, mig-assembly
-status: in_progress
+status: complete
 ---
 
 # Epic 5: API Integration
