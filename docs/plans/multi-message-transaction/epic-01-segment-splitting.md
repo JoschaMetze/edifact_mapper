@@ -5,7 +5,7 @@ title: "Segment Splitting at UNH/UNT Boundaries"
 depends_on: []
 estimated_tasks: 4
 crate: mig-assembly
-status: in_progress
+status: complete
 ---
 
 # Epic 1: Segment Splitting at UNH/UNT Boundaries
@@ -349,3 +349,16 @@ Expected: No warnings
 git add crates/mig-assembly/src/lib.rs
 git commit -m "feat(mig-assembly): export split_messages and chunk types"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 45 |
+| Passed | 45 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/mig-assembly/src/tokenize.rs` (6 new tests: struct existence, single-message split, two-message split, envelope preservation, no-messages error, plus existing tests)
+- `crates/mig-assembly/src/lib.rs` (re-exports verified via `cargo check --workspace`)
