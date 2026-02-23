@@ -5,7 +5,7 @@ title: "TOML Directory Reorganization"
 depends_on: [multi-message-transaction/E02]
 estimated_tasks: 4
 crate: mig-bo4e
-status: in_progress
+status: complete
 ---
 
 # Epic 4: TOML Directory Reorganization
