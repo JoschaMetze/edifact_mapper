@@ -194,10 +194,7 @@ pub fn rebuild_unh(referenz: &str, nachrichten_typ: &str) -> OwnedSegment {
 pub fn rebuild_unt(segment_count: usize, referenz: &str) -> OwnedSegment {
     OwnedSegment {
         id: "UNT".to_string(),
-        elements: vec![
-            vec![segment_count.to_string()],
-            vec![referenz.to_string()],
-        ],
+        elements: vec![vec![segment_count.to_string()], vec![referenz.to_string()]],
         segment_number: 0,
     }
 }
