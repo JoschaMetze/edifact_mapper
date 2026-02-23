@@ -1,0 +1,23 @@
+# SteuerbareRessource Zuordnung (SG10 within SEQ+ZF1) for PID 55002.
+# CCI/CAV zugeordneter Marktpartner data, merges into entity "SteuerbareRessource".
+#
+# CCI+++ZB3                       → merkmal_code (Zugeordneter Marktpartner)
+# CAV+Z91:<MP-ID>::<Eigenschaft>  → MSB zuordnung (Z39=gMSB/Z40=wMSB/Z41=Auffang)
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8:2.SG10"
+source_path = "sg4.sg8_zf1.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.2.0" = "merkmal_code"
+"cav[Z91].0.1" = "zugeordneter_mp"
+"cav[Z91].0.3" = "msb_eigenschaft"
+
+[companion_fields."cav[Z91].0.0"]
+target = ""
+default = "Z91"

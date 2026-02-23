@@ -1,0 +1,27 @@
+# Netzlokation informative data (SEQ+ZD7) for PID 55002.
+# Merges into entity "Netzlokation" via deep-merge.
+#
+# SEQ+ZD7+<Zeitraum-Ref>  (Informative Daten der Netzlokation)
+# RFF+Z32:<Netzlokations-ID>  → reference to Netzlokation from SG5 LOC+Z18
+
+[meta]
+entity = "Netzlokation"
+bo4e_type = "Netzlokation"
+companion_type = "NetzlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zd7"
+discriminator = "SEQ.0.0=ZD7"
+
+[fields]
+"seq.1.0" = "zeitraum_referenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZD7"
+
+[companion_fields]
+"rff.0.1" = "referenz_netzlokation"
+
+[companion_fields."rff.0.0"]
+target = ""
+default = "Z32"

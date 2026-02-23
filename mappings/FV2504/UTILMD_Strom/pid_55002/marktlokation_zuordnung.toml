@@ -1,0 +1,24 @@
+# Marktlokation Zuordnung (SG10 within SEQ+Z98) for PID 55002.
+# CCI/CAV zugeordneter Marktpartner data, merges into entity "Marktlokation".
+#
+# CCI+++ZB3                            → merkmal_code (Zugeordneter Marktpartner)
+# CAV+Z91:<MP-ID>::<Eigenschaft>:<Art> → MSB zuordnung
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8:1.SG10"
+source_path = "sg4.sg8_z98.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.2.0" = "merkmal_code"
+"cav[Z91].0.1" = "zugeordneter_mp"
+"cav[Z91].0.3" = "msb_eigenschaft"
+"cav[Z91].0.4" = "leistungserbringung"
+
+[companion_fields."cav[Z91].0.0"]
+target = ""
+default = "Z91"

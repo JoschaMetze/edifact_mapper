@@ -151,7 +151,7 @@ Key correspondences:
 | automapper-generator | 1 | Snapshot tests (insta) |
 | mig-types | 6 | Generated typed MIG-tree types |
 | mig-assembly | 40+ | Assembler, disassembler, roundtrip, ConversionService |
-| mig-bo4e | 27+ | TOML mapping engine, migration comparison tests |
+| mig-bo4e | 65+ | TOML mapping engine, roundtrip, PID 55001/55002 mapping tests |
 | automapper-api | 12 | REST v1/v2, gRPC, integration tests |
 | automapper-web | 0 | WASM components |
 
@@ -182,6 +182,125 @@ The MIG XML defines ALL possible segments/groups for a message type (e.g., UTILM
 - The filter works recursively: it resolves ambiguity at all nesting levels (SG4 variants, SG8 variants within SG4, SG10 variants within SG8, etc.).
 - Entry segment `Number` determines group selection — if the first segment's Number isn't in the AHB set, the entire group variant is dropped.
 - The assembled tree preserves the full group hierarchy: `SG4 → [SG5, SG6, SG8 → [SG10], SG12]`.
+
+### Process: Creating TOML Mappings for a New PID
+
+Follow this step-by-step process when adding BO4E mappings for a new PID.
+
+**Step 1: Read the PID schema JSON**
+```bash
+# Primary reference — always start here
+cat crates/mig-types/src/generated/fv2504/utilmd/pids/pid_NNNNN_schema.json
+```
+This is the single source of truth. It tells you:
+- Which SG groups exist (sg5_z16, sg8_z98, sg12_z04, etc.)
+- What segments each group contains (LOC, SEQ, CCI, CAV, NAD, RFF, etc.)
+- Element indices and component sub-indices for field paths
+- Discriminator codes (LOC qualifier Z16/Z17, SEQ qualifier Z98/ZD7, etc.)
+- Which codes are AHB-filtered (only valid codes for this PID)
+
+**Step 2: Check for a reference PID with similar structure**
+```bash
+ls mappings/FV2504/UTILMD_Strom/
+# Compare with existing PIDs — 55001 (Anmeldung) and 55002 (Bestätigung) are references
+diff <(python3 -c "import json; d=json.load(open('...pid_55001_schema.json')); print('\n'.join(sorted(d['fields'].keys())))") \
+     <(python3 -c "import json; d=json.load(open('...pid_NNNNN_schema.json')); print('\n'.join(sorted(d['fields'].keys())))")
+```
+If a similar PID already has mappings, copy and adapt rather than starting from scratch.
+
+**Step 3: Generate scaffolds (optional starting point)**
+```bash
+cargo run -p automapper-generator -- generate-toml-scaffolds \
+  --mig-xml xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml \
+  --ahb-xml xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml \
+  --message-type UTILMD --variant Strom --format-version FV2504 \
+  --pid NNNNN --output-dir mappings/FV2504/UTILMD_Strom
+```
+Scaffolds are a starting point — they need manual review and refinement (entity names, field names, companion_fields).
+
+**Step 4: Map the group hierarchy to entities**
+
+Read the schema's `fields` object and create one TOML file per group. Use this mapping:
+
+| Schema group | TOML pattern | Entity name source |
+|---|---|---|
+| `sg2` | `marktteilnehmer.toml` | Always "Marktteilnehmer" |
+| `sg2.sg3_ic` | `ansprechpartner.toml` or `kontakt.toml` | CTA function code |
+| `sg4` (root segments) | `prozessdaten.toml` | IDE/DTM/STS = "Prozessdaten" |
+| `sg4.sg5_zNN` | `{entity}.toml` | LOC code description in schema |
+| `sg4.sg6` | `prozessdaten_rff_{qual}.toml` | RFF qualifier, merges into "Prozessdaten" |
+| `sg4.sg8_zXX` | `{entity}_info.toml` | SEQ code → parent LOC entity |
+| `sg4.sg8_zXX.sg10` | `{entity}_zuordnung.toml` | CCI/CAV → parent LOC entity companion |
+| `sg4.sg12_zNN` | `{entity}.toml` | NAD qualifier (Z04/Z09 etc.) |
+
+**Step 5: Write each TOML file**
+
+For each group, consult the schema to determine:
+1. **Element indices**: Schema `elements[].index` → TOML path prefix (e.g., `loc.1.0`)
+2. **Component sub-indices**: Schema `components[].sub_index` → TOML path suffix
+3. **Codes vs data**: `type: "code"` with single value → use `default`; `type: "data"` → map to a field name
+4. **Discriminators**: If multiple groups share the same `source_group`, add a `discriminator`
+5. **companion_fields**: CCI/CAV/RFF segments in _zuordnung and _info files usually go in `[companion_fields]`
+
+**Step 6: Check for a fixture file to test with**
+```bash
+ls example_market_communication_bo4e_transactions/UTILMD/FV2504/*NNNNN*
+```
+If a fixture exists, write roundtrip tests. If not, write at least a load test to verify TOML parsing.
+
+**Step 7: Verify**
+```bash
+cargo test -p mig-bo4e -- --nocapture  # all mapping tests
+cargo clippy -p mig-bo4e -- -D warnings
+```
+
+### TOML Mapping Guidelines
+
+When creating TOML mapping files for new PIDs, follow these rules:
+
+**Entity naming — derive from PID schema descriptions, not guesswork:**
+- Always read the PID schema JSON (`crates/mig-types/src/generated/fv2504/utilmd/pids/pid_NNNNN_schema.json`) before naming entities.
+- LOC qualifier codes map to specific location types: Z16=Marktlokation, Z17=Messlokation, Z18=Netzlokation, Z19=SteuerbareRessource, Z20=TechnischeRessource, Z22=RuhendeMarktlokation.
+- SEQ groups describe their parent location's properties — name the entity after the location, not the property type.
+- The schema `beschreibung` and segment `name` fields contain the canonical German descriptions — use these to determine entity names.
+
+**Entity design — reuse BO4E types, don't invent new ones:**
+- Map to existing BO4E core types (Marktlokation, Messlokation, Netzlokation, etc.) and their `*Edifact` companion types.
+- SEQ/CCI/CAV "info" and "zuordnung" groups are NOT separate entities — they enrich their parent LOC entity. Use `entity = "Marktlokation"` (not `entity = "MarktlokationInfo"`).
+- RFF groups with different qualifiers (Z13, TN, Z60) that describe the same concept merge into one entity (e.g., all into `Prozessdaten`) using discriminators, not separate entity types.
+- Reference the C# project's `*Edifact` companion types to understand entity boundaries. If the C# code stores a field on `MarktlokationEdifact`, use `companion_fields` in the TOML, not a new entity.
+
+**One TOML file = one source group instance:**
+- Each file maps exactly one group in the MIG tree (SG5, SG8, SG10, etc.).
+- Multiple files can share the same `entity` name — `deep_merge_insert()` combines their outputs.
+- This enables per-group reuse across PIDs via the `generate-pid-mappings` tool.
+- `[fields]` section is REQUIRED even if empty — omitting it causes a TOML parse error.
+
+**companion_fields for EDIFACT-specific data:**
+- Core BO4E fields go in `[fields]`.
+- EDIFACT-only data (qualifiers, references, transport info) goes in `[companion_fields]` with a `companion_type` in `[meta]`.
+- Only set `companion_type` on files that have `[companion_fields]` — it's unused without them.
+
+**Discriminators for multi-instance groups:**
+- When multiple TOML files map the same source group (e.g., multiple RFFs in SG6), each needs a `discriminator` (e.g., `RFF.0.0=Z13`) to select the right instance.
+- When looking up definitions in tests, use `(entity, source_group)` pairs — `definition_for_entity()` alone is ambiguous when multiple files share an entity name.
+
+**Field path convention — always use numeric indices:**
+- Use `loc.0` (element index 0), `loc.1.0` (element 1, component 0), `cav.0.3` (element 0, component 3).
+- Named paths (`loc.d3227`, `loc.c517.d3225`) are deprecated — they're ambiguous and harder to maintain.
+- Empty EDIFACT values (empty string components) are omitted from BO4E JSON output — only non-empty values are included.
+- The reverse mapper pads intermediate empty elements automatically, so omitting empty values from BO4E is safe for roundtrip.
+
+**PID-specific STS mapping — verify schema per PID:**
+- STS segment structure varies significantly between PIDs (e.g., 55001 uses `STS+7++E01+ZW4+E03` for Transaktionsgrund, while 55002 uses `STS+E01+<status>+<pruefschritt>:<ebd>::<ref>` for Antwort-Status).
+- Always check the PID schema JSON for the actual STS element/composite layout before writing STS field mappings.
+- DTM qualifiers also vary: 55001 has DTM+92 and DTM+93, 55002 only has DTM+93.
+
+**File naming convention:**
+- `{entity}.toml` — primary LOC/base mapping (e.g., `marktlokation.toml`)
+- `{entity}_info.toml` — SG8 SEQ group enrichment (e.g., `marktlokation_info.toml`)
+- `{entity}_zuordnung.toml` — SG10 CCI/CAV attribute mapping (e.g., `marktlokation_zuordnung.toml`)
+- `{entity}_rff_{qualifier}.toml` — discriminated RFF mappings (e.g., `prozessdaten_rff_z13.toml`)
 
 ## Implementation Plans
 

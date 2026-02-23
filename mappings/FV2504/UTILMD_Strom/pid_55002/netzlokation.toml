@@ -1,0 +1,18 @@
+# Netzlokation (LOC+Z18) for PID 55002.
+#
+# LOC+Z18+<Netzlokations-ID>
+# The ID identifies a Netzlokation. SG8 SEQ+ZD7 references it via RFF+Z32.
+
+[meta]
+entity = "Netzlokation"
+bo4e_type = "Netzlokation"
+source_group = "SG4.SG5"
+source_path = "sg4.sg5_z18"
+discriminator = "LOC.0.0=Z18"
+
+[fields]
+"loc.1.0" = "netzlokations_id"
+
+[fields."loc.0"]
+target = ""
+default = "Z18"

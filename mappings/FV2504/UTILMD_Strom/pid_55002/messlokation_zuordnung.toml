@@ -1,0 +1,24 @@
+# Messlokation Zuordnung (SG10 within SEQ+ZF3) for PID 55002.
+# CCI/CAV zugeordneter Marktpartner data, merges into entity "Messlokation".
+#
+# Schema: ZF3's SG10 has only CAV+ZF0 (gMSB), not CAV+Z91.
+#
+# CCI+++ZB3                       → merkmal_code (Zugeordneter Marktpartner)
+# CAV+ZF0:<gMSB-MP-ID>           → gMSB responsible for Messlokation
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8:3.SG10"
+source_path = "sg4.sg8_zf3.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.2.0" = "merkmal_code"
+"cav.0.1" = "gmsb_mp_id"
+
+[companion_fields."cav.0.0"]
+target = ""
+default = "ZF0"

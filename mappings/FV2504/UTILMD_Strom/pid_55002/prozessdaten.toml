@@ -1,0 +1,38 @@
+# Prozessdaten (process data) mapping for PID 55002 (Bestätigung Anmeldung verb. MaLo).
+#
+# Source: SG4 top-level segments (IDE, DTM, STS)
+# IDE+24+<Vorgangsnummer>         -> vorgang_id (Transaktion)
+# DTM+93:<Datum>:303              -> gueltig_bis (Datum Vertragsende)
+# STS+E01+<status>+<code>:<ebd>::<ref> -> Antwort-Status mit EBD-Referenz
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.1" = "vorgang_id"
+
+# DTM+93 (Datum Vertragsende)
+"dtm[93].0.1" = "gueltig_bis"
+
+# STS segment — Status der Antwort
+"sts.0.0" = "antwort_kategorie"
+"sts.1.0" = "antwort_status"
+"sts.2.0" = "pruefschritt_code"
+"sts.2.1" = "ebd_nummer"
+"sts.2.3" = "zeitraum_referenz"
+
+[fields."ide.0"]
+target = ""
+default = "24"
+
+[fields."dtm[93].0.0"]
+target = ""
+default = "93"
+
+[fields."dtm[93].0.2"]
+target = ""
+default = "303"
