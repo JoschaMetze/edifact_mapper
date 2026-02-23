@@ -5,7 +5,7 @@ title: "Interchange Data Model"
 depends_on: []
 estimated_tasks: 3
 crate: mig-bo4e
-status: in_progress
+status: complete
 ---
 
 # Epic 2: Interchange Data Model
