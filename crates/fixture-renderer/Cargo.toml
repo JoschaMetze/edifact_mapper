@@ -1,0 +1,25 @@
+[package]
+name = "fixture-renderer"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "CLI tool for rendering EDIFACT fixtures from BO4E via TOML mappings"
+
+[[bin]]
+name = "fixture-renderer"
+path = "src/main.rs"
+
+[dependencies]
+automapper-generator = { path = "../automapper-generator" }
+mig-assembly = { path = "../mig-assembly" }
+mig-bo4e = { path = "../mig-bo4e" }
+edifact-types.workspace = true
+mig-types = { path = "../mig-types" }
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
