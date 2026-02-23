@@ -292,3 +292,22 @@ Expected: OK
 git add crates/mig-bo4e/src/model.rs crates/mig-bo4e/src/lib.rs
 git commit -m "feat(mig-bo4e): add UNH field extraction and re-export model types"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 67 |
+| Passed | 66 |
+| Failed | 0 |
+| Skipped | 1 |
+
+New tests added (4):
+- `model::tests::test_transaktion_serde_roundtrip` — Transaktion serde roundtrip
+- `model::tests::test_nachricht_serde_roundtrip` — Nachricht serde roundtrip
+- `model::tests::test_interchange_serde_roundtrip` — Interchange serde roundtrip
+- `model::tests::test_extract_unh_fields` — UNH field extraction helper
+
+Files changed:
+- `crates/mig-bo4e/src/model.rs` (new)
+- `crates/mig-bo4e/src/lib.rs` (modified)
