@@ -691,7 +691,9 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             pid,
             output_dir,
         } => {
-            use automapper_generator::schema_diff::{diff_pid_schemas, render_diff_markdown, DiffInput};
+            use automapper_generator::schema_diff::{
+                diff_pid_schemas, render_diff_markdown, DiffInput,
+            };
 
             let old_json: serde_json::Value =
                 serde_json::from_str(&std::fs::read_to_string(&old_schema)?)?;

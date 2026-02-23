@@ -216,10 +216,7 @@ fn extract_components(element: &serde_json::Value) -> Vec<FlatComponent> {
         .unwrap_or_default()
 }
 
-fn diff_groups(
-    old: &BTreeMap<String, FlatGroup>,
-    new: &BTreeMap<String, FlatGroup>,
-) -> GroupDiff {
+fn diff_groups(old: &BTreeMap<String, FlatGroup>, new: &BTreeMap<String, FlatGroup>) -> GroupDiff {
     let old_keys: BTreeSet<&String> = old.keys().collect();
     let new_keys: BTreeSet<&String> = new.keys().collect();
 
@@ -294,10 +291,8 @@ fn diff_segments(
 
         match (old_group, new_group) {
             (Some(og), Some(ng)) => {
-                let old_tags: BTreeSet<&str> =
-                    og.segments.iter().map(|s| s.tag.as_str()).collect();
-                let new_tags: BTreeSet<&str> =
-                    ng.segments.iter().map(|s| s.tag.as_str()).collect();
+                let old_tags: BTreeSet<&str> = og.segments.iter().map(|s| s.tag.as_str()).collect();
+                let new_tags: BTreeSet<&str> = ng.segments.iter().map(|s| s.tag.as_str()).collect();
 
                 for tag in old_tags.intersection(&new_tags) {
                     unchanged.push(SegmentEntry {
@@ -350,10 +345,7 @@ fn diff_segments(
     }
 }
 
-fn diff_codes(
-    old: &BTreeMap<String, FlatGroup>,
-    new: &BTreeMap<String, FlatGroup>,
-) -> CodeDiff {
+fn diff_codes(old: &BTreeMap<String, FlatGroup>, new: &BTreeMap<String, FlatGroup>) -> CodeDiff {
     let mut changed = Vec::new();
 
     for (key, new_group) in new {
@@ -474,8 +466,7 @@ fn diff_elements(
 
             // Compare components within matching elements
             for new_el in &new_seg.elements {
-                let Some(old_el) = old_seg.elements.iter().find(|e| e.index == new_el.index)
-                else {
+                let Some(old_el) = old_seg.elements.iter().find(|e| e.index == new_el.index) else {
                     continue;
                 };
                 let old_subs: BTreeSet<usize> =

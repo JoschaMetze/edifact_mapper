@@ -43,10 +43,8 @@ fn minimal_schema_json(groups: &[(&str, &str, &str)]) -> serde_json::Value {
 
 #[test]
 fn test_diff_identical_schemas_has_no_group_changes() {
-    let schema = minimal_schema_json(&[
-        ("sg5_z16", "SG5", "LOC:Z16"),
-        ("sg8_z98", "SG8", "SEQ:Z98"),
-    ]);
+    let schema =
+        minimal_schema_json(&[("sg5_z16", "SG5", "LOC:Z16"), ("sg8_z98", "SG8", "SEQ:Z98")]);
 
     let input = DiffInput {
         old_schema: schema.clone(),
@@ -66,10 +64,7 @@ fn test_diff_identical_schemas_has_no_group_changes() {
 #[test]
 fn test_diff_detects_added_group() {
     let old = minimal_schema_json(&[("sg5_z16", "SG5", "LOC:Z16")]);
-    let new = minimal_schema_json(&[
-        ("sg5_z16", "SG5", "LOC:Z16"),
-        ("sg8_zh5", "SG8", "SEQ:ZH5"),
-    ]);
+    let new = minimal_schema_json(&[("sg5_z16", "SG5", "LOC:Z16"), ("sg8_zh5", "SG8", "SEQ:ZH5")]);
 
     let input = DiffInput {
         old_schema: old,
@@ -87,10 +82,7 @@ fn test_diff_detects_added_group() {
 
 #[test]
 fn test_diff_detects_removed_group() {
-    let old = minimal_schema_json(&[
-        ("sg5_z16", "SG5", "LOC:Z16"),
-        ("sg8_z98", "SG8", "SEQ:Z98"),
-    ]);
+    let old = minimal_schema_json(&[("sg5_z16", "SG5", "LOC:Z16"), ("sg8_z98", "SG8", "SEQ:Z98")]);
     let new = minimal_schema_json(&[("sg5_z16", "SG5", "LOC:Z16")]);
 
     let input = DiffInput {
@@ -239,7 +231,10 @@ fn test_diff_detects_added_element() {
         "sg4",
         "SG4",
         ":",
-        &[("STS", &[(0, "9015", "code", &["7"]), (2, "9013", "code", &["E01"])])],
+        &[(
+            "STS",
+            &[(0, "9015", "code", &["7"]), (2, "9013", "code", &["E01"])],
+        )],
     )]);
     let new = schema_with_segments(&[(
         "sg4",
