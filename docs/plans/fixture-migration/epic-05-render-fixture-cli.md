@@ -5,7 +5,7 @@ title: "render-fixture CLI Subcommand"
 depends_on: []
 estimated_tasks: 4
 crate: automapper-generator
-status: in_progress
+status: complete
 ---
 
 # Epic 5: `render-fixture` CLI Subcommand
@@ -797,3 +797,23 @@ Expected: All PASS
 git add crates/automapper-generator/src/main.rs crates/automapper-generator/src/fixture_renderer/ crates/automapper-generator/tests/fixture_renderer_test.rs
 git commit -m "feat(generator): add generate-canonical-bo4e and render-fixture CLI subcommands"
 ```
+
+---
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 5 |
+| Passed | 5 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/automapper-generator/src/fixture_renderer/types.rs` — CanonicalBo4e serde roundtrip
+- `crates/fixture-renderer/src/renderer.rs` — render_fixture() + generate_canonical_bo4e()
+- `crates/fixture-renderer/src/main.rs` — CLI subcommands (render-fixture, generate-canonical-bo4e)
+
+### Implementation Note
+
+Due to circular dependency constraints (`mig-assembly` → `automapper-generator` and `mig-bo4e` → `automapper-generator`), the render logic and CLI were placed in a new `fixture-renderer` workspace crate instead of in `automapper-generator`. The CanonicalBo4e types remain in `automapper-generator` as the format contract. The `fixture-renderer` binary provides both `render-fixture` and `generate-canonical-bo4e` subcommands.
