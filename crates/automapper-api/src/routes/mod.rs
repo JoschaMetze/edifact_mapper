@@ -5,6 +5,7 @@ pub mod coordinators;
 pub mod fixtures;
 pub mod health;
 pub mod inspect;
+pub mod reverse_v2;
 
 use axum::Router;
 
@@ -20,5 +21,7 @@ pub fn api_routes() -> Router<AppState> {
 
 /// Build all `/api/v2/*` routes.
 pub fn api_v2_routes() -> Router<AppState> {
-    Router::new().merge(convert_v2::routes())
+    Router::new()
+        .merge(convert_v2::routes())
+        .merge(reverse_v2::routes())
 }

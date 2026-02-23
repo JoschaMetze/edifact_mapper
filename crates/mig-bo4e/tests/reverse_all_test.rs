@@ -37,7 +37,11 @@ fn test_map_all_reverse_message_level() {
     let sg2 = tree.groups.iter().find(|g| g.group_id == "SG2");
     assert!(sg2.is_some(), "Should have SG2 group");
     let sg2 = sg2.unwrap();
-    assert_eq!(sg2.repetitions.len(), 2, "Should have 2 Marktteilnehmer reps");
+    assert_eq!(
+        sg2.repetitions.len(),
+        2,
+        "Should have 2 Marktteilnehmer reps"
+    );
 
     // First rep should have NAD segment with MS qualifier
     let rep0 = &sg2.repetitions[0];
@@ -61,5 +65,8 @@ fn test_map_all_reverse_transaction_level() {
 
     // Should produce groups including SG5
     let has_groups = !tree.groups.is_empty();
-    assert!(has_groups, "Should produce at least one group from reverse mapping");
+    assert!(
+        has_groups,
+        "Should produce at least one group from reverse mapping"
+    );
 }

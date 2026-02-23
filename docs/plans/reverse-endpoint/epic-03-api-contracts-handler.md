@@ -645,3 +645,16 @@ Expected: OK (fix any formatting)
 git add crates/automapper-api/
 git commit -m "fix(api): wire up reverse endpoint dependencies"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 15 |
+| Passed | 15 |
+| Failed | 0 |
+| Skipped | 0 |
+
+New tests added:
+- `crates/automapper-api/src/contracts/reverse_v2.rs` — 8 unit tests (normalization, deserialization)
+- `crates/automapper-api/tests/reverse_v2_test.rs` — 7 integration tests (contract validation, handler modes, roundtrip)

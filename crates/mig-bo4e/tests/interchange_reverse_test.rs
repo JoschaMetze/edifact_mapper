@@ -39,16 +39,14 @@ fn test_map_interchange_reverse_single_transaction() {
         }],
     };
 
-    let tree = MappingEngine::map_interchange_reverse(
-        &msg_engine,
-        &tx_engine,
-        &mapped,
-        "SG4",
-    );
+    let tree = MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4");
 
     // Should have message-level groups (SG2) and transaction group (SG4)
     let sg2 = tree.groups.iter().find(|g| g.group_id == "SG2");
-    assert!(sg2.is_some(), "Should have SG2 group from message stammdaten");
+    assert!(
+        sg2.is_some(),
+        "Should have SG2 group from message stammdaten"
+    );
 
     let sg4 = tree.groups.iter().find(|g| g.group_id == "SG4");
     assert!(sg4.is_some(), "Should have SG4 group from transactions");
