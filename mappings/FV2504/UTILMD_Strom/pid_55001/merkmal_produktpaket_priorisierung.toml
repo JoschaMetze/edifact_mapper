@@ -1,8 +1,9 @@
 # ProduktpaketPriorisierung Zuordnung (SG10 within SEQ+ZH0) for PID 55001.
 # CCI/CAV characteristics, merges into entity "ProduktpaketPriorisierung".
 #
-# CCI+Z65+++Z02  -> merkmal_code (Umsetzungsgradvorgabe), relevanz_zuordnung
-# CAV+Z75        -> prioritaet
+# CCI+Z65+++Z02  -> merkmal_code (D7059 Umsetzungsgradvorgabe),
+#                   relevanz_zuordnung_lf (C240.D7037 Merkmal Code, Z01/Z02)
+# CAV+Z75       -> prioritaet (C889.7111 Priorisierung erforderliches Produktpaket)
 
 [meta]
 entity = "ProduktpaketPriorisierung"
@@ -15,5 +16,5 @@ source_path = "sg4.sg8_zh0.sg10"
 
 [companion_fields]
 "cci.0" = "merkmal_code"
-"cci.3" = "sparte"
+"cci.3" = "relevanz_zuordnung_lf"
 "cav.0" = "prioritaet"

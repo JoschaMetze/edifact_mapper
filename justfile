@@ -66,6 +66,23 @@ serve:
 serve-release:
     cargo run --release -p automapper-api
 
+# Build the WASM frontend into static/ for the API server to serve
+build-web:
+    trunk build --config crates/automapper-web/trunk.toml --release
+    rm -rf static/*
+    cp -r crates/automapper-web/dist/* static/
+
+# Start API server serving the built frontend on :8080
+# Run `just build-web` first, then open http://localhost:8080
+serve-full: build-web serve
+
+# Start API + frontend dev servers (frontend on :3001 with hot-reload, API on :8080)
+dev:
+    trunk serve --config crates/automapper-web/trunk.toml & \
+    TRUNK_PID=$!; \
+    cargo run -p automapper-api; \
+    kill $TRUNK_PID 2>/dev/null
+
 # Run the code generator CLI
 generate *args:
     cargo run -p automapper-generator -- {{args}}

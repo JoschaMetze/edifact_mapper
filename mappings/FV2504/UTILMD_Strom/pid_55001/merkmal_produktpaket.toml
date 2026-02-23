@@ -1,9 +1,9 @@
 # Produktpaket Zuordnung (SG10 within SEQ+Z79) for PID 55001.
 # CCI/CAV characteristics, merges into entity "Produktpaket".
 #
-# CCI+Z66                       -> merkmal_code (Produkteigenschaft)
-# CAV+ZH9:::9991000002107       -> messlokation_ref
-# CAV+ZV4:::4000                -> produktdetail_wert
+# CCI+Z66               -> merkmal_code (D7059 Produkteigenschaft)
+# CAV+ZH9:::XXXXXXXXXX  -> produkteigenschaft_code (D7110 Merkmalswert, Code der Produkteigenschaft)
+# CAV+ZV4:::XXXX        -> produktdetail_wert (D7110 Merkmalswert, Wertedetails zum Produkt)
 
 [meta]
 entity = "Produktpaket"
@@ -16,7 +16,7 @@ source_path = "sg4.sg8_z79.sg10"
 
 [companion_fields]
 "cci.0" = "merkmal_code"
-"cav[ZH9].0.3" = "messlokation_ref"
+"cav[ZH9].0.3" = "produkteigenschaft_code"
 "cav[ZV4].0.3" = "produktdetail_wert"
 
 [companion_fields."cav[ZH9].0.0"]

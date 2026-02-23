@@ -4,7 +4,7 @@ You are a subagent responsible for generating TOML mappings for new UTILMD PIDs.
 
 ## Context
 
-The edifact_mapper project converts EDIFACT messages to BO4E JSON and back. Each PID (Pruefidentifikator) has its own set of TOML mapping files that define how MIG tree segments map to BO4E objects. Currently only PID 55001 has complete mappings (15 files). The `generate-pid-mappings` CLI reuses those reference mappings for new PIDs.
+The edifact_mapper project converts EDIFACT messages to BO4E JSON and back. Each PID (Pruefidentifikator) has its own set of TOML mapping files that define how MIG tree segments map to BO4E objects. PIDs 55001 and 55002 have complete mappings as references. The `generate-pid-mappings` CLI reuses those reference mappings for new PIDs.
 
 ### What the generator does
 
@@ -13,38 +13,146 @@ The edifact_mapper project converts EDIFACT messages to BO4E JSON and back. Each
 - **Matched** groups get a cloned+adapted TOML with all field mappings filled in.
 - **Scaffolded** groups get an empty TOML skeleton with `# TODO` markers.
 
-### Reference coverage (as of PID 55001)
+### Reference coverage (PID 55001 + 55002)
 
 Currently mapped qualifiers:
 
 | Group | Qualifier | Entity | BO4E Type |
 |-------|-----------|--------|-----------|
 | SG2 | (none) | Marktteilnehmer | Marktteilnehmer |
+| SG2.SG3 | IC | Kontakt | Kontakt |
 | SG4 | (none) | Prozessdaten | Prozessdaten |
 | SG5 | Z16 | Marktlokation | Marktlokation |
+| SG5 | Z17 | Messlokation | Messlokation |
+| SG5 | Z18 | Netzlokation | Netzlokation |
+| SG5 | Z19 | SteuerbareRessource | SteuerbareRessource |
+| SG5 | Z20 | TechnischeRessource | TechnischeRessource |
+| SG5 | Z22 | RuhendeMarktlokation | RuhendeMarktlokation |
 | SG6 | (none) | ProzessReferenz | ProzessReferenz |
-| SG8 | Z01 | Geraet | Geraet |
-| SG8 | Z75 | Netznutzungsabrechnung | Netznutzungsabrechnung |
-| SG8 | Z79 | Zaehlpunkt | Zaehlpunkt |
-| SG8 | ZH0 | Messstellenbetrieb | Messstellenbetrieb |
-| SG10 | parent:Z01 | MerkmalGeraet | Merkmal |
-| SG10 | parent:Z75 | MerkmalNetznutzung | Merkmal |
-| SG10 | parent:Z79 | MerkmalZaehlpunkt | Merkmal |
-| SG10 | parent:ZH0 | MerkmalMessstellenbetrieb | Merkmal |
+| SG8 | Z98 | Marktlokation | Marktlokation (info) |
+| SG8 | ZD7 | Netzlokation | Netzlokation (info) |
+| SG8 | ZF1 | SteuerbareRessource | SteuerbareRessource (info) |
+| SG8 | ZF3 | Messlokation | Messlokation (info) |
+| SG8 | Z01 | Produktpaket | Produktpaket |
+| SG8 | Z75 | EnfgDaten | EnfgDaten |
+| SG8 | Z79 | ProduktpaketPriorisierung | ProduktpaketPriorisierung |
+| SG8 | ZH0 | Ansprechpartner | Ansprechpartner |
+| SG10 | parent:Z98 | Marktlokation | zuordnung (companion) |
+| SG10 | parent:ZD7 | Netzlokation | zuordnung (companion) |
+| SG10 | parent:ZF1 | SteuerbareRessource | zuordnung (companion) |
+| SG10 | parent:ZF3 | Messlokation | zuordnung (companion) |
+| SG10 | parent:Z01 | Produktpaket | merkmal (companion) |
+| SG10 | parent:Z79 | ProduktpaketPriorisierung | merkmal (companion) |
 | SG12 | Z04 | Geschaeftspartner | Geschaeftspartner |
 | SG12 | Z09 | Ansprechpartner | Ansprechpartner |
 | root | (none) | Nachricht | Nachricht |
 
+**LOC qualifier → Entity mapping (canonical):**
+- Z15 → Netzlokation (legacy, rarely used)
+- Z16 → Marktlokation
+- Z17 → Messlokation
+- Z18 → Netzlokation
+- Z19 → SteuerbareRessource
+- Z20 → TechnischeRessource
+- Z21 → Messlokation (same structure as Z17)
+- Z22 → RuhendeMarktlokation
+
 **Not yet mapped (will always scaffold):**
 
-- SG3 (CTA/COM contact details, child of SG2)
-- SG5+Z22 (Messlokation LOC)
+- SG5 qualifiers Z15, Z21 (rare variants)
 - SG9 (QTY quantity, child of some SG8 variants)
-- All SG5 qualifiers except Z16 (Z15, Z17, Z18, Z19, Z20, Z21)
-- All SG8 qualifiers except Z01/Z75/Z79/ZH0 (100+ others)
-- All SG12 qualifiers except Z04/Z09 (30+ others)
+- SG8/SG10/SG12 qualifiers not listed in the table above
 
-## Workflow
+## Process: Creating TOML Mappings for a New PID
+
+Follow this step-by-step process when adding BO4E mappings for a new PID.
+
+### Step 1: Read the PID schema JSON
+
+```bash
+# Primary reference — always start here
+cat crates/mig-types/src/generated/fv2504/utilmd/pids/pid_NNNNN_schema.json
+```
+
+This is the **single source of truth**. It tells you:
+- Which SG groups exist (sg5_z16, sg8_z98, sg12_z04, etc.)
+- What segments each group contains (LOC, SEQ, CCI, CAV, NAD, RFF, etc.)
+- Element indices and component sub-indices for field paths
+- Discriminator codes (LOC qualifier Z16/Z17, SEQ qualifier Z98/ZD7, etc.)
+- Which codes are AHB-filtered (only valid codes for this PID)
+
+### Step 2: Check for a reference PID with similar structure
+
+```bash
+ls mappings/FV2504/UTILMD_Strom/
+# Compare with existing PIDs — 55001 (Anmeldung) and 55002 (Bestätigung) are references
+diff <(python3 -c "import json; d=json.load(open('...pid_55001_schema.json')); print('\n'.join(sorted(d['fields'].keys())))") \
+     <(python3 -c "import json; d=json.load(open('...pid_NNNNN_schema.json')); print('\n'.join(sorted(d['fields'].keys())))")
+```
+
+If a similar PID already has mappings, copy and adapt rather than starting from scratch.
+
+### Step 3: Generate scaffolds (optional starting point)
+
+```bash
+cargo run -p automapper-generator -- generate-pid-mappings \
+  --pid {PID_ID} \
+  --schema-dir crates/mig-types/src/generated/fv2504/utilmd/pids \
+  --mappings-dir mappings \
+  --format-version FV2504 \
+  --message-type UTILMD_Strom
+```
+
+If the PID already has a directory under `mappings/FV2504/UTILMD_Strom/pid_{PID_ID}/`, add `--overwrite` only if the user explicitly requested regeneration.
+
+Scaffolds are a starting point — they need manual review and refinement (entity names, field names, companion_fields).
+
+### Step 4: Map the group hierarchy to entities
+
+Read the schema's `fields` object and create one TOML file per group. Use this mapping:
+
+| Schema group | TOML pattern | Entity name source |
+|---|---|---|
+| `sg2` | `marktteilnehmer.toml` | Always "Marktteilnehmer" |
+| `sg2.sg3_ic` | `kontakt.toml` | CTA function code |
+| `sg4` (root segments) | `prozessdaten.toml` | IDE/DTM/STS = "Prozessdaten" |
+| `sg4.sg5_zNN` | `{entity}.toml` | LOC code description in schema |
+| `sg4.sg6` | `prozessdaten_rff_{qual}.toml` | RFF qualifier, merges into "Prozessdaten" |
+| `sg4.sg8_zXX` | `{entity}_info.toml` | SEQ code → parent LOC entity |
+| `sg4.sg8_zXX.sg10` | `{entity}_zuordnung.toml` | CCI/CAV → parent LOC entity companion |
+| `sg4.sg12_zNN` | `{entity}.toml` | NAD qualifier (Z04/Z09 etc.) |
+
+### Step 5: Write each TOML file
+
+For each group, consult the schema to determine:
+1. **Element indices**: Schema `elements[].index` → TOML path prefix (e.g., `loc.1.0`)
+2. **Component sub-indices**: Schema `components[].sub_index` → TOML path suffix
+3. **Codes vs data**: `type: "code"` with single value → use `default`; `type: "data"` → map to a field name
+4. **Discriminators**: If multiple groups share the same `source_group`, add a `discriminator`
+5. **companion_fields**: CCI/CAV/RFF segments in _zuordnung and _info files usually go in `[companion_fields]`
+
+**Field path rules:**
+- Always use numeric indices: `loc.0`, `loc.1.0`, `cav.0.3` (not named paths like `loc.d3227`)
+- `[fields]` section is REQUIRED even if empty
+- Only set `companion_type` on files that have `[companion_fields]`
+- Empty EDIFACT values are omitted from BO4E JSON — safe for roundtrip
+
+### Step 6: Check for a fixture file to test with
+
+```bash
+ls example_market_communication_bo4e_transactions/UTILMD/FV2504/*NNNNN*
+```
+
+If a fixture exists, write roundtrip tests. If not, write at least a load test to verify TOML parsing.
+
+### Step 7: Verify
+
+```bash
+cargo test -p mig-bo4e -- --nocapture  # all mapping tests
+cargo clippy -p mig-bo4e -- -D warnings
+```
+
+## Workflow (Generator-Based)
 
 ### Step 1: Run the generator
 
@@ -56,8 +164,6 @@ cargo run --bin automapper-generator -- generate-pid-mappings \
   --format-version FV2504 \
   --message-type UTILMD_Strom
 ```
-
-If the PID already has a directory under `mappings/FV2504/UTILMD_Strom/pid_{PID_ID}/`, add `--overwrite` only if the user explicitly requested regeneration.
 
 Capture both stdout and stderr. The report is printed to stderr.
 
@@ -89,8 +195,8 @@ For each scaffolded entity, determine its **gap category**:
 - **What it is**: A new SEQ qualifier (e.g., Z03, Z08, Z20) that has no reference mapping.
 - **What's needed**: A new TOML mapping with the correct BO4E type and field mappings.
 - **Key question for user**: What BO4E entity does this SEQ qualifier represent?
-- **Hint**: Check the AHB XML for the qualifier's Bezeichnung (description). The SG8 entity typically maps to a domain concept: Zaehlpunkt (metering point), Messstellenbetrieb (meter operation), Geraet (device), or a new entity type.
-- **SG10 children**: If the SG8 group has SG10 children (CCI/CAV), those will also need Merkmal mappings.
+- **Hint**: Check the PID schema JSON — the `beschreibung` field gives the German domain term. SG8 entities typically enrich their parent LOC entity (Marktlokation, Netzlokation, etc.) or map to standalone types (Produktpaket, EnfgDaten).
+- **SG10 children**: If the SG8 group has SG10 children (CCI/CAV), those will also need zuordnung/merkmal mappings.
 - **SG9 children**: If the SG8 group has SG9 children (QTY), those need quantity mappings. No reference exists yet.
 
 #### Category B: New SG12 qualifier (NAD-based entity)
@@ -102,24 +208,24 @@ For each scaffolded entity, determine its **gap category**:
 
 #### Category C: New SG5 qualifier (LOC-based entity)
 
-- **What it is**: A new LOC qualifier (e.g., Z15=Netzlokation, Z17=Tranche, Z19=SteuerbareRessource, Z20=TechnischeRessource, Z21=Messlokation, Z22=Messlokation).
+- **What it is**: A new LOC qualifier not yet mapped.
 - **What's needed**: A TOML mapping for the location entity.
-- **Key question**: Which BO4E location type? Existing types: Marktlokation, Messlokation, Netzlokation, SteuerbareRessource, TechnischeRessource, Tranche, MabisZaehlpunkt.
-- **Hint**: LOC qualifier → BO4E type mapping is usually:
-  - Z15 → Netzlokation
+- **Key question**: Which BO4E location type?
+- **Hint**: LOC qualifier → BO4E type mapping:
+  - Z15 → Netzlokation (legacy)
   - Z16 → Marktlokation (already mapped)
-  - Z17 → Tranche
-  - Z18 → MabisZaehlpunkt
+  - Z17 → Messlokation
+  - Z18 → Netzlokation
   - Z19 → SteuerbareRessource
   - Z20 → TechnischeRessource
-  - Z21 → Messlokation (same structure as Z16)
-  - Z22 → Messlokation (same structure as Z16)
+  - Z21 → Messlokation (same structure as Z17)
+  - Z22 → RuhendeMarktlokation
 
 #### Category D: SG3 (CTA/COM contact details)
 
 - **What it is**: Contact communication details, child of SG2.
-- **BO4E type**: Kommunikationsdetail or embedded in Marktteilnehmer.
-- **Note**: Low priority. The legacy pipeline embeds CTA/COM in the Marktteilnehmer mapping.
+- **BO4E type**: Kontakt (mapped in 55001 as `kontakt.toml`).
+- **Note**: Usually can be cloned from reference.
 
 #### Category E: SG9 (QTY quantity)
 
@@ -163,7 +269,7 @@ Format your output as a structured report:
 - **Group**: SG8 with SEQ+{qualifier}
 - **Segments**: SEQ, PIA, CCI, CAV, ...
 - **Suggested BO4E type**: {suggestion or "Unknown — needs user decision"}
-- **Children**: SG10 (Merkmal), SG9 (QTY) if applicable
+- **Children**: SG10 (zuordnung), SG9 (QTY) if applicable
 - **Question**: {specific question for the user}
 
 #### 2. ...
@@ -177,11 +283,18 @@ If any scaffolded entity would need a BO4E type not in bo4e-extensions, list the
 2. ...
 ```
 
+## PID-Specific Gotchas
+
+- **STS segment structure varies between PIDs**: 55001 uses `STS+7++E01+ZW4+E03` (Transaktionsgrund), 55002 uses `STS+E01+<status>+<pruefschritt>:<ebd>::<ref>` (Antwort-Status). Always check the schema.
+- **DTM qualifiers vary**: 55001 has DTM+92 and DTM+93, 55002 only has DTM+93. Don't assume all DTMs exist.
+- **SG10 CAV qualifiers differ**: Under sg8_zf3 (Messlokation), SG10 uses CAV+ZF0 (gMSB only, 2 components) — NOT CAV+Z91 (4-5 components) like the other three SG10 groups.
+- **RFF groups are PID-specific**: 55001 has RFF+Z13/TN in SG6, 55002 has no RFF. Check schema, not reference.
+
 ## Important Notes
 
 - **Do not modify** matched TOML files unless the user asks. They are cloned from working reference mappings.
 - **Do not guess** BO4E field mappings for scaffolded entities. The user must provide the mapping intent.
-- **Do check** the AHB XML (`xml-migs-and-ahbs/FV2504/`) for qualifier descriptions when classifying gaps. The Bezeichnung field gives the German domain term.
-- **SG8 qualifier naming**: The SEQ qualifier (Z01, Z79, ZH0, etc.) determines the entity type. Two PIDs with the same SG8 qualifier always map to the same entity.
-- **SG10 always inherits**: If an SG8 group has SG10 children, the Merkmal mapping is always scoped to the parent SG8's qualifier. The `source_group` uses the parent qualifier for context.
+- **Do check** the PID schema JSON for segment descriptions and codes when classifying gaps.
+- **SG8 qualifier naming**: The SEQ qualifier (Z01, Z79, ZH0, Z98, ZD7, ZF1, ZF3, etc.) determines the entity type. Two PIDs with the same SG8 qualifier always map to the same entity.
+- **SG10 always inherits**: If an SG8 group has SG10 children, the zuordnung/merkmal mapping is scoped to the parent SG8's entity. The `source_group` uses `SG4.SG8:{index}.SG10` with the parent's index.
 - After user provides decisions, update the TOML files in place (fill in `bo4e_type`, `entity`, field `target` values).

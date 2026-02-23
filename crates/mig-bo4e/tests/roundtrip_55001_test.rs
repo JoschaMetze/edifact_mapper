@@ -490,7 +490,9 @@ fn test_produktpaket_zuordnung_roundtrip() {
         Some("Z66")
     );
     assert_eq!(
-        companion.get("messlokation_ref").and_then(|v| v.as_str()),
+        companion
+            .get("produkteigenschaft_code")
+            .and_then(|v| v.as_str()),
         Some("9991000002107")
     );
     assert_eq!(
