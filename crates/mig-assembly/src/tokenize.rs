@@ -104,7 +104,9 @@ pub fn parse_to_segments(input: &[u8]) -> Result<Vec<OwnedSegment>, crate::Assem
 /// # Errors
 ///
 /// Returns an error if no UNH/UNT pairs are found.
-pub fn split_messages(segments: Vec<OwnedSegment>) -> Result<InterchangeChunks, crate::AssemblyError> {
+pub fn split_messages(
+    segments: Vec<OwnedSegment>,
+) -> Result<InterchangeChunks, crate::AssemblyError> {
     let mut envelope: Vec<OwnedSegment> = Vec::new();
     let mut messages: Vec<MessageChunk> = Vec::new();
     let mut unz: Option<OwnedSegment> = None;
@@ -203,9 +205,17 @@ mod tests {
     fn test_message_chunk_struct_exists() {
         let chunk = MessageChunk {
             envelope: vec![],
-            unh: OwnedSegment { id: "UNH".to_string(), elements: vec![], segment_number: 0 },
+            unh: OwnedSegment {
+                id: "UNH".to_string(),
+                elements: vec![],
+                segment_number: 0,
+            },
             body: vec![],
-            unt: OwnedSegment { id: "UNT".to_string(), elements: vec![], segment_number: 1 },
+            unt: OwnedSegment {
+                id: "UNT".to_string(),
+                elements: vec![],
+                segment_number: 1,
+            },
         };
         assert_eq!(chunk.unh.id, "UNH");
         assert_eq!(chunk.unt.id, "UNT");

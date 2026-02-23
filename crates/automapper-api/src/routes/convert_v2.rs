@@ -2,7 +2,7 @@
 //!
 //! Supports two conversion modes:
 //! - `mig-tree`: tokenize + assemble → return tree as JSON
-//! - `bo4e`: tokenize + assemble + TOML mapping → return BO4E JSON
+//! - `bo4e`: tokenize + split messages + per-message PID detection + assemble + TOML mapping → return hierarchical `Interchange` JSON
 
 use std::collections::HashSet;
 
@@ -22,16 +22,6 @@ use crate::state::AppState;
 /// Build v2 conversion routes.
 pub fn routes() -> Router<AppState> {
     Router::new().route("/convert", post(convert_v2))
-}
-
-/// Convert PascalCase to camelCase: "Marktlokation" → "marktlokation",
-/// "ProduktpaketPriorisierung" → "produktpaketPriorisierung".
-fn to_camel_case(s: &str) -> String {
-    let mut chars = s.chars();
-    match chars.next() {
-        None => String::new(),
-        Some(c) => c.to_lowercase().to_string() + chars.as_str(),
-    }
 }
 
 /// `POST /api/v2/convert` — MIG-driven conversion endpoint.
@@ -83,77 +73,92 @@ async fn convert_v2(
                     message: format!("tokenization error: {e}"),
                 })?;
 
-            // Step 2: Detect PID
-            let pid = detect_pid(&segments).map_err(|e| ApiError::ConversionError {
-                message: format!("PID detection error: {e}"),
-            })?;
+            // Step 2: Split into messages
+            let chunks =
+                mig_assembly::split_messages(segments).map_err(|e| ApiError::ConversionError {
+                    message: format!("message splitting error: {e}"),
+                })?;
 
-            // Step 3: Look up AHB for PID segment numbers
+            // Step 3: Extract envelope nachrichtendaten
+            let nachrichtendaten = mig_bo4e::model::extract_nachrichtendaten(&chunks.envelope);
+
+            // Step 4: Process each message
             // TODO: detect message type/variant from UNH segment
             let msg_variant = "UTILMD_Strom";
-            let ahb = state
-                .mig_registry
-                .ahb_schema(&req.format_version, msg_variant)
-                .ok_or_else(|| ApiError::Internal {
-                    message: format!(
-                        "No AHB schema available for {}/{}",
-                        req.format_version, msg_variant
-                    ),
+            let mut nachrichten = Vec::new();
+
+            for (msg_idx, msg_chunk) in chunks.messages.iter().enumerate() {
+                let all_segments = msg_chunk.all_segments();
+
+                // Detect PID from this message's segments
+                let pid = detect_pid(&all_segments).map_err(|e| ApiError::ConversionError {
+                    message: format!("PID detection error in message {msg_idx}: {e}"),
                 })?;
 
-            let workflow = ahb.workflows.iter().find(|w| w.id == pid).ok_or_else(|| {
-                ApiError::ConversionError {
-                    message: format!("PID {pid} not found in AHB"),
-                }
-            })?;
-
-            let ahb_numbers: HashSet<String> = workflow.segment_numbers.iter().cloned().collect();
-
-            // Step 4: Filter MIG for this PID and assemble
-            let filtered_mig = filter_mig_for_pid(service.mig(), &ahb_numbers);
-            let assembler = Assembler::new(&filtered_mig);
-            let tree =
-                assembler
-                    .assemble_generic(&segments)
-                    .map_err(|e| ApiError::ConversionError {
-                        message: format!("assembly error: {e}"),
+                // Look up AHB for PID segment numbers
+                let ahb = state
+                    .mig_registry
+                    .ahb_schema(&req.format_version, msg_variant)
+                    .ok_or_else(|| ApiError::Internal {
+                        message: format!(
+                            "No AHB schema available for {}/{}",
+                            req.format_version, msg_variant
+                        ),
                     })?;
 
-            // Step 5: Apply TOML mappings
-            let engine = state
-                .mig_registry
-                .mapping_engine_for_pid(&req.format_version, msg_variant, &pid)
-                .ok_or_else(|| ApiError::Internal {
-                    message: format!(
-                        "No TOML mappings available for {}/{}/pid_{}",
-                        req.format_version, msg_variant, pid
-                    ),
+                let workflow = ahb.workflows.iter().find(|w| w.id == pid).ok_or_else(|| {
+                    ApiError::ConversionError {
+                        message: format!("PID {pid} not found in AHB (message {msg_idx})"),
+                    }
                 })?;
 
-            let entities = engine.map_all_forward(&tree);
+                let ahb_numbers: HashSet<String> =
+                    workflow.segment_numbers.iter().cloned().collect();
 
-            // Restructure: extract Prozessdaten as transaktionsdaten, rest goes into stammdaten
-            let mut stammdaten = serde_json::Map::new();
-            let mut transaktionsdaten = serde_json::Value::Null;
-
-            if let Some(obj) = entities.as_object() {
-                for (key, value) in obj {
-                    if key == "Prozessdaten" {
-                        transaktionsdaten = value.clone();
-                    } else {
-                        stammdaten.insert(to_camel_case(key), value.clone());
+                // Filter MIG for this PID and assemble
+                let filtered_mig = filter_mig_for_pid(service.mig(), &ahb_numbers);
+                let assembler = Assembler::new(&filtered_mig);
+                let tree = assembler.assemble_generic(&all_segments).map_err(|e| {
+                    ApiError::ConversionError {
+                        message: format!("assembly error in message {msg_idx}: {e}"),
                     }
-                }
+                })?;
+
+                // Load split engines (message-level + transaction-level)
+                let (msg_engine, tx_engine) = state
+                    .mig_registry
+                    .mapping_engines_split(&req.format_version, msg_variant, &pid)
+                    .ok_or_else(|| ApiError::Internal {
+                        message: format!(
+                            "No mapping engines for {}/{}/pid_{}",
+                            req.format_version, msg_variant, pid
+                        ),
+                    })?;
+
+                // Map with split engines into hierarchical result
+                let mapped =
+                    mig_bo4e::MappingEngine::map_interchange(msg_engine, tx_engine, &tree, "SG4");
+
+                // Extract UNH fields
+                let (unh_referenz, nachrichten_typ) =
+                    mig_bo4e::model::extract_unh_fields(&msg_chunk.unh);
+
+                nachrichten.push(mig_bo4e::Nachricht {
+                    unh_referenz,
+                    nachrichten_typ,
+                    stammdaten: mapped.stammdaten,
+                    transaktionen: mapped.transaktionen,
+                });
             }
+
+            let interchange = mig_bo4e::Interchange {
+                nachrichtendaten,
+                nachrichten,
+            };
 
             Ok(Json(ConvertV2Response {
                 mode: "bo4e".to_string(),
-                result: serde_json::json!({
-                    "pid": pid,
-                    "formatVersion": req.format_version,
-                    "transaktionsdaten": transaktionsdaten,
-                    "stammdaten": stammdaten,
-                }),
+                result: serde_json::to_value(&interchange).unwrap_or_default(),
                 duration_ms: start.elapsed().as_secs_f64() * 1000.0,
             }))
         }
