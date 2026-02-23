@@ -99,8 +99,8 @@ fn test_map_all_forward_55001() {
 
     let prozess = obj.get("Prozessdaten").unwrap();
     assert!(
-        prozess.get("vorgang_id").and_then(|v| v.as_str()).is_some(),
-        "Prozessdaten should have vorgang_id"
+        prozess.get("vorgangId").and_then(|v| v.as_str()).is_some(),
+        "Prozessdaten should have vorgangId"
     );
     assert_eq!(
         prozess.get("pruefidentifikator").and_then(|v| v.as_str()),
@@ -110,10 +110,10 @@ fn test_map_all_forward_55001() {
 
     let malo = obj.get("Marktlokation").unwrap();
     assert!(
-        malo.get("marktlokations_id")
+        malo.get("marktlokationsId")
             .and_then(|v| v.as_str())
             .is_some(),
-        "Marktlokation should have marktlokations_id"
+        "Marktlokation should have marktlokationsId"
     );
 
     // Marktlokation should have merged companion data from SG10 (Haushaltskunde)
@@ -144,9 +144,9 @@ fn test_map_all_forward_55001() {
     );
     let pp_companion = pp.get("ProduktpaketEdifact").unwrap();
     assert_eq!(
-        pp_companion.get("merkmal_code").and_then(|v| v.as_str()),
+        pp_companion.get("merkmalCode").and_then(|v| v.as_str()),
         Some("Z66"),
-        "Produktpaket companion should have merkmal_code Z66"
+        "Produktpaket companion should have merkmalCode Z66"
     );
 
     let ppp = obj.get("ProduktpaketPriorisierung").unwrap();

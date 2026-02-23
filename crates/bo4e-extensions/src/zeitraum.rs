@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 /// A time period with optional start and end.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Zeitraum {
     pub von: Option<NaiveDateTime>,
     pub bis: Option<NaiveDateTime>,

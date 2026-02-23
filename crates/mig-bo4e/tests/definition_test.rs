@@ -12,14 +12,14 @@ source_group = "SG8"
 discriminator = "seq.d1245.qualifier == 'Z01'"
 
 [fields]
-"loc.c517.d3225" = "marktlokations_id"
+"loc.c517.d3225" = "marktlokationsId"
 "loc.d3227" = { target = "lokationstyp", transform = "loc_qualifier_to_type" }
 
 [fields."sg9_characteristics"]
 "cci.c240.d7037" = "characteristic_code"
 
 [companion_fields]
-"dtm.c507.d2380" = { target = "gueltig_ab", when = "dtm.c507.d2005 == '157'" }
+"dtm.c507.d2380" = { target = "gueltigAb", when = "dtm.c507.d2005 == '157'" }
 "#;
 
     let def: MappingDefinition = toml::from_str(toml_str).unwrap();
@@ -35,7 +35,7 @@ discriminator = "seq.d1245.qualifier == 'Z01'"
 
     // Check simple field
     match &def.fields["loc.c517.d3225"] {
-        FieldMapping::Simple(target) => assert_eq!(target, "marktlokations_id"),
+        FieldMapping::Simple(target) => assert_eq!(target, "marktlokationsId"),
         other => panic!("Expected Simple, got {:?}", other),
     }
 
@@ -122,7 +122,7 @@ source_group = "SG8"
 discriminator = "seq.d1245.qualifier == 'Z01'"
 
 [fields]
-"loc.c517.d3225" = "marktlokations_id"
+"loc.c517.d3225" = "marktlokationsId"
 "#,
     )
     .unwrap();
@@ -137,7 +137,7 @@ source_group = "SG8"
 discriminator = "seq.d1245.qualifier == 'Z02'"
 
 [fields]
-"loc.c517.d3225" = "messlokations_id"
+"loc.c517.d3225" = "messlokationsId"
 "#,
     )
     .unwrap();

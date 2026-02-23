@@ -7,6 +7,7 @@ use crate::data_quality::DataQuality;
 
 /// EDIFACT companion for Marktlokation.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct MarktlokationEdifact {
     pub lokationsbuendel_objektcode: Option<String>,
     pub datenqualitaet: Option<DataQuality>,
@@ -22,6 +23,7 @@ pub struct MarktlokationEdifact {
 
 /// EDIFACT companion for Messlokation.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct MesslokationEdifact {
     pub lokationsbuendel_objektcode: Option<String>,
     pub datenqualitaet: Option<DataQuality>,
@@ -34,6 +36,7 @@ pub struct MesslokationEdifact {
 
 /// EDIFACT companion for Zaehler.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ZaehlerEdifact {
     pub referenz_messlokation: Option<String>,
     pub referenz_gateway: Option<String>,
@@ -53,6 +56,7 @@ pub struct ZaehlerEdifact {
 
 /// EDIFACT companion for Geschaeftspartner.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct GeschaeftspartnerEdifact {
     pub nad_qualifier: Option<String>,
     /// Raw NAD segment string for roundtrip fidelity.
@@ -65,6 +69,7 @@ pub struct GeschaeftspartnerEdifact {
 
 /// EDIFACT companion for Vertrag.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct VertragEdifact {
     pub haushaltskunde: Option<bool>,
     pub versorgungsart: Option<String>,
@@ -72,6 +77,7 @@ pub struct VertragEdifact {
 
 /// EDIFACT companion for Netzlokation.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct NetzlokationEdifact {
     pub lokationsbuendel_objektcode: Option<String>,
     pub datenqualitaet: Option<DataQuality>,
@@ -84,6 +90,7 @@ pub struct NetzlokationEdifact {
 
 /// EDIFACT companion for TechnischeRessource.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct TechnischeRessourceEdifact {
     pub lokationsbuendel_objektcode: Option<String>,
     pub datenqualitaet: Option<DataQuality>,
@@ -97,6 +104,7 @@ pub struct TechnischeRessourceEdifact {
 
 /// EDIFACT companion for SteuerbareRessource.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SteuerbareRessourceEdifact {
     pub lokationsbuendel_objektcode: Option<String>,
     pub datenqualitaet: Option<DataQuality>,
@@ -108,6 +116,7 @@ pub struct SteuerbareRessourceEdifact {
 
 /// EDIFACT companion for Tranche (placeholder).
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct TrancheEdifact {
     pub lokationsbuendel_objektcode: Option<String>,
     /// Raw LOC+Z21 segment string for roundtrip fidelity.
@@ -117,6 +126,7 @@ pub struct TrancheEdifact {
 
 /// EDIFACT companion for MabisZaehlpunkt (placeholder).
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct MabisZaehlpunktEdifact {
     pub zaehlpunkt_typ: Option<String>,
     /// Raw LOC+Z15 segment string for roundtrip fidelity.
@@ -126,6 +136,7 @@ pub struct MabisZaehlpunktEdifact {
 
 /// EDIFACT companion for Bilanzierung.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BilanzierungEdifact {
     pub temperatur_arbeit: Option<f64>,
     pub jahresverbrauchsprognose: Option<f64>,
@@ -145,6 +156,7 @@ pub struct BilanzierungEdifact {
 
 /// EDIFACT companion for Produktpaket.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ProduktpaketEdifact {
     pub produktpaket_name: Option<String>,
     /// SEQ qualifier used for this Produktpaket (Z79 or ZH0).
@@ -160,6 +172,7 @@ pub struct ProduktpaketEdifact {
 
 /// EDIFACT companion for Lokationszuordnung.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LokationszuordnungEdifact {
     pub zuordnungstyp: Option<String>,
     /// SEQ sub-ID (e.g. "1" in SEQ+Z78+1) for roundtrip fidelity.
@@ -172,6 +185,7 @@ pub struct LokationszuordnungEdifact {
 
 /// A location type assignment (used in vorgelagerte_lokations_ids).
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LokationsTypZuordnung {
     pub lokations_id: String,
     pub lokationstyp: String,

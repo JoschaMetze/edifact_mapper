@@ -13,6 +13,7 @@ use serde::{Deserialize, Serialize};
 /// - `CCI+++code` → empty qualifier, code is component(2,0)
 /// - `CCI+qualifier+additional+code` → all three present
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CciEntry {
     /// CCI element 0 qualifier (e.g. "Z30", "Z15", "Z99")
     pub qualifier: Option<String>,
@@ -24,6 +25,7 @@ pub struct CciEntry {
 
 /// SEQ+Z45 — Stammdaten des Zählwerks (meter reading master data)
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SeqZ45Group {
     pub zeitscheibe_ref: Option<String>,
     /// PIA+Z02 component 0: ArtikelId
@@ -47,6 +49,7 @@ pub struct SeqZ45Group {
 
 /// SEQ+Z71 — Abrechnungsdaten der Netzlokation
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SeqZ71Group {
     pub zeitscheibe_ref: Option<String>,
     /// PIA+Z02 component 0: ArtikelId
@@ -64,6 +67,7 @@ pub struct SeqZ71Group {
 
 /// SEQ+Z21 — Profiltyp data
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SeqZ21Group {
     pub zeitscheibe_ref: Option<String>,
     /// Raw RFF segment strings inside this group.
@@ -80,6 +84,7 @@ pub struct SeqZ21Group {
 
 /// SEQ+Z08 — Messstellenart data
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SeqZ08Group {
     pub zeitscheibe_ref: Option<String>,
     /// Raw RFF segment strings inside this group.
@@ -96,6 +101,7 @@ pub struct SeqZ08Group {
 
 /// SEQ+Z01 — Marktrollen (market roles) and related data
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SeqZ01Group {
     pub zeitscheibe_ref: Option<String>,
     /// All CCI segments in this group
@@ -115,6 +121,7 @@ pub struct SeqZ01Group {
 
 /// SEQ+Z20 — Technische Ressource details
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SeqZ20Group {
     pub zeitscheibe_ref: Option<String>,
     /// Raw RFF segments (e.g. RFF+MG) within this Z20 group.
@@ -133,6 +140,7 @@ pub struct SeqZ20Group {
 /// Generic SEQ group for less common qualifiers (Z02, Z44, Z59, ZE1, Z98, etc.)
 /// Stored as raw segments for roundtrip fidelity.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct GenericSeqGroup {
     /// The SEQ qualifier (e.g. "Z02", "Z44", "Z59", "ZE1")
     pub qualifier: String,

@@ -7,6 +7,7 @@ use crate::zeitraum::Zeitraum;
 /// - `T` — the standard BO4E business object (pure data)
 /// - `E` — the EDIFACT companion type (functional domain data)
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct WithValidity<T, E> {
     /// The pure BO4E business object.
     pub data: T,

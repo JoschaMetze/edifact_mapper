@@ -336,11 +336,11 @@ fn test_produktpaket_roundtrip() {
     eprintln!("Produktpaket BO4E: {}", bo4e);
 
     assert_eq!(
-        bo4e.get("produktpaket_id").and_then(|v| v.as_str()),
+        bo4e.get("produktpaketId").and_then(|v| v.as_str()),
         Some("1")
     );
     assert_eq!(
-        bo4e.get("produkt_code").and_then(|v| v.as_str()),
+        bo4e.get("produktCode").and_then(|v| v.as_str()),
         Some("9991000002082")
     );
 
@@ -486,17 +486,17 @@ fn test_produktpaket_zuordnung_roundtrip() {
         .get("ProduktpaketEdifact")
         .expect("Should have companion");
     assert_eq!(
-        companion.get("merkmal_code").and_then(|v| v.as_str()),
+        companion.get("merkmalCode").and_then(|v| v.as_str()),
         Some("Z66")
     );
     assert_eq!(
         companion
-            .get("produkteigenschaft_code")
+            .get("produkteigenschaftCode")
             .and_then(|v| v.as_str()),
         Some("9991000002107")
     );
     assert_eq!(
-        companion.get("produktdetail_wert").and_then(|v| v.as_str()),
+        companion.get("produktdetailWert").and_then(|v| v.as_str()),
         Some("4000")
     );
 

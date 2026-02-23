@@ -9,6 +9,7 @@ use crate::with_validity::WithValidity;
 
 /// A complete UTILMD message containing one or more transactions.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UtilmdNachricht {
     pub nachrichtendaten: Nachrichtendaten,
     pub dokumentennummer: String,
@@ -18,6 +19,7 @@ pub struct UtilmdNachricht {
 
 /// A single UTILMD transaction (IDE segment group).
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UtilmdTransaktion {
     pub transaktions_id: String,
     /// Original IDE qualifier (e.g. "24" or deprecated "Z01").

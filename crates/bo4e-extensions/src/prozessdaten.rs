@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 /// Process-level metadata for UTILMD transactions.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Prozessdaten {
     pub transaktionsgrund: Option<String>,
     pub transaktionsgrund_ergaenzung: Option<String>,
@@ -115,6 +116,7 @@ pub struct Prozessdaten {
 
 /// Message-level metadata (from UNB/BGM/DTM segments).
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Nachrichtendaten {
     pub dokumentennummer: Option<String>,
     pub nachrichtenreferenz: Option<String>,
@@ -175,6 +177,7 @@ pub struct Nachrichtendaten {
 
 /// A time slice reference within a transaction.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Zeitscheibe {
     pub zeitscheiben_id: String,
     pub gueltigkeitszeitraum: Option<crate::zeitraum::Zeitraum>,
@@ -182,6 +185,7 @@ pub struct Zeitscheibe {
 
 /// A zeitscheibe reference block: an RFF segment (Z49/Z50/Z53) followed by DTM+Z25/Z26.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ZeitscheibeRef {
     /// Raw RFF segment (e.g. "RFF+Z49::2")
     pub raw_rff: String,
@@ -192,6 +196,7 @@ pub struct ZeitscheibeRef {
 
 /// Response status for answer messages.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Antwortstatus {
     pub status: Option<String>,
     pub grund: Option<String>,
@@ -202,6 +207,7 @@ pub struct Antwortstatus {
 ///
 /// Appears after NAD+MS/MR in EDIFACT messages.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Ansprechpartner {
     /// CTA+IC+:name — contact person name
     pub name: Option<String>,
@@ -213,6 +219,7 @@ pub struct Ansprechpartner {
 
 /// A single COM entry (e.g. phone, fax, email).
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Kommunikationsdetail {
     pub value: String,
     pub qualifier: String, // "TE", "FX", "EM"
@@ -265,6 +272,6 @@ mod tests {
             gueltigkeitszeitraum: None,
         };
         let json = serde_json::to_string(&zs).unwrap();
-        assert!(json.contains("\"zeitscheiben_id\":\"1\""));
+        assert!(json.contains("\"zeitscheibenId\":\"1\""));
     }
 }

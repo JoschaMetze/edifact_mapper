@@ -13,17 +13,17 @@ source_path = "sg4"
 
 [fields]
 # IDE segment (Transaktion)
-"ide.1" = "vorgang_id"
+"ide.1" = "vorgangId"
 
 # DTM+93 (Datum Vertragsende)
-"dtm[93].0.1" = "gueltig_bis"
+"dtm[93].0.1" = "gueltigBis"
 
 # STS segment — Status der Antwort
-"sts.0.0" = "antwort_kategorie"
-"sts.1.0" = "antwort_status"
+"sts.0.0" = "antwortKategorie"
+"sts.1.0" = "antwortStatus"
 "sts.2.0" = "pruefschritt_code"
-"sts.2.1" = "ebd_nummer"
-"sts.2.3" = "zeitraum_referenz"
+"sts.2.1" = "ebdNummer"
+"sts.2.3" = "zeitraumReferenz"
 
 [fields."ide.0"]
 target = ""

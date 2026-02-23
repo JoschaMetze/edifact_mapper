@@ -18,20 +18,20 @@ source_path = "sg4"
 [fields]
 # IDE segment (Transaktion)
 "ide.0" = { target = "", default = "24" }
-"ide.1" = "vorgang_id"
+"ide.1" = "vorgangId"
 
 # DTM+92 (Beginn der Lieferung) — composite C507: qualifier, value, format
 "dtm[92].0.0" = { target = "", default = "92" }
-"dtm[92].0.1" = "gueltig_ab"
+"dtm[92].0.1" = "gueltigAb"
 "dtm[92].0.2" = { target = "", default = "303" }
 
 # DTM+93 (Datum Vertragsende)
 "dtm[93].0.0" = { target = "", default = "93" }
-"dtm[93].0.1" = "gueltig_bis"
+"dtm[93].0.1" = "gueltigBis"
 "dtm[93].0.2" = { target = "", default = "303" }
 
 # STS segment — Transaktionsgrund (ZW4=Verbrauchende MaLo, ZAP=ruhende MaLo)
 "sts.0" = { target = "", default = "7" }
 "sts.2" = "transaktionsgrund"
-"sts.3" = "transaktionsgrund_ergaenzung"
-"sts.4" = "transaktionsgrund_ergaenzung_befristete_anmeldung"
+"sts.3" = "transaktionsgrundErgaenzung"
+"sts.4" = "transaktionsgrundErgaenzungBefristeteAnmeldung"

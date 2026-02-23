@@ -25,6 +25,7 @@ pub enum SegmentZone {
 
 /// A raw segment preserved for roundtrip fidelity.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PassthroughSegment {
     /// The full raw segment text (without terminator), e.g. "CCI+Z30++Z07"
     pub raw: String,

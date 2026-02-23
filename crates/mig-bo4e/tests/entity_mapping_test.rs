@@ -78,7 +78,7 @@ fn test_marktlokation_forward_mapping() {
     let bo4e = engine.map_forward(&tree, def, 0);
 
     assert_eq!(
-        bo4e.get("marktlokations_id").and_then(|v| v.as_str()),
+        bo4e.get("marktlokationsId").and_then(|v| v.as_str()),
         Some("12345678900"),
         "Should extract MaLo ID from LOC+Z16 segment"
     );
@@ -95,7 +95,7 @@ fn test_marktlokation_reverse_mapping() {
         .expect("Marktlokation SG5 definition should exist");
 
     let bo4e = serde_json::json!({
-        "marktlokations_id": "12345678900"
+        "marktlokationsId": "12345678900"
     });
 
     let instance = engine.map_reverse(&bo4e, def);
@@ -223,18 +223,18 @@ fn test_prozessdaten_forward_mapping() {
     let bo4e = engine.map_forward(&tree, def, 0);
 
     assert_eq!(
-        bo4e.get("vorgang_id").and_then(|v| v.as_str()),
+        bo4e.get("vorgangId").and_then(|v| v.as_str()),
         Some("ALEXANDE542328517"),
         "Should extract Vorgang ID from IDE"
     );
     assert!(
-        bo4e.get("gueltig_ab")
+        bo4e.get("gueltigAb")
             .and_then(|v| v.as_str())
             .is_some_and(|v| v.starts_with("2025053")),
         "Should extract valid-from date from DTM+92"
     );
     assert!(
-        bo4e.get("gueltig_bis")
+        bo4e.get("gueltigBis")
             .and_then(|v| v.as_str())
             .is_some_and(|v| v.starts_with("2025123")),
         "Should extract valid-to date from DTM+93"
@@ -257,12 +257,12 @@ fn test_prozessdaten_reverse_mapping() {
         .expect("Prozessdaten SG4 definition should exist");
 
     let bo4e = serde_json::json!({
-        "vorgang_id": "TEST123",
-        "gueltig_ab": "202505312200+00",
-        "gueltig_bis": "202512312300+00",
+        "vorgangId": "TEST123",
+        "gueltigAb": "202505312200+00",
+        "gueltigBis": "202512312300+00",
         "transaktionsgrund": "E01",
-        "transaktionsgrund_ergaenzung": "ZW4",
-        "transaktionsgrund_ergaenzung_befristete_anmeldung": "E03"
+        "transaktionsgrundErgaenzung": "ZW4",
+        "transaktionsgrundErgaenzungBefristeteAnmeldung": "E03"
     });
 
     let instance = engine.map_reverse(&bo4e, def);

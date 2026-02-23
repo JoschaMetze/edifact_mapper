@@ -13,14 +13,14 @@ source_path = "sg4.sg8_zf3"
 discriminator = "SEQ.0.0=ZF3"
 
 [fields]
-"seq.1.0" = "zeitraum_referenz"
+"seq.1.0" = "zeitraumReferenz"
 
 [fields."seq.0"]
 target = ""
 default = "ZF3"
 
 [companion_fields]
-"rff.0.1" = "referenz_messlokation"
+"rff.0.1" = "referenzMesslokation"
 
 [companion_fields."rff.0.0"]
 target = ""
