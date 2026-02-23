@@ -124,6 +124,98 @@ pub fn extract_nachrichtendaten(envelope: &[OwnedSegment]) -> serde_json::Value 
     serde_json::Value::Object(result)
 }
 
+/// Rebuild a UNB (interchange header) segment from nachrichtendaten JSON.
+///
+/// This is the inverse of `extract_nachrichtendaten()`.
+/// Fields not present in the JSON get sensible defaults (UNOC:3, "500" qualifier).
+pub fn rebuild_unb(nachrichtendaten: &serde_json::Value) -> OwnedSegment {
+    let syntax = nachrichtendaten
+        .get("syntaxKennung")
+        .and_then(|v| v.as_str())
+        .unwrap_or("UNOC");
+    let sender = nachrichtendaten
+        .get("absenderCode")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+    let receiver = nachrichtendaten
+        .get("empfaengerCode")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+    let datum = nachrichtendaten
+        .get("datum")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+    let zeit = nachrichtendaten
+        .get("zeit")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+    let interchange_ref = nachrichtendaten
+        .get("interchangeRef")
+        .and_then(|v| v.as_str())
+        .unwrap_or("00000");
+
+    OwnedSegment {
+        id: "UNB".to_string(),
+        elements: vec![
+            vec![syntax.to_string(), "3".to_string()],
+            vec![sender.to_string(), "500".to_string()],
+            vec![receiver.to_string(), "500".to_string()],
+            vec![datum.to_string(), zeit.to_string()],
+            vec![interchange_ref.to_string()],
+        ],
+        segment_number: 0,
+    }
+}
+
+/// Rebuild a UNH (message header) segment from reference number and message type.
+///
+/// Produces: `UNH+referenz+typ:D:11A:UN:S2.1`
+pub fn rebuild_unh(referenz: &str, nachrichten_typ: &str) -> OwnedSegment {
+    OwnedSegment {
+        id: "UNH".to_string(),
+        elements: vec![
+            vec![referenz.to_string()],
+            vec![
+                nachrichten_typ.to_string(),
+                "D".to_string(),
+                "11A".to_string(),
+                "UN".to_string(),
+                "S2.1".to_string(),
+            ],
+        ],
+        segment_number: 0,
+    }
+}
+
+/// Rebuild a UNT (message trailer) segment.
+///
+/// Produces: `UNT+count+referenz`
+/// `segment_count` includes UNH and UNT themselves.
+pub fn rebuild_unt(segment_count: usize, referenz: &str) -> OwnedSegment {
+    OwnedSegment {
+        id: "UNT".to_string(),
+        elements: vec![
+            vec![segment_count.to_string()],
+            vec![referenz.to_string()],
+        ],
+        segment_number: 0,
+    }
+}
+
+/// Rebuild a UNZ (interchange trailer) segment.
+///
+/// Produces: `UNZ+count+ref`
+pub fn rebuild_unz(message_count: usize, interchange_ref: &str) -> OwnedSegment {
+    OwnedSegment {
+        id: "UNZ".to_string(),
+        elements: vec![
+            vec![message_count.to_string()],
+            vec![interchange_ref.to_string()],
+        ],
+        segment_number: 0,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
