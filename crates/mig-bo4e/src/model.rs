@@ -124,6 +124,98 @@ pub fn extract_nachrichtendaten(envelope: &[OwnedSegment]) -> serde_json::Value 
     serde_json::Value::Object(result)
 }
 
+/// Rebuild a UNB (interchange header) segment from nachrichtendaten JSON.
+///
+/// This is the inverse of `extract_nachrichtendaten()`.
+/// Fields not present in the JSON get sensible defaults (UNOC:3, "500" qualifier).
+pub fn rebuild_unb(nachrichtendaten: &serde_json::Value) -> OwnedSegment {
+    let syntax = nachrichtendaten
+        .get("syntaxKennung")
+        .and_then(|v| v.as_str())
+        .unwrap_or("UNOC");
+    let sender = nachrichtendaten
+        .get("absenderCode")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+    let receiver = nachrichtendaten
+        .get("empfaengerCode")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+    let datum = nachrichtendaten
+        .get("datum")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+    let zeit = nachrichtendaten
+        .get("zeit")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+    let interchange_ref = nachrichtendaten
+        .get("interchangeRef")
+        .and_then(|v| v.as_str())
+        .unwrap_or("00000");
+
+    OwnedSegment {
+        id: "UNB".to_string(),
+        elements: vec![
+            vec![syntax.to_string(), "3".to_string()],
+            vec![sender.to_string(), "500".to_string()],
+            vec![receiver.to_string(), "500".to_string()],
+            vec![datum.to_string(), zeit.to_string()],
+            vec![interchange_ref.to_string()],
+        ],
+        segment_number: 0,
+    }
+}
+
+/// Rebuild a UNH (message header) segment from reference number and message type.
+///
+/// Produces: `UNH+referenz+typ:D:11A:UN:S2.1`
+pub fn rebuild_unh(referenz: &str, nachrichten_typ: &str) -> OwnedSegment {
+    OwnedSegment {
+        id: "UNH".to_string(),
+        elements: vec![
+            vec![referenz.to_string()],
+            vec![
+                nachrichten_typ.to_string(),
+                "D".to_string(),
+                "11A".to_string(),
+                "UN".to_string(),
+                "S2.1".to_string(),
+            ],
+        ],
+        segment_number: 0,
+    }
+}
+
+/// Rebuild a UNT (message trailer) segment.
+///
+/// Produces: `UNT+count+referenz`
+/// `segment_count` includes UNH and UNT themselves.
+pub fn rebuild_unt(segment_count: usize, referenz: &str) -> OwnedSegment {
+    OwnedSegment {
+        id: "UNT".to_string(),
+        elements: vec![
+            vec![segment_count.to_string()],
+            vec![referenz.to_string()],
+        ],
+        segment_number: 0,
+    }
+}
+
+/// Rebuild a UNZ (interchange trailer) segment.
+///
+/// Produces: `UNZ+count+ref`
+pub fn rebuild_unz(message_count: usize, interchange_ref: &str) -> OwnedSegment {
+    OwnedSegment {
+        id: "UNZ".to_string(),
+        elements: vec![
+            vec![message_count.to_string()],
+            vec![interchange_ref.to_string()],
+        ],
+        segment_number: 0,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -237,5 +329,87 @@ mod tests {
         let (referenz, typ) = extract_unh_fields(&unh);
         assert_eq!(referenz, "MSG001");
         assert_eq!(typ, "UTILMD");
+    }
+
+    #[test]
+    fn test_rebuild_unb_from_nachrichtendaten() {
+        let nd = serde_json::json!({
+            "syntaxKennung": "UNOC",
+            "absenderCode": "9900123456789",
+            "empfaengerCode": "9900987654321",
+            "datum": "210101",
+            "zeit": "1200",
+            "interchangeRef": "REF001"
+        });
+
+        let unb = rebuild_unb(&nd);
+        assert_eq!(unb.id, "UNB");
+        // UNB+UNOC:3+sender:500+receiver:500+date:time+ref
+        assert_eq!(unb.elements[0], vec!["UNOC", "3"]);
+        assert_eq!(unb.elements[1][0], "9900123456789");
+        assert_eq!(unb.elements[2][0], "9900987654321");
+        assert_eq!(unb.elements[3], vec!["210101", "1200"]);
+        assert_eq!(unb.elements[4], vec!["REF001"]);
+    }
+
+    #[test]
+    fn test_rebuild_unb_defaults() {
+        // Empty nachrichtendaten — should produce valid UNB with placeholders
+        let nd = serde_json::json!({});
+        let unb = rebuild_unb(&nd);
+        assert_eq!(unb.id, "UNB");
+        assert_eq!(unb.elements[0], vec!["UNOC", "3"]);
+    }
+
+    #[test]
+    fn test_rebuild_unh() {
+        let unh = rebuild_unh("00001", "UTILMD");
+        assert_eq!(unh.id, "UNH");
+        assert_eq!(unh.elements[0], vec!["00001"]);
+        assert_eq!(unh.elements[1][0], "UTILMD");
+        assert_eq!(unh.elements[1][1], "D");
+        assert_eq!(unh.elements[1][2], "11A");
+        assert_eq!(unh.elements[1][3], "UN");
+        assert_eq!(unh.elements[1][4], "S2.1");
+    }
+
+    #[test]
+    fn test_rebuild_unt() {
+        let unt = rebuild_unt(25, "00001");
+        assert_eq!(unt.id, "UNT");
+        assert_eq!(unt.elements[0], vec!["25"]);
+        assert_eq!(unt.elements[1], vec!["00001"]);
+    }
+
+    #[test]
+    fn test_rebuild_unz() {
+        let unz = rebuild_unz(1, "REF001");
+        assert_eq!(unz.id, "UNZ");
+        assert_eq!(unz.elements[0], vec!["1"]);
+        assert_eq!(unz.elements[1], vec!["REF001"]);
+    }
+
+    #[test]
+    fn test_roundtrip_nachrichtendaten_rebuild() {
+        // extract_nachrichtendaten() → rebuild_unb() should preserve fields
+        let original = OwnedSegment {
+            id: "UNB".to_string(),
+            elements: vec![
+                vec!["UNOC".to_string(), "3".to_string()],
+                vec!["9900123456789".to_string(), "500".to_string()],
+                vec!["9900987654321".to_string(), "500".to_string()],
+                vec!["210101".to_string(), "1200".to_string()],
+                vec!["REF001".to_string()],
+            ],
+            segment_number: 0,
+        };
+
+        let nd = extract_nachrichtendaten(&[original]);
+        let rebuilt = rebuild_unb(&nd);
+        assert_eq!(rebuilt.elements[0], vec!["UNOC", "3"]);
+        assert_eq!(rebuilt.elements[1][0], "9900123456789");
+        assert_eq!(rebuilt.elements[2][0], "9900987654321");
+        assert_eq!(rebuilt.elements[3], vec!["210101", "1200"]);
+        assert_eq!(rebuilt.elements[4], vec!["REF001"]);
     }
 }
