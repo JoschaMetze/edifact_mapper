@@ -1181,3 +1181,18 @@ Expected: All tests PASS
 git add crates/automapper-generator/tests/schema_diff_test.rs
 git commit -m "test(generator): add JSON serialization roundtrip test for PidSchemaDiff"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 9 |
+| Passed | 9 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/automapper-generator/src/schema_diff/types.rs`
+- `crates/automapper-generator/src/schema_diff/differ.rs`
+- `crates/automapper-generator/src/schema_diff/mod.rs`
+- `crates/automapper-generator/tests/schema_diff_test.rs`
