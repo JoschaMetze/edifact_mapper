@@ -24,3 +24,4 @@ pub mod tokenize;
 
 pub use error::AssemblyError;
 pub use service::ConversionService;
+pub use tokenize::{split_messages, InterchangeChunks, MessageChunk};
