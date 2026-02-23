@@ -5,7 +5,7 @@ title: "API Contracts & Handler"
 depends_on: [reverse-endpoint/E01, reverse-endpoint/E02]
 estimated_tasks: 5
 crate: automapper-api
-status: pending
+status: in_progress
 ---
 
 # Epic 3: API Contracts & Handler
