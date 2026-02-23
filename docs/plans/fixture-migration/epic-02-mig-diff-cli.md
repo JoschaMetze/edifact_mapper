@@ -5,7 +5,7 @@ title: "mig-diff CLI Subcommand"
 depends_on: [1]
 estimated_tasks: 3
 crate: automapper-generator
-status: in_progress
+status: complete
 ---
 
 # Epic 2: `mig-diff` CLI Subcommand
