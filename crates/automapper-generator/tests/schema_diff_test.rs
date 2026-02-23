@@ -363,3 +363,41 @@ fn test_diff_55001_vs_55002_shows_differences() {
     );
     eprintln!("Code changes: {}", diff.codes.changed.len());
 }
+
+#[test]
+fn test_diff_serializes_to_json() {
+    let old = schema_with_segments(&[(
+        "sg5_z16",
+        "SG5",
+        "LOC:Z16",
+        &[("LOC", &[(0, "3227", "code", &["Z16"])])],
+    )]);
+    let new = schema_with_segments(&[(
+        "sg5_z16",
+        "SG5",
+        "LOC:Z16",
+        &[
+            ("LOC", &[(0, "3227", "code", &["Z16"])]),
+            ("MEA", &[(0, "6311", "code", &["AAA"])]),
+        ],
+    )]);
+
+    let input = DiffInput {
+        old_schema: old,
+        new_schema: new,
+        old_version: "FV2504".into(),
+        new_version: "FV2510".into(),
+        message_type: "UTILMD".into(),
+        pid: "55001".into(),
+    };
+
+    let diff = diff_pid_schemas(&input);
+    let json = serde_json::to_string_pretty(&diff).unwrap();
+    assert!(json.contains("\"old_version\": \"FV2504\""));
+    assert!(json.contains("\"new_version\": \"FV2510\""));
+    assert!(json.contains("\"tag\": \"MEA\""));
+
+    // Verify round-trip: deserialize back
+    let parsed: PidSchemaDiff = serde_json::from_str(&json).unwrap();
+    assert_eq!(parsed.segments.added.len(), 1);
+}
