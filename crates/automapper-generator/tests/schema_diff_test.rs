@@ -105,6 +105,7 @@ fn test_diff_detects_removed_group() {
     assert_eq!(diff.groups.removed[0].group, "sg8_z98");
 }
 
+#[allow(clippy::type_complexity)]
 fn schema_with_segments(
     groups: &[(&str, &str, &str, &[(&str, &[(usize, &str, &str, &[&str])])])],
 ) -> serde_json::Value {
