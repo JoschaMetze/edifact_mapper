@@ -11,6 +11,7 @@ use std::path::Path;
 
 const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/pid_55001";
+const MESSAGE_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/message";
 
 #[test]
 fn test_full_pid_pipeline_55001() {
@@ -65,14 +66,15 @@ fn test_full_pid_pipeline_55001() {
         }
     }
 
-    // Step 4: Verify TOML mappings can load
-    let mappings_dir = Path::new(MAPPINGS_DIR);
-    if !mappings_dir.exists() {
-        eprintln!("Skipping mapping test: {:?} not found", mappings_dir);
+    // Step 4: Verify TOML mappings can load (combined message + transaction)
+    let msg_dir = Path::new(MESSAGE_DIR);
+    let tx_dir = Path::new(MAPPINGS_DIR);
+    if !msg_dir.exists() || !tx_dir.exists() {
+        eprintln!("Skipping mapping test: message/ or pid/ dir not found");
         return;
     }
 
-    let engine = MappingEngine::load(mappings_dir).unwrap();
+    let engine = MappingEngine::load_merged(&[msg_dir, tx_dir]).unwrap();
     assert!(
         !engine.definitions().is_empty(),
         "Should load TOML mapping definitions"
