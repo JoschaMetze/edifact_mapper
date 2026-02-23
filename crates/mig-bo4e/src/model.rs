@@ -238,4 +238,86 @@ mod tests {
         assert_eq!(referenz, "MSG001");
         assert_eq!(typ, "UTILMD");
     }
+
+    #[test]
+    fn test_rebuild_unb_from_nachrichtendaten() {
+        let nd = serde_json::json!({
+            "syntaxKennung": "UNOC",
+            "absenderCode": "9900123456789",
+            "empfaengerCode": "9900987654321",
+            "datum": "210101",
+            "zeit": "1200",
+            "interchangeRef": "REF001"
+        });
+
+        let unb = rebuild_unb(&nd);
+        assert_eq!(unb.id, "UNB");
+        // UNB+UNOC:3+sender:500+receiver:500+date:time+ref
+        assert_eq!(unb.elements[0], vec!["UNOC", "3"]);
+        assert_eq!(unb.elements[1][0], "9900123456789");
+        assert_eq!(unb.elements[2][0], "9900987654321");
+        assert_eq!(unb.elements[3], vec!["210101", "1200"]);
+        assert_eq!(unb.elements[4], vec!["REF001"]);
+    }
+
+    #[test]
+    fn test_rebuild_unb_defaults() {
+        // Empty nachrichtendaten — should produce valid UNB with placeholders
+        let nd = serde_json::json!({});
+        let unb = rebuild_unb(&nd);
+        assert_eq!(unb.id, "UNB");
+        assert_eq!(unb.elements[0], vec!["UNOC", "3"]);
+    }
+
+    #[test]
+    fn test_rebuild_unh() {
+        let unh = rebuild_unh("00001", "UTILMD");
+        assert_eq!(unh.id, "UNH");
+        assert_eq!(unh.elements[0], vec!["00001"]);
+        assert_eq!(unh.elements[1][0], "UTILMD");
+        assert_eq!(unh.elements[1][1], "D");
+        assert_eq!(unh.elements[1][2], "11A");
+        assert_eq!(unh.elements[1][3], "UN");
+        assert_eq!(unh.elements[1][4], "S2.1");
+    }
+
+    #[test]
+    fn test_rebuild_unt() {
+        let unt = rebuild_unt(25, "00001");
+        assert_eq!(unt.id, "UNT");
+        assert_eq!(unt.elements[0], vec!["25"]);
+        assert_eq!(unt.elements[1], vec!["00001"]);
+    }
+
+    #[test]
+    fn test_rebuild_unz() {
+        let unz = rebuild_unz(1, "REF001");
+        assert_eq!(unz.id, "UNZ");
+        assert_eq!(unz.elements[0], vec!["1"]);
+        assert_eq!(unz.elements[1], vec!["REF001"]);
+    }
+
+    #[test]
+    fn test_roundtrip_nachrichtendaten_rebuild() {
+        // extract_nachrichtendaten() → rebuild_unb() should preserve fields
+        let original = OwnedSegment {
+            id: "UNB".to_string(),
+            elements: vec![
+                vec!["UNOC".to_string(), "3".to_string()],
+                vec!["9900123456789".to_string(), "500".to_string()],
+                vec!["9900987654321".to_string(), "500".to_string()],
+                vec!["210101".to_string(), "1200".to_string()],
+                vec!["REF001".to_string()],
+            ],
+            segment_number: 0,
+        };
+
+        let nd = extract_nachrichtendaten(&[original]);
+        let rebuilt = rebuild_unb(&nd);
+        assert_eq!(rebuilt.elements[0], vec!["UNOC", "3"]);
+        assert_eq!(rebuilt.elements[1][0], "9900123456789");
+        assert_eq!(rebuilt.elements[2][0], "9900987654321");
+        assert_eq!(rebuilt.elements[3], vec!["210101", "1200"]);
+        assert_eq!(rebuilt.elements[4], vec!["REF001"]);
+    }
 }
