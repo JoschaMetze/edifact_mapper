@@ -657,3 +657,26 @@ Expected: ALL PASS
 git add crates/mig-bo4e/src/engine.rs
 git commit -m "test(mig-bo4e): add backward compat regression test for single-transaction mapping"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 593 |
+| Passed | 593 |
+| Failed | 0 |
+| Skipped | 0 |
+| New tests added | 5 |
+
+New tests:
+- `assembler::tests::test_group_instance_as_assembled_tree` — validates sub-tree creation from group instance
+- `engine::tests::test_map_message_level_extracts_sg2_only` — message-level SG2 mapping on full tree
+- `engine::tests::test_map_transaction_scoped_to_sg4_instance` — transaction-level mapping via sub-tree scoping
+- `engine::tests::test_map_interchange_produces_full_hierarchy` — full map_interchange with message + transaction levels
+- `engine::tests::test_map_interchange_single_transaction_backward_compat` — backward compat for single-transaction case
+
+Files modified:
+- `crates/mig-assembly/src/assembler.rs` — added `AssembledGroupInstance::as_assembled_tree()`
+- `crates/mig-bo4e/src/engine.rs` — added `MappingEngine::map_interchange()` + 5 tests
+- `crates/mig-bo4e/src/model.rs` — added `MappedMessage` type
+- `crates/mig-bo4e/src/lib.rs` — exported `MappedMessage`

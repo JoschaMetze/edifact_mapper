@@ -776,6 +776,74 @@ impl MappingEngine {
         0
     }
 
+    /// Map an assembled tree into message-level and transaction-level results.
+    ///
+    /// - `msg_engine`: MappingEngine loaded with message-level definitions (SG2, SG3, root segments)
+    /// - `tx_engine`: MappingEngine loaded with transaction-level definitions (relative to SG4)
+    /// - `tree`: The assembled tree for one message
+    /// - `transaction_group`: The group ID that represents transactions (e.g., "SG4")
+    ///
+    /// Returns a `MappedMessage` with message stammdaten and per-transaction results.
+    pub fn map_interchange(
+        msg_engine: &MappingEngine,
+        tx_engine: &MappingEngine,
+        tree: &AssembledTree,
+        transaction_group: &str,
+    ) -> crate::model::MappedMessage {
+        // Map message-level entities
+        let stammdaten = msg_engine.map_all_forward(tree);
+
+        // Find the transaction group and map each repetition
+        let transaktionen = tree
+            .groups
+            .iter()
+            .find(|g| g.group_id == transaction_group)
+            .map(|sg| {
+                sg.repetitions
+                    .iter()
+                    .map(|instance| {
+                        let sub_tree = instance.as_assembled_tree();
+                        let tx_result = tx_engine.map_all_forward(&sub_tree);
+
+                        // Split: "Prozessdaten" entity goes into transaktionsdaten,
+                        // everything else into stammdaten
+                        let mut tx_stammdaten = serde_json::Map::new();
+                        let mut transaktionsdaten = serde_json::Value::Null;
+
+                        if let Some(obj) = tx_result.as_object() {
+                            for (key, value) in obj {
+                                if key == "Prozessdaten" || key == "Nachricht" {
+                                    // Merge into transaktionsdaten
+                                    if transaktionsdaten.is_null() {
+                                        transaktionsdaten = value.clone();
+                                    } else if let (Some(existing), Some(new_map)) =
+                                        (transaktionsdaten.as_object_mut(), value.as_object())
+                                    {
+                                        for (k, v) in new_map {
+                                            existing.entry(k.clone()).or_insert(v.clone());
+                                        }
+                                    }
+                                } else {
+                                    tx_stammdaten.insert(key.clone(), value.clone());
+                                }
+                            }
+                        }
+
+                        crate::model::Transaktion {
+                            stammdaten: serde_json::Value::Object(tx_stammdaten),
+                            transaktionsdaten,
+                        }
+                    })
+                    .collect()
+            })
+            .unwrap_or_default();
+
+        crate::model::MappedMessage {
+            stammdaten,
+            transaktionen,
+        }
+    }
+
     /// Build an assembled group from BO4E values and a definition.
     pub fn build_group_from_bo4e(
         &self,
@@ -929,6 +997,129 @@ mod tests {
     }
 
     #[test]
+    fn test_map_interchange_single_transaction_backward_compat() {
+        use mig_assembly::assembler::*;
+
+        // Single SG4 with SG5 — the common case for current PID 55001 fixtures
+        let tree = AssembledTree {
+            segments: vec![
+                AssembledSegment {
+                    tag: "UNH".to_string(),
+                    elements: vec![vec!["001".to_string()]],
+                },
+                AssembledSegment {
+                    tag: "BGM".to_string(),
+                    elements: vec![
+                        vec!["E01".to_string()],
+                        vec!["DOC001".to_string()],
+                    ],
+                },
+            ],
+            groups: vec![
+                AssembledGroup {
+                    group_id: "SG2".to_string(),
+                    repetitions: vec![AssembledGroupInstance {
+                        segments: vec![AssembledSegment {
+                            tag: "NAD".to_string(),
+                            elements: vec![
+                                vec!["MS".to_string()],
+                                vec!["9900123".to_string()],
+                            ],
+                        }],
+                        child_groups: vec![],
+                    }],
+                },
+                AssembledGroup {
+                    group_id: "SG4".to_string(),
+                    repetitions: vec![AssembledGroupInstance {
+                        segments: vec![AssembledSegment {
+                            tag: "IDE".to_string(),
+                            elements: vec![
+                                vec!["24".to_string()],
+                                vec!["TX001".to_string()],
+                            ],
+                        }],
+                        child_groups: vec![AssembledGroup {
+                            group_id: "SG5".to_string(),
+                            repetitions: vec![AssembledGroupInstance {
+                                segments: vec![AssembledSegment {
+                                    tag: "LOC".to_string(),
+                                    elements: vec![
+                                        vec!["Z16".to_string()],
+                                        vec!["DE000111222333".to_string()],
+                                    ],
+                                }],
+                                child_groups: vec![],
+                            }],
+                        }],
+                    }],
+                },
+            ],
+            post_group_start: 2,
+        };
+
+        // Empty message engine (no message-level defs for this test)
+        let msg_engine = MappingEngine::from_definitions(vec![]);
+
+        // Transaction defs
+        let mut tx_fields = BTreeMap::new();
+        tx_fields.insert(
+            "ide.1".to_string(),
+            FieldMapping::Simple("vorgangId".to_string()),
+        );
+        let mut malo_fields = BTreeMap::new();
+        malo_fields.insert(
+            "loc.1".to_string(),
+            FieldMapping::Simple("marktlokationsId".to_string()),
+        );
+
+        let tx_engine = MappingEngine::from_definitions(vec![
+            MappingDefinition {
+                meta: MappingMeta {
+                    entity: "Prozessdaten".to_string(),
+                    bo4e_type: "Prozessdaten".to_string(),
+                    companion_type: None,
+                    source_group: "".to_string(),
+                    source_path: None,
+                    discriminator: None,
+                },
+                fields: tx_fields,
+                companion_fields: None,
+                complex_handlers: None,
+            },
+            MappingDefinition {
+                meta: MappingMeta {
+                    entity: "Marktlokation".to_string(),
+                    bo4e_type: "Marktlokation".to_string(),
+                    companion_type: None,
+                    source_group: "SG5".to_string(),
+                    source_path: None,
+                    discriminator: None,
+                },
+                fields: malo_fields,
+                companion_fields: None,
+                complex_handlers: None,
+            },
+        ]);
+
+        let result = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4");
+
+        assert_eq!(result.transaktionen.len(), 1);
+        assert_eq!(
+            result.transaktionen[0].transaktionsdaten["vorgangId"]
+                .as_str()
+                .unwrap(),
+            "TX001"
+        );
+        assert_eq!(
+            result.transaktionen[0].stammdaten["Marktlokation"]["marktlokationsId"]
+                .as_str()
+                .unwrap(),
+            "DE000111222333"
+        );
+    }
+
+    #[test]
     fn test_map_reverse_pads_intermediate_empty_elements() {
         // NAD+Z09+++Muster:Max — positions 0 and 3 populated, 1 and 2 should become [""]
         let mut fields = BTreeMap::new();
@@ -1012,6 +1203,321 @@ mod tests {
         // Single element with 3 components — no intermediate padding needed
         assert_eq!(dtm.elements.len(), 1);
         assert_eq!(dtm.elements[0], vec!["92", "20250531", "303"]);
+    }
+
+    #[test]
+    fn test_map_message_level_extracts_sg2_only() {
+        use mig_assembly::assembler::*;
+
+        // Build a tree with SG2 (message-level) and SG4 (transaction-level)
+        let tree = AssembledTree {
+            segments: vec![
+                AssembledSegment {
+                    tag: "UNH".to_string(),
+                    elements: vec![vec!["001".to_string()]],
+                },
+                AssembledSegment {
+                    tag: "BGM".to_string(),
+                    elements: vec![vec!["E01".to_string()]],
+                },
+            ],
+            groups: vec![
+                AssembledGroup {
+                    group_id: "SG2".to_string(),
+                    repetitions: vec![AssembledGroupInstance {
+                        segments: vec![AssembledSegment {
+                            tag: "NAD".to_string(),
+                            elements: vec![
+                                vec!["MS".to_string()],
+                                vec!["9900123".to_string()],
+                            ],
+                        }],
+                        child_groups: vec![],
+                    }],
+                },
+                AssembledGroup {
+                    group_id: "SG4".to_string(),
+                    repetitions: vec![AssembledGroupInstance {
+                        segments: vec![AssembledSegment {
+                            tag: "IDE".to_string(),
+                            elements: vec![
+                                vec!["24".to_string()],
+                                vec!["TX001".to_string()],
+                            ],
+                        }],
+                        child_groups: vec![],
+                    }],
+                },
+            ],
+            post_group_start: 2,
+        };
+
+        // Message-level definition maps SG2
+        let mut msg_fields = BTreeMap::new();
+        msg_fields.insert(
+            "nad.0".to_string(),
+            FieldMapping::Simple("marktrolle".to_string()),
+        );
+        msg_fields.insert(
+            "nad.1".to_string(),
+            FieldMapping::Simple("rollencodenummer".to_string()),
+        );
+        let msg_def = MappingDefinition {
+            meta: MappingMeta {
+                entity: "Marktteilnehmer".to_string(),
+                bo4e_type: "Marktteilnehmer".to_string(),
+                companion_type: None,
+                source_group: "SG2".to_string(),
+                source_path: None,
+                discriminator: None,
+            },
+            fields: msg_fields,
+            companion_fields: None,
+            complex_handlers: None,
+        };
+
+        let engine = MappingEngine::from_definitions(vec![msg_def.clone()]);
+        let result = engine.map_all_forward(&tree);
+
+        // Should contain Marktteilnehmer from SG2
+        assert!(result.get("Marktteilnehmer").is_some());
+        let mt = &result["Marktteilnehmer"];
+        assert_eq!(mt["marktrolle"].as_str().unwrap(), "MS");
+        assert_eq!(mt["rollencodenummer"].as_str().unwrap(), "9900123");
+    }
+
+    #[test]
+    fn test_map_transaction_scoped_to_sg4_instance() {
+        use mig_assembly::assembler::*;
+
+        // Build a tree with SG4 containing SG5 (LOC+Z16)
+        let tree = AssembledTree {
+            segments: vec![
+                AssembledSegment {
+                    tag: "UNH".to_string(),
+                    elements: vec![vec!["001".to_string()]],
+                },
+                AssembledSegment {
+                    tag: "BGM".to_string(),
+                    elements: vec![vec!["E01".to_string()]],
+                },
+            ],
+            groups: vec![AssembledGroup {
+                group_id: "SG4".to_string(),
+                repetitions: vec![AssembledGroupInstance {
+                    segments: vec![AssembledSegment {
+                        tag: "IDE".to_string(),
+                        elements: vec![
+                            vec!["24".to_string()],
+                            vec!["TX001".to_string()],
+                        ],
+                    }],
+                    child_groups: vec![AssembledGroup {
+                        group_id: "SG5".to_string(),
+                        repetitions: vec![AssembledGroupInstance {
+                            segments: vec![AssembledSegment {
+                                tag: "LOC".to_string(),
+                                elements: vec![
+                                    vec!["Z16".to_string()],
+                                    vec!["DE000111222333".to_string()],
+                                ],
+                            }],
+                            child_groups: vec![],
+                        }],
+                    }],
+                }],
+            }],
+            post_group_start: 2,
+        };
+
+        // Transaction-level definitions: prozessdaten (root of SG4) + marktlokation (SG5)
+        let mut proz_fields = BTreeMap::new();
+        proz_fields.insert(
+            "ide.1".to_string(),
+            FieldMapping::Simple("vorgangId".to_string()),
+        );
+        let proz_def = MappingDefinition {
+            meta: MappingMeta {
+                entity: "Prozessdaten".to_string(),
+                bo4e_type: "Prozessdaten".to_string(),
+                companion_type: None,
+                source_group: "".to_string(), // Root-level within transaction sub-tree
+                source_path: None,
+                discriminator: None,
+            },
+            fields: proz_fields,
+            companion_fields: None,
+            complex_handlers: None,
+        };
+
+        let mut malo_fields = BTreeMap::new();
+        malo_fields.insert(
+            "loc.1".to_string(),
+            FieldMapping::Simple("marktlokationsId".to_string()),
+        );
+        let malo_def = MappingDefinition {
+            meta: MappingMeta {
+                entity: "Marktlokation".to_string(),
+                bo4e_type: "Marktlokation".to_string(),
+                companion_type: None,
+                source_group: "SG5".to_string(), // Relative to SG4, not "SG4.SG5"
+                source_path: None,
+                discriminator: None,
+            },
+            fields: malo_fields,
+            companion_fields: None,
+            complex_handlers: None,
+        };
+
+        let tx_engine = MappingEngine::from_definitions(vec![proz_def, malo_def]);
+
+        // Scope to the SG4 instance and map
+        let sg4 = &tree.groups[0]; // SG4 group
+        let sg4_instance = &sg4.repetitions[0];
+        let sub_tree = sg4_instance.as_assembled_tree();
+
+        let result = tx_engine.map_all_forward(&sub_tree);
+
+        // Should contain Prozessdaten from SG4 root segments
+        assert_eq!(
+            result["Prozessdaten"]["vorgangId"].as_str().unwrap(),
+            "TX001"
+        );
+
+        // Should contain Marktlokation from SG5 within SG4
+        assert_eq!(
+            result["Marktlokation"]["marktlokationsId"].as_str().unwrap(),
+            "DE000111222333"
+        );
+    }
+
+    #[test]
+    fn test_map_interchange_produces_full_hierarchy() {
+        use mig_assembly::assembler::*;
+
+        // Build a tree with SG2 (message-level) and SG4 with two repetitions (two transactions)
+        let tree = AssembledTree {
+            segments: vec![
+                AssembledSegment {
+                    tag: "UNH".to_string(),
+                    elements: vec![vec!["001".to_string()]],
+                },
+                AssembledSegment {
+                    tag: "BGM".to_string(),
+                    elements: vec![vec!["E01".to_string()]],
+                },
+            ],
+            groups: vec![
+                AssembledGroup {
+                    group_id: "SG2".to_string(),
+                    repetitions: vec![AssembledGroupInstance {
+                        segments: vec![AssembledSegment {
+                            tag: "NAD".to_string(),
+                            elements: vec![
+                                vec!["MS".to_string()],
+                                vec!["9900123".to_string()],
+                            ],
+                        }],
+                        child_groups: vec![],
+                    }],
+                },
+                AssembledGroup {
+                    group_id: "SG4".to_string(),
+                    repetitions: vec![
+                        AssembledGroupInstance {
+                            segments: vec![AssembledSegment {
+                                tag: "IDE".to_string(),
+                                elements: vec![
+                                    vec!["24".to_string()],
+                                    vec!["TX001".to_string()],
+                                ],
+                            }],
+                            child_groups: vec![],
+                        },
+                        AssembledGroupInstance {
+                            segments: vec![AssembledSegment {
+                                tag: "IDE".to_string(),
+                                elements: vec![
+                                    vec!["24".to_string()],
+                                    vec!["TX002".to_string()],
+                                ],
+                            }],
+                            child_groups: vec![],
+                        },
+                    ],
+                },
+            ],
+            post_group_start: 2,
+        };
+
+        // Message-level definitions
+        let mut msg_fields = BTreeMap::new();
+        msg_fields.insert(
+            "nad.0".to_string(),
+            FieldMapping::Simple("marktrolle".to_string()),
+        );
+        let msg_defs = vec![MappingDefinition {
+            meta: MappingMeta {
+                entity: "Marktteilnehmer".to_string(),
+                bo4e_type: "Marktteilnehmer".to_string(),
+                companion_type: None,
+                source_group: "SG2".to_string(),
+                source_path: None,
+                discriminator: None,
+            },
+            fields: msg_fields,
+            companion_fields: None,
+            complex_handlers: None,
+        }];
+
+        // Transaction-level definitions
+        let mut tx_fields = BTreeMap::new();
+        tx_fields.insert(
+            "ide.1".to_string(),
+            FieldMapping::Simple("vorgangId".to_string()),
+        );
+        let tx_defs = vec![MappingDefinition {
+            meta: MappingMeta {
+                entity: "Prozessdaten".to_string(),
+                bo4e_type: "Prozessdaten".to_string(),
+                companion_type: None,
+                source_group: "".to_string(),
+                source_path: None,
+                discriminator: None,
+            },
+            fields: tx_fields,
+            companion_fields: None,
+            complex_handlers: None,
+        }];
+
+        let msg_engine = MappingEngine::from_definitions(msg_defs);
+        let tx_engine = MappingEngine::from_definitions(tx_defs);
+
+        let result = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4");
+
+        // Message-level stammdaten
+        assert!(result.stammdaten["Marktteilnehmer"].is_object());
+        assert_eq!(
+            result.stammdaten["Marktteilnehmer"]["marktrolle"]
+                .as_str()
+                .unwrap(),
+            "MS"
+        );
+
+        // Two transactions
+        assert_eq!(result.transaktionen.len(), 2);
+        assert_eq!(
+            result.transaktionen[0].transaktionsdaten["vorgangId"]
+                .as_str()
+                .unwrap(),
+            "TX001"
+        );
+        assert_eq!(
+            result.transaktionen[1].transaktionsdaten["vorgangId"]
+                .as_str()
+                .unwrap(),
+            "TX002"
+        );
     }
 
     #[test]

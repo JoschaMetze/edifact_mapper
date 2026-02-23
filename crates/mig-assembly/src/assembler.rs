@@ -44,6 +44,22 @@ pub struct AssembledGroupInstance {
     pub child_groups: Vec<AssembledGroup>,
 }
 
+impl AssembledGroupInstance {
+    /// Create a virtual `AssembledTree` scoped to this group instance.
+    ///
+    /// The instance's own segments become the tree's root segments,
+    /// and its child groups become the tree's groups. This enables
+    /// running `MappingEngine::map_all_forward()` on a single
+    /// transaction group as if it were a complete message.
+    pub fn as_assembled_tree(&self) -> AssembledTree {
+        AssembledTree {
+            segments: self.segments.clone(),
+            groups: self.child_groups.clone(),
+            post_group_start: self.segments.len(),
+        }
+    }
+}
+
 /// MIG-guided assembler.
 ///
 /// Takes a MIG schema and uses it as a grammar to guide consumption
@@ -402,6 +418,49 @@ mod tests {
         assert_eq!(dtm.elements[0][0], "137");
         assert_eq!(dtm.elements[0][1], "202501010000+01");
         assert_eq!(dtm.elements[0][2], "303");
+    }
+
+    #[test]
+    fn test_group_instance_as_assembled_tree() {
+        // Build an SG4 instance with root segments (IDE, STS) and child groups (SG5)
+        let sg5 = AssembledGroup {
+            group_id: "SG5".to_string(),
+            repetitions: vec![AssembledGroupInstance {
+                segments: vec![AssembledSegment {
+                    tag: "LOC".to_string(),
+                    elements: vec![vec!["Z16".to_string(), "DE000111222333".to_string()]],
+                }],
+                child_groups: vec![],
+            }],
+        };
+
+        let sg4_instance = AssembledGroupInstance {
+            segments: vec![
+                AssembledSegment {
+                    tag: "IDE".to_string(),
+                    elements: vec![vec!["24".to_string(), "TX001".to_string()]],
+                },
+                AssembledSegment {
+                    tag: "STS".to_string(),
+                    elements: vec![vec!["7".to_string()]],
+                },
+            ],
+            child_groups: vec![sg5],
+        };
+
+        let sub_tree = sg4_instance.as_assembled_tree();
+
+        // Root segments of sub-tree are the SG4 instance's segments
+        assert_eq!(sub_tree.segments.len(), 2);
+        assert_eq!(sub_tree.segments[0].tag, "IDE");
+        assert_eq!(sub_tree.segments[1].tag, "STS");
+
+        // Groups of sub-tree are the SG4 instance's child groups
+        assert_eq!(sub_tree.groups.len(), 1);
+        assert_eq!(sub_tree.groups[0].group_id, "SG5");
+
+        // post_group_start marks where root segments end
+        assert_eq!(sub_tree.post_group_start, 2);
     }
 
     #[test]
