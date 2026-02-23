@@ -5,7 +5,7 @@ title: "migrate-fixture CLI Subcommand"
 depends_on: [1, 3]
 estimated_tasks: 3
 crate: automapper-generator
-status: in_progress
+status: complete
 ---
 
 # Epic 4: `migrate-fixture` CLI Subcommand
@@ -362,3 +362,20 @@ Expected: All PASS
 git add crates/automapper-generator/src/main.rs
 git commit -m "feat(generator): add migrate-fixture-dir CLI for batch migration"
 ```
+
+## Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests | 157 |
+| Passed | 157 |
+| Failed | 0 |
+| Skipped | 0 |
+
+Files tested:
+- `crates/automapper-generator/src/fixture_migrator/batch.rs`
+- `crates/automapper-generator/src/fixture_migrator/migrator.rs`
+- `crates/automapper-generator/src/fixture_migrator/skeleton.rs`
+- `crates/automapper-generator/src/fixture_migrator/types.rs`
+- `crates/automapper-generator/src/main.rs`
+- `crates/automapper-generator/tests/fixture_migrator_test.rs`
