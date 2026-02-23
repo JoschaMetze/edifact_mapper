@@ -29,22 +29,38 @@ impl<'a> Disassembler<'a> {
     /// 1. Pre-group top-level segments (e.g., UNB, UNH, BGM, DTM)
     /// 2. Groups (recursively, in MIG order)
     /// 3. Post-group top-level segments (e.g., UNT, UNZ)
+    ///
+    /// Uses MIG-guided ordering: walks the MIG schema tree and looks up
+    /// matching data in the assembled tree. This handles both assembler output
+    /// (already in MIG order) and reverse-mapped trees (may be in arbitrary order).
     pub fn disassemble(&self, tree: &AssembledTree) -> Vec<DisassembledSegment> {
         let mut output = Vec::new();
 
-        // 1. Emit pre-group segments (already in MIG order from assembler)
-        for seg in &tree.segments[..tree.post_group_start] {
-            output.push(assembled_to_disassembled(seg));
+        // 1. Emit pre-group segments in MIG order
+        let pre_group = &tree.segments[..tree.post_group_start];
+        let mut consumed = vec![false; pre_group.len()];
+        for mig_seg in &self.mig.segments {
+            if let Some(idx) = pre_group
+                .iter()
+                .enumerate()
+                .position(|(i, s)| !consumed[i] && s.tag == mig_seg.id)
+            {
+                output.push(assembled_to_disassembled(&pre_group[idx]));
+                consumed[idx] = true;
+            }
         }
 
-        // 2. Emit groups in MIG order (using cursors for duplicate group IDs)
-        let mut group_cursor = 0;
+        // 2. Emit groups in MIG order (lookup by group ID with consumption tracking)
+        let mut consumed_groups = vec![false; tree.groups.len()];
         for mig_group in &self.mig.segment_groups {
-            if group_cursor < tree.groups.len()
-                && tree.groups[group_cursor].group_id == mig_group.id
+            if let Some(idx) = tree
+                .groups
+                .iter()
+                .enumerate()
+                .position(|(i, g)| !consumed_groups[i] && g.group_id == mig_group.id)
             {
-                self.emit_group(&tree.groups[group_cursor], mig_group, &mut output);
-                group_cursor += 1;
+                self.emit_group(&tree.groups[idx], mig_group, &mut output);
+                consumed_groups[idx] = true;
             }
         }
 
@@ -73,26 +89,33 @@ impl<'a> Disassembler<'a> {
         mig_group: &MigSegmentGroup,
         output: &mut Vec<DisassembledSegment>,
     ) {
-        // Use cursors to handle duplicate tags in MIG (e.g., multiple DTMs).
-        // Segments in the instance are in MIG order from the assembler.
-        let mut seg_cursor = 0;
+        // Emit segments in MIG order using tag-based lookup with consumption tracking.
+        // This handles both assembler output (in MIG order) and reverse-mapped trees
+        // (may be in arbitrary order).
+        let mut consumed = vec![false; instance.segments.len()];
         for mig_seg in &mig_group.segments {
-            if seg_cursor < instance.segments.len()
-                && instance.segments[seg_cursor].tag == mig_seg.id
+            if let Some(idx) = instance
+                .segments
+                .iter()
+                .enumerate()
+                .position(|(i, s)| !consumed[i] && s.tag == mig_seg.id)
             {
-                output.push(assembled_to_disassembled(&instance.segments[seg_cursor]));
-                seg_cursor += 1;
+                output.push(assembled_to_disassembled(&instance.segments[idx]));
+                consumed[idx] = true;
             }
         }
 
-        // Child groups — also use cursor for duplicate group IDs
-        let mut group_cursor = 0;
+        // Child groups — lookup by group ID with consumption tracking
+        let mut consumed_child = vec![false; instance.child_groups.len()];
         for nested_mig in &mig_group.nested_groups {
-            if group_cursor < instance.child_groups.len()
-                && instance.child_groups[group_cursor].group_id == nested_mig.id
+            if let Some(idx) = instance
+                .child_groups
+                .iter()
+                .enumerate()
+                .position(|(i, g)| !consumed_child[i] && g.group_id == nested_mig.id)
             {
-                self.emit_group(&instance.child_groups[group_cursor], nested_mig, output);
-                group_cursor += 1;
+                self.emit_group(&instance.child_groups[idx], nested_mig, output);
+                consumed_child[idx] = true;
             }
         }
     }
