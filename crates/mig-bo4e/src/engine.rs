@@ -998,17 +998,15 @@ impl MappingEngine {
 
                     if leaf_group.is_empty() || def.meta.source_group.is_empty() {
                         root_segs.extend(instance.segments);
+                    } else if let Some(existing) =
+                        child_groups.iter_mut().find(|g| g.group_id == leaf_group)
+                    {
+                        existing.repetitions.push(instance);
                     } else {
-                        if let Some(existing) =
-                            child_groups.iter_mut().find(|g| g.group_id == leaf_group)
-                        {
-                            existing.repetitions.push(instance);
-                        } else {
-                            child_groups.push(AssembledGroup {
-                                group_id: leaf_group.to_string(),
-                                repetitions: vec![instance],
-                            });
-                        }
+                        child_groups.push(AssembledGroup {
+                            group_id: leaf_group.to_string(),
+                            repetitions: vec![instance],
+                        });
                     }
                 }
 
