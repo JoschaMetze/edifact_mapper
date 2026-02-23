@@ -1,0 +1,19 @@
+# Kontakt (contact person) mapping for PID 55001.
+#
+# Source: SG2 -> SG3 (CTA + COM segments, qualifier IC = Informationskontakt)
+# CTA+IC+:Max Muster       -> kontaktfunktion, kontakt_name
+# COM+max@example.com:EM   -> kommunikationsnummer, kommunikationsart
+
+[meta]
+entity = "Kontakt"
+bo4e_type = "Kontakt"
+source_group = "SG2.SG3"
+source_path = "sg2.sg3_ic"
+discriminator = "CTA.0.0=IC"
+
+[fields]
+"cta.0" = { target = "", default = "IC" }
+"cta.1.0" = "kontakt_nummer"
+"cta.1.1" = "kontakt_name"
+"com.0.0" = "kommunikationsnummer"
+"com.0.1" = "kommunikationsart"

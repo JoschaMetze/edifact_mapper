@@ -1,0 +1,15 @@
+# EnfgDaten (EnFG privilege data for customer) mapping for PID 55001.
+#
+# Source: SG4.SG8 repetition with SEQ qualifier Z75
+# "Daten des Kunden des Lieferanten" — EnFG-related data.
+# SEQ+Z75  -> (qualifier only)
+
+[meta]
+entity = "EnfgDaten"
+bo4e_type = "EnfgDaten"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z75"
+discriminator = "SEQ.0.0=Z75"
+
+[fields]
+"seq.0" = { target = "", default = "Z75" }

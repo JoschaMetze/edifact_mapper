@@ -18,6 +18,7 @@ pub mod definition;
 pub mod engine;
 pub mod error;
 pub mod handlers;
+pub mod segment_structure;
 
 pub use engine::MappingEngine;
 pub use error::MappingError;

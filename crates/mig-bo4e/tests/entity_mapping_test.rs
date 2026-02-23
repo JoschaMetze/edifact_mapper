@@ -70,8 +70,10 @@ fn test_marktlokation_forward_mapping() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Marktlokation")
-        .expect("Marktlokation definition should exist");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Marktlokation" && d.meta.source_group == "SG4.SG5")
+        .expect("Marktlokation SG5 definition should exist");
 
     let bo4e = engine.map_forward(&tree, def, 0);
 
@@ -87,8 +89,10 @@ fn test_marktlokation_reverse_mapping() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Marktlokation")
-        .expect("Marktlokation definition should exist");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Marktlokation" && d.meta.source_group == "SG4.SG5")
+        .expect("Marktlokation SG5 definition should exist");
 
     let bo4e = serde_json::json!({
         "marktlokations_id": "12345678900"
@@ -124,8 +128,10 @@ fn test_marktlokation_roundtrip() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Marktlokation")
-        .expect("Marktlokation definition should exist");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Marktlokation" && d.meta.source_group == "SG4.SG5")
+        .expect("Marktlokation SG5 definition should exist");
 
     // Forward: tree → BO4E
     let bo4e = engine.map_forward(&tree, def, 0);
@@ -207,9 +213,12 @@ fn test_prozessdaten_forward_mapping() {
     };
     let Some(engine) = load_engine() else { return };
 
+    // Use source_group to pick the SG4 Prozessdaten (not the SG4.SG6 RFF one)
     let def = engine
-        .definition_for_entity("Prozessdaten")
-        .expect("Prozessdaten definition should exist");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Prozessdaten" && d.meta.source_group == "SG4")
+        .expect("Prozessdaten SG4 definition should exist");
 
     let bo4e = engine.map_forward(&tree, def, 0);
 
@@ -242,8 +251,10 @@ fn test_prozessdaten_reverse_mapping() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Prozessdaten")
-        .expect("Prozessdaten definition should exist");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Prozessdaten" && d.meta.source_group == "SG4")
+        .expect("Prozessdaten SG4 definition should exist");
 
     let bo4e = serde_json::json!({
         "vorgang_id": "TEST123",
@@ -293,8 +304,10 @@ fn test_prozessdaten_roundtrip() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Prozessdaten")
-        .expect("Prozessdaten definition should exist");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Prozessdaten" && d.meta.source_group == "SG4")
+        .expect("Prozessdaten SG4 definition should exist");
 
     let original =
         MappingEngine::resolve_group_instance(&tree, "SG4", 0).expect("SG4 should exist");
@@ -340,10 +353,10 @@ fn test_prozessdaten_roundtrip() {
     }
 }
 
-// ── ProzessReferenz: SG4.SG6 → RFF+Z13 ──
+// ── Prozessdaten RFF+Z13: SG4.SG6 → pruefidentifikator ──
 
 #[test]
-fn test_prozess_referenz_forward_mapping() {
+fn test_prozessdaten_rff_z13_forward_mapping() {
     let Some((mig, _)) = load_pid_filtered_mig("55001") else {
         return;
     };
@@ -353,27 +366,31 @@ fn test_prozess_referenz_forward_mapping() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("ProzessReferenz")
-        .expect("ProzessReferenz definition should exist");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.source_group == "SG4.SG6")
+        .expect("SG4.SG6 definition should exist");
 
     let bo4e = engine.map_forward(&tree, def, 0);
 
     assert_eq!(
-        bo4e.get("pid_id").and_then(|v| v.as_str()),
+        bo4e.get("pruefidentifikator").and_then(|v| v.as_str()),
         Some("55001"),
         "Should extract PID reference from RFF+Z13"
     );
 }
 
 #[test]
-fn test_prozess_referenz_reverse_mapping() {
+fn test_prozessdaten_rff_z13_reverse_mapping() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("ProzessReferenz")
-        .expect("ProzessReferenz definition should exist");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.source_group == "SG4.SG6")
+        .expect("SG4.SG6 definition should exist");
 
-    let bo4e = serde_json::json!({ "pid_id": "55001" });
+    let bo4e = serde_json::json!({ "pruefidentifikator": "55001" });
     let instance = engine.map_reverse(&bo4e, def);
 
     assert_eq!(instance.segments.len(), 1);
@@ -383,7 +400,7 @@ fn test_prozess_referenz_reverse_mapping() {
 }
 
 #[test]
-fn test_prozess_referenz_roundtrip() {
+fn test_prozessdaten_rff_z13_roundtrip() {
     let Some((mig, _)) = load_pid_filtered_mig("55001") else {
         return;
     };
@@ -393,8 +410,10 @@ fn test_prozess_referenz_roundtrip() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("ProzessReferenz")
-        .expect("ProzessReferenz definition should exist");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.source_group == "SG4.SG6")
+        .expect("SG4.SG6 definition should exist");
 
     let original =
         MappingEngine::resolve_group_instance(&tree, "SG4.SG6", 0).expect("SG4.SG6 should exist");

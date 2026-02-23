@@ -12,11 +12,13 @@ use mig_types::segment::OwnedSegment;
 
 use crate::definition::{FieldMapping, MappingDefinition};
 use crate::error::MappingError;
+use crate::segment_structure::SegmentStructure;
 
 /// The mapping engine holds all loaded mapping definitions
 /// and provides methods for bidirectional conversion.
 pub struct MappingEngine {
     definitions: Vec<MappingDefinition>,
+    segment_structure: Option<SegmentStructure>,
 }
 
 impl MappingEngine {
@@ -38,12 +40,27 @@ impl MappingEngine {
             }
         }
 
-        Ok(Self { definitions })
+        Ok(Self {
+            definitions,
+            segment_structure: None,
+        })
     }
 
     /// Create an engine from an already-parsed list of definitions.
     pub fn from_definitions(definitions: Vec<MappingDefinition>) -> Self {
-        Self { definitions }
+        Self {
+            definitions,
+            segment_structure: None,
+        }
+    }
+
+    /// Attach a MIG-derived segment structure for trailing element padding.
+    ///
+    /// When set, `map_reverse` pads each segment's elements up to the
+    /// MIG-defined count, ensuring trailing empty elements are preserved.
+    pub fn with_segment_structure(mut self, ss: SegmentStructure) -> Self {
+        self.segment_structure = Some(ss);
+        self
     }
 
     /// Get all loaded definitions.
@@ -160,6 +177,9 @@ impl MappingEngine {
     /// `group_path` is the definition's `source_group` (may be dotted, e.g., "SG4.SG5").
     /// An empty `source_group` maps root-level segments (BGM, DTM, etc.).
     /// Returns a flat JSON object with target field names as keys.
+    ///
+    /// If the definition has `companion_fields`, those are extracted into a nested
+    /// object keyed by `companion_type` (or `"_companion"` if not specified).
     pub fn map_forward(
         &self,
         tree: &AssembledTree,
@@ -175,6 +195,7 @@ impl MappingEngine {
                 child_groups: vec![],
             };
             Self::extract_fields_from_instance(&root_instance, &def.fields, &mut result);
+            Self::extract_companion_fields(&root_instance, def, &mut result);
             return serde_json::Value::Object(result);
         }
 
@@ -182,9 +203,29 @@ impl MappingEngine {
 
         if let Some(instance) = instance {
             Self::extract_fields_from_instance(instance, &def.fields, &mut result);
+            Self::extract_companion_fields(instance, def, &mut result);
         }
 
         serde_json::Value::Object(result)
+    }
+
+    /// Extract companion_fields into a nested object within the result.
+    fn extract_companion_fields(
+        instance: &AssembledGroupInstance,
+        def: &MappingDefinition,
+        result: &mut serde_json::Map<String, serde_json::Value>,
+    ) {
+        if let Some(ref companion_fields) = def.companion_fields {
+            let companion_key = def.meta.companion_type.as_deref().unwrap_or("_companion");
+            let mut companion_result = serde_json::Map::new();
+            Self::extract_fields_from_instance(instance, companion_fields, &mut companion_result);
+            if !companion_result.is_empty() {
+                result.insert(
+                    companion_key.to_string(),
+                    serde_json::Value::Object(companion_result),
+                );
+            }
+        }
     }
 
     /// Extract all fields from an instance into a result map (shared logic).
@@ -356,6 +397,83 @@ impl MappingEngine {
             }
         }
 
+        // Process companion_fields — values are nested under the companion type key
+        if let Some(ref companion_fields) = def.companion_fields {
+            let companion_key = def.meta.companion_type.as_deref().unwrap_or("_companion");
+            let companion_value = bo4e_value
+                .get(companion_key)
+                .unwrap_or(&serde_json::Value::Null);
+
+            for (path, field_mapping) in companion_fields {
+                let (target, default, enum_map) = match field_mapping {
+                    FieldMapping::Simple(t) => (t.clone(), None, None),
+                    FieldMapping::Structured(s) => {
+                        (s.target.clone(), s.default.clone(), s.enum_map.as_ref())
+                    }
+                    FieldMapping::Nested(_) => continue,
+                };
+
+                let parts: Vec<&str> = path.split('.').collect();
+                if parts.len() < 2 {
+                    continue;
+                }
+
+                let (seg_tag, qualifier) = parse_tag_qualifier(parts[0]);
+                let seg_key = parts[0].to_uppercase();
+                let sub_path = &parts[1..];
+
+                let (element_idx, component_idx) = if let Ok(ei) = sub_path[0].parse::<usize>() {
+                    let ci = if sub_path.len() > 1 {
+                        sub_path[1].parse::<usize>().unwrap_or(0)
+                    } else {
+                        0
+                    };
+                    (ei, ci)
+                } else {
+                    match sub_path.len() {
+                        1 => (0, 0),
+                        2 => (1, 0),
+                        _ => continue,
+                    }
+                };
+
+                let val = if target.is_empty() {
+                    default
+                } else {
+                    let bo4e_val = self.populate_field(companion_value, &target, path);
+                    let mapped_val = match (bo4e_val, enum_map) {
+                        (Some(v), Some(map)) => map
+                            .iter()
+                            .find(|(_, bo4e_v)| *bo4e_v == &v)
+                            .map(|(edifact_k, _)| edifact_k.clone())
+                            .or(Some(v)),
+                        (v, _) => v,
+                    };
+                    mapped_val.or(default)
+                };
+
+                if let Some(val) = val {
+                    field_values.push((
+                        seg_key.clone(),
+                        seg_tag.clone(),
+                        element_idx,
+                        component_idx,
+                        val,
+                    ));
+                }
+
+                if let Some(q) = qualifier {
+                    let key_upper = seg_key.clone();
+                    let already_has = field_values
+                        .iter()
+                        .any(|(k, _, ei, ci, _)| *k == key_upper && *ei == 0 && *ci == 0);
+                    if !already_has {
+                        field_values.push((seg_key, seg_tag, 0, 0, q.to_string()));
+                    }
+                }
+            }
+        }
+
         // Build segments with elements/components in correct positions.
         // Group by segment_key to create separate segments for "DTM[92]" vs "DTM[93]".
         let mut segments: Vec<AssembledSegment> = Vec::new();
@@ -380,6 +498,30 @@ impl MappingEngine {
                 seg.elements[*element_idx].push(String::new());
             }
             seg.elements[*element_idx][*component_idx] = val.clone();
+        }
+
+        // Pad intermediate empty elements: any [] between position 0 and the last
+        // populated position becomes [""] so the EDIFACT renderer emits the `+` separator.
+        for seg in &mut segments {
+            let last_populated = seg.elements.iter().rposition(|e| !e.is_empty());
+            if let Some(last_idx) = last_populated {
+                for i in 0..last_idx {
+                    if seg.elements[i].is_empty() {
+                        seg.elements[i] = vec![String::new()];
+                    }
+                }
+            }
+        }
+
+        // MIG-aware trailing padding: extend each segment to the MIG-defined element count.
+        if let Some(ref ss) = self.segment_structure {
+            for seg in &mut segments {
+                if let Some(expected) = ss.element_count(&seg.tag) {
+                    while seg.elements.len() < expected {
+                        seg.elements.push(vec![String::new()]);
+                    }
+                }
+            }
         }
 
         AssembledGroupInstance {
@@ -416,13 +558,24 @@ impl MappingEngine {
                 .elements
                 .get(element_idx)?
                 .get(component_idx)
+                .filter(|v| !v.is_empty())
                 .cloned();
         }
 
         // Named path convention
         match path.len() {
-            1 => segment.elements.first()?.first().cloned(),
-            2 => segment.elements.get(1)?.first().cloned(),
+            1 => segment
+                .elements
+                .first()?
+                .first()
+                .filter(|v| !v.is_empty())
+                .cloned(),
+            2 => segment
+                .elements
+                .get(1)?
+                .first()
+                .filter(|v| !v.is_empty())
+                .cloned(),
             _ => None,
         }
     }
@@ -538,37 +691,41 @@ impl MappingEngine {
     /// - Root-level (empty source_group) → map rep 0 as single object
     /// - No discriminator, 1 rep in tree → map as single object
     /// - No discriminator, multiple reps in tree → map ALL reps into a JSON array
+    ///
+    /// When multiple definitions share the same `entity` name, their fields are
+    /// deep-merged into a single JSON object. This allows related TOML files
+    /// (e.g., LOC location + SEQ info + SG10 characteristics) to contribute
+    /// fields to the same BO4E entity.
     pub fn map_all_forward(&self, tree: &AssembledTree) -> serde_json::Value {
         let mut result = serde_json::Map::new();
 
         for def in &self.definitions {
             let entity = &def.meta.entity;
 
-            if let Some(ref disc) = def.meta.discriminator {
+            let bo4e = if let Some(ref disc) = def.meta.discriminator {
                 // Has discriminator — resolve to specific rep
-                if let Some(rep) = Self::resolve_repetition(tree, &def.meta.source_group, disc) {
-                    let bo4e = self.map_forward(tree, def, rep);
-                    result.insert(entity.clone(), bo4e);
-                }
+                Self::resolve_repetition(tree, &def.meta.source_group, disc)
+                    .map(|rep| self.map_forward(tree, def, rep))
             } else if def.meta.source_group.is_empty() {
                 // Root-level mapping — always single object
-                let bo4e = self.map_forward(tree, def, 0);
-                result.insert(entity.clone(), bo4e);
+                Some(self.map_forward(tree, def, 0))
             } else {
                 let num_reps = Self::count_repetitions(tree, &def.meta.source_group);
                 if num_reps <= 1 {
-                    // Single rep — map as object
-                    let bo4e = self.map_forward(tree, def, 0);
-                    result.insert(entity.clone(), bo4e);
+                    Some(self.map_forward(tree, def, 0))
                 } else {
                     // Multiple reps, no discriminator — map all into array
                     let mut items = Vec::new();
                     for rep in 0..num_reps {
-                        let bo4e = self.map_forward(tree, def, rep);
-                        items.push(bo4e);
+                        items.push(self.map_forward(tree, def, rep));
                     }
-                    result.insert(entity.clone(), serde_json::Value::Array(items));
+                    Some(serde_json::Value::Array(items))
                 }
+            };
+
+            if let Some(bo4e) = bo4e {
+                let bo4e = inject_bo4e_metadata(bo4e, &def.meta.bo4e_type);
+                deep_merge_insert(&mut result, entity, bo4e);
             }
         }
 
@@ -662,6 +819,70 @@ fn parse_tag_qualifier(tag_part: &str) -> (String, Option<&str>) {
     }
 }
 
+/// Inject `boTyp` and `versionStruktur` metadata into a BO4E JSON value.
+///
+/// For objects, inserts both fields (without overwriting existing ones).
+/// For arrays, injects into each element object.
+fn inject_bo4e_metadata(mut value: serde_json::Value, bo4e_type: &str) -> serde_json::Value {
+    match &mut value {
+        serde_json::Value::Object(map) => {
+            map.entry("boTyp")
+                .or_insert_with(|| serde_json::Value::String(bo4e_type.to_string()));
+            map.entry("versionStruktur")
+                .or_insert_with(|| serde_json::Value::String("1".to_string()));
+        }
+        serde_json::Value::Array(items) => {
+            for item in items {
+                if let serde_json::Value::Object(map) = item {
+                    map.entry("boTyp")
+                        .or_insert_with(|| serde_json::Value::String(bo4e_type.to_string()));
+                    map.entry("versionStruktur")
+                        .or_insert_with(|| serde_json::Value::String("1".to_string()));
+                }
+            }
+        }
+        _ => {}
+    }
+    value
+}
+
+/// Deep-merge a BO4E value into the result map.
+///
+/// If the entity already exists as an object, new fields are merged in
+/// (existing fields are NOT overwritten). This allows multiple TOML
+/// definitions with the same `entity` name to contribute fields to one object.
+fn deep_merge_insert(
+    result: &mut serde_json::Map<String, serde_json::Value>,
+    entity: &str,
+    bo4e: serde_json::Value,
+) {
+    if let Some(existing) = result.get_mut(entity) {
+        if let (Some(existing_map), serde_json::Value::Object(new_map)) =
+            (existing.as_object_mut(), &bo4e)
+        {
+            for (k, v) in new_map {
+                if let Some(existing_v) = existing_map.get_mut(k) {
+                    // Recursively merge nested objects (e.g., companion types)
+                    if let (Some(existing_inner), Some(new_inner)) =
+                        (existing_v.as_object_mut(), v.as_object())
+                    {
+                        for (ik, iv) in new_inner {
+                            existing_inner
+                                .entry(ik.clone())
+                                .or_insert_with(|| iv.clone());
+                        }
+                    }
+                    // Don't overwrite existing scalar/array values
+                } else {
+                    existing_map.insert(k.clone(), v.clone());
+                }
+            }
+            return;
+        }
+    }
+    result.insert(entity.to_string(), bo4e);
+}
+
 /// Set a value in a nested JSON map using a dotted path.
 /// E.g., "address.city" sets `{"address": {"city": "value"}}`.
 fn set_nested_value(map: &mut serde_json::Map<String, serde_json::Value>, path: &str, val: String) {
@@ -683,4 +904,157 @@ fn set_nested_value(map: &mut serde_json::Map<String, serde_json::Value>, path: 
         parts.last().unwrap().to_string(),
         serde_json::Value::String(val),
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::definition::{MappingDefinition, MappingMeta, StructuredFieldMapping};
+    use std::collections::BTreeMap;
+
+    fn make_def(fields: BTreeMap<String, FieldMapping>) -> MappingDefinition {
+        MappingDefinition {
+            meta: MappingMeta {
+                entity: "Test".to_string(),
+                bo4e_type: "Test".to_string(),
+                companion_type: None,
+                source_group: "SG4".to_string(),
+                source_path: None,
+                discriminator: None,
+            },
+            fields,
+            companion_fields: None,
+            complex_handlers: None,
+        }
+    }
+
+    #[test]
+    fn test_map_reverse_pads_intermediate_empty_elements() {
+        // NAD+Z09+++Muster:Max — positions 0 and 3 populated, 1 and 2 should become [""]
+        let mut fields = BTreeMap::new();
+        fields.insert(
+            "nad.0".to_string(),
+            FieldMapping::Structured(StructuredFieldMapping {
+                target: String::new(),
+                transform: None,
+                when: None,
+                default: Some("Z09".to_string()),
+                enum_map: None,
+            }),
+        );
+        fields.insert(
+            "nad.3.0".to_string(),
+            FieldMapping::Simple("name".to_string()),
+        );
+        fields.insert(
+            "nad.3.1".to_string(),
+            FieldMapping::Simple("vorname".to_string()),
+        );
+
+        let def = make_def(fields);
+        let engine = MappingEngine::from_definitions(vec![]);
+
+        let bo4e = serde_json::json!({
+            "name": "Muster",
+            "vorname": "Max"
+        });
+
+        let instance = engine.map_reverse(&bo4e, &def);
+        assert_eq!(instance.segments.len(), 1);
+
+        let nad = &instance.segments[0];
+        assert_eq!(nad.tag, "NAD");
+        assert_eq!(nad.elements.len(), 4);
+        assert_eq!(nad.elements[0], vec!["Z09"]);
+        // Intermediate positions 1 and 2 should be padded to [""]
+        assert_eq!(nad.elements[1], vec![""]);
+        assert_eq!(nad.elements[2], vec![""]);
+        assert_eq!(nad.elements[3][0], "Muster");
+        assert_eq!(nad.elements[3][1], "Max");
+    }
+
+    #[test]
+    fn test_map_reverse_no_padding_when_contiguous() {
+        // DTM+92:20250531:303 — all three components in element 0, no gaps
+        let mut fields = BTreeMap::new();
+        fields.insert(
+            "dtm.0.0".to_string(),
+            FieldMapping::Structured(StructuredFieldMapping {
+                target: String::new(),
+                transform: None,
+                when: None,
+                default: Some("92".to_string()),
+                enum_map: None,
+            }),
+        );
+        fields.insert(
+            "dtm.0.1".to_string(),
+            FieldMapping::Simple("value".to_string()),
+        );
+        fields.insert(
+            "dtm.0.2".to_string(),
+            FieldMapping::Structured(StructuredFieldMapping {
+                target: String::new(),
+                transform: None,
+                when: None,
+                default: Some("303".to_string()),
+                enum_map: None,
+            }),
+        );
+
+        let def = make_def(fields);
+        let engine = MappingEngine::from_definitions(vec![]);
+
+        let bo4e = serde_json::json!({ "value": "20250531" });
+
+        let instance = engine.map_reverse(&bo4e, &def);
+        let dtm = &instance.segments[0];
+        // Single element with 3 components — no intermediate padding needed
+        assert_eq!(dtm.elements.len(), 1);
+        assert_eq!(dtm.elements[0], vec!["92", "20250531", "303"]);
+    }
+
+    #[test]
+    fn test_map_reverse_with_segment_structure_pads_trailing() {
+        // STS+7++E01 — position 0 and 2 populated, MIG says 5 elements
+        let mut fields = BTreeMap::new();
+        fields.insert(
+            "sts.0".to_string(),
+            FieldMapping::Structured(StructuredFieldMapping {
+                target: String::new(),
+                transform: None,
+                when: None,
+                default: Some("7".to_string()),
+                enum_map: None,
+            }),
+        );
+        fields.insert(
+            "sts.2".to_string(),
+            FieldMapping::Simple("grund".to_string()),
+        );
+
+        let def = make_def(fields);
+
+        // Build a SegmentStructure manually via HashMap
+        let mut counts = std::collections::HashMap::new();
+        counts.insert("STS".to_string(), 5usize);
+        let ss = SegmentStructure {
+            element_counts: counts,
+        };
+
+        let engine = MappingEngine::from_definitions(vec![]).with_segment_structure(ss);
+
+        let bo4e = serde_json::json!({ "grund": "E01" });
+
+        let instance = engine.map_reverse(&bo4e, &def);
+        let sts = &instance.segments[0];
+        // Should have 5 elements: pos 0 = ["7"], pos 1 = [""] (intermediate pad),
+        // pos 2 = ["E01"], pos 3 = [""] (trailing pad), pos 4 = [""] (trailing pad)
+        assert_eq!(sts.elements.len(), 5);
+        assert_eq!(sts.elements[0], vec!["7"]);
+        assert_eq!(sts.elements[1], vec![""]);
+        assert_eq!(sts.elements[2], vec!["E01"]);
+        assert_eq!(sts.elements[3], vec![""]);
+        assert_eq!(sts.elements[4], vec![""]);
+    }
 }

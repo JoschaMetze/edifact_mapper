@@ -1,0 +1,19 @@
+# EnfgDaten Zuordnung (SG10 within SEQ+Z75) for PID 55001.
+# CCI/CAV characteristics, merges into entity "EnfgDaten".
+#
+# CCI+Z61++ZF9  -> merkmal_code (Grundlage EnFG), verringerung_status
+# CAV+ZU5       -> privilegierung_grund
+
+[meta]
+entity = "EnfgDaten"
+bo4e_type = "EnfgDaten"
+companion_type = "EnfgDatenEdifact"
+source_group = "SG4.SG8:3.SG10"
+source_path = "sg4.sg8_z75.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.0" = "merkmal_code"
+"cci.2" = "verringerung_status"
+"cav.0" = "privilegierung_grund"

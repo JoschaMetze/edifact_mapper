@@ -1,16 +1,20 @@
-# Prozess-Referenz mapping for PID 55001.
+# Pruefidentifikator (RFF+Z13) — merges into Prozessdaten.
 #
 # Source: SG4.SG6 → RFF segment (qualifier Z13 = PID reference)
-# RFF+Z13:55001  →  qualifier, pid_id
+# RFF+Z13:55001  →  pruefidentifikator
 #
 # The RFF composite C506 has qualifier at [0][0] and reference at [0][1].
 
 [meta]
-entity = "ProzessReferenz"
-bo4e_type = "ProzessReferenz"
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
 source_group = "SG4.SG6"
 source_path = "sg4.sg6"
+discriminator = "RFF.0.0=Z13"
 
 [fields]
-"rff.0.0" = { target = "", default = "Z13" }
-"rff.0.1" = "pid_id"
+"rff.0.1" = "pruefidentifikator"
+
+[fields."rff.0.0"]
+target = ""
+default = "Z13"

@@ -1,7 +1,7 @@
 //! Integration test for `MappingEngine::map_all_forward()`.
 //!
 //! Loads a PID-filtered MIG for 55001, assembles a fixture,
-//! and verifies that all 15 entity keys are produced with correct values.
+//! and verifies that all entity keys are produced with correct values.
 
 use automapper_generator::parsing::ahb_parser::parse_ahb;
 use automapper_generator::parsing::mig_parser::parse_mig;
@@ -62,21 +62,15 @@ fn test_map_all_forward_55001() {
         serde_json::to_string_pretty(&result).unwrap()
     );
 
-    // All 15 entity keys should be present
+    // All entity keys should be present (Merkmal data merged into parent entities)
     let expected_entities = [
         "Nachricht",
         "Marktteilnehmer",
         "Prozessdaten",
         "Marktlokation",
-        "ProzessReferenz",
-        "Zaehlpunkt",
-        "Messstellenbetrieb",
-        "Geraet",
-        "Netznutzungsabrechnung",
-        "MerkmalZaehlpunkt",
-        "MerkmalMessstellenbetrieb",
-        "MerkmalGeraet",
-        "MerkmalNetznutzung",
+        "Produktpaket",
+        "ProduktpaketPriorisierung",
+        "EnfgDaten",
         "Ansprechpartner",
         "Geschaeftspartner",
     ];
@@ -108,6 +102,11 @@ fn test_map_all_forward_55001() {
         prozess.get("vorgang_id").and_then(|v| v.as_str()).is_some(),
         "Prozessdaten should have vorgang_id"
     );
+    assert_eq!(
+        prozess.get("pruefidentifikator").and_then(|v| v.as_str()),
+        Some("55001"),
+        "Prozessdaten should have pruefidentifikator merged from RFF+Z13"
+    );
 
     let malo = obj.get("Marktlokation").unwrap();
     assert!(
@@ -117,10 +116,16 @@ fn test_map_all_forward_55001() {
         "Marktlokation should have marktlokations_id"
     );
 
+    // Marktlokation should have merged companion data from SG10 (Haushaltskunde)
+    assert!(
+        malo.get("MarktlokationEdifact").is_some(),
+        "Marktlokation should have MarktlokationEdifact companion from SG10"
+    );
+
     // Discriminator-resolved entities should be single objects (not arrays)
     assert!(
-        obj.get("Zaehlpunkt").unwrap().is_object(),
-        "Zaehlpunkt should be a single object (resolved via discriminator)"
+        obj.get("Produktpaket").unwrap().is_object(),
+        "Produktpaket should be a single object (resolved via discriminator)"
     );
     assert!(
         obj.get("Ansprechpartner").unwrap().is_object(),
@@ -129,6 +134,31 @@ fn test_map_all_forward_55001() {
     assert!(
         obj.get("Geschaeftspartner").unwrap().is_object(),
         "Geschaeftspartner should be a single object (resolved via discriminator)"
+    );
+
+    // Companion fields merged from SG10 into parent entities
+    let pp = obj.get("Produktpaket").unwrap();
+    assert!(
+        pp.get("ProduktpaketEdifact").is_some(),
+        "Produktpaket should have companion data from SG10 (Produkteigenschaft)"
+    );
+    let pp_companion = pp.get("ProduktpaketEdifact").unwrap();
+    assert_eq!(
+        pp_companion.get("merkmal_code").and_then(|v| v.as_str()),
+        Some("Z66"),
+        "Produktpaket companion should have merkmal_code Z66"
+    );
+
+    let ppp = obj.get("ProduktpaketPriorisierung").unwrap();
+    assert!(
+        ppp.get("ProduktpaketPriorisierungEdifact").is_some(),
+        "ProduktpaketPriorisierung should have companion data from SG10"
+    );
+
+    let enfg = obj.get("EnfgDaten").unwrap();
+    assert!(
+        enfg.get("EnfgDatenEdifact").is_some(),
+        "EnfgDaten should have companion data from SG10 (EnFG privilege)"
     );
 
     eprintln!(

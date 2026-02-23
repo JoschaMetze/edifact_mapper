@@ -11,27 +11,40 @@ fn test_load_real_mapping_files() {
 
     let engine = MappingEngine::load(mappings_dir).unwrap();
     assert!(
-        engine.definitions().len() >= 15,
-        "Expected at least 15 mapping files, got {}",
+        engine.definitions().len() >= 17,
+        "Expected at least 17 mapping files, got {}",
         engine.definitions().len()
     );
     assert!(engine.definition_for_entity("Marktlokation").is_some());
     assert!(engine.definition_for_entity("Marktteilnehmer").is_some());
     assert!(engine.definition_for_entity("Geschaeftspartner").is_some());
     assert!(engine.definition_for_entity("Nachricht").is_some());
-    assert!(engine.definition_for_entity("Zaehlpunkt").is_some());
-    assert!(engine.definition_for_entity("Messstellenbetrieb").is_some());
-    assert!(engine.definition_for_entity("Geraet").is_some());
+    assert!(engine.definition_for_entity("Produktpaket").is_some());
     assert!(engine
-        .definition_for_entity("Netznutzungsabrechnung")
+        .definition_for_entity("ProduktpaketPriorisierung")
         .is_some());
+    assert!(engine.definition_for_entity("EnfgDaten").is_some());
     assert!(engine.definition_for_entity("Ansprechpartner").is_some());
-    assert!(engine.definition_for_entity("MerkmalZaehlpunkt").is_some());
     assert!(engine
-        .definition_for_entity("MerkmalMessstellenbetrieb")
+        .definition_for_entity("RuhendeMarktlokation")
         .is_some());
-    assert!(engine.definition_for_entity("MerkmalGeraet").is_some());
-    assert!(engine.definition_for_entity("MerkmalNetznutzung").is_some());
+    assert!(engine.definition_for_entity("Kontakt").is_some());
+    // Merkmal/zuordnung data is now merged into parent entities (Produktpaket, etc.)
+    // via companion_fields — verify SG10 definitions exist by source_group
+    assert!(
+        engine
+            .definitions()
+            .iter()
+            .any(|d| d.meta.source_group == "SG4.SG8:0.SG10"),
+        "Should have SG10 definition for Produktpaket zuordnung"
+    );
+    assert!(
+        engine
+            .definitions()
+            .iter()
+            .any(|d| d.meta.source_group == "SG4.SG8:1.SG10"),
+        "Should have SG10 definition for ProduktpaketPriorisierung zuordnung"
+    );
 }
 
 #[test]
@@ -42,12 +55,16 @@ fn test_marktlokation_mapping_structure() {
     }
 
     let engine = MappingEngine::load(mappings_dir).unwrap();
-    let def = engine.definition_for_entity("Marktlokation").unwrap();
+    let def = engine
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Marktlokation" && d.meta.source_group == "SG4.SG5")
+        .expect("Marktlokation SG5 definition");
 
     assert_eq!(def.meta.bo4e_type, "Marktlokation");
     assert_eq!(def.meta.source_group, "SG4.SG5");
-    assert!(def.fields.contains_key("loc.c517.d3225"));
-    assert!(def.fields.contains_key("loc.d3227"));
+    assert!(def.fields.contains_key("loc.1.0"));
+    assert!(def.fields.contains_key("loc.0"));
 }
 
 #[test]

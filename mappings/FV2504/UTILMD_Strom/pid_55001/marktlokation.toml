@@ -1,14 +1,16 @@
-# Marktlokation entity mapping for PID 55001 (Anmeldung).
+# Marktlokation entity mapping for PID 55001 (Anmeldung verb. MaLo).
 #
-# Source: SG4 → SG5 → LOC segment (qualifier Z16 = Marktlokation)
-# The LOC segment carries the MaLo ID in C517/3225.
+# Source: SG4 -> SG5 -> LOC segment (qualifier Z16 = Marktlokation)
+# The LOC segment carries the MaLo ID in C517/D3225.
+# Enriched by SG8 Z01 (Daten der Marktlokation) and its SG10 (Haushaltskunde).
 
 [meta]
 entity = "Marktlokation"
 bo4e_type = "Marktlokation"
 source_group = "SG4.SG5"
 source_path = "sg4.sg5_z16"
+discriminator = "LOC.0.0=Z16"
 
 [fields]
-"loc.d3227" = { target = "", default = "Z16" }
-"loc.c517.d3225" = "marktlokations_id"
+"loc.0" = { target = "", default = "Z16" }
+"loc.1.0" = "marktlokations_id"

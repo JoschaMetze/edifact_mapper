@@ -1,10 +1,10 @@
-# Prozessdaten (process data) mapping for PID 55001.
+# Prozessdaten (process data) mapping for PID 55001 (Anmeldung verb. MaLo).
 #
 # Source: SG4 top-level segments (IDE, DTM, STS)
-# IDE+24+ALEXANDE542328517       → vorgang_id
-# DTM+92:20250531...:303         → gueltig_ab (valid from)
-# DTM+93:20251231...:303         → gueltig_bis (valid to)
-# STS+7++E01+ZW4+E03             → status fields
+# IDE+24+ALEXANDE542328517       -> vorgang_id (Transaktion)
+# DTM+92:20250531...:303         -> gueltig_ab (Beginn der Lieferung)
+# DTM+93:20251231...:303         -> gueltig_bis (Datum Vertragsende)
+# STS+7++E01+ZW4+E03             -> transaktionsgrund (Verbrauchende MaLo / ruhende MaLo)
 #
 # Uses qualifier-based segment selection: dtm[92] selects the DTM
 # where elements[0][0] == "92".
@@ -16,23 +16,22 @@ source_group = "SG4"
 source_path = "sg4"
 
 [fields]
-# IDE segment
+# IDE segment (Transaktion)
 "ide.0" = { target = "", default = "24" }
 "ide.1" = "vorgang_id"
 
-# DTM+92 (valid from) — composite C507: qualifier, value, format
+# DTM+92 (Beginn der Lieferung) — composite C507: qualifier, value, format
 "dtm[92].0.0" = { target = "", default = "92" }
 "dtm[92].0.1" = "gueltig_ab"
 "dtm[92].0.2" = { target = "", default = "303" }
 
-# DTM+93 (valid to)
+# DTM+93 (Datum Vertragsende)
 "dtm[93].0.0" = { target = "", default = "93" }
 "dtm[93].0.1" = "gueltig_bis"
 "dtm[93].0.2" = { target = "", default = "303" }
 
-# STS segment — C601.D9015 Statustyp, C556.D9013 Transaktionsgrund
+# STS segment — Transaktionsgrund (ZW4=Verbrauchende MaLo, ZAP=ruhende MaLo)
 "sts.0" = { target = "", default = "7" }
-"sts.1" = { target = "", default = "" }
 "sts.2" = "transaktionsgrund"
 "sts.3" = "transaktionsgrund_ergaenzung"
 "sts.4" = "transaktionsgrund_ergaenzung_befristete_anmeldung"

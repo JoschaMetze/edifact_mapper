@@ -200,8 +200,10 @@ fn test_prozessdaten_roundtrip_full() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Prozessdaten")
-        .expect("Prozessdaten definition");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Prozessdaten" && d.meta.source_group == "SG4")
+        .expect("Prozessdaten SG4 definition");
 
     let original = MappingEngine::resolve_group_instance(&tree, "SG4", 0).unwrap();
     let bo4e = engine.map_forward(&tree, def, 0);
@@ -260,8 +262,10 @@ fn test_marktlokation_roundtrip_full() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Marktlokation")
-        .expect("Marktlokation definition");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Marktlokation" && d.meta.source_group == "SG4.SG5")
+        .expect("Marktlokation SG5 definition");
 
     let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG5", 0).unwrap();
     let bo4e = engine.map_forward(&tree, def, 0);
@@ -275,10 +279,10 @@ fn test_marktlokation_roundtrip_full() {
     );
 }
 
-// ── ProzessReferenz: SG4.SG6 → RFF+Z13 ──
+// ── Prozessdaten RFF+Z13: SG4.SG6 → pruefidentifikator ──
 
 #[test]
-fn test_prozess_referenz_roundtrip_full() {
+fn test_prozessdaten_rff_z13_roundtrip_full() {
     let Some(mig) = load_pid_filtered_mig("55001") else {
         return;
     };
@@ -288,28 +292,30 @@ fn test_prozess_referenz_roundtrip_full() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("ProzessReferenz")
-        .expect("ProzessReferenz definition");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.source_group == "SG4.SG6")
+        .expect("SG4.SG6 definition");
 
     let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG6", 0).unwrap();
     let bo4e = engine.map_forward(&tree, def, 0);
     let reconstructed = engine.map_reverse(&bo4e, def);
 
     let (matched, total) = compare_segments(
-        "ProzessReferenz",
+        "Prozessdaten(RFF)",
         &original.segments,
         &reconstructed.segments,
     );
     assert_eq!(
         matched, total,
-        "ProzessReferenz: all {total} segments should roundtrip"
+        "Prozessdaten(RFF): all {total} segments should roundtrip"
     );
 }
 
-// ── Zaehlpunkt: SG4.SG8 rep 0 → SEQ+Z79, PIA ──
+// ── Produktpaket: SG4.SG8 rep 0 → SEQ+Z79, PIA ──
 
 #[test]
-fn test_zaehlpunkt_roundtrip() {
+fn test_produktpaket_roundtrip() {
     let Some(mig) = load_pid_filtered_mig("55001") else {
         return;
     };
@@ -319,34 +325,39 @@ fn test_zaehlpunkt_roundtrip() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Zaehlpunkt")
-        .expect("Zaehlpunkt definition");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Produktpaket" && d.meta.source_group == "SG4.SG8")
+        .expect("Produktpaket SG8 definition");
 
-    // SG8 rep 0 = Z79
+    // SG8 rep 0 = Z79 (Bestandteil eines Produktpakets)
     let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8", 0).unwrap();
     let bo4e = engine.map_forward(&tree, def, 0);
-    eprintln!("Zaehlpunkt BO4E: {}", bo4e);
+    eprintln!("Produktpaket BO4E: {}", bo4e);
 
-    assert_eq!(bo4e.get("position").and_then(|v| v.as_str()), Some("1"));
     assert_eq!(
-        bo4e.get("zaehlpunktnummer").and_then(|v| v.as_str()),
+        bo4e.get("produktpaket_id").and_then(|v| v.as_str()),
+        Some("1")
+    );
+    assert_eq!(
+        bo4e.get("produkt_code").and_then(|v| v.as_str()),
         Some("9991000002082")
     );
 
     let reconstructed = engine.map_reverse(&bo4e, def);
 
     let (matched, total) =
-        compare_segments("Zaehlpunkt", &original.segments, &reconstructed.segments);
+        compare_segments("Produktpaket", &original.segments, &reconstructed.segments);
     assert_eq!(
         matched, total,
-        "Zaehlpunkt: all {total} segments should roundtrip"
+        "Produktpaket: all {total} segments should roundtrip"
     );
 }
 
-// ── Messstellenbetrieb: SG4.SG8 rep 1 → SEQ+ZH0 ──
+// ── ProduktpaketPriorisierung: SG4.SG8 rep 1 → SEQ+ZH0 ──
 
 #[test]
-fn test_messstellenbetrieb_roundtrip() {
+fn test_produktpaket_priorisierung_roundtrip() {
     let Some(mig) = load_pid_filtered_mig("55001") else {
         return;
     };
@@ -356,31 +367,33 @@ fn test_messstellenbetrieb_roundtrip() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Messstellenbetrieb")
-        .expect("Messstellenbetrieb definition");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "ProduktpaketPriorisierung" && d.meta.source_group == "SG4.SG8")
+        .expect("ProduktpaketPriorisierung SG8 definition");
 
-    // SG8 rep 1 = ZH0
+    // SG8 rep 1 = ZH0 (Priorisierung erforderliches Produktpaket)
     let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8", 1).unwrap();
     let bo4e = engine.map_forward(&tree, def, 1);
-    eprintln!("Messstellenbetrieb BO4E: {}", bo4e);
+    eprintln!("ProduktpaketPriorisierung BO4E: {}", bo4e);
 
     let reconstructed = engine.map_reverse(&bo4e, def);
 
     let (matched, total) = compare_segments(
-        "Messstellenbetrieb",
+        "ProduktpaketPriorisierung",
         &original.segments,
         &reconstructed.segments,
     );
     assert_eq!(
         matched, total,
-        "Messstellenbetrieb: all {total} segments should roundtrip"
+        "ProduktpaketPriorisierung: all {total} segments should roundtrip"
     );
 }
 
-// ── Geraet: SG4.SG8 rep 2 → SEQ+Z01 ──
+// ── Marktlokation Daten: SG4.SG8 rep 2 → SEQ+Z01 ──
 
 #[test]
-fn test_geraet_roundtrip() {
+fn test_marktlokation_daten_roundtrip() {
     let Some(mig) = load_pid_filtered_mig("55001") else {
         return;
     };
@@ -390,27 +403,33 @@ fn test_geraet_roundtrip() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Geraet")
-        .expect("Geraet definition");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Marktlokation" && d.meta.source_group == "SG4.SG8")
+        .expect("Marktlokation SG8 definition");
 
-    // SG8 rep 2 = Z01
+    // SG8 rep 2 = Z01 (Daten der Marktlokation)
     let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8", 2).unwrap();
     let bo4e = engine.map_forward(&tree, def, 2);
-    eprintln!("Geraet BO4E: {}", bo4e);
+    eprintln!("Marktlokation Daten BO4E: {}", bo4e);
 
     let reconstructed = engine.map_reverse(&bo4e, def);
 
-    let (matched, total) = compare_segments("Geraet", &original.segments, &reconstructed.segments);
+    let (matched, total) = compare_segments(
+        "Marktlokation Daten",
+        &original.segments,
+        &reconstructed.segments,
+    );
     assert_eq!(
         matched, total,
-        "Geraet: all {total} segments should roundtrip"
+        "Marktlokation Daten: all {total} segments should roundtrip"
     );
 }
 
-// ── Netznutzungsabrechnung: SG4.SG8 rep 3 → SEQ+Z75 ──
+// ── EnfgDaten: SG4.SG8 rep 3 → SEQ+Z75 ──
 
 #[test]
-fn test_netznutzungsabrechnung_roundtrip() {
+fn test_enfg_daten_roundtrip() {
     let Some(mig) = load_pid_filtered_mig("55001") else {
         return;
     };
@@ -420,150 +439,30 @@ fn test_netznutzungsabrechnung_roundtrip() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("Netznutzungsabrechnung")
-        .expect("Netznutzungsabrechnung definition");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "EnfgDaten" && d.meta.source_group == "SG4.SG8")
+        .expect("EnfgDaten SG8 definition");
 
-    // SG8 rep 3 = Z75
+    // SG8 rep 3 = Z75 (Daten des Kunden des Lieferanten / EnFG)
     let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8", 3).unwrap();
     let bo4e = engine.map_forward(&tree, def, 3);
-    eprintln!("Netznutzungsabrechnung BO4E: {}", bo4e);
-
-    let reconstructed = engine.map_reverse(&bo4e, def);
-
-    let (matched, total) = compare_segments(
-        "Netznutzungsabrechnung",
-        &original.segments,
-        &reconstructed.segments,
-    );
-    assert_eq!(
-        matched, total,
-        "Netznutzungsabrechnung: all {total} segments should roundtrip"
-    );
-}
-
-// ── MerkmalZaehlpunkt: SG4.SG8:0.SG10 → CCI+Z66, CAV+ZH9, CAV+ZV4 ──
-
-#[test]
-fn test_merkmal_zaehlpunkt_roundtrip() {
-    let Some(mig) = load_pid_filtered_mig("55001") else {
-        return;
-    };
-    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
-        return;
-    };
-    let Some(engine) = load_engine() else { return };
-
-    let def = engine
-        .definition_for_entity("MerkmalZaehlpunkt")
-        .expect("MerkmalZaehlpunkt definition");
-
-    // Navigate to SG8[0].SG10[0] using intermediate rep syntax
-    let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8:0.SG10", 0).unwrap();
-    eprintln!("MerkmalZaehlpunkt original segments:");
-    for s in &original.segments {
-        eprintln!("  {} {:?}", s.tag, s.elements);
-    }
-
-    let bo4e = engine.map_forward(&tree, def, 0);
-    eprintln!("MerkmalZaehlpunkt BO4E: {}", bo4e);
-
-    assert_eq!(
-        bo4e.get("merkmal_code").and_then(|v| v.as_str()),
-        Some("Z66")
-    );
-    assert_eq!(
-        bo4e.get("messlokation_ref").and_then(|v| v.as_str()),
-        Some("9991000002107")
-    );
-    assert_eq!(
-        bo4e.get("jahresverbrauch").and_then(|v| v.as_str()),
-        Some("4000")
-    );
-
-    let reconstructed = engine.map_reverse(&bo4e, def);
-    eprintln!("MerkmalZaehlpunkt reconstructed segments:");
-    for s in &reconstructed.segments {
-        eprintln!("  {} {:?}", s.tag, s.elements);
-    }
-
-    let (matched, total) = compare_segments(
-        "MerkmalZaehlpunkt",
-        &original.segments,
-        &reconstructed.segments,
-    );
-    assert_eq!(
-        matched, total,
-        "MerkmalZaehlpunkt: all {total} segments should roundtrip"
-    );
-}
-
-// ── MerkmalMessstellenbetrieb: SG4.SG8:1.SG10 → CCI+Z65, CAV+Z75 ──
-
-#[test]
-fn test_merkmal_messstellenbetrieb_roundtrip() {
-    let Some(mig) = load_pid_filtered_mig("55001") else {
-        return;
-    };
-    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
-        return;
-    };
-    let Some(engine) = load_engine() else { return };
-
-    let def = engine
-        .definition_for_entity("MerkmalMessstellenbetrieb")
-        .expect("MerkmalMessstellenbetrieb definition");
-
-    let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8:1.SG10", 0).unwrap();
-    let bo4e = engine.map_forward(&tree, def, 0);
-    eprintln!("MerkmalMessstellenbetrieb BO4E: {}", bo4e);
-
-    let reconstructed = engine.map_reverse(&bo4e, def);
-
-    let (matched, total) = compare_segments(
-        "MerkmalMessstellenbetrieb",
-        &original.segments,
-        &reconstructed.segments,
-    );
-    assert_eq!(
-        matched, total,
-        "MerkmalMessstellenbetrieb: all {total} segments should roundtrip"
-    );
-}
-
-// ── MerkmalGeraet: SG4.SG8:2.SG10 → CCI+++Z18 ──
-
-#[test]
-fn test_merkmal_geraet_roundtrip() {
-    let Some(mig) = load_pid_filtered_mig("55001") else {
-        return;
-    };
-    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
-        return;
-    };
-    let Some(engine) = load_engine() else { return };
-
-    let def = engine
-        .definition_for_entity("MerkmalGeraet")
-        .expect("MerkmalGeraet definition");
-
-    let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8:2.SG10", 0).unwrap();
-    let bo4e = engine.map_forward(&tree, def, 0);
-    eprintln!("MerkmalGeraet BO4E: {}", bo4e);
+    eprintln!("EnfgDaten BO4E: {}", bo4e);
 
     let reconstructed = engine.map_reverse(&bo4e, def);
 
     let (matched, total) =
-        compare_segments("MerkmalGeraet", &original.segments, &reconstructed.segments);
+        compare_segments("EnfgDaten", &original.segments, &reconstructed.segments);
     assert_eq!(
         matched, total,
-        "MerkmalGeraet: all {total} segments should roundtrip"
+        "EnfgDaten: all {total} segments should roundtrip"
     );
 }
 
-// ── MerkmalNetznutzung: SG4.SG8:3.SG10 → CCI+Z61, CAV+ZU5 ──
+// ── Produktpaket Zuordnung: SG4.SG8:0.SG10 → CCI+Z66, CAV+ZH9, CAV+ZV4 ──
 
 #[test]
-fn test_merkmal_netznutzung_roundtrip() {
+fn test_produktpaket_zuordnung_roundtrip() {
     let Some(mig) = load_pid_filtered_mig("55001") else {
         return;
     };
@@ -573,23 +472,149 @@ fn test_merkmal_netznutzung_roundtrip() {
     let Some(engine) = load_engine() else { return };
 
     let def = engine
-        .definition_for_entity("MerkmalNetznutzung")
-        .expect("MerkmalNetznutzung definition");
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Produktpaket" && d.meta.source_group == "SG4.SG8:0.SG10")
+        .expect("Produktpaket SG10 definition");
 
-    let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8:3.SG10", 0).unwrap();
+    let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8:0.SG10", 0).unwrap();
     let bo4e = engine.map_forward(&tree, def, 0);
-    eprintln!("MerkmalNetznutzung BO4E: {}", bo4e);
+    eprintln!("Produktpaket zuordnung BO4E: {}", bo4e);
+
+    // Companion fields should be under the companion type key
+    let companion = bo4e
+        .get("ProduktpaketEdifact")
+        .expect("Should have companion");
+    assert_eq!(
+        companion.get("merkmal_code").and_then(|v| v.as_str()),
+        Some("Z66")
+    );
+    assert_eq!(
+        companion.get("messlokation_ref").and_then(|v| v.as_str()),
+        Some("9991000002107")
+    );
+    assert_eq!(
+        companion.get("produktdetail_wert").and_then(|v| v.as_str()),
+        Some("4000")
+    );
 
     let reconstructed = engine.map_reverse(&bo4e, def);
 
     let (matched, total) = compare_segments(
-        "MerkmalNetznutzung",
+        "Produktpaket zuordnung",
         &original.segments,
         &reconstructed.segments,
     );
     assert_eq!(
         matched, total,
-        "MerkmalNetznutzung: all {total} segments should roundtrip"
+        "Produktpaket zuordnung: all {total} segments should roundtrip"
+    );
+}
+
+// ── ProduktpaketPriorisierung Zuordnung: SG4.SG8:1.SG10 → CCI+Z65, CAV+Z75 ──
+
+#[test]
+fn test_produktpaket_priorisierung_zuordnung_roundtrip() {
+    let Some(mig) = load_pid_filtered_mig("55001") else {
+        return;
+    };
+    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
+        return;
+    };
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definitions()
+        .iter()
+        .find(|d| {
+            d.meta.entity == "ProduktpaketPriorisierung" && d.meta.source_group == "SG4.SG8:1.SG10"
+        })
+        .expect("ProduktpaketPriorisierung SG10 definition");
+
+    let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8:1.SG10", 0).unwrap();
+    let bo4e = engine.map_forward(&tree, def, 0);
+    eprintln!("ProduktpaketPriorisierung zuordnung BO4E: {}", bo4e);
+
+    let reconstructed = engine.map_reverse(&bo4e, def);
+
+    let (matched, total) = compare_segments(
+        "ProduktpaketPriorisierung zuordnung",
+        &original.segments,
+        &reconstructed.segments,
+    );
+    assert_eq!(
+        matched, total,
+        "ProduktpaketPriorisierung zuordnung: all {total} segments should roundtrip"
+    );
+}
+
+// ── Marktlokation Zuordnung: SG4.SG8:2.SG10 → CCI+++Z18 ──
+
+#[test]
+fn test_marktlokation_zuordnung_roundtrip() {
+    let Some(mig) = load_pid_filtered_mig("55001") else {
+        return;
+    };
+    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
+        return;
+    };
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Marktlokation" && d.meta.source_group == "SG4.SG8:2.SG10")
+        .expect("Marktlokation SG10 definition");
+
+    let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8:2.SG10", 0).unwrap();
+    let bo4e = engine.map_forward(&tree, def, 0);
+    eprintln!("Marktlokation zuordnung BO4E: {}", bo4e);
+
+    let reconstructed = engine.map_reverse(&bo4e, def);
+
+    let (matched, total) = compare_segments(
+        "Marktlokation zuordnung",
+        &original.segments,
+        &reconstructed.segments,
+    );
+    assert_eq!(
+        matched, total,
+        "Marktlokation zuordnung: all {total} segments should roundtrip"
+    );
+}
+
+// ── EnfgDaten Zuordnung: SG4.SG8:3.SG10 → CCI+Z61, CAV+ZU5 ──
+
+#[test]
+fn test_enfg_daten_zuordnung_roundtrip() {
+    let Some(mig) = load_pid_filtered_mig("55001") else {
+        return;
+    };
+    let Some(tree) = assemble_fixture(&mig, "55001_UTILMD_S2.1_ALEXANDE121980.edi") else {
+        return;
+    };
+    let Some(engine) = load_engine() else { return };
+
+    let def = engine
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "EnfgDaten" && d.meta.source_group == "SG4.SG8:3.SG10")
+        .expect("EnfgDaten SG10 definition");
+
+    let original = MappingEngine::resolve_group_instance(&tree, "SG4.SG8:3.SG10", 0).unwrap();
+    let bo4e = engine.map_forward(&tree, def, 0);
+    eprintln!("EnfgDaten zuordnung BO4E: {}", bo4e);
+
+    let reconstructed = engine.map_reverse(&bo4e, def);
+
+    let (matched, total) = compare_segments(
+        "EnfgDaten zuordnung",
+        &original.segments,
+        &reconstructed.segments,
+    );
+    assert_eq!(
+        matched, total,
+        "EnfgDaten zuordnung: all {total} segments should roundtrip"
     );
 }
 
@@ -701,23 +726,25 @@ fn test_all_entities_roundtrip_55001() {
         ("Marktteilnehmer", "SG2", 1),
         ("Prozessdaten", "SG4", 0),
         ("Marktlokation", "SG4.SG5", 0),
-        ("ProzessReferenz", "SG4.SG6", 0),
-        ("Zaehlpunkt", "SG4.SG8", 0),
-        ("Messstellenbetrieb", "SG4.SG8", 1),
-        ("Geraet", "SG4.SG8", 2),
-        ("Netznutzungsabrechnung", "SG4.SG8", 3),
-        ("MerkmalZaehlpunkt", "SG4.SG8:0.SG10", 0),
-        ("MerkmalMessstellenbetrieb", "SG4.SG8:1.SG10", 0),
-        ("MerkmalGeraet", "SG4.SG8:2.SG10", 0),
-        ("MerkmalNetznutzung", "SG4.SG8:3.SG10", 0),
+        ("Prozessdaten", "SG4.SG6", 0),
+        ("Produktpaket", "SG4.SG8", 0),
+        ("ProduktpaketPriorisierung", "SG4.SG8", 1),
+        ("Marktlokation", "SG4.SG8", 2),
+        ("EnfgDaten", "SG4.SG8", 3),
+        ("Produktpaket", "SG4.SG8:0.SG10", 0),
+        ("ProduktpaketPriorisierung", "SG4.SG8:1.SG10", 0),
+        ("Marktlokation", "SG4.SG8:2.SG10", 0),
+        ("EnfgDaten", "SG4.SG8:3.SG10", 0),
         ("Ansprechpartner", "SG4.SG12", 0),
         ("Geschaeftspartner", "SG4.SG12", 1),
     ];
 
     for (entity_name, source_group, rep) in &entities {
         let def = engine
-            .definition_for_entity(entity_name)
-            .unwrap_or_else(|| panic!("Missing definition for {entity_name}"));
+            .definitions()
+            .iter()
+            .find(|d| d.meta.entity == *entity_name && d.meta.source_group == *source_group)
+            .unwrap_or_else(|| panic!("Missing definition for {entity_name} at {source_group}"));
 
         // Get original segments
         let original_segments = if source_group.is_empty() {
@@ -734,11 +761,7 @@ fn test_all_entities_roundtrip_55001() {
         };
 
         // Forward + reverse
-        let bo4e = if source_group.is_empty() {
-            engine.map_forward(&tree, def, *rep)
-        } else {
-            engine.map_forward(&tree, def, *rep)
-        };
+        let bo4e = engine.map_forward(&tree, def, *rep);
         let reconstructed = engine.map_reverse(&bo4e, def);
 
         let (matched, total) =
