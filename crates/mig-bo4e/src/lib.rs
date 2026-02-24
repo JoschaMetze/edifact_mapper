@@ -15,6 +15,7 @@
 //! ```
 
 pub mod definition;
+pub mod code_lookup;
 pub mod engine;
 pub mod error;
 pub mod handlers;
