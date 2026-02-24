@@ -711,6 +711,10 @@ impl MappingEngine {
         for part in &parts {
             current = current.get(part)?;
         }
+        // Handle enriched code objects: {"code": "Z15", "meaning": "..."}
+        if let Some(code) = current.get("code").and_then(|v| v.as_str()) {
+            return Some(code.to_string());
+        }
         current.as_str().map(|s| s.to_string())
     }
 
@@ -2098,5 +2102,52 @@ mod tests {
         let hk = &bo4e_enriched["MarktlokationEdifact"]["haushaltskunde"];
         assert_eq!(hk["code"].as_str(), Some("Z15"));
         assert_eq!(hk["meaning"].as_str(), Some("Haushaltskunde"));
+    }
+
+    #[test]
+    fn test_reverse_mapping_accepts_enriched_companion() {
+        // Reverse mapping should accept both plain string and enriched object format
+        let mut companion_fields = BTreeMap::new();
+        companion_fields.insert(
+            "cci.2".to_string(),
+            FieldMapping::Simple("haushaltskunde".to_string()),
+        );
+
+        let def = MappingDefinition {
+            meta: MappingMeta {
+                entity: "Test".to_string(),
+                bo4e_type: "Test".to_string(),
+                companion_type: Some("TestEdifact".to_string()),
+                source_group: "SG4".to_string(),
+                source_path: None,
+                discriminator: None,
+            },
+            fields: BTreeMap::new(),
+            companion_fields: Some(companion_fields),
+            complex_handlers: None,
+        };
+
+        let engine = MappingEngine::from_definitions(vec![]);
+
+        // Test 1: Plain string format (backward compat)
+        let bo4e_plain = serde_json::json!({
+            "TestEdifact": {
+                "haushaltskunde": "Z15"
+            }
+        });
+        let instance_plain = engine.map_reverse(&bo4e_plain, &def);
+        assert_eq!(instance_plain.segments[0].elements[2], vec!["Z15"]);
+
+        // Test 2: Enriched object format
+        let bo4e_enriched = serde_json::json!({
+            "TestEdifact": {
+                "haushaltskunde": {
+                    "code": "Z15",
+                    "meaning": "Haushaltskunde gem. EnWG"
+                }
+            }
+        });
+        let instance_enriched = engine.map_reverse(&bo4e_enriched, &def);
+        assert_eq!(instance_enriched.segments[0].elements[2], vec!["Z15"]);
     }
 }
