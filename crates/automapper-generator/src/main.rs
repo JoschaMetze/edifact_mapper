@@ -249,6 +249,33 @@ enum Commands {
         #[arg(long)]
         output_dir: PathBuf,
     },
+
+    /// Generate TypeScript type definitions from TOML mappings and PID schemas
+    GenerateTypescript {
+        /// PIDs to generate types for (comma-separated, e.g., "55001,55002")
+        #[arg(long)]
+        pids: String,
+
+        /// Directory containing pid_*_schema.json files
+        #[arg(long)]
+        schema_dir: PathBuf,
+
+        /// Base directory for TOML mappings (e.g., "mappings")
+        #[arg(long)]
+        mappings_dir: PathBuf,
+
+        /// Format version (e.g., "FV2504")
+        #[arg(long)]
+        format_version: String,
+
+        /// Message type variant (e.g., "UTILMD_Strom")
+        #[arg(long)]
+        message_type: String,
+
+        /// Output directory for generated .d.ts files
+        #[arg(long)]
+        output_dir: PathBuf,
+    },
 }
 
 /// Infer energy variant (Strom/Gas) from a filename.
@@ -893,6 +920,36 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 println!("\nNo differences found.");
             }
 
+            Ok(())
+        }
+        Commands::GenerateTypescript {
+            pids,
+            schema_dir,
+            mappings_dir,
+            format_version,
+            message_type,
+            output_dir,
+        } => {
+            let pid_list: Vec<&str> = pids.split(',').map(|s| s.trim()).collect();
+            eprintln!(
+                "Generating TypeScript types for PIDs: {:?} ({} {})",
+                pid_list, message_type, format_version
+            );
+
+            let files = automapper_generator::codegen::typescript_gen::generate_typescript(
+                &pid_list,
+                &schema_dir,
+                &mappings_dir,
+                &format_version,
+                &message_type,
+                &output_dir,
+            )?;
+
+            eprintln!("\n=== TypeScript Generation Complete ===");
+            for f in &files {
+                eprintln!("  Generated: {}", f);
+            }
+            eprintln!("Output: {:?}", output_dir);
             Ok(())
         }
         Commands::ValidateSchema {
