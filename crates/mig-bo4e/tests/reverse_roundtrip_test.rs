@@ -104,7 +104,8 @@ fn test_forward_reverse_roundtrip_55001() {
     let original_tree = assembler.assemble_generic(&msg_segs).unwrap();
 
     // Step 3: Forward mapping → MappedMessage
-    let mapped = MappingEngine::map_interchange(&msg_engine, &tx_engine, &original_tree, "SG4", true);
+    let mapped =
+        MappingEngine::map_interchange(&msg_engine, &tx_engine, &original_tree, "SG4", true);
 
     // Verify we got meaningful forward output
     assert!(
@@ -209,7 +210,8 @@ fn test_forward_reverse_roundtrip_55001_dev_fixture() {
     let original_tree = assembler.assemble_generic(&msg_segs).unwrap();
 
     // Forward → Reverse
-    let mapped = MappingEngine::map_interchange(&msg_engine, &tx_engine, &original_tree, "SG4", true);
+    let mapped =
+        MappingEngine::map_interchange(&msg_engine, &tx_engine, &original_tree, "SG4", true);
     let mut reverse_tree =
         MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4");
 

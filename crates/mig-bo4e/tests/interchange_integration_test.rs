@@ -86,8 +86,13 @@ fn test_interchange_hierarchy_from_55001_fixture() {
                 .unwrap();
 
             // Map with split engines
-            let mapped =
-                mig_bo4e::MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", true);
+            let mapped = mig_bo4e::MappingEngine::map_interchange(
+                &msg_engine,
+                &tx_engine,
+                &tree,
+                "SG4",
+                true,
+            );
 
             // Verify message-level stammdaten
             assert!(

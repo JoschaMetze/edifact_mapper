@@ -107,8 +107,12 @@ impl MigServiceRegistry {
                                     Ok(engine) => {
                                         // Attach CodeLookup from any available PID schema
                                         // (root_segments are identical across all PIDs)
-                                        let engine =
-                                            attach_code_lookup_for_message(&fv, &variant, &variant_path, engine);
+                                        let engine = attach_code_lookup_for_message(
+                                            &fv,
+                                            &variant,
+                                            &variant_path,
+                                            engine,
+                                        );
                                         let key = format!("{}/{}", fv, variant);
                                         tracing::info!(
                                             "Loaded {} message-level TOML mappings for {key}",

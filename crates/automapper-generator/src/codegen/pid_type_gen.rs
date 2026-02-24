@@ -1097,7 +1097,6 @@ fn group_to_schema_value(
         .map(|seg_id| {
             let mig_number = group.segment_mig_numbers.get(seg_id);
 
-
             // Direct Number-based lookup (precise), fall back to group search
             let mig_seg = mig_number
                 .and_then(|num| number_index.get(num).copied())

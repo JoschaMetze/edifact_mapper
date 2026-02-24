@@ -297,40 +297,40 @@ impl MappingEngine {
 
                     // Enrich code fields with meaning from PID schema
                     if enrich_codes {
-                    if let (Some(ref code_lookup), Some(ref source_path)) =
-                        (&self.code_lookup, &def.meta.source_path)
-                    {
-                        let (seg_tag, _qualifier) =
-                            parse_tag_qualifier(path.split('.').next().unwrap_or(""));
-                        let parts: Vec<&str> = path.split('.').collect();
-                        let (element_idx, component_idx) =
-                            Self::parse_element_component(&parts[1..]);
+                        if let (Some(ref code_lookup), Some(ref source_path)) =
+                            (&self.code_lookup, &def.meta.source_path)
+                        {
+                            let (seg_tag, _qualifier) =
+                                parse_tag_qualifier(path.split('.').next().unwrap_or(""));
+                            let parts: Vec<&str> = path.split('.').collect();
+                            let (element_idx, component_idx) =
+                                Self::parse_element_component(&parts[1..]);
 
-                        if code_lookup.is_code_field(
-                            source_path,
-                            &seg_tag,
-                            element_idx,
-                            component_idx,
-                        ) {
-                            let meaning = code_lookup
-                                .meaning_for(
-                                    source_path,
-                                    &seg_tag,
-                                    element_idx,
-                                    component_idx,
-                                    &mapped_val,
-                                )
-                                .map(|m| serde_json::Value::String(m.to_string()))
-                                .unwrap_or(serde_json::Value::Null);
+                            if code_lookup.is_code_field(
+                                source_path,
+                                &seg_tag,
+                                element_idx,
+                                component_idx,
+                            ) {
+                                let meaning = code_lookup
+                                    .meaning_for(
+                                        source_path,
+                                        &seg_tag,
+                                        element_idx,
+                                        component_idx,
+                                        &mapped_val,
+                                    )
+                                    .map(|m| serde_json::Value::String(m.to_string()))
+                                    .unwrap_or(serde_json::Value::Null);
 
-                            let enriched = serde_json::json!({
-                                "code": mapped_val,
-                                "meaning": meaning,
-                            });
-                            set_nested_value_json(&mut companion_result, &target, enriched);
-                            continue;
+                                let enriched = serde_json::json!({
+                                    "code": mapped_val,
+                                    "meaning": meaning,
+                                });
+                                set_nested_value_json(&mut companion_result, &target, enriched);
+                                continue;
+                            }
                         }
-                    }
                     }
 
                     set_nested_value(&mut companion_result, &target, mapped_val);
@@ -375,40 +375,40 @@ impl MappingEngine {
 
                 // Enrich code fields with meaning from PID schema
                 if enrich_codes {
-                if let (Some(ref code_lookup), Some(ref source_path)) =
-                    (&self.code_lookup, &def.meta.source_path)
-                {
-                    let (seg_tag, _qualifier) =
-                        parse_tag_qualifier(path.split('.').next().unwrap_or(""));
-                    let parts: Vec<&str> = path.split('.').collect();
-                    let (element_idx, component_idx) =
-                        Self::parse_element_component(&parts[1..]);
+                    if let (Some(ref code_lookup), Some(ref source_path)) =
+                        (&self.code_lookup, &def.meta.source_path)
+                    {
+                        let (seg_tag, _qualifier) =
+                            parse_tag_qualifier(path.split('.').next().unwrap_or(""));
+                        let parts: Vec<&str> = path.split('.').collect();
+                        let (element_idx, component_idx) =
+                            Self::parse_element_component(&parts[1..]);
 
-                    if code_lookup.is_code_field(
-                        source_path,
-                        &seg_tag,
-                        element_idx,
-                        component_idx,
-                    ) {
-                        let meaning = code_lookup
-                            .meaning_for(
-                                source_path,
-                                &seg_tag,
-                                element_idx,
-                                component_idx,
-                                &mapped_val,
-                            )
-                            .map(|m| serde_json::Value::String(m.to_string()))
-                            .unwrap_or(serde_json::Value::Null);
+                        if code_lookup.is_code_field(
+                            source_path,
+                            &seg_tag,
+                            element_idx,
+                            component_idx,
+                        ) {
+                            let meaning = code_lookup
+                                .meaning_for(
+                                    source_path,
+                                    &seg_tag,
+                                    element_idx,
+                                    component_idx,
+                                    &mapped_val,
+                                )
+                                .map(|m| serde_json::Value::String(m.to_string()))
+                                .unwrap_or(serde_json::Value::Null);
 
-                        let enriched = serde_json::json!({
-                            "code": mapped_val,
-                            "meaning": meaning,
-                        });
-                        set_nested_value_json(result, &target, enriched);
-                        continue;
+                            let enriched = serde_json::json!({
+                                "code": mapped_val,
+                                "meaning": meaning,
+                            });
+                            set_nested_value_json(result, &target, enriched);
+                            continue;
+                        }
                     }
-                }
                 }
 
                 set_nested_value(result, &target, mapped_val);
@@ -865,11 +865,7 @@ impl MappingEngine {
     }
 
     /// Inner implementation with enrichment control.
-    fn map_all_forward_inner(
-        &self,
-        tree: &AssembledTree,
-        enrich_codes: bool,
-    ) -> serde_json::Value {
+    fn map_all_forward_inner(&self, tree: &AssembledTree, enrich_codes: bool) -> serde_json::Value {
         let mut result = serde_json::Map::new();
 
         for def in &self.definitions {
@@ -1061,7 +1057,8 @@ impl MappingEngine {
                             }],
                             post_group_start: 0,
                         };
-                        let tx_result = tx_engine.map_all_forward_inner(&wrapped_tree, enrich_codes);
+                        let tx_result =
+                            tx_engine.map_all_forward_inner(&wrapped_tree, enrich_codes);
 
                         // Split: "Prozessdaten" entity goes into transaktionsdaten,
                         // everything else into stammdaten
