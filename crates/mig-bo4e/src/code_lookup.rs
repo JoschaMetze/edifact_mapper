@@ -64,7 +64,7 @@ impl CodeLookup {
     ) -> bool {
         let key = (
             source_path.to_string(),
-            segment_tag.to_uppercase(),
+            segment_tag.to_string(),
             element_index,
             component_index,
         );
@@ -83,7 +83,7 @@ impl CodeLookup {
     ) -> Option<&str> {
         let key = (
             source_path.to_string(),
-            segment_tag.to_uppercase(),
+            segment_tag.to_string(),
             element_index,
             component_index,
         );

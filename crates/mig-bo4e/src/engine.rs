@@ -3,6 +3,7 @@
 //! Supports nested group paths (e.g., "SG4.SG5") for navigating the assembled tree
 //! and provides `map_forward` / `map_reverse` for full entity conversion.
 
+use std::collections::HashMap;
 use std::path::Path;
 
 use mig_assembly::assembler::{
@@ -281,8 +282,8 @@ impl MappingEngine {
 
             for (path, field_mapping) in companion_fields {
                 let (target, enum_map) = match field_mapping {
-                    FieldMapping::Simple(t) => (t.clone(), None),
-                    FieldMapping::Structured(s) => (s.target.clone(), s.enum_map.as_ref()),
+                    FieldMapping::Simple(t) => (t.as_str(), None),
+                    FieldMapping::Structured(s) => (s.target.as_str(), s.enum_map.as_ref()),
                     FieldMapping::Nested(_) => continue,
                 };
                 if target.is_empty() {
@@ -300,9 +301,8 @@ impl MappingEngine {
                         if let (Some(ref code_lookup), Some(ref source_path)) =
                             (&self.code_lookup, &def.meta.source_path)
                         {
-                            let (seg_tag, _qualifier) =
-                                parse_tag_qualifier(path.split('.').next().unwrap_or(""));
                             let parts: Vec<&str> = path.split('.').collect();
+                            let (seg_tag, _qualifier) = parse_tag_qualifier(parts[0]);
                             let (element_idx, component_idx) =
                                 Self::parse_element_component(&parts[1..]);
 
@@ -327,13 +327,13 @@ impl MappingEngine {
                                     "code": mapped_val,
                                     "meaning": meaning,
                                 });
-                                set_nested_value_json(&mut companion_result, &target, enriched);
+                                set_nested_value_json(&mut companion_result, target, enriched);
                                 continue;
                             }
                         }
                     }
 
-                    set_nested_value(&mut companion_result, &target, mapped_val);
+                    set_nested_value(&mut companion_result, target, mapped_val);
                 }
             }
 
@@ -359,8 +359,8 @@ impl MappingEngine {
     ) {
         for (path, field_mapping) in &def.fields {
             let (target, enum_map) = match field_mapping {
-                FieldMapping::Simple(t) => (t.clone(), None),
-                FieldMapping::Structured(s) => (s.target.clone(), s.enum_map.as_ref()),
+                FieldMapping::Simple(t) => (t.as_str(), None),
+                FieldMapping::Structured(s) => (s.target.as_str(), s.enum_map.as_ref()),
                 FieldMapping::Nested(_) => continue,
             };
             if target.is_empty() {
@@ -378,9 +378,8 @@ impl MappingEngine {
                     if let (Some(ref code_lookup), Some(ref source_path)) =
                         (&self.code_lookup, &def.meta.source_path)
                     {
-                        let (seg_tag, _qualifier) =
-                            parse_tag_qualifier(path.split('.').next().unwrap_or(""));
                         let parts: Vec<&str> = path.split('.').collect();
+                        let (seg_tag, _qualifier) = parse_tag_qualifier(parts[0]);
                         let (element_idx, component_idx) =
                             Self::parse_element_component(&parts[1..]);
 
@@ -405,13 +404,13 @@ impl MappingEngine {
                                 "code": mapped_val,
                                 "meaning": meaning,
                             });
-                            set_nested_value_json(result, &target, enriched);
+                            set_nested_value_json(result, target, enriched);
                             continue;
                         }
                     }
                 }
 
-                set_nested_value(result, &target, mapped_val);
+                set_nested_value(result, target, mapped_val);
             }
         }
     }
@@ -463,13 +462,14 @@ impl MappingEngine {
     ) -> AssembledGroupInstance {
         // Collect (segment_key, element_index, component_index, value) tuples.
         // segment_key includes qualifier for disambiguation: "DTM" or "DTM[92]".
-        let mut field_values: Vec<(String, String, usize, usize, String)> = Vec::new();
+        let mut field_values: Vec<(String, String, usize, usize, String)> =
+            Vec::with_capacity(def.fields.len());
 
         for (path, field_mapping) in &def.fields {
             let (target, default, enum_map) = match field_mapping {
-                FieldMapping::Simple(t) => (t.clone(), None, None),
+                FieldMapping::Simple(t) => (t.as_str(), None, None),
                 FieldMapping::Structured(s) => {
-                    (s.target.clone(), s.default.clone(), s.enum_map.as_ref())
+                    (s.target.as_str(), s.default.as_ref(), s.enum_map.as_ref())
                 }
                 FieldMapping::Nested(_) => continue,
             };
@@ -502,9 +502,9 @@ impl MappingEngine {
 
             // Try BO4E value first, fall back to default
             let val = if target.is_empty() {
-                default
+                default.cloned()
             } else {
-                let bo4e_val = self.populate_field(bo4e_value, &target, path);
+                let bo4e_val = self.populate_field(bo4e_value, target, path);
                 // Apply reverse enum_map: BO4E value → EDIFACT value
                 let mapped_val = match (bo4e_val, enum_map) {
                     (Some(v), Some(map)) => {
@@ -516,7 +516,7 @@ impl MappingEngine {
                     }
                     (v, _) => v,
                 };
-                mapped_val.or(default)
+                mapped_val.or_else(|| default.cloned())
             };
 
             if let Some(val) = val {
@@ -531,10 +531,9 @@ impl MappingEngine {
 
             // If there's a qualifier, also inject it at elements[0][0]
             if let Some(q) = qualifier {
-                let key_upper = seg_key.clone();
                 let already_has = field_values
                     .iter()
-                    .any(|(k, _, ei, ci, _)| *k == key_upper && *ei == 0 && *ci == 0);
+                    .any(|(k, _, ei, ci, _)| *k == seg_key && *ei == 0 && *ci == 0);
                 if !already_has {
                     field_values.push((seg_key, seg_tag, 0, 0, q.to_string()));
                 }
@@ -551,9 +550,9 @@ impl MappingEngine {
 
             for (path, field_mapping) in companion_fields {
                 let (target, default, enum_map) = match field_mapping {
-                    FieldMapping::Simple(t) => (t.clone(), None, None),
+                    FieldMapping::Simple(t) => (t.as_str(), None, None),
                     FieldMapping::Structured(s) => {
-                        (s.target.clone(), s.default.clone(), s.enum_map.as_ref())
+                        (s.target.as_str(), s.default.as_ref(), s.enum_map.as_ref())
                     }
                     FieldMapping::Nested(_) => continue,
                 };
@@ -583,9 +582,9 @@ impl MappingEngine {
                 };
 
                 let val = if target.is_empty() {
-                    default
+                    default.cloned()
                 } else {
-                    let bo4e_val = self.populate_field(companion_value, &target, path);
+                    let bo4e_val = self.populate_field(companion_value, target, path);
                     let mapped_val = match (bo4e_val, enum_map) {
                         (Some(v), Some(map)) => map
                             .iter()
@@ -594,7 +593,7 @@ impl MappingEngine {
                             .or(Some(v)),
                         (v, _) => v,
                     };
-                    mapped_val.or(default)
+                    mapped_val.or_else(|| default.cloned())
                 };
 
                 if let Some(val) = val {
@@ -608,10 +607,9 @@ impl MappingEngine {
                 }
 
                 if let Some(q) = qualifier {
-                    let key_upper = seg_key.clone();
                     let already_has = field_values
                         .iter()
-                        .any(|(k, _, ei, ci, _)| *k == key_upper && *ei == 0 && *ci == 0);
+                        .any(|(k, _, ei, ci, _)| *k == seg_key && *ei == 0 && *ci == 0);
                     if !already_has {
                         field_values.push((seg_key, seg_tag, 0, 0, q.to_string()));
                     }
@@ -621,19 +619,20 @@ impl MappingEngine {
 
         // Build segments with elements/components in correct positions.
         // Group by segment_key to create separate segments for "DTM[92]" vs "DTM[93]".
-        let mut segments: Vec<AssembledSegment> = Vec::new();
-        let mut seen_keys: Vec<String> = Vec::new();
+        let mut segments: Vec<AssembledSegment> = Vec::with_capacity(field_values.len());
+        let mut seen_keys: HashMap<String, usize> = HashMap::new();
 
         for (seg_key, seg_tag, element_idx, component_idx, val) in &field_values {
-            let seg = if let Some(pos) = seen_keys.iter().position(|k| k == seg_key) {
+            let seg = if let Some(&pos) = seen_keys.get(seg_key) {
                 &mut segments[pos]
             } else {
-                seen_keys.push(seg_key.clone());
+                let pos = segments.len();
+                seen_keys.insert(seg_key.clone(), pos);
                 segments.push(AssembledSegment {
                     tag: seg_tag.clone(),
                     elements: vec![],
                 });
-                segments.last_mut().unwrap()
+                &mut segments[pos]
             };
 
             while seg.elements.len() <= *element_idx {
@@ -748,9 +747,8 @@ impl MappingEngine {
         target_field: &str,
         _source_path: &str,
     ) -> Option<String> {
-        let parts: Vec<&str> = target_field.split('.').collect();
         let mut current = bo4e_value;
-        for part in &parts {
+        for part in target_field.split('.') {
             current = current.get(part)?;
         }
         // Handle enriched code objects: {"code": "Z15", "meaning": "..."}
@@ -884,7 +882,7 @@ impl MappingEngine {
                     Some(self.map_forward_inner(tree, def, 0, enrich_codes))
                 } else {
                     // Multiple reps, no discriminator — map all into array
-                    let mut items = Vec::new();
+                    let mut items = Vec::with_capacity(num_reps);
                     for rep in 0..num_reps {
                         items.push(self.map_forward_inner(tree, def, rep, enrich_codes));
                     }
@@ -1458,24 +1456,7 @@ fn to_camel_case(name: &str) -> String {
 /// Set a value in a nested JSON map using a dotted path.
 /// E.g., "address.city" sets `{"address": {"city": "value"}}`.
 fn set_nested_value(map: &mut serde_json::Map<String, serde_json::Value>, path: &str, val: String) {
-    let parts: Vec<&str> = path.split('.').collect();
-    if parts.len() == 1 {
-        map.insert(parts[0].to_string(), serde_json::Value::String(val));
-        return;
-    }
-
-    // Navigate/create intermediate objects
-    let mut current = map;
-    for part in &parts[..parts.len() - 1] {
-        let entry = current
-            .entry(part.to_string())
-            .or_insert_with(|| serde_json::Value::Object(serde_json::Map::new()));
-        current = entry.as_object_mut().expect("expected object in path");
-    }
-    current.insert(
-        parts.last().unwrap().to_string(),
-        serde_json::Value::String(val),
-    );
+    set_nested_value_json(map, path, serde_json::Value::String(val));
 }
 
 /// Like `set_nested_value` but accepts a `serde_json::Value` instead of a `String`.
@@ -1484,19 +1465,18 @@ fn set_nested_value_json(
     path: &str,
     val: serde_json::Value,
 ) {
-    let parts: Vec<&str> = path.split('.').collect();
-    if parts.len() == 1 {
-        map.insert(parts[0].to_string(), val);
-        return;
+    if let Some((prefix, leaf)) = path.rsplit_once('.') {
+        let mut current = map;
+        for part in prefix.split('.') {
+            let entry = current
+                .entry(part.to_string())
+                .or_insert_with(|| serde_json::Value::Object(serde_json::Map::new()));
+            current = entry.as_object_mut().expect("expected object in path");
+        }
+        current.insert(leaf.to_string(), val);
+    } else {
+        map.insert(path.to_string(), val);
     }
-    let mut current = map;
-    for part in &parts[..parts.len() - 1] {
-        let entry = current
-            .entry(part.to_string())
-            .or_insert_with(|| serde_json::Value::Object(serde_json::Map::new()));
-        current = entry.as_object_mut().expect("expected object in path");
-    }
-    current.insert(parts.last().unwrap().to_string(), val);
 }
 
 #[cfg(test)]

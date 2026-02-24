@@ -4,7 +4,6 @@
 //! status, directing callers to use the v2 REST API instead.
 
 use std::pin::Pin;
-use std::sync::Arc;
 
 use tokio_stream::Stream;
 use tonic::{Request, Response, Status, Streaming};
@@ -13,17 +12,15 @@ use crate::grpc::transform_proto::transform_service_server::TransformService;
 use crate::grpc::transform_proto::{
     Bo4eToEdifactRequest, ConvertResponse as ProtoConvertResponse, EdifactToBo4eRequest,
 };
-use crate::state::CoordinatorRegistry;
 
 /// gRPC implementation of TransformService.
-pub struct TransformServiceImpl {
-    #[allow(dead_code)]
-    registry: Arc<CoordinatorRegistry>,
-}
+///
+/// All methods currently return `UNIMPLEMENTED` — callers should use the v2 REST API.
+pub struct TransformServiceImpl;
 
 impl TransformServiceImpl {
-    pub fn new(registry: Arc<CoordinatorRegistry>) -> Self {
-        Self { registry }
+    pub fn new(_registry: std::sync::Arc<crate::state::CoordinatorRegistry>) -> Self {
+        Self
     }
 }
 

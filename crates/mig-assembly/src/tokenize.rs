@@ -7,6 +7,8 @@
 //! `OwnedSegment` itself lives in `mig-types::segment` — re-exported here
 //! for backward compatibility.
 
+use std::sync::Arc;
+
 use edifact_types::{Control, EdifactDelimiters, RawSegment};
 
 // Re-export OwnedSegment from mig-types so existing `use crate::tokenize::OwnedSegment` paths work.
@@ -15,8 +17,8 @@ pub use mig_types::segment::OwnedSegment;
 /// A single EDIFACT message (UNH...UNT) with its interchange envelope.
 #[derive(Debug, Clone)]
 pub struct MessageChunk {
-    /// Interchange envelope segments (UNA, UNB) — shared across all messages.
-    pub envelope: Vec<OwnedSegment>,
+    /// Interchange envelope segments (UNA, UNB) — shared across all messages via `Arc`.
+    pub envelope: Arc<Vec<OwnedSegment>>,
     /// The UNH segment itself.
     pub unh: OwnedSegment,
     /// Segments between UNH and UNT (exclusive of both).
@@ -29,7 +31,8 @@ impl MessageChunk {
     /// Reconstruct the full segment list for this message (envelope + UNH + body + UNT).
     /// This is the input format expected by `Assembler::assemble_generic()`.
     pub fn all_segments(&self) -> Vec<OwnedSegment> {
-        let mut segs = self.envelope.clone();
+        let mut segs = Vec::with_capacity(self.envelope.len() + 2 + self.body.len());
+        segs.extend_from_slice(&self.envelope);
         segs.push(self.unh.clone());
         segs.extend(self.body.iter().cloned());
         segs.push(self.unt.clone());
@@ -107,13 +110,14 @@ pub fn parse_to_segments(input: &[u8]) -> Result<Vec<OwnedSegment>, crate::Assem
 pub fn split_messages(
     segments: Vec<OwnedSegment>,
 ) -> Result<InterchangeChunks, crate::AssemblyError> {
-    let mut envelope: Vec<OwnedSegment> = Vec::new();
-    let mut messages: Vec<MessageChunk> = Vec::new();
+    let mut envelope: Vec<OwnedSegment> = Vec::with_capacity(4);
+    // Collect (unh, body, unt) tuples first, then wrap with shared envelope Arc.
+    let mut raw_messages: Vec<(OwnedSegment, Vec<OwnedSegment>, OwnedSegment)> = Vec::new();
     let mut unz: Option<OwnedSegment> = None;
 
     // State machine
     let mut current_unh: Option<OwnedSegment> = None;
-    let mut current_body: Vec<OwnedSegment> = Vec::new();
+    let mut current_body: Vec<OwnedSegment> = Vec::with_capacity(32);
     let mut seen_first_unh = false;
 
     for seg in segments {
@@ -126,12 +130,7 @@ pub fn split_messages(
             }
             "UNT" => {
                 if let Some(unh) = current_unh.take() {
-                    messages.push(MessageChunk {
-                        envelope: envelope.clone(),
-                        unh,
-                        body: std::mem::take(&mut current_body),
-                        unt: seg,
-                    });
+                    raw_messages.push((unh, std::mem::take(&mut current_body), seg));
                 }
             }
             "UNZ" => {
@@ -147,14 +146,26 @@ pub fn split_messages(
         }
     }
 
-    if messages.is_empty() {
+    if raw_messages.is_empty() {
         return Err(crate::AssemblyError::ParseError(
             "No UNH/UNT message pairs found in interchange".to_string(),
         ));
     }
 
+    // Share the envelope via Arc across all messages to avoid N clones.
+    let envelope_arc = Arc::new(envelope);
+    let messages = raw_messages
+        .into_iter()
+        .map(|(unh, body, unt)| MessageChunk {
+            envelope: Arc::clone(&envelope_arc),
+            unh,
+            body,
+            unt,
+        })
+        .collect();
+
     Ok(InterchangeChunks {
-        envelope,
+        envelope: (*envelope_arc).clone(),
         messages,
         unz,
     })
@@ -204,7 +215,7 @@ mod tests {
     #[test]
     fn test_message_chunk_struct_exists() {
         let chunk = MessageChunk {
-            envelope: vec![],
+            envelope: Arc::new(vec![]),
             unh: OwnedSegment {
                 id: "UNH".to_string(),
                 elements: vec![],
