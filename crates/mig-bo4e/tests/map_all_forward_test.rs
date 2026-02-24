@@ -170,3 +170,90 @@ fn test_map_all_forward_55001() {
         expected_entities.len()
     );
 }
+
+#[test]
+fn test_map_all_forward_55001_with_code_enrichment() {
+    let mig_path = Path::new(MIG_XML_PATH);
+    let ahb_path = Path::new(AHB_XML_PATH);
+    if !mig_path.exists() || !ahb_path.exists() {
+        eprintln!("Skipping: MIG/AHB XML not found");
+        return;
+    }
+
+    let fixture_path = Path::new(FIXTURE_DIR).join("55001_UTILMD_S2.1_ALEXANDE121980.edi");
+    if !fixture_path.exists() {
+        eprintln!("Skipping: fixture not found");
+        return;
+    }
+
+    let msg_dir = Path::new(MESSAGE_DIR);
+    let tx_dir = Path::new(MAPPINGS_DIR);
+    if !msg_dir.exists() || !tx_dir.exists() {
+        eprintln!("Skipping: mappings not found");
+        return;
+    }
+
+    let schema_path = Path::new(
+        "../../crates/mig-types/src/generated/fv2504/utilmd/pids/pid_55001_schema.json",
+    );
+    if !schema_path.exists() {
+        eprintln!("Skipping: PID schema not found");
+        return;
+    }
+
+    // Load PID-filtered MIG
+    let mig = parse_mig(mig_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+    let ahb = parse_ahb(ahb_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+    let pid = ahb.workflows.iter().find(|w| w.id == "55001").unwrap();
+    let numbers: HashSet<String> = pid.segment_numbers.iter().cloned().collect();
+    let filtered_mig = filter_mig_for_pid(&mig, &numbers);
+
+    // Assemble fixture
+    let content = std::fs::read(&fixture_path).unwrap();
+    let segments = parse_to_segments(&content).unwrap();
+    let assembler = Assembler::new(&filtered_mig);
+    let tree = assembler.assemble_generic(&segments).unwrap();
+
+    // Load engine WITH code lookup for enrichment
+    let code_lookup =
+        mig_bo4e::code_lookup::CodeLookup::from_schema_file(schema_path).unwrap();
+    let engine = MappingEngine::load_merged(&[msg_dir, tx_dir])
+        .unwrap()
+        .with_code_lookup(code_lookup);
+
+    let result = engine.map_all_forward(&tree);
+
+    eprintln!(
+        "map_all_forward (enriched) result:\n{}",
+        serde_json::to_string_pretty(&result).unwrap()
+    );
+
+    // Companion fields should now be enriched objects
+    let malo = result.get("Marktlokation").unwrap();
+    let malo_companion = malo.get("MarktlokationEdifact").unwrap();
+    let hk = malo_companion.get("haushaltskunde").unwrap();
+    assert!(
+        hk.is_object(),
+        "haushaltskunde should be an enriched object, got: {hk}"
+    );
+    assert!(hk.get("code").is_some(), "should have code field");
+    assert!(hk.get("meaning").is_some(), "should have meaning field");
+
+    let pp = result.get("Produktpaket").unwrap();
+    let pp_companion = pp.get("ProduktpaketEdifact").unwrap();
+    let mc = pp_companion.get("merkmalCode").unwrap();
+    assert_eq!(mc.get("code").and_then(|v| v.as_str()), Some("Z66"));
+    assert_eq!(
+        mc.get("meaning").and_then(|v| v.as_str()),
+        Some("Produkteigenschaft")
+    );
+
+    // Data-type fields should still be plain strings
+    let pe = pp_companion.get("produkteigenschaftCode");
+    if let Some(pe) = pe {
+        assert!(
+            pe.is_string(),
+            "data-type companion field should remain a plain string, got: {pe}"
+        );
+    }
+}
