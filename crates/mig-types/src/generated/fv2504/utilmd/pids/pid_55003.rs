@@ -2,9 +2,9 @@
 //! Ablehnung Anmeldung verb. MaLo
 //! Do not edit manually.
 
-use crate::cursor::{consume, expect_segment, peek_is, SegmentCursor, SegmentNotFound};
-use crate::segment::OwnedSegment;
 use serde::{Deserialize, Serialize};
+use crate::segment::OwnedSegment;
+use crate::cursor::{SegmentCursor, SegmentNotFound, peek_is, consume, expect_segment};
 
 /// SG12 — Beteiligter, Qualifier
 /// Qualifiers: VY
@@ -59,7 +59,10 @@ pub struct Pid55003 {
 
 impl Pid55003Sg12Vy {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
         let saved = cursor.save();
         let nad = if peek_is(segments, cursor, "NAD") {
             Some(consume(segments, cursor)?.clone())
@@ -70,13 +73,18 @@ impl Pid55003Sg12Vy {
             cursor.restore(saved);
             return None;
         }
-        Some(Self { nad })
+        Some(Self {
+            nad,
+        })
     }
 }
 
 impl Pid55003Sg2 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
         let saved = cursor.save();
         let nad = if peek_is(segments, cursor, "NAD") {
             Some(consume(segments, cursor)?.clone())
@@ -91,13 +99,19 @@ impl Pid55003Sg2 {
         while let Some(item) = Pid55003Sg3Ic::from_segments(segments, cursor) {
             sg3_ic.push(item);
         }
-        Some(Self { nad, sg3_ic })
+        Some(Self {
+            nad,
+            sg3_ic,
+        })
     }
 }
 
 impl Pid55003Sg3Ic {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
         let saved = cursor.save();
         let com = if peek_is(segments, cursor, "COM") {
             Some(consume(segments, cursor)?.clone())
@@ -113,13 +127,19 @@ impl Pid55003Sg3Ic {
             cursor.restore(saved);
             return None;
         }
-        Some(Self { com, cta })
+        Some(Self {
+            com,
+            cta,
+        })
     }
 }
 
 impl Pid55003Sg4 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
         let saved = cursor.save();
         let dtm = if peek_is(segments, cursor, "DTM") {
             Some(consume(segments, cursor)?.clone())
@@ -166,7 +186,10 @@ impl Pid55003Sg4 {
 
 impl Pid55003Sg6 {
     /// Try to assemble this group from segments at the cursor position.
-    pub fn from_segments(segments: &[OwnedSegment], cursor: &mut SegmentCursor) -> Option<Self> {
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
         let saved = cursor.save();
         let rff = if peek_is(segments, cursor, "RFF") {
             Some(consume(segments, cursor)?.clone())
@@ -177,13 +200,17 @@ impl Pid55003Sg6 {
             cursor.restore(saved);
             return None;
         }
-        Some(Self { rff })
+        Some(Self {
+            rff,
+        })
     }
 }
 
 impl Pid55003 {
     /// Assemble this PID from a pre-tokenized segment list.
-    pub fn from_segments(segments: &[OwnedSegment]) -> Result<Self, SegmentNotFound> {
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+    ) -> Result<Self, SegmentNotFound> {
         let mut cursor = SegmentCursor::new(segments.len());
 
         let bgm = expect_segment(segments, &mut cursor, "BGM")?.clone();

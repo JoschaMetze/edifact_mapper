@@ -1128,12 +1128,12 @@ fn segment_to_schema_value(
 
     let mut elements = Vec::new();
 
-    // Direct data elements
-    for (i, de) in seg.data_elements.iter().enumerate() {
+    // Direct data elements — use wire position, not enumeration index
+    for de in &seg.data_elements {
         let mut el = serde_json::Map::new();
         el.insert(
             "index".to_string(),
-            serde_json::Value::Number((i as u64).into()),
+            serde_json::Value::Number((de.position as u64).into()),
         );
         el.insert("id".to_string(), serde_json::Value::String(de.id.clone()));
         let de_name = de
@@ -1151,13 +1151,12 @@ fn segment_to_schema_value(
         elements.push(serde_json::Value::Object(el));
     }
 
-    // Composite elements
-    for (ci, comp) in seg.composites.iter().enumerate() {
-        let elem_idx = seg.data_elements.len() + ci;
+    // Composite elements — use wire position, not offset from data_elements
+    for comp in &seg.composites {
         let mut el = serde_json::Map::new();
         el.insert(
             "index".to_string(),
-            serde_json::Value::Number((elem_idx as u64).into()),
+            serde_json::Value::Number((comp.position as u64).into()),
         );
         el.insert(
             "composite".to_string(),
@@ -1173,13 +1172,13 @@ fn segment_to_schema_value(
             serde_json::Value::String(sanitize_doc(comp_name)),
         );
 
-        // Sub-components
+        // Sub-components — use wire position within composite
         let mut components = Vec::new();
-        for (di, de) in comp.data_elements.iter().enumerate() {
+        for de in &comp.data_elements {
             let mut sub = serde_json::Map::new();
             sub.insert(
                 "sub_index".to_string(),
-                serde_json::Value::Number((di as u64).into()),
+                serde_json::Value::Number((de.position as u64).into()),
             );
             sub.insert("id".to_string(), serde_json::Value::String(de.id.clone()));
             let de_name = de
