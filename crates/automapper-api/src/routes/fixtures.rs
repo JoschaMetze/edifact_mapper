@@ -24,7 +24,7 @@ pub fn routes() -> Router<AppState> {
 }
 
 /// Query parameters for listing fixtures.
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, utoipa::IntoParams)]
 pub struct ListFixturesQuery {
     pub message_type: String,
     pub format_version: String,
@@ -33,7 +33,18 @@ pub struct ListFixturesQuery {
 /// `GET /api/v1/fixtures?message_type=UTILMD&format_version=FV2504`
 ///
 /// Scans the fixture directory and returns grouped entries.
-async fn list_fixtures(
+#[utoipa::path(
+    get,
+    path = "/api/v1/fixtures",
+    params(ListFixturesQuery),
+    responses(
+        (status = 200, description = "List of fixture entries", body = FixtureListResponse),
+        (status = 400, description = "Bad request"),
+        (status = 404, description = "No fixtures found"),
+    ),
+    tag = "v1"
+)]
+pub(crate) async fn list_fixtures(
     Query(params): Query<ListFixturesQuery>,
 ) -> Result<Json<FixtureListResponse>, ApiError> {
     // Reject path traversal
@@ -92,7 +103,7 @@ async fn list_fixtures(
 }
 
 /// Query parameters for getting a specific fixture file.
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, utoipa::IntoParams)]
 pub struct GetFixtureQuery {
     /// File type: `edi` or `bo4e`.
     #[serde(rename = "type")]
@@ -102,7 +113,23 @@ pub struct GetFixtureQuery {
 /// `GET /api/v1/fixtures/{message_type}/{format_version}/{name}?type=edi|bo4e`
 ///
 /// Serves the raw content of a fixture file.
-async fn get_fixture(
+#[utoipa::path(
+    get,
+    path = "/api/v1/fixtures/{message_type}/{format_version}/{name}",
+    params(
+        ("message_type" = String, Path, description = "EDIFACT message type"),
+        ("format_version" = String, Path, description = "Format version (e.g. FV2504)"),
+        ("name" = String, Path, description = "Fixture base name"),
+        GetFixtureQuery,
+    ),
+    responses(
+        (status = 200, description = "Fixture file content", body = String),
+        (status = 400, description = "Bad request"),
+        (status = 404, description = "Fixture not found"),
+    ),
+    tag = "v1"
+)]
+pub(crate) async fn get_fixture(
     Path((message_type, format_version, name)): Path<(String, String, String)>,
     Query(params): Query<GetFixtureQuery>,
 ) -> Result<impl IntoResponse, ApiError> {

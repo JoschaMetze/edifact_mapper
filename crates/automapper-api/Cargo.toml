@@ -44,6 +44,10 @@ prost.workspace = true
 async-stream = "0.3"
 tokio-stream = "0.1"
 
+# OpenAPI / Swagger UI
+utoipa = { version = "5", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "9", features = ["axum"] }
+
 # Observability
 tracing.workspace = true
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

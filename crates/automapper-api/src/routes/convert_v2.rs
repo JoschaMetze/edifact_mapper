@@ -31,7 +31,19 @@ pub fn routes() -> Router<AppState> {
 /// Query parameters:
 /// - `enrich_codes` (bool, default `true`): When `false`, code fields are emitted
 ///   as plain strings instead of `{"code": "...", "meaning": "..."}` objects.
-async fn convert_v2(
+#[utoipa::path(
+    post,
+    path = "/api/v2/convert",
+    params(ConvertV2Query),
+    request_body = ConvertV2Request,
+    responses(
+        (status = 200, description = "Conversion result", body = ConvertV2Response),
+        (status = 400, description = "Bad request"),
+        (status = 422, description = "Conversion error"),
+    ),
+    tag = "v2"
+)]
+pub(crate) async fn convert_v2(
     State(state): State<AppState>,
     Query(query): Query<ConvertV2Query>,
     Json(req): Json<ConvertV2Request>,

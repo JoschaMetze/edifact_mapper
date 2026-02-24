@@ -16,13 +16,33 @@ pub fn routes() -> Router<AppState> {
 }
 
 /// `GET /api/v1/coordinators` — List all available coordinators.
-async fn list_coordinators(State(state): State<AppState>) -> Json<Vec<CoordinatorInfo>> {
+#[utoipa::path(
+    get,
+    path = "/api/v1/coordinators",
+    responses(
+        (status = 200, description = "List of available coordinators", body = Vec<CoordinatorInfo>),
+    ),
+    tag = "v1"
+)]
+pub(crate) async fn list_coordinators(State(state): State<AppState>) -> Json<Vec<CoordinatorInfo>> {
     let coordinators: Vec<CoordinatorInfo> = state.registry.list().into_iter().cloned().collect();
     Json(coordinators)
 }
 
 /// `GET /api/v1/coordinators/{message_type}` — Get a specific coordinator.
-async fn get_coordinator(
+#[utoipa::path(
+    get,
+    path = "/api/v1/coordinators/{message_type}",
+    params(
+        ("message_type" = String, Path, description = "EDIFACT message type (e.g. UTILMD)"),
+    ),
+    responses(
+        (status = 200, description = "Coordinator details", body = CoordinatorInfo),
+        (status = 404, description = "Coordinator not found"),
+    ),
+    tag = "v1"
+)]
+pub(crate) async fn get_coordinator(
     State(state): State<AppState>,
     Path(message_type): Path<String>,
 ) -> Result<Json<CoordinatorInfo>, ApiError> {

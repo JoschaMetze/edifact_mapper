@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Information about an available coordinator.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct CoordinatorInfo {
     /// EDIFACT message type (e.g., "UTILMD").
     pub message_type: String,

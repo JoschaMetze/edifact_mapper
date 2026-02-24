@@ -5,7 +5,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Input level for the reverse endpoint.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq, utoipa::ToSchema)]
 #[serde(rename_all = "lowercase")]
 pub enum InputLevel {
     /// Full interchange JSON (nachrichtendaten + nachrichten array).
@@ -17,7 +17,7 @@ pub enum InputLevel {
 }
 
 /// Output mode for the reverse endpoint.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq, utoipa::ToSchema)]
 #[serde(rename_all = "kebab-case")]
 pub enum ReverseMode {
     /// Return EDIFACT string.
@@ -30,7 +30,7 @@ pub enum ReverseMode {
 ///
 /// When input is `nachricht` or `transaktion`, these values fill in
 /// the envelope segments that aren't present in the input.
-#[derive(Debug, Clone, Deserialize, Default)]
+#[derive(Debug, Clone, Deserialize, Default, utoipa::ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct EnvelopeOverrides {
     pub absender_code: Option<String>,
@@ -39,11 +39,12 @@ pub struct EnvelopeOverrides {
 }
 
 /// Request body for `POST /api/v2/reverse`.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, utoipa::ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct ReverseV2Request {
     /// The BO4E JSON to convert back to EDIFACT.
     /// Shape depends on `level`.
+    #[schema(value_type = Object)]
     pub input: serde_json::Value,
 
     /// Which level the input represents.
@@ -66,13 +67,14 @@ fn default_mode() -> ReverseMode {
 }
 
 /// Response body for `POST /api/v2/reverse`.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct ReverseV2Response {
     /// The mode used for conversion.
     pub mode: String,
 
     /// The result: EDIFACT string or MIG tree JSON.
+    #[schema(value_type = Object)]
     pub result: serde_json::Value,
 
     /// Conversion duration in milliseconds.

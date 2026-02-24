@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 /// A single fixture entry (a pair of `.edi` / `.bo.json` files sharing the same base name).
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct FixtureEntry {
     /// Base file name without extension (e.g., `55001_UTILMD_S2.1_ALEXANDE121980`).
     pub name: String,
@@ -19,7 +19,7 @@ pub struct FixtureEntry {
 }
 
 /// Response for `GET /api/v1/fixtures`.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct FixtureListResponse {
     pub fixtures: Vec<FixtureEntry>,
 }

@@ -14,7 +14,17 @@ pub fn routes() -> Router<AppState> {
 }
 
 /// `POST /api/v1/inspect/edifact` — Parse EDIFACT into a segment tree.
-async fn inspect_edifact(
+#[utoipa::path(
+    post,
+    path = "/api/v1/inspect/edifact",
+    request_body = InspectRequest,
+    responses(
+        (status = 200, description = "Parsed segment tree", body = InspectResponse),
+        (status = 400, description = "Bad request"),
+    ),
+    tag = "v1"
+)]
+pub(crate) async fn inspect_edifact(
     State(state): State<AppState>,
     Json(request): Json<InspectRequest>,
 ) -> Result<Json<InspectResponse>, ApiError> {

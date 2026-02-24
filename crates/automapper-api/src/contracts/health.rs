@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Response body for `GET /health`.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct HealthResponse {
     /// Whether the service is healthy.
     pub healthy: bool,

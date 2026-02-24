@@ -25,7 +25,18 @@ pub fn routes() -> Router<AppState> {
 }
 
 /// `POST /api/v2/reverse` — BO4E to EDIFACT reverse conversion.
-async fn reverse_v2(
+#[utoipa::path(
+    post,
+    path = "/api/v2/reverse",
+    request_body = ReverseV2Request,
+    responses(
+        (status = 200, description = "Reverse conversion result", body = ReverseV2Response),
+        (status = 400, description = "Bad request"),
+        (status = 422, description = "Conversion error"),
+    ),
+    tag = "v2"
+)]
+pub(crate) async fn reverse_v2(
     State(state): State<AppState>,
     Json(req): Json<ReverseV2Request>,
 ) -> Result<Json<ReverseV2Response>, ApiError> {

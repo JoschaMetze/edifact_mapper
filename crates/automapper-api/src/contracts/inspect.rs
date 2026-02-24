@@ -3,14 +3,14 @@
 use serde::{Deserialize, Serialize};
 
 /// Request body for `POST /api/v1/inspect/edifact`.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, utoipa::ToSchema)]
 pub struct InspectRequest {
     /// The raw EDIFACT content to inspect.
     pub edifact: String,
 }
 
 /// Response body for EDIFACT inspection.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct InspectResponse {
     /// Flat list of parsed segments.
     pub segments: Vec<SegmentNode>,
@@ -26,7 +26,7 @@ pub struct InspectResponse {
 }
 
 /// A single EDIFACT segment in the tree.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct SegmentNode {
     /// Segment tag (e.g., "UNH", "NAD", "LOC").
     pub tag: String,
@@ -45,7 +45,7 @@ pub struct SegmentNode {
 }
 
 /// A data element within a segment.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct DataElement {
     /// 1-based position within the segment.
     pub position: u32,
@@ -58,7 +58,7 @@ pub struct DataElement {
 }
 
 /// A component element within a composite data element.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct ComponentElement {
     /// 1-based position within the composite element.
     pub position: u32,
