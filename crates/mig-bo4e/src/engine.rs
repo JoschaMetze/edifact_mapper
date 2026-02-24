@@ -229,6 +229,17 @@ impl MappingEngine {
         def: &MappingDefinition,
         repetition: usize,
     ) -> serde_json::Value {
+        self.map_forward_inner(tree, def, repetition, true)
+    }
+
+    /// Inner implementation with enrichment control.
+    fn map_forward_inner(
+        &self,
+        tree: &AssembledTree,
+        def: &MappingDefinition,
+        repetition: usize,
+        enrich_codes: bool,
+    ) -> serde_json::Value {
         let mut result = serde_json::Map::new();
 
         // Root-level mapping: source_group is empty → use tree's own segments
@@ -237,16 +248,16 @@ impl MappingEngine {
                 segments: tree.segments[..tree.post_group_start].to_vec(),
                 child_groups: vec![],
             };
-            self.extract_fields_from_instance(&root_instance, def, &mut result);
-            self.extract_companion_fields(&root_instance, def, &mut result);
+            self.extract_fields_from_instance(&root_instance, def, &mut result, enrich_codes);
+            self.extract_companion_fields(&root_instance, def, &mut result, enrich_codes);
             return serde_json::Value::Object(result);
         }
 
         let instance = Self::resolve_group_instance(tree, &def.meta.source_group, repetition);
 
         if let Some(instance) = instance {
-            self.extract_fields_from_instance(instance, def, &mut result);
-            self.extract_companion_fields(instance, def, &mut result);
+            self.extract_fields_from_instance(instance, def, &mut result, enrich_codes);
+            self.extract_companion_fields(instance, def, &mut result, enrich_codes);
         }
 
         serde_json::Value::Object(result)
@@ -261,6 +272,7 @@ impl MappingEngine {
         instance: &AssembledGroupInstance,
         def: &MappingDefinition,
         result: &mut serde_json::Map<String, serde_json::Value>,
+        enrich_codes: bool,
     ) {
         if let Some(ref companion_fields) = def.companion_fields {
             let raw_key = def.meta.companion_type.as_deref().unwrap_or("_companion");
@@ -284,6 +296,7 @@ impl MappingEngine {
                     };
 
                     // Enrich code fields with meaning from PID schema
+                    if enrich_codes {
                     if let (Some(ref code_lookup), Some(ref source_path)) =
                         (&self.code_lookup, &def.meta.source_path)
                     {
@@ -318,6 +331,7 @@ impl MappingEngine {
                             continue;
                         }
                     }
+                    }
 
                     set_nested_value(&mut companion_result, &target, mapped_val);
                 }
@@ -341,6 +355,7 @@ impl MappingEngine {
         instance: &AssembledGroupInstance,
         def: &MappingDefinition,
         result: &mut serde_json::Map<String, serde_json::Value>,
+        enrich_codes: bool,
     ) {
         for (path, field_mapping) in &def.fields {
             let (target, enum_map) = match field_mapping {
@@ -359,6 +374,7 @@ impl MappingEngine {
                 };
 
                 // Enrich code fields with meaning from PID schema
+                if enrich_codes {
                 if let (Some(ref code_lookup), Some(ref source_path)) =
                     (&self.code_lookup, &def.meta.source_path)
                 {
@@ -393,6 +409,7 @@ impl MappingEngine {
                         continue;
                     }
                 }
+                }
 
                 set_nested_value(result, &target, mapped_val);
             }
@@ -423,7 +440,7 @@ impl MappingEngine {
         };
 
         let mut result = serde_json::Map::new();
-        self.extract_fields_from_instance(&instance, def, &mut result);
+        self.extract_fields_from_instance(&instance, def, &mut result, true);
         serde_json::Value::Object(result)
     }
 
@@ -844,6 +861,15 @@ impl MappingEngine {
     /// (e.g., LOC location + SEQ info + SG10 characteristics) to contribute
     /// fields to the same BO4E entity.
     pub fn map_all_forward(&self, tree: &AssembledTree) -> serde_json::Value {
+        self.map_all_forward_inner(tree, true)
+    }
+
+    /// Inner implementation with enrichment control.
+    fn map_all_forward_inner(
+        &self,
+        tree: &AssembledTree,
+        enrich_codes: bool,
+    ) -> serde_json::Value {
         let mut result = serde_json::Map::new();
 
         for def in &self.definitions {
@@ -852,19 +878,19 @@ impl MappingEngine {
             let bo4e = if let Some(ref disc) = def.meta.discriminator {
                 // Has discriminator — resolve to specific rep
                 Self::resolve_repetition(tree, &def.meta.source_group, disc)
-                    .map(|rep| self.map_forward(tree, def, rep))
+                    .map(|rep| self.map_forward_inner(tree, def, rep, enrich_codes))
             } else if def.meta.source_group.is_empty() {
                 // Root-level mapping — always single object
-                Some(self.map_forward(tree, def, 0))
+                Some(self.map_forward_inner(tree, def, 0, enrich_codes))
             } else {
                 let num_reps = Self::count_repetitions(tree, &def.meta.source_group);
                 if num_reps <= 1 {
-                    Some(self.map_forward(tree, def, 0))
+                    Some(self.map_forward_inner(tree, def, 0, enrich_codes))
                 } else {
                     // Multiple reps, no discriminator — map all into array
                     let mut items = Vec::new();
                     for rep in 0..num_reps {
-                        items.push(self.map_forward(tree, def, rep));
+                        items.push(self.map_forward_inner(tree, def, rep, enrich_codes));
                     }
                     Some(serde_json::Value::Array(items))
                 }
@@ -1011,9 +1037,10 @@ impl MappingEngine {
         tx_engine: &MappingEngine,
         tree: &AssembledTree,
         transaction_group: &str,
+        enrich_codes: bool,
     ) -> crate::model::MappedMessage {
         // Map message-level entities
-        let stammdaten = msg_engine.map_all_forward(tree);
+        let stammdaten = msg_engine.map_all_forward_inner(tree, enrich_codes);
 
         // Find the transaction group and map each repetition
         let transaktionen = tree
@@ -1034,7 +1061,7 @@ impl MappingEngine {
                             }],
                             post_group_start: 0,
                         };
-                        let tx_result = tx_engine.map_all_forward(&wrapped_tree);
+                        let tx_result = tx_engine.map_all_forward_inner(&wrapped_tree, enrich_codes);
 
                         // Split: "Prozessdaten" entity goes into transaktionsdaten,
                         // everything else into stammdaten
@@ -1594,7 +1621,7 @@ mod tests {
             },
         ]);
 
-        let result = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4");
+        let result = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", true);
 
         assert_eq!(result.transaktionen.len(), 1);
         assert_eq!(
@@ -1969,7 +1996,7 @@ mod tests {
         let msg_engine = MappingEngine::from_definitions(msg_defs);
         let tx_engine = MappingEngine::from_definitions(tx_defs);
 
-        let result = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4");
+        let result = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", true);
 
         // Message-level stammdaten
         assert!(result.stammdaten["marktteilnehmer"].is_object());

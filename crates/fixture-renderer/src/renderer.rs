@@ -94,7 +94,7 @@ pub fn render_fixture(
             .map_err(|e| RendererError::Assembly(e.to_string()))?;
 
         // Forward map to BO4E
-        let mapped = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4");
+        let mapped = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", true);
 
         // Reverse map back to tree
         let reverse_tree =
@@ -219,7 +219,7 @@ pub fn generate_canonical_bo4e(
 
     // 7. Forward map
     let mapped: MappedMessage =
-        MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4");
+        MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", true);
 
     // 8. Build CanonicalBo4e
     let canonical = CanonicalBo4e {

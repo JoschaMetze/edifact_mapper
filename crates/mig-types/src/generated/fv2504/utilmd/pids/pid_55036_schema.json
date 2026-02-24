@@ -485,8 +485,56 @@
                 {
                   "codes": [
                     {
-                      "name": "Der NB informiert den LFN darüber, dass zum gewünschten Anmeldedatum noch ein anderer LFA der Marktlokation zugeordnet ist und deshalb eine Abmeldeanfrage an den LFA stellt.",
-                      "value": "Z26"
+                      "name": "Der LFN wird einer Marktlokation vollständig zugeordnet (vollständige (100%ige) Zuordnung).\r\nDieser Geschäftsvorfall ist auch für die Änderung von einer tranchierten Marktlokation in eine nicht tranchierte Marktlokation anzuwenden.",
+                      "value": "ZW0"
+                    },
+                    {
+                      "name": "Der LFN wird einer bestehenden Tranche vollständig zugeordnet (vollständige (100%ige) Zuordnung). \r\nDieser Geschäftsvorfall ist bei einem direkten Übergang, d. h. lückenlosem Zuordnungsende und -beginn und unter Beibehaltung der Tranche, anzuwenden.",
+                      "value": "ZW1"
+                    },
+                    {
+                      "name": "Der LFN wird einer neu zu bildenden Tranche zugeordnet (anteiliger Zuordnungsvorgang unter Bildung neuer Tranchen",
+                      "value": "ZW2"
+                    },
+                    {
+                      "name": "Erzeugende Marktlokation",
+                      "value": "ZW3"
+                    },
+                    {
+                      "name": "Verbrauchende Marktlokation",
+                      "value": "ZW4"
+                    },
+                    {
+                      "name": "Tranche",
+                      "value": "ZW5"
+                    },
+                    {
+                      "name": "Pauschale Marktlokation",
+                      "value": "ZW6"
+                    },
+                    {
+                      "name": "Gemessene Marktlokation",
+                      "value": "ZW7"
+                    },
+                    {
+                      "name": "Fall 1",
+                      "value": "ZW8"
+                    },
+                    {
+                      "name": "Fall 2",
+                      "value": "ZW9"
+                    },
+                    {
+                      "name": "Fall 3",
+                      "value": "ZX0"
+                    },
+                    {
+                      "name": "Fall 4",
+                      "value": "ZX1"
+                    },
+                    {
+                      "name": "ruhende Marktlokation",
+                      "value": "ZAP"
                     }
                   ],
                   "id": "9013",
@@ -504,8 +552,12 @@
                 {
                   "codes": [
                     {
-                      "name": "Der NB informiert den LFN darüber, dass zum gewünschten Anmeldedatum noch ein anderer LFA der Marktlokation zugeordnet ist und deshalb eine Abmeldeanfrage an den LFA stellt.",
-                      "value": "Z26"
+                      "name": "Kunde verlässt eine schon bestehende Marktlokation",
+                      "value": "E01"
+                    },
+                    {
+                      "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
+                      "value": "E03"
                     }
                   ],
                   "id": "9013",

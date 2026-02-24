@@ -511,20 +511,36 @@
                 {
                   "codes": [
                     {
-                      "name": "Erzeugende Marktlokation",
-                      "value": "ZW3"
+                      "name": "Kunde verlässt oder bezieht eine schon bestehende Marktlokation",
+                      "value": "E01"
                     },
                     {
-                      "name": "Verbrauchende Marktlokation",
-                      "value": "ZW4"
+                      "name": "Kunde zieht aus der Marktlokation aus und die Marktlokation wird stillgelegt (bei allen anderen Auszügen ist E01 zu verwenden)",
+                      "value": "Z33"
                     },
                     {
-                      "name": "Tranche",
-                      "value": "ZW5"
+                      "name": "Verstreicht die gesetzliche 3 Monatsfrist der Ersatzversorgung ohne Aufnahme der Folgelieferung durch einen Lieferanten, kann der zuständigen LF die Marktlokation mit diesem Transaktionsgrund abmelden.",
+                      "value": "Z41"
                     },
                     {
-                      "name": "ruhende Marktlokation",
-                      "value": "ZAP"
+                      "name": "Aufhebung einer zukünftigen Zuordnung wegen Auszug des Kunden",
+                      "value": "ZG9"
+                    },
+                    {
+                      "name": "Aufhebung einer zukünftigen Zuordnung wegen Stilllegung",
+                      "value": "ZH1"
+                    },
+                    {
+                      "name": "Vertrag zwischen Absender des Geschäftsvorfalls und Kunde wurde aufgehoben, wird z. B. verwendet wenn der Kunde den Vertrag widerruft.",
+                      "value": "ZH2"
+                    },
+                    {
+                      "name": "Anzuwenden wenn Ende wegen Kündigung durch bislang beliefernden LF (LFA) entsteht",
+                      "value": "ZT4"
+                    },
+                    {
+                      "name": "Anzuwenden wenn Ende wegen \r\n- Kündigung durch den Kunden, \r\n- Kündigung durch LFN,\r\n- Keine Kündigung des Vertrages notwendig da Vertrag nur auf bestimmte Zeit gelaufen ist und von alleine ausläuft und\r\n- Kündigung durch Dritten z.B. unabhängige Berater\r\nentsteht.",
+                      "value": "ZT5"
                     }
                   ],
                   "id": "9013",
@@ -573,20 +589,12 @@
                 {
                   "codes": [
                     {
-                      "name": "Erzeugende Marktlokation",
-                      "value": "ZW3"
+                      "name": "Kunde verlässt eine schon bestehende Marktlokation",
+                      "value": "E01"
                     },
                     {
-                      "name": "Verbrauchende Marktlokation",
-                      "value": "ZW4"
-                    },
-                    {
-                      "name": "Tranche",
-                      "value": "ZW5"
-                    },
-                    {
-                      "name": "ruhende Marktlokation",
-                      "value": "ZAP"
+                      "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
+                      "value": "E03"
                     }
                   ],
                   "id": "9013",

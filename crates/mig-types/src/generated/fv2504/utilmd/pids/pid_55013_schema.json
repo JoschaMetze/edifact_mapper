@@ -2405,12 +2405,40 @@
                 {
                   "codes": [
                     {
-                      "name": "Pauschale Marktlokation",
-                      "value": "ZW6"
+                      "name": "Ersatzbelieferung",
+                      "value": "E06"
                     },
                     {
-                      "name": "Gemessene Marktlokation",
-                      "value": "ZW7"
+                      "name": "Kündigung Lieferantenrahmenvertrag",
+                      "value": "Z02"
+                    },
+                    {
+                      "name": "Beim NB liegt nur eine Auszugsmeldung für die Marktlokation vor. Es erfolgt seitens des NB anschließend eine Meldung der Marktlokation an den E/G.",
+                      "value": "Z36"
+                    },
+                    {
+                      "name": "Beim NB liegt eine neue Marktlokation ohne Lieferantenzuordnung vor. Daher erfolgt eine Meldung an den  zuständigen LF für die EoG.",
+                      "value": "Z37"
+                    },
+                    {
+                      "name": "Ein erstellter vorübergehender Anschluss wird aufgrund von fehlendem LF dem  zuständigen LF für die EoG gemeldet.",
+                      "value": "Z39"
+                    },
+                    {
+                      "name": "EoG aus Bilanzkreisschließung",
+                      "value": "ZC6"
+                    },
+                    {
+                      "name": "EoG aufgrund Erlöschen der Zuordnungsermächtigung",
+                      "value": "ZC7"
+                    },
+                    {
+                      "name": "EoG wegen Kündigung durch LF",
+                      "value": "ZT6"
+                    },
+                    {
+                      "name": "EoG wegen Kündigung durch Kunde/LFN",
+                      "value": "ZT7"
                     }
                   ],
                   "id": "9013",
@@ -2451,12 +2479,12 @@
                 {
                   "codes": [
                     {
-                      "name": "Pauschale Marktlokation",
-                      "value": "ZW6"
+                      "name": "Kunde verlässt eine schon bestehende Marktlokation",
+                      "value": "E01"
                     },
                     {
-                      "name": "Gemessene Marktlokation",
-                      "value": "ZW7"
+                      "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
+                      "value": "E03"
                     }
                   ],
                   "id": "9013",

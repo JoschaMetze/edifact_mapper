@@ -6,7 +6,7 @@
 
 use std::collections::HashSet;
 
-use axum::extract::State;
+use axum::extract::{Query, State};
 use axum::routing::post;
 use axum::{Json, Router};
 
@@ -15,7 +15,9 @@ use mig_assembly::pid_detect::detect_pid;
 use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::tokenize::parse_to_segments;
 
-use crate::contracts::convert_v2::{ConvertMode, ConvertV2Request, ConvertV2Response};
+use crate::contracts::convert_v2::{
+    ConvertMode, ConvertV2Query, ConvertV2Request, ConvertV2Response,
+};
 use crate::error::ApiError;
 use crate::state::AppState;
 
@@ -25,10 +27,16 @@ pub fn routes() -> Router<AppState> {
 }
 
 /// `POST /api/v2/convert` — MIG-driven conversion endpoint.
+///
+/// Query parameters:
+/// - `enrich_codes` (bool, default `true`): When `false`, code fields are emitted
+///   as plain strings instead of `{"code": "...", "meaning": "..."}` objects.
 async fn convert_v2(
     State(state): State<AppState>,
+    Query(query): Query<ConvertV2Query>,
     Json(req): Json<ConvertV2Request>,
 ) -> Result<Json<ConvertV2Response>, ApiError> {
+    let enrich_codes = query.enrich_codes.unwrap_or(true);
     let start = std::time::Instant::now();
 
     match req.mode {
@@ -136,8 +144,13 @@ async fn convert_v2(
                     })?;
 
                 // Map with split engines into hierarchical result
-                let mapped =
-                    mig_bo4e::MappingEngine::map_interchange(msg_engine, tx_engine, &tree, "SG4");
+                let mapped = mig_bo4e::MappingEngine::map_interchange(
+                    msg_engine,
+                    tx_engine,
+                    &tree,
+                    "SG4",
+                    enrich_codes,
+                );
 
                 // Extract UNH fields
                 let (unh_referenz, nachrichten_typ) =

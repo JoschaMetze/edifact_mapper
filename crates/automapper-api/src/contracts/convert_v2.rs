@@ -25,6 +25,14 @@ pub struct ConvertV2Request {
     pub format_version: String,
 }
 
+/// Query parameters for `POST /api/v2/convert`.
+#[derive(Debug, Clone, Deserialize)]
+pub struct ConvertV2Query {
+    /// When `false`, code fields are emitted as plain strings instead of
+    /// `{"code": "...", "meaning": "..."}` objects. Defaults to `true`.
+    pub enrich_codes: Option<bool>,
+}
+
 /// Response body for `POST /api/v2/convert`.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ConvertV2Response {

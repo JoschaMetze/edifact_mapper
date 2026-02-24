@@ -951,10 +951,13 @@ pub fn generate_pid_schema(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbS
     // Build direct Number → MigSegment index for O(1) lookups
     let number_index = build_mig_number_index(mig);
 
-    // Build AHB code index: (mig_number, data_element_id) → AHB-filtered codes.
+    // Build AHB code index: (mig_number, data_element_id, occurrence) → AHB-filtered codes.
     // AHB field paths look like "SG4/SG5/LOC/3227" or "SG2/NAD/C082/3039".
     // The last path component is always the data element ID.
-    let mut ahb_codes: HashMap<(String, String), Vec<AhbCodeValue>> = HashMap::new();
+    // A segment can contain the same DE ID multiple times (e.g., STS has three C556/D_9013
+    // composites). We use an occurrence counter to distinguish them.
+    let mut ahb_codes: HashMap<(String, String, usize), Vec<AhbCodeValue>> = HashMap::new();
+    let mut de_occurrence: HashMap<(String, String), usize> = HashMap::new();
     for field in &pid.fields {
         if field.codes.is_empty() {
             continue;
@@ -964,7 +967,13 @@ pub fn generate_pid_schema(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbS
         };
         // Extract the last path component as the data element ID
         if let Some(de_id) = field.segment_path.rsplit('/').next() {
-            ahb_codes.insert((mig_num.clone(), de_id.to_string()), field.codes.clone());
+            let occ_key = (mig_num.clone(), de_id.to_string());
+            let occurrence = de_occurrence.entry(occ_key).or_insert(0);
+            ahb_codes.insert(
+                (mig_num.clone(), de_id.to_string(), *occurrence),
+                field.codes.clone(),
+            );
+            *occurrence += 1;
         }
     }
 
@@ -1047,7 +1056,7 @@ fn group_to_schema_value(
     group: &PidGroupInfo,
     number_index: &HashMap<String, &MigSegment>,
     mig: &MigSchema,
-    ahb_codes: &HashMap<(String, String), Vec<crate::schema::ahb::AhbCodeValue>>,
+    ahb_codes: &HashMap<(String, String, usize), Vec<crate::schema::ahb::AhbCodeValue>>,
 ) -> serde_json::Value {
     let mut obj = serde_json::Map::new();
     obj.insert(
@@ -1087,6 +1096,7 @@ fn group_to_schema_value(
         .iter()
         .map(|seg_id| {
             let mig_number = group.segment_mig_numbers.get(seg_id);
+
 
             // Direct Number-based lookup (precise), fall back to group search
             let mig_seg = mig_number
@@ -1131,7 +1141,7 @@ fn group_to_schema_value(
 fn segment_to_schema_value(
     seg: &MigSegment,
     mig_number: Option<&String>,
-    ahb_codes: &HashMap<(String, String), Vec<crate::schema::ahb::AhbCodeValue>>,
+    ahb_codes: &HashMap<(String, String, usize), Vec<crate::schema::ahb::AhbCodeValue>>,
 ) -> serde_json::Value {
     let mut obj = serde_json::Map::new();
     obj.insert("id".to_string(), serde_json::Value::String(seg.id.clone()));
@@ -1144,6 +1154,10 @@ fn segment_to_schema_value(
         "name".to_string(),
         serde_json::Value::String(sanitize_doc(name)),
     );
+
+    // Track per-DE-ID occurrence counters within this segment so we can
+    // disambiguate repeated data elements (e.g., three C556/D_9013 in STS).
+    let mut de_occurrence: HashMap<String, usize> = HashMap::new();
 
     let mut elements = Vec::new();
 
@@ -1165,7 +1179,9 @@ fn segment_to_schema_value(
             serde_json::Value::String(sanitize_doc(de_name)),
         );
 
-        emit_element_codes(&mut el, &de.codes, &de.id, mig_number, ahb_codes);
+        let occ = de_occurrence.entry(de.id.clone()).or_insert(0);
+        emit_element_codes(&mut el, &de.codes, &de.id, mig_number, *occ, ahb_codes);
+        *occ += 1;
 
         elements.push(serde_json::Value::Object(el));
     }
@@ -1210,7 +1226,9 @@ fn segment_to_schema_value(
                 serde_json::Value::String(sanitize_doc(de_name)),
             );
 
-            emit_element_codes(&mut sub, &de.codes, &de.id, mig_number, ahb_codes);
+            let occ = de_occurrence.entry(de.id.clone()).or_insert(0);
+            emit_element_codes(&mut sub, &de.codes, &de.id, mig_number, *occ, ahb_codes);
+            *occ += 1;
 
             components.push(serde_json::Value::Object(sub));
         }
@@ -1232,10 +1250,12 @@ fn emit_element_codes(
     mig_codes: &[crate::schema::common::CodeDefinition],
     de_id: &str,
     mig_number: Option<&String>,
-    ahb_codes: &HashMap<(String, String), Vec<crate::schema::ahb::AhbCodeValue>>,
+    occurrence: usize,
+    ahb_codes: &HashMap<(String, String, usize), Vec<crate::schema::ahb::AhbCodeValue>>,
 ) {
     // Try AHB-filtered codes first (only codes this PID allows)
-    let ahb_filtered = mig_number.and_then(|num| ahb_codes.get(&(num.clone(), de_id.to_string())));
+    let ahb_filtered =
+        mig_number.and_then(|num| ahb_codes.get(&(num.clone(), de_id.to_string(), occurrence)));
 
     if let Some(ahb) = ahb_filtered {
         if !ahb.is_empty() {

@@ -105,6 +105,10 @@ impl MigServiceRegistry {
                             if message_dir.is_dir() {
                                 match MappingEngine::load(&message_dir) {
                                     Ok(engine) => {
+                                        // Attach CodeLookup from any available PID schema
+                                        // (root_segments are identical across all PIDs)
+                                        let engine =
+                                            attach_code_lookup_for_message(&fv, &variant, &variant_path, engine);
                                         let key = format!("{}/{}", fv, variant);
                                         tracing::info!(
                                             "Loaded {} message-level TOML mappings for {key}",
@@ -364,6 +368,28 @@ fn attach_code_lookup(
     } else {
         engine
     }
+}
+
+/// Attach a CodeLookup to the message-level engine using any available PID schema.
+///
+/// Root-level segments (BGM, DTM, etc.) are identical across all PID schemas,
+/// so we just pick the first `pid_*` directory we find under the variant path.
+fn attach_code_lookup_for_message(
+    fv: &str,
+    variant: &str,
+    variant_path: &std::path::Path,
+    engine: MappingEngine,
+) -> MappingEngine {
+    let Ok(entries) = std::fs::read_dir(variant_path) else {
+        return engine;
+    };
+    for entry in entries.flatten() {
+        let dirname = entry.file_name().to_string_lossy().to_string();
+        if dirname.starts_with("pid_") {
+            return attach_code_lookup(fv, variant, &dirname, engine);
+        }
+    }
+    engine
 }
 
 /// Discovers and manages available coordinators.
