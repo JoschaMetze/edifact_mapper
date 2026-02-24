@@ -72,7 +72,11 @@ async fn reverse_v2(
             .transaktionen
             .first()
             .and_then(|tx| tx.transaktionsdaten.get("pruefidentifikator"))
-            .and_then(|v| v.as_str())
+            .and_then(|v| {
+                // Handle both plain string and enriched {"code": "55001", "meaning": "..."} formats
+                v.as_str()
+                    .or_else(|| v.get("code").and_then(|c| c.as_str()))
+            })
             .ok_or_else(|| ApiError::BadRequest {
                 message: "No pruefidentifikator found in transaktionsdaten".to_string(),
             })?;

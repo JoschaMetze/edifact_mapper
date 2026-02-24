@@ -237,7 +237,7 @@ impl MappingEngine {
                 segments: tree.segments[..tree.post_group_start].to_vec(),
                 child_groups: vec![],
             };
-            Self::extract_fields_from_instance(&root_instance, &def.fields, &mut result);
+            self.extract_fields_from_instance(&root_instance, def, &mut result);
             self.extract_companion_fields(&root_instance, def, &mut result);
             return serde_json::Value::Object(result);
         }
@@ -245,7 +245,7 @@ impl MappingEngine {
         let instance = Self::resolve_group_instance(tree, &def.meta.source_group, repetition);
 
         if let Some(instance) = instance {
-            Self::extract_fields_from_instance(instance, &def.fields, &mut result);
+            self.extract_fields_from_instance(instance, def, &mut result);
             self.extract_companion_fields(instance, def, &mut result);
         }
 
@@ -332,13 +332,17 @@ impl MappingEngine {
         }
     }
 
-    /// Extract all fields from an instance into a result map (shared logic).
+    /// Extract all fields from an instance into a result map.
+    ///
+    /// When a `code_lookup` is configured, code-type fields are emitted as
+    /// `{"code": "E01", "meaning": "..."}` objects. Data-type fields remain plain strings.
     fn extract_fields_from_instance(
+        &self,
         instance: &AssembledGroupInstance,
-        fields: &std::collections::BTreeMap<String, FieldMapping>,
+        def: &MappingDefinition,
         result: &mut serde_json::Map<String, serde_json::Value>,
     ) {
-        for (path, field_mapping) in fields {
+        for (path, field_mapping) in &def.fields {
             let (target, enum_map) = match field_mapping {
                 FieldMapping::Simple(t) => (t.clone(), None),
                 FieldMapping::Structured(s) => (s.target.clone(), s.enum_map.as_ref()),
@@ -353,6 +357,43 @@ impl MappingEngine {
                 } else {
                     val
                 };
+
+                // Enrich code fields with meaning from PID schema
+                if let (Some(ref code_lookup), Some(ref source_path)) =
+                    (&self.code_lookup, &def.meta.source_path)
+                {
+                    let (seg_tag, _qualifier) =
+                        parse_tag_qualifier(path.split('.').next().unwrap_or(""));
+                    let parts: Vec<&str> = path.split('.').collect();
+                    let (element_idx, component_idx) =
+                        Self::parse_element_component(&parts[1..]);
+
+                    if code_lookup.is_code_field(
+                        source_path,
+                        &seg_tag,
+                        element_idx,
+                        component_idx,
+                    ) {
+                        let meaning = code_lookup
+                            .meaning_for(
+                                source_path,
+                                &seg_tag,
+                                element_idx,
+                                component_idx,
+                                &mapped_val,
+                            )
+                            .map(|m| serde_json::Value::String(m.to_string()))
+                            .unwrap_or(serde_json::Value::Null);
+
+                        let enriched = serde_json::json!({
+                            "code": mapped_val,
+                            "meaning": meaning,
+                        });
+                        set_nested_value_json(result, &target, enriched);
+                        continue;
+                    }
+                }
+
                 set_nested_value(result, &target, mapped_val);
             }
         }
@@ -382,25 +423,7 @@ impl MappingEngine {
         };
 
         let mut result = serde_json::Map::new();
-        for (path, field_mapping) in &def.fields {
-            let (target, enum_map) = match field_mapping {
-                FieldMapping::Simple(t) => (t.clone(), None),
-                FieldMapping::Structured(s) => (s.target.clone(), s.enum_map.as_ref()),
-                FieldMapping::Nested(_) => continue,
-            };
-            if target.is_empty() {
-                continue;
-            }
-            if let Some(val) = Self::extract_from_instance(&instance, path) {
-                let mapped_val = if let Some(map) = enum_map {
-                    map.get(&val).cloned().unwrap_or(val)
-                } else {
-                    val
-                };
-                set_nested_value(&mut result, &target, mapped_val);
-            }
-        }
-
+        self.extract_fields_from_instance(&instance, def, &mut result);
         serde_json::Value::Object(result)
     }
 
