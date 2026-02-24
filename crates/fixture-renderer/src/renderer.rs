@@ -38,7 +38,10 @@ pub struct RenderInput {
 ///           -> disassemble -> render -> .edi
 ///
 /// This validates that the TOML mappings can produce a complete EDIFACT message.
-pub fn render_fixture(source_edi_path: &Path, input: &RenderInput) -> Result<String, RendererError> {
+pub fn render_fixture(
+    source_edi_path: &Path,
+    input: &RenderInput,
+) -> Result<String, RendererError> {
     // 1. Parse MIG and AHB
     let mig = automapper_generator::parsing::mig_parser::parse_mig(
         &input.mig_xml_path,
@@ -73,11 +76,9 @@ pub fn render_fixture(source_edi_path: &Path, input: &RenderInput) -> Result<Str
     let chunks = split_messages(segments).map_err(|e| RendererError::Assembly(e.to_string()))?;
 
     // 4. Load mapping engines
-    let (msg_engine, tx_engine) = MappingEngine::load_split(
-        &input.message_mappings_dir,
-        &input.transaction_mappings_dir,
-    )
-    .map_err(|e| RendererError::Mapping(e.to_string()))?;
+    let (msg_engine, tx_engine) =
+        MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
+            .map_err(|e| RendererError::Mapping(e.to_string()))?;
 
     // 5. Process each message through forward+reverse roundtrip
     let assembler = Assembler::new(&filtered_mig);
@@ -203,11 +204,9 @@ pub fn generate_canonical_bo4e(
     let nachrichtendaten = extract_nachrichtendaten(&chunks.envelope);
 
     // 5. Load mapping engines
-    let (msg_engine, tx_engine) = MappingEngine::load_split(
-        &input.message_mappings_dir,
-        &input.transaction_mappings_dir,
-    )
-    .map_err(|e| RendererError::Mapping(e.to_string()))?;
+    let (msg_engine, tx_engine) =
+        MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
+            .map_err(|e| RendererError::Mapping(e.to_string()))?;
 
     // 6. Process first message
     let msg = chunks.messages.first().ok_or(RendererError::NoMessages)?;

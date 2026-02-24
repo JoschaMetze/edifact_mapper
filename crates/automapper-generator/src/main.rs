@@ -731,8 +731,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
 
             // Load inputs
             let old_edi = std::fs::read_to_string(&old_fixture)?;
-            let diff_json: PidSchemaDiff =
-                serde_json::from_str(&std::fs::read_to_string(&diff)?)?;
+            let diff_json: PidSchemaDiff = serde_json::from_str(&std::fs::read_to_string(&diff)?)?;
             let new_schema: serde_json::Value =
                 serde_json::from_str(&std::fs::read_to_string(&new_pid_schema)?)?;
 
@@ -790,8 +789,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             use automapper_generator::fixture_migrator::batch::migrate_directory;
             use automapper_generator::schema_diff::types::PidSchemaDiff;
 
-            let diff_json: PidSchemaDiff =
-                serde_json::from_str(&std::fs::read_to_string(&diff)?)?;
+            let diff_json: PidSchemaDiff = serde_json::from_str(&std::fs::read_to_string(&diff)?)?;
             let new_schema: serde_json::Value =
                 serde_json::from_str(&std::fs::read_to_string(&new_pid_schema)?)?;
 

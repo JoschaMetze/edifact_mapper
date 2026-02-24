@@ -22,8 +22,7 @@ fn make_input_55001() -> Option<RenderInput> {
     let msg_mappings = base.join("mappings/FV2504/UTILMD_Strom/message");
     let tx_mappings = base.join("mappings/FV2504/UTILMD_Strom/pid_55001");
 
-    if !mig_path.exists() || !ahb_path.exists() || !msg_mappings.exists() || !tx_mappings.exists()
-    {
+    if !mig_path.exists() || !ahb_path.exists() || !msg_mappings.exists() || !tx_mappings.exists() {
         return None;
     }
 
@@ -164,5 +163,8 @@ fn test_roundtrip_generate_then_render() {
     assert!(edifact.contains("UNT+"));
     assert!(edifact.contains("UNZ+"));
 
-    eprintln!("Roundtrip complete: canonical BO4E -> EDIFACT ({} bytes)", edifact.len());
+    eprintln!(
+        "Roundtrip complete: canonical BO4E -> EDIFACT ({} bytes)",
+        edifact.len()
+    );
 }

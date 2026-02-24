@@ -260,11 +260,7 @@ fn test_migrate_directory_processes_multiple_fixtures() {
     )
     .unwrap();
     // Write a non-.edi file that should be skipped
-    std::fs::write(
-        tmp_old.path().join("55001_UTILMD_S2.1_test1.bo.json"),
-        "{}",
-    )
-    .unwrap();
+    std::fs::write(tmp_old.path().join("55001_UTILMD_S2.1_test1.bo.json"), "{}").unwrap();
 
     let diff = version_only_diff();
     let schema = serde_json::json!({"pid": "55001", "fields": {}});
