@@ -14,8 +14,8 @@
 //! let instance = engine.map_reverse(&bo4e, def);
 //! ```
 
-pub mod definition;
 pub mod code_lookup;
+pub mod definition;
 pub mod engine;
 pub mod error;
 pub mod handlers;

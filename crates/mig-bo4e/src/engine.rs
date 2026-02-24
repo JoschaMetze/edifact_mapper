@@ -19,6 +19,7 @@ use crate::segment_structure::SegmentStructure;
 pub struct MappingEngine {
     definitions: Vec<MappingDefinition>,
     segment_structure: Option<SegmentStructure>,
+    code_lookup: Option<crate::code_lookup::CodeLookup>,
 }
 
 impl MappingEngine {
@@ -43,6 +44,7 @@ impl MappingEngine {
         Ok(Self {
             definitions,
             segment_structure: None,
+            code_lookup: None,
         })
     }
 
@@ -73,6 +75,7 @@ impl MappingEngine {
         Ok(Self {
             definitions,
             segment_structure: None,
+            code_lookup: None,
         })
     }
 
@@ -81,6 +84,7 @@ impl MappingEngine {
         Self {
             definitions,
             segment_structure: None,
+            code_lookup: None,
         }
     }
 
@@ -90,6 +94,15 @@ impl MappingEngine {
     /// MIG-defined count, ensuring trailing empty elements are preserved.
     pub fn with_segment_structure(mut self, ss: SegmentStructure) -> Self {
         self.segment_structure = Some(ss);
+        self
+    }
+
+    /// Attach a code lookup for enriching companion field values.
+    ///
+    /// When set, companion fields that map to code-type elements in the PID schema
+    /// are emitted as `{"code": "Z15", "meaning": "Ja"}` objects instead of plain strings.
+    pub fn with_code_lookup(mut self, cl: crate::code_lookup::CodeLookup) -> Self {
+        self.code_lookup = Some(cl);
         self
     }
 
@@ -225,7 +238,7 @@ impl MappingEngine {
                 child_groups: vec![],
             };
             Self::extract_fields_from_instance(&root_instance, &def.fields, &mut result);
-            Self::extract_companion_fields(&root_instance, def, &mut result);
+            self.extract_companion_fields(&root_instance, def, &mut result);
             return serde_json::Value::Object(result);
         }
 
@@ -233,14 +246,18 @@ impl MappingEngine {
 
         if let Some(instance) = instance {
             Self::extract_fields_from_instance(instance, &def.fields, &mut result);
-            Self::extract_companion_fields(instance, def, &mut result);
+            self.extract_companion_fields(instance, def, &mut result);
         }
 
         serde_json::Value::Object(result)
     }
 
     /// Extract companion_fields into a nested object within the result.
+    ///
+    /// When a `code_lookup` is configured, code-type fields are emitted as
+    /// `{"code": "Z15", "meaning": "Ja"}` objects. Data-type fields remain plain strings.
     fn extract_companion_fields(
+        &self,
         instance: &AssembledGroupInstance,
         def: &MappingDefinition,
         result: &mut serde_json::Map<String, serde_json::Value>,
@@ -248,7 +265,63 @@ impl MappingEngine {
         if let Some(ref companion_fields) = def.companion_fields {
             let companion_key = def.meta.companion_type.as_deref().unwrap_or("_companion");
             let mut companion_result = serde_json::Map::new();
-            Self::extract_fields_from_instance(instance, companion_fields, &mut companion_result);
+
+            for (path, field_mapping) in companion_fields {
+                let (target, enum_map) = match field_mapping {
+                    FieldMapping::Simple(t) => (t.clone(), None),
+                    FieldMapping::Structured(s) => (s.target.clone(), s.enum_map.as_ref()),
+                    FieldMapping::Nested(_) => continue,
+                };
+                if target.is_empty() {
+                    continue;
+                }
+                if let Some(val) = Self::extract_from_instance(instance, path) {
+                    let mapped_val = if let Some(map) = enum_map {
+                        map.get(&val).cloned().unwrap_or(val)
+                    } else {
+                        val
+                    };
+
+                    // Enrich code fields with meaning from PID schema
+                    if let (Some(ref code_lookup), Some(ref source_path)) =
+                        (&self.code_lookup, &def.meta.source_path)
+                    {
+                        let (seg_tag, _qualifier) =
+                            parse_tag_qualifier(path.split('.').next().unwrap_or(""));
+                        let parts: Vec<&str> = path.split('.').collect();
+                        let (element_idx, component_idx) =
+                            Self::parse_element_component(&parts[1..]);
+
+                        if code_lookup.is_code_field(
+                            source_path,
+                            &seg_tag,
+                            element_idx,
+                            component_idx,
+                        ) {
+                            let meaning = code_lookup
+                                .meaning_for(
+                                    source_path,
+                                    &seg_tag,
+                                    element_idx,
+                                    component_idx,
+                                    &mapped_val,
+                                )
+                                .map(|m| serde_json::Value::String(m.to_string()))
+                                .unwrap_or(serde_json::Value::Null);
+
+                            let enriched = serde_json::json!({
+                                "code": mapped_val,
+                                "meaning": meaning,
+                            });
+                            set_nested_value_json(&mut companion_result, &target, enriched);
+                            continue;
+                        }
+                    }
+
+                    set_nested_value(&mut companion_result, &target, mapped_val);
+                }
+            }
+
             if !companion_result.is_empty() {
                 result.insert(
                     companion_key.to_string(),
@@ -608,6 +681,21 @@ impl MappingEngine {
                 .cloned(),
             _ => None,
         }
+    }
+
+    /// Parse element and component indices from path parts after the segment tag.
+    /// E.g., ["2"] -> (2, 0), ["0", "3"] -> (0, 3), ["1", "0"] -> (1, 0)
+    fn parse_element_component(parts: &[&str]) -> (usize, usize) {
+        if parts.is_empty() {
+            return (0, 0);
+        }
+        let element_idx = parts[0].parse::<usize>().unwrap_or(0);
+        let component_idx = if parts.len() > 1 {
+            parts[1].parse::<usize>().unwrap_or(0)
+        } else {
+            0
+        };
+        (element_idx, component_idx)
     }
 
     /// Extract a value from a BO4E JSON object by target field name.
@@ -1321,6 +1409,27 @@ fn set_nested_value(map: &mut serde_json::Map<String, serde_json::Value>, path: 
     );
 }
 
+/// Like `set_nested_value` but accepts a `serde_json::Value` instead of a `String`.
+fn set_nested_value_json(
+    map: &mut serde_json::Map<String, serde_json::Value>,
+    path: &str,
+    val: serde_json::Value,
+) {
+    let parts: Vec<&str> = path.split('.').collect();
+    if parts.len() == 1 {
+        map.insert(parts[0].to_string(), val);
+        return;
+    }
+    let mut current = map;
+    for part in &parts[..parts.len() - 1] {
+        let entry = current
+            .entry(part.to_string())
+            .or_insert_with(|| serde_json::Value::Object(serde_json::Map::new()));
+        current = entry.as_object_mut().expect("expected object in path");
+    }
+    current.insert(parts.last().unwrap().to_string(), val);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1884,5 +1993,110 @@ mod tests {
         assert_eq!(sts.elements[2], vec!["E01"]);
         assert_eq!(sts.elements[3], vec![""]);
         assert_eq!(sts.elements[4], vec![""]);
+    }
+
+    #[test]
+    fn test_extract_companion_fields_with_code_enrichment() {
+        use crate::code_lookup::CodeLookup;
+        use mig_assembly::assembler::*;
+
+        let schema = serde_json::json!({
+            "fields": {
+                "sg4": {
+                    "children": {
+                        "sg8_z01": {
+                            "children": {
+                                "sg10": {
+                                    "segments": [{
+                                        "id": "CCI",
+                                        "elements": [{
+                                            "index": 2,
+                                            "components": [{
+                                                "sub_index": 0,
+                                                "type": "code",
+                                                "codes": [
+                                                    {"value": "Z15", "name": "Haushaltskunde"},
+                                                    {"value": "Z18", "name": "Kein Haushaltskunde"}
+                                                ]
+                                            }]
+                                        }]
+                                    }],
+                                    "source_group": "SG10"
+                                }
+                            },
+                            "segments": [],
+                            "source_group": "SG8"
+                        }
+                    },
+                    "segments": [],
+                    "source_group": "SG4"
+                }
+            }
+        });
+
+        let code_lookup = CodeLookup::from_schema_value(&schema);
+
+        let tree = AssembledTree {
+            segments: vec![],
+            groups: vec![AssembledGroup {
+                group_id: "SG4".to_string(),
+                repetitions: vec![AssembledGroupInstance {
+                    segments: vec![],
+                    child_groups: vec![AssembledGroup {
+                        group_id: "SG8".to_string(),
+                        repetitions: vec![AssembledGroupInstance {
+                            segments: vec![],
+                            child_groups: vec![AssembledGroup {
+                                group_id: "SG10".to_string(),
+                                repetitions: vec![AssembledGroupInstance {
+                                    segments: vec![AssembledSegment {
+                                        tag: "CCI".to_string(),
+                                        elements: vec![vec![], vec![], vec!["Z15".to_string()]],
+                                    }],
+                                    child_groups: vec![],
+                                }],
+                            }],
+                        }],
+                    }],
+                }],
+            }],
+            post_group_start: 0,
+        };
+
+        let mut companion_fields = BTreeMap::new();
+        companion_fields.insert(
+            "cci.2".to_string(),
+            FieldMapping::Simple("haushaltskunde".to_string()),
+        );
+
+        let def = MappingDefinition {
+            meta: MappingMeta {
+                entity: "Marktlokation".to_string(),
+                bo4e_type: "Marktlokation".to_string(),
+                companion_type: Some("MarktlokationEdifact".to_string()),
+                source_group: "SG4.SG8.SG10".to_string(),
+                source_path: Some("sg4.sg8_z01.sg10".to_string()),
+                discriminator: None,
+            },
+            fields: BTreeMap::new(),
+            companion_fields: Some(companion_fields),
+            complex_handlers: None,
+        };
+
+        // Without code lookup — plain string
+        let engine_plain = MappingEngine::from_definitions(vec![]);
+        let bo4e_plain = engine_plain.map_forward(&tree, &def, 0);
+        assert_eq!(
+            bo4e_plain["MarktlokationEdifact"]["haushaltskunde"].as_str(),
+            Some("Z15"),
+            "Without code lookup, should be plain string"
+        );
+
+        // With code lookup — enriched object
+        let engine_enriched = MappingEngine::from_definitions(vec![]).with_code_lookup(code_lookup);
+        let bo4e_enriched = engine_enriched.map_forward(&tree, &def, 0);
+        let hk = &bo4e_enriched["MarktlokationEdifact"]["haushaltskunde"];
+        assert_eq!(hk["code"].as_str(), Some("Z15"));
+        assert_eq!(hk["meaning"].as_str(), Some("Haushaltskunde"));
     }
 }

@@ -117,10 +117,7 @@ impl CodeLookup {
             return;
         };
         for element in elements {
-            let element_index = element
-                .get("index")
-                .and_then(|v| v.as_u64())
-                .unwrap_or(0) as usize;
+            let element_index = element.get("index").and_then(|v| v.as_u64()).unwrap_or(0) as usize;
 
             // Simple element (no composite) with codes
             if let Some("code") = element.get("type").and_then(|v| v.as_str()) {
