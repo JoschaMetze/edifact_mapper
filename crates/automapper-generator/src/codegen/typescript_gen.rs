@@ -383,6 +383,80 @@ pub fn emit_index_dts(pids: &[&str]) -> String {
     out
 }
 
+/// Generate TypeScript type definitions for one or more PIDs.
+///
+/// Creates:
+/// - `{output_dir}/common.d.ts` — shared CodeField type
+/// - `{output_dir}/{fv}/{variant}/pid_{pid}.d.ts` — per-PID types
+/// - `{output_dir}/{fv}/{variant}/index.d.ts` — barrel re-exports
+pub fn generate_typescript(
+    pids: &[&str],
+    schema_dir: &Path,
+    mappings_dir: &Path,
+    format_version: &str,
+    variant: &str,
+    output_dir: &Path,
+) -> Result<Vec<String>, GeneratorError> {
+    let mut generated_files = Vec::new();
+
+    // Write common.d.ts
+    let common_path = output_dir.join("common.d.ts");
+    std::fs::create_dir_all(output_dir)?;
+    std::fs::write(&common_path, emit_common_dts())?;
+    generated_files.push("common.d.ts".to_string());
+
+    // Per-PID generation
+    let variant_dir = output_dir.join(format_version).join(variant);
+    std::fs::create_dir_all(&variant_dir)?;
+
+    let msg_dir = mappings_dir
+        .join(format_version)
+        .join(variant)
+        .join("message");
+
+    for pid in pids {
+        let schema_path = schema_dir.join(format!("pid_{}_schema.json", pid.to_lowercase()));
+        if !schema_path.exists() {
+            return Err(GeneratorError::FileNotFound(schema_path));
+        }
+
+        let tx_dir = mappings_dir
+            .join(format_version)
+            .join(variant)
+            .join(format!("pid_{}", pid));
+
+        let dirs: Vec<&Path> = if msg_dir.exists() {
+            vec![msg_dir.as_path(), tx_dir.as_path()]
+        } else {
+            vec![tx_dir.as_path()]
+        };
+
+        let info = collect_entities(&dirs, &schema_path, pid)?;
+        let content = emit_pid_dts(&info);
+
+        let filename = format!("pid_{}.d.ts", pid);
+        std::fs::write(variant_dir.join(&filename), &content)?;
+        generated_files.push(format!("{}/{}/{}", format_version, variant, filename));
+
+        eprintln!(
+            "PID {}: {} entities, {} with companions",
+            pid,
+            info.entities.len(),
+            info.entities
+                .iter()
+                .filter(|e| e.companion.is_some())
+                .count()
+        );
+    }
+
+    // Write index.d.ts
+    let pid_strs: Vec<&str> = pids.to_vec();
+    std::fs::write(variant_dir.join("index.d.ts"), emit_index_dts(&pid_strs))?;
+    generated_files.push(format!("{}/{}/index.d.ts", format_version, variant));
+
+    Ok(generated_files)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -579,5 +653,49 @@ mod tests {
         let content = emit_index_dts(&["55001", "55002"]);
         assert!(content.contains("export * from \"./pid_55001\";"));
         assert!(content.contains("export * from \"./pid_55002\";"));
+    }
+
+    #[test]
+    fn test_generate_typescript_pid_55001() {
+        let schema_dir = Path::new(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../crates/mig-types/src/generated/fv2504/utilmd/pids"
+        ));
+        let mappings_dir = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../mappings"));
+
+        if !schema_dir.join("pid_55001_schema.json").exists() {
+            eprintln!("Skipping: PID schema not found");
+            return;
+        }
+
+        let output_dir = std::env::temp_dir().join("ts_gen_test_55001");
+        let _ = std::fs::remove_dir_all(&output_dir);
+
+        generate_typescript(
+            &["55001"],
+            schema_dir,
+            mappings_dir,
+            "FV2504",
+            "UTILMD_Strom",
+            &output_dir,
+        )
+        .unwrap();
+
+        // Check files were created
+        assert!(output_dir.join("common.d.ts").exists());
+        assert!(output_dir
+            .join("FV2504/UTILMD_Strom/pid_55001.d.ts")
+            .exists());
+        assert!(output_dir.join("FV2504/UTILMD_Strom/index.d.ts").exists());
+
+        // Check content
+        let pid_content =
+            std::fs::read_to_string(output_dir.join("FV2504/UTILMD_Strom/pid_55001.d.ts")).unwrap();
+        assert!(pid_content.contains("export interface Pid55001Response"));
+        assert!(pid_content.contains("export interface Marktlokation"));
+        assert!(pid_content.contains("marktlokationsId?: string;"));
+
+        // Cleanup
+        let _ = std::fs::remove_dir_all(&output_dir);
     }
 }
