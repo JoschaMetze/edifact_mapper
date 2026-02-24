@@ -193,9 +193,8 @@ fn test_map_all_forward_55001_with_code_enrichment() {
         return;
     }
 
-    let schema_path = Path::new(
-        "../../crates/mig-types/src/generated/fv2504/utilmd/pids/pid_55001_schema.json",
-    );
+    let schema_path =
+        Path::new("../../crates/mig-types/src/generated/fv2504/utilmd/pids/pid_55001_schema.json");
     if !schema_path.exists() {
         eprintln!("Skipping: PID schema not found");
         return;
@@ -215,8 +214,7 @@ fn test_map_all_forward_55001_with_code_enrichment() {
     let tree = assembler.assemble_generic(&segments).unwrap();
 
     // Load engine WITH code lookup for enrichment
-    let code_lookup =
-        mig_bo4e::code_lookup::CodeLookup::from_schema_file(schema_path).unwrap();
+    let code_lookup = mig_bo4e::code_lookup::CodeLookup::from_schema_file(schema_path).unwrap();
     let engine = MappingEngine::load_merged(&[msg_dir, tx_dir])
         .unwrap()
         .with_code_lookup(code_lookup);
