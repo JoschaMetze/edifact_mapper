@@ -6,6 +6,7 @@ use std::sync::Arc;
 use automapper_generator::parsing::ahb_parser::parse_ahb;
 use automapper_generator::schema::ahb::AhbSchema;
 use mig_assembly::ConversionService;
+use mig_bo4e::code_lookup::CodeLookup;
 use mig_bo4e::segment_structure::SegmentStructure;
 use mig_bo4e::MappingEngine;
 
@@ -152,6 +153,9 @@ impl MigServiceRegistry {
                                             } else {
                                                 engine
                                             };
+                                            // Attach CodeLookup for companion field enrichment
+                                            let engine =
+                                                attach_code_lookup(&fv, &variant, &dirname, engine);
                                             let key = format!("{}/{}/{}", fv, variant, dirname);
                                             tracing::info!(
                                                 "Loaded {} TOML mapping definitions for {key}",
@@ -177,6 +181,10 @@ impl MigServiceRegistry {
                                             } else {
                                                 tx_engine
                                             };
+                                            // Attach CodeLookup for companion field enrichment
+                                            let tx_engine = attach_code_lookup(
+                                                &fv, &variant, &dirname, tx_engine,
+                                            );
                                             let key = format!("{}/{}/{}", fv, variant, dirname);
                                             transaction_engines.insert(key, tx_engine);
                                         }
@@ -320,6 +328,41 @@ impl MigServiceRegistry {
     /// Check if any MIG services are available.
     pub fn has_services(&self) -> bool {
         !self.services.is_empty()
+    }
+}
+
+/// Try to load a CodeLookup from the PID schema JSON and attach it to the engine.
+///
+/// Schema path: `crates/mig-types/src/generated/{fv_lower}/{msg_type_lower}/pids/{pid_dirname}_schema.json`
+fn attach_code_lookup(
+    fv: &str,
+    variant: &str,
+    pid_dirname: &str,
+    engine: MappingEngine,
+) -> MappingEngine {
+    let msg_type = variant.split('_').next().unwrap_or(variant).to_lowercase();
+    let fv_lower = fv.to_lowercase();
+    let schema_path = format!(
+        "crates/mig-types/src/generated/{}/{}/pids/{}_schema.json",
+        fv_lower, msg_type, pid_dirname
+    );
+    let schema_path = std::path::Path::new(&schema_path);
+    if schema_path.exists() {
+        match CodeLookup::from_schema_file(schema_path) {
+            Ok(lookup) => {
+                tracing::debug!("Loaded CodeLookup for {}/{}/{}", fv, variant, pid_dirname);
+                engine.with_code_lookup(lookup)
+            }
+            Err(e) => {
+                tracing::warn!(
+                    "Failed to load CodeLookup from {}: {e}",
+                    schema_path.display()
+                );
+                engine
+            }
+        }
+    } else {
+        engine
     }
 }
 

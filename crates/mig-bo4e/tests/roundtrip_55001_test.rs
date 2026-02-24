@@ -485,7 +485,7 @@ fn test_produktpaket_zuordnung_roundtrip() {
 
     // Companion fields should be under the companion type key
     let companion = bo4e
-        .get("ProduktpaketEdifact")
+        .get("produktpaketEdifact")
         .expect("Should have companion");
     assert_eq!(
         companion.get("merkmalCode").and_then(|v| v.as_str()),

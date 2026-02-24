@@ -19,7 +19,7 @@ fn test_map_all_reverse_message_level() {
 
     // Construct a minimal message-level BO4E JSON (Marktteilnehmer in SG2)
     let bo4e = serde_json::json!({
-        "Marktteilnehmer": [
+        "marktteilnehmer": [
             {
                 "marktrolle": "MS",
                 "rollencodenummer": "9900123456789"
@@ -56,7 +56,7 @@ fn test_map_all_reverse_transaction_level() {
 
     // Minimal transaction-level BO4E (Marktlokation in SG5)
     let bo4e = serde_json::json!({
-        "Marktlokation": {
+        "marktlokation": {
             "marktlokationsId": "51238696781"
         }
     });

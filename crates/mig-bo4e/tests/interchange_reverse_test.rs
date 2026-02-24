@@ -24,13 +24,13 @@ fn test_map_interchange_reverse_single_transaction() {
     // Build a MappedMessage that mirrors the forward output
     let mapped = MappedMessage {
         stammdaten: serde_json::json!({
-            "Marktteilnehmer": [
+            "marktteilnehmer": [
                 { "marktrolle": "MS", "rollencodenummer": "9900123456789" }
             ]
         }),
         transaktionen: vec![Transaktion {
             stammdaten: serde_json::json!({
-                "Marktlokation": { "marktlokationsId": "51238696781" }
+                "marktlokation": { "marktlokationsId": "51238696781" }
             }),
             transaktionsdaten: serde_json::json!({
                 "kategorie": "E01",

@@ -263,7 +263,8 @@ impl MappingEngine {
         result: &mut serde_json::Map<String, serde_json::Value>,
     ) {
         if let Some(ref companion_fields) = def.companion_fields {
-            let companion_key = def.meta.companion_type.as_deref().unwrap_or("_companion");
+            let raw_key = def.meta.companion_type.as_deref().unwrap_or("_companion");
+            let companion_key = to_camel_case(raw_key);
             let mut companion_result = serde_json::Map::new();
 
             for (path, field_mapping) in companion_fields {
@@ -502,9 +503,10 @@ impl MappingEngine {
 
         // Process companion_fields — values are nested under the companion type key
         if let Some(ref companion_fields) = def.companion_fields {
-            let companion_key = def.meta.companion_type.as_deref().unwrap_or("_companion");
+            let raw_key = def.meta.companion_type.as_deref().unwrap_or("_companion");
+            let companion_key = to_camel_case(raw_key);
             let companion_value = bo4e_value
-                .get(companion_key)
+                .get(&companion_key)
                 .unwrap_or(&serde_json::Value::Null);
 
             for (path, field_mapping) in companion_fields {
@@ -847,7 +849,8 @@ impl MappingEngine {
 
             if let Some(bo4e) = bo4e {
                 let bo4e = inject_bo4e_metadata(bo4e, &def.meta.bo4e_type);
-                deep_merge_insert(&mut result, entity, bo4e);
+                let key = to_camel_case(entity);
+                deep_merge_insert(&mut result, &key, bo4e);
             }
         }
 
@@ -867,10 +870,10 @@ impl MappingEngine {
         let mut groups: Vec<AssembledGroup> = Vec::new();
 
         for def in &self.definitions {
-            let entity = &def.meta.entity;
+            let entity_key = to_camel_case(&def.meta.entity);
 
             // Look up entity value
-            let entity_value = entities.get(entity);
+            let entity_value = entities.get(&entity_key);
 
             if entity_value.is_none() {
                 continue;
@@ -1017,7 +1020,7 @@ impl MappingEngine {
 
                         if let Some(obj) = tx_result.as_object() {
                             for (key, value) in obj {
-                                if key == "Prozessdaten" || key == "Nachricht" {
+                                if key == "prozessdaten" || key == "nachricht" {
                                     // Merge into transaktionsdaten
                                     if transaktionsdaten.is_null() {
                                         transaktionsdaten = value.clone();
@@ -1095,8 +1098,9 @@ impl MappingEngine {
                 } else {
                     relative.chars().filter(|c| *c == '.').count() + 1
                 };
+                let entity_key = to_camel_case(&def.meta.entity);
                 let is_transaktionsdaten =
-                    def.meta.entity == "Prozessdaten" || def.meta.entity == "Nachricht";
+                    entity_key == "prozessdaten" || entity_key == "nachricht";
                 DefWithMeta {
                     def,
                     relative,
@@ -1152,7 +1156,8 @@ impl MappingEngine {
                 let bo4e_value = if dm.is_transaktionsdaten {
                     &tx.transaktionsdaten
                 } else {
-                    match tx.stammdaten.get(&dm.def.meta.entity) {
+                    let entity_key = to_camel_case(&dm.def.meta.entity);
+                    match tx.stammdaten.get(&entity_key) {
                         Some(v) => v,
                         None => continue,
                     }
@@ -1390,6 +1395,19 @@ fn deep_merge_insert(
     result.insert(entity.to_string(), bo4e);
 }
 
+/// Convert a PascalCase name to camelCase by lowering the first character.
+///
+/// E.g., `"Ansprechpartner"` → `"ansprechpartner"`,
+/// `"AnsprechpartnerEdifact"` → `"ansprechpartnerEdifact"`,
+/// `"ProduktpaketPriorisierung"` → `"produktpaketPriorisierung"`.
+fn to_camel_case(name: &str) -> String {
+    let mut chars = name.chars();
+    match chars.next() {
+        Some(c) => c.to_lowercase().to_string() + chars.as_str(),
+        None => String::new(),
+    }
+}
+
 /// Set a value in a nested JSON map using a dotted path.
 /// E.g., "address.city" sets `{"address": {"city": "value"}}`.
 fn set_nested_value(map: &mut serde_json::Map<String, serde_json::Value>, path: &str, val: String) {
@@ -1563,7 +1581,7 @@ mod tests {
             "TX001"
         );
         assert_eq!(
-            result.transaktionen[0].stammdaten["Marktlokation"]["marktlokationsId"]
+            result.transaktionen[0].stammdaten["marktlokation"]["marktlokationsId"]
                 .as_str()
                 .unwrap(),
             "DE000111222333"
@@ -1725,8 +1743,8 @@ mod tests {
         let result = engine.map_all_forward(&tree);
 
         // Should contain Marktteilnehmer from SG2
-        assert!(result.get("Marktteilnehmer").is_some());
-        let mt = &result["Marktteilnehmer"];
+        assert!(result.get("marktteilnehmer").is_some());
+        let mt = &result["marktteilnehmer"];
         assert_eq!(mt["marktrolle"].as_str().unwrap(), "MS");
         assert_eq!(mt["rollencodenummer"].as_str().unwrap(), "9900123");
     }
@@ -1822,13 +1840,13 @@ mod tests {
 
         // Should contain Prozessdaten from SG4 root segments
         assert_eq!(
-            result["Prozessdaten"]["vorgangId"].as_str().unwrap(),
+            result["prozessdaten"]["vorgangId"].as_str().unwrap(),
             "TX001"
         );
 
         // Should contain Marktlokation from SG5 within SG4
         assert_eq!(
-            result["Marktlokation"]["marktlokationsId"]
+            result["marktlokation"]["marktlokationsId"]
                 .as_str()
                 .unwrap(),
             "DE000111222333"
@@ -1931,9 +1949,9 @@ mod tests {
         let result = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4");
 
         // Message-level stammdaten
-        assert!(result.stammdaten["Marktteilnehmer"].is_object());
+        assert!(result.stammdaten["marktteilnehmer"].is_object());
         assert_eq!(
-            result.stammdaten["Marktteilnehmer"]["marktrolle"]
+            result.stammdaten["marktteilnehmer"]["marktrolle"]
                 .as_str()
                 .unwrap(),
             "MS"
@@ -2091,7 +2109,7 @@ mod tests {
         let engine_plain = MappingEngine::from_definitions(vec![]);
         let bo4e_plain = engine_plain.map_forward(&tree, &def, 0);
         assert_eq!(
-            bo4e_plain["MarktlokationEdifact"]["haushaltskunde"].as_str(),
+            bo4e_plain["marktlokationEdifact"]["haushaltskunde"].as_str(),
             Some("Z15"),
             "Without code lookup, should be plain string"
         );
@@ -2099,7 +2117,7 @@ mod tests {
         // With code lookup — enriched object
         let engine_enriched = MappingEngine::from_definitions(vec![]).with_code_lookup(code_lookup);
         let bo4e_enriched = engine_enriched.map_forward(&tree, &def, 0);
-        let hk = &bo4e_enriched["MarktlokationEdifact"]["haushaltskunde"];
+        let hk = &bo4e_enriched["marktlokationEdifact"]["haushaltskunde"];
         assert_eq!(hk["code"].as_str(), Some("Z15"));
         assert_eq!(hk["meaning"].as_str(), Some("Haushaltskunde"));
     }
@@ -2131,7 +2149,7 @@ mod tests {
 
         // Test 1: Plain string format (backward compat)
         let bo4e_plain = serde_json::json!({
-            "TestEdifact": {
+            "testEdifact": {
                 "haushaltskunde": "Z15"
             }
         });
@@ -2140,7 +2158,7 @@ mod tests {
 
         // Test 2: Enriched object format
         let bo4e_enriched = serde_json::json!({
-            "TestEdifact": {
+            "testEdifact": {
                 "haushaltskunde": {
                     "code": "Z15",
                     "meaning": "Haushaltskunde gem. EnWG"

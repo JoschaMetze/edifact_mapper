@@ -66,16 +66,16 @@ fn test_map_all_forward_55001() {
 
     // All entity keys should be present (Merkmal data merged into parent entities)
     let expected_entities = [
-        "Nachricht",
-        "Marktteilnehmer",
-        "Prozessdaten",
-        "Marktlokation",
-        "Produktpaket",
-        "ProduktpaketPriorisierung",
-        "EnfgDaten",
-        "Ansprechpartner",
-        "Geschaeftspartner",
-        // Note: "Kontakt" (SG2.SG3) is defined in the message-level mappings but
+        "nachricht",
+        "marktteilnehmer",
+        "prozessdaten",
+        "marktlokation",
+        "produktpaket",
+        "produktpaketPriorisierung",
+        "enfgDaten",
+        "ansprechpartner",
+        "geschaeftspartner",
+        // Note: "kontakt" (SG2.SG3) is defined in the message-level mappings but
         // won't appear here because this fixture has no CTA+IC segment in SG3.
     ];
 
@@ -85,7 +85,7 @@ fn test_map_all_forward_55001() {
     }
 
     // Marktteilnehmer should be an array of 2 (SG2 has 2 reps, no discriminator)
-    let mt = obj.get("Marktteilnehmer").unwrap();
+    let mt = obj.get("marktteilnehmer").unwrap();
     assert!(mt.is_array(), "Marktteilnehmer should be an array");
     assert_eq!(
         mt.as_array().unwrap().len(),
@@ -94,14 +94,14 @@ fn test_map_all_forward_55001() {
     );
 
     // Spot-check values
-    let nachricht = obj.get("Nachricht").unwrap();
+    let nachricht = obj.get("nachricht").unwrap();
     assert_eq!(
         nachricht.get("nachrichtentyp").and_then(|v| v.as_str()),
         Some("E01"),
         "Nachricht.nachrichtentyp should be E01"
     );
 
-    let prozess = obj.get("Prozessdaten").unwrap();
+    let prozess = obj.get("prozessdaten").unwrap();
     assert!(
         prozess.get("vorgangId").and_then(|v| v.as_str()).is_some(),
         "Prozessdaten should have vorgangId"
@@ -112,7 +112,7 @@ fn test_map_all_forward_55001() {
         "Prozessdaten should have pruefidentifikator merged from RFF+Z13"
     );
 
-    let malo = obj.get("Marktlokation").unwrap();
+    let malo = obj.get("marktlokation").unwrap();
     assert!(
         malo.get("marktlokationsId")
             .and_then(|v| v.as_str())
@@ -122,46 +122,46 @@ fn test_map_all_forward_55001() {
 
     // Marktlokation should have merged companion data from SG10 (Haushaltskunde)
     assert!(
-        malo.get("MarktlokationEdifact").is_some(),
-        "Marktlokation should have MarktlokationEdifact companion from SG10"
+        malo.get("marktlokationEdifact").is_some(),
+        "Marktlokation should have marktlokationEdifact companion from SG10"
     );
 
     // Discriminator-resolved entities should be single objects (not arrays)
     assert!(
-        obj.get("Produktpaket").unwrap().is_object(),
+        obj.get("produktpaket").unwrap().is_object(),
         "Produktpaket should be a single object (resolved via discriminator)"
     );
     assert!(
-        obj.get("Ansprechpartner").unwrap().is_object(),
+        obj.get("ansprechpartner").unwrap().is_object(),
         "Ansprechpartner should be a single object (resolved via discriminator)"
     );
     assert!(
-        obj.get("Geschaeftspartner").unwrap().is_object(),
+        obj.get("geschaeftspartner").unwrap().is_object(),
         "Geschaeftspartner should be a single object (resolved via discriminator)"
     );
 
     // Companion fields merged from SG10 into parent entities
-    let pp = obj.get("Produktpaket").unwrap();
+    let pp = obj.get("produktpaket").unwrap();
     assert!(
-        pp.get("ProduktpaketEdifact").is_some(),
+        pp.get("produktpaketEdifact").is_some(),
         "Produktpaket should have companion data from SG10 (Produkteigenschaft)"
     );
-    let pp_companion = pp.get("ProduktpaketEdifact").unwrap();
+    let pp_companion = pp.get("produktpaketEdifact").unwrap();
     assert_eq!(
         pp_companion.get("merkmalCode").and_then(|v| v.as_str()),
         Some("Z66"),
         "Produktpaket companion should have merkmalCode Z66"
     );
 
-    let ppp = obj.get("ProduktpaketPriorisierung").unwrap();
+    let ppp = obj.get("produktpaketPriorisierung").unwrap();
     assert!(
-        ppp.get("ProduktpaketPriorisierungEdifact").is_some(),
+        ppp.get("produktpaketPriorisierungEdifact").is_some(),
         "ProduktpaketPriorisierung should have companion data from SG10"
     );
 
-    let enfg = obj.get("EnfgDaten").unwrap();
+    let enfg = obj.get("enfgDaten").unwrap();
     assert!(
-        enfg.get("EnfgDatenEdifact").is_some(),
+        enfg.get("enfgDatenEdifact").is_some(),
         "EnfgDaten should have companion data from SG10 (EnFG privilege)"
     );
 
@@ -227,8 +227,8 @@ fn test_map_all_forward_55001_with_code_enrichment() {
     );
 
     // Companion fields should now be enriched objects
-    let malo = result.get("Marktlokation").unwrap();
-    let malo_companion = malo.get("MarktlokationEdifact").unwrap();
+    let malo = result.get("marktlokation").unwrap();
+    let malo_companion = malo.get("marktlokationEdifact").unwrap();
     let hk = malo_companion.get("haushaltskunde").unwrap();
     assert!(
         hk.is_object(),
@@ -237,8 +237,8 @@ fn test_map_all_forward_55001_with_code_enrichment() {
     assert!(hk.get("code").is_some(), "should have code field");
     assert!(hk.get("meaning").is_some(), "should have meaning field");
 
-    let pp = result.get("Produktpaket").unwrap();
-    let pp_companion = pp.get("ProduktpaketEdifact").unwrap();
+    let pp = result.get("produktpaket").unwrap();
+    let pp_companion = pp.get("produktpaketEdifact").unwrap();
     let mc = pp_companion.get("merkmalCode").unwrap();
     assert_eq!(mc.get("code").and_then(|v| v.as_str()), Some("Z66"));
     assert_eq!(
