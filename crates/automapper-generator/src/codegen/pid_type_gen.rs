@@ -999,6 +999,25 @@ pub fn generate_pid_schema(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbS
     }
     root.insert("fields".to_string(), serde_json::Value::Object(fields));
 
+    // Root-level segments (BGM, DTM, etc.) — outside any group.
+    // Emitted under "root_segments" so CodeLookup can enrich message-header fields.
+    let root_segments: Vec<_> = structure
+        .top_level_segments
+        .iter()
+        .filter_map(|seg_id| {
+            mig.segments
+                .iter()
+                .find(|s| s.id.eq_ignore_ascii_case(seg_id))
+        })
+        .map(|seg| segment_to_schema_value(seg, None, &ahb_codes))
+        .collect();
+    if !root_segments.is_empty() {
+        root.insert(
+            "root_segments".to_string(),
+            serde_json::Value::Array(root_segments),
+        );
+    }
+
     serde_json::to_string_pretty(&serde_json::Value::Object(root)).unwrap()
 }
 

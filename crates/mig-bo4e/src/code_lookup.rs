@@ -40,6 +40,17 @@ impl CodeLookup {
                 Self::walk_group(group_key, group_value, &mut entries);
             }
         }
+        // Root-level segments (BGM, DTM, etc.) use empty source_path.
+        if let Some(root_segments) = schema.get("root_segments").and_then(|s| s.as_array()) {
+            for segment in root_segments {
+                let seg_id = segment
+                    .get("id")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("")
+                    .to_uppercase();
+                Self::process_segment("", &seg_id, segment, &mut entries);
+            }
+        }
         Self { entries }
     }
 
