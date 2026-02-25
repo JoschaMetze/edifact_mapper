@@ -1,6 +1,6 @@
 use automapper_generator::conditions::codegen::generate_condition_evaluator_file;
 use automapper_generator::conditions::condition_types::*;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 fn make_test_conditions() -> Vec<GeneratedCondition> {
     vec![
@@ -59,6 +59,7 @@ fn test_generate_condition_evaluator_file_structure() {
         &conditions,
         "test_ahb.xml",
         &HashMap::new(),
+        &HashSet::new(),
     );
 
     assert!(output.contains("auto-generated"), "should have header");
@@ -81,6 +82,7 @@ fn test_generate_match_arms() {
         &conditions,
         "test.xml",
         &HashMap::new(),
+        &HashSet::new(),
     );
 
     assert!(
@@ -110,6 +112,7 @@ fn test_external_condition_output() {
         &conditions,
         "test.xml",
         &HashMap::new(),
+        &HashSet::new(),
     );
 
     assert!(
@@ -135,6 +138,7 @@ fn test_high_confidence_condition_has_implementation() {
         &conditions,
         "test.xml",
         &HashMap::new(),
+        &HashSet::new(),
     );
 
     assert!(
@@ -152,6 +156,7 @@ fn test_medium_confidence_has_review_marker() {
         &conditions,
         "test.xml",
         &HashMap::new(),
+        &HashSet::new(),
     );
 
     assert!(
@@ -169,6 +174,7 @@ fn test_low_confidence_has_todo() {
         &conditions,
         "test.xml",
         &HashMap::new(),
+        &HashSet::new(),
     );
 
     assert!(
@@ -197,7 +203,7 @@ fn test_preserved_methods_included() {
     );
 
     let output =
-        generate_condition_evaluator_file("UTILMD", "FV2510", &conditions, "test.xml", &preserved);
+        generate_condition_evaluator_file("UTILMD", "FV2510", &conditions, "test.xml", &preserved, &HashSet::new());
 
     assert!(
         output.contains("5 => self.evaluate_5(ctx)"),
@@ -222,6 +228,7 @@ fn test_condition_evaluator_snapshot() {
         &conditions,
         "test_ahb.xml",
         &HashMap::new(),
+        &HashSet::new(),
     );
 
     // Replace the dynamic timestamp line for stable snapshots

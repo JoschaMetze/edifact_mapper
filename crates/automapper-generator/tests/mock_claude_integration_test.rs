@@ -90,6 +90,7 @@ fn test_end_to_end_condition_generation_pipeline() {
         &enriched,
         "test_ahb.xml",
         &std::collections::HashMap::new(),
+        &std::collections::HashSet::new(),
     );
 
     // Verify the output contains expected elements

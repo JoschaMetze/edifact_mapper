@@ -687,6 +687,20 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 eprintln!("Preserving {} existing conditions", preserved.len());
             }
 
+            // Collect external IDs from preserved conditions (from metadata)
+            let preserved_external_ids: std::collections::HashSet<u32> = if let Some(ref existing_meta) = existing_metadata {
+                decision.to_preserve.iter().filter_map(|id| {
+                    let meta = existing_meta.conditions.get(id)?;
+                    if meta.is_external {
+                        id.parse().ok()
+                    } else {
+                        None
+                    }
+                }).collect()
+            } else {
+                std::collections::HashSet::new()
+            };
+
             // Generate output file
             let source_code =
                 automapper_generator::conditions::codegen::generate_condition_evaluator_file(
@@ -695,6 +709,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                     &all_generated,
                     ahb_path.to_str().unwrap_or("unknown"),
                     &preserved,
+                    &preserved_external_ids,
                 );
 
             std::fs::write(&output_path, &source_code)?;

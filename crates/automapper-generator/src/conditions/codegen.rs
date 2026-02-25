@@ -10,6 +10,7 @@ pub fn generate_condition_evaluator_file(
     conditions: &[GeneratedCondition],
     source_file: &str,
     preserved_method_bodies: &std::collections::HashMap<u32, String>,
+    preserved_external_ids: &std::collections::HashSet<u32>,
 ) -> String {
     let class_name = format!(
         "{}ConditionEvaluator{}",
@@ -41,12 +42,15 @@ pub fn generate_condition_evaluator_file(
     code.push_str("    external_conditions: std::collections::HashSet<u32>,\n");
     code.push_str("}\n\n");
 
-    // Collect external condition numbers
-    let external_ids: Vec<u32> = conditions
+    // Collect external condition numbers (newly generated + preserved)
+    let mut external_ids: Vec<u32> = conditions
         .iter()
         .filter(|c| c.is_external)
         .map(|c| c.condition_number)
+        .chain(preserved_external_ids.iter().copied())
         .collect();
+    external_ids.sort();
+    external_ids.dedup();
 
     // Default impl
     code.push_str(&format!("impl Default for {} {{\n", class_name));
