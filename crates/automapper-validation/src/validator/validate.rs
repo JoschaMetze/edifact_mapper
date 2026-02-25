@@ -185,7 +185,9 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                     // Condition is met - field is required/applicable
                     if is_mandatory_status(&field.ahb_status) {
                         let segment_id = extract_segment_id(&field.segment_path);
-                        if !ctx.has_segment(&segment_id) {
+                        if !ctx.has_segment(&segment_id)
+                            && !is_parent_group_absent(ctx, &field.segment_path)
+                        {
                             report.add_issue(
                                 ValidationIssue::new(
                                     Severity::Error,
@@ -394,6 +396,31 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                 }
             }
         }
+    }
+}
+
+/// Check if a field's parent group is absent (has zero instances).
+///
+/// For a path like `SG2/SG3/CTA/3139`, the group path is `["SG2", "SG3"]`.
+/// If the navigator reports 0 instances for that group, the group is absent
+/// and fields inside it shouldn't be flagged as missing.
+///
+/// Returns `false` (not absent) when:
+/// - The field has no group prefix (e.g., `NAD/3035`)
+/// - No navigator is available (can't determine group presence)
+fn is_parent_group_absent(ctx: &EvaluationContext, field_path: &str) -> bool {
+    let group_path: Vec<&str> = field_path
+        .split('/')
+        .take_while(|p| p.starts_with("SG"))
+        .collect();
+
+    if group_path.is_empty() {
+        return false;
+    }
+
+    match ctx.navigator {
+        Some(nav) => nav.group_instance_count(&group_path) == 0,
+        None => false,
     }
 }
 
@@ -1091,6 +1118,167 @@ mod tests {
         assert_eq!(extract_group_path_key("SG4/SG12/NAD/3035"), "SG4/SG12");
         assert_eq!(extract_group_path_key("NAD/3035"), "");
         assert_eq!(extract_group_path_key("SG4/SG8/SEQ/6350"), "SG4/SG8");
+    }
+
+    #[test]
+    fn test_absent_optional_group_no_missing_field_error() {
+        // SG3 is optional ("Kann"). If SG3 is absent, its children CTA/3139
+        // and CTA/C056/3412 should NOT produce AHB001 errors.
+        use mig_types::navigator::GroupNavigator;
+
+        struct NavWithoutSG3;
+        impl GroupNavigator for NavWithoutSG3 {
+            fn find_segments_in_group(&self, _: &str, _: &[&str], _: usize) -> Vec<OwnedSegment> {
+                vec![]
+            }
+            fn find_segments_with_qualifier_in_group(
+                &self,
+                _: &str,
+                _: usize,
+                _: &str,
+                _: &[&str],
+                _: usize,
+            ) -> Vec<OwnedSegment> {
+                vec![]
+            }
+            fn group_instance_count(&self, group_path: &[&str]) -> usize {
+                match group_path {
+                    ["SG2"] => 2,        // two NAD groups present
+                    ["SG2", "SG3"] => 0, // SG3 is absent
+                    _ => 0,
+                }
+            }
+        }
+
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+        let nav = NavWithoutSG3;
+
+        // Only NAD segments present, no CTA
+        let segments = vec![
+            OwnedSegment {
+                id: "NAD".into(),
+                elements: vec![vec!["MS".into()]],
+                segment_number: 3,
+            },
+            OwnedSegment {
+                id: "NAD".into(),
+                elements: vec![vec!["MR".into()]],
+                segment_number: 4,
+            },
+        ];
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![
+                AhbFieldRule {
+                    segment_path: "SG2/SG3/CTA/3139".to_string(),
+                    name: "Funktion des Ansprechpartners, Code".to_string(),
+                    ahb_status: "Muss".to_string(),
+                    codes: vec![],
+                },
+                AhbFieldRule {
+                    segment_path: "SG2/SG3/CTA/C056/3412".to_string(),
+                    name: "Name vom Ansprechpartner".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![],
+                },
+            ],
+        };
+
+        let report = validator.validate_with_navigator(
+            &segments,
+            &workflow,
+            &external,
+            ValidationLevel::Conditions,
+            &nav,
+        );
+
+        let ahb_errors: Vec<_> = report
+            .by_category(ValidationCategory::Ahb)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+        assert!(
+            ahb_errors.is_empty(),
+            "Expected no AHB001 errors when SG3 is absent, got: {:?}",
+            ahb_errors
+        );
+    }
+
+    #[test]
+    fn test_present_group_still_checks_mandatory_fields() {
+        // If SG3 IS present but CTA is missing within it → AHB001 error.
+        use mig_types::navigator::GroupNavigator;
+
+        struct NavWithSG3;
+        impl GroupNavigator for NavWithSG3 {
+            fn find_segments_in_group(&self, _: &str, _: &[&str], _: usize) -> Vec<OwnedSegment> {
+                vec![]
+            }
+            fn find_segments_with_qualifier_in_group(
+                &self,
+                _: &str,
+                _: usize,
+                _: &str,
+                _: &[&str],
+                _: usize,
+            ) -> Vec<OwnedSegment> {
+                vec![]
+            }
+            fn group_instance_count(&self, group_path: &[&str]) -> usize {
+                match group_path {
+                    ["SG2"] => 1,
+                    ["SG2", "SG3"] => 1, // SG3 is present
+                    _ => 0,
+                }
+            }
+        }
+
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+        let nav = NavWithSG3;
+
+        // SG3 is present (nav says 1 instance) but CTA is not in flat segments
+        let segments = vec![OwnedSegment {
+            id: "NAD".into(),
+            elements: vec![vec!["MS".into()]],
+            segment_number: 3,
+        }];
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![AhbFieldRule {
+                segment_path: "SG2/SG3/CTA/3139".to_string(),
+                name: "Funktion des Ansprechpartners, Code".to_string(),
+                ahb_status: "Muss".to_string(),
+                codes: vec![],
+            }],
+        };
+
+        let report = validator.validate_with_navigator(
+            &segments,
+            &workflow,
+            &external,
+            ValidationLevel::Conditions,
+            &nav,
+        );
+
+        let ahb_errors: Vec<_> = report
+            .by_category(ValidationCategory::Ahb)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+        assert_eq!(
+            ahb_errors.len(),
+            1,
+            "Expected AHB001 error when SG3 is present but CTA missing"
+        );
+        assert!(ahb_errors[0].message.contains("CTA"));
     }
 
     #[test]
