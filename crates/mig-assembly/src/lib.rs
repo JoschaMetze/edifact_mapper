@@ -16,6 +16,7 @@ pub mod diagnostic;
 pub mod disassembler;
 pub mod error;
 pub mod matcher;
+pub mod navigator;
 pub mod pid_detect;
 pub mod pid_filter;
 pub mod renderer;
@@ -25,5 +26,6 @@ pub mod tokenize;
 
 pub use diagnostic::{StructureDiagnostic, StructureDiagnosticKind};
 pub use error::AssemblyError;
+pub use navigator::AssembledTreeNavigator;
 pub use service::ConversionService;
 pub use tokenize::{split_messages, InterchangeChunks, MessageChunk};
