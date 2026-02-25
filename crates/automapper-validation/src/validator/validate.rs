@@ -424,19 +424,15 @@ fn is_field_present(ctx: &EvaluationContext, field: &AhbFieldRule) -> bool {
     ctx.has_segment(&segment_id)
 }
 
-/// Check if the specific group variant for a field is absent.
+/// Check if the parent group for a field is entirely absent.
 ///
-/// Handles two cases:
-/// 1. **Group entirely absent**: `SG2/SG3/CTA/3139` — if SG3 has 0 instances,
-///    the whole group is absent and its children aren't required.
-/// 2. **Group variant absent**: `SG4/SG5/LOC/3227` with codes `[Z17]` — SG5
-///    may have instances (e.g., LOC+Z16), but no instance contains LOC+Z17.
-///    The Z17 *variant* of SG5 is absent, so fields requiring Z17 aren't
-///    required.
+/// For example, `SG2/SG3/CTA/3139` — if SG3 has 0 instances, the whole
+/// group is absent and its children aren't required.
 ///
 /// Returns `false` (not absent) when:
 /// - The field has no group prefix (e.g., `NAD/3035`)
 /// - No navigator is available (can't determine group presence)
+/// - The group has at least one instance
 fn is_group_variant_absent(ctx: &EvaluationContext, field: &AhbFieldRule) -> bool {
     let group_path: Vec<&str> = field
         .segment_path
@@ -453,37 +449,7 @@ fn is_group_variant_absent(ctx: &EvaluationContext, field: &AhbFieldRule) -> boo
         None => return false,
     };
 
-    let instance_count = nav.group_instance_count(&group_path);
-
-    // Case 1: group entirely absent
-    if instance_count == 0 {
-        return true;
-    }
-
-    // Case 2: group has instances, but does any contain the required qualifier?
-    // Only applies when the field has qualifier codes on a simple qualifier path.
-    if !field.codes.is_empty() && is_qualifier_field(&field.segment_path) {
-        let segment_id = extract_segment_id(&field.segment_path);
-        let required_codes: Vec<&str> = field.codes.iter().map(|c| c.value.as_str()).collect();
-
-        // Check each group instance for a segment with a matching qualifier.
-        let any_instance_has_qualifier = (0..instance_count).any(|i| {
-            nav.find_segments_in_group(&segment_id, &group_path, i)
-                .iter()
-                .any(|seg| {
-                    seg.elements
-                        .first()
-                        .and_then(|e| e.first())
-                        .is_some_and(|v| required_codes.contains(&v.as_str()))
-                })
-        });
-
-        if !any_instance_has_qualifier {
-            return true; // no group instance has this qualifier variant
-        }
-    }
-
-    false
+    nav.group_instance_count(&group_path) == 0
 }
 
 /// Check if an AHB status is mandatory (Muss or X prefix).
@@ -1464,24 +1430,24 @@ mod tests {
     }
 
     #[test]
-    fn test_absent_group_variant_no_error() {
-        // SG5 has instances (LOC+Z16), but the Z17 variant is absent.
-        // Field rule for SG4/SG5/LOC/3227 with code [Z17] should NOT error.
+    fn test_missing_qualifier_with_navigator_is_detected() {
+        // NAD+MS is in SG2 but NAD+MR is missing. With a navigator that
+        // reports SG2 has 1 instance, the missing MR must still be flagged.
         use mig_types::navigator::GroupNavigator;
 
-        struct NavWithSG5Z16Only;
-        impl GroupNavigator for NavWithSG5Z16Only {
+        struct NavWithSG2;
+        impl GroupNavigator for NavWithSG2 {
             fn find_segments_in_group(
                 &self,
                 segment_id: &str,
                 group_path: &[&str],
                 instance_index: usize,
             ) -> Vec<OwnedSegment> {
-                if segment_id == "LOC" && group_path == ["SG4", "SG5"] && instance_index == 0 {
+                if segment_id == "NAD" && group_path == ["SG2"] && instance_index == 0 {
                     vec![OwnedSegment {
-                        id: "LOC".into(),
-                        elements: vec![vec!["Z16".into()], vec!["12345678900".into()]],
-                        segment_number: 10,
+                        id: "NAD".into(),
+                        elements: vec![vec!["MS".into()]],
+                        segment_number: 3,
                     }]
                 } else {
                     vec![]
@@ -1499,8 +1465,7 @@ mod tests {
             }
             fn group_instance_count(&self, group_path: &[&str]) -> usize {
                 match group_path {
-                    ["SG4"] => 1,
-                    ["SG4", "SG5"] => 1, // only the Z16 instance
+                    ["SG2"] => 1,
                     _ => 0,
                 }
             }
@@ -1509,12 +1474,12 @@ mod tests {
         let evaluator = MockEvaluator::new(vec![]);
         let validator = EdifactValidator::new(evaluator);
         let external = NoOpExternalProvider;
-        let nav = NavWithSG5Z16Only;
+        let nav = NavWithSG2;
 
         let segments = vec![OwnedSegment {
-            id: "LOC".into(),
-            elements: vec![vec!["Z16".into()], vec!["12345678900".into()]],
-            segment_number: 10,
+            id: "NAD".into(),
+            elements: vec![vec!["MS".into()]],
+            segment_number: 3,
         }];
 
         let workflow = AhbWorkflow {
@@ -1522,25 +1487,23 @@ mod tests {
             description: "Test".to_string(),
             communication_direction: None,
             fields: vec![
-                // Z16 variant — present, should not error
                 AhbFieldRule {
-                    segment_path: "SG4/SG5/LOC/3227".to_string(),
-                    name: "Ortsangabe, Qualifier".to_string(),
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Absender".to_string(),
                     ahb_status: "X".to_string(),
                     codes: vec![AhbCodeRule {
-                        value: "Z16".to_string(),
-                        description: "Marktlokation".to_string(),
+                        value: "MS".to_string(),
+                        description: "Absender".to_string(),
                         ahb_status: "X".to_string(),
                     }],
                 },
-                // Z17 variant — absent (no SG5 instance with Z17)
                 AhbFieldRule {
-                    segment_path: "SG4/SG5/LOC/3227".to_string(),
-                    name: "Ortsangabe, Qualifier".to_string(),
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Empfaenger".to_string(),
                     ahb_status: "Muss".to_string(),
                     codes: vec![AhbCodeRule {
-                        value: "Z17".to_string(),
-                        description: "Messlokation".to_string(),
+                        value: "MR".to_string(),
+                        description: "Empfaenger".to_string(),
                         ahb_status: "X".to_string(),
                     }],
                 },
@@ -1559,11 +1522,13 @@ mod tests {
             .by_category(ValidationCategory::Ahb)
             .filter(|i| i.severity == Severity::Error)
             .collect();
-        assert!(
-            ahb_errors.is_empty(),
-            "Expected no AHB001 errors when Z17 SG5 variant is absent, got: {:?}",
+        assert_eq!(
+            ahb_errors.len(),
+            1,
+            "Expected AHB001 for missing NAD+MR even with navigator, got: {:?}",
             ahb_errors
         );
+        assert!(ahb_errors[0].message.contains("Empfaenger"));
     }
 
     #[test]
