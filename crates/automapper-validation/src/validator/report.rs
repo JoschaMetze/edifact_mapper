@@ -111,6 +111,19 @@ impl ValidationReport {
     pub fn total_issues(&self) -> usize {
         self.issues.len()
     }
+
+    /// Enrich all issues that have a `field_path` by resolving BO4E paths.
+    ///
+    /// The `resolver` closure maps an EDIFACT field path (e.g., "SG4/SG5/LOC/C517/3225")
+    /// to a BO4E field path (e.g., "stammdaten.Marktlokation.marktlokationsId").
+    /// Issues without a `field_path` or where the resolver returns `None` are left unchanged.
+    pub fn enrich_bo4e_paths(&mut self, resolver: impl Fn(&str) -> Option<String>) {
+        for issue in &mut self.issues {
+            if let Some(ref edifact_path) = issue.field_path {
+                issue.bo4e_path = resolver(edifact_path);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -201,6 +214,36 @@ mod tests {
         report.add_issues(issues);
 
         assert_eq!(report.total_issues(), 2);
+    }
+
+    #[test]
+    fn test_enrich_bo4e_paths() {
+        let mut report = ValidationReport::new("UTILMD", ValidationLevel::Full);
+        report.add_issue(
+            make_error("AHB001").with_field_path("SG4/SG5/LOC/C517/3225"),
+        );
+        report.add_issue(
+            make_warning("STR001").with_field_path("SG2/NAD/3035"),
+        );
+        // Issue without field_path should be left alone
+        report.add_issue(make_error("AHB002"));
+
+        report.enrich_bo4e_paths(|path| match path {
+            "SG4/SG5/LOC/C517/3225" => Some("stammdaten.Marktlokation.marktlokationsId".into()),
+            "SG2/NAD/3035" => Some("stammdaten.Marktteilnehmer".into()),
+            _ => None,
+        });
+
+        assert_eq!(
+            report.issues[0].bo4e_path.as_deref(),
+            Some("stammdaten.Marktlokation.marktlokationsId")
+        );
+        assert_eq!(
+            report.issues[1].bo4e_path.as_deref(),
+            Some("stammdaten.Marktteilnehmer")
+        );
+        // No field_path → no bo4e_path
+        assert!(report.issues[2].bo4e_path.is_none());
     }
 
     #[test]

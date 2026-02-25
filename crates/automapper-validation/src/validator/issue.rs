@@ -100,6 +100,12 @@ pub struct ValidationIssue {
 
     /// The expected value (if applicable).
     pub expected_value: Option<String>,
+
+    /// BO4E field path (e.g., "stammdaten.Marktlokation.marktlokationsId").
+    /// Set when validation is triggered from BO4E input and errors can be
+    /// traced back to the source BO4E structure.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bo4e_path: Option<String>,
 }
 
 impl ValidationIssue {
@@ -120,6 +126,7 @@ impl ValidationIssue {
             rule: None,
             actual_value: None,
             expected_value: None,
+            bo4e_path: None,
         }
     }
 
@@ -150,6 +157,12 @@ impl ValidationIssue {
     /// Builder: set the expected value.
     pub fn with_expected(mut self, value: impl Into<String>) -> Self {
         self.expected_value = Some(value.into());
+        self
+    }
+
+    /// Builder: set the BO4E field path.
+    pub fn with_bo4e_path(mut self, path: impl Into<String>) -> Self {
+        self.bo4e_path = Some(path.into());
         self
     }
 
@@ -242,9 +255,39 @@ mod tests {
         );
 
         let json = serde_json::to_string_pretty(&issue).unwrap();
+        // bo4e_path should be absent from JSON when None (skip_serializing_if)
+        assert!(!json.contains("bo4e_path"));
         let deserialized: ValidationIssue = serde_json::from_str(&json).unwrap();
         assert_eq!(deserialized.code, "COD002");
         assert_eq!(deserialized.severity, Severity::Warning);
+        assert!(deserialized.bo4e_path.is_none());
+    }
+
+    #[test]
+    fn test_bo4e_path_builder_and_serialization() {
+        let issue = ValidationIssue::new(
+            Severity::Error,
+            ValidationCategory::Ahb,
+            "AHB001",
+            "Required field missing",
+        )
+        .with_field_path("SG4/SG5/LOC/C517/3225")
+        .with_bo4e_path("stammdaten.Marktlokation.marktlokationsId");
+
+        assert_eq!(
+            issue.bo4e_path.as_deref(),
+            Some("stammdaten.Marktlokation.marktlokationsId")
+        );
+
+        let json = serde_json::to_string_pretty(&issue).unwrap();
+        assert!(json.contains("bo4e_path"));
+        assert!(json.contains("stammdaten.Marktlokation.marktlokationsId"));
+
+        let deserialized: ValidationIssue = serde_json::from_str(&json).unwrap();
+        assert_eq!(
+            deserialized.bo4e_path.as_deref(),
+            Some("stammdaten.Marktlokation.marktlokationsId")
+        );
     }
 
     #[test]

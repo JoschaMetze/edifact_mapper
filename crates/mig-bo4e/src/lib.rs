@@ -18,11 +18,13 @@ pub mod code_lookup;
 pub mod definition;
 pub mod engine;
 pub mod error;
+pub mod error_mapping;
 pub mod handlers;
 pub mod model;
 pub mod segment_structure;
 
 pub use engine::MappingEngine;
 pub use error::MappingError;
+pub use error_mapping::Bo4eFieldIndex;
 pub use handlers::HandlerRegistry;
 pub use model::{Interchange, MappedMessage, Nachricht, Transaktion};
