@@ -185,7 +185,7 @@ pub fn build_user_prompt(conditions: &[ConditionInput], context: &ConditionConte
         }
     }
 
-    // Add conditions list
+    // Add conditions list with resolved AHB notation
     prompt.push_str("\nConditions:\n");
     for condition in conditions {
         prompt.push_str(&format!(
@@ -196,6 +196,11 @@ pub fn build_user_prompt(conditions: &[ConditionInput], context: &ConditionConte
             if !fields.is_empty() {
                 prompt.push_str(&format!("    Used by fields: {}\n", fields.join(", ")));
             }
+        }
+        // Parse AHB notation from description and resolve element indices
+        let resolutions = resolve_ahb_notations(&condition.description);
+        for resolution in &resolutions {
+            prompt.push_str(&format!("    → {}\n", resolution));
         }
     }
 
@@ -394,6 +399,57 @@ fn append_group_segments(
     for nested in &group.nested_groups {
         append_group_segments(context, nested, referenced);
     }
+}
+
+/// Parses AHB segment notation from a condition description and resolves
+/// each `+`-separated token to its `elements[N]` index.
+///
+/// For example, from "STS+E01++Z01" it produces:
+///   `STS+E01++Z01 → elements[0]=E01, elements[1]=(empty), elements[2]=Z01`
+///
+/// This eliminates the ambiguity where the model miscounts `+` separators.
+fn resolve_ahb_notations(description: &str) -> Vec<String> {
+    use regex::Regex;
+
+    // Match patterns like SEG+val1+val2, SEG+val1++val2+val3, etc.
+    // The segment tag is 2-3 uppercase letters, followed by + and values.
+    // Values can contain / for alternatives (e.g., ZG9/ZH1/ZH2).
+    let notation_regex =
+        Regex::new(r"\b([A-Z]{2,3})\+([A-Za-z0-9/?+*: ]*[A-Za-z0-9])").unwrap();
+
+    let mut results = Vec::new();
+
+    for cap in notation_regex.captures_iter(description) {
+        let seg_tag = cap.get(1).unwrap().as_str();
+        let rest = cap.get(2).unwrap().as_str();
+
+        // Split by + to get element tokens
+        let tokens: Vec<&str> = rest.split('+').collect();
+
+        if tokens.is_empty() {
+            continue;
+        }
+
+        let mut parts = Vec::new();
+        for (i, token) in tokens.iter().enumerate() {
+            let trimmed = token.trim();
+            if trimmed.is_empty() {
+                parts.push(format!("elements[{}]=(empty)", i));
+            } else {
+                // Collapse alternatives and wildcards for display
+                parts.push(format!("elements[{}]={}", i, trimmed));
+            }
+        }
+
+        results.push(format!(
+            "Notation resolved: {}+{} → {}",
+            seg_tag,
+            rest,
+            parts.join(", ")
+        ));
+    }
+
+    results
 }
 
 /// Default example implementations for few-shot prompting.

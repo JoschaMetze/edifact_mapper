@@ -70,6 +70,62 @@ fn test_user_prompt_includes_conditions() {
 }
 
 #[test]
+fn test_user_prompt_resolves_ahb_notation() {
+    let conditions = vec![
+        ConditionInput {
+            id: "23".to_string(),
+            description: "Wenn in dieser SG4 das STS+E01++A05/A99 (Status der Antwort) vorhanden"
+                .to_string(),
+            referencing_fields: None,
+        },
+        ConditionInput {
+            id: "7".to_string(),
+            description: "Wenn SG4 STS+7++ZG9/ZH1/ZH2 (Transaktionsgrund) vorhanden".to_string(),
+            referencing_fields: None,
+        },
+        ConditionInput {
+            id: "12".to_string(),
+            description: "Wenn SG4 DTM+471 (Ende zum nächstmöglichem Termin) nicht vorhanden"
+                .to_string(),
+            referencing_fields: None,
+        },
+    ];
+    let context = ConditionContext {
+        message_type: "UTILMD",
+        format_version: "FV2504",
+        mig_schema: None,
+        example_implementations: vec![],
+    };
+    let prompt = build_user_prompt(&conditions, &context);
+
+    // STS+E01++A05/A99: elements[0]=E01, elements[1]=(empty), elements[2]=A05/A99
+    assert!(
+        prompt.contains("elements[0]=E01"),
+        "should resolve first element of STS+E01++A05/A99"
+    );
+    assert!(
+        prompt.contains("elements[1]=(empty)"),
+        "should mark the empty element between ++ in STS+E01++A05/A99"
+    );
+    assert!(
+        prompt.contains("elements[2]=A05/A99"),
+        "should resolve A05/A99 at elements[2]"
+    );
+
+    // STS+7++ZG9/ZH1/ZH2: elements[0]=7, elements[1]=(empty), elements[2]=ZG9/ZH1/ZH2
+    assert!(
+        prompt.contains("elements[2]=ZG9/ZH1/ZH2"),
+        "should resolve ZG9/ZH1/ZH2 at elements[2]"
+    );
+
+    // DTM+471: elements[0]=471
+    assert!(
+        prompt.contains("elements[0]=471"),
+        "should resolve DTM+471"
+    );
+}
+
+#[test]
 fn test_default_examples_exist() {
     let examples = default_example_implementations();
     assert!(examples.len() >= 3, "should have at least 3 examples");
