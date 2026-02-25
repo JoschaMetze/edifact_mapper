@@ -37,7 +37,7 @@ pub mod validator;
 pub use error::{ParseError, ValidationError};
 pub use eval::{
     CompositeExternalProvider, ConditionEvaluator, ConditionExprEvaluator, ConditionResult,
-    EvaluationContext, MapExternalProvider,
+    EvaluationContext, GroupNavigator, MapExternalProvider, NoOpGroupNavigator,
 };
 pub use expr::{ConditionExpr, ConditionParser};
 pub use validator::{

@@ -1,6 +1,7 @@
 //! Evaluation context for condition evaluation.
 
 use super::evaluator::ExternalConditionProvider;
+use mig_types::navigator::GroupNavigator;
 use mig_types::segment::OwnedSegment;
 
 /// Context passed to condition evaluators during evaluation.
@@ -19,10 +20,41 @@ pub struct EvaluationContext<'a> {
     /// Parsed EDIFACT segments for direct segment inspection by condition
     /// evaluators. Conditions often need to check specific segment values.
     pub segments: &'a [OwnedSegment],
+
+    /// Optional group navigator for group-scoped condition queries.
+    /// When None, group-scoped methods return empty / false / 0.
+    pub navigator: Option<&'a dyn GroupNavigator>,
+}
+
+/// A no-op group navigator that returns empty results for all queries.
+pub struct NoOpGroupNavigator;
+
+impl GroupNavigator for NoOpGroupNavigator {
+    fn find_segments_in_group(
+        &self,
+        _: &str,
+        _: &[&str],
+        _: usize,
+    ) -> Vec<OwnedSegment> {
+        Vec::new()
+    }
+    fn find_segments_with_qualifier_in_group(
+        &self,
+        _: &str,
+        _: usize,
+        _: &str,
+        _: &[&str],
+        _: usize,
+    ) -> Vec<OwnedSegment> {
+        Vec::new()
+    }
+    fn group_instance_count(&self, _: &[&str]) -> usize {
+        0
+    }
 }
 
 impl<'a> EvaluationContext<'a> {
-    /// Create a new evaluation context.
+    /// Create a new evaluation context (without group navigator).
     pub fn new(
         pruefidentifikator: &'a str,
         external: &'a dyn ExternalConditionProvider,
@@ -32,6 +64,22 @@ impl<'a> EvaluationContext<'a> {
             pruefidentifikator,
             external,
             segments,
+            navigator: None,
+        }
+    }
+
+    /// Create a new evaluation context with a group navigator.
+    pub fn with_navigator(
+        pruefidentifikator: &'a str,
+        external: &'a dyn ExternalConditionProvider,
+        segments: &'a [OwnedSegment],
+        navigator: &'a dyn GroupNavigator,
+    ) -> Self {
+        Self {
+            pruefidentifikator,
+            external,
+            segments,
+            navigator: Some(navigator),
         }
     }
 
@@ -71,12 +119,70 @@ impl<'a> EvaluationContext<'a> {
     pub fn has_segment(&self, segment_id: &str) -> bool {
         self.segments.iter().any(|s| s.id == segment_id)
     }
+
+    /// Find all segments with the given tag within a specific group instance.
+    /// Returns empty if no navigator is set.
+    pub fn find_segments_in_group(
+        &self,
+        segment_id: &str,
+        group_path: &[&str],
+        instance_index: usize,
+    ) -> Vec<OwnedSegment> {
+        match self.navigator {
+            Some(nav) => nav.find_segments_in_group(segment_id, group_path, instance_index),
+            None => Vec::new(),
+        }
+    }
+
+    /// Find segments matching a tag + qualifier within a group instance.
+    /// Returns empty if no navigator is set.
+    pub fn find_segments_with_qualifier_in_group(
+        &self,
+        segment_id: &str,
+        element_index: usize,
+        qualifier: &str,
+        group_path: &[&str],
+        instance_index: usize,
+    ) -> Vec<OwnedSegment> {
+        match self.navigator {
+            Some(nav) => nav.find_segments_with_qualifier_in_group(
+                segment_id,
+                element_index,
+                qualifier,
+                group_path,
+                instance_index,
+            ),
+            None => Vec::new(),
+        }
+    }
+
+    /// Check if a segment exists in a specific group instance.
+    /// Returns false if no navigator is set.
+    pub fn has_segment_in_group(
+        &self,
+        segment_id: &str,
+        group_path: &[&str],
+        instance_index: usize,
+    ) -> bool {
+        !self.find_segments_in_group(segment_id, group_path, instance_index)
+            .is_empty()
+    }
+
+    /// Count repetitions of a group at the given path.
+    /// Returns 0 if no navigator is set.
+    pub fn group_instance_count(&self, group_path: &[&str]) -> usize {
+        match self.navigator {
+            Some(nav) => nav.group_instance_count(group_path),
+            None => 0,
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::super::evaluator::NoOpExternalProvider;
     use super::*;
+    use mig_types::navigator::GroupNavigator;
 
     fn make_segment(id: &str, elements: Vec<Vec<&str>>) -> OwnedSegment {
         OwnedSegment {
@@ -86,6 +192,84 @@ mod tests {
                 .map(|e| e.into_iter().map(|c| c.to_string()).collect())
                 .collect(),
             segment_number: 0,
+        }
+    }
+
+    // --- Mock navigator for testing ---
+    struct MockGroupNavigator {
+        groups: Vec<(Vec<String>, usize, Vec<OwnedSegment>)>,
+    }
+
+    impl MockGroupNavigator {
+        fn new() -> Self {
+            Self { groups: vec![] }
+        }
+        fn with_group(
+            mut self,
+            path: &[&str],
+            instance: usize,
+            segs: Vec<OwnedSegment>,
+        ) -> Self {
+            self.groups.push((
+                path.iter().map(|s| s.to_string()).collect(),
+                instance,
+                segs,
+            ));
+            self
+        }
+        fn find_instance(&self, group_path: &[&str], idx: usize) -> Option<&[OwnedSegment]> {
+            self.groups
+                .iter()
+                .find(|(p, i, _)| {
+                    let ps: Vec<&str> = p.iter().map(|s| s.as_str()).collect();
+                    ps.as_slice() == group_path && *i == idx
+                })
+                .map(|(_, _, segs)| segs.as_slice())
+        }
+    }
+
+    impl GroupNavigator for MockGroupNavigator {
+        fn find_segments_in_group(
+            &self,
+            segment_id: &str,
+            group_path: &[&str],
+            instance_index: usize,
+        ) -> Vec<OwnedSegment> {
+            self.find_instance(group_path, instance_index)
+                .map(|segs| {
+                    segs.iter()
+                        .filter(|s| s.id == segment_id)
+                        .cloned()
+                        .collect()
+                })
+                .unwrap_or_default()
+        }
+        fn find_segments_with_qualifier_in_group(
+            &self,
+            segment_id: &str,
+            element_index: usize,
+            qualifier: &str,
+            group_path: &[&str],
+            instance_index: usize,
+        ) -> Vec<OwnedSegment> {
+            self.find_segments_in_group(segment_id, group_path, instance_index)
+                .into_iter()
+                .filter(|s| {
+                    s.elements
+                        .get(element_index)
+                        .and_then(|e| e.first())
+                        .is_some_and(|v| v == qualifier)
+                })
+                .collect()
+        }
+        fn group_instance_count(&self, group_path: &[&str]) -> usize {
+            self.groups
+                .iter()
+                .filter(|(p, _, _)| {
+                    let ps: Vec<&str> = p.iter().map(|s| s.as_str()).collect();
+                    ps.as_slice() == group_path
+                })
+                .count()
         }
     }
 
@@ -124,5 +308,90 @@ mod tests {
 
         assert!(ctx.has_segment("UNH"));
         assert!(!ctx.has_segment("NAD"));
+    }
+
+    // --- Group navigator tests ---
+
+    #[test]
+    fn test_no_navigator_group_find_returns_empty() {
+        let segments = vec![make_segment("SEQ", vec![vec!["Z98"]])];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+        assert!(ctx
+            .find_segments_in_group("SEQ", &["SG4", "SG8"], 0)
+            .is_empty());
+    }
+
+    #[test]
+    fn test_no_navigator_group_instance_count_zero() {
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &[]);
+        assert_eq!(ctx.group_instance_count(&["SG4"]), 0);
+    }
+
+    #[test]
+    fn test_with_navigator_finds_segments_in_group() {
+        let external = NoOpExternalProvider;
+        let nav = MockGroupNavigator::new().with_group(
+            &["SG4", "SG8"],
+            0,
+            vec![
+                make_segment("SEQ", vec![vec!["Z98"]]),
+                make_segment("CCI", vec![vec!["Z30"], vec![], vec!["Z07"]]),
+            ],
+        );
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+        let result = ctx.find_segments_in_group("SEQ", &["SG4", "SG8"], 0);
+        assert_eq!(result.len(), 1);
+        assert_eq!(result[0].id, "SEQ");
+    }
+
+    #[test]
+    fn test_with_navigator_qualifier_in_group() {
+        let external = NoOpExternalProvider;
+        let nav = MockGroupNavigator::new().with_group(
+            &["SG4", "SG8"],
+            0,
+            vec![
+                make_segment("SEQ", vec![vec!["Z98"]]),
+                make_segment("SEQ", vec![vec!["Z01"]]),
+            ],
+        );
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+        let result =
+            ctx.find_segments_with_qualifier_in_group("SEQ", 0, "Z98", &["SG4", "SG8"], 0);
+        assert_eq!(result.len(), 1);
+    }
+
+    #[test]
+    fn test_group_instance_count_with_navigator() {
+        let external = NoOpExternalProvider;
+        let nav = MockGroupNavigator::new()
+            .with_group(
+                &["SG4", "SG8"],
+                0,
+                vec![make_segment("SEQ", vec![vec!["Z98"]])],
+            )
+            .with_group(
+                &["SG4", "SG8"],
+                1,
+                vec![make_segment("SEQ", vec![vec!["Z01"]])],
+            );
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+        assert_eq!(ctx.group_instance_count(&["SG4", "SG8"]), 2);
+    }
+
+    #[test]
+    fn test_has_segment_in_group() {
+        let external = NoOpExternalProvider;
+        let nav = MockGroupNavigator::new().with_group(
+            &["SG4", "SG8"],
+            0,
+            vec![make_segment("SEQ", vec![vec!["Z98"]])],
+        );
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+        assert!(ctx.has_segment_in_group("SEQ", &["SG4", "SG8"], 0));
+        assert!(!ctx.has_segment_in_group("CCI", &["SG4", "SG8"], 0));
+        assert!(!ctx.has_segment_in_group("SEQ", &["SG4", "SG5"], 0));
     }
 }
