@@ -1,5 +1,7 @@
 //! Main EdifactValidator implementation.
 
+use std::collections::{HashMap, HashSet};
+
 use crate::eval::{
     ConditionEvaluator, ConditionExprEvaluator, ConditionResult, EvaluationContext,
     ExternalConditionProvider,
@@ -199,9 +201,6 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                             );
                         }
                     }
-
-                    // Validate code values if field has code restrictions
-                    self.validate_field_codes(field, ctx, report);
                 }
                 ConditionResult::False => {
                     // Condition not met - field not required, skip
@@ -224,28 +223,80 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                 }
             }
         }
+
+        // Cross-field code validation: aggregate allowed codes across all field
+        // rules sharing the same segment path, then check each segment instance
+        // against the combined set. This avoids false positives from per-field
+        // validation (e.g., NAD/3035 with [MS] for sender and [MR] for receiver).
+        self.validate_codes_cross_field(workflow, ctx, report);
     }
 
-    /// Validate code values for a field against AHB allowed codes.
+    /// Validate qualifier codes by aggregating allowed values across all field
+    /// rules that share the same segment path.
     ///
-    /// Currently disabled: per-field code validation produces false positives
-    /// because the AHB has separate field rules for each segment instance
-    /// (e.g., NAD/3035 with codes [MS] for sender, [MR] for receiver), but
-    /// the validator finds ALL segments matching the tag and checks each
-    /// against one rule's codes. Since qualifier codes serve as discriminators
-    /// (identifying which segment instance belongs to which field rule),
-    /// per-field code validation is a no-op by definition.
-    ///
-    /// TODO: implement cross-field code validation — collect all allowed
-    /// codes across all field rules sharing the same segment path, then
-    /// validate each segment's qualifier against that combined set.
-    fn validate_field_codes(
+    /// Only validates simple qualifier paths (`[SG/]*/SEG/ELEMENT`) where the
+    /// code is in `element[0][0]`. Composite paths (`SEG/COMPOSITE/ELEMENT`)
+    /// are skipped because resolving composite IDs to element indices requires
+    /// MIG schema knowledge the validator doesn't have.
+    fn validate_codes_cross_field(
         &self,
-        _field: &AhbFieldRule,
-        _ctx: &EvaluationContext,
-        _report: &mut ValidationReport,
+        workflow: &AhbWorkflow,
+        ctx: &EvaluationContext,
+        report: &mut ValidationReport,
     ) {
-        // Intentionally empty — see doc comment above.
+        // Group allowed codes by segment path (only simple qualifier fields).
+        let mut codes_by_path: HashMap<&str, HashSet<&str>> = HashMap::new();
+
+        for field in &workflow.fields {
+            if field.codes.is_empty() || !is_qualifier_field(&field.segment_path) {
+                continue;
+            }
+            let entry = codes_by_path.entry(&field.segment_path).or_default();
+            for code in &field.codes {
+                if code.ahb_status == "X" || code.ahb_status.starts_with("Muss") {
+                    entry.insert(&code.value);
+                }
+            }
+        }
+
+        // For each path, check all matching segments against the combined code set.
+        for (&path, allowed_codes) in &codes_by_path {
+            if allowed_codes.is_empty() {
+                continue;
+            }
+
+            let segment_id = extract_segment_id(path);
+            let matching_segments = ctx.find_segments(&segment_id);
+
+            for segment in matching_segments {
+                if let Some(code_value) = segment
+                    .elements
+                    .first()
+                    .and_then(|e| e.first())
+                    .filter(|v| !v.is_empty())
+                {
+                    if !allowed_codes.contains(code_value.as_str()) {
+                        let mut sorted_codes: Vec<&str> = allowed_codes.iter().copied().collect();
+                        sorted_codes.sort_unstable();
+                        report.add_issue(
+                            ValidationIssue::new(
+                                Severity::Error,
+                                ValidationCategory::Code,
+                                ErrorCodes::CODE_NOT_ALLOWED_FOR_PID,
+                                format!(
+                                    "Code '{}' is not allowed for this PID. Allowed: [{}]",
+                                    code_value,
+                                    sorted_codes.join(", ")
+                                ),
+                            )
+                            .with_field_path(path)
+                            .with_actual(code_value)
+                            .with_expected(sorted_codes.join(", ")),
+                        );
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -253,6 +304,21 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
 fn is_mandatory_status(status: &str) -> bool {
     let trimmed = status.trim();
     trimmed.starts_with("Muss") || trimmed.starts_with('X')
+}
+
+/// Check if a field path points to a simple qualifier element (element[0] of the segment).
+///
+/// Returns `true` for paths like `[SG/]*/SEG/ELEMENT` where the data element is
+/// directly under the segment (no composite wrapper). These fields have their code
+/// in `element[0][0]` and can be validated.
+///
+/// Returns `false` for composite paths like `SEG/COMPOSITE/ELEMENT` (e.g.,
+/// `UNH/S009/0065`) where the element is inside a composite at an unknown index.
+fn is_qualifier_field(path: &str) -> bool {
+    let parts: Vec<&str> = path.split('/').filter(|p| !p.starts_with("SG")).collect();
+    // Expected: [SEGMENT_TAG, ELEMENT_ID] — exactly 2 parts after SG stripping.
+    // If 3+ parts, there's a composite layer (e.g., [SEG, COMPOSITE, ELEMENT]).
+    parts.len() == 2
 }
 
 /// Extract the segment ID from a field path like "SG2/NAD/C082/3039" -> "NAD".
@@ -661,11 +727,9 @@ mod tests {
     }
 
     #[test]
-    fn test_code_validation_disabled_for_qualifier_fields() {
-        // Per-field code validation is disabled because the AHB has separate
-        // field rules for each segment instance (e.g., NAD/3035 with [MS] for
-        // sender, [MR] for receiver). Checking all NAD segments against one
-        // rule's codes produces false positives.
+    fn test_cross_field_code_validation_valid_qualifiers() {
+        // NAD/3035 has separate field rules: [MS] for sender, [MR] for receiver.
+        // Cross-field validation unions them → {MS, MR}. Both segments are valid.
         let evaluator = MockEvaluator::new(vec![]);
         let validator = EdifactValidator::new(evaluator);
         let external = NoOpExternalProvider;
@@ -716,15 +780,98 @@ mod tests {
             ValidationLevel::Conditions,
         );
 
-        // No COD002 errors — per-field code validation is disabled
         let code_errors: Vec<_> = report
             .by_category(ValidationCategory::Code)
             .filter(|i| i.severity == Severity::Error)
             .collect();
         assert!(
             code_errors.is_empty(),
-            "Expected no code errors, got: {:?}",
+            "Expected no code errors for valid qualifiers, got: {:?}",
             code_errors
         );
+    }
+
+    #[test]
+    fn test_cross_field_code_validation_catches_invalid_qualifier() {
+        // NAD+MT is not in the allowed set {MS, MR} → should produce COD002.
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+
+        let nad_ms = OwnedSegment {
+            id: "NAD".to_string(),
+            elements: vec![vec!["MS".to_string()]],
+            segment_number: 4,
+        };
+        let nad_mt = OwnedSegment {
+            id: "NAD".to_string(),
+            elements: vec![vec!["MT".to_string()]], // invalid
+            segment_number: 5,
+        };
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Absender".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MS".to_string(),
+                        description: "Absender".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Empfaenger".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MR".to_string(),
+                        description: "Empfaenger".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+            ],
+        };
+
+        let report = validator.validate(
+            &[nad_ms, nad_mt],
+            &workflow,
+            &external,
+            ValidationLevel::Conditions,
+        );
+
+        let code_errors: Vec<_> = report
+            .by_category(ValidationCategory::Code)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+        assert_eq!(code_errors.len(), 1, "Expected one COD002 error for MT");
+        assert!(code_errors[0].message.contains("MT"));
+        assert!(code_errors[0].message.contains("MR"));
+        assert!(code_errors[0].message.contains("MS"));
+    }
+
+    #[test]
+    fn test_is_qualifier_field_simple_paths() {
+        assert!(is_qualifier_field("NAD/3035"));
+        assert!(is_qualifier_field("SG2/NAD/3035"));
+        assert!(is_qualifier_field("SG4/SG8/SEQ/6350"));
+        assert!(is_qualifier_field("LOC/3227"));
+    }
+
+    #[test]
+    fn test_is_qualifier_field_composite_paths() {
+        assert!(!is_qualifier_field("UNH/S009/0065"));
+        assert!(!is_qualifier_field("NAD/C082/3039"));
+        assert!(!is_qualifier_field("SG2/NAD/C082/3039"));
+    }
+
+    #[test]
+    fn test_is_qualifier_field_bare_segment() {
+        assert!(!is_qualifier_field("NAD"));
+        assert!(!is_qualifier_field("SG2/NAD"));
     }
 }
