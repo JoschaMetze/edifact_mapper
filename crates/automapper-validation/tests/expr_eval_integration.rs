@@ -4,7 +4,7 @@ use automapper_validation::eval::{
     ConditionEvaluator, ConditionExprEvaluator, ConditionResult, EvaluationContext,
     ExternalConditionProvider,
 };
-use edifact_types::RawSegment;
+use mig_types::segment::OwnedSegment;
 use std::collections::HashMap;
 
 /// Mock evaluator with configurable condition results.
@@ -50,7 +50,7 @@ impl ExternalConditionProvider for NoExternal {
 fn eval_status(ahb_status: &str, conditions: Vec<(u32, ConditionResult)>) -> ConditionResult {
     let mock = MockEvaluator::new(conditions);
     let ext = NoExternal;
-    let segments: Vec<RawSegment> = Vec::new();
+    let segments: Vec<OwnedSegment> = Vec::new();
     let ctx = EvaluationContext::new("11001", &ext, &segments);
     let expr_eval = ConditionExprEvaluator::new(&mock);
     expr_eval.evaluate_status(ahb_status, &ctx)

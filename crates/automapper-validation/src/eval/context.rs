@@ -1,6 +1,7 @@
 //! Evaluation context for condition evaluation.
 
 use super::evaluator::ExternalConditionProvider;
+use mig_types::segment::OwnedSegment;
 
 /// Context passed to condition evaluators during evaluation.
 ///
@@ -15,9 +16,9 @@ pub struct EvaluationContext<'a> {
     /// outside the EDIFACT message.
     pub external: &'a dyn ExternalConditionProvider,
 
-    /// Raw EDIFACT segments for direct segment inspection by condition
+    /// Parsed EDIFACT segments for direct segment inspection by condition
     /// evaluators. Conditions often need to check specific segment values.
-    pub segments: &'a [edifact_types::RawSegment<'a>],
+    pub segments: &'a [OwnedSegment],
 }
 
 impl<'a> EvaluationContext<'a> {
@@ -25,7 +26,7 @@ impl<'a> EvaluationContext<'a> {
     pub fn new(
         pruefidentifikator: &'a str,
         external: &'a dyn ExternalConditionProvider,
-        segments: &'a [edifact_types::RawSegment<'a>],
+        segments: &'a [OwnedSegment],
     ) -> Self {
         Self {
             pruefidentifikator,
@@ -35,12 +36,12 @@ impl<'a> EvaluationContext<'a> {
     }
 
     /// Find the first segment with the given ID.
-    pub fn find_segment(&self, segment_id: &str) -> Option<&edifact_types::RawSegment<'a>> {
+    pub fn find_segment(&self, segment_id: &str) -> Option<&'a OwnedSegment> {
         self.segments.iter().find(|s| s.id == segment_id)
     }
 
     /// Find all segments with the given ID.
-    pub fn find_segments(&self, segment_id: &str) -> Vec<&edifact_types::RawSegment<'a>> {
+    pub fn find_segments(&self, segment_id: &str) -> Vec<&'a OwnedSegment> {
         self.segments
             .iter()
             .filter(|s| s.id == segment_id)
@@ -53,7 +54,7 @@ impl<'a> EvaluationContext<'a> {
         segment_id: &str,
         element_index: usize,
         qualifier: &str,
-    ) -> Vec<&edifact_types::RawSegment<'a>> {
+    ) -> Vec<&'a OwnedSegment> {
         self.segments
             .iter()
             .filter(|s| {
@@ -61,7 +62,7 @@ impl<'a> EvaluationContext<'a> {
                     && s.elements
                         .get(element_index)
                         .and_then(|e| e.first())
-                        .is_some_and(|v| *v == qualifier)
+                        .is_some_and(|v| v == qualifier)
             })
             .collect()
     }
@@ -76,17 +77,15 @@ impl<'a> EvaluationContext<'a> {
 mod tests {
     use super::super::evaluator::NoOpExternalProvider;
     use super::*;
-    use edifact_types::{RawSegment, SegmentPosition};
 
-    fn make_segment<'a>(id: &'a str, elements: Vec<Vec<&'a str>>) -> RawSegment<'a> {
-        RawSegment {
-            id,
-            elements,
-            position: SegmentPosition {
-                segment_number: 0,
-                byte_offset: 0,
-                message_number: 0,
-            },
+    fn make_segment(id: &str, elements: Vec<Vec<&str>>) -> OwnedSegment {
+        OwnedSegment {
+            id: id.to_string(),
+            elements: elements
+                .into_iter()
+                .map(|e| e.into_iter().map(|c| c.to_string()).collect())
+                .collect(),
+            segment_number: 0,
         }
     }
 

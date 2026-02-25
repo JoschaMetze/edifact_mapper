@@ -156,41 +156,40 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
     }
 
     /// Parse EDIFACT content into segments.
-    fn parse_segments<'a>(
+    fn parse_segments(
         &self,
-        _input: &'a str,
-    ) -> Result<Vec<edifact_types::RawSegment<'a>>, ValidationError> {
-        // TODO: Use EdifactStreamParser from edifact-parser crate to parse segments.
-        // For now, return empty vec. The actual parsing will be wired up when
-        // Feature 1 (edifact-parser) is integrated.
+        _input: &str,
+    ) -> Result<Vec<mig_types::segment::OwnedSegment>, ValidationError> {
+        // TODO: Use EdifactStreamParser from edifact-parser crate to parse segments,
+        // then convert to OwnedSegment. For now, return empty vec.
         Ok(Vec::new())
     }
 
     /// Detect the message type from the UNH segment.
     fn detect_message_type<'a>(
         &self,
-        segments: &'a [edifact_types::RawSegment<'a>],
+        segments: &'a [mig_types::segment::OwnedSegment],
     ) -> Option<&'a str> {
         segments
             .iter()
             .find(|s| s.id == "UNH")
             .and_then(|unh| unh.elements.get(1))
             .and_then(|e| e.first())
-            .copied()
+            .map(|s| s.as_str())
     }
 
     /// Detect the Pruefidentifikator from RFF+Z13.
     fn detect_pruefidentifikator<'a>(
         &self,
-        segments: &'a [edifact_types::RawSegment<'a>],
+        segments: &'a [mig_types::segment::OwnedSegment],
     ) -> Option<&'a str> {
         segments.iter().find_map(|s| {
             if s.id != "RFF" {
                 return None;
             }
             let qualifier = s.elements.first()?.first()?;
-            if *qualifier == "Z13" {
-                s.elements.first()?.get(1).copied()
+            if qualifier == "Z13" {
+                s.elements.first()?.get(1).map(|s| s.as_str())
             } else {
                 None
             }
@@ -200,7 +199,7 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
     /// Validate EDIFACT structure (segment presence, ordering).
     fn validate_structure(
         &self,
-        _segments: &[edifact_types::RawSegment],
+        _segments: &[mig_types::segment::OwnedSegment],
         _report: &mut ValidationReport,
     ) {
         // TODO: Implement MIG structure validation when MIG schema types
@@ -298,7 +297,7 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
         for segment in matching_segments {
             if let Some(first_element) = segment.elements.first() {
                 if let Some(code_value) = first_element.first() {
-                    if !code_value.is_empty() && !allowed_codes.contains(code_value) {
+                    if !code_value.is_empty() && !allowed_codes.contains(&code_value.as_str()) {
                         report.add_issue(
                             ValidationIssue::new(
                                 Severity::Error,
@@ -311,7 +310,7 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                                 ),
                             )
                             .with_field_path(&field.segment_path)
-                            .with_actual(*code_value)
+                            .with_actual(code_value)
                             .with_expected(allowed_codes.join(", ")),
                         );
                     }

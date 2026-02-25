@@ -119,7 +119,7 @@ impl<'a, E: ConditionEvaluator> ConditionExprEvaluator<'a, E> {
 mod tests {
     use super::super::evaluator::{ConditionResult as CR, NoOpExternalProvider};
     use super::*;
-    use edifact_types::RawSegment;
+    use mig_types::segment::OwnedSegment;
     use std::collections::HashMap;
 
     /// A mock condition evaluator for testing.
@@ -163,13 +163,13 @@ mod tests {
         }
     }
 
-    fn empty_context() -> (NoOpExternalProvider, Vec<RawSegment<'static>>) {
+    fn empty_context() -> (NoOpExternalProvider, Vec<OwnedSegment>) {
         (NoOpExternalProvider, Vec::new())
     }
 
     fn make_ctx<'a>(
         external: &'a NoOpExternalProvider,
-        segments: &'a [RawSegment<'a>],
+        segments: &'a [OwnedSegment],
     ) -> EvaluationContext<'a> {
         EvaluationContext::new("11001", external, segments)
     }
