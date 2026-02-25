@@ -41,7 +41,7 @@ impl ClaudeConditionGenerator {
     /// Invokes the `claude` CLI with `--print` flag and returns stdout.
     fn invoke_claude_cli(&self, prompt: &str) -> Result<String, GeneratorError> {
         let mut child = Command::new("claude")
-            .args(["--print", "--model", "sonnet", "--max-tokens", "16384"])
+            .args(["--print", "--model", "sonnet"])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
