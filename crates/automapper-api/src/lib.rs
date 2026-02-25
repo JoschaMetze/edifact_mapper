@@ -49,9 +49,6 @@ use grpc::transform_proto::transform_service_server::TransformServiceServer;
 )]
 struct ApiDoc;
 
-/// Build the Swagger UI router in its own stack frame to avoid stack overflow
-/// from the large embedded static assets in debug builds.
-#[inline(never)]
 fn swagger_ui_router() -> Router {
     SwaggerUi::new("/swagger-ui")
         .url("/api-docs/openapi.json", ApiDoc::openapi())

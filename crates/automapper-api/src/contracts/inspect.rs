@@ -27,6 +27,7 @@ pub struct InspectResponse {
 
 /// A single EDIFACT segment in the tree.
 #[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
+#[schema(no_recursion)]
 pub struct SegmentNode {
     /// Segment tag (e.g., "UNH", "NAD", "LOC").
     pub tag: String,
