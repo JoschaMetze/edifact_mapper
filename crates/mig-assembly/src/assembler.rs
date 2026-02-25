@@ -5,6 +5,7 @@
 //! that can be converted to typed PID structs.
 
 use crate::cursor::SegmentCursor;
+use crate::diagnostic::{StructureDiagnostic, StructureDiagnosticKind};
 use crate::matcher;
 use crate::tokenize::OwnedSegment;
 use crate::AssemblyError;
@@ -202,6 +203,74 @@ impl<'a> Assembler<'a> {
             }))
         }
     }
+
+    /// Assemble segments with diagnostic collection.
+    ///
+    /// Returns the assembled tree plus diagnostics for segments not consumed
+    /// by the MIG-guided assembly. Existing `assemble_generic()` is unchanged.
+    pub fn assemble_with_diagnostics(
+        &self,
+        segments: &[OwnedSegment],
+    ) -> (AssembledTree, Vec<StructureDiagnostic>) {
+        let mut diagnostics = Vec::new();
+
+        let tree = match self.assemble_generic(segments) {
+            Ok(tree) => tree,
+            Err(e) => {
+                diagnostics.push(StructureDiagnostic {
+                    kind: StructureDiagnosticKind::UnexpectedSegment,
+                    segment_id: String::new(),
+                    position: 0,
+                    message: format!("Assembly failed: {e}"),
+                });
+                return (
+                    AssembledTree {
+                        segments: Vec::new(),
+                        groups: Vec::new(),
+                        post_group_start: 0,
+                    },
+                    diagnostics,
+                );
+            }
+        };
+
+        // Count consumed segments in the assembled tree
+        let consumed = count_tree_segments(&tree);
+
+        // Segments beyond consumed count are unconsumed
+        for (i, seg) in segments.iter().enumerate().skip(consumed) {
+            diagnostics.push(StructureDiagnostic {
+                kind: StructureDiagnosticKind::UnexpectedSegment,
+                segment_id: seg.id.clone(),
+                position: i,
+                message: format!(
+                    "Segment '{}' at position {} was not consumed by MIG-guided assembly",
+                    seg.id, i
+                ),
+            });
+        }
+
+        (tree, diagnostics)
+    }
+}
+
+fn count_tree_segments(tree: &AssembledTree) -> usize {
+    let mut count = tree.segments.len();
+    for group in &tree.groups {
+        count += count_group_segments(group);
+    }
+    count
+}
+
+fn count_group_segments(group: &AssembledGroup) -> usize {
+    let mut count = 0;
+    for rep in &group.repetitions {
+        count += rep.segments.len();
+        for child in &rep.child_groups {
+            count += count_group_segments(child);
+        }
+    }
+    count
 }
 
 fn owned_to_assembled(seg: &OwnedSegment) -> AssembledSegment {
@@ -477,5 +546,60 @@ mod tests {
         assert!(result.segments.iter().any(|s| s.tag == "UNH"));
         assert!(result.segments.iter().any(|s| s.tag == "BGM"));
         assert!(result.segments.iter().any(|s| s.tag == "DTM"));
+    }
+
+    #[test]
+    fn test_assemble_with_diagnostics_clean_input() {
+        let mig = make_mig_schema(vec!["UNH", "BGM", "UNT"], vec![]);
+        let segments = vec![
+            make_owned_seg("UNH", vec![vec!["001"]]),
+            make_owned_seg("BGM", vec![vec!["E01"]]),
+            make_owned_seg("UNT", vec![vec!["2", "001"]]),
+        ];
+        let assembler = Assembler::new(&mig);
+        let (tree, diagnostics) = assembler.assemble_with_diagnostics(&segments);
+        assert_eq!(tree.segments.len(), 3);
+        assert!(
+            diagnostics.is_empty(),
+            "Clean input should have no diagnostics"
+        );
+    }
+
+    #[test]
+    fn test_assemble_with_diagnostics_unconsumed_segments() {
+        let mig = make_mig_schema(vec!["UNH", "BGM"], vec![]);
+        let segments = vec![
+            make_owned_seg("UNH", vec![vec!["001"]]),
+            make_owned_seg("BGM", vec![vec!["E01"]]),
+            make_owned_seg("FTX", vec![vec!["AAA", "extra text"]]),
+        ];
+        let assembler = Assembler::new(&mig);
+        let (tree, diagnostics) = assembler.assemble_with_diagnostics(&segments);
+        assert_eq!(tree.segments.len(), 2);
+        assert_eq!(diagnostics.len(), 1);
+        assert_eq!(
+            diagnostics[0].kind,
+            StructureDiagnosticKind::UnexpectedSegment
+        );
+        assert_eq!(diagnostics[0].segment_id, "FTX");
+        assert_eq!(diagnostics[0].position, 2);
+    }
+
+    #[test]
+    fn test_assemble_with_diagnostics_multiple_unconsumed() {
+        let mig = make_mig_schema(vec!["UNH"], vec![]);
+        let segments = vec![
+            make_owned_seg("UNH", vec![vec!["001"]]),
+            make_owned_seg("FOO", vec![]),
+            make_owned_seg("BAR", vec![]),
+            make_owned_seg("BAZ", vec![]),
+        ];
+        let assembler = Assembler::new(&mig);
+        let (tree, diagnostics) = assembler.assemble_with_diagnostics(&segments);
+        assert_eq!(tree.segments.len(), 1);
+        assert_eq!(diagnostics.len(), 3);
+        assert_eq!(diagnostics[0].segment_id, "FOO");
+        assert_eq!(diagnostics[1].segment_id, "BAR");
+        assert_eq!(diagnostics[2].segment_id, "BAZ");
     }
 }
