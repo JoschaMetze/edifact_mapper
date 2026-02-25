@@ -40,6 +40,7 @@ use grpc::transform_proto::transform_service_server::TransformServiceServer;
         routes::convert_v2::convert_v2,
         routes::reverse_v2::reverse_v2,
         routes::validate_v2::validate_v2,
+        routes::validate_bo4e::validate_bo4e,
     ),
     tags(
         (name = "health", description = "Service health"),

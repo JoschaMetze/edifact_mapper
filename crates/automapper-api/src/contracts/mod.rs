@@ -8,4 +8,5 @@ pub mod health;
 pub mod inspect;
 pub mod reverse_v2;
 pub mod trace;
+pub mod validate_bo4e;
 pub mod validate_v2;
