@@ -1,0 +1,45 @@
+---
+source: crates/automapper-validation/tests/snapshot_test.rs
+expression: json
+---
+{
+  "format_version": "FV2510",
+  "issues": [
+    {
+      "actual_value": null,
+      "category": "Ahb",
+      "code": "AHB001",
+      "expected_value": null,
+      "field_path": "SG2/NAD/3035",
+      "message": "Required field 'Partnerrolle' at SG2/NAD/3035 is missing",
+      "rule": "Muss",
+      "segment_position": null,
+      "severity": "Error"
+    },
+    {
+      "actual_value": null,
+      "category": "Ahb",
+      "code": "AHB001",
+      "expected_value": null,
+      "field_path": "SG2/NAD/C082/3039",
+      "message": "Required field 'MP-ID des MSB' at SG2/NAD/C082/3039 is missing",
+      "rule": "Muss [182] ∧ [152]",
+      "segment_position": null,
+      "severity": "Error"
+    },
+    {
+      "actual_value": null,
+      "category": "Ahb",
+      "code": "AHB001",
+      "expected_value": null,
+      "field_path": "SG4/DTM/C507/2380",
+      "message": "Required field 'Lieferbeginn-Datum' at SG4/DTM/C507/2380 is missing",
+      "rule": "X",
+      "segment_position": null,
+      "severity": "Error"
+    }
+  ],
+  "level": "Full",
+  "message_type": "UTILMD",
+  "pruefidentifikator": "11001"
+}
