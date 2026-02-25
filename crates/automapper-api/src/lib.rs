@@ -9,6 +9,7 @@ pub mod error;
 pub mod grpc;
 pub mod routes;
 pub mod state;
+pub mod validation_bridge;
 
 use axum::Router;
 use tower_http::cors::{Any, CorsLayer};
