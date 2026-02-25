@@ -231,14 +231,14 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
         self.validate_codes_cross_field(workflow, ctx, report);
     }
 
-    /// Validate qualifier codes by aggregating allowed values across all field
-    /// rules that share the same segment tag.
+    /// Validate qualifier codes by aggregating allowed values across field rules.
     ///
-    /// Since `ctx.find_segments("NAD")` returns ALL NAD segments regardless of
-    /// group path, we must union codes from all paths for the same tag (e.g.,
-    /// `SG2/NAD/3035` codes `{MS, MR}` + `SG4/SG12/NAD/3035` codes `{Z04, Z09}`
-    /// → combined `{MS, MR, Z04, Z09}`). This prevents false positives from
-    /// cross-group matches.
+    /// When a group navigator is available, codes are grouped by segment path
+    /// (e.g., `SG2/NAD/3035` → `{MS, MR}`) and segments are looked up within
+    /// the specific group, giving precise per-group validation.
+    ///
+    /// Without a navigator, falls back to grouping by segment tag and unioning
+    /// all codes across groups to avoid cross-group false positives.
     ///
     /// Only validates simple qualifier paths (`[SG/]*/SEG/ELEMENT`) where the
     /// code is in `element[0][0]`. Composite paths are skipped.
@@ -248,8 +248,87 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
         ctx: &EvaluationContext,
         report: &mut ValidationReport,
     ) {
-        // Group allowed codes by segment tag (not path), since find_segments
-        // returns all instances of that tag across all groups.
+        if ctx.navigator.is_some() {
+            self.validate_codes_group_scoped(workflow, ctx, report);
+        } else {
+            self.validate_codes_tag_scoped(workflow, ctx, report);
+        }
+    }
+
+    /// Group-scoped code validation: group codes by path, use navigator to
+    /// find segments within each group, check against that group's codes only.
+    fn validate_codes_group_scoped(
+        &self,
+        workflow: &AhbWorkflow,
+        ctx: &EvaluationContext,
+        report: &mut ValidationReport,
+    ) {
+        // Group allowed codes by (group_path_key, segment_tag).
+        // E.g., "SG2/NAD/3035" → key ("SG2", "NAD"), "SG4/SG12/NAD/3035" → key ("SG4/SG12", "NAD")
+        let mut codes_by_group: HashMap<(String, String), HashSet<&str>> = HashMap::new();
+
+        for field in &workflow.fields {
+            if field.codes.is_empty() || !is_qualifier_field(&field.segment_path) {
+                continue;
+            }
+            let tag = extract_segment_id(&field.segment_path);
+            let group_key = extract_group_path_key(&field.segment_path);
+            let entry = codes_by_group.entry((group_key, tag)).or_default();
+            for code in &field.codes {
+                if code.ahb_status == "X" || code.ahb_status.starts_with("Muss") {
+                    entry.insert(&code.value);
+                }
+            }
+        }
+
+        let nav = ctx.navigator.unwrap();
+
+        for ((group_key, tag), allowed_codes) in &codes_by_group {
+            if allowed_codes.is_empty() {
+                continue;
+            }
+
+            let group_path: Vec<&str> = if group_key.is_empty() {
+                Vec::new()
+            } else {
+                group_key.split('/').collect()
+            };
+
+            // Iterate over all instances of this group and check segments.
+            if group_path.is_empty() {
+                // No group prefix (e.g., bare "NAD/3035") — check flat segments.
+                Self::check_segments_against_codes(
+                    ctx.find_segments(tag),
+                    allowed_codes,
+                    tag,
+                    &format!("{tag}/qualifier"),
+                    report,
+                );
+            } else {
+                let instance_count = nav.group_instance_count(&group_path);
+                for i in 0..instance_count {
+                    let segments = nav.find_segments_in_group(tag, &group_path, i);
+                    let refs: Vec<&OwnedSegment> = segments.iter().collect();
+                    Self::check_segments_against_codes(
+                        refs,
+                        allowed_codes,
+                        tag,
+                        &format!("{group_key}/{tag}/qualifier"),
+                        report,
+                    );
+                }
+            }
+        }
+    }
+
+    /// Fallback: group codes by segment tag (unioning across all groups) and
+    /// check all segments of that tag. Used when no navigator is available.
+    fn validate_codes_tag_scoped(
+        &self,
+        workflow: &AhbWorkflow,
+        ctx: &EvaluationContext,
+        report: &mut ValidationReport,
+    ) {
         let mut codes_by_tag: HashMap<String, HashSet<&str>> = HashMap::new();
 
         for field in &workflow.fields {
@@ -265,40 +344,53 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
             }
         }
 
-        // For each tag, check all matching segments against the combined code set.
         for (tag, allowed_codes) in &codes_by_tag {
             if allowed_codes.is_empty() {
                 continue;
             }
+            Self::check_segments_against_codes(
+                ctx.find_segments(tag),
+                allowed_codes,
+                tag,
+                &format!("{tag}/qualifier"),
+                report,
+            );
+        }
+    }
 
-            let matching_segments = ctx.find_segments(tag);
-
-            for segment in matching_segments {
-                if let Some(code_value) = segment
-                    .elements
-                    .first()
-                    .and_then(|e| e.first())
-                    .filter(|v| !v.is_empty())
-                {
-                    if !allowed_codes.contains(code_value.as_str()) {
-                        let mut sorted_codes: Vec<&str> = allowed_codes.iter().copied().collect();
-                        sorted_codes.sort_unstable();
-                        report.add_issue(
-                            ValidationIssue::new(
-                                Severity::Error,
-                                ValidationCategory::Code,
-                                ErrorCodes::CODE_NOT_ALLOWED_FOR_PID,
-                                format!(
-                                    "Code '{}' is not allowed for this PID. Allowed: [{}]",
-                                    code_value,
-                                    sorted_codes.join(", ")
-                                ),
-                            )
-                            .with_field_path(format!("{}/qualifier", tag))
-                            .with_actual(code_value)
-                            .with_expected(sorted_codes.join(", ")),
-                        );
-                    }
+    /// Check a list of segments' qualifier (element[0][0]) against allowed codes.
+    fn check_segments_against_codes(
+        segments: Vec<&OwnedSegment>,
+        allowed_codes: &HashSet<&str>,
+        _tag: &str,
+        field_path: &str,
+        report: &mut ValidationReport,
+    ) {
+        for segment in segments {
+            if let Some(code_value) = segment
+                .elements
+                .first()
+                .and_then(|e| e.first())
+                .filter(|v| !v.is_empty())
+            {
+                if !allowed_codes.contains(code_value.as_str()) {
+                    let mut sorted_codes: Vec<&str> = allowed_codes.iter().copied().collect();
+                    sorted_codes.sort_unstable();
+                    report.add_issue(
+                        ValidationIssue::new(
+                            Severity::Error,
+                            ValidationCategory::Code,
+                            ErrorCodes::CODE_NOT_ALLOWED_FOR_PID,
+                            format!(
+                                "Code '{}' is not allowed for this PID. Allowed: [{}]",
+                                code_value,
+                                sorted_codes.join(", ")
+                            ),
+                        )
+                        .with_field_path(field_path)
+                        .with_actual(code_value)
+                        .with_expected(sorted_codes.join(", ")),
+                    );
                 }
             }
         }
@@ -324,6 +416,18 @@ fn is_qualifier_field(path: &str) -> bool {
     // Expected: [SEGMENT_TAG, ELEMENT_ID] — exactly 2 parts after SG stripping.
     // If 3+ parts, there's a composite layer (e.g., [SEG, COMPOSITE, ELEMENT]).
     parts.len() == 2
+}
+
+/// Extract the group path prefix from a field path.
+///
+/// `"SG2/NAD/3035"` → `"SG2"`, `"SG4/SG12/NAD/3035"` → `"SG4/SG12"`,
+/// `"NAD/3035"` → `""` (no group prefix).
+fn extract_group_path_key(path: &str) -> String {
+    let sg_parts: Vec<&str> = path
+        .split('/')
+        .take_while(|p| p.starts_with("SG"))
+        .collect();
+    sg_parts.join("/")
 }
 
 /// Extract the segment ID from a field path like "SG2/NAD/C082/3039" -> "NAD".
@@ -979,5 +1083,195 @@ mod tests {
     fn test_is_qualifier_field_bare_segment() {
         assert!(!is_qualifier_field("NAD"));
         assert!(!is_qualifier_field("SG2/NAD"));
+    }
+
+    #[test]
+    fn test_extract_group_path_key() {
+        assert_eq!(extract_group_path_key("SG2/NAD/3035"), "SG2");
+        assert_eq!(extract_group_path_key("SG4/SG12/NAD/3035"), "SG4/SG12");
+        assert_eq!(extract_group_path_key("NAD/3035"), "");
+        assert_eq!(extract_group_path_key("SG4/SG8/SEQ/6350"), "SG4/SG8");
+    }
+
+    #[test]
+    fn test_group_scoped_code_validation_with_navigator() {
+        // With a navigator, SG2/NAD is checked against {MS, MR} only,
+        // and SG4/SG12/NAD is checked against {Z04, Z09} only.
+        // NAD+MT in SG2 → error with allowed [MR, MS] (not the full union).
+        use mig_types::navigator::GroupNavigator;
+
+        struct TestNav;
+        impl GroupNavigator for TestNav {
+            fn find_segments_in_group(
+                &self,
+                segment_id: &str,
+                group_path: &[&str],
+                _instance_index: usize,
+            ) -> Vec<OwnedSegment> {
+                if segment_id != "NAD" {
+                    return vec![];
+                }
+                match group_path {
+                    ["SG2"] => vec![
+                        OwnedSegment {
+                            id: "NAD".into(),
+                            elements: vec![vec!["MS".into()]],
+                            segment_number: 3,
+                        },
+                        OwnedSegment {
+                            id: "NAD".into(),
+                            elements: vec![vec!["MT".into()]], // invalid in SG2
+                            segment_number: 4,
+                        },
+                    ],
+                    ["SG4", "SG12"] => vec![
+                        OwnedSegment {
+                            id: "NAD".into(),
+                            elements: vec![vec!["Z04".into()]],
+                            segment_number: 20,
+                        },
+                        OwnedSegment {
+                            id: "NAD".into(),
+                            elements: vec![vec!["Z09".into()]],
+                            segment_number: 21,
+                        },
+                    ],
+                    _ => vec![],
+                }
+            }
+            fn find_segments_with_qualifier_in_group(
+                &self,
+                _: &str,
+                _: usize,
+                _: &str,
+                _: &[&str],
+                _: usize,
+            ) -> Vec<OwnedSegment> {
+                vec![]
+            }
+            fn group_instance_count(&self, group_path: &[&str]) -> usize {
+                match group_path {
+                    ["SG2"] | ["SG4", "SG12"] => 1,
+                    _ => 0,
+                }
+            }
+        }
+
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+        let nav = TestNav;
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Absender".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MS".to_string(),
+                        description: "Absender".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Empfaenger".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MR".to_string(),
+                        description: "Empfaenger".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "SG4/SG12/NAD/3035".to_string(),
+                    name: "Anschlussnutzer".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "Z04".to_string(),
+                        description: "Anschlussnutzer".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "SG4/SG12/NAD/3035".to_string(),
+                    name: "Korrespondenzanschrift".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "Z09".to_string(),
+                        description: "Korrespondenzanschrift".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+            ],
+        };
+
+        // All segments flat (for condition evaluation), navigator provides group scope.
+        let all_segments = vec![
+            OwnedSegment {
+                id: "NAD".into(),
+                elements: vec![vec!["MS".into()]],
+                segment_number: 3,
+            },
+            OwnedSegment {
+                id: "NAD".into(),
+                elements: vec![vec!["MT".into()]],
+                segment_number: 4,
+            },
+            OwnedSegment {
+                id: "NAD".into(),
+                elements: vec![vec!["Z04".into()]],
+                segment_number: 20,
+            },
+            OwnedSegment {
+                id: "NAD".into(),
+                elements: vec![vec!["Z09".into()]],
+                segment_number: 21,
+            },
+        ];
+
+        let report = validator.validate_with_navigator(
+            &all_segments,
+            &workflow,
+            &external,
+            ValidationLevel::Conditions,
+            &nav,
+        );
+
+        let code_errors: Vec<_> = report
+            .by_category(ValidationCategory::Code)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+
+        // Only one error: MT in SG2 (not allowed in {MS, MR}).
+        // Z04 and Z09 are NOT checked against {MS, MR} — group-scoped.
+        assert_eq!(
+            code_errors.len(),
+            1,
+            "Expected exactly one COD002 error for MT in SG2, got: {:?}",
+            code_errors
+        );
+        assert!(code_errors[0].message.contains("MT"));
+        // Error should show only SG2's allowed codes, not the full union
+        assert!(code_errors[0].message.contains("MR"));
+        assert!(code_errors[0].message.contains("MS"));
+        assert!(
+            !code_errors[0].message.contains("Z04"),
+            "SG4/SG12 codes should not leak into SG2 error"
+        );
+        // Field path should include the group
+        assert!(
+            code_errors[0]
+                .field_path
+                .as_deref()
+                .unwrap_or("")
+                .contains("SG2"),
+            "Error field_path should reference SG2, got: {:?}",
+            code_errors[0].field_path
+        );
     }
 }
