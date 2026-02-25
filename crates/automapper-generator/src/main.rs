@@ -723,6 +723,25 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             std::fs::write(&output_path, &source_code)?;
             eprintln!("Generated: {:?}", output_path);
 
+            // Run rustfmt on the generated file to ensure consistent formatting
+            match std::process::Command::new("rustfmt")
+                .arg(&output_path)
+                .status()
+            {
+                Ok(status) if status.success() => {
+                    eprintln!("Formatted: {:?}", output_path);
+                }
+                Ok(status) => {
+                    eprintln!(
+                        "Warning: rustfmt exited with {} for {:?}",
+                        status, output_path
+                    );
+                }
+                Err(e) => {
+                    eprintln!("Warning: rustfmt not available ({}), skipping formatting", e);
+                }
+            }
+
             // Save metadata — merge newly generated with preserved
             let mut meta_conditions: std::collections::HashMap<
                 String,

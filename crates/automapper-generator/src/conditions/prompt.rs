@@ -186,6 +186,8 @@ from the AHB shorthand notation alone.
 4. When a condition references a specific segment qualifier (e.g., "STS+7", "NAD+MR", "LOC+Z16"), use `ctx.find_segments_with_qualifier()`.
 5. For **low confidence** conditions, set implementation to null.
 6. **Always consult the Segment Structure Reference for element indices.** Do not derive indices from EDIFACT shorthand notation in condition descriptions.
+7. Use `.first()` instead of `.get(0)` — clippy enforces this (`clippy::get_first`).
+8. Prefix unused function parameters with `_` (e.g., `_ctx`) to avoid `unused_variable` warnings.
 
 Respond ONLY with a JSON object in this exact format (no markdown, no code blocks):
 {
