@@ -1,0 +1,20 @@
+# Geschaeftspartner (Dienstleister) mapping for PID 55035.
+#
+# Source: SG4.SG12 -> NAD+Z63 (Dienstleister)
+# Identifies a related market partner by MP-ID.
+
+[meta]
+entity = "Geschaeftspartner"
+bo4e_type = "Geschaeftspartner"
+companion_type = "GeschaeftspartnerEdifact"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12_z63"
+discriminator = "NAD.0.0=Z63"
+
+[fields]
+"nad.0" = { target = "", default = "Z63" }
+"nad.1.0" = "marktpartnerId"
+
+[companion_fields]
+"nad.1.1" = "codelisteCode"
+"nad.1.2" = "codepflegeCode"

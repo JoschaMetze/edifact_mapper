@@ -1,0 +1,27 @@
+# Marktlokation Verbrauchsart info (SEQ+ZE5) for PID 55035.
+# Merges into entity "Marktlokation" via deep-merge.
+#
+# SEQ+ZE5+<Zeitraum-Ref>  (Informative Verbrauchsart und Nutzung der OBIS-Kennzahl)
+# RFF+Z10:<OBIS-Kennzahl>
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_ze5"
+discriminator = "SEQ.0.0=ZE5"
+
+[fields]
+"seq.1.0" = "zeitraumReferenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZE5"
+
+[companion_fields]
+"rff.0.1" = "obisKennzahl"
+
+[companion_fields."rff.0.0"]
+target = ""
+default = "Z10"

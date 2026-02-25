@@ -1,0 +1,27 @@
+# Netzlokation Fortlaufende Nummer / MaLo-Zuordnung info (SEQ+ZD6) for PID 55035.
+# Merges into entity "Netzlokation" via deep-merge.
+#
+# SEQ+ZD6+<Zeitraum-Ref>  (Informative Zuordnung Lokation zum Objektcode des Lokationsbuendels)
+# RFF+Z16:<Marktlokations-ID>
+
+[meta]
+entity = "Netzlokation"
+bo4e_type = "Netzlokation"
+companion_type = "NetzlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zd6"
+discriminator = "SEQ.0.0=ZD6"
+
+[fields]
+"seq.1.0" = "zeitraumReferenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZD6"
+
+[companion_fields]
+"rff.0.1" = "marktlokationsId"
+
+[companion_fields."rff.0.0"]
+target = ""
+default = "Z16"

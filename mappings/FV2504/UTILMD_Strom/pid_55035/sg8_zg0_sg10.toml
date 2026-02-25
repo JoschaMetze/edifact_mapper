@@ -1,0 +1,24 @@
+# Netzlokation Spannungsebene Zuordnung (SG10 within SEQ+ZG0) for PID 55035.
+# CCI/CAV attribute data, merges into entity "Netzlokation".
+#
+# CAV+Z30:<Codeliste>:<Codepflege>:<Geraete-Nr>  → Geraeteidentifikation
+# CCI+++Z75  → Smartmeter-Gateway
+
+[meta]
+entity = "Netzlokation"
+bo4e_type = "Netzlokation"
+companion_type = "NetzlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zg0.sg10"
+
+[fields]
+
+[companion_fields]
+"cav.0.1" = "codelisteCode"
+"cav.0.2" = "codepflegeCode"
+"cav.0.3" = "geraeteNummer"
+"cci.2.0" = "merkmalCode"
+
+[companion_fields."cav.0.0"]
+target = ""
+default = "Z30"

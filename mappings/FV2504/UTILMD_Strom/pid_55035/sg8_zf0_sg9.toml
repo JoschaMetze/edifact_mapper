@@ -1,0 +1,24 @@
+# Messlokation Mengenangabe (SG9 within SEQ+ZF0) for PID 55035.
+# QTY segment data, merges into entity "Messlokation".
+#
+# QTY+Z42:<Menge>:KWH  → Mengenangabe
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_zf0.sg9"
+
+[fields]
+
+[companion_fields]
+"qty.0.1" = "mengenangabe"
+
+[companion_fields."qty.0.0"]
+target = ""
+default = "Z42"
+
+[companion_fields."qty.0.2"]
+target = ""
+default = "KWH"

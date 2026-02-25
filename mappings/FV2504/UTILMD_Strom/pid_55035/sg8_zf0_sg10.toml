@@ -1,0 +1,21 @@
+# Messlokation Zaehler/Geraete Zuordnung (SG10 within SEQ+ZF0) for PID 55035.
+# CCI/CAV attribute data, merges into entity "Messlokation".
+#
+# CAV+ZH7/ZH8  → zaehlerGeraeteCode (Information zu weiteren technischen Einrichtungen)
+# CCI+++Z63    → Information zu weiteren technischen Einrichtungen
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zf0.sg10"
+
+[fields]
+
+[companion_fields]
+"cav.0.0" = "zaehlerGeraeteCode"
+
+[companion_fields."cci.0"]
+target = ""
+default = "Z63"

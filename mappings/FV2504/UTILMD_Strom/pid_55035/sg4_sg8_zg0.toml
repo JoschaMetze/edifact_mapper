@@ -1,0 +1,19 @@
+# Netzlokation Spannungsebene info (SEQ+ZG0) for PID 55035.
+# Merges into entity "Netzlokation" via deep-merge.
+#
+# SEQ+ZG0+<Zeitraum-Ref>  (Informative Smartmeter-Gateway)
+
+[meta]
+entity = "Netzlokation"
+bo4e_type = "Netzlokation"
+companion_type = "NetzlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zg0"
+discriminator = "SEQ.0.0=ZG0"
+
+[fields]
+"seq.1.0" = "zeitraumReferenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZG0"

@@ -1,0 +1,31 @@
+# Prozessdaten (process data) mapping for PID 55015 (Ablehnung EOG Anmeldung).
+#
+# Source: SG4 top-level segments (IDE, STS, FTX)
+# IDE+24+<Vorgangsnummer>                         -> vorgangId
+# STS+E01+<status>+<code>:<ebd>::<zeitraumRef>    -> Antwort-Status
+# FTX+ACB+<funktion>+<code>+<text>                -> freitext
+#
+# No DTM segment in SG4 for this PID.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.0" = { target = "", default = "24" }
+"ide.1" = "vorgangId"
+
+# STS segment — Status der Antwort (E01)
+"sts.0.0" = "antwortKategorie"
+"sts.1.0" = "antwortStatus"
+"sts.2.0" = "pruefschrittCode"
+"sts.2.1" = "ebdNummer"
+"sts.2.3" = "zeitraumReferenz"
+
+# FTX segment — Zusaetzliche Informationen (ACB)
+"ftx.0" = { target = "", default = "ACB" }
+"ftx.2.0" = "freitextReferenz"
+"ftx.3.0" = "freitext"

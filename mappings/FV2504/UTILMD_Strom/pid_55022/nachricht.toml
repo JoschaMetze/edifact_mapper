@@ -1,0 +1,18 @@
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+source_group = ""
+source_path = ""
+
+[fields]
+"bgm.0" = "nachrichtentyp"
+"bgm.1" = "nachrichtennummer"
+"dtm[137].0.1" = "erstellungsdatum"
+
+[fields."dtm[137].0.0"]
+target = ""
+default = "137"
+
+[fields."dtm[137].0.2"]
+target = ""
+default = "303"

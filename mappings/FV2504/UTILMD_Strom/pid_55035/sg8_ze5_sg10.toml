@@ -1,0 +1,21 @@
+# Marktlokation Verbrauchsart Zuordnung (SG10 within SEQ+ZE5) for PID 55035.
+# CCI/CAV attribute data, merges into entity "Marktlokation".
+#
+# CAV+ZE6/Z87/ZE7  → eMobilitaetCode (Art der E-Mobilitaet)
+# CCI+++Z17        → Stromverbrauchsart
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_ze5.sg10"
+
+[fields]
+
+[companion_fields]
+"cav.0.0" = "eMobilitaetCode"
+
+[companion_fields."cci.0"]
+target = ""
+default = "Z17"

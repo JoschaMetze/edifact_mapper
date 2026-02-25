@@ -1,0 +1,19 @@
+# TechnischeRessource Profildefinition info (SEQ+ZG1) for PID 55035.
+# Merges into entity "TechnischeRessource" via deep-merge.
+#
+# SEQ+ZG1+<Zeitraum-Ref>  (Informative Profildaten)
+
+[meta]
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+companion_type = "TechnischeRessourceEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zg1"
+discriminator = "SEQ.0.0=ZG1"
+
+[fields]
+"seq.1.0" = "zeitraumReferenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZG1"

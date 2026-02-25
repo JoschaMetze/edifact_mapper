@@ -1,0 +1,29 @@
+# Prozessdaten (process data) mapping for PID 55017 (Bestätigung Kündigung).
+#
+# Source: SG4 top-level segments (IDE, DTM, STS)
+# IDE+24+<Vorgangsnummer>                         -> vorgangId
+# DTM+471:<Datum>:303                             -> kuendigungsDatum
+# STS+E01+<status>+<code>:<ebd>::<zeitraumRef>    -> Antwort-Status
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.0" = { target = "", default = "24" }
+"ide.1" = "vorgangId"
+
+# DTM+471 (Kündigungsdatum)
+"dtm[471].0.0" = { target = "", default = "471" }
+"dtm[471].0.1" = "kuendigungsDatum"
+"dtm[471].0.2" = { target = "", default = "303" }
+
+# STS segment — Status der Antwort (E01)
+"sts.0.0" = "antwortKategorie"
+"sts.1.0" = "antwortStatus"
+"sts.2.0" = "pruefschrittCode"
+"sts.2.1" = "ebdNummer"
+"sts.2.3" = "zeitraumReferenz"

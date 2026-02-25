@@ -1,0 +1,37 @@
+# Messlokation Zaehleinrichtung info (SEQ+ZF6) for PID 55035.
+# Merges into entity "Messlokation" via deep-merge.
+#
+# SEQ+ZF6+<Zeitraum-Ref>  (Informative OBIS-Daten der Zaehleinrichtung)
+# PIA+5+<OBIS-Kennzahl>:SRW
+# RFF+AGK:<Referenz-Identifikation>
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf6"
+discriminator = "SEQ.0.0=ZF6"
+
+[fields]
+"seq.1.0" = "zeitraumReferenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZF6"
+
+[fields."pia.0"]
+target = ""
+default = "5"
+
+[companion_fields]
+"pia.1.0" = "obisKennzahl"
+"rff.0.1" = "referenzIdentifikation"
+
+[companion_fields."pia.1.1"]
+target = ""
+default = "SRW"
+
+[companion_fields."rff.0.0"]
+target = ""
+default = "AGK"

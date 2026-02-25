@@ -1,0 +1,21 @@
+# Messlokation Leistungskurvendefinition Zuordnung (SG10 within SEQ+ZE1) for PID 55035.
+# CCI/CAV attribute data, merges into entity "Messlokation".
+#
+# CCI+++Z38  → Code des Zaehlzeitregisters
+# CCI.2.0    → zaehlzeitregisterCode
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_ze1.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.2.0" = "zaehlzeitregisterCode"
+
+[companion_fields."cci.0"]
+target = ""
+default = "Z38"

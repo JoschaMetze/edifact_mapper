@@ -1,0 +1,25 @@
+# Netzlokation Lokationsbuendelstruktur info (SEQ+ZD5) for PID 55035.
+# Merges into entity "Netzlokation" via deep-merge.
+#
+# SEQ+ZD5+<Zeitraum-Ref>  (Informative Referenz auf die Lokationsbuendelstruktur)
+# RFF+Z31/Z39:<Lokationsbuendelstruktur-ID>:<Fortlaufende Nummer>
+
+[meta]
+entity = "Netzlokation"
+bo4e_type = "Netzlokation"
+companion_type = "NetzlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zd5"
+discriminator = "SEQ.0.0=ZD5"
+
+[fields]
+"seq.1.0" = "zeitraumReferenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZD5"
+
+[companion_fields]
+"rff.0.0" = "lokationsbuendelstrukturQualifier"
+"rff.0.1" = "lokationsbuendelstrukturId"
+"rff.0.2" = "fortlaufendeNummer"

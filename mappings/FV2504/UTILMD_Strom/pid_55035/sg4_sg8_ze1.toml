@@ -1,0 +1,28 @@
+# Messlokation Leistungskurvendefinition info (SEQ+ZE1) for PID 55035.
+# Merges into entity "Messlokation" via deep-merge.
+#
+# SEQ+ZE1+<Zeitraum-Ref>  (Informative Netznutzungsabrechnungsdaten der Marktlokation)
+# PIA+Z02+<Artikel-ID>:<Art Z09/Z10>
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_ze1"
+discriminator = "SEQ.0.0=ZE1"
+
+[fields]
+"seq.1.0" = "zeitraumReferenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZE1"
+
+[fields."pia.0"]
+target = ""
+default = "Z02"
+
+[companion_fields]
+"pia.1.0" = "artikelId"
+"pia.1.1" = "artProduktCode"

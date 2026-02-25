@@ -1,0 +1,21 @@
+# Marktlokation Jahresverbrauchsprognose (SG9 within SEQ+Z98) for PID 55013.
+# QTY quantity data, merges into entity "Marktlokation" via deep-merge.
+#
+# QTY+31:<Menge>:KWH  -> Veranschlagte Jahresmenge Gesamt (estimated annual quantity)
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8:1.SG9"
+source_path = "sg4.sg8_z98.sg9"
+
+[fields]
+
+[companion_fields]
+"qty.0.1" = "jahresverbrauchsprognose"
+"qty.0.2" = "mengeneinheit"
+
+[companion_fields."qty.0.0"]
+target = ""
+default = "31"

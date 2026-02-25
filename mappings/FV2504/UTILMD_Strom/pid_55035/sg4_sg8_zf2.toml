@@ -1,0 +1,37 @@
+# TechnischeRessource Konfiguration info (SEQ+ZF2) for PID 55035.
+# Merges into entity "TechnischeRessource" via deep-merge.
+#
+# SEQ+ZF2+<Zeitraum-Ref>  (Informative Produkt-Daten der Steuerbaren Ressource)
+# PIA+5+<Konfigurationsprodukt-Code>:Z12
+# RFF+Z38:<Steuerbare-Ressource-ID>
+
+[meta]
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+companion_type = "TechnischeRessourceEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf2"
+discriminator = "SEQ.0.0=ZF2"
+
+[fields]
+"seq.1.0" = "zeitraumReferenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZF2"
+
+[fields."pia.0"]
+target = ""
+default = "5"
+
+[companion_fields]
+"pia.1.0" = "konfigurationsproduktCode"
+"rff.0.1" = "steuerbareRessourceId"
+
+[companion_fields."pia.1.1"]
+target = ""
+default = "Z12"
+
+[companion_fields."rff.0.0"]
+target = ""
+default = "Z38"
