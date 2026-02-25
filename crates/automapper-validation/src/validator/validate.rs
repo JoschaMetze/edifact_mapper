@@ -232,26 +232,32 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
     }
 
     /// Validate qualifier codes by aggregating allowed values across all field
-    /// rules that share the same segment path.
+    /// rules that share the same segment tag.
+    ///
+    /// Since `ctx.find_segments("NAD")` returns ALL NAD segments regardless of
+    /// group path, we must union codes from all paths for the same tag (e.g.,
+    /// `SG2/NAD/3035` codes `{MS, MR}` + `SG4/SG12/NAD/3035` codes `{Z04, Z09}`
+    /// → combined `{MS, MR, Z04, Z09}`). This prevents false positives from
+    /// cross-group matches.
     ///
     /// Only validates simple qualifier paths (`[SG/]*/SEG/ELEMENT`) where the
-    /// code is in `element[0][0]`. Composite paths (`SEG/COMPOSITE/ELEMENT`)
-    /// are skipped because resolving composite IDs to element indices requires
-    /// MIG schema knowledge the validator doesn't have.
+    /// code is in `element[0][0]`. Composite paths are skipped.
     fn validate_codes_cross_field(
         &self,
         workflow: &AhbWorkflow,
         ctx: &EvaluationContext,
         report: &mut ValidationReport,
     ) {
-        // Group allowed codes by segment path (only simple qualifier fields).
-        let mut codes_by_path: HashMap<&str, HashSet<&str>> = HashMap::new();
+        // Group allowed codes by segment tag (not path), since find_segments
+        // returns all instances of that tag across all groups.
+        let mut codes_by_tag: HashMap<String, HashSet<&str>> = HashMap::new();
 
         for field in &workflow.fields {
             if field.codes.is_empty() || !is_qualifier_field(&field.segment_path) {
                 continue;
             }
-            let entry = codes_by_path.entry(&field.segment_path).or_default();
+            let tag = extract_segment_id(&field.segment_path);
+            let entry = codes_by_tag.entry(tag).or_default();
             for code in &field.codes {
                 if code.ahb_status == "X" || code.ahb_status.starts_with("Muss") {
                     entry.insert(&code.value);
@@ -259,14 +265,13 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
             }
         }
 
-        // For each path, check all matching segments against the combined code set.
-        for (&path, allowed_codes) in &codes_by_path {
+        // For each tag, check all matching segments against the combined code set.
+        for (tag, allowed_codes) in &codes_by_tag {
             if allowed_codes.is_empty() {
                 continue;
             }
 
-            let segment_id = extract_segment_id(path);
-            let matching_segments = ctx.find_segments(&segment_id);
+            let matching_segments = ctx.find_segments(tag);
 
             for segment in matching_segments {
                 if let Some(code_value) = segment
@@ -289,7 +294,7 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                                     sorted_codes.join(", ")
                                 ),
                             )
-                            .with_field_path(path)
+                            .with_field_path(format!("{}/qualifier", tag))
                             .with_actual(code_value)
                             .with_expected(sorted_codes.join(", ")),
                         );
@@ -852,6 +857,107 @@ mod tests {
         assert!(code_errors[0].message.contains("MT"));
         assert!(code_errors[0].message.contains("MR"));
         assert!(code_errors[0].message.contains("MS"));
+    }
+
+    #[test]
+    fn test_cross_field_code_validation_unions_across_groups() {
+        // SG2/NAD/3035 allows {MS, MR}, SG4/SG12/NAD/3035 allows {Z04, Z09}.
+        // Since find_segments("NAD") returns all NADs, codes must be unioned
+        // by tag: {MS, MR, Z04, Z09}. NAD+MT should be caught, all others pass.
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+
+        let segments = vec![
+            OwnedSegment {
+                id: "NAD".to_string(),
+                elements: vec![vec!["MS".to_string()]],
+                segment_number: 3,
+            },
+            OwnedSegment {
+                id: "NAD".to_string(),
+                elements: vec![vec!["MR".to_string()]],
+                segment_number: 4,
+            },
+            OwnedSegment {
+                id: "NAD".to_string(),
+                elements: vec![vec!["Z04".to_string()]],
+                segment_number: 20,
+            },
+            OwnedSegment {
+                id: "NAD".to_string(),
+                elements: vec![vec!["Z09".to_string()]],
+                segment_number: 21,
+            },
+            OwnedSegment {
+                id: "NAD".to_string(),
+                elements: vec![vec!["MT".to_string()]], // invalid
+                segment_number: 22,
+            },
+        ];
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Absender".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MS".to_string(),
+                        description: "Absender".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Empfaenger".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MR".to_string(),
+                        description: "Empfaenger".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "SG4/SG12/NAD/3035".to_string(),
+                    name: "Anschlussnutzer".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "Z04".to_string(),
+                        description: "Anschlussnutzer".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "SG4/SG12/NAD/3035".to_string(),
+                    name: "Korrespondenzanschrift".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "Z09".to_string(),
+                        description: "Korrespondenzanschrift".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+            ],
+        };
+
+        let report =
+            validator.validate(&segments, &workflow, &external, ValidationLevel::Conditions);
+
+        let code_errors: Vec<_> = report
+            .by_category(ValidationCategory::Code)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+        assert_eq!(
+            code_errors.len(),
+            1,
+            "Expected exactly one COD002 error for MT, got: {:?}",
+            code_errors
+        );
+        assert!(code_errors[0].message.contains("MT"));
     }
 
     #[test]
