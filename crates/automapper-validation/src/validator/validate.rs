@@ -201,8 +201,10 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                 }
             }
 
-            // Evaluate the AHB status condition expression
-            let condition_result = expr_eval.evaluate_status(&field.ahb_status, ctx);
+            // Evaluate the AHB status condition expression, collecting
+            // which specific condition IDs are unknown when the result is Unknown.
+            let (condition_result, unknown_ids) =
+                expr_eval.evaluate_status_detailed(&field.ahb_status, ctx);
 
             match condition_result {
                 ConditionResult::True => {
@@ -230,15 +232,22 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                     // Condition not met - field not required, skip
                 }
                 ConditionResult::Unknown => {
-                    // Cannot determine - add info-level warning
+                    // Cannot determine - add info-level warning with specific missing IDs
+                    let detail = if unknown_ids.is_empty() {
+                        String::new()
+                    } else {
+                        let ids: Vec<String> =
+                            unknown_ids.iter().map(|id| format!("[{id}]")).collect();
+                        format!(" (missing conditions: {})", ids.join(", "))
+                    };
                     report.add_issue(
                         ValidationIssue::new(
                             Severity::Info,
                             ValidationCategory::Ahb,
                             ErrorCodes::CONDITION_UNKNOWN,
                             format!(
-                                "Condition for field '{}' could not be fully evaluated (external conditions missing)",
-                                field.name
+                                "Condition for field '{}' could not be fully evaluated{}",
+                                field.name, detail
                             ),
                         )
                         .with_field_path(&field.segment_path)

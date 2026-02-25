@@ -113,6 +113,64 @@ impl<'a, E: ConditionEvaluator> ConditionExprEvaluator<'a, E> {
             Err(_) => ConditionResult::Unknown, // Parse error = treat as unknown
         }
     }
+
+    /// Like [`evaluate_status`](Self::evaluate_status), but also returns the
+    /// IDs of conditions that evaluated to `Unknown`.
+    pub fn evaluate_status_detailed(
+        &self,
+        ahb_status: &str,
+        ctx: &EvaluationContext,
+    ) -> (ConditionResult, Vec<u32>) {
+        use crate::expr::ConditionParser;
+
+        match ConditionParser::parse(ahb_status) {
+            Ok(Some(expr)) => {
+                let result = self.evaluate(&expr, ctx);
+                if result.is_unknown() {
+                    let unknown_ids = self.collect_unknown_ids(&expr, ctx);
+                    (result, unknown_ids)
+                } else {
+                    (result, Vec::new())
+                }
+            }
+            Ok(None) => (ConditionResult::True, Vec::new()),
+            Err(_) => (ConditionResult::Unknown, Vec::new()),
+        }
+    }
+
+    /// Collect condition IDs that evaluate to `Unknown` within an expression.
+    fn collect_unknown_ids(&self, expr: &ConditionExpr, ctx: &EvaluationContext) -> Vec<u32> {
+        let mut ids = Vec::new();
+        self.collect_unknown_ids_inner(expr, ctx, &mut ids);
+        ids
+    }
+
+    fn collect_unknown_ids_inner(
+        &self,
+        expr: &ConditionExpr,
+        ctx: &EvaluationContext,
+        ids: &mut Vec<u32>,
+    ) {
+        match expr {
+            ConditionExpr::Ref(id) => {
+                if self.evaluator.evaluate(*id, ctx).is_unknown() {
+                    ids.push(*id);
+                }
+            }
+            ConditionExpr::And(exprs) | ConditionExpr::Or(exprs) => {
+                for e in exprs {
+                    self.collect_unknown_ids_inner(e, ctx, ids);
+                }
+            }
+            ConditionExpr::Xor(left, right) => {
+                self.collect_unknown_ids_inner(left, ctx, ids);
+                self.collect_unknown_ids_inner(right, ctx, ids);
+            }
+            ConditionExpr::Not(inner) => {
+                self.collect_unknown_ids_inner(inner, ctx, ids);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -588,5 +646,64 @@ mod tests {
 
         let expr = ConditionExpr::And(vec![ConditionExpr::Ref(1), ConditionExpr::Ref(2)]);
         assert_eq!(expr_eval.evaluate(&expr, &ctx), CR::False);
+    }
+
+    // === evaluate_status_detailed ===
+
+    #[test]
+    fn test_detailed_returns_unknown_ids() {
+        // [182]=True, [8]=Unknown → AND = Unknown, unknown_ids = [8]
+        let eval = MockEvaluator::new().with_condition(182, CR::True);
+        let (ext, segs) = empty_context();
+        let ctx = make_ctx(&ext, &segs);
+        let expr_eval = ConditionExprEvaluator::new(&eval);
+
+        let (result, unknown_ids) =
+            expr_eval.evaluate_status_detailed("Muss [182] ∧ [8]", &ctx);
+        assert_eq!(result, CR::Unknown);
+        assert_eq!(unknown_ids, vec![8]);
+    }
+
+    #[test]
+    fn test_detailed_multiple_unknown_ids() {
+        // [1]=Unknown, [2]=True, [3]=Unknown → AND = Unknown, unknown_ids = [1, 3]
+        let eval = MockEvaluator::new().with_condition(2, CR::True);
+        let (ext, segs) = empty_context();
+        let ctx = make_ctx(&ext, &segs);
+        let expr_eval = ConditionExprEvaluator::new(&eval);
+
+        let (result, unknown_ids) =
+            expr_eval.evaluate_status_detailed("Muss [1] ∧ [2] ∧ [3]", &ctx);
+        assert_eq!(result, CR::Unknown);
+        assert_eq!(unknown_ids, vec![1, 3]);
+    }
+
+    #[test]
+    fn test_detailed_no_unknown_when_true() {
+        let eval = MockEvaluator::new()
+            .with_condition(182, CR::True)
+            .with_condition(152, CR::True);
+        let (ext, segs) = empty_context();
+        let ctx = make_ctx(&ext, &segs);
+        let expr_eval = ConditionExprEvaluator::new(&eval);
+
+        let (result, unknown_ids) =
+            expr_eval.evaluate_status_detailed("Muss [182] ∧ [152]", &ctx);
+        assert_eq!(result, CR::True);
+        assert!(unknown_ids.is_empty());
+    }
+
+    #[test]
+    fn test_detailed_no_unknown_when_false() {
+        let eval = MockEvaluator::new()
+            .with_condition(182, CR::False);
+        let (ext, segs) = empty_context();
+        let ctx = make_ctx(&ext, &segs);
+        let expr_eval = ConditionExprEvaluator::new(&eval);
+
+        let (result, unknown_ids) =
+            expr_eval.evaluate_status_detailed("Muss [182] ∧ [8]", &ctx);
+        assert_eq!(result, CR::False);
+        assert!(unknown_ids.is_empty());
     }
 }
