@@ -227,6 +227,12 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
     }
 
     /// Validate code values for a field against AHB allowed codes.
+    ///
+    /// Only validates codes for fields pointing to simple qualifier elements
+    /// (element\[0\]\[0\] of the segment), i.e., paths like `[SG/]*/SEG/ELEMENT`.
+    /// Fields in composite sub-elements (paths like `SEG/COMPOSITE/ELEMENT`)
+    /// are skipped because resolving composite IDs to element indices requires
+    /// MIG schema knowledge that the validator doesn't have.
     fn validate_field_codes(
         &self,
         field: &AhbFieldRule,
@@ -234,6 +240,13 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
         report: &mut ValidationReport,
     ) {
         if field.codes.is_empty() {
+            return;
+        }
+
+        // Only validate codes for simple qualifier fields (element[0] of the segment).
+        // Composite paths (SEG/COMPOSITE/ELEMENT) can't be resolved to element indices
+        // without MIG schema, so we skip them to avoid false positives.
+        if !is_qualifier_field(&field.segment_path) {
             return;
         }
 
@@ -281,6 +294,30 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
 fn is_mandatory_status(status: &str) -> bool {
     let trimmed = status.trim();
     trimmed.starts_with("Muss") || trimmed.starts_with('X')
+}
+
+/// Check if a field path points to a simple qualifier element (element\[0\] of the segment).
+///
+/// Returns `true` for paths like `[SG/]*/SEG/ELEMENT` where the data element is
+/// directly under the segment (no composite wrapper). These fields have their code
+/// in `element[0][0]` and can be validated.
+///
+/// Returns `false` for composite paths like `SEG/COMPOSITE/ELEMENT` (e.g.,
+/// `UNH/S009/0065`) where the element is inside a composite at an unknown index.
+///
+/// Examples:
+/// - `"SG2/NAD/3035"` → true (qualifier is element[0])
+/// - `"LOC/3227"` → true
+/// - `"UNH/S009/0065"` → false (S009 is a composite, index unknown)
+/// - `"NAD/C082/3039"` → false (C082 is a composite)
+fn is_qualifier_field(path: &str) -> bool {
+    // Strip segment group prefixes (SG\d+), then check if there's exactly
+    // one component after the segment tag (meaning a simple element, not a composite path).
+    let parts: Vec<&str> = path.split('/').filter(|p| !p.starts_with("SG")).collect();
+
+    // Expected: [SEGMENT_TAG, ELEMENT_ID] — exactly 2 parts after SG stripping.
+    // If 3+ parts, there's a composite layer (e.g., [SEG, COMPOSITE, ELEMENT]).
+    parts.len() == 2
 }
 
 /// Extract the segment ID from a field path like "SG2/NAD/C082/3039" -> "NAD".
@@ -367,6 +404,36 @@ mod tests {
     #[test]
     fn test_extract_segment_id_nested_sg() {
         assert_eq!(extract_segment_id("SG4/SG8/SEQ/C286/6350"), "SEQ");
+    }
+
+    #[test]
+    fn test_is_qualifier_field_simple_paths() {
+        // Simple qualifier: [SG/]*/SEG/ELEMENT → true
+        assert!(is_qualifier_field("NAD/3035"));
+        assert!(is_qualifier_field("SG2/NAD/3035"));
+        assert!(is_qualifier_field("SG4/SG8/SEQ/6350"));
+        assert!(is_qualifier_field("LOC/3227"));
+        assert!(is_qualifier_field("DTM/2005"));
+        assert!(is_qualifier_field("RFF/1153"));
+    }
+
+    #[test]
+    fn test_is_qualifier_field_composite_paths() {
+        // Composite path: SEG/COMPOSITE/ELEMENT → false
+        assert!(!is_qualifier_field("UNH/S009/0065"));
+        assert!(!is_qualifier_field("UNH/S009/0052"));
+        assert!(!is_qualifier_field("NAD/C082/3039"));
+        assert!(!is_qualifier_field("SG2/NAD/C082/3039"));
+        assert!(!is_qualifier_field("SG4/SG8/SEQ/C286/6350"));
+        assert!(!is_qualifier_field("BGM/C002/1001"));
+    }
+
+    #[test]
+    fn test_is_qualifier_field_bare_segment() {
+        // Bare segment path (no element) → false (not a code field)
+        assert!(!is_qualifier_field("NAD"));
+        assert!(!is_qualifier_field("SG2/NAD"));
+        assert!(!is_qualifier_field("SG8"));
     }
 
     // === Validator tests with mock data ===
@@ -615,5 +682,136 @@ mod tests {
             &nav,
         );
         assert!(report.is_valid());
+    }
+
+    #[test]
+    fn test_code_validation_skips_composite_paths() {
+        // UNH/S009/0065 has codes like ["UTILMD"], but the code is in element[1]
+        // (composite S009), not element[0] (message reference).
+        // The validator should skip code validation for composite paths.
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+
+        let unh_segment = OwnedSegment {
+            id: "UNH".to_string(),
+            elements: vec![
+                vec!["ALEXANDE951842".to_string()], // element 0: message ref
+                vec![
+                    "UTILMD".to_string(),
+                    "D".to_string(),
+                    "11A".to_string(),
+                    "UN".to_string(),
+                    "S2.1".to_string(),
+                ],
+            ],
+            segment_number: 1,
+        };
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![
+                AhbFieldRule {
+                    segment_path: "UNH/S009/0065".to_string(),
+                    name: "Nachrichtentyp".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "UTILMD".to_string(),
+                        description: "Stammdaten".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "UNH/S009/0052".to_string(),
+                    name: "Version".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "D".to_string(),
+                        description: "Draft".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+            ],
+        };
+
+        let report = validator.validate(
+            &[unh_segment],
+            &workflow,
+            &external,
+            ValidationLevel::Conditions,
+        );
+
+        // Should NOT produce COD002 false positives for composite element paths
+        let code_errors: Vec<_> = report
+            .by_category(ValidationCategory::Code)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+        assert!(
+            code_errors.is_empty(),
+            "Expected no code errors for composite paths, got: {:?}",
+            code_errors
+        );
+    }
+
+    #[test]
+    fn test_code_validation_works_for_qualifier_fields() {
+        // NAD/3035 has the qualifier in element[0][0] — this SHOULD be validated.
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+
+        let nad_segment = OwnedSegment {
+            id: "NAD".to_string(),
+            elements: vec![
+                vec!["ZZ".to_string()], // element 0: qualifier (invalid)
+                vec![
+                    "9900123000000".to_string(),
+                    "".to_string(),
+                    "293".to_string(),
+                ],
+            ],
+            segment_number: 5,
+        };
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![AhbFieldRule {
+                segment_path: "SG2/NAD/3035".to_string(),
+                name: "Partnerrolle".to_string(),
+                ahb_status: "X".to_string(),
+                codes: vec![
+                    AhbCodeRule {
+                        value: "MS".to_string(),
+                        description: "Absender".to_string(),
+                        ahb_status: "X".to_string(),
+                    },
+                    AhbCodeRule {
+                        value: "MR".to_string(),
+                        description: "Empfaenger".to_string(),
+                        ahb_status: "X".to_string(),
+                    },
+                ],
+            }],
+        };
+
+        let report = validator.validate(
+            &[nad_segment],
+            &workflow,
+            &external,
+            ValidationLevel::Conditions,
+        );
+
+        // Should produce a code error because "ZZ" is not in ["MS", "MR"]
+        let code_errors: Vec<_> = report
+            .by_category(ValidationCategory::Code)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+        assert_eq!(code_errors.len(), 1);
+        assert_eq!(code_errors[0].code, ErrorCodes::CODE_NOT_ALLOWED_FOR_PID);
+        assert!(code_errors[0].message.contains("ZZ"));
     }
 }
