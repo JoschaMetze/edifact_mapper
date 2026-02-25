@@ -296,3 +296,56 @@ fn test_parse_response_mixed_confidence() {
     assert_eq!(conditions[2].confidence, ConfidenceLevel::Low);
     assert!(conditions[2].rust_code.is_none());
 }
+
+#[test]
+fn test_user_prompt_detects_group_scope() {
+    let conditions = vec![
+        ConditionInput {
+            id: "15".to_string(),
+            description:
+                "Wenn in derselben SG8 das SEQ+Z98 (Informative Daten) vorhanden".to_string(),
+            referencing_fields: None,
+        },
+        ConditionInput {
+            id: "23".to_string(),
+            description: "Wenn in dieser SG4 das STS+E01++A05/A99 (Status) vorhanden".to_string(),
+            referencing_fields: None,
+        },
+    ];
+    let context = ConditionContext {
+        message_type: "UTILMD",
+        format_version: "FV2504",
+        mig_schema: None,
+        example_implementations: vec![],
+    };
+    let prompt = build_user_prompt(&conditions, &context);
+    assert!(
+        prompt.contains("GROUP-SCOPED"),
+        "should annotate group-scoped conditions"
+    );
+    assert!(
+        prompt.contains("SG8"),
+        "should identify the target group for condition 15"
+    );
+    assert!(
+        prompt.contains("SG4"),
+        "should identify the target group for condition 23"
+    );
+}
+
+#[test]
+fn test_system_prompt_documents_group_scoped_api() {
+    let prompt = build_system_prompt();
+    assert!(
+        prompt.contains("find_segments_in_group"),
+        "should document group-scoped find"
+    );
+    assert!(
+        prompt.contains("find_segments_with_qualifier_in_group"),
+        "should document group-scoped qualifier find"
+    );
+    assert!(
+        prompt.contains("group_instance_count"),
+        "should document group instance count"
+    );
+}

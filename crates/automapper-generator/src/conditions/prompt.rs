@@ -108,6 +108,50 @@ pub trait ExternalConditionProvider: Send + Sync {
 }
 ```
 
+## Group-Scoped Queries (for "in derselben SG8" / "in dieser SG4" conditions)
+
+Some conditions require checking segments within a specific group instance rather than
+searching the entire message. The EvaluationContext provides group-scoped methods:
+
+```rust
+// Find all segments with tag in a specific group instance
+ctx.find_segments_in_group(segment_id, group_path, instance_index) -> Vec<OwnedSegment>
+
+// Find segments with qualifier in a specific group instance
+ctx.find_segments_with_qualifier_in_group(segment_id, element_index, qualifier, group_path, instance_index) -> Vec<OwnedSegment>
+
+// Count how many repetitions of a group exist at the given path
+ctx.group_instance_count(group_path) -> usize
+```
+
+- `group_path` is a slice of group IDs from root, e.g., `&["SG4", "SG8"]`
+- `instance_index` selects which repetition of the innermost group (0-based)
+- These return owned `OwnedSegment` values (not references)
+
+**Fallback pattern:** When the condition says "in derselben SG8", use group-scoped first,
+then fall back to message-wide if the group navigator is not available (returns empty):
+
+```rust
+// Try group-scoped query first
+let group_segs = ctx.find_segments_with_qualifier_in_group("SEQ", 0, "Z98", &["SG4", "SG8"], 0);
+if !group_segs.is_empty() {
+    return ConditionResult::True;
+}
+// Fallback to message-wide search
+let all_segs = ctx.find_segments_with_qualifier("SEQ", 0, "Z98");
+if !all_segs.is_empty() {
+    return ConditionResult::True;
+}
+ConditionResult::False
+```
+
+**Deriving group_path from AHB descriptions:**
+- "in derselben SG8" → group_path = `&["SG4", "SG8"]` (SG8 is nested under SG4 in UTILMD)
+- "in dieser SG4" → group_path = `&["SG4"]`
+
+When a condition is marked GROUP-SCOPED in the user prompt, iterate over all group instances
+using `ctx.group_instance_count(group_path)` and check each instance.
+
 ## Confidence levels
 - **high**: Simple segment existence checks, qualifier comparisons, value matches
 - **medium**: Logic requiring some interpretation but structurally clear
@@ -201,6 +245,10 @@ pub fn build_user_prompt(conditions: &[ConditionInput], context: &ConditionConte
         let resolutions = resolve_ahb_notations(&condition.description);
         for resolution in &resolutions {
             prompt.push_str(&format!("    → {}\n", resolution));
+        }
+        // Detect group-scoped conditions
+        if let Some(scope_hint) = detect_group_scope(&condition.description) {
+            prompt.push_str(&format!("    → {}\n", scope_hint));
         }
     }
 
@@ -452,6 +500,21 @@ fn resolve_ahb_notations(description: &str) -> Vec<String> {
     results
 }
 
+/// Detects if a condition description requires group-scoped evaluation.
+///
+/// Looks for phrases like "in derselben SG8" or "in dieser SG4" and returns
+/// a hint string directing the generator to use group-scoped API methods.
+fn detect_group_scope(description: &str) -> Option<String> {
+    let re = regex::Regex::new(r"(?i)in\s+(?:derselben|dieser)\s+(SG\d+)").unwrap();
+    re.captures(description).map(|cap| {
+        let group = cap.get(1).unwrap().as_str();
+        format!(
+            "GROUP-SCOPED: Use find_segments_in_group / find_segments_with_qualifier_in_group with group_path ending in \"{}\"",
+            group
+        )
+    })
+}
+
 /// Default example implementations for few-shot prompting.
 pub fn default_example_implementations() -> Vec<String> {
     vec![
@@ -502,6 +565,29 @@ fn evaluate_17(&self, ctx: &EvaluationContext) -> ConditionResult {
 fn evaluate_42(&self, ctx: &EvaluationContext) -> ConditionResult {
     let dtm_segments = ctx.find_segments_with_qualifier("DTM", 0, "92");
     if dtm_segments.is_empty() {
+        ConditionResult::False
+    } else {
+        ConditionResult::True
+    }
+}"#
+        .to_string(),
+        r#"// Example 6: Group-scoped check — "Wenn in derselben SG8 das SEQ+Z98 vorhanden"
+// Uses group-scoped query with fallback to message-wide search.
+fn evaluate_15(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let group_path = &["SG4", "SG8"];
+    let instance_count = ctx.group_instance_count(group_path);
+    if instance_count > 0 {
+        // Group navigator available — check each SG8 instance
+        for i in 0..instance_count {
+            let segs = ctx.find_segments_with_qualifier_in_group("SEQ", 0, "Z98", group_path, i);
+            if !segs.is_empty() {
+                return ConditionResult::True;
+            }
+        }
+        return ConditionResult::False;
+    }
+    // Fallback: no group navigator, search message-wide
+    if ctx.find_segments_with_qualifier("SEQ", 0, "Z98").is_empty() {
         ConditionResult::False
     } else {
         ConditionResult::True
