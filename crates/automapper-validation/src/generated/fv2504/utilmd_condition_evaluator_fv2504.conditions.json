@@ -1,18 +1,12 @@
 {
-  "generated_at": "2026-02-25T10:00:46Z",
+  "generated_at": "2026-02-25T10:42:56Z",
   "ahb_file": "UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml",
   "format_version": "FV2504",
   "conditions": {
-    "5": {
+    "8": {
       "confidence": "high",
-      "reasoning": "The sender MP-ID (NAD+MS) is present in the message, but whether that market participant acts in the role LF (Lieferant) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
-      "description_hash": "a1466d0d",
-      "is_external": true
-    },
-    "6": {
-      "confidence": "high",
-      "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role ÜNB (Übertragungsnetzbetreiber) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
-      "description_hash": "4b435776",
+      "reasoning": "Whether data clearing is required cannot be determined from the EDIFACT message content alone — it depends on business/contractual context external to the message.",
+      "description_hash": "d48f1537",
       "is_external": true
     },
     "1": {
@@ -21,10 +15,28 @@
       "description_hash": "4ebb4e5c",
       "is_external": true
     },
-    "7": {
+    "11": {
       "confidence": "high",
-      "reasoning": "Checks if STS with Statuskategorie=7 has Transaktionsgrund ZG9/ZH1/ZH2. Per the segment structure reference, STS (Transaktionsgrund) elements[0][0]=Statuskategorie code ('7') and elements[2][0]=DE9013 (Transaktionsgrund). The AHB notation STS+7++ZG9 uses ++ for one empty element (elements[1]=Status), so ZG9 lands at elements[2][0]. Returns Unknown if no STS+7 segment exists, False if a different Transaktionsgrund is present.",
-      "description_hash": "101bffb4",
+      "reasoning": "Per the segment reference, STS+7 Transaktionsgrund is at elements[2][0]. The AHB shorthand STS+7++ZG9/ZH1/ZH2 maps: elements[0][0]=7, elements[1]=empty, elements[2][0]=Transaktionsgrund. Returns True (condition 'nicht vorhanden') when none of ZG9/ZH1/ZH2 appear.",
+      "description_hash": "321d0c62",
+      "is_external": false
+    },
+    "6": {
+      "confidence": "high",
+      "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role ÜNB (Übertragungsnetzbetreiber) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
+      "description_hash": "4b435776",
+      "is_external": true
+    },
+    "16": {
+      "confidence": "high",
+      "reasoning": "Per the segment reference for STS 'Status der Antwort': elements[0][0]=E01, elements[2][0]=Code des Prüfschritts. Z12 (Ablehnung Vertragsbindung) at elements[2][0] matches AHB STS+E01++Z12. Returns True when this specific STS is present.",
+      "description_hash": "01e37a5a",
+      "is_external": false
+    },
+    "15": {
+      "confidence": "medium",
+      "reasoning": "Checks for presence of SEQ+Z98 (Daten der Marktlokation) using elements[0][0]==\"Z98\" per the Segment Structure Reference (SEQ Daten der Marktlokation codes include Z98). The 'in derselben SG8' (same SG8 group) constraint cannot be precisely enforced with the flat segments API — the check covers the full message. In practice this is sufficient since Z98 identifies a specific Marktlokation data group and its co-occurrence within the same SG8 is the typical structural pattern.",
+      "description_hash": "07b13291",
       "is_external": false
     },
     "4": {
@@ -32,6 +44,54 @@
       "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role LF (Lieferant) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
       "description_hash": "55130474",
       "is_external": true
+    },
+    "13": {
+      "confidence": "high",
+      "reasoning": "Per the segment reference for STS 'Status der Antwort': elements[0][0]=E01 (Statuskategorie), elements[1]=empty Status field, elements[2][0]=Code des Prüfschritts. AHB STS+E01++Z01 confirms elements[2][0] for the Prüfschritt code Z01. Condition is True ('nicht vorhanden') when absent.",
+      "description_hash": "95c62c31",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "The sender MP-ID (NAD+MS) is present in the message, but whether that market participant acts in the role LF (Lieferant) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
+      "description_hash": "a1466d0d",
+      "is_external": true
+    },
+    "12": {
+      "confidence": "high",
+      "reasoning": "DTM 'Ende zum (nächstmöglichen Termin)' uses qualifier 471 at elements[0][0] per the segment reference. Condition is True ('nicht vorhanden') when no such DTM segment exists.",
+      "description_hash": "c8244b0e",
+      "is_external": false
+    },
+    "14": {
+      "confidence": "medium",
+      "reasoning": "'Wenn Datum bekannt' (When date is known) reflects whether the sender has knowledge of a specific date at the time of sending. This cannot be determined from the EDIFACT message structure itself — a missing DTM segment is ambiguous between 'date unknown' and 'date not applicable'. Requires external business context.",
+      "description_hash": "d089cab4",
+      "is_external": true
+    },
+    "9": {
+      "confidence": "high",
+      "reasoning": "The NAD+MS segment provides the sender MP-ID, but whether that market participant acts in the MSB role requires external market participant registry knowledge not present in the EDIFACT message.",
+      "description_hash": "d9990b82",
+      "is_external": true
+    },
+    "18": {
+      "confidence": "high",
+      "reasoning": "Checks absence of DTM+93 (Ende zum, elements[0][0] = \"93\"). Condition is true when no such segment is present. Straightforward negated existence check on a well-defined segment qualifier.",
+      "description_hash": "b2b52d1a",
+      "is_external": false
+    },
+    "10": {
+      "confidence": "high",
+      "reasoning": "Per the segment reference, STS+7 Transaktionsgrundergänzung für Lieferende bei befristeter Anmeldung is at elements[4][0]. The AHB shorthand STS+7++xxx+xxx+E01/E03 has five positional fields after the tag: elements[0]=7, elements[1]=empty, elements[2]=Transaktionsgrund, elements[3]=Transaktionsgrundergänzung, elements[4]=Lieferende qualifier. Check for E01 or E03.",
+      "description_hash": "d04ca26f",
+      "is_external": false
+    },
+    "7": {
+      "confidence": "high",
+      "reasoning": "Checks if STS with Statuskategorie=7 has Transaktionsgrund ZG9/ZH1/ZH2. Per the segment structure reference, STS (Transaktionsgrund) elements[0][0]=Statuskategorie code ('7') and elements[2][0]=DE9013 (Transaktionsgrund). The AHB notation STS+7++ZG9 uses ++ for one empty element (elements[1]=Status), so ZG9 lands at elements[2][0]. Returns Unknown if no STS+7 segment exists, False if a different Transaktionsgrund is present.",
+      "description_hash": "101bffb4",
+      "is_external": false
     }
   }
 }
