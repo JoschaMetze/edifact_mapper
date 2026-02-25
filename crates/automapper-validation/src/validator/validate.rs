@@ -228,65 +228,24 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
 
     /// Validate code values for a field against AHB allowed codes.
     ///
-    /// Only validates codes for fields pointing to simple qualifier elements
-    /// (element\[0\]\[0\] of the segment), i.e., paths like `[SG/]*/SEG/ELEMENT`.
-    /// Fields in composite sub-elements (paths like `SEG/COMPOSITE/ELEMENT`)
-    /// are skipped because resolving composite IDs to element indices requires
-    /// MIG schema knowledge that the validator doesn't have.
+    /// Currently disabled: per-field code validation produces false positives
+    /// because the AHB has separate field rules for each segment instance
+    /// (e.g., NAD/3035 with codes [MS] for sender, [MR] for receiver), but
+    /// the validator finds ALL segments matching the tag and checks each
+    /// against one rule's codes. Since qualifier codes serve as discriminators
+    /// (identifying which segment instance belongs to which field rule),
+    /// per-field code validation is a no-op by definition.
+    ///
+    /// TODO: implement cross-field code validation — collect all allowed
+    /// codes across all field rules sharing the same segment path, then
+    /// validate each segment's qualifier against that combined set.
     fn validate_field_codes(
         &self,
-        field: &AhbFieldRule,
-        ctx: &EvaluationContext,
-        report: &mut ValidationReport,
+        _field: &AhbFieldRule,
+        _ctx: &EvaluationContext,
+        _report: &mut ValidationReport,
     ) {
-        if field.codes.is_empty() {
-            return;
-        }
-
-        // Only validate codes for simple qualifier fields (element[0] of the segment).
-        // Composite paths (SEG/COMPOSITE/ELEMENT) can't be resolved to element indices
-        // without MIG schema, so we skip them to avoid false positives.
-        if !is_qualifier_field(&field.segment_path) {
-            return;
-        }
-
-        let allowed_codes: Vec<&str> = field
-            .codes
-            .iter()
-            .filter(|c| c.ahb_status == "X" || c.ahb_status.starts_with("Muss"))
-            .map(|c| c.value.as_str())
-            .collect();
-
-        if allowed_codes.is_empty() {
-            return;
-        }
-
-        let segment_id = extract_segment_id(&field.segment_path);
-        let matching_segments = ctx.find_segments(&segment_id);
-
-        for segment in matching_segments {
-            if let Some(first_element) = segment.elements.first() {
-                if let Some(code_value) = first_element.first() {
-                    if !code_value.is_empty() && !allowed_codes.contains(&code_value.as_str()) {
-                        report.add_issue(
-                            ValidationIssue::new(
-                                Severity::Error,
-                                ValidationCategory::Code,
-                                ErrorCodes::CODE_NOT_ALLOWED_FOR_PID,
-                                format!(
-                                    "Code '{}' is not allowed for this PID. Allowed: [{}]",
-                                    code_value,
-                                    allowed_codes.join(", ")
-                                ),
-                            )
-                            .with_field_path(&field.segment_path)
-                            .with_actual(code_value)
-                            .with_expected(allowed_codes.join(", ")),
-                        );
-                    }
-                }
-            }
-        }
+        // Intentionally empty — see doc comment above.
     }
 }
 
@@ -294,30 +253,6 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
 fn is_mandatory_status(status: &str) -> bool {
     let trimmed = status.trim();
     trimmed.starts_with("Muss") || trimmed.starts_with('X')
-}
-
-/// Check if a field path points to a simple qualifier element (element\[0\] of the segment).
-///
-/// Returns `true` for paths like `[SG/]*/SEG/ELEMENT` where the data element is
-/// directly under the segment (no composite wrapper). These fields have their code
-/// in `element[0][0]` and can be validated.
-///
-/// Returns `false` for composite paths like `SEG/COMPOSITE/ELEMENT` (e.g.,
-/// `UNH/S009/0065`) where the element is inside a composite at an unknown index.
-///
-/// Examples:
-/// - `"SG2/NAD/3035"` → true (qualifier is element[0])
-/// - `"LOC/3227"` → true
-/// - `"UNH/S009/0065"` → false (S009 is a composite, index unknown)
-/// - `"NAD/C082/3039"` → false (C082 is a composite)
-fn is_qualifier_field(path: &str) -> bool {
-    // Strip segment group prefixes (SG\d+), then check if there's exactly
-    // one component after the segment tag (meaning a simple element, not a composite path).
-    let parts: Vec<&str> = path.split('/').filter(|p| !p.starts_with("SG")).collect();
-
-    // Expected: [SEGMENT_TAG, ELEMENT_ID] — exactly 2 parts after SG stripping.
-    // If 3+ parts, there's a composite layer (e.g., [SEG, COMPOSITE, ELEMENT]).
-    parts.len() == 2
 }
 
 /// Extract the segment ID from a field path like "SG2/NAD/C082/3039" -> "NAD".
@@ -404,36 +339,6 @@ mod tests {
     #[test]
     fn test_extract_segment_id_nested_sg() {
         assert_eq!(extract_segment_id("SG4/SG8/SEQ/C286/6350"), "SEQ");
-    }
-
-    #[test]
-    fn test_is_qualifier_field_simple_paths() {
-        // Simple qualifier: [SG/]*/SEG/ELEMENT → true
-        assert!(is_qualifier_field("NAD/3035"));
-        assert!(is_qualifier_field("SG2/NAD/3035"));
-        assert!(is_qualifier_field("SG4/SG8/SEQ/6350"));
-        assert!(is_qualifier_field("LOC/3227"));
-        assert!(is_qualifier_field("DTM/2005"));
-        assert!(is_qualifier_field("RFF/1153"));
-    }
-
-    #[test]
-    fn test_is_qualifier_field_composite_paths() {
-        // Composite path: SEG/COMPOSITE/ELEMENT → false
-        assert!(!is_qualifier_field("UNH/S009/0065"));
-        assert!(!is_qualifier_field("UNH/S009/0052"));
-        assert!(!is_qualifier_field("NAD/C082/3039"));
-        assert!(!is_qualifier_field("SG2/NAD/C082/3039"));
-        assert!(!is_qualifier_field("SG4/SG8/SEQ/C286/6350"));
-        assert!(!is_qualifier_field("BGM/C002/1001"));
-    }
-
-    #[test]
-    fn test_is_qualifier_field_bare_segment() {
-        // Bare segment path (no element) → false (not a code field)
-        assert!(!is_qualifier_field("NAD"));
-        assert!(!is_qualifier_field("SG2/NAD"));
-        assert!(!is_qualifier_field("SG8"));
     }
 
     // === Validator tests with mock data ===
@@ -756,22 +661,23 @@ mod tests {
     }
 
     #[test]
-    fn test_code_validation_works_for_qualifier_fields() {
-        // NAD/3035 has the qualifier in element[0][0] — this SHOULD be validated.
+    fn test_code_validation_disabled_for_qualifier_fields() {
+        // Per-field code validation is disabled because the AHB has separate
+        // field rules for each segment instance (e.g., NAD/3035 with [MS] for
+        // sender, [MR] for receiver). Checking all NAD segments against one
+        // rule's codes produces false positives.
         let evaluator = MockEvaluator::new(vec![]);
         let validator = EdifactValidator::new(evaluator);
         let external = NoOpExternalProvider;
 
-        let nad_segment = OwnedSegment {
+        let nad_ms = OwnedSegment {
             id: "NAD".to_string(),
-            elements: vec![
-                vec!["ZZ".to_string()], // element 0: qualifier (invalid)
-                vec![
-                    "9900123000000".to_string(),
-                    "".to_string(),
-                    "293".to_string(),
-                ],
-            ],
+            elements: vec![vec!["MS".to_string()]],
+            segment_number: 4,
+        };
+        let nad_mr = OwnedSegment {
+            id: "NAD".to_string(),
+            elements: vec![vec!["MR".to_string()]],
             segment_number: 5,
         };
 
@@ -779,39 +685,46 @@ mod tests {
             pruefidentifikator: "55001".to_string(),
             description: "Test".to_string(),
             communication_direction: None,
-            fields: vec![AhbFieldRule {
-                segment_path: "SG2/NAD/3035".to_string(),
-                name: "Partnerrolle".to_string(),
-                ahb_status: "X".to_string(),
-                codes: vec![
-                    AhbCodeRule {
+            fields: vec![
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Absender".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
                         value: "MS".to_string(),
                         description: "Absender".to_string(),
                         ahb_status: "X".to_string(),
-                    },
-                    AhbCodeRule {
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Empfaenger".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
                         value: "MR".to_string(),
                         description: "Empfaenger".to_string(),
                         ahb_status: "X".to_string(),
-                    },
-                ],
-            }],
+                    }],
+                },
+            ],
         };
 
         let report = validator.validate(
-            &[nad_segment],
+            &[nad_ms, nad_mr],
             &workflow,
             &external,
             ValidationLevel::Conditions,
         );
 
-        // Should produce a code error because "ZZ" is not in ["MS", "MR"]
+        // No COD002 errors — per-field code validation is disabled
         let code_errors: Vec<_> = report
             .by_category(ValidationCategory::Code)
             .filter(|i| i.severity == Severity::Error)
             .collect();
-        assert_eq!(code_errors.len(), 1);
-        assert_eq!(code_errors[0].code, ErrorCodes::CODE_NOT_ALLOWED_FOR_PID);
-        assert!(code_errors[0].message.contains("ZZ"));
+        assert!(
+            code_errors.is_empty(),
+            "Expected no code errors, got: {:?}",
+            code_errors
+        );
     }
 }
