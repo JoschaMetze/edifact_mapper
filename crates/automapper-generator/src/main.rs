@@ -504,13 +504,24 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             let mut all_generated = Vec::new();
 
             for (i, batch) in condition_inputs.chunks(batch_size).enumerate() {
-                eprintln!(
-                    "[Batch {}/{}] Processing {} conditions...",
+                let batch_ids: Vec<&str> = batch.iter().map(|c| c.id.as_str()).collect();
+                let id_range = format!(
+                    "{}..{}",
+                    batch_ids.first().unwrap_or(&"?"),
+                    batch_ids.last().unwrap_or(&"?")
+                );
+                eprint!(
+                    "[Batch {}/{}] Sending {} conditions ({}) to Claude... ",
                     i + 1,
                     condition_inputs.len().div_ceil(batch_size),
-                    batch.len()
+                    batch.len(),
+                    id_range,
                 );
+                // Flush so the user sees the message before the blocking call
+                use std::io::Write;
+                let _ = std::io::stderr().flush();
 
+                let batch_start = std::time::Instant::now();
                 match generator.generate_batch(batch, &context) {
                     Ok(mut generated) => {
                         // Enrich with original descriptions
@@ -545,7 +556,8 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                             })
                             .count();
                         eprintln!(
-                            "  Generated: {} (High: {}, Medium: {}, Low: {})",
+                            "done in {:.1}s — {} results (High: {}, Medium: {}, Low: {})",
+                            batch_start.elapsed().as_secs_f64(),
                             generated.len(),
                             high,
                             medium,
@@ -554,7 +566,11 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                         all_generated.extend(generated);
                     }
                     Err(e) => {
-                        eprintln!("  ERROR: {}", e);
+                        eprintln!(
+                            "FAILED after {:.1}s — {}",
+                            batch_start.elapsed().as_secs_f64(),
+                            e
+                        );
                     }
                 }
             }
