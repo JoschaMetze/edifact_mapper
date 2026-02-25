@@ -89,7 +89,10 @@ fn test_snapshot_clean_report() {
     };
 
     // Provide a matching NAD segment so the mandatory field is satisfied.
-    let segments = vec![make_segment("NAD", vec![vec!["MS"], vec!["1234567890123", "", "293"]])];
+    let segments = vec![make_segment(
+        "NAD",
+        vec![vec!["MS"], vec!["1234567890123", "", "293"]],
+    )];
 
     let report = validator.validate(&segments, &workflow, &external, ValidationLevel::Full);
 

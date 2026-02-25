@@ -8,7 +8,7 @@ expression: stable_output
 // Generated: 2026-02-18T00:00:00Z
 // </auto-generated>
 
-use automapper_validation::condition::{ConditionEvaluator, ConditionResult, EvaluationContext};
+use crate::eval::{ConditionEvaluator, ConditionResult, EvaluationContext};
 
 /// Generated condition evaluator for UTILMD FV2510.
 pub struct UtilmdConditionEvaluatorFV2510 {
@@ -25,6 +25,14 @@ impl Default for UtilmdConditionEvaluatorFV2510 {
 }
 
 impl ConditionEvaluator for UtilmdConditionEvaluatorFV2510 {
+    fn message_type(&self) -> &str {
+        "UTILMD"
+    }
+
+    fn format_version(&self) -> &str {
+        "FV2510"
+    }
+
     fn evaluate(&self, condition: u32, ctx: &EvaluationContext) -> ConditionResult {
         match condition {
             1 => self.evaluate_1(ctx),

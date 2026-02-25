@@ -29,7 +29,7 @@ pub fn generate_condition_evaluator_file(
     ));
     code.push_str("// </auto-generated>\n\n");
 
-    code.push_str("use automapper_validation::condition::{ConditionEvaluator, ConditionResult, EvaluationContext};\n\n");
+    code.push_str("use crate::eval::{ConditionEvaluator, ConditionResult, EvaluationContext};\n\n");
 
     // Struct definition
     code.push_str(&format!(
@@ -51,9 +51,15 @@ pub fn generate_condition_evaluator_file(
     // Default impl
     code.push_str(&format!("impl Default for {} {{\n", class_name));
     code.push_str("    fn default() -> Self {\n");
-    code.push_str("        let mut external_conditions = std::collections::HashSet::new();\n");
-    for id in &external_ids {
-        code.push_str(&format!("        external_conditions.insert({});\n", id));
+    if external_ids.is_empty() {
+        code.push_str("        let external_conditions = std::collections::HashSet::new();\n");
+    } else {
+        code.push_str(
+            "        let mut external_conditions = std::collections::HashSet::new();\n",
+        );
+        for id in &external_ids {
+            code.push_str(&format!("        external_conditions.insert({});\n", id));
+        }
     }
     code.push_str("        Self { external_conditions }\n");
     code.push_str("    }\n");
@@ -61,12 +67,6 @@ pub fn generate_condition_evaluator_file(
 
     // ConditionEvaluator impl
     code.push_str(&format!("impl ConditionEvaluator for {} {{\n", class_name));
-
-    // evaluate() method with match arms
-    code.push_str(
-        "    fn evaluate(&self, condition: u32, ctx: &EvaluationContext) -> ConditionResult {\n",
-    );
-    code.push_str("        match condition {\n");
 
     // Merge new conditions and preserved conditions, sorted by condition number
     let mut all_condition_numbers: Vec<u32> = conditions
@@ -76,6 +76,28 @@ pub fn generate_condition_evaluator_file(
         .collect();
     all_condition_numbers.sort();
     all_condition_numbers.dedup();
+
+    // message_type() and format_version() methods
+    code.push_str(&format!(
+        "    fn message_type(&self) -> &str {{\n        \"{}\"\n    }}\n\n",
+        message_type
+    ));
+    code.push_str(&format!(
+        "    fn format_version(&self) -> &str {{\n        \"{}\"\n    }}\n\n",
+        format_version
+    ));
+
+    // evaluate() method with match arms
+    let ctx_prefix = if all_condition_numbers.is_empty() {
+        "_ctx"
+    } else {
+        "ctx"
+    };
+    code.push_str(&format!(
+        "    fn evaluate(&self, condition: u32, {}: &EvaluationContext) -> ConditionResult {{\n",
+        ctx_prefix
+    ));
+    code.push_str("        match condition {\n");
 
     for &num in &all_condition_numbers {
         code.push_str(&format!(

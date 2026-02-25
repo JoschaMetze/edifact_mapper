@@ -30,6 +30,7 @@
 pub mod error;
 pub mod eval;
 pub mod expr;
+pub mod generated;
 pub mod validator;
 
 // Re-export key types at crate root for convenience
@@ -46,3 +47,6 @@ pub use validator::{
 
 // Re-export AHB workflow types for callers
 pub use validator::validate::{AhbCodeRule, AhbFieldRule, AhbWorkflow};
+
+// Re-export generated evaluators
+pub use generated::UtilmdConditionEvaluatorFV2504;
