@@ -5,6 +5,7 @@ pub mod coordinators;
 pub mod fixtures;
 pub mod health;
 pub mod inspect;
+pub(crate) mod reverse_pipeline;
 pub mod reverse_v2;
 pub mod validate_bo4e;
 pub mod validate_v2;

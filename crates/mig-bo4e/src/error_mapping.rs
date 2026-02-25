@@ -68,14 +68,8 @@ impl Bo4eFieldIndex {
             }
 
             if !fields.is_empty() {
-                // Deduce the prefix from the first field's path (up to segment tag)
-                let prefix = fields
-                    .first()
-                    .map(|f| extract_segment_prefix(&f.edifact_path))
-                    .unwrap_or_else(|| group_path.clone());
-
                 entries.push(IndexEntry {
-                    edifact_prefix: prefix,
+                    edifact_prefix: group_path.clone(),
                     entity: def.meta.entity.clone(),
                     location,
                     companion_type,
@@ -97,13 +91,18 @@ impl Bo4eFieldIndex {
                 }
             }
         }
-        // Prefix match for code/qualifier paths
+        // Prefix match for code/qualifier paths — longest prefix wins
+        let mut best: Option<&IndexEntry> = None;
         for entry in &self.entries {
-            if edifact_field_path.starts_with(&entry.edifact_prefix) {
-                return Some(self.build_entity_path(entry));
+            if edifact_field_path.starts_with(&entry.edifact_prefix)
+                && best
+                    .map(|b| entry.edifact_prefix.len() > b.edifact_prefix.len())
+                    .unwrap_or(true)
+            {
+                best = Some(entry);
             }
         }
-        None
+        best.map(|entry| self.build_entity_path(entry))
     }
 
     fn collect_fields(
@@ -353,22 +352,6 @@ fn resolve_element_at_position(
     None
 }
 
-/// Extract the segment-level prefix from an AHB path.
-/// "SG4/SG5/LOC/C517/3225" → "SG4/SG5/LOC"
-fn extract_segment_prefix(path: &str) -> String {
-    let parts: Vec<&str> = path.split('/').collect();
-    // Find the segment tag (first non-SG part)
-    let mut prefix_parts = Vec::new();
-    for part in &parts {
-        prefix_parts.push(*part);
-        // Stop after the segment tag (non-SG part)
-        if !part.starts_with("SG") {
-            break;
-        }
-    }
-    prefix_parts.join("/")
-}
-
 /// Convert PascalCase to camelCase (first char lowercase).
 fn to_camel_first_lower(s: &str) -> String {
     let mut chars = s.chars();
@@ -428,16 +411,6 @@ mod tests {
             classify_entity("Marktteilnehmer"),
             FieldLocation::Stammdaten
         ));
-    }
-
-    #[test]
-    fn test_extract_segment_prefix() {
-        assert_eq!(
-            extract_segment_prefix("SG4/SG5/LOC/C517/3225"),
-            "SG4/SG5/LOC"
-        );
-        assert_eq!(extract_segment_prefix("SG2/NAD/3035"), "SG2/NAD");
-        assert_eq!(extract_segment_prefix("SG4/IDE/7140"), "SG4/IDE");
     }
 
     #[test]

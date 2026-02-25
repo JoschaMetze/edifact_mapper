@@ -5,7 +5,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Input level for the reverse endpoint.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq, utoipa::ToSchema)]
+#[derive(Debug, Default, Clone, Deserialize, PartialEq, Eq, utoipa::ToSchema)]
 #[serde(rename_all = "lowercase")]
 pub enum InputLevel {
     /// Full interchange JSON (nachrichtendaten + nachrichten array).
@@ -13,6 +13,7 @@ pub enum InputLevel {
     /// Single message JSON (unhReferenz, nachrichtenTyp, stammdaten, transaktionen).
     Nachricht,
     /// Single transaction JSON (stammdaten, transaktionsdaten).
+    #[default]
     Transaktion,
 }
 

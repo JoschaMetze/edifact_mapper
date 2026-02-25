@@ -9,15 +9,18 @@ use serde::{Deserialize, Serialize};
 pub enum ValidationLevel {
     /// Validate only EDIFACT structure: segment presence, ordering, and
     /// repetition counts against the MIG schema.
+    #[serde(alias = "structure")]
     Structure,
 
     /// Validate structure plus AHB condition expressions for the detected
     /// Pruefidentifikator. Requires a registered `ConditionEvaluator`.
+    #[serde(alias = "conditions")]
     Conditions,
 
     /// Full validation: structure, conditions, format checks, and code
     /// value restrictions. The most thorough level.
     #[default]
+    #[serde(alias = "full")]
     Full,
 }
 
