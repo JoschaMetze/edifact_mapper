@@ -7,7 +7,7 @@ use gloo_net::http::Request;
 
 use crate::types::{
     ConvertV2Request, ConvertV2Response, CoordinatorInfo, FixtureListResponse, HealthResponse,
-    InspectRequest, InspectResponse,
+    InspectRequest, InspectResponse, ValidateV2Request, ValidateV2Response,
 };
 
 /// Base URL for API calls. Empty string means same origin.
@@ -25,7 +25,7 @@ pub async fn convert_v2(
         format_version: format_version.to_string(),
     };
 
-    let url = format!("{API_BASE}/api/v2/convert");
+    let url = format!("{API_BASE}/api/v2/convert?validate=true");
 
     let response = Request::post(&url)
         .header("Content-Type", "application/json")
@@ -38,6 +38,42 @@ pub async fn convert_v2(
     if response.ok() {
         response
             .json::<ConvertV2Response>()
+            .await
+            .map_err(|e| format!("failed to parse response: {e}"))
+    } else {
+        let status = response.status();
+        let body = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "unknown error".to_string());
+        Err(format!("HTTP {status}: {body}"))
+    }
+}
+
+/// Validate EDIFACT content using AHB conditions via the v2 pipeline.
+pub async fn validate_v2(
+    input: &str,
+    format_version: &str,
+) -> Result<ValidateV2Response, String> {
+    let request_body = ValidateV2Request {
+        input: input.to_string(),
+        format_version: format_version.to_string(),
+        level: "full".to_string(),
+    };
+
+    let url = format!("{API_BASE}/api/v2/validate");
+
+    let response = Request::post(&url)
+        .header("Content-Type", "application/json")
+        .json(&request_body)
+        .map_err(|e| format!("failed to serialize request: {e}"))?
+        .send()
+        .await
+        .map_err(|e| format!("request failed: {e}"))?;
+
+    if response.ok() {
+        response
+            .json::<ValidateV2Response>()
             .await
             .map_err(|e| format!("failed to parse response: {e}"))
     } else {
