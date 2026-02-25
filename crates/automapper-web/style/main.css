@@ -221,8 +221,18 @@ body {
     font-weight: 600;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
     background: #a8f0ff;
+}
+
+.btn-secondary {
+    background: var(--color-border);
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--color-text-muted);
 }
 
 .btn-small {
@@ -440,6 +450,11 @@ body {
 .error-list .severity-icon.critical {
     background: var(--color-error);
     color: white;
+}
+
+.error-list .severity-icon.info {
+    background: var(--color-info);
+    color: var(--color-bg);
 }
 
 .error-list .error-code {

@@ -29,11 +29,13 @@ pub fn ErrorList(
                                 let severity_class = match err.severity.as_str() {
                                     "warning" => "warning",
                                     "critical" => "critical",
+                                    "info" => "info",
                                     _ => "error",
                                 };
                                 let severity_char = match err.severity.as_str() {
                                     "warning" => "W",
                                     "critical" => "!",
+                                    "info" => "i",
                                     _ => "E",
                                 };
                                 let icon_class = format!("severity-icon {severity_class}");
