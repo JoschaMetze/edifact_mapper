@@ -262,8 +262,7 @@ pub fn build_user_prompt(conditions: &[ConditionInput], context: &ConditionConte
 fn build_segment_structure_context(mig: &MigSchema, conditions: &[ConditionInput]) -> String {
     use regex::Regex;
 
-    let de_regex =
-        Regex::new(r"(?i)(?:SG\d+\s+)?([A-Z]{3})(?:\+[A-Z0-9]+)?\s+DE(\d{4})").unwrap();
+    let de_regex = Regex::new(r"(?i)(?:SG\d+\s+)?([A-Z]{3})(?:\+[A-Z0-9]+)?\s+DE(\d{4})").unwrap();
     let qualifier_regex = Regex::new(r"\b([A-Z]{3})\+([A-Z0-9]+)").unwrap();
 
     let mut referenced_segments = std::collections::HashSet::new();
@@ -287,7 +286,9 @@ fn build_segment_structure_context(mig: &MigSchema, conditions: &[ConditionInput
 
     let mut context = String::new();
     context.push_str("## EDIFACT Segment Structure Reference (from MIG schema)\n");
-    context.push_str("These are the AUTHORITATIVE element positions. Use these indices in your code.\n");
+    context.push_str(
+        "These are the AUTHORITATIVE element positions. Use these indices in your code.\n",
+    );
     context.push_str("- `elements[N]` = element at position N (0-based, after segment tag)\n");
     context.push_str("- `elements[N][M]` = component M within composite element N\n");
     context.push_str("- Positions marked (empty) have no data in the MIG — they exist as empty `[]` in the parsed output.\n\n");
@@ -462,8 +463,7 @@ fn resolve_ahb_notations(description: &str) -> Vec<String> {
     // Match patterns like SEG+val1+val2, SEG+val1++val2+val3, etc.
     // The segment tag is 2-3 uppercase letters, followed by + and values.
     // Values can contain / for alternatives (e.g., ZG9/ZH1/ZH2).
-    let notation_regex =
-        Regex::new(r"\b([A-Z]{2,3})\+([A-Za-z0-9/?+*: ]*[A-Za-z0-9])").unwrap();
+    let notation_regex = Regex::new(r"\b([A-Z]{2,3})\+([A-Za-z0-9/?+*: ]*[A-Za-z0-9])").unwrap();
 
     let mut results = Vec::new();
 

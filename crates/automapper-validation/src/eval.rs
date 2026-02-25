@@ -10,7 +10,7 @@ pub use context::{EvaluationContext, NoOpGroupNavigator};
 pub use evaluator::{
     ConditionEvaluator, ConditionResult, ExternalConditionProvider, NoOpExternalProvider,
 };
-pub use mig_types::navigator::GroupNavigator;
 pub use expr_eval::ConditionExprEvaluator;
+pub use mig_types::navigator::GroupNavigator;
 pub use providers::{CompositeExternalProvider, MapExternalProvider};
 pub use registry::EvaluatorRegistry;

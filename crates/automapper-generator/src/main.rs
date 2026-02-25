@@ -302,7 +302,10 @@ fn parse_existing_method_bodies(source: &str) -> std::collections::HashMap<u32, 
     while i < lines.len() {
         // Look for method signatures: `    fn evaluate_N(&self, ctx: &EvaluationContext) -> ConditionResult {`
         let trimmed = lines[i].trim();
-        if trimmed.starts_with("fn evaluate_") && trimmed.contains("(&self") && trimmed.ends_with('{') {
+        if trimmed.starts_with("fn evaluate_")
+            && trimmed.contains("(&self")
+            && trimmed.ends_with('{')
+        {
             // Extract condition number from `evaluate_N`
             let after = trimmed.strip_prefix("fn evaluate_").unwrap_or("");
             let num_str: String = after.chars().take_while(|c| c.is_ascii_digit()).collect();
@@ -688,18 +691,23 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             }
 
             // Collect external IDs from preserved conditions (from metadata)
-            let preserved_external_ids: std::collections::HashSet<u32> = if let Some(ref existing_meta) = existing_metadata {
-                decision.to_preserve.iter().filter_map(|id| {
-                    let meta = existing_meta.conditions.get(id)?;
-                    if meta.is_external {
-                        id.parse().ok()
-                    } else {
-                        None
-                    }
-                }).collect()
-            } else {
-                std::collections::HashSet::new()
-            };
+            let preserved_external_ids: std::collections::HashSet<u32> =
+                if let Some(ref existing_meta) = existing_metadata {
+                    decision
+                        .to_preserve
+                        .iter()
+                        .filter_map(|id| {
+                            let meta = existing_meta.conditions.get(id)?;
+                            if meta.is_external {
+                                id.parse().ok()
+                            } else {
+                                None
+                            }
+                        })
+                        .collect()
+                } else {
+                    std::collections::HashSet::new()
+                };
 
             // Generate output file
             let source_code =
@@ -716,8 +724,10 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             eprintln!("Generated: {:?}", output_path);
 
             // Save metadata — merge newly generated with preserved
-            let mut meta_conditions: std::collections::HashMap<String, automapper_generator::conditions::metadata::ConditionMetadata> =
-                std::collections::HashMap::new();
+            let mut meta_conditions: std::collections::HashMap<
+                String,
+                automapper_generator::conditions::metadata::ConditionMetadata,
+            > = std::collections::HashMap::new();
 
             // First, carry over preserved conditions from existing metadata
             if let Some(ref existing_meta) = existing_metadata {

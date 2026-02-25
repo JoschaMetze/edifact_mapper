@@ -22,7 +22,9 @@ impl Default for UtilmdConditionEvaluatorFV2504 {
         external_conditions.insert(8);
         external_conditions.insert(9);
         external_conditions.insert(14);
-        Self { external_conditions }
+        Self {
+            external_conditions,
+        }
     }
 }
 
@@ -79,7 +81,10 @@ impl UtilmdConditionEvaluatorFV2504 {
             for i in 0..instance_count {
                 let segs = ctx.find_segments_in_group("SEQ", group_path, i);
                 if segs.iter().any(|seg| {
-                    seg.elements.first().and_then(|e| e.first()).map(|s| s.as_str())
+                    seg.elements
+                        .first()
+                        .and_then(|e| e.first())
+                        .map(|s| s.as_str())
                         .is_some_and(|v| v == "Z01" || v == "Z80" || v == "Z81")
                 }) {
                     return ConditionResult::True;
@@ -89,10 +94,17 @@ impl UtilmdConditionEvaluatorFV2504 {
         }
         // Fallback: message-wide search
         let found = ctx.find_segments("SEQ").iter().any(|seg| {
-            seg.elements.first().and_then(|e| e.first()).map(|s| s.as_str())
+            seg.elements
+                .first()
+                .and_then(|e| e.first())
+                .map(|s| s.as_str())
                 .is_some_and(|v| v == "Z01" || v == "Z80" || v == "Z81")
         });
-        if found { ConditionResult::True } else { ConditionResult::False }
+        if found {
+            ConditionResult::True
+        } else {
+            ConditionResult::False
+        }
     }
 
     /// [19] Wenn SG8 SEQ+Z01/Z98 (Daten der Marktlokation) SG10 CCI+++ZC0 (Prognose auf Basis von Werten) vorhanden
@@ -102,14 +114,26 @@ impl UtilmdConditionEvaluatorFV2504 {
         let instance_count = ctx.group_instance_count(group_path);
         if instance_count > 0 {
             for i in 0..instance_count {
-                let seq_present = ctx.find_segments_in_group("SEQ", group_path, i).iter().any(|seg| {
-                    seg.elements.first().and_then(|e| e.first()).map(|s| s.as_str())
-                        .is_some_and(|v| v == "Z01" || v == "Z98")
-                });
-                let cci_present = ctx.find_segments_in_group("CCI", group_path, i).iter().any(|seg| {
-                    seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
-                        .is_some_and(|v| v == "ZC0")
-                });
+                let seq_present =
+                    ctx.find_segments_in_group("SEQ", group_path, i)
+                        .iter()
+                        .any(|seg| {
+                            seg.elements
+                                .first()
+                                .and_then(|e| e.first())
+                                .map(|s| s.as_str())
+                                .is_some_and(|v| v == "Z01" || v == "Z98")
+                        });
+                let cci_present =
+                    ctx.find_segments_in_group("CCI", group_path, i)
+                        .iter()
+                        .any(|seg| {
+                            seg.elements
+                                .get(2)
+                                .and_then(|e| e.first())
+                                .map(|s| s.as_str())
+                                .is_some_and(|v| v == "ZC0")
+                        });
                 if seq_present && cci_present {
                     return ConditionResult::True;
                 }
@@ -118,15 +142,27 @@ impl UtilmdConditionEvaluatorFV2504 {
         }
         // Fallback: message-wide search
         let seq_present = ctx.find_segments("SEQ").iter().any(|seg| {
-            seg.elements.first().and_then(|e| e.first()).map(|s| s.as_str())
+            seg.elements
+                .first()
+                .and_then(|e| e.first())
+                .map(|s| s.as_str())
                 .is_some_and(|v| v == "Z01" || v == "Z98")
         });
-        if !seq_present { return ConditionResult::False; }
+        if !seq_present {
+            return ConditionResult::False;
+        }
         let cci_present = ctx.find_segments("CCI").iter().any(|seg| {
-            seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
+            seg.elements
+                .get(2)
+                .and_then(|e| e.first())
+                .map(|s| s.as_str())
                 .is_some_and(|v| v == "ZC0")
         });
-        if cci_present { ConditionResult::True } else { ConditionResult::False }
+        if cci_present {
+            ConditionResult::True
+        } else {
+            ConditionResult::False
+        }
     }
 
     /// [20] Wenn SG8 SEQ+Z01 (Daten der Marktlokation) SG10 CCI+Z30++Z07 (Verbrauch) vorhanden
@@ -136,11 +172,19 @@ impl UtilmdConditionEvaluatorFV2504 {
         let instance_count = ctx.group_instance_count(group_path);
         if instance_count > 0 {
             for i in 0..instance_count {
-                let seq_present = !ctx.find_segments_with_qualifier_in_group("SEQ", 0, "Z01", group_path, i).is_empty();
-                let cci_present = ctx.find_segments_with_qualifier_in_group("CCI", 0, "Z30", group_path, i).iter().any(|seg| {
-                    seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
-                        .is_some_and(|v| v == "Z07")
-                });
+                let seq_present = !ctx
+                    .find_segments_with_qualifier_in_group("SEQ", 0, "Z01", group_path, i)
+                    .is_empty();
+                let cci_present = ctx
+                    .find_segments_with_qualifier_in_group("CCI", 0, "Z30", group_path, i)
+                    .iter()
+                    .any(|seg| {
+                        seg.elements
+                            .get(2)
+                            .and_then(|e| e.first())
+                            .map(|s| s.as_str())
+                            .is_some_and(|v| v == "Z07")
+                    });
                 if seq_present && cci_present {
                     return ConditionResult::True;
                 }
@@ -149,12 +193,24 @@ impl UtilmdConditionEvaluatorFV2504 {
         }
         // Fallback: message-wide search
         let seq_present = !ctx.find_segments_with_qualifier("SEQ", 0, "Z01").is_empty();
-        if !seq_present { return ConditionResult::False; }
-        let cci_present = ctx.find_segments_with_qualifier("CCI", 0, "Z30").iter().any(|seg| {
-            seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
-                .is_some_and(|v| v == "Z07")
-        });
-        if cci_present { ConditionResult::True } else { ConditionResult::False }
+        if !seq_present {
+            return ConditionResult::False;
+        }
+        let cci_present = ctx
+            .find_segments_with_qualifier("CCI", 0, "Z30")
+            .iter()
+            .any(|seg| {
+                seg.elements
+                    .get(2)
+                    .and_then(|e| e.first())
+                    .map(|s| s.as_str())
+                    .is_some_and(|v| v == "Z07")
+            });
+        if cci_present {
+            ConditionResult::True
+        } else {
+            ConditionResult::False
+        }
     }
 
     /// [21] Wenn SG10 CCI+++ZA6 (Prognose auf Basis von Profilen) in dieser SG8 vorhanden
@@ -164,10 +220,16 @@ impl UtilmdConditionEvaluatorFV2504 {
         let instance_count = ctx.group_instance_count(group_path);
         if instance_count > 0 {
             for i in 0..instance_count {
-                let found = ctx.find_segments_in_group("CCI", group_path, i).iter().any(|seg| {
-                    seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
-                        .is_some_and(|v| v == "ZA6")
-                });
+                let found = ctx
+                    .find_segments_in_group("CCI", group_path, i)
+                    .iter()
+                    .any(|seg| {
+                        seg.elements
+                            .get(2)
+                            .and_then(|e| e.first())
+                            .map(|s| s.as_str())
+                            .is_some_and(|v| v == "ZA6")
+                    });
                 if found {
                     return ConditionResult::True;
                 }
@@ -176,21 +238,34 @@ impl UtilmdConditionEvaluatorFV2504 {
         }
         // Fallback: message-wide search
         let found = ctx.find_segments("CCI").iter().any(|seg| {
-            seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
+            seg.elements
+                .get(2)
+                .and_then(|e| e.first())
+                .map(|s| s.as_str())
                 .is_some_and(|v| v == "ZA6")
         });
-        if found { ConditionResult::True } else { ConditionResult::False }
+        if found {
+            ConditionResult::True
+        } else {
+            ConditionResult::False
+        }
     }
 
     /// [22] Es ist die Zeitraum-ID vom DE1156 aus einem passenden SG6 RFF+Z47/ Z48/ Z49 (Verwendungszeitraum der Daten) einzutragen
     // REVIEW: The condition instructs that the Zeitraum-ID (DE1156) from a matching SG6 RFF+Z47/Z48/Z49 (Verwendungszeitraum der Daten) must be entered. Interpreted as: this condition is True when such an RFF segment (with qualifier Z47, Z48, or Z49 at elements[0][0]) is present in the message. The schema for RFF — Verwendungszeitraum der Daten lists those qualifiers at elements[0][0]. Confidence medium because the wording is instructional rather than a pure boolean predicate. (medium confidence)
     fn evaluate_22(&self, ctx: &EvaluationContext) -> ConditionResult {
         let found = ctx.find_segments("RFF").iter().any(|seg| {
-            seg.elements.first().and_then(|e| e.first()).map(|s| s.as_str()).is_some_and(|v| {
-                v == "Z47" || v == "Z48" || v == "Z49"
-            })
+            seg.elements
+                .first()
+                .and_then(|e| e.first())
+                .map(|s| s.as_str())
+                .is_some_and(|v| v == "Z47" || v == "Z48" || v == "Z49")
         });
-        if found { ConditionResult::True } else { ConditionResult::False }
+        if found {
+            ConditionResult::True
+        } else {
+            ConditionResult::False
+        }
     }
 
     /// [23] Wenn in dieser SG4 das STS+E01++A05/A99 (Status der Antwort) vorhanden
@@ -200,9 +275,14 @@ impl UtilmdConditionEvaluatorFV2504 {
         let instance_count = ctx.group_instance_count(group_path);
         if instance_count > 0 {
             for i in 0..instance_count {
-                let found = ctx.find_segments_with_qualifier_in_group("STS", 0, "E01", group_path, i)
-                    .iter().any(|seg| {
-                        seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
+                let found = ctx
+                    .find_segments_with_qualifier_in_group("STS", 0, "E01", group_path, i)
+                    .iter()
+                    .any(|seg| {
+                        seg.elements
+                            .get(2)
+                            .and_then(|e| e.first())
+                            .map(|s| s.as_str())
                             .is_some_and(|v| v == "A05" || v == "A99")
                     });
                 if found {
@@ -212,11 +292,21 @@ impl UtilmdConditionEvaluatorFV2504 {
             return ConditionResult::False;
         }
         // Fallback: message-wide search
-        let found = ctx.find_segments_with_qualifier("STS", 0, "E01").iter().any(|seg| {
-            seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
-                .is_some_and(|v| v == "A05" || v == "A99")
-        });
-        if found { ConditionResult::True } else { ConditionResult::False }
+        let found = ctx
+            .find_segments_with_qualifier("STS", 0, "E01")
+            .iter()
+            .any(|seg| {
+                seg.elements
+                    .get(2)
+                    .and_then(|e| e.first())
+                    .map(|s| s.as_str())
+                    .is_some_and(|v| v == "A05" || v == "A99")
+            });
+        if found {
+            ConditionResult::True
+        } else {
+            ConditionResult::False
+        }
     }
 
     /// [24] Wenn in dieser SG4 das STS+E01++A25/A99 (Status der Antwort) vorhanden
@@ -226,9 +316,14 @@ impl UtilmdConditionEvaluatorFV2504 {
         let instance_count = ctx.group_instance_count(group_path);
         if instance_count > 0 {
             for i in 0..instance_count {
-                let found = ctx.find_segments_with_qualifier_in_group("STS", 0, "E01", group_path, i)
-                    .iter().any(|seg| {
-                        seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
+                let found = ctx
+                    .find_segments_with_qualifier_in_group("STS", 0, "E01", group_path, i)
+                    .iter()
+                    .any(|seg| {
+                        seg.elements
+                            .get(2)
+                            .and_then(|e| e.first())
+                            .map(|s| s.as_str())
                             .is_some_and(|v| v == "A25" || v == "A99")
                     });
                 if found {
@@ -238,19 +333,40 @@ impl UtilmdConditionEvaluatorFV2504 {
             return ConditionResult::False;
         }
         // Fallback: message-wide search
-        let found = ctx.find_segments_with_qualifier("STS", 0, "E01").iter().any(|seg| {
-            seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
-                .is_some_and(|v| v == "A25" || v == "A99")
-        });
-        if found { ConditionResult::True } else { ConditionResult::False }
+        let found = ctx
+            .find_segments_with_qualifier("STS", 0, "E01")
+            .iter()
+            .any(|seg| {
+                seg.elements
+                    .get(2)
+                    .and_then(|e| e.first())
+                    .map(|s| s.as_str())
+                    .is_some_and(|v| v == "A25" || v == "A99")
+            });
+        if found {
+            ConditionResult::True
+        } else {
+            ConditionResult::False
+        }
     }
 
     /// [25] Wenn die Veräußerungsform der erzeugenden Marktlokation der Marktprämie zugeordnet ist
     fn evaluate_25(&self, ctx: &EvaluationContext) -> ConditionResult {
-        let found = ctx.find_segments_with_qualifier("CCI", 0, "Z22").iter().any(|seg| {
-            seg.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str()).is_some_and(|v| v == "Z91")
-        });
-        if found { ConditionResult::True } else { ConditionResult::False }
+        let found = ctx
+            .find_segments_with_qualifier("CCI", 0, "Z22")
+            .iter()
+            .any(|seg| {
+                seg.elements
+                    .get(2)
+                    .and_then(|e| e.first())
+                    .map(|s| s.as_str())
+                    .is_some_and(|v| v == "Z91")
+            });
+        if found {
+            ConditionResult::True
+        } else {
+            ConditionResult::False
+        }
     }
 
     /// [1] Wenn Aufteilung vorhanden
@@ -282,7 +398,12 @@ impl UtilmdConditionEvaluatorFV2504 {
         let sts_segments = ctx.find_segments_with_qualifier("STS", 0, "7");
         match sts_segments.first() {
             Some(sts) => {
-                match sts.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str()) {
+                match sts
+                    .elements
+                    .get(2)
+                    .and_then(|e| e.first())
+                    .map(|s| s.as_str())
+                {
                     Some("ZG9") | Some("ZH1") | Some("ZH2") => ConditionResult::True,
                     Some(_) => ConditionResult::False,
                     None => ConditionResult::Unknown,
@@ -308,8 +429,11 @@ impl UtilmdConditionEvaluatorFV2504 {
     fn evaluate_10(&self, ctx: &EvaluationContext) -> ConditionResult {
         let sts_segments = ctx.find_segments_with_qualifier("STS", 0, "7");
         for sts in &sts_segments {
-            if let Some("E01" | "E03") =
-                sts.elements.get(4).and_then(|e| e.first()).map(|s| s.as_str())
+            if let Some("E01" | "E03") = sts
+                .elements
+                .get(4)
+                .and_then(|e| e.first())
+                .map(|s| s.as_str())
             {
                 return ConditionResult::True;
             }
@@ -325,8 +449,11 @@ impl UtilmdConditionEvaluatorFV2504 {
     fn evaluate_11(&self, ctx: &EvaluationContext) -> ConditionResult {
         let sts_segments = ctx.find_segments_with_qualifier("STS", 0, "7");
         for sts in &sts_segments {
-            if let Some("ZG9" | "ZH1" | "ZH2") =
-                sts.elements.get(2).and_then(|e| e.first()).map(|s| s.as_str())
+            if let Some("ZG9" | "ZH1" | "ZH2") = sts
+                .elements
+                .get(2)
+                .and_then(|e| e.first())
+                .map(|s| s.as_str())
             {
                 return ConditionResult::False;
             }
@@ -347,7 +474,12 @@ impl UtilmdConditionEvaluatorFV2504 {
     fn evaluate_13(&self, ctx: &EvaluationContext) -> ConditionResult {
         let sts_segments = ctx.find_segments_with_qualifier("STS", 0, "E01");
         for sts in &sts_segments {
-            if sts.elements.get(2).and_then(|e| e.first()).is_some_and(|v| v == "Z01") {
+            if sts
+                .elements
+                .get(2)
+                .and_then(|e| e.first())
+                .is_some_and(|v| v == "Z01")
+            {
                 return ConditionResult::False;
             }
         }
@@ -368,7 +500,10 @@ impl UtilmdConditionEvaluatorFV2504 {
         let instance_count = ctx.group_instance_count(group_path);
         if instance_count > 0 {
             for i in 0..instance_count {
-                if !ctx.find_segments_with_qualifier_in_group("SEQ", 0, "Z98", group_path, i).is_empty() {
+                if !ctx
+                    .find_segments_with_qualifier_in_group("SEQ", 0, "Z98", group_path, i)
+                    .is_empty()
+                {
                     return ConditionResult::True;
                 }
             }
@@ -386,7 +521,12 @@ impl UtilmdConditionEvaluatorFV2504 {
     fn evaluate_16(&self, ctx: &EvaluationContext) -> ConditionResult {
         let sts_segments = ctx.find_segments_with_qualifier("STS", 0, "E01");
         for sts in &sts_segments {
-            if sts.elements.get(2).and_then(|e| e.first()).is_some_and(|v| v == "Z12") {
+            if sts
+                .elements
+                .get(2)
+                .and_then(|e| e.first())
+                .is_some_and(|v| v == "Z12")
+            {
                 return ConditionResult::True;
             }
         }
@@ -402,5 +542,4 @@ impl UtilmdConditionEvaluatorFV2504 {
             ConditionResult::False
         }
     }
-
 }

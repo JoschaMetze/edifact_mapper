@@ -22,8 +22,7 @@ impl GroupNavigator for AssembledTreeNavigator<'_> {
         group_path: &[&str],
         instance_index: usize,
     ) -> Vec<OwnedSegment> {
-        let Some(instance) = resolve_instance(&self.tree.groups, group_path, instance_index)
-        else {
+        let Some(instance) = resolve_instance(&self.tree.groups, group_path, instance_index) else {
             return Vec::new();
         };
         instance
@@ -96,7 +95,9 @@ fn to_owned(seg: &AssembledSegment, segment_number: u32) -> OwnedSegment {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::assembler::{AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree};
+    use crate::assembler::{
+        AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree,
+    };
     use mig_types::navigator::GroupNavigator;
 
     fn make_seg(tag: &str, elements: Vec<Vec<&str>>) -> AssembledSegment {
@@ -169,8 +170,7 @@ mod tests {
     fn test_qualifier_in_group_scoped() {
         let tree = tree_with_sg4_sg8();
         let nav = AssembledTreeNavigator::new(&tree);
-        let segs =
-            nav.find_segments_with_qualifier_in_group("CCI", 2, "ZC0", &["SG4", "SG8"], 1);
+        let segs = nav.find_segments_with_qualifier_in_group("CCI", 2, "ZC0", &["SG4", "SG8"], 1);
         assert_eq!(segs.len(), 1);
         // NOT in instance 0
         assert!(nav
@@ -199,9 +199,7 @@ mod tests {
     fn test_invalid_path_returns_empty() {
         let tree = tree_with_sg4_sg8();
         let nav = AssembledTreeNavigator::new(&tree);
-        assert!(nav
-            .find_segments_in_group("SEQ", &["SG99"], 0)
-            .is_empty());
+        assert!(nav.find_segments_in_group("SEQ", &["SG99"], 0).is_empty());
         assert!(nav
             .find_segments_in_group("SEQ", &["SG4", "SG8"], 99)
             .is_empty());

@@ -119,10 +119,7 @@ fn test_user_prompt_resolves_ahb_notation() {
     );
 
     // DTM+471: elements[0]=471
-    assert!(
-        prompt.contains("elements[0]=471"),
-        "should resolve DTM+471"
-    );
+    assert!(prompt.contains("elements[0]=471"), "should resolve DTM+471");
 }
 
 #[test]
@@ -302,8 +299,8 @@ fn test_user_prompt_detects_group_scope() {
     let conditions = vec![
         ConditionInput {
             id: "15".to_string(),
-            description:
-                "Wenn in derselben SG8 das SEQ+Z98 (Informative Daten) vorhanden".to_string(),
+            description: "Wenn in derselben SG8 das SEQ+Z98 (Informative Daten) vorhanden"
+                .to_string(),
             referencing_fields: None,
         },
         ConditionInput {

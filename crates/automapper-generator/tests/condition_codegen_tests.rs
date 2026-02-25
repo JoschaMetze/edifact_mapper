@@ -202,8 +202,14 @@ fn test_preserved_methods_included() {
         "    fn evaluate_10(&self, _ctx: &EvaluationContext) -> ConditionResult {\n        ConditionResult::False // previously generated\n    }\n".to_string(),
     );
 
-    let output =
-        generate_condition_evaluator_file("UTILMD", "FV2510", &conditions, "test.xml", &preserved, &HashSet::new());
+    let output = generate_condition_evaluator_file(
+        "UTILMD",
+        "FV2510",
+        &conditions,
+        "test.xml",
+        &preserved,
+        &HashSet::new(),
+    );
 
     assert!(
         output.contains("5 => self.evaluate_5(ctx)"),

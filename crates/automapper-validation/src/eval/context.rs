@@ -30,12 +30,7 @@ pub struct EvaluationContext<'a> {
 pub struct NoOpGroupNavigator;
 
 impl GroupNavigator for NoOpGroupNavigator {
-    fn find_segments_in_group(
-        &self,
-        _: &str,
-        _: &[&str],
-        _: usize,
-    ) -> Vec<OwnedSegment> {
+    fn find_segments_in_group(&self, _: &str, _: &[&str], _: usize) -> Vec<OwnedSegment> {
         Vec::new()
     }
     fn find_segments_with_qualifier_in_group(
@@ -164,7 +159,8 @@ impl<'a> EvaluationContext<'a> {
         group_path: &[&str],
         instance_index: usize,
     ) -> bool {
-        !self.find_segments_in_group(segment_id, group_path, instance_index)
+        !self
+            .find_segments_in_group(segment_id, group_path, instance_index)
             .is_empty()
     }
 
@@ -204,17 +200,9 @@ mod tests {
         fn new() -> Self {
             Self { groups: vec![] }
         }
-        fn with_group(
-            mut self,
-            path: &[&str],
-            instance: usize,
-            segs: Vec<OwnedSegment>,
-        ) -> Self {
-            self.groups.push((
-                path.iter().map(|s| s.to_string()).collect(),
-                instance,
-                segs,
-            ));
+        fn with_group(mut self, path: &[&str], instance: usize, segs: Vec<OwnedSegment>) -> Self {
+            self.groups
+                .push((path.iter().map(|s| s.to_string()).collect(), instance, segs));
             self
         }
         fn find_instance(&self, group_path: &[&str], idx: usize) -> Option<&[OwnedSegment]> {
@@ -358,8 +346,7 @@ mod tests {
             ],
         );
         let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
-        let result =
-            ctx.find_segments_with_qualifier_in_group("SEQ", 0, "Z98", &["SG4", "SG8"], 0);
+        let result = ctx.find_segments_with_qualifier_in_group("SEQ", 0, "Z98", &["SG4", "SG8"], 0);
         assert_eq!(result.len(), 1);
     }
 

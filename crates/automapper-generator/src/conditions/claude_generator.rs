@@ -92,26 +92,27 @@ impl ClaudeConditionGenerator {
         let cleaned = strip_markdown_code_blocks(raw_response);
 
         // Try full parse first
-        let entries: Vec<ClaudeConditionEntry> =
-            if let Ok(response) = serde_json::from_str::<ClaudeConditionResponse>(&cleaned) {
-                response.conditions
-            } else {
-                // Response may be truncated — try to recover individual condition objects
-                let recovered = recover_partial_conditions(&cleaned);
-                if recovered.is_empty() {
-                    return Err(GeneratorError::ClaudeCli {
+        let entries: Vec<ClaudeConditionEntry> = if let Ok(response) =
+            serde_json::from_str::<ClaudeConditionResponse>(&cleaned)
+        {
+            response.conditions
+        } else {
+            // Response may be truncated — try to recover individual condition objects
+            let recovered = recover_partial_conditions(&cleaned);
+            if recovered.is_empty() {
+                return Err(GeneratorError::ClaudeCli {
                         message: format!(
                             "failed to parse Claude JSON response (no recoverable conditions). Response was: {}",
                             &cleaned[..cleaned.len().min(500)]
                         ),
                     });
-                }
-                eprintln!(
-                    "WARNING: Response was truncated, recovered {} complete conditions",
-                    recovered.len()
-                );
-                recovered
-            };
+            }
+            eprintln!(
+                "WARNING: Response was truncated, recovered {} complete conditions",
+                recovered.len()
+            );
+            recovered
+        };
 
         let mut results = Vec::new();
         for entry in entries {
@@ -180,7 +181,12 @@ fn recover_partial_conditions(json: &str) -> Vec<ClaudeConditionEntry> {
 
     while i < bytes.len() {
         // Skip whitespace and commas
-        if bytes[i] == b' ' || bytes[i] == b'\n' || bytes[i] == b'\r' || bytes[i] == b'\t' || bytes[i] == b',' {
+        if bytes[i] == b' '
+            || bytes[i] == b'\n'
+            || bytes[i] == b'\r'
+            || bytes[i] == b'\t'
+            || bytes[i] == b','
+        {
             i += 1;
             continue;
         }
