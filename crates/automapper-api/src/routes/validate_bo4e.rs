@@ -52,9 +52,6 @@ pub(crate) async fn validate_bo4e(
             message: format!("Input normalization error: {e}"),
         })?;
 
-    // TODO: detect message type/variant from nachrichtenTyp
-    let msg_variant = "UTILMD_Strom";
-
     // Step 2: Process the first message
     let nachricht = interchange
         .nachrichten
@@ -64,6 +61,15 @@ pub(crate) async fn validate_bo4e(
         })?;
 
     let pid = extract_pid(nachricht)?;
+    let msg_variant = state
+        .mig_registry
+        .resolve_variant(&req.format_version, pid)
+        .ok_or_else(|| ApiError::ConversionError {
+            message: format!(
+                "Could not determine message variant for PID {pid} in {}",
+                req.format_version
+            ),
+        })?;
     let ctx = load_reverse_context(&state, &req.format_version, msg_variant, pid)?;
 
     // Step 3: Reverse map BO4E → AssembledTree → EDIFACT

@@ -78,9 +78,17 @@ pub(crate) async fn validate_v2(
         message: format!("PID detection error: {e}"),
     })?;
 
-    // Step 5: Load AHB schema from registry
-    // TODO: detect message type/variant from UNH segment
-    let msg_variant = "UTILMD_Strom";
+    // Step 5: Resolve message variant from PID
+    let msg_variant = state
+        .mig_registry
+        .resolve_variant(&req.format_version, &pid)
+        .ok_or_else(|| ApiError::ConversionError {
+            message: format!(
+                "Could not determine message variant for PID {pid} in {}",
+                req.format_version
+            ),
+        })?;
+
     let ahb = state
         .mig_registry
         .ahb_schema(&req.format_version, msg_variant)

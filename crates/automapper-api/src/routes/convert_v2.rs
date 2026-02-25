@@ -103,9 +103,28 @@ pub(crate) async fn convert_v2(
             // Step 3: Extract envelope nachrichtendaten
             let nachrichtendaten = mig_bo4e::model::extract_nachrichtendaten(&chunks.envelope);
 
-            // Step 4: Process each message
-            // TODO: detect message type/variant from UNH segment
-            let msg_variant = "UTILMD_Strom";
+            // Step 4: Detect PID from the first message to resolve variant
+            let first_chunk = chunks
+                .messages
+                .first()
+                .ok_or_else(|| ApiError::BadRequest {
+                    message: "No messages found in EDIFACT content".to_string(),
+                })?;
+            let first_segments = first_chunk.all_segments();
+            let first_pid = detect_pid(&first_segments).map_err(|e| ApiError::ConversionError {
+                message: format!("PID detection error: {e}"),
+            })?;
+
+            let msg_variant = state
+                .mig_registry
+                .resolve_variant(&req.format_version, &first_pid)
+                .ok_or_else(|| ApiError::ConversionError {
+                    message: format!(
+                        "Could not determine message variant for PID {first_pid} in {}",
+                        req.format_version
+                    ),
+                })?;
+
             let mut nachrichten = Vec::new();
 
             // Look up AHB schema once (same for all messages of this variant)

@@ -333,6 +333,22 @@ impl MigServiceRegistry {
         self.ahb_schemas.get(&key)
     }
 
+    /// Resolve the message variant (e.g., `"UTILMD_Strom"`) for a given PID
+    /// by scanning all loaded AHB schemas for the format version.
+    ///
+    /// Returns the variant portion of the AHB key (after the `"{fv}/"` prefix).
+    pub fn resolve_variant(&self, fv: &str, pid: &str) -> Option<&str> {
+        let prefix = format!("{}/", fv);
+        for (key, schema) in &self.ahb_schemas {
+            if let Some(variant) = key.strip_prefix(&prefix) {
+                if schema.workflows.iter().any(|w| w.id == pid) {
+                    return Some(variant);
+                }
+            }
+        }
+        None
+    }
+
     /// Check if any MIG services are available.
     pub fn has_services(&self) -> bool {
         !self.services.is_empty()
@@ -558,4 +574,45 @@ fn parse_edifact_to_segment_nodes(edifact: &str) -> Vec<crate::contracts::inspec
     }
 
     segments
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_resolve_variant_finds_pid() {
+        let mut ahb_schemas = HashMap::new();
+        let schema = AhbSchema {
+            message_type: "UTILMD".to_string(),
+            variant: Some("Strom".to_string()),
+            version: "2.1".to_string(),
+            format_version: "FV2504".to_string(),
+            source_file: String::new(),
+            workflows: vec![automapper_generator::schema::ahb::Pruefidentifikator {
+                id: "55001".to_string(),
+                beschreibung: "Test workflow".to_string(),
+                kommunikation_von: None,
+                fields: vec![],
+                segment_numbers: vec![],
+            }],
+            bedingungen: vec![],
+        };
+        ahb_schemas.insert("FV2504/UTILMD_Strom".to_string(), schema);
+
+        let registry = MigServiceRegistry {
+            services: HashMap::new(),
+            mapping_engines: HashMap::new(),
+            message_engines: HashMap::new(),
+            transaction_engines: HashMap::new(),
+            ahb_schemas,
+        };
+
+        assert_eq!(
+            registry.resolve_variant("FV2504", "55001"),
+            Some("UTILMD_Strom")
+        );
+        assert_eq!(registry.resolve_variant("FV2504", "99999"), None);
+        assert_eq!(registry.resolve_variant("FV9999", "55001"), None);
+    }
 }

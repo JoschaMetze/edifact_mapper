@@ -122,7 +122,9 @@ async fn test_validate_bo4e_valid_55001_transaktion() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate-bo4e returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -192,7 +194,9 @@ async fn test_validate_bo4e_issues_have_bo4e_paths() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate-bo4e returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -287,7 +291,9 @@ async fn test_validate_bo4e_default_levels() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate-bo4e returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }

@@ -46,8 +46,6 @@ pub(crate) async fn reverse_v2(
             message: format!("Input normalization error: {e}"),
         })?;
 
-    // TODO: detect message type/variant from nachrichtenTyp
-    let msg_variant = "UTILMD_Strom";
     let delimiters = edifact_types::EdifactDelimiters::default();
 
     let mut all_edifact_parts: Vec<String> = Vec::new();
@@ -55,6 +53,15 @@ pub(crate) async fn reverse_v2(
     // Step 2: Process each message
     for nachricht in &interchange.nachrichten {
         let pid = extract_pid(nachricht)?;
+        let msg_variant = state
+            .mig_registry
+            .resolve_variant(&req.format_version, pid)
+            .ok_or_else(|| ApiError::ConversionError {
+                message: format!(
+                    "Could not determine message variant for PID {pid} in {}",
+                    req.format_version
+                ),
+            })?;
         let ctx = load_reverse_context(&state, &req.format_version, msg_variant, pid)?;
         let tree = reverse_map_nachricht(&ctx, nachricht);
 

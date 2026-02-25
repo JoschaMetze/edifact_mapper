@@ -91,7 +91,9 @@ async fn test_validate_v2_default_level_is_full() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -150,7 +152,9 @@ async fn test_validate_v2_structure_level() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -208,7 +212,9 @@ async fn test_validate_v2_with_external_conditions() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -265,7 +271,9 @@ async fn test_validate_v2_report_metadata() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -348,7 +356,9 @@ async fn test_validate_55001_fixture_returns_clean_report() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -426,7 +436,9 @@ async fn test_validate_55002_fixture_returns_clean_report() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -490,7 +502,9 @@ async fn test_validate_55001_structure_only() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -558,7 +572,9 @@ async fn test_validate_55001_with_external_conditions() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("validate returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -639,7 +655,9 @@ async fn test_convert_55001_with_validate_flag() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("convert+validate returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }

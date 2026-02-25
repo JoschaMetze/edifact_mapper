@@ -151,7 +151,9 @@ async fn test_reverse_transaktion_level_produces_edifact() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("reverse transaktion returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -213,7 +215,9 @@ async fn test_reverse_mig_tree_mode() {
         let body_str = String::from_utf8_lossy(&body_bytes);
         eprintln!("reverse mig-tree returned {status}: {body_str}");
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
@@ -263,7 +267,9 @@ async fn test_reverse_default_mode_is_edifact() {
     } else {
         // MIG XML not available — acceptable in CI
         assert!(
-            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            status == StatusCode::BAD_REQUEST
+                || status == StatusCode::UNPROCESSABLE_ENTITY
+                || status == StatusCode::INTERNAL_SERVER_ERROR,
             "Unexpected status: {status}"
         );
     }
