@@ -185,7 +185,7 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                     // Condition is met - field is required/applicable
                     if is_mandatory_status(&field.ahb_status)
                         && !is_field_present(ctx, field)
-                        && !is_parent_group_absent(ctx, &field.segment_path)
+                        && !is_group_variant_absent(ctx, field)
                     {
                         report.add_issue(
                             ValidationIssue::new(
@@ -424,17 +424,22 @@ fn is_field_present(ctx: &EvaluationContext, field: &AhbFieldRule) -> bool {
     ctx.has_segment(&segment_id)
 }
 
-/// Check if a field's parent group is absent (has zero instances).
+/// Check if the specific group variant for a field is absent.
 ///
-/// For a path like `SG2/SG3/CTA/3139`, the group path is `["SG2", "SG3"]`.
-/// If the navigator reports 0 instances for that group, the group is absent
-/// and fields inside it shouldn't be flagged as missing.
+/// Handles two cases:
+/// 1. **Group entirely absent**: `SG2/SG3/CTA/3139` — if SG3 has 0 instances,
+///    the whole group is absent and its children aren't required.
+/// 2. **Group variant absent**: `SG4/SG5/LOC/3227` with codes `[Z17]` — SG5
+///    may have instances (e.g., LOC+Z16), but no instance contains LOC+Z17.
+///    The Z17 *variant* of SG5 is absent, so fields requiring Z17 aren't
+///    required.
 ///
 /// Returns `false` (not absent) when:
 /// - The field has no group prefix (e.g., `NAD/3035`)
 /// - No navigator is available (can't determine group presence)
-fn is_parent_group_absent(ctx: &EvaluationContext, field_path: &str) -> bool {
-    let group_path: Vec<&str> = field_path
+fn is_group_variant_absent(ctx: &EvaluationContext, field: &AhbFieldRule) -> bool {
+    let group_path: Vec<&str> = field
+        .segment_path
         .split('/')
         .take_while(|p| p.starts_with("SG"))
         .collect();
@@ -443,10 +448,42 @@ fn is_parent_group_absent(ctx: &EvaluationContext, field_path: &str) -> bool {
         return false;
     }
 
-    match ctx.navigator {
-        Some(nav) => nav.group_instance_count(&group_path) == 0,
-        None => false,
+    let nav = match ctx.navigator {
+        Some(nav) => nav,
+        None => return false,
+    };
+
+    let instance_count = nav.group_instance_count(&group_path);
+
+    // Case 1: group entirely absent
+    if instance_count == 0 {
+        return true;
     }
+
+    // Case 2: group has instances, but does any contain the required qualifier?
+    // Only applies when the field has qualifier codes on a simple qualifier path.
+    if !field.codes.is_empty() && is_qualifier_field(&field.segment_path) {
+        let segment_id = extract_segment_id(&field.segment_path);
+        let required_codes: Vec<&str> = field.codes.iter().map(|c| c.value.as_str()).collect();
+
+        // Check each group instance for a segment with a matching qualifier.
+        let any_instance_has_qualifier = (0..instance_count).any(|i| {
+            nav.find_segments_in_group(&segment_id, &group_path, i)
+                .iter()
+                .any(|seg| {
+                    seg.elements
+                        .first()
+                        .and_then(|e| e.first())
+                        .is_some_and(|v| required_codes.contains(&v.as_str()))
+                })
+        });
+
+        if !any_instance_has_qualifier {
+            return true; // no group instance has this qualifier variant
+        }
+    }
+
+    false
 }
 
 /// Check if an AHB status is mandatory (Muss or X prefix).
@@ -1424,6 +1461,109 @@ mod tests {
             "Expected AHB001 error when SG3 is present but CTA missing"
         );
         assert!(ahb_errors[0].message.contains("CTA"));
+    }
+
+    #[test]
+    fn test_absent_group_variant_no_error() {
+        // SG5 has instances (LOC+Z16), but the Z17 variant is absent.
+        // Field rule for SG4/SG5/LOC/3227 with code [Z17] should NOT error.
+        use mig_types::navigator::GroupNavigator;
+
+        struct NavWithSG5Z16Only;
+        impl GroupNavigator for NavWithSG5Z16Only {
+            fn find_segments_in_group(
+                &self,
+                segment_id: &str,
+                group_path: &[&str],
+                instance_index: usize,
+            ) -> Vec<OwnedSegment> {
+                if segment_id == "LOC" && group_path == ["SG4", "SG5"] && instance_index == 0 {
+                    vec![OwnedSegment {
+                        id: "LOC".into(),
+                        elements: vec![vec!["Z16".into()], vec!["12345678900".into()]],
+                        segment_number: 10,
+                    }]
+                } else {
+                    vec![]
+                }
+            }
+            fn find_segments_with_qualifier_in_group(
+                &self,
+                _: &str,
+                _: usize,
+                _: &str,
+                _: &[&str],
+                _: usize,
+            ) -> Vec<OwnedSegment> {
+                vec![]
+            }
+            fn group_instance_count(&self, group_path: &[&str]) -> usize {
+                match group_path {
+                    ["SG4"] => 1,
+                    ["SG4", "SG5"] => 1, // only the Z16 instance
+                    _ => 0,
+                }
+            }
+        }
+
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+        let nav = NavWithSG5Z16Only;
+
+        let segments = vec![OwnedSegment {
+            id: "LOC".into(),
+            elements: vec![vec!["Z16".into()], vec!["12345678900".into()]],
+            segment_number: 10,
+        }];
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![
+                // Z16 variant — present, should not error
+                AhbFieldRule {
+                    segment_path: "SG4/SG5/LOC/3227".to_string(),
+                    name: "Ortsangabe, Qualifier".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "Z16".to_string(),
+                        description: "Marktlokation".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                // Z17 variant — absent (no SG5 instance with Z17)
+                AhbFieldRule {
+                    segment_path: "SG4/SG5/LOC/3227".to_string(),
+                    name: "Ortsangabe, Qualifier".to_string(),
+                    ahb_status: "Muss".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "Z17".to_string(),
+                        description: "Messlokation".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+            ],
+        };
+
+        let report = validator.validate_with_navigator(
+            &segments,
+            &workflow,
+            &external,
+            ValidationLevel::Conditions,
+            &nav,
+        );
+
+        let ahb_errors: Vec<_> = report
+            .by_category(ValidationCategory::Ahb)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+        assert!(
+            ahb_errors.is_empty(),
+            "Expected no AHB001 errors when Z17 SG5 variant is absent, got: {:?}",
+            ahb_errors
+        );
     }
 
     #[test]
