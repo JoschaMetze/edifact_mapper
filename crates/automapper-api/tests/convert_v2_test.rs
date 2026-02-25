@@ -195,6 +195,144 @@ async fn test_convert_v2_bo4e_mode() {
     }
 }
 
+// --- Validation flag ---
+
+#[tokio::test]
+async fn test_convert_v2_bo4e_default_has_no_validation() {
+    let fixture_path = std::path::Path::new(
+        "example_market_communication_bo4e_transactions/UTILMD/FV2504/55001_UTILMD_S2.1_ALEXANDE121980.edi",
+    );
+    if !fixture_path.exists() {
+        eprintln!(
+            "Skipping test: fixture not found at {}",
+            fixture_path.display()
+        );
+        return;
+    }
+    let input = std::fs::read_to_string(fixture_path).unwrap();
+
+    let app = app();
+
+    let body = serde_json::json!({
+        "input": input,
+        "mode": "bo4e",
+        "format_version": "FV2504"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/api/v2/convert")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_string(&body).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    let status = response.status();
+    let body_bytes = response.into_body().collect().await.unwrap().to_bytes();
+
+    if status == StatusCode::OK {
+        let resp: ConvertV2Response = serde_json::from_slice(&body_bytes).unwrap();
+        assert_eq!(resp.mode, "bo4e");
+        // Without ?validate=true, the validation field should be None
+        assert!(
+            resp.validation.is_none(),
+            "validation should be absent by default"
+        );
+        // Also verify the raw JSON does not contain "validation" key
+        let raw: serde_json::Value = serde_json::from_slice(&body_bytes).unwrap();
+        assert!(
+            raw.get("validation").is_none(),
+            "validation key should not appear in JSON when not requested"
+        );
+    } else {
+        let body_str = String::from_utf8_lossy(&body_bytes);
+        eprintln!("bo4e mode returned {status}: {body_str}");
+        assert!(
+            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            "Unexpected status: {status}"
+        );
+    }
+}
+
+#[tokio::test]
+async fn test_convert_v2_bo4e_with_validate_flag() {
+    let fixture_path = std::path::Path::new(
+        "example_market_communication_bo4e_transactions/UTILMD/FV2504/55001_UTILMD_S2.1_ALEXANDE121980.edi",
+    );
+    if !fixture_path.exists() {
+        eprintln!(
+            "Skipping test: fixture not found at {}",
+            fixture_path.display()
+        );
+        return;
+    }
+    let input = std::fs::read_to_string(fixture_path).unwrap();
+
+    let app = app();
+
+    let body = serde_json::json!({
+        "input": input,
+        "mode": "bo4e",
+        "format_version": "FV2504"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/api/v2/convert?validate=true")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_string(&body).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    let status = response.status();
+    let body_bytes = response.into_body().collect().await.unwrap().to_bytes();
+
+    if status == StatusCode::OK {
+        let resp: ConvertV2Response = serde_json::from_slice(&body_bytes).unwrap();
+        assert_eq!(resp.mode, "bo4e");
+        // With ?validate=true, the validation field should be present
+        assert!(
+            resp.validation.is_some(),
+            "validation should be present when ?validate=true"
+        );
+
+        let report = resp.validation.unwrap();
+        // The report should have the standard ValidationReport fields
+        assert!(
+            report.get("level").is_some(),
+            "validation report should have 'level'"
+        );
+        assert!(
+            report.get("issues").is_some(),
+            "validation report should have 'issues'"
+        );
+        assert!(
+            report.get("message_type").is_some(),
+            "validation report should have 'message_type'"
+        );
+        assert_eq!(report["message_type"], "UTILMD");
+
+        // Conversion result should still be present
+        assert!(resp.result.get("nachrichtendaten").is_some());
+        assert!(resp.result.get("nachrichten").is_some());
+    } else {
+        let body_str = String::from_utf8_lossy(&body_bytes);
+        eprintln!("bo4e+validate mode returned {status}: {body_str}");
+        assert!(
+            status == StatusCode::BAD_REQUEST || status == StatusCode::INTERNAL_SERVER_ERROR,
+            "Unexpected status: {status}"
+        );
+    }
+}
+
 // --- Missing fields ---
 
 #[tokio::test]

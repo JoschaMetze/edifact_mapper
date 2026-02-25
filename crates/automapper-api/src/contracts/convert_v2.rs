@@ -31,6 +31,9 @@ pub struct ConvertV2Query {
     /// When `false`, code fields are emitted as plain strings instead of
     /// `{"code": "...", "meaning": "..."}` objects. Defaults to `true`.
     pub enrich_codes: Option<bool>,
+
+    /// Run validation and include report in response. Defaults to `false`.
+    pub validate: Option<bool>,
 }
 
 /// Response body for `POST /api/v2/convert`.
@@ -45,4 +48,9 @@ pub struct ConvertV2Response {
 
     /// Conversion duration in milliseconds.
     pub duration_ms: f64,
+
+    /// Validation report (present when `?validate=true`).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schema(value_type = Option<Object>)]
+    pub validation: Option<serde_json::Value>,
 }

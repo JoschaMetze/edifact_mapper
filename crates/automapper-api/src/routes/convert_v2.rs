@@ -74,6 +74,7 @@ pub(crate) async fn convert_v2(
                 mode: "mig-tree".to_string(),
                 result: serde_json::json!({ "tree": tree }),
                 duration_ms: start.elapsed().as_secs_f64() * 1000.0,
+                validation: None,
             }))
         }
         ConvertMode::Bo4e => {
@@ -107,6 +108,20 @@ pub(crate) async fn convert_v2(
             let msg_variant = "UTILMD_Strom";
             let mut nachrichten = Vec::new();
 
+            // Look up AHB schema once (same for all messages of this variant)
+            let ahb = state
+                .mig_registry
+                .ahb_schema(&req.format_version, msg_variant)
+                .ok_or_else(|| ApiError::Internal {
+                    message: format!(
+                        "No AHB schema available for {}/{}",
+                        req.format_version, msg_variant
+                    ),
+                })?;
+
+            // Track the last filtered MIG for optional validation
+            let mut last_filtered_mig = None;
+
             for (msg_idx, msg_chunk) in chunks.messages.iter().enumerate() {
                 let all_segments = msg_chunk.all_segments();
 
@@ -114,17 +129,6 @@ pub(crate) async fn convert_v2(
                 let pid = detect_pid(&all_segments).map_err(|e| ApiError::ConversionError {
                     message: format!("PID detection error in message {msg_idx}: {e}"),
                 })?;
-
-                // Look up AHB for PID segment numbers
-                let ahb = state
-                    .mig_registry
-                    .ahb_schema(&req.format_version, msg_variant)
-                    .ok_or_else(|| ApiError::Internal {
-                        message: format!(
-                            "No AHB schema available for {}/{}",
-                            req.format_version, msg_variant
-                        ),
-                    })?;
 
                 let workflow = ahb.workflows.iter().find(|w| w.id == pid).ok_or_else(|| {
                     ApiError::ConversionError {
@@ -174,6 +178,8 @@ pub(crate) async fn convert_v2(
                     stammdaten: mapped.stammdaten,
                     transaktionen: mapped.transaktionen,
                 });
+
+                last_filtered_mig = Some(filtered_mig);
             }
 
             let interchange = mig_bo4e::Interchange {
@@ -181,10 +187,67 @@ pub(crate) async fn convert_v2(
                 nachrichten,
             };
 
+            // Optional validation when ?validate=true
+            let validation = if query.validate.unwrap_or(false) {
+                // Reuse the first message's segments + PID for validation
+                if let Some(first_chunk) = chunks.messages.first() {
+                    let val_segments = first_chunk.all_segments();
+                    let val_pid =
+                        detect_pid(&val_segments).map_err(|e| ApiError::ConversionError {
+                            message: format!("PID detection error during validation: {e}"),
+                        })?;
+
+                    let val_workflow =
+                        crate::validation_bridge::ahb_workflow_from_schema(ahb, &val_pid)
+                            .ok_or_else(|| ApiError::ConversionError {
+                                message: format!("PID {val_pid} not found in AHB for validation"),
+                            })?;
+
+                    let external = automapper_validation::eval::NoOpExternalProvider;
+                    let evaluator = crate::routes::validate_v2::StubEvaluator {
+                        message_type: "UTILMD".to_string(),
+                        format_version: req.format_version.clone(),
+                    };
+                    let validator = automapper_validation::EdifactValidator::new(evaluator);
+                    let mut report = validator.validate(
+                        &val_segments,
+                        &val_workflow,
+                        &external,
+                        automapper_validation::ValidationLevel::Full,
+                    );
+
+                    // Add structure diagnostics if we have a filtered MIG
+                    if let Some(ref fmig) = last_filtered_mig {
+                        let assembler = Assembler::new(fmig);
+                        let (_tree, structure_diagnostics) =
+                            assembler.assemble_with_diagnostics(&val_segments);
+                        for diag in structure_diagnostics {
+                            report.add_issue(automapper_validation::ValidationIssue::new(
+                                automapper_validation::Severity::Warning,
+                                automapper_validation::ValidationCategory::Structure,
+                                automapper_validation::ErrorCodes::UNEXPECTED_SEGMENT,
+                                diag.message,
+                            ));
+                        }
+                    }
+
+                    let report_json =
+                        serde_json::to_value(&report).map_err(|e| ApiError::Internal {
+                            message: format!("Failed to serialize validation report: {e}"),
+                        })?;
+                    Some(report_json)
+                } else {
+                    None
+                }
+            } else {
+                None
+            };
+
             Ok(Json(ConvertV2Response {
                 mode: "bo4e".to_string(),
                 result: serde_json::to_value(&interchange).unwrap_or_default(),
                 duration_ms: start.elapsed().as_secs_f64() * 1000.0,
+                validation,
             }))
         }
     }
