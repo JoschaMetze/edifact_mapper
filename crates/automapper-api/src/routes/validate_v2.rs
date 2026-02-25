@@ -10,6 +10,7 @@ use axum::routing::post;
 use axum::{Json, Router};
 
 use mig_assembly::assembler::Assembler;
+use mig_assembly::navigator::AssembledTreeNavigator;
 use mig_assembly::pid_detect::detect_pid;
 use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::tokenize::parse_to_segments;
@@ -120,7 +121,7 @@ pub(crate) async fn validate_v2(
     let ahb_numbers: HashSet<String> = ahb_workflow.segment_numbers.iter().cloned().collect();
     let filtered_mig = filter_mig_for_pid(service.mig(), &ahb_numbers);
     let assembler = Assembler::new(&filtered_mig);
-    let (_tree, structure_diagnostics) = assembler.assemble_with_diagnostics(&all_segments);
+    let (tree, structure_diagnostics) = assembler.assemble_with_diagnostics(&all_segments);
 
     // Step 8: Build external condition provider
     let external: Box<dyn automapper_validation::eval::ExternalConditionProvider> =
@@ -136,8 +137,15 @@ pub(crate) async fn validate_v2(
     let evaluator = automapper_validation::UtilmdConditionEvaluatorFV2504::default();
     let validator = automapper_validation::EdifactValidator::new(evaluator);
 
-    // Step 10: Run validation
-    let mut report = validator.validate(&all_segments, &workflow, external.as_ref(), level);
+    // Step 10: Run validation with group navigator
+    let navigator = AssembledTreeNavigator::new(&tree);
+    let mut report = validator.validate_with_navigator(
+        &all_segments,
+        &workflow,
+        external.as_ref(),
+        level,
+        &navigator,
+    );
 
     // Step 11: Add structure diagnostics as ValidationIssues
     for diag in structure_diagnostics {
