@@ -98,6 +98,7 @@ fn simple_field(path: &str, name: &str, status: &str) -> AhbFieldRule {
         name: name.to_string(),
         ahb_status: status.to_string(),
         codes: vec![],
+        parent_group_ahb_status: None,
     }
 }
 
@@ -120,6 +121,7 @@ fn field_with_codes(
                 ahb_status: ahb.to_string(),
             })
             .collect(),
+        parent_group_ahb_status: None,
     }
 }
 

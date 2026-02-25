@@ -18,7 +18,7 @@ use super::report::ValidationReport;
 ///
 /// Represents a single field in an AHB rule table with its status
 /// and allowed codes for a specific Pruefidentifikator.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct AhbFieldRule {
     /// Segment path (e.g., "SG2/NAD/C082/3039").
     pub segment_path: String,
@@ -31,10 +31,16 @@ pub struct AhbFieldRule {
 
     /// Allowed code values with their AHB status.
     pub codes: Vec<AhbCodeRule>,
+
+    /// AHB status of the innermost parent group (e.g., "Kann", "Muss", "Soll [46]").
+    ///
+    /// When the parent group is optional ("Kann") and its qualifier variant is
+    /// absent from the message, mandatory checks for child fields are skipped.
+    pub parent_group_ahb_status: Option<String>,
 }
 
 /// An allowed code value within an AHB field rule.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct AhbCodeRule {
     /// The code value (e.g., "E01", "Z33").
     pub value: String,
@@ -424,15 +430,20 @@ fn is_field_present(ctx: &EvaluationContext, field: &AhbFieldRule) -> bool {
     ctx.has_segment(&segment_id)
 }
 
-/// Check if the parent group for a field is entirely absent.
+/// Check if the group variant for a field is absent from the message.
 ///
-/// For example, `SG2/SG3/CTA/3139` — if SG3 has 0 instances, the whole
-/// group is absent and its children aren't required.
+/// Uses tree-based logic:
+/// 1. **Group entirely absent**: If the group path has 0 instances, the
+///    whole group is absent and its children aren't required.
+/// 2. **Optional group variant absent**: If the parent group is optional
+///    ("Kann") and the specific qualifier variant isn't present, the variant
+///    is absent. E.g., SG5 "Kann" with LOC+Z17 — if no SG5 instance has
+///    LOC+Z17, all fields under that variant are skipped.
 ///
 /// Returns `false` (not absent) when:
 /// - The field has no group prefix (e.g., `NAD/3035`)
 /// - No navigator is available (can't determine group presence)
-/// - The group has at least one instance
+/// - The parent group is mandatory and has instances
 fn is_group_variant_absent(ctx: &EvaluationContext, field: &AhbFieldRule) -> bool {
     let group_path: Vec<&str> = field
         .segment_path
@@ -449,7 +460,44 @@ fn is_group_variant_absent(ctx: &EvaluationContext, field: &AhbFieldRule) -> boo
         None => return false,
     };
 
-    nav.group_instance_count(&group_path) == 0
+    let instance_count = nav.group_instance_count(&group_path);
+
+    // Case 1: group entirely absent
+    if instance_count == 0 {
+        return true;
+    }
+
+    // Case 2: group has instances, but the specific qualifier variant may be absent.
+    // Only applies when the parent group is optional ("Kann") — mandatory groups
+    // ("Muss", "X") require all their qualifier variants to be present.
+    if let Some(ref group_status) = field.parent_group_ahb_status {
+        if !is_mandatory_status(group_status) && !group_status.contains('[') {
+            // Parent group is unconditionally optional (e.g., "Kann").
+            // Check if the field's qualifier variant is present in any instance.
+            if !field.codes.is_empty() && is_qualifier_field(&field.segment_path) {
+                let segment_id = extract_segment_id(&field.segment_path);
+                let required_codes: Vec<&str> =
+                    field.codes.iter().map(|c| c.value.as_str()).collect();
+
+                let any_instance_has_qualifier = (0..instance_count).any(|i| {
+                    nav.find_segments_in_group(&segment_id, &group_path, i)
+                        .iter()
+                        .any(|seg| {
+                            seg.elements
+                                .first()
+                                .and_then(|e| e.first())
+                                .is_some_and(|v| required_codes.contains(&v.as_str()))
+                        })
+                });
+
+                if !any_instance_has_qualifier {
+                    return true; // optional group variant absent
+                }
+            }
+        }
+    }
+
+    false
 }
 
 /// Check if an AHB status is mandatory (Muss or X prefix).
@@ -588,6 +636,7 @@ mod tests {
                 name: "MP-ID des MSB".to_string(),
                 ahb_status: "Muss [182] ∧ [152]".to_string(),
                 codes: vec![],
+                parent_group_ahb_status: None,
             }],
         };
 
@@ -618,6 +667,7 @@ mod tests {
                 name: "Partnerrolle".to_string(),
                 ahb_status: "Muss [182] ∧ [152]".to_string(),
                 codes: vec![],
+                parent_group_ahb_status: None,
             }],
         };
 
@@ -644,6 +694,7 @@ mod tests {
                 name: "Partnerrolle".to_string(),
                 ahb_status: "Muss [182] ∧ [152]".to_string(),
                 codes: vec![],
+                parent_group_ahb_status: None,
             }],
         };
 
@@ -671,6 +722,7 @@ mod tests {
                 name: "Partnerrolle".to_string(),
                 ahb_status: "Muss [182] ∧ [152]".to_string(),
                 codes: vec![],
+                parent_group_ahb_status: None,
             }],
         };
 
@@ -715,6 +767,7 @@ mod tests {
                 name: "Partnerrolle".to_string(),
                 ahb_status: "Muss".to_string(), // No conditions
                 codes: vec![],
+                parent_group_ahb_status: None,
             }],
         };
 
@@ -740,6 +793,7 @@ mod tests {
                 name: "Datum".to_string(),
                 ahb_status: "X".to_string(),
                 codes: vec![],
+                parent_group_ahb_status: None,
             }],
         };
 
@@ -765,6 +819,7 @@ mod tests {
                 name: "Datum".to_string(),
                 ahb_status: "Soll".to_string(),
                 codes: vec![],
+                parent_group_ahb_status: None,
             }],
         };
 
@@ -857,6 +912,7 @@ mod tests {
                         description: "Stammdaten".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "UNH/S009/0052".to_string(),
@@ -867,6 +923,7 @@ mod tests {
                         description: "Draft".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
             ],
         };
@@ -923,6 +980,7 @@ mod tests {
                         description: "Absender".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -933,6 +991,7 @@ mod tests {
                         description: "Empfaenger".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
             ],
         };
@@ -987,6 +1046,7 @@ mod tests {
                         description: "Absender".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -997,6 +1057,7 @@ mod tests {
                         description: "Empfaenger".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
             ],
         };
@@ -1069,6 +1130,7 @@ mod tests {
                         description: "Absender".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1079,6 +1141,7 @@ mod tests {
                         description: "Empfaenger".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG4/SG12/NAD/3035".to_string(),
@@ -1089,6 +1152,7 @@ mod tests {
                         description: "Anschlussnutzer".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG4/SG12/NAD/3035".to_string(),
@@ -1099,6 +1163,7 @@ mod tests {
                         description: "Korrespondenzanschrift".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
             ],
         };
@@ -1168,6 +1233,7 @@ mod tests {
                         description: "Absender".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1178,6 +1244,7 @@ mod tests {
                         description: "Empfaenger".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
             ],
         };
@@ -1232,6 +1299,7 @@ mod tests {
                         description: "Absender".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1242,6 +1310,7 @@ mod tests {
                         description: "Empfaenger".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
             ],
         };
@@ -1327,12 +1396,14 @@ mod tests {
                     name: "Funktion des Ansprechpartners, Code".to_string(),
                     ahb_status: "Muss".to_string(),
                     codes: vec![],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG2/SG3/CTA/C056/3412".to_string(),
                     name: "Name vom Ansprechpartner".to_string(),
                     ahb_status: "X".to_string(),
                     codes: vec![],
+                    parent_group_ahb_status: None,
                 },
             ],
         };
@@ -1406,6 +1477,7 @@ mod tests {
                 name: "Funktion des Ansprechpartners, Code".to_string(),
                 ahb_status: "Muss".to_string(),
                 codes: vec![],
+                parent_group_ahb_status: None,
             }],
         };
 
@@ -1496,6 +1568,7 @@ mod tests {
                         description: "Absender".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1506,6 +1579,7 @@ mod tests {
                         description: "Empfaenger".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
             ],
         };
@@ -1529,6 +1603,155 @@ mod tests {
             ahb_errors
         );
         assert!(ahb_errors[0].message.contains("Empfaenger"));
+    }
+
+    #[test]
+    fn test_optional_group_variant_absent_no_error() {
+        // SG5 is "Kann" (optional) with LOC+Z16 present but LOC+Z17 absent.
+        // Field rules for LOC/3227 with Z17 and its children should NOT error
+        // because the parent group is optional and the variant is absent.
+        // Meanwhile, SG2 is "Muss" — missing NAD+MR MUST still error.
+        use mig_types::navigator::GroupNavigator;
+
+        struct TestNav;
+        impl GroupNavigator for TestNav {
+            fn find_segments_in_group(
+                &self,
+                segment_id: &str,
+                group_path: &[&str],
+                instance_index: usize,
+            ) -> Vec<OwnedSegment> {
+                match (segment_id, group_path, instance_index) {
+                    ("LOC", ["SG4", "SG5"], 0) => vec![OwnedSegment {
+                        id: "LOC".into(),
+                        elements: vec![vec!["Z16".into()], vec!["DE00012345".into()]],
+                        segment_number: 10,
+                    }],
+                    ("NAD", ["SG2"], 0) => vec![OwnedSegment {
+                        id: "NAD".into(),
+                        elements: vec![vec!["MS".into()]],
+                        segment_number: 3,
+                    }],
+                    _ => vec![],
+                }
+            }
+            fn find_segments_with_qualifier_in_group(
+                &self,
+                _: &str,
+                _: usize,
+                _: &str,
+                _: &[&str],
+                _: usize,
+            ) -> Vec<OwnedSegment> {
+                vec![]
+            }
+            fn group_instance_count(&self, group_path: &[&str]) -> usize {
+                match group_path {
+                    ["SG2"] => 1,
+                    ["SG4"] => 1,
+                    ["SG4", "SG5"] => 1, // only Z16 instance
+                    _ => 0,
+                }
+            }
+        }
+
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+        let nav = TestNav;
+
+        let segments = vec![
+            OwnedSegment {
+                id: "NAD".into(),
+                elements: vec![vec!["MS".into()]],
+                segment_number: 3,
+            },
+            OwnedSegment {
+                id: "LOC".into(),
+                elements: vec![vec!["Z16".into()], vec!["DE00012345".into()]],
+                segment_number: 10,
+            },
+        ];
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![
+                // SG2 "Muss" — NAD+MS present, NAD+MR missing → should error
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Absender".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MS".to_string(),
+                        description: "Absender".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                    parent_group_ahb_status: Some("Muss".to_string()),
+                },
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Empfaenger".to_string(),
+                    ahb_status: "Muss".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MR".to_string(),
+                        description: "Empfaenger".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                    parent_group_ahb_status: Some("Muss".to_string()),
+                },
+                // SG5 "Kann" — LOC+Z16 present, LOC+Z17 absent → should NOT error
+                AhbFieldRule {
+                    segment_path: "SG4/SG5/LOC/3227".to_string(),
+                    name: "Ortsangabe, Qualifier (Z16)".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "Z16".to_string(),
+                        description: "Marktlokation".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                    parent_group_ahb_status: Some("Kann".to_string()),
+                },
+                AhbFieldRule {
+                    segment_path: "SG4/SG5/LOC/3227".to_string(),
+                    name: "Ortsangabe, Qualifier (Z17)".to_string(),
+                    ahb_status: "Muss".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "Z17".to_string(),
+                        description: "Messlokation".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                    parent_group_ahb_status: Some("Kann".to_string()),
+                },
+            ],
+        };
+
+        let report = validator.validate_with_navigator(
+            &segments,
+            &workflow,
+            &external,
+            ValidationLevel::Conditions,
+            &nav,
+        );
+
+        let ahb_errors: Vec<_> = report
+            .by_category(ValidationCategory::Ahb)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+
+        // Exactly 1 error: NAD+MR missing (mandatory group)
+        // LOC+Z17 should NOT error (optional group variant absent)
+        assert_eq!(
+            ahb_errors.len(),
+            1,
+            "Expected only AHB001 for missing NAD+MR, got: {:?}",
+            ahb_errors
+        );
+        assert!(
+            ahb_errors[0].message.contains("Empfaenger"),
+            "Error should be for missing NAD+MR (Empfaenger)"
+        );
     }
 
     #[test]
@@ -1614,6 +1837,7 @@ mod tests {
                         description: "Absender".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1624,6 +1848,7 @@ mod tests {
                         description: "Empfaenger".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG4/SG12/NAD/3035".to_string(),
@@ -1634,6 +1859,7 @@ mod tests {
                         description: "Anschlussnutzer".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
                 AhbFieldRule {
                     segment_path: "SG4/SG12/NAD/3035".to_string(),
@@ -1644,6 +1870,7 @@ mod tests {
                         description: "Korrespondenzanschrift".to_string(),
                         ahb_status: "X".to_string(),
                     }],
+                    parent_group_ahb_status: None,
                 },
             ],
         };

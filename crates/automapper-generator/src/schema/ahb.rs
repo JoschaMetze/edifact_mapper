@@ -53,6 +53,12 @@ pub struct AhbFieldDefinition {
     /// MIG Number of the parent S_* segment (links to MigSegment.number).
     #[serde(default)]
     pub mig_number: Option<String>,
+    /// AHB status of the innermost parent group (e.g., "Kann", "Muss", "Soll [46]").
+    ///
+    /// This enables the validator to skip mandatory checks for fields inside
+    /// optional groups whose qualifier variant is absent from the message.
+    #[serde(default)]
+    pub parent_group_ahb_status: Option<String>,
 }
 
 /// A valid code value for an AHB field.

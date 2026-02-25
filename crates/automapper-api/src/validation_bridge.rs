@@ -51,6 +51,7 @@ pub fn ahb_workflow_from_pruefidentifikator(pruefid: &Pruefidentifikator) -> Ahb
                         ahb_status: c.ahb_status.clone().unwrap_or_else(|| "X".to_string()),
                     })
                     .collect(),
+                parent_group_ahb_status: f.parent_group_ahb_status.clone(),
             })
             .collect(),
     }
@@ -109,6 +110,7 @@ mod tests {
             description: Some("Rolle des Absenders".to_string()),
             codes: vec![],
             mig_number: Some("0042".to_string()),
+            parent_group_ahb_status: None,
         }];
 
         let schema = make_schema("55001", fields);
@@ -144,6 +146,7 @@ mod tests {
                 },
             ],
             mig_number: None,
+            parent_group_ahb_status: None,
         }];
 
         let schema = make_schema("55001", fields);
@@ -175,6 +178,7 @@ mod tests {
                 ahb_status: None, // No explicit status
             }],
             mig_number: None,
+            parent_group_ahb_status: None,
         }];
 
         let schema = make_schema("55001", fields);
@@ -229,6 +233,7 @@ mod tests {
                         description: None,
                         codes: vec![],
                         mig_number: None,
+                        parent_group_ahb_status: None,
                     }],
                     segment_numbers: vec![],
                 },
@@ -243,6 +248,7 @@ mod tests {
                         description: None,
                         codes: vec![],
                         mig_number: None,
+                        parent_group_ahb_status: None,
                     }],
                     segment_numbers: vec![],
                 },
@@ -272,6 +278,7 @@ mod tests {
                 description: None,
                 codes: vec![],
                 mig_number: Some("0010".to_string()),
+                parent_group_ahb_status: None,
             }],
             segment_numbers: vec!["0010".to_string()],
         };

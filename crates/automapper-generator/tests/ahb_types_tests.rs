@@ -9,6 +9,7 @@ fn test_ahb_field_is_mandatory() {
         description: None,
         codes: vec![],
         mig_number: None,
+        parent_group_ahb_status: None,
     };
     assert!(field_muss.is_mandatory());
 
@@ -19,6 +20,7 @@ fn test_ahb_field_is_mandatory() {
         description: None,
         codes: vec![],
         mig_number: None,
+        parent_group_ahb_status: None,
     };
     assert!(field_x.is_mandatory());
 
@@ -29,6 +31,7 @@ fn test_ahb_field_is_mandatory() {
         description: None,
         codes: vec![],
         mig_number: None,
+        parent_group_ahb_status: None,
     };
     assert!(!field_conditional.is_mandatory());
 }
@@ -42,6 +45,7 @@ fn test_ahb_field_condition_ids() {
         description: None,
         codes: vec![],
         mig_number: None,
+        parent_group_ahb_status: None,
     };
     let ids = field.condition_ids();
     assert_eq!(ids, vec!["1".to_string(), "2".to_string()]);
@@ -56,6 +60,7 @@ fn test_ahb_field_no_conditions() {
         description: None,
         codes: vec![],
         mig_number: None,
+        parent_group_ahb_status: None,
     };
     assert!(field.condition_ids().is_empty());
 }
@@ -94,6 +99,7 @@ fn test_ahb_schema_serialization_roundtrip() {
                     ahb_status: Some("X".to_string()),
                 }],
                 mig_number: None,
+                parent_group_ahb_status: None,
             }],
         }],
         bedingungen: vec![BedingungDefinition {
@@ -125,6 +131,7 @@ fn test_pruefidentifikator_summary() {
                 description: None,
                 codes: vec![],
                 mig_number: None,
+                parent_group_ahb_status: None,
             },
             AhbFieldDefinition {
                 segment_path: "SG2/NAD/3035".to_string(),
@@ -133,6 +140,7 @@ fn test_pruefidentifikator_summary() {
                 description: None,
                 codes: vec![],
                 mig_number: None,
+                parent_group_ahb_status: None,
             },
         ],
     };

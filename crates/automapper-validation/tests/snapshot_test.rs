@@ -85,6 +85,7 @@ fn test_snapshot_clean_report() {
             name: "Partnerrolle".to_string(),
             ahb_status: "Muss".to_string(),
             codes: vec![],
+            parent_group_ahb_status: None,
         }],
     };
 
@@ -123,18 +124,21 @@ fn test_snapshot_report_with_errors() {
                 name: "Partnerrolle".to_string(),
                 ahb_status: "Muss".to_string(),
                 codes: vec![],
+                parent_group_ahb_status: None,
             },
             AhbFieldRule {
                 segment_path: "SG2/NAD/C082/3039".to_string(),
                 name: "MP-ID des MSB".to_string(),
                 ahb_status: "Muss [182] ∧ [152]".to_string(),
                 codes: vec![],
+                parent_group_ahb_status: None,
             },
             AhbFieldRule {
                 segment_path: "SG4/DTM/C507/2380".to_string(),
                 name: "Lieferbeginn-Datum".to_string(),
                 ahb_status: "X".to_string(),
                 codes: vec![],
+                parent_group_ahb_status: None,
             },
         ],
     };

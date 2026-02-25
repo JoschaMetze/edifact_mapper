@@ -114,6 +114,7 @@ fn parse_workflow(
     let mut fields = Vec::new();
     let mut segment_numbers = Vec::new();
     let mut path_stack: Vec<String> = Vec::new();
+    let mut group_status_stack: Vec<Option<String>> = Vec::new();
     let mut current_segment_number: Option<String> = None;
     let mut buf = Vec::new();
 
@@ -138,7 +139,12 @@ fn parse_workflow(
                         current_segment_number = None;
                     }
 
-                    // Capture group-level conditional AHB_Status
+                    // Track group-level AHB_Status on the stack
+                    if name.starts_with("G_") {
+                        group_status_stack.push(get_attr(e, "AHB_Status"));
+                    }
+
+                    // Capture group-level conditional AHB_Status as a field entry
                     if let Some(ahb_status) = get_attr(e, "AHB_Status") {
                         if ahb_status.contains('[') {
                             let seg_path = path_stack.join("/");
@@ -151,6 +157,11 @@ fn parse_workflow(
                                 description: None,
                                 codes: Vec::new(),
                                 mig_number: current_segment_number.clone(),
+                                parent_group_ahb_status: group_status_stack
+                                    .iter()
+                                    .rev()
+                                    .skip(1) // skip self for group-level entries
+                                    .find_map(|s| s.clone()),
                             });
                         }
                     }
@@ -186,6 +197,9 @@ fn parse_workflow(
                             description: None,
                             codes,
                             mig_number: current_segment_number.clone(),
+                            parent_group_ahb_status: group_status_stack
+                                .last()
+                                .and_then(|s| s.clone()),
                         });
                     }
                     // Note: we already consumed the end tag in parse_ahb_codes
@@ -214,6 +228,9 @@ fn parse_workflow(
                             description: None,
                             codes: Vec::new(),
                             mig_number: current_segment_number.clone(),
+                            parent_group_ahb_status: group_status_stack
+                                .last()
+                                .and_then(|s| s.clone()),
                         });
                     }
                 }
@@ -227,6 +244,9 @@ fn parse_workflow(
                 {
                     if name.starts_with("S_") {
                         current_segment_number = None;
+                    }
+                    if name.starts_with("G_") {
+                        group_status_stack.pop();
                     }
                     path_stack.pop();
                 }
