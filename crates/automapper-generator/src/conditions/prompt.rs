@@ -5,7 +5,7 @@ use crate::schema::mig::MigSchema;
 pub struct ConditionContext<'a> {
     /// The EDIFACT message type (e.g., "UTILMD").
     pub message_type: &'a str,
-    /// The format version (e.g., "FV2510").
+    /// The format version (e.g., "FV2504").
     pub format_version: &'a str,
     /// Optional MIG schema for segment structure context.
     pub mig_schema: Option<&'a MigSchema>,
@@ -16,63 +16,121 @@ pub struct ConditionContext<'a> {
 /// Builds the system prompt for condition generation.
 ///
 /// The system prompt instructs Claude to generate Rust condition evaluator functions
-/// from German AHB condition descriptions.
+/// from German AHB (Anwendungshandbuch) condition descriptions.
 pub fn build_system_prompt() -> String {
-    r#"You are an expert Rust developer specializing in EDIFACT message validation.
+    r#"You are an expert Rust developer specializing in EDIFACT message validation for the German energy market.
 Your task is to generate Rust condition evaluator functions from German AHB (Anwendungshandbuch) condition descriptions.
 
-The generated functions will be used in a struct that implements ConditionEvaluator:
-```rust
-pub trait ConditionEvaluator: Send + Sync {
-    fn evaluate(&self, condition: u32, ctx: &EvaluationContext) -> ConditionResult;
-    fn is_external(&self, condition: u32) -> bool;
-}
-```
-
+The generated methods belong to a struct implementing the `ConditionEvaluator` trait.
 Each condition is implemented as a method with this signature:
 ```rust
-fn evaluate_NNN(&self, ctx: &EvaluationContext) -> ConditionResult {
-    // Your implementation here
+fn evaluate_NNN(&self, ctx: &EvaluationContext) -> ConditionResult
+```
+
+## EvaluationContext API
+
+The context provides access to **raw parsed EDIFACT segments**, NOT high-level business objects.
+
+```rust
+pub struct EvaluationContext<'a> {
+    /// The PID being validated (e.g., "55001").
+    pub pruefidentifikator: &'a str,
+    /// Provider for external conditions (business context outside the message).
+    pub external: &'a dyn ExternalConditionProvider,
+    /// All parsed EDIFACT segments in message order.
+    pub segments: &'a [OwnedSegment],
 }
 ```
 
-**EvaluationContext API:**
-- `ctx.transaktion` - the `UtilmdTransaktion` struct with all parsed business objects
-- `ctx.pruefidentifikator` - the current Pruefidentifikator being validated
-- `ctx.external` - an `&dyn ExternalConditionProvider` for conditions requiring runtime business context
+**Helper methods on EvaluationContext:**
+- `ctx.find_segment("NAD")` → `Option<&OwnedSegment>` — first segment with that ID
+- `ctx.find_segments("NAD")` → `Vec<&OwnedSegment>` — all segments with that ID
+- `ctx.find_segments_with_qualifier("NAD", 0, "MS")` → `Vec<&OwnedSegment>` — segments where `elements[0][0] == "MS"`
+- `ctx.has_segment("LOC")` → `bool` — whether any segment with that ID exists
 
-**UtilmdTransaktion fields:**
-- `ctx.transaktion.marktlokationen` - `Vec<WithValidity<Marktlokation, MarktlokationEdifact>>`
-- `ctx.transaktion.messlokationen` - `Vec<WithValidity<Messlokation, MesslokationEdifact>>`
-- `ctx.transaktion.netzlokationen` - `Vec<WithValidity<Netzlokation, NetzlokationEdifact>>`
-- `ctx.transaktion.zaehler` - `Vec<WithValidity<Zaehler, ZaehlerEdifact>>`
-- `ctx.transaktion.parteien` - `Vec<WithValidity<Geschaeftspartner, GeschaeftspartnerEdifact>>`
-- `ctx.transaktion.vertrag` - `Option<WithValidity<Vertrag, VertragEdifact>>`
-- `ctx.transaktion.prozessdaten` - `Prozessdaten`
-- `ctx.transaktion.zeitscheiben` - `Vec<Zeitscheibe>`
-- `ctx.transaktion.steuerbare_ressourcen` - `Vec<WithValidity<SteuerbareRessource, SteuerbareRessourceEdifact>>`
-- `ctx.transaktion.technische_ressourcen` - `Vec<WithValidity<TechnischeRessource, TechnischeRessourceEdifact>>`
+## OwnedSegment structure
 
-**ConditionResult:**
+```rust
+pub struct OwnedSegment {
+    pub id: String,                    // Segment tag: "NAD", "LOC", "STS", etc.
+    pub elements: Vec<Vec<String>>,    // elements[i][j] = component j of element i
+    pub segment_number: u32,           // Position in message
+}
+```
+
+**EDIFACT encoding → elements mapping:**
+Segment fields are separated by `+`, components within a field by `:`.
+Element index 0 is the first data element AFTER the segment tag.
+
+Example: `NAD+MS+9978842000002::293`
+→ `elements[0] = ["MS"]`             (qualifier)
+→ `elements[1] = ["9978842000002", "", "293"]`  (party ID, empty, code list)
+
+Example: `STS+7++E01+ZW4+E03`
+→ `elements[0] = ["7"]`    (status type)
+→ `elements[1] = []`       (empty element)
+→ `elements[2] = ["E01"]`  (Kategorie)
+→ `elements[3] = ["ZW4"]`  (Transaktionsgrund)
+→ `elements[4] = ["E03"]`  (Antwortcode)
+
+Example: `LOC+Z16+12345678900`
+→ `elements[0] = ["Z16"]`           (qualifier: Z16=Marktlokation)
+→ `elements[1] = ["12345678900"]`   (location ID)
+
+Example: `DTM+92:202505312200?+00:303`
+→ `elements[0] = ["92", "202505312200+00", "303"]`  (qualifier, value, format code)
+
+Example: `RFF+Z13:55001`
+→ `elements[0] = ["Z13", "55001"]`  (qualifier, reference value)
+
+**Accessing element values safely:**
+```rust
+// Get element i, component j:
+segment.elements.get(i).and_then(|e| e.get(j)).map(|s| s.as_str())
+
+// Check qualifier (element 0, component 0):
+segment.elements.get(0).and_then(|e| e.first()).is_some_and(|v| v == "MS")
+```
+
+## ConditionResult
+
 ```rust
 pub enum ConditionResult { True, False, Unknown }
 ```
 
-Return `ConditionResult::Unknown` when the condition cannot be determined from the available data.
+Return `Unknown` when the condition cannot be determined from the available segments.
 
-**Confidence levels:**
-- **high**: Simple field existence checks or value comparisons
-- **medium**: Logic that requires some interpretation but is straightforward
-- **low**: Complex temporal logic, business rules that need clarification
+## ExternalConditionProvider
 
-**External conditions:**
-Some conditions CANNOT be determined from the message alone. These depend on external runtime context such as:
-- Message splitting status ("Wenn Aufteilung vorhanden")
-- Data clearing requirements ("Datenclearing erforderlich")
+```rust
+pub trait ExternalConditionProvider: Send + Sync {
+    fn evaluate(&self, condition_name: &str) -> ConditionResult;
+}
+```
 
-Mark such conditions with `"is_external": true`. For external conditions, provide an `"external_name"` field with a meaningful snake_case name.
+## Confidence levels
+- **high**: Simple segment existence checks, qualifier comparisons, value matches
+- **medium**: Logic requiring some interpretation but structurally clear
+- **low**: Complex business rules that need clarification, temporal logic
 
-For **low confidence** conditions, set implementation to null.
+## External conditions
+Some conditions CANNOT be determined from the EDIFACT message alone — they depend on
+runtime business context (market participant roles, clearing status, product configuration).
+
+Mark such conditions with `"is_external": true` and provide `"external_name"` with a
+meaningful snake_case identifier.
+
+Common external conditions in UTILMD:
+- "Wenn Aufteilung vorhanden" → message_splitting
+- "Datenclearing erforderlich" → data_clearing_required
+- "Wenn MP-ID in ... in der Rolle LF/NB/ÜNB/MSB" → these check market participant roles which are NOT in the EDIFACT data. Mark as external with name like `recipient_is_lf`, `sender_is_nb`, etc.
+
+## IMPORTANT rules for generated code
+1. Only use the `EvaluationContext` API described above. Do NOT invent fields like `ctx.transaktion`, `ctx.prozessdaten`, etc.
+2. Access segment data through `ctx.find_segment()`, `ctx.find_segments_with_qualifier()`, and element indexing.
+3. Use `.get()` and `.and_then()` for safe element access — never panic on missing data.
+4. When a condition references a specific segment qualifier (e.g., "STS+7", "NAD+MR", "LOC+Z16"), use `ctx.find_segments_with_qualifier()`.
+5. For **low confidence** conditions, set implementation to null.
 
 Respond ONLY with a JSON object in this exact format (no markdown, no code blocks):
 {
@@ -140,7 +198,8 @@ pub fn build_user_prompt(conditions: &[ConditionInput], context: &ConditionConte
 fn build_segment_structure_context(mig: &MigSchema, conditions: &[ConditionInput]) -> String {
     use regex::Regex;
 
-    let de_regex = Regex::new(r"(?i)(?:SG\d+\s+)?([A-Z]{3})(?:\+[A-Z0-9]+)?\s+DE(\d{4})").unwrap();
+    let de_regex =
+        Regex::new(r"(?i)(?:SG\d+\s+)?([A-Z]{3})(?:\+[A-Z0-9]+)?\s+DE(\d{4})").unwrap();
     let qualifier_regex = Regex::new(r"\b([A-Z]{3})\+([A-Z0-9]+)").unwrap();
 
     let mut referenced_segments = std::collections::HashSet::new();
@@ -164,19 +223,13 @@ fn build_segment_structure_context(mig: &MigSchema, conditions: &[ConditionInput
 
     let mut context = String::new();
     context.push_str("## EDIFACT Segment Structure Reference\n");
-    context.push_str("This shows how to access data elements from the parsed transaction.\n\n");
+    context.push_str("Element positions map to `segment.elements[position]`.\n");
+    context.push_str("Component sub-indices map to `segment.elements[position][sub_index]`.\n\n");
 
     // Include segment definitions from MIG that are referenced
     for segment in &mig.segments {
         if referenced_segments.contains(&segment.id.to_uppercase()) {
-            context.push_str(&format!("### {} - {}\n", segment.id, segment.name));
-            for de in &segment.data_elements {
-                context.push_str(&format!(
-                    "- DE{} ({}): element position {}\n",
-                    de.id, de.name, de.position
-                ));
-            }
-            context.push('\n');
+            append_segment_doc(&mut context, &segment.id, &segment.name, &segment.data_elements, None);
         }
     }
 
@@ -188,6 +241,27 @@ fn build_segment_structure_context(mig: &MigSchema, conditions: &[ConditionInput
     context
 }
 
+fn append_segment_doc(
+    context: &mut String,
+    id: &str,
+    name: &str,
+    data_elements: &[crate::schema::mig::MigDataElement],
+    group_id: Option<&str>,
+) {
+    if let Some(gid) = group_id {
+        context.push_str(&format!("### {} - {} (in {})\n", id, name, gid));
+    } else {
+        context.push_str(&format!("### {} - {}\n", id, name));
+    }
+    for de in data_elements {
+        context.push_str(&format!(
+            "- elements[{}] — DE{} ({})\n",
+            de.position, de.id, de.name
+        ));
+    }
+    context.push('\n');
+}
+
 fn append_group_segments(
     context: &mut String,
     group: &crate::schema::mig::MigSegmentGroup,
@@ -195,17 +269,13 @@ fn append_group_segments(
 ) {
     for segment in &group.segments {
         if referenced.contains(&segment.id.to_uppercase()) {
-            context.push_str(&format!(
-                "### {} - {} (in {})\n",
-                segment.id, segment.name, group.id
-            ));
-            for de in &segment.data_elements {
-                context.push_str(&format!(
-                    "- DE{} ({}): element position {}\n",
-                    de.id, de.name, de.position
-                ));
-            }
-            context.push('\n');
+            append_segment_doc(
+                context,
+                &segment.id,
+                &segment.name,
+                &segment.data_elements,
+                Some(&group.id),
+            );
         }
     }
     for nested in &group.nested_groups {
@@ -216,28 +286,57 @@ fn append_group_segments(
 /// Default example implementations for few-shot prompting.
 pub fn default_example_implementations() -> Vec<String> {
     vec![
-        r#"// Example 1: Field existence check
+        r#"// Example 1: Check if a LOC+Z16 (Marktlokation) segment exists
 fn evaluate_494(&self, ctx: &EvaluationContext) -> ConditionResult {
-    if ctx.transaktion.marktlokationen.is_empty() {
+    if ctx.find_segments_with_qualifier("LOC", 0, "Z16").is_empty() {
         ConditionResult::False
     } else {
         ConditionResult::True
     }
 }"#
         .to_string(),
-        r#"// Example 2: Value comparison
+        r#"// Example 2: Check STS Transaktionsgrund value (element 3)
+// EDIFACT: STS+7++E01+ZW4+E03 → elements[3][0] = "ZW4"
 fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
-    match ctx.transaktion.prozessdaten.kategorie.as_deref() {
-        Some("E01") | Some("E02") => ConditionResult::True,
-        Some(_) => ConditionResult::False,
+    let sts_segments = ctx.find_segments_with_qualifier("STS", 0, "7");
+    match sts_segments.first() {
+        Some(sts) => {
+            match sts.elements.get(3).and_then(|e| e.first()).map(|s| s.as_str()) {
+                Some("E01") | Some("E02") => ConditionResult::True,
+                Some(_) => ConditionResult::False,
+                None => ConditionResult::Unknown,
+            }
+        }
         None => ConditionResult::Unknown,
     }
 }"#
         .to_string(),
-        r#"// Example 3: External condition
+        r#"// Example 3: External condition — cannot determine from message alone
 fn evaluate_1(&self, ctx: &EvaluationContext) -> ConditionResult {
-    // "Wenn Aufteilung vorhanden" — requires external context
+    // "Wenn Aufteilung vorhanden" — requires external business context
     ctx.external.evaluate("message_splitting")
+}"#
+        .to_string(),
+        r#"// Example 4: Check RFF reference value
+// EDIFACT: RFF+Z13:55001 → elements[0] = ["Z13", "55001"]
+fn evaluate_17(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let rff_segments = ctx.find_segments_with_qualifier("RFF", 0, "Z13");
+    if rff_segments.is_empty() {
+        ConditionResult::False
+    } else {
+        ConditionResult::True
+    }
+}"#
+        .to_string(),
+        r#"// Example 5: Check DTM date qualifier exists
+// EDIFACT: DTM+92:202505312200+00:303 → elements[0] = ["92", "202505312200+00", "303"]
+fn evaluate_42(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let dtm_segments = ctx.find_segments_with_qualifier("DTM", 0, "92");
+    if dtm_segments.is_empty() {
+        ConditionResult::False
+    } else {
+        ConditionResult::True
+    }
 }"#
         .to_string(),
     ]
