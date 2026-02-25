@@ -8,7 +8,7 @@ use crate::components::collapsible_panel::CollapsiblePanel;
 use crate::components::error_list::ErrorList;
 use crate::components::fixture_selector::FixtureSelector;
 use crate::components::segment_tree::SegmentTreeView;
-use crate::types::{ApiErrorEntry, Direction, SegmentNode};
+use crate::types::{ApiErrorEntry, Direction, SegmentNode, extract_validation_issues};
 
 /// Main converter page.
 #[component]
@@ -23,6 +23,9 @@ pub fn ConverterPage() -> impl IntoView {
     let (segments, set_segments) = signal(Vec::<SegmentNode>::new());
     let (errors, set_errors) = signal(Vec::<ApiErrorEntry>::new());
     let (duration_ms, set_duration_ms) = signal(0.0_f64);
+    let (validation_issues, set_validation_issues) = signal(Vec::<ApiErrorEntry>::new());
+    let (is_validating, set_is_validating) = signal(false);
+    let (_validation_duration_ms, set_validation_duration_ms) = signal(0.0_f64);
 
     // Convert action — uses v2 MIG-driven pipeline (EDIFACT -> BO4E only)
     let convert_action = Action::new_local(move |_: &()| {
@@ -31,6 +34,7 @@ pub fn ConverterPage() -> impl IntoView {
         async move {
             set_is_converting.set(true);
             set_errors.set(vec![]);
+            set_validation_issues.set(vec![]);
             set_segments.set(vec![]);
             set_output.set(String::new());
 
@@ -51,6 +55,13 @@ pub fn ConverterPage() -> impl IntoView {
                     let pretty = serde_json::to_string_pretty(&resp.result)
                         .unwrap_or_else(|_| resp.result.to_string());
                     set_output.set(pretty);
+
+                    // Extract validation results if present
+                    if let Some(ref validation) = resp.validation {
+                        set_validation_issues.set(extract_validation_issues(validation));
+                    } else {
+                        set_validation_issues.set(vec![]);
+                    }
                 }
                 Err(e) => {
                     set_errors.set(vec![ApiErrorEntry {
@@ -63,6 +74,33 @@ pub fn ConverterPage() -> impl IntoView {
             }
 
             set_is_converting.set(false);
+        }
+    });
+
+    // Standalone validate action — calls /api/v2/validate directly
+    let validate_action = Action::new_local(move |_: &()| {
+        let input_val = input.get();
+
+        async move {
+            set_is_validating.set(true);
+            set_validation_issues.set(vec![]);
+
+            match api_client::validate_v2(&input_val, "FV2504").await {
+                Ok(resp) => {
+                    set_validation_duration_ms.set(resp.duration_ms);
+                    set_validation_issues.set(extract_validation_issues(&resp.report));
+                }
+                Err(e) => {
+                    set_validation_issues.set(vec![ApiErrorEntry {
+                        code: "VALIDATION_ERROR".to_string(),
+                        message: e,
+                        location: None,
+                        severity: "error".to_string(),
+                    }]);
+                }
+            }
+
+            set_is_validating.set(false);
         }
     });
 
@@ -94,6 +132,20 @@ pub fn ConverterPage() -> impl IntoView {
         }
     });
 
+    let validation_badge = Signal::derive(move || {
+        let issues = validation_issues.get();
+        if issues.is_empty() {
+            String::new()
+        } else {
+            let error_count = issues.iter().filter(|i| i.severity == "error").count();
+            if error_count > 0 {
+                format!("{} errors", error_count)
+            } else {
+                format!("{} issues", issues.len())
+            }
+        }
+    });
+
     let segments_empty = Signal::derive(move || segments.get().is_empty());
 
     view! {
@@ -121,6 +173,13 @@ pub fn ConverterPage() -> impl IntoView {
                         disabled=move || is_converting.get()
                     >
                         {move || if is_converting.get() { "Converting..." } else { "Convert" }}
+                    </button>
+                    <button
+                        class="btn btn-secondary"
+                        on:click=move |_| { validate_action.dispatch(()); }
+                        disabled=move || is_validating.get()
+                    >
+                        {move || if is_validating.get() { "Validating..." } else { "Validate" }}
                     </button>
                 </div>
 
@@ -154,6 +213,14 @@ pub fn ConverterPage() -> impl IntoView {
                 initially_open=true
             >
                 <ErrorList errors=errors.into() />
+            </CollapsiblePanel>
+
+            <CollapsiblePanel
+                title="Validation"
+                badge=validation_badge
+                initially_open=true
+            >
+                <ErrorList errors=validation_issues.into() />
             </CollapsiblePanel>
         </div>
     }
