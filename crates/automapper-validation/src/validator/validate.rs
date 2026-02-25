@@ -4,6 +4,7 @@ use crate::eval::{
     ConditionEvaluator, ConditionExprEvaluator, ConditionResult, EvaluationContext,
     ExternalConditionProvider,
 };
+use mig_types::navigator::GroupNavigator;
 use mig_types::segment::OwnedSegment;
 
 use super::codes::ErrorCodes;
@@ -125,6 +126,37 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
             .with_pruefidentifikator(&workflow.pruefidentifikator);
 
         let ctx = EvaluationContext::new(&workflow.pruefidentifikator, external, segments);
+
+        if matches!(level, ValidationLevel::Conditions | ValidationLevel::Full) {
+            self.validate_conditions(workflow, &ctx, &mut report);
+        }
+
+        report
+    }
+
+    /// Validate with a group navigator for group-scoped condition queries.
+    ///
+    /// Same as [`validate`] but passes a `GroupNavigator` to the
+    /// `EvaluationContext`, enabling conditions to query segments within
+    /// specific group instances (e.g., "in derselben SG8").
+    pub fn validate_with_navigator(
+        &self,
+        segments: &[OwnedSegment],
+        workflow: &AhbWorkflow,
+        external: &dyn ExternalConditionProvider,
+        level: ValidationLevel,
+        navigator: &dyn GroupNavigator,
+    ) -> ValidationReport {
+        let mut report = ValidationReport::new(self.evaluator.message_type(), level)
+            .with_format_version(self.evaluator.format_version())
+            .with_pruefidentifikator(&workflow.pruefidentifikator);
+
+        let ctx = EvaluationContext::with_navigator(
+            &workflow.pruefidentifikator,
+            external,
+            segments,
+            navigator,
+        );
 
         if matches!(level, ValidationLevel::Conditions | ValidationLevel::Full) {
             self.validate_conditions(workflow, &ctx, &mut report);
@@ -559,5 +591,29 @@ mod tests {
         assert_eq!(report.level, ValidationLevel::Full);
         assert_eq!(report.message_type, "UTILMD");
         assert_eq!(report.pruefidentifikator.as_deref(), Some("55001"));
+    }
+
+    #[test]
+    fn test_validate_with_navigator_returns_report() {
+        let evaluator = MockEvaluator::all_true(&[]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+        let nav = crate::eval::NoOpGroupNavigator;
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![],
+        };
+
+        let report = validator.validate_with_navigator(
+            &[],
+            &workflow,
+            &external,
+            ValidationLevel::Full,
+            &nav,
+        );
+        assert!(report.is_valid());
     }
 }
