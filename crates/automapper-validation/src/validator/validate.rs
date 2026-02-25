@@ -184,13 +184,19 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
 
         for field in &workflow.fields {
             // If the parent group has a conditional status, evaluate it first.
-            // When the parent group condition evaluates to False, the entire
-            // group variant is not required — skip this field entirely.
+            // When the parent group condition evaluates to False or Unknown,
+            // the group variant is either not required or indeterminate —
+            // skip child field validation. The group-level AhbFieldRule entry
+            // itself already produces an Info "condition unknown" warning when
+            // Unknown, so the user is informed without false mandatory errors.
             if let Some(ref group_status) = field.parent_group_ahb_status {
                 if group_status.contains('[') {
                     let group_result = expr_eval.evaluate_status(group_status, ctx);
-                    if matches!(group_result, ConditionResult::False) {
-                        continue; // parent group not required, skip child field
+                    if matches!(
+                        group_result,
+                        ConditionResult::False | ConditionResult::Unknown
+                    ) {
+                        continue;
                     }
                 }
             }
@@ -1873,6 +1879,54 @@ mod tests {
         assert!(
             ahb_errors.is_empty(),
             "Expected no errors when conditional group variant [165]=False, got: {:?}",
+            ahb_errors
+        );
+    }
+
+    #[test]
+    fn test_conditional_group_variant_unknown_no_error() {
+        // When a parent group condition evaluates to Unknown (unimplemented
+        // condition), child fields should NOT produce mandatory-missing errors.
+        // The group-level entry itself will produce an Info "condition unknown".
+
+        // Condition 165 is NOT in the evaluator → returns Unknown
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![AhbFieldRule {
+                segment_path: "SG4/SG5/LOC/3227".to_string(),
+                name: "Ortsangabe, Qualifier (Z17)".to_string(),
+                ahb_status: "X".to_string(),
+                codes: vec![AhbCodeRule {
+                    value: "Z17".to_string(),
+                    description: "Messlokation".to_string(),
+                    ahb_status: "X".to_string(),
+                }],
+                parent_group_ahb_status: Some("Soll [165]".to_string()),
+            }],
+        };
+
+        let report = validator.validate(
+            &[],
+            &workflow,
+            &external,
+            ValidationLevel::Conditions,
+        );
+
+        let ahb_errors: Vec<_> = report
+            .by_category(ValidationCategory::Ahb)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+
+        // No errors: parent group condition [165] is Unknown → skip child fields
+        assert!(
+            ahb_errors.is_empty(),
+            "Expected no errors when parent group condition is Unknown, got: {:?}",
             ahb_errors
         );
     }
