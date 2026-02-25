@@ -114,6 +114,10 @@ enum Commands {
         /// Dry run — parse only, don't call Claude
         #[arg(long, default_value = "false")]
         dry_run: bool,
+
+        /// Maximum number of conditions to generate (useful for testing)
+        #[arg(long)]
+        limit: Option<usize>,
     },
 
     /// Generate TOML mapping scaffolds from PID schema
@@ -392,6 +396,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             mig_path,
             batch_size,
             dry_run,
+            limit,
         } => {
             eprintln!(
                 "Generating conditions for {} {} (incremental={})",
@@ -474,10 +479,15 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             }
 
             // Build condition inputs
+            let to_regenerate = if let Some(max) = limit {
+                eprintln!("Limiting to first {} conditions (--limit)", max);
+                &decision.to_regenerate[..max.min(decision.to_regenerate.len())]
+            } else {
+                &decision.to_regenerate
+            };
             let condition_inputs: Vec<
                 automapper_generator::conditions::condition_types::ConditionInput,
-            > = decision
-                .to_regenerate
+            > = to_regenerate
                 .iter()
                 .map(
                     |c| automapper_generator::conditions::condition_types::ConditionInput {
