@@ -142,11 +142,8 @@ fn test_validate_utilmd_lieferbeginn_all_fields_present() {
     let validator = EdifactValidator::new(evaluator);
     let external = NoOpExternalProvider;
 
-    // Note: with empty input, parse_segments returns empty vec,
-    // so all mandatory fields will be missing
-    let report = validator
-        .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-        .unwrap();
+    // With no segments, all mandatory fields will be missing
+    let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
     // All Muss fields are missing -> errors
     assert!(!report.is_valid());
@@ -168,9 +165,7 @@ fn test_validate_conditional_fields_not_required_when_false() {
     let validator = EdifactValidator::new(evaluator);
     let external = NoOpExternalProvider;
 
-    let report = validator
-        .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-        .unwrap();
+    let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
     // [182]=F makes AND false -> field not required -> no error
     assert!(report.is_valid());
@@ -190,9 +185,7 @@ fn test_validate_mixed_mandatory_and_conditional_fields() {
     let validator = EdifactValidator::new(evaluator);
     let external = NoOpExternalProvider;
 
-    let report = validator
-        .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-        .unwrap();
+    let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
     // NAD is missing (error), DTM condition is false (no error)
     assert!(!report.is_valid());
@@ -216,9 +209,7 @@ fn test_validate_unknown_conditions_produce_info() {
     let validator = EdifactValidator::new(evaluator);
     let external = NoOpExternalProvider;
 
-    let report = validator
-        .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-        .unwrap();
+    let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
     // [182]=T, [8]=Unknown -> AND = Unknown -> info, not error
     assert!(report.is_valid());
@@ -244,9 +235,7 @@ fn test_validate_xor_expression() {
     let validator = EdifactValidator::new(evaluator);
     let external = NoOpExternalProvider;
 
-    let report = validator
-        .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-        .unwrap();
+    let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
     // XOR(T,F) = T -> field required, DTM missing -> error
     assert!(!report.is_valid());
@@ -268,9 +257,7 @@ fn test_validate_structure_level_ignores_conditions() {
     let validator = EdifactValidator::new(evaluator);
     let external = NoOpExternalProvider;
 
-    let report = validator
-        .validate(b"", ValidationLevel::Structure, &external, Some(&workflow))
-        .unwrap();
+    let report = validator.validate(&[], &workflow, &external, ValidationLevel::Structure);
 
     // Structure level does not check AHB conditions
     assert_eq!(report.by_category(ValidationCategory::Ahb).count(), 0);
@@ -284,9 +271,7 @@ fn test_validate_report_serialization() {
 
     let workflow = make_workflow(vec![simple_field("NAD", "Partnerrolle", "Muss")]);
 
-    let report = validator
-        .validate(b"", ValidationLevel::Full, &external, Some(&workflow))
-        .unwrap();
+    let report = validator.validate(&[], &workflow, &external, ValidationLevel::Full);
 
     // Serialize to JSON and back
     let json = serde_json::to_string_pretty(&report).unwrap();
@@ -306,9 +291,7 @@ fn test_validate_kann_field_not_mandatory() {
     let validator = EdifactValidator::new(evaluator);
     let external = NoOpExternalProvider;
 
-    let report = validator
-        .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-        .unwrap();
+    let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
     // "Kann" is not mandatory even when condition is True
     assert!(report.is_valid());
@@ -323,9 +306,7 @@ fn test_validate_multiple_workflows_same_validator() {
 
     // First workflow
     let wf1 = make_workflow(vec![simple_field("NAD", "Partnerrolle", "Muss")]);
-    let report1 = validator
-        .validate(b"", ValidationLevel::Conditions, &external, Some(&wf1))
-        .unwrap();
+    let report1 = validator.validate(&[], &wf1, &external, ValidationLevel::Conditions);
     assert_eq!(report1.error_count(), 1);
 
     // Second workflow with different fields
@@ -333,9 +314,7 @@ fn test_validate_multiple_workflows_same_validator() {
         simple_field("DTM", "Datum", "Muss"),
         simple_field("BGM", "Nachrichtentyp", "Muss"),
     ]);
-    let report2 = validator
-        .validate(b"", ValidationLevel::Conditions, &external, Some(&wf2))
-        .unwrap();
+    let report2 = validator.validate(&[], &wf2, &external, ValidationLevel::Conditions);
     assert_eq!(report2.error_count(), 2);
 }
 
@@ -350,9 +329,7 @@ fn test_validate_severity_ordering_in_report() {
         simple_field("DTM", "Datum", "X"),
     ]);
 
-    let report = validator
-        .validate(b"", ValidationLevel::Full, &external, Some(&workflow))
-        .unwrap();
+    let report = validator.validate(&[], &workflow, &external, ValidationLevel::Full);
 
     // Both fields are mandatory and missing
     assert_eq!(report.error_count(), 2);
@@ -368,11 +345,17 @@ fn test_validate_report_metadata() {
     let validator = EdifactValidator::new(evaluator);
     let external = NoOpExternalProvider;
 
-    let report = validator
-        .validate(b"", ValidationLevel::Conditions, &external, None)
-        .unwrap();
+    let workflow = AhbWorkflow {
+        pruefidentifikator: "11001".to_string(),
+        description: String::new(),
+        communication_direction: None,
+        fields: vec![],
+    };
+
+    let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
     assert_eq!(report.format_version.as_deref(), Some("FV2510"));
     assert_eq!(report.level, ValidationLevel::Conditions);
-    assert_eq!(report.message_type, "UNKNOWN"); // Empty input -> no UNH
+    assert_eq!(report.message_type, "UTILMD"); // Message type from evaluator
+    assert_eq!(report.pruefidentifikator.as_deref(), Some("11001"));
 }

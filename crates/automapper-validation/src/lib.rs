@@ -22,9 +22,9 @@
 //! // Parse a condition expression
 //! let expr = ConditionParser::parse("Muss [182] ∧ [152]").unwrap();
 //!
-//! // Evaluate using a condition evaluator
+//! // Validate pre-parsed segments against AHB workflow
 //! let validator = EdifactValidator::new(my_evaluator);
-//! let report = validator.validate(edifact_bytes, ValidationLevel::Full, &external, None)?;
+//! let report = validator.validate(&segments, &workflow, &external, ValidationLevel::Full);
 //! ```
 
 pub mod error;
@@ -40,3 +40,6 @@ pub use validator::{
     EdifactValidator, ErrorCodes, Severity, ValidationCategory, ValidationIssue, ValidationLevel,
     ValidationReport,
 };
+
+// Re-export AHB workflow types for callers
+pub use validator::validate::{AhbCodeRule, AhbFieldRule, AhbWorkflow};

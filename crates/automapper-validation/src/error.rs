@@ -27,10 +27,6 @@ pub enum ParseError {
 /// Errors that can occur during validation.
 #[derive(Debug, thiserror::Error)]
 pub enum ValidationError {
-    /// EDIFACT parse error.
-    #[error(transparent)]
-    Parse(#[from] edifact_parser::ParseError),
-
     /// Condition expression parse error.
     #[error("condition expression parse error: {0}")]
     ConditionParse(#[from] ParseError),

@@ -1,10 +1,10 @@
 //! Main EdifactValidator implementation.
 
-use crate::error::ValidationError;
 use crate::eval::{
     ConditionEvaluator, ConditionExprEvaluator, ConditionResult, EvaluationContext,
     ExternalConditionProvider,
 };
+use mig_types::segment::OwnedSegment;
 
 use super::codes::ErrorCodes;
 use super::issue::{Severity, ValidationCategory, ValidationIssue};
@@ -61,6 +61,10 @@ pub struct AhbWorkflow {
 
 /// Validates EDIFACT messages against AHB business rules.
 ///
+/// The validator is a pure validation engine: it receives pre-parsed
+/// segments, an AHB workflow, and an external condition provider.
+/// Parsing and message-type detection are the caller's responsibility.
+///
 /// The validator is generic over the `ConditionEvaluator` implementation,
 /// which is typically generated from AHB XML schemas.
 ///
@@ -75,11 +79,11 @@ pub struct AhbWorkflow {
 /// let external = NoOpExternalProvider;
 ///
 /// let report = validator.validate(
-///     edifact_bytes,
-///     ValidationLevel::Full,
+///     &segments,
+///     &ahb_workflow,
 ///     &external,
-///     Some(&ahb_workflow),
-/// )?;
+///     ValidationLevel::Full,
+/// );
 ///
 /// if !report.is_valid() {
 ///     for error in report.errors() {
@@ -97,115 +101,36 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
         Self { evaluator }
     }
 
-    /// Validate an EDIFACT message.
+    /// Validate pre-parsed EDIFACT segments against an AHB workflow.
     ///
     /// # Arguments
     ///
-    /// * `input` - Raw EDIFACT bytes
-    /// * `level` - Validation strictness level
+    /// * `segments` - Pre-parsed EDIFACT segments
+    /// * `workflow` - AHB workflow definition for the PID
     /// * `external` - Provider for external conditions
-    /// * `workflow` - Optional AHB workflow definition for the PID
+    /// * `level` - Validation strictness level
     ///
     /// # Returns
     ///
-    /// A `ValidationReport` with all issues found, or an error if
-    /// the EDIFACT content could not be parsed at all.
+    /// A `ValidationReport` with all issues found.
     pub fn validate(
         &self,
-        input: &[u8],
-        level: ValidationLevel,
+        segments: &[OwnedSegment],
+        workflow: &AhbWorkflow,
         external: &dyn ExternalConditionProvider,
-        workflow: Option<&AhbWorkflow>,
-    ) -> Result<ValidationReport, ValidationError> {
-        let input_str = std::str::from_utf8(input)
-            .map_err(|_| ValidationError::Parse(edifact_parser::ParseError::UnexpectedEof))?;
+        level: ValidationLevel,
+    ) -> ValidationReport {
+        let mut report = ValidationReport::new(self.evaluator.message_type(), level)
+            .with_format_version(self.evaluator.format_version())
+            .with_pruefidentifikator(&workflow.pruefidentifikator);
 
-        // Collect segments using the parser
-        let segments = self.parse_segments(input_str)?;
+        let ctx = EvaluationContext::new(&workflow.pruefidentifikator, external, segments);
 
-        // Detect message type from UNH segment
-        let message_type = self.detect_message_type(&segments).unwrap_or("UNKNOWN");
-
-        // Build the report
-        let mut report = ValidationReport::new(message_type, level)
-            .with_format_version(self.evaluator.format_version());
-
-        // Detect PID from RFF+Z13
-        let pid_string = self
-            .detect_pruefidentifikator(&segments)
-            .map(|s| s.to_string());
-        if let Some(ref pid) = pid_string {
-            report.pruefidentifikator = Some(pid.clone());
-        }
-
-        // Create evaluation context
-        let pid_ref = pid_string.as_deref().unwrap_or("");
-        let ctx = EvaluationContext::new(pid_ref, external, &segments);
-
-        // Structure validation (always performed)
-        self.validate_structure(&segments, &mut report);
-
-        // Condition validation (if level >= Conditions and workflow provided)
         if matches!(level, ValidationLevel::Conditions | ValidationLevel::Full) {
-            if let Some(wf) = workflow {
-                self.validate_conditions(wf, &ctx, &mut report);
-            }
+            self.validate_conditions(workflow, &ctx, &mut report);
         }
 
-        Ok(report)
-    }
-
-    /// Parse EDIFACT content into segments.
-    fn parse_segments(
-        &self,
-        _input: &str,
-    ) -> Result<Vec<mig_types::segment::OwnedSegment>, ValidationError> {
-        // TODO: Use EdifactStreamParser from edifact-parser crate to parse segments,
-        // then convert to OwnedSegment. For now, return empty vec.
-        Ok(Vec::new())
-    }
-
-    /// Detect the message type from the UNH segment.
-    fn detect_message_type<'a>(
-        &self,
-        segments: &'a [mig_types::segment::OwnedSegment],
-    ) -> Option<&'a str> {
-        segments
-            .iter()
-            .find(|s| s.id == "UNH")
-            .and_then(|unh| unh.elements.get(1))
-            .and_then(|e| e.first())
-            .map(|s| s.as_str())
-    }
-
-    /// Detect the Pruefidentifikator from RFF+Z13.
-    fn detect_pruefidentifikator<'a>(
-        &self,
-        segments: &'a [mig_types::segment::OwnedSegment],
-    ) -> Option<&'a str> {
-        segments.iter().find_map(|s| {
-            if s.id != "RFF" {
-                return None;
-            }
-            let qualifier = s.elements.first()?.first()?;
-            if qualifier == "Z13" {
-                s.elements.first()?.get(1).map(|s| s.as_str())
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Validate EDIFACT structure (segment presence, ordering).
-    fn validate_structure(
-        &self,
-        _segments: &[mig_types::segment::OwnedSegment],
-        _report: &mut ValidationReport,
-    ) {
-        // TODO: Implement MIG structure validation when MIG schema types
-        // are available from automapper-generator. For now, this is a
-        // placeholder that will be filled in when the generator crate
-        // provides MigSchema types.
+        report
     }
 
     /// Validate AHB conditions for each field in the workflow.
@@ -432,10 +357,8 @@ mod tests {
             }],
         };
 
-        // Validate empty EDIFACT (will have no segments)
-        let report = validator
-            .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-            .unwrap();
+        // Validate with no segments
+        let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
         // Should have an error for missing mandatory field
         assert!(!report.is_valid());
@@ -464,9 +387,7 @@ mod tests {
             }],
         };
 
-        let report = validator
-            .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-            .unwrap();
+        let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
         // Condition is false, so field is not required - no error
         assert!(report.is_valid());
@@ -492,9 +413,7 @@ mod tests {
             }],
         };
 
-        let report = validator
-            .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-            .unwrap();
+        let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
         // Should be valid (Unknown is not an error) but have an info issue
         assert!(report.is_valid());
@@ -522,9 +441,7 @@ mod tests {
         };
 
         // With Structure level, conditions are not checked
-        let report = validator
-            .validate(b"", ValidationLevel::Structure, &external, Some(&workflow))
-            .unwrap();
+        let report = validator.validate(&[], &workflow, &external, ValidationLevel::Structure);
 
         // No AHB errors because conditions were not evaluated
         assert!(report.is_valid());
@@ -532,15 +449,19 @@ mod tests {
     }
 
     #[test]
-    fn test_validate_no_workflow_no_condition_errors() {
+    fn test_validate_empty_workflow_no_condition_errors() {
         let evaluator = MockEvaluator::all_true(&[]);
         let validator = EdifactValidator::new(evaluator);
         let external = NoOpExternalProvider;
 
-        // No workflow provided
-        let report = validator
-            .validate(b"", ValidationLevel::Full, &external, None)
-            .unwrap();
+        let empty_workflow = AhbWorkflow {
+            pruefidentifikator: String::new(),
+            description: String::new(),
+            communication_direction: None,
+            fields: vec![],
+        };
+
+        let report = validator.validate(&[], &empty_workflow, &external, ValidationLevel::Full);
 
         assert!(report.is_valid());
     }
@@ -563,9 +484,7 @@ mod tests {
             }],
         };
 
-        let report = validator
-            .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-            .unwrap();
+        let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
         // Bare "Muss" with no conditions -> unconditionally required -> missing = error
         assert!(!report.is_valid());
@@ -590,9 +509,7 @@ mod tests {
             }],
         };
 
-        let report = validator
-            .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-            .unwrap();
+        let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
         assert!(!report.is_valid());
         let errors: Vec<_> = report.errors().collect();
@@ -617,9 +534,7 @@ mod tests {
             }],
         };
 
-        let report = validator
-            .validate(b"", ValidationLevel::Conditions, &external, Some(&workflow))
-            .unwrap();
+        let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
         // Soll is not mandatory, so missing is not an error
         assert!(report.is_valid());
@@ -631,11 +546,18 @@ mod tests {
         let validator = EdifactValidator::new(evaluator);
         let external = NoOpExternalProvider;
 
-        let report = validator
-            .validate(b"", ValidationLevel::Full, &external, None)
-            .unwrap();
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: String::new(),
+            communication_direction: None,
+            fields: vec![],
+        };
+
+        let report = validator.validate(&[], &workflow, &external, ValidationLevel::Full);
 
         assert_eq!(report.format_version.as_deref(), Some("FV2510"));
         assert_eq!(report.level, ValidationLevel::Full);
+        assert_eq!(report.message_type, "UTILMD");
+        assert_eq!(report.pruefidentifikator.as_deref(), Some("55001"));
     }
 }
