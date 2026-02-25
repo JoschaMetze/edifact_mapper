@@ -183,25 +183,23 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
             match condition_result {
                 ConditionResult::True => {
                     // Condition is met - field is required/applicable
-                    if is_mandatory_status(&field.ahb_status) {
-                        let segment_id = extract_segment_id(&field.segment_path);
-                        if !ctx.has_segment(&segment_id)
-                            && !is_parent_group_absent(ctx, &field.segment_path)
-                        {
-                            report.add_issue(
-                                ValidationIssue::new(
-                                    Severity::Error,
-                                    ValidationCategory::Ahb,
-                                    ErrorCodes::MISSING_REQUIRED_FIELD,
-                                    format!(
-                                        "Required field '{}' at {} is missing",
-                                        field.name, field.segment_path
-                                    ),
-                                )
-                                .with_field_path(&field.segment_path)
-                                .with_rule(&field.ahb_status),
-                            );
-                        }
+                    if is_mandatory_status(&field.ahb_status)
+                        && !is_field_present(ctx, field)
+                        && !is_parent_group_absent(ctx, &field.segment_path)
+                    {
+                        report.add_issue(
+                            ValidationIssue::new(
+                                Severity::Error,
+                                ValidationCategory::Ahb,
+                                ErrorCodes::MISSING_REQUIRED_FIELD,
+                                format!(
+                                    "Required field '{}' at {} is missing",
+                                    field.name, field.segment_path
+                                ),
+                            )
+                            .with_field_path(&field.segment_path)
+                            .with_rule(&field.ahb_status),
+                        );
                     }
                 }
                 ConditionResult::False => {
@@ -397,6 +395,33 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
             }
         }
     }
+}
+
+/// Check if a field's required segment instance is present.
+///
+/// For fields with qualifier codes (e.g., `SG2/NAD/3035` with `[MR]`),
+/// checks that a segment with one of those qualifier values exists.
+/// Otherwise just checks that any segment with the tag is present.
+///
+/// This prevents false negatives where `NAD+MS` is present but the
+/// validator incorrectly says NAD "exists" when `NAD+MR` is missing.
+fn is_field_present(ctx: &EvaluationContext, field: &AhbFieldRule) -> bool {
+    let segment_id = extract_segment_id(&field.segment_path);
+
+    // If field has qualifier codes and is a simple qualifier path,
+    // check for a segment with one of those specific qualifiers.
+    if !field.codes.is_empty() && is_qualifier_field(&field.segment_path) {
+        let required_codes: Vec<&str> = field.codes.iter().map(|c| c.value.as_str()).collect();
+        let matching = ctx.find_segments(&segment_id);
+        return matching.iter().any(|seg| {
+            seg.elements
+                .first()
+                .and_then(|e| e.first())
+                .is_some_and(|v| required_codes.contains(&v.as_str()))
+        });
+    }
+
+    ctx.has_segment(&segment_id)
 }
 
 /// Check if a field's parent group is absent (has zero instances).
@@ -1110,6 +1135,126 @@ mod tests {
     fn test_is_qualifier_field_bare_segment() {
         assert!(!is_qualifier_field("NAD"));
         assert!(!is_qualifier_field("SG2/NAD"));
+    }
+
+    #[test]
+    fn test_missing_qualifier_instance_is_detected() {
+        // NAD+MS is present but NAD+MR is missing.
+        // The Empfaenger field requires [MR] → should produce AHB001.
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+
+        let nad_ms = OwnedSegment {
+            id: "NAD".to_string(),
+            elements: vec![vec!["MS".to_string()]],
+            segment_number: 3,
+        };
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Absender".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MS".to_string(),
+                        description: "Absender".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Empfaenger".to_string(),
+                    ahb_status: "Muss".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MR".to_string(),
+                        description: "Empfaenger".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+            ],
+        };
+
+        let report =
+            validator.validate(&[nad_ms], &workflow, &external, ValidationLevel::Conditions);
+
+        let ahb_errors: Vec<_> = report
+            .by_category(ValidationCategory::Ahb)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+        assert_eq!(
+            ahb_errors.len(),
+            1,
+            "Expected AHB001 for missing NAD+MR, got: {:?}",
+            ahb_errors
+        );
+        assert!(ahb_errors[0].message.contains("Empfaenger"));
+    }
+
+    #[test]
+    fn test_present_qualifier_instance_no_error() {
+        // Both NAD+MS and NAD+MR present → no AHB001 for either.
+        let evaluator = MockEvaluator::new(vec![]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+
+        let segments = vec![
+            OwnedSegment {
+                id: "NAD".to_string(),
+                elements: vec![vec!["MS".to_string()]],
+                segment_number: 3,
+            },
+            OwnedSegment {
+                id: "NAD".to_string(),
+                elements: vec![vec!["MR".to_string()]],
+                segment_number: 4,
+            },
+        ];
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Absender".to_string(),
+                    ahb_status: "Muss".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MS".to_string(),
+                        description: "Absender".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+                AhbFieldRule {
+                    segment_path: "SG2/NAD/3035".to_string(),
+                    name: "Empfaenger".to_string(),
+                    ahb_status: "Muss".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "MR".to_string(),
+                        description: "Empfaenger".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                },
+            ],
+        };
+
+        let report =
+            validator.validate(&segments, &workflow, &external, ValidationLevel::Conditions);
+
+        let ahb_errors: Vec<_> = report
+            .by_category(ValidationCategory::Ahb)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+        assert!(
+            ahb_errors.is_empty(),
+            "Expected no AHB001 errors, got: {:?}",
+            ahb_errors
+        );
     }
 
     #[test]
