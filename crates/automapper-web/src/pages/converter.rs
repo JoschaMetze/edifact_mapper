@@ -8,7 +8,7 @@ use crate::components::collapsible_panel::CollapsiblePanel;
 use crate::components::error_list::ErrorList;
 use crate::components::fixture_selector::FixtureSelector;
 use crate::components::segment_tree::SegmentTreeView;
-use crate::types::{ApiErrorEntry, Direction, SegmentNode, extract_validation_issues};
+use crate::types::{extract_validation_issues, ApiErrorEntry, Direction, SegmentNode};
 
 /// Main converter page.
 #[component]
