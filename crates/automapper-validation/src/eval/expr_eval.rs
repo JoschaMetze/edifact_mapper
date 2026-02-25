@@ -658,8 +658,7 @@ mod tests {
         let ctx = make_ctx(&ext, &segs);
         let expr_eval = ConditionExprEvaluator::new(&eval);
 
-        let (result, unknown_ids) =
-            expr_eval.evaluate_status_detailed("Muss [182] ∧ [8]", &ctx);
+        let (result, unknown_ids) = expr_eval.evaluate_status_detailed("Muss [182] ∧ [8]", &ctx);
         assert_eq!(result, CR::Unknown);
         assert_eq!(unknown_ids, vec![8]);
     }
@@ -687,22 +686,19 @@ mod tests {
         let ctx = make_ctx(&ext, &segs);
         let expr_eval = ConditionExprEvaluator::new(&eval);
 
-        let (result, unknown_ids) =
-            expr_eval.evaluate_status_detailed("Muss [182] ∧ [152]", &ctx);
+        let (result, unknown_ids) = expr_eval.evaluate_status_detailed("Muss [182] ∧ [152]", &ctx);
         assert_eq!(result, CR::True);
         assert!(unknown_ids.is_empty());
     }
 
     #[test]
     fn test_detailed_no_unknown_when_false() {
-        let eval = MockEvaluator::new()
-            .with_condition(182, CR::False);
+        let eval = MockEvaluator::new().with_condition(182, CR::False);
         let (ext, segs) = empty_context();
         let ctx = make_ctx(&ext, &segs);
         let expr_eval = ConditionExprEvaluator::new(&eval);
 
-        let (result, unknown_ids) =
-            expr_eval.evaluate_status_detailed("Muss [182] ∧ [8]", &ctx);
+        let (result, unknown_ids) = expr_eval.evaluate_status_detailed("Muss [182] ∧ [8]", &ctx);
         assert_eq!(result, CR::False);
         assert!(unknown_ids.is_empty());
     }

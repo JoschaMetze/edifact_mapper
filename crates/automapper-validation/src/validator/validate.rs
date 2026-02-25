@@ -1920,12 +1920,7 @@ mod tests {
             }],
         };
 
-        let report = validator.validate(
-            &[],
-            &workflow,
-            &external,
-            ValidationLevel::Conditions,
-        );
+        let report = validator.validate(&[], &workflow, &external, ValidationLevel::Conditions);
 
         let ahb_errors: Vec<_> = report
             .by_category(ValidationCategory::Ahb)

@@ -60,23 +60,11 @@ impl Bo4eFieldIndex {
             let mut fields = Vec::new();
 
             // Process [fields]
-            Self::collect_fields(
-                &def.fields,
-                &group_path,
-                mig,
-                false,
-                &mut fields,
-            );
+            Self::collect_fields(&def.fields, &group_path, mig, false, &mut fields);
 
             // Process [companion_fields]
             if let Some(ref companion) = def.companion_fields {
-                Self::collect_fields(
-                    companion,
-                    &group_path,
-                    mig,
-                    true,
-                    &mut fields,
-                );
+                Self::collect_fields(companion, &group_path, mig, true, &mut fields);
             }
 
             if !fields.is_empty() {
@@ -145,9 +133,7 @@ impl Bo4eFieldIndex {
             };
 
             // Resolve via MIG to get the AHB-style EDIFACT path
-            if let Some(edifact_path) =
-                resolve_edifact_path(group_path, &parsed, mig)
-            {
+            if let Some(edifact_path) = resolve_edifact_path(group_path, &parsed, mig) {
                 out.push(FieldEntry {
                     edifact_path,
                     bo4e_field: target.to_string(),
@@ -261,11 +247,7 @@ fn resolve_edifact_path(
     let segment = find_segment_in_mig(mig, group_path, &parsed.segment_tag)?;
 
     // Build a unified list of (position, element_kind) sorted by position
-    let resolved = resolve_element_at_position(
-        segment,
-        parsed.element_idx,
-        parsed.component_idx,
-    )?;
+    let resolved = resolve_element_at_position(segment, parsed.element_idx, parsed.component_idx)?;
 
     let prefix = if group_path.is_empty() {
         parsed.segment_tag.clone()
@@ -343,7 +325,11 @@ fn resolve_element_at_position(
     component_idx: Option<usize>,
 ) -> Option<ResolvedElement> {
     // Check composites first — they have a position field
-    if let Some(composite) = segment.composites.iter().find(|c| c.position == element_idx) {
+    if let Some(composite) = segment
+        .composites
+        .iter()
+        .find(|c| c.position == element_idx)
+    {
         let comp_idx = component_idx.unwrap_or(0);
         // Find the data element at the component sub-index by sorting by position
         let mut sub_elements: Vec<_> = composite.data_elements.iter().collect();
@@ -356,7 +342,11 @@ fn resolve_element_at_position(
     }
 
     // Check standalone data elements
-    if let Some(de) = segment.data_elements.iter().find(|d| d.position == element_idx) {
+    if let Some(de) = segment
+        .data_elements
+        .iter()
+        .find(|d| d.position == element_idx)
+    {
         return Some(ResolvedElement::DataElement(de.id.clone()));
     }
 
@@ -452,7 +442,10 @@ mod tests {
 
     #[test]
     fn test_to_camel_first_lower() {
-        assert_eq!(to_camel_first_lower("MarktlokationEdifact"), "marktlokationEdifact");
+        assert_eq!(
+            to_camel_first_lower("MarktlokationEdifact"),
+            "marktlokationEdifact"
+        );
         assert_eq!(to_camel_first_lower("Foo"), "foo");
         assert_eq!(to_camel_first_lower(""), "");
     }

@@ -92,7 +92,10 @@ pub(crate) async fn validate_bo4e(
         .transaktionen
         .first()
         .and_then(|tx| tx.transaktionsdaten.get("pruefidentifikator"))
-        .and_then(|v| v.as_str().or_else(|| v.get("code").and_then(|c| c.as_str())))
+        .and_then(|v| {
+            v.as_str()
+                .or_else(|| v.get("code").and_then(|c| c.as_str()))
+        })
         .ok_or_else(|| ApiError::BadRequest {
             message: "No pruefidentifikator found in transaktionsdaten".to_string(),
         })?;
@@ -108,13 +111,13 @@ pub(crate) async fn validate_bo4e(
             ),
         })?;
 
-    let ahb_workflow = ahb
-        .workflows
-        .iter()
-        .find(|w| w.id == pid)
-        .ok_or_else(|| ApiError::ConversionError {
-            message: format!("PID {pid} not found in AHB"),
-        })?;
+    let ahb_workflow =
+        ahb.workflows
+            .iter()
+            .find(|w| w.id == pid)
+            .ok_or_else(|| ApiError::ConversionError {
+                message: format!("PID {pid} not found in AHB"),
+            })?;
 
     let ahb_numbers: HashSet<String> = ahb_workflow.segment_numbers.iter().cloned().collect();
     let filtered_mig = filter_mig_for_pid(service.mig(), &ahb_numbers);

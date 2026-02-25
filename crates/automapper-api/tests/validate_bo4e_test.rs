@@ -14,10 +14,7 @@ fn app() -> axum::Router {
 }
 
 /// Helper to send a validate-bo4e request and collect the response.
-async fn send_validate_bo4e(
-    app: axum::Router,
-    body: serde_json::Value,
-) -> (StatusCode, Vec<u8>) {
+async fn send_validate_bo4e(app: axum::Router, body: serde_json::Value) -> (StatusCode, Vec<u8>) {
     let response = app
         .oneshot(
             Request::builder()
@@ -109,7 +106,9 @@ async fn test_validate_bo4e_valid_55001_transaktion() {
         assert_eq!(report["pruefidentifikator"], "55001");
 
         // Issues should be an array
-        let issues = report["issues"].as_array().expect("issues should be an array");
+        let issues = report["issues"]
+            .as_array()
+            .expect("issues should be an array");
 
         // Check that issues with field_path may have bo4e_path enriched
         for issue in issues {
@@ -183,7 +182,8 @@ async fn test_validate_bo4e_issues_have_bo4e_paths() {
             for issue in &issues_with_bo4e_path {
                 let bo4e_path = issue["bo4e_path"].as_str().unwrap();
                 assert!(
-                    bo4e_path.starts_with("stammdaten.") || bo4e_path.starts_with("transaktionsdaten."),
+                    bo4e_path.starts_with("stammdaten.")
+                        || bo4e_path.starts_with("transaktionsdaten."),
                     "bo4e_path should start with stammdaten or transaktionsdaten, got: {bo4e_path}"
                 );
             }

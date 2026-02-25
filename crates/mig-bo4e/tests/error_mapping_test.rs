@@ -4,8 +4,8 @@ use automapper_generator::parsing::ahb_parser::parse_ahb;
 use automapper_generator::parsing::mig_parser::parse_mig;
 use automapper_generator::schema::mig::MigSchema;
 use mig_assembly::pid_filter::filter_mig_for_pid;
-use mig_bo4e::error_mapping::Bo4eFieldIndex;
 use mig_bo4e::engine::MappingEngine;
+use mig_bo4e::error_mapping::Bo4eFieldIndex;
 use std::collections::HashSet;
 use std::path::Path;
 

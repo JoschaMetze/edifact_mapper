@@ -219,12 +219,8 @@ mod tests {
     #[test]
     fn test_enrich_bo4e_paths() {
         let mut report = ValidationReport::new("UTILMD", ValidationLevel::Full);
-        report.add_issue(
-            make_error("AHB001").with_field_path("SG4/SG5/LOC/C517/3225"),
-        );
-        report.add_issue(
-            make_warning("STR001").with_field_path("SG2/NAD/3035"),
-        );
+        report.add_issue(make_error("AHB001").with_field_path("SG4/SG5/LOC/C517/3225"));
+        report.add_issue(make_warning("STR001").with_field_path("SG2/NAD/3035"));
         // Issue without field_path should be left alone
         report.add_issue(make_error("AHB002"));
 
