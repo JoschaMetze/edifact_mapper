@@ -183,6 +183,18 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
         let expr_eval = ConditionExprEvaluator::new(&self.evaluator);
 
         for field in &workflow.fields {
+            // If the parent group has a conditional status, evaluate it first.
+            // When the parent group condition evaluates to False, the entire
+            // group variant is not required — skip this field entirely.
+            if let Some(ref group_status) = field.parent_group_ahb_status {
+                if group_status.contains('[') {
+                    let group_result = expr_eval.evaluate_status(group_status, ctx);
+                    if matches!(group_result, ConditionResult::False) {
+                        continue; // parent group not required, skip child field
+                    }
+                }
+            }
+
             // Evaluate the AHB status condition expression
             let condition_result = expr_eval.evaluate_status(&field.ahb_status, ctx);
 
@@ -1751,6 +1763,117 @@ mod tests {
         assert!(
             ahb_errors[0].message.contains("Empfaenger"),
             "Error should be for missing NAD+MR (Empfaenger)"
+        );
+    }
+
+    #[test]
+    fn test_conditional_group_variant_absent_no_error() {
+        // Real-world scenario: SG5 "Messlokation" has AHB_Status="Soll [165]".
+        // Condition [165] evaluates to False → LOC+Z17 should NOT error.
+        // SG5 "Marktlokation" has AHB_Status="Muss [2061]".
+        // Condition [2061] evaluates to True → LOC+Z16 is present → no error.
+        use mig_types::navigator::GroupNavigator;
+
+        struct TestNav;
+        impl GroupNavigator for TestNav {
+            fn find_segments_in_group(
+                &self,
+                segment_id: &str,
+                group_path: &[&str],
+                instance_index: usize,
+            ) -> Vec<OwnedSegment> {
+                if segment_id == "LOC" && group_path == ["SG4", "SG5"] && instance_index == 0 {
+                    vec![OwnedSegment {
+                        id: "LOC".into(),
+                        elements: vec![vec!["Z16".into()], vec!["DE00012345".into()]],
+                        segment_number: 10,
+                    }]
+                } else {
+                    vec![]
+                }
+            }
+            fn find_segments_with_qualifier_in_group(
+                &self,
+                _: &str,
+                _: usize,
+                _: &str,
+                _: &[&str],
+                _: usize,
+            ) -> Vec<OwnedSegment> {
+                vec![]
+            }
+            fn group_instance_count(&self, group_path: &[&str]) -> usize {
+                match group_path {
+                    ["SG4"] => 1,
+                    ["SG4", "SG5"] => 1, // only Z16 instance
+                    _ => 0,
+                }
+            }
+        }
+
+        // Condition 165 → False (Messlokation not required)
+        // Condition 2061 → True (Marktlokation required)
+        let evaluator = MockEvaluator::new(vec![(165, CR::False), (2061, CR::True)]);
+        let validator = EdifactValidator::new(evaluator);
+        let external = NoOpExternalProvider;
+        let nav = TestNav;
+
+        let segments = vec![OwnedSegment {
+            id: "LOC".into(),
+            elements: vec![vec!["Z16".into()], vec!["DE00012345".into()]],
+            segment_number: 10,
+        }];
+
+        let workflow = AhbWorkflow {
+            pruefidentifikator: "55001".to_string(),
+            description: "Test".to_string(),
+            communication_direction: None,
+            fields: vec![
+                // SG5 "Muss [2061]" with [2061]=True → LOC+Z16 required, present → OK
+                AhbFieldRule {
+                    segment_path: "SG4/SG5/LOC/3227".to_string(),
+                    name: "Ortsangabe, Qualifier (Z16)".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "Z16".to_string(),
+                        description: "Marktlokation".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                    parent_group_ahb_status: Some("Muss [2061]".to_string()),
+                },
+                // SG5 "Soll [165]" with [165]=False → LOC+Z17 NOT required → skip
+                AhbFieldRule {
+                    segment_path: "SG4/SG5/LOC/3227".to_string(),
+                    name: "Ortsangabe, Qualifier (Z17)".to_string(),
+                    ahb_status: "X".to_string(),
+                    codes: vec![AhbCodeRule {
+                        value: "Z17".to_string(),
+                        description: "Messlokation".to_string(),
+                        ahb_status: "X".to_string(),
+                    }],
+                    parent_group_ahb_status: Some("Soll [165]".to_string()),
+                },
+            ],
+        };
+
+        let report = validator.validate_with_navigator(
+            &segments,
+            &workflow,
+            &external,
+            ValidationLevel::Conditions,
+            &nav,
+        );
+
+        let ahb_errors: Vec<_> = report
+            .by_category(ValidationCategory::Ahb)
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+
+        // Zero errors: Z16 is present, and Z17's group condition is False
+        assert!(
+            ahb_errors.is_empty(),
+            "Expected no errors when conditional group variant [165]=False, got: {:?}",
+            ahb_errors
         );
     }
 
