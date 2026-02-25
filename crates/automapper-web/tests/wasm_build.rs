@@ -112,3 +112,120 @@ fn test_error_entry_deserialization() {
     assert_eq!(err.severity, "error");
     assert_eq!(err.location, Some("byte 42".to_string()));
 }
+
+#[test]
+fn test_validate_v2_request_serialization() {
+    let req = ValidateV2Request {
+        input: "UNH+1+UTILMD'".to_string(),
+        format_version: "FV2504".to_string(),
+        ..Default::default()
+    };
+
+    let json = serde_json::to_value(&req).unwrap();
+    assert_eq!(json["input"], "UNH+1+UTILMD'");
+    assert_eq!(json["format_version"], "FV2504");
+    assert_eq!(json["level"], "full");
+}
+
+#[test]
+fn test_validate_v2_response_deserialization() {
+    let json = r#"{
+        "report": {
+            "valid": true,
+            "issues": [],
+            "summary": {"total": 0}
+        },
+        "duration_ms": 5.67
+    }"#;
+
+    let resp: ValidateV2Response = serde_json::from_str(json).unwrap();
+    assert_eq!(resp.duration_ms, 5.67);
+    assert!(resp.report.is_object());
+    assert_eq!(resp.report["valid"], true);
+}
+
+#[test]
+fn test_convert_v2_response_with_validation() {
+    let json = r#"{
+        "mode": "bo4e",
+        "result": {"stammdaten": {}},
+        "duration_ms": 10.0,
+        "validation": {
+            "valid": false,
+            "issues": [{"severity": "Warning", "code": "W001", "message": "minor issue"}]
+        }
+    }"#;
+
+    let resp: ConvertV2Response = serde_json::from_str(json).unwrap();
+    assert_eq!(resp.mode, "bo4e");
+    assert!(resp.validation.is_some());
+    let validation = resp.validation.unwrap();
+    assert_eq!(validation["valid"], false);
+    assert_eq!(validation["issues"].as_array().unwrap().len(), 1);
+}
+
+#[test]
+fn test_extract_validation_issues_from_report() {
+    use automapper_web::types::extract_validation_issues;
+
+    let report = serde_json::json!({
+        "valid": false,
+        "issues": [
+            {
+                "severity": "Error",
+                "category": "structure",
+                "code": "E001",
+                "message": "missing mandatory segment UNH",
+                "field_path": "UNH",
+                "segment_position": 0
+            },
+            {
+                "severity": "Warning",
+                "category": "condition",
+                "code": "W002",
+                "message": "condition [1] not met",
+                "field_path": "SG4.IDE.0",
+                "segment_position": 5
+            },
+            {
+                "severity": "Info",
+                "category": "hint",
+                "code": "I003",
+                "message": "optional group SG12 omitted",
+                "field_path": null,
+                "segment_position": null
+            }
+        ]
+    });
+
+    let entries = extract_validation_issues(&report);
+    assert_eq!(entries.len(), 3);
+
+    assert_eq!(entries[0].severity, "error");
+    assert_eq!(entries[0].code, "E001");
+    assert_eq!(entries[0].message, "missing mandatory segment UNH");
+    assert_eq!(entries[0].location, Some("UNH".to_string()));
+
+    assert_eq!(entries[1].severity, "warning");
+    assert_eq!(entries[1].code, "W002");
+    assert_eq!(entries[1].message, "condition [1] not met");
+    assert_eq!(entries[1].location, Some("SG4.IDE.0".to_string()));
+
+    assert_eq!(entries[2].severity, "info");
+    assert_eq!(entries[2].code, "I003");
+    assert_eq!(entries[2].message, "optional group SG12 omitted");
+    assert_eq!(entries[2].location, None);
+}
+
+#[test]
+fn test_extract_validation_issues_empty_report() {
+    use automapper_web::types::extract_validation_issues;
+
+    let report = serde_json::json!({
+        "valid": true,
+        "issues": []
+    });
+
+    let entries = extract_validation_issues(&report);
+    assert!(entries.is_empty());
+}
