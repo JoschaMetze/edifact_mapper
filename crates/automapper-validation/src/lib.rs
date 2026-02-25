@@ -34,7 +34,10 @@ pub mod validator;
 
 // Re-export key types at crate root for convenience
 pub use error::{ParseError, ValidationError};
-pub use eval::{ConditionEvaluator, ConditionExprEvaluator, ConditionResult, EvaluationContext};
+pub use eval::{
+    CompositeExternalProvider, ConditionEvaluator, ConditionExprEvaluator, ConditionResult,
+    EvaluationContext, MapExternalProvider,
+};
 pub use expr::{ConditionExpr, ConditionParser};
 pub use validator::{
     EdifactValidator, ErrorCodes, Severity, ValidationCategory, ValidationIssue, ValidationLevel,
