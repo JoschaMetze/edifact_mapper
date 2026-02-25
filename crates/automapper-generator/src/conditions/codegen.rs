@@ -121,15 +121,19 @@ pub fn generate_condition_evaluator_file(
     }
 
     // Preserved methods (from previous generation, high-confidence, unchanged)
-    for (&num, body) in preserved_method_bodies {
+    // These are complete method blocks including doc comments.
+    let mut preserved_nums: Vec<u32> = preserved_method_bodies.keys().copied().collect();
+    preserved_nums.sort();
+    for num in preserved_nums {
         // Only include if not already generated as a new condition
         if !conditions.iter().any(|c| c.condition_number == num) {
-            code.push_str(&format!(
-                "    fn evaluate_{}(&self, ctx: &EvaluationContext) -> ConditionResult {{\n",
-                num
-            ));
-            code.push_str(&indent_body(body, 8));
-            code.push_str("    }\n\n");
+            if let Some(block) = preserved_method_bodies.get(&num) {
+                code.push_str(block);
+                if !block.ends_with('\n') {
+                    code.push('\n');
+                }
+                code.push('\n');
+            }
         }
     }
 

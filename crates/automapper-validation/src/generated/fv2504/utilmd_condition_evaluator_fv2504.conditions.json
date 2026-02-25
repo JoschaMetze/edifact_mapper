@@ -1,6 +1,37 @@
 {
-  "generated_at": "2026-02-25T09:17:55Z",
+  "generated_at": "2026-02-25T10:00:46Z",
   "ahb_file": "UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml",
   "format_version": "FV2504",
-  "conditions": {}
+  "conditions": {
+    "5": {
+      "confidence": "high",
+      "reasoning": "The sender MP-ID (NAD+MS) is present in the message, but whether that market participant acts in the role LF (Lieferant) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
+      "description_hash": "a1466d0d",
+      "is_external": true
+    },
+    "6": {
+      "confidence": "high",
+      "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role ÜNB (Übertragungsnetzbetreiber) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
+      "description_hash": "4b435776",
+      "is_external": true
+    },
+    "1": {
+      "confidence": "high",
+      "reasoning": "'Wenn Aufteilung vorhanden' checks whether message splitting is present — a business context decision that cannot be determined from the EDIFACT message content alone. Matches the canonical external condition from the examples.",
+      "description_hash": "4ebb4e5c",
+      "is_external": true
+    },
+    "7": {
+      "confidence": "high",
+      "reasoning": "Checks if STS with Statuskategorie=7 has Transaktionsgrund ZG9/ZH1/ZH2. Per the segment structure reference, STS (Transaktionsgrund) elements[0][0]=Statuskategorie code ('7') and elements[2][0]=DE9013 (Transaktionsgrund). The AHB notation STS+7++ZG9 uses ++ for one empty element (elements[1]=Status), so ZG9 lands at elements[2][0]. Returns Unknown if no STS+7 segment exists, False if a different Transaktionsgrund is present.",
+      "description_hash": "101bffb4",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "high",
+      "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role LF (Lieferant) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
+      "description_hash": "55130474",
+      "is_external": true
+    }
+  }
 }

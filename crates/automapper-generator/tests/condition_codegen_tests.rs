@@ -193,7 +193,7 @@ fn test_preserved_methods_included() {
     let mut preserved = HashMap::new();
     preserved.insert(
         10,
-        "ConditionResult::False // previously generated".to_string(),
+        "    fn evaluate_10(&self, _ctx: &EvaluationContext) -> ConditionResult {\n        ConditionResult::False // previously generated\n    }\n".to_string(),
     );
 
     let output =

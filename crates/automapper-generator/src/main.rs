@@ -95,9 +95,14 @@ enum Commands {
         #[arg(long)]
         message_type: String,
 
-        /// Only regenerate conditions that changed or are low-confidence
-        #[arg(long, default_value = "false")]
+        /// Only regenerate conditions that changed or are low-confidence.
+        /// Default: true. Use --no-incremental to force full regeneration.
+        #[arg(long, default_value = "true")]
         incremental: bool,
+
+        /// Force regeneration of all conditions, ignoring metadata.
+        #[arg(long, default_value = "false")]
+        force: bool,
 
         /// Maximum concurrent Claude CLI calls
         #[arg(long, default_value = "4")]
@@ -282,6 +287,68 @@ enum Commands {
     },
 }
 
+/// Parses an existing generated condition evaluator `.rs` file and extracts
+/// complete method blocks (doc comments + signature + body) keyed by condition number.
+///
+/// Returns a `HashMap<u32, String>` where the value is the full method text
+/// including leading doc comments and trailing `}\n`.
+fn parse_existing_method_bodies(source: &str) -> std::collections::HashMap<u32, String> {
+    use std::collections::HashMap;
+
+    let mut methods: HashMap<u32, String> = HashMap::new();
+    let lines: Vec<&str> = source.lines().collect();
+    let mut i = 0;
+
+    while i < lines.len() {
+        // Look for method signatures: `    fn evaluate_N(&self, ctx: &EvaluationContext) -> ConditionResult {`
+        let trimmed = lines[i].trim();
+        if trimmed.starts_with("fn evaluate_") && trimmed.contains("(&self") && trimmed.ends_with('{') {
+            // Extract condition number from `evaluate_N`
+            let after = trimmed.strip_prefix("fn evaluate_").unwrap_or("");
+            let num_str: String = after.chars().take_while(|c| c.is_ascii_digit()).collect();
+            if let Ok(num) = num_str.parse::<u32>() {
+                // Collect doc comments above this method
+                let mut comment_start = i;
+                while comment_start > 0 {
+                    let prev = lines[comment_start - 1].trim();
+                    if prev.starts_with("///") || prev.starts_with("// ") {
+                        comment_start -= 1;
+                    } else {
+                        break;
+                    }
+                }
+
+                // Find closing brace (track brace depth)
+                let mut depth = 1;
+                let mut j = i + 1;
+                while j < lines.len() && depth > 0 {
+                    for ch in lines[j].chars() {
+                        match ch {
+                            '{' => depth += 1,
+                            '}' => depth -= 1,
+                            _ => {}
+                        }
+                    }
+                    j += 1;
+                }
+
+                // Collect the full block: comments + signature + body + closing brace
+                let block: String = lines[comment_start..j]
+                    .iter()
+                    .map(|l| format!("{}\n", l))
+                    .collect();
+
+                methods.insert(num, block);
+                i = j;
+                continue;
+            }
+        }
+        i += 1;
+    }
+
+    methods
+}
+
 /// Infer energy variant (Strom/Gas) from a filename.
 fn infer_variant(filename: &str) -> Option<&'static str> {
     if filename.contains("Strom") {
@@ -392,17 +459,13 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             format_version,
             message_type,
             incremental,
+            force,
             max_concurrent,
             mig_path,
             batch_size,
             dry_run,
             limit,
         } => {
-            eprintln!(
-                "Generating conditions for {} {} (incremental={})",
-                message_type, format_version, incremental
-            );
-
             // Parse AHB
             let variant =
                 infer_variant(ahb_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
@@ -447,13 +510,37 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             let existing_metadata =
                 automapper_generator::conditions::metadata::load_metadata(&metadata_path)?;
 
+            // Load existing .rs file to extract preserved method bodies
+            let output_path = output_dir.join(format!(
+                "{}_conditions_{}.rs",
+                message_type.to_lowercase(),
+                format_version.to_lowercase()
+            ));
+            let existing_method_bodies = if output_path.exists() {
+                let existing_source = std::fs::read_to_string(&output_path)?;
+                parse_existing_method_bodies(&existing_source)
+            } else {
+                std::collections::HashMap::new()
+            };
+
+            // Populate existing IDs from metadata
+            let existing_ids: std::collections::HashSet<String> = existing_metadata
+                .as_ref()
+                .map(|m| m.conditions.keys().cloned().collect())
+                .unwrap_or_default();
+
+            let force_all = force || (!incremental && existing_metadata.is_none());
+            eprintln!(
+                "Generating conditions for {} {} (incremental={}, force={})",
+                message_type, format_version, incremental, force_all
+            );
+
             // Determine what needs regeneration
-            let existing_ids = std::collections::HashSet::new();
             let decision = automapper_generator::conditions::metadata::decide_regeneration(
                 &conditions,
                 existing_metadata.as_ref(),
                 &existing_ids,
-                !incremental,
+                force_all,
             );
 
             eprintln!(
@@ -585,14 +672,22 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 }
             }
 
-            // Generate output file
-            let output_path = output_dir.join(format!(
-                "{}_conditions_{}.rs",
-                message_type.to_lowercase(),
-                format_version.to_lowercase()
-            ));
+            // Build preserved method bodies for conditions we're keeping
+            let preserved: std::collections::HashMap<u32, String> = decision
+                .to_preserve
+                .iter()
+                .filter_map(|id| {
+                    let num: u32 = id.parse().ok()?;
+                    let body = existing_method_bodies.get(&num)?;
+                    Some((num, body.clone()))
+                })
+                .collect();
 
-            let preserved = std::collections::HashMap::new();
+            if !preserved.is_empty() {
+                eprintln!("Preserving {} existing conditions", preserved.len());
+            }
+
+            // Generate output file
             let source_code =
                 automapper_generator::conditions::codegen::generate_condition_evaluator_file(
                     &message_type,
@@ -605,8 +700,20 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             std::fs::write(&output_path, &source_code)?;
             eprintln!("Generated: {:?}", output_path);
 
-            // Save metadata
-            let mut meta_conditions = std::collections::HashMap::new();
+            // Save metadata — merge newly generated with preserved
+            let mut meta_conditions: std::collections::HashMap<String, automapper_generator::conditions::metadata::ConditionMetadata> =
+                std::collections::HashMap::new();
+
+            // First, carry over preserved conditions from existing metadata
+            if let Some(ref existing_meta) = existing_metadata {
+                for id in &decision.to_preserve {
+                    if let Some(meta) = existing_meta.conditions.get(id) {
+                        meta_conditions.insert(id.clone(), meta.clone());
+                    }
+                }
+            }
+
+            // Then add newly generated conditions
             for gc in &all_generated {
                 let desc = gc.original_description.as_deref().unwrap_or("");
                 meta_conditions.insert(
