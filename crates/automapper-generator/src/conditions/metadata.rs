@@ -177,10 +177,6 @@ fn should_regenerate(
         return Some(RegenerationReason::LowConfidence);
     }
 
-    if condition_meta.confidence.to_lowercase() == "medium" {
-        return Some(RegenerationReason::MediumConfidence);
-    }
-
     // Check for staleness (description changed)
     let current_hash = compute_description_hash(description);
     if condition_meta.description_hash != current_hash {
