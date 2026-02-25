@@ -1,13 +1,43 @@
 {
-  "generated_at": "2026-02-25T10:42:56Z",
+  "generated_at": "2026-02-25T10:51:43Z",
   "ahb_file": "UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml",
   "format_version": "FV2504",
   "conditions": {
-    "8": {
+    "5": {
       "confidence": "high",
-      "reasoning": "Whether data clearing is required cannot be determined from the EDIFACT message content alone — it depends on business/contractual context external to the message.",
-      "description_hash": "d48f1537",
+      "reasoning": "The sender MP-ID (NAD+MS) is present in the message, but whether that market participant acts in the role LF (Lieferant) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
+      "description_hash": "a1466d0d",
       "is_external": true
+    },
+    "10": {
+      "confidence": "high",
+      "reasoning": "Per the segment reference, STS+7 Transaktionsgrundergänzung für Lieferende bei befristeter Anmeldung is at elements[4][0]. The AHB shorthand STS+7++xxx+xxx+E01/E03 has five positional fields after the tag: elements[0]=7, elements[1]=empty, elements[2]=Transaktionsgrund, elements[3]=Transaktionsgrundergänzung, elements[4]=Lieferende qualifier. Check for E01 or E03.",
+      "description_hash": "d04ca26f",
+      "is_external": false
+    },
+    "12": {
+      "confidence": "high",
+      "reasoning": "DTM 'Ende zum (nächstmöglichen Termin)' uses qualifier 471 at elements[0][0] per the segment reference. Condition is True ('nicht vorhanden') when no such DTM segment exists.",
+      "description_hash": "c8244b0e",
+      "is_external": false
+    },
+    "6": {
+      "confidence": "high",
+      "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role ÜNB (Übertragungsnetzbetreiber) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
+      "description_hash": "4b435776",
+      "is_external": true
+    },
+    "9": {
+      "confidence": "high",
+      "reasoning": "The NAD+MS segment provides the sender MP-ID, but whether that market participant acts in the MSB role requires external market participant registry knowledge not present in the EDIFACT message.",
+      "description_hash": "d9990b82",
+      "is_external": true
+    },
+    "19": {
+      "confidence": "high",
+      "reasoning": "Group-scoped: checks SEQ+Z01/Z98 AND CCI+++ZC0 co-occurrence within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "e1d13481",
+      "is_external": false
     },
     "1": {
       "confidence": "high",
@@ -21,22 +51,22 @@
       "description_hash": "321d0c62",
       "is_external": false
     },
-    "6": {
+    "20": {
       "confidence": "high",
-      "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role ÜNB (Übertragungsnetzbetreiber) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
-      "description_hash": "4b435776",
-      "is_external": true
-    },
-    "16": {
-      "confidence": "high",
-      "reasoning": "Per the segment reference for STS 'Status der Antwort': elements[0][0]=E01, elements[2][0]=Code des Prüfschritts. Z12 (Ablehnung Vertragsbindung) at elements[2][0] matches AHB STS+E01++Z12. Returns True when this specific STS is present.",
-      "description_hash": "01e37a5a",
+      "reasoning": "Group-scoped: checks SEQ+Z01 AND CCI+Z30++Z07 co-occurrence within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "a5387753",
       "is_external": false
     },
-    "15": {
+    "21": {
+      "confidence": "high",
+      "reasoning": "Group-scoped: checks CCI+++ZA6 within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "cff72c8d",
+      "is_external": false
+    },
+    "22": {
       "confidence": "medium",
-      "reasoning": "Checks for presence of SEQ+Z98 (Daten der Marktlokation) using elements[0][0]==\"Z98\" per the Segment Structure Reference (SEQ Daten der Marktlokation codes include Z98). The 'in derselben SG8' (same SG8 group) constraint cannot be precisely enforced with the flat segments API — the check covers the full message. In practice this is sufficient since Z98 identifies a specific Marktlokation data group and its co-occurrence within the same SG8 is the typical structural pattern.",
-      "description_hash": "07b13291",
+      "reasoning": "The condition instructs that the Zeitraum-ID (DE1156) from a matching SG6 RFF+Z47/Z48/Z49 (Verwendungszeitraum der Daten) must be entered. Interpreted as: this condition is True when such an RFF segment (with qualifier Z47, Z48, or Z49 at elements[0][0]) is present in the message. The schema for RFF — Verwendungszeitraum der Daten lists those qualifiers at elements[0][0]. Confidence medium because the wording is instructional rather than a pure boolean predicate.",
+      "description_hash": "077d9210",
       "is_external": false
     },
     "4": {
@@ -45,22 +75,46 @@
       "description_hash": "55130474",
       "is_external": true
     },
+    "23": {
+      "confidence": "high",
+      "reasoning": "Group-scoped: checks STS+E01++A05/A99 within SG4 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "ff6dde96",
+      "is_external": false
+    },
+    "24": {
+      "confidence": "high",
+      "reasoning": "Group-scoped: checks STS+E01++A25/A99 within SG4 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "17b52555",
+      "is_external": false
+    },
+    "16": {
+      "confidence": "high",
+      "reasoning": "Per the segment reference for STS 'Status der Antwort': elements[0][0]=E01, elements[2][0]=Code des Prüfschritts. Z12 (Ablehnung Vertragsbindung) at elements[2][0] matches AHB STS+E01++Z12. Returns True when this specific STS is present.",
+      "description_hash": "01e37a5a",
+      "is_external": false
+    },
+    "15": {
+      "confidence": "high",
+      "reasoning": "Group-scoped: checks SEQ+Z98 within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "07b13291",
+      "is_external": false
+    },
     "13": {
       "confidence": "high",
       "reasoning": "Per the segment reference for STS 'Status der Antwort': elements[0][0]=E01 (Statuskategorie), elements[1]=empty Status field, elements[2][0]=Code des Prüfschritts. AHB STS+E01++Z01 confirms elements[2][0] for the Prüfschritt code Z01. Condition is True ('nicht vorhanden') when absent.",
       "description_hash": "95c62c31",
       "is_external": false
     },
-    "5": {
+    "18": {
       "confidence": "high",
-      "reasoning": "The sender MP-ID (NAD+MS) is present in the message, but whether that market participant acts in the role LF (Lieferant) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
-      "description_hash": "a1466d0d",
-      "is_external": true
+      "reasoning": "Checks absence of DTM+93 (Ende zum, elements[0][0] = \"93\"). Condition is true when no such segment is present. Straightforward negated existence check on a well-defined segment qualifier.",
+      "description_hash": "b2b52d1a",
+      "is_external": false
     },
-    "12": {
+    "7": {
       "confidence": "high",
-      "reasoning": "DTM 'Ende zum (nächstmöglichen Termin)' uses qualifier 471 at elements[0][0] per the segment reference. Condition is True ('nicht vorhanden') when no such DTM segment exists.",
-      "description_hash": "c8244b0e",
+      "reasoning": "Checks if STS with Statuskategorie=7 has Transaktionsgrund ZG9/ZH1/ZH2. Per the segment structure reference, STS (Transaktionsgrund) elements[0][0]=Statuskategorie code ('7') and elements[2][0]=DE9013 (Transaktionsgrund). The AHB notation STS+7++ZG9 uses ++ for one empty element (elements[1]=Status), so ZG9 lands at elements[2][0]. Returns Unknown if no STS+7 segment exists, False if a different Transaktionsgrund is present.",
+      "description_hash": "101bffb4",
       "is_external": false
     },
     "14": {
@@ -69,28 +123,22 @@
       "description_hash": "d089cab4",
       "is_external": true
     },
-    "9": {
+    "8": {
       "confidence": "high",
-      "reasoning": "The NAD+MS segment provides the sender MP-ID, but whether that market participant acts in the MSB role requires external market participant registry knowledge not present in the EDIFACT message.",
-      "description_hash": "d9990b82",
+      "reasoning": "Whether data clearing is required cannot be determined from the EDIFACT message content alone — it depends on business/contractual context external to the message.",
+      "description_hash": "d48f1537",
       "is_external": true
     },
-    "18": {
+    "17": {
       "confidence": "high",
-      "reasoning": "Checks absence of DTM+93 (Ende zum, elements[0][0] = \"93\"). Condition is true when no such segment is present. Straightforward negated existence check on a well-defined segment qualifier.",
-      "description_hash": "b2b52d1a",
+      "reasoning": "Group-scoped: checks SEQ+Z01/Z80/Z81 within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "f99c24cd",
       "is_external": false
     },
-    "10": {
+    "25": {
       "confidence": "high",
-      "reasoning": "Per the segment reference, STS+7 Transaktionsgrundergänzung für Lieferende bei befristeter Anmeldung is at elements[4][0]. The AHB shorthand STS+7++xxx+xxx+E01/E03 has five positional fields after the tag: elements[0]=7, elements[1]=empty, elements[2]=Transaktionsgrund, elements[3]=Transaktionsgrundergänzung, elements[4]=Lieferende qualifier. Check for E01 or E03.",
-      "description_hash": "d04ca26f",
-      "is_external": false
-    },
-    "7": {
-      "confidence": "high",
-      "reasoning": "Checks if STS with Statuskategorie=7 has Transaktionsgrund ZG9/ZH1/ZH2. Per the segment structure reference, STS (Transaktionsgrund) elements[0][0]=Statuskategorie code ('7') and elements[2][0]=DE9013 (Transaktionsgrund). The AHB notation STS+7++ZG9 uses ++ for one empty element (elements[1]=Status), so ZG9 lands at elements[2][0]. Returns Unknown if no STS+7 segment exists, False if a different Transaktionsgrund is present.",
-      "description_hash": "101bffb4",
+      "reasoning": "Checks for CCI with elements[0][0]==\"Z22\" (Veräußerungsform der erzeugenden Marktlokation, per schema codes [Z22=]) and elements[2][0]==\"Z91\". The schema description for Z91 is explicitly '§ 21 Abs. 1 Nr. 1 EEG 2017 (Marktprämie)', making Z91 the unambiguous code for Marktprämie. Both element positions are confirmed from CCI — Veräußerungsform schema entry.",
+      "description_hash": "3bebab6e",
       "is_external": false
     }
   }
