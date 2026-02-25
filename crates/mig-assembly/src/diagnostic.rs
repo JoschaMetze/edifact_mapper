@@ -47,14 +47,8 @@ mod tests {
             message: "BGM not expected after UNH".to_string(),
         };
         let display = diag.to_string();
-        assert!(
-            display.contains("BGM"),
-            "display should contain segment_id"
-        );
-        assert!(
-            display.contains("3"),
-            "display should contain position"
-        );
+        assert!(display.contains("BGM"), "display should contain segment_id");
+        assert!(display.contains("3"), "display should contain position");
         assert!(
             display.contains("BGM not expected after UNH"),
             "display should contain message"
@@ -89,9 +83,11 @@ mod tests {
             message: "RFF exceeded max repetitions of 5".to_string(),
         };
         let json = serde_json::to_string(&diag).expect("serialize");
-        let roundtripped: StructureDiagnostic =
-            serde_json::from_str(&json).expect("deserialize");
-        assert_eq!(roundtripped.kind, StructureDiagnosticKind::MaxRepetitionsExceeded);
+        let roundtripped: StructureDiagnostic = serde_json::from_str(&json).expect("deserialize");
+        assert_eq!(
+            roundtripped.kind,
+            StructureDiagnosticKind::MaxRepetitionsExceeded
+        );
         assert_eq!(roundtripped.segment_id, "RFF");
         assert_eq!(roundtripped.position, 12);
         assert_eq!(roundtripped.message, "RFF exceeded max repetitions of 5");
@@ -106,9 +102,11 @@ mod tests {
             message: "qualifier Z99 not recognized for LOC in SG5".to_string(),
         };
         let json = serde_json::to_string(&diag).expect("serialize");
-        let roundtripped: StructureDiagnostic =
-            serde_json::from_str(&json).expect("deserialize");
-        assert_eq!(roundtripped.kind, StructureDiagnosticKind::UnrecognizedQualifier);
+        let roundtripped: StructureDiagnostic = serde_json::from_str(&json).expect("deserialize");
+        assert_eq!(
+            roundtripped.kind,
+            StructureDiagnosticKind::UnrecognizedQualifier
+        );
         assert_eq!(roundtripped.segment_id, "LOC");
         assert_eq!(roundtripped.position, 7);
         assert_eq!(

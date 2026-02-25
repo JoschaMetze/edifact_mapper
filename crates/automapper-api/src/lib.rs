@@ -39,6 +39,7 @@ use grpc::transform_proto::transform_service_server::TransformServiceServer;
         routes::fixtures::get_fixture,
         routes::convert_v2::convert_v2,
         routes::reverse_v2::reverse_v2,
+        routes::validate_v2::validate_v2,
     ),
     tags(
         (name = "health", description = "Service health"),

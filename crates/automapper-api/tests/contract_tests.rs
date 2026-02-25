@@ -3,12 +3,15 @@
 //! These tests ensure the API contract is stable — any accidental field rename
 //! or type change will break these tests.
 
+use std::collections::HashMap;
+
 use automapper_api::contracts::coordinators::CoordinatorInfo;
 use automapper_api::contracts::error::ErrorSeverity;
 use automapper_api::contracts::health::HealthResponse;
 use automapper_api::contracts::inspect::{
     ComponentElement, DataElement, InspectRequest, InspectResponse, SegmentNode,
 };
+use automapper_api::contracts::validate_v2::{ValidateV2Request, ValidateV2Response};
 
 #[test]
 fn test_inspect_request_deserialization() {
@@ -124,4 +127,78 @@ fn test_error_severity_deserialization() {
 
     let c: ErrorSeverity = serde_json::from_str(r#""critical""#).unwrap();
     assert_eq!(c, ErrorSeverity::Critical);
+}
+
+// --- Validate V2 contract tests ---
+
+#[test]
+fn test_validate_request_deserialization() {
+    let json = r#"{
+        "input": "UNH+1+UTILMD'",
+        "format_version": "FV2504"
+    }"#;
+    let req: ValidateV2Request = serde_json::from_str(json).unwrap();
+    assert_eq!(req.input, "UNH+1+UTILMD'");
+    assert_eq!(req.format_version, "FV2504");
+    assert_eq!(req.level, "full"); // default
+    assert!(req.external_conditions.is_none());
+}
+
+#[test]
+fn test_validate_request_with_all_fields() {
+    let json = r#"{
+        "input": "UNH+1+UTILMD'",
+        "format_version": "FV2504",
+        "level": "structure",
+        "external_conditions": {"DateKnown": true, "Splitting": false}
+    }"#;
+    let req: ValidateV2Request = serde_json::from_str(json).unwrap();
+    assert_eq!(req.level, "structure");
+    let ext = req.external_conditions.unwrap();
+    assert_eq!(ext.get("DateKnown"), Some(&true));
+    assert_eq!(ext.get("Splitting"), Some(&false));
+}
+
+#[test]
+fn test_validate_response_serialization() {
+    let resp = ValidateV2Response {
+        report: serde_json::json!({
+            "message_type": "UTILMD",
+            "level": "Full",
+            "issues": []
+        }),
+        duration_ms: 1.23,
+    };
+
+    let json = serde_json::to_value(&resp).unwrap();
+    assert_eq!(json["report"]["message_type"], "UTILMD");
+    assert_eq!(json["report"]["level"], "Full");
+    assert_eq!(json["duration_ms"], 1.23);
+}
+
+#[test]
+fn test_validate_request_level_defaults_to_full() {
+    // Ensure the serde default works
+    let json = r#"{"input": "x", "format_version": "FV2504"}"#;
+    let req: ValidateV2Request = serde_json::from_str(json).unwrap();
+    assert_eq!(req.level, "full");
+}
+
+#[test]
+fn test_validate_request_external_conditions_hashmap() {
+    let mut conditions = HashMap::new();
+    conditions.insert("Cond1".to_string(), true);
+    conditions.insert("Cond2".to_string(), false);
+
+    let json = serde_json::json!({
+        "input": "test",
+        "format_version": "FV2504",
+        "external_conditions": conditions
+    });
+
+    let req: ValidateV2Request = serde_json::from_str(&json.to_string()).unwrap();
+    let ext = req.external_conditions.unwrap();
+    assert_eq!(ext.len(), 2);
+    assert_eq!(ext["Cond1"], true);
+    assert_eq!(ext["Cond2"], false);
 }

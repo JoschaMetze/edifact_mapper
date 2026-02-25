@@ -116,20 +116,14 @@ mod tests {
         conditions.insert("DateKnown".to_string(), true);
         let provider = MapExternalProvider::new(conditions);
 
-        assert_eq!(
-            provider.evaluate("NonExistent"),
-            ConditionResult::Unknown
-        );
+        assert_eq!(provider.evaluate("NonExistent"), ConditionResult::Unknown);
     }
 
     #[test]
     fn map_provider_empty_map_returns_unknown() {
         let provider = MapExternalProvider::new(HashMap::new());
 
-        assert_eq!(
-            provider.evaluate("Anything"),
-            ConditionResult::Unknown
-        );
+        assert_eq!(provider.evaluate("Anything"), ConditionResult::Unknown);
     }
 
     // ---- CompositeExternalProvider tests ----
@@ -169,9 +163,6 @@ mod tests {
     fn composite_empty_returns_unknown() {
         let composite = CompositeExternalProvider::new(vec![]);
 
-        assert_eq!(
-            composite.evaluate("Anything"),
-            ConditionResult::Unknown
-        );
+        assert_eq!(composite.evaluate("Anything"), ConditionResult::Unknown);
     }
 }
