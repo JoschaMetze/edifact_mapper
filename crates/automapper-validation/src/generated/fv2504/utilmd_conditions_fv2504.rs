@@ -15,11 +15,14 @@ pub struct UtilmdConditionEvaluatorFV2504 {
 impl Default for UtilmdConditionEvaluatorFV2504 {
     fn default() -> Self {
         let external_conditions = std::collections::HashSet::new();
-        Self { external_conditions }
+        Self {
+            external_conditions,
+        }
     }
 }
 
 impl ConditionEvaluator for UtilmdConditionEvaluatorFV2504 {
+    #[allow(clippy::match_single_binding)]
     fn evaluate(&self, condition: u32, _ctx: &EvaluationContext) -> ConditionResult {
         match condition {
             _ => ConditionResult::Unknown,
@@ -37,7 +40,4 @@ impl ConditionEvaluator for UtilmdConditionEvaluatorFV2504 {
     fn format_version(&self) -> &str {
         "FV2504"
     }
-}
-
-impl UtilmdConditionEvaluatorFV2504 {
 }

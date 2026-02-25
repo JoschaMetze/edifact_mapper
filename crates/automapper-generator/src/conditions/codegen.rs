@@ -54,9 +54,7 @@ pub fn generate_condition_evaluator_file(
     if external_ids.is_empty() {
         code.push_str("        let external_conditions = std::collections::HashSet::new();\n");
     } else {
-        code.push_str(
-            "        let mut external_conditions = std::collections::HashSet::new();\n",
-        );
+        code.push_str("        let mut external_conditions = std::collections::HashSet::new();\n");
         for id in &external_ids {
             code.push_str(&format!("        external_conditions.insert({});\n", id));
         }

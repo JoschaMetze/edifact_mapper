@@ -204,10 +204,8 @@ pub(crate) async fn convert_v2(
                             })?;
 
                     let external = automapper_validation::eval::NoOpExternalProvider;
-                    let evaluator = crate::routes::validate_v2::StubEvaluator {
-                        message_type: "UTILMD".to_string(),
-                        format_version: req.format_version.clone(),
-                    };
+                    let evaluator =
+                        automapper_validation::UtilmdConditionEvaluatorFV2504::default();
                     let validator = automapper_validation::EdifactValidator::new(evaluator);
                     let mut report = validator.validate(
                         &val_segments,

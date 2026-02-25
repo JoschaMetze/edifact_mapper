@@ -23,36 +23,6 @@ pub fn routes() -> Router<AppState> {
     Router::new().route("/validate", post(validate_v2))
 }
 
-/// Stub condition evaluator that returns `Unknown` for all conditions.
-///
-/// This is used until generated evaluators are available (Task 9/10).
-pub(crate) struct StubEvaluator {
-    pub message_type: String,
-    pub format_version: String,
-}
-
-impl automapper_validation::ConditionEvaluator for StubEvaluator {
-    fn evaluate(
-        &self,
-        _condition: u32,
-        _ctx: &automapper_validation::EvaluationContext,
-    ) -> automapper_validation::ConditionResult {
-        automapper_validation::ConditionResult::Unknown
-    }
-
-    fn is_external(&self, _condition: u32) -> bool {
-        false
-    }
-
-    fn message_type(&self) -> &str {
-        &self.message_type
-    }
-
-    fn format_version(&self) -> &str {
-        &self.format_version
-    }
-}
-
 /// `POST /api/v2/validate` -- validate EDIFACT against AHB rules.
 ///
 /// Parses the EDIFACT content, detects the PID, assembles with diagnostics,
@@ -162,11 +132,8 @@ pub(crate) async fn validate_v2(
             Box::new(automapper_validation::eval::NoOpExternalProvider)
         };
 
-    // Step 9: Create stub evaluator and validator
-    let evaluator = StubEvaluator {
-        message_type: "UTILMD".to_string(),
-        format_version: req.format_version.clone(),
-    };
+    // Step 9: Create condition evaluator and validator
+    let evaluator = automapper_validation::UtilmdConditionEvaluatorFV2504::default();
     let validator = automapper_validation::EdifactValidator::new(evaluator);
 
     // Step 10: Run validation
@@ -195,29 +162,20 @@ pub(crate) async fn validate_v2(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
-    fn stub_evaluator_returns_unknown() {
-        let evaluator = StubEvaluator {
-            message_type: "UTILMD".to_string(),
-            format_version: "FV2504".to_string(),
-        };
+    fn generated_evaluator_returns_unknown_for_unimplemented_conditions() {
+        let evaluator = automapper_validation::UtilmdConditionEvaluatorFV2504::default();
 
         let segments = vec![];
         let external = automapper_validation::eval::NoOpExternalProvider;
         let ctx = automapper_validation::EvaluationContext::new("55001", &external, &segments);
 
         use automapper_validation::ConditionEvaluator;
-        assert_eq!(
-            evaluator.evaluate(182, &ctx),
-            automapper_validation::ConditionResult::Unknown
-        );
+        // Generated evaluator returns Unknown for conditions not yet implemented
         assert_eq!(
             evaluator.evaluate(999, &ctx),
             automapper_validation::ConditionResult::Unknown
         );
-        assert!(!evaluator.is_external(182));
         assert_eq!(evaluator.message_type(), "UTILMD");
         assert_eq!(evaluator.format_version(), "FV2504");
     }
