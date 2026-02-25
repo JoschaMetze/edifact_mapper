@@ -12,6 +12,7 @@
 
 pub mod assembler;
 pub mod cursor;
+pub mod diagnostic;
 pub mod disassembler;
 pub mod error;
 pub mod matcher;
@@ -22,6 +23,7 @@ pub mod roundtrip;
 pub mod service;
 pub mod tokenize;
 
+pub use diagnostic::{StructureDiagnostic, StructureDiagnosticKind};
 pub use error::AssemblyError;
 pub use service::ConversionService;
 pub use tokenize::{split_messages, InterchangeChunks, MessageChunk};
