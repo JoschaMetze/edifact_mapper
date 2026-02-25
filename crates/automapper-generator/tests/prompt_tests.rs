@@ -144,6 +144,64 @@ fn test_parse_response_invalid_json() {
 }
 
 #[test]
+fn test_parse_truncated_response_recovers_complete_conditions() {
+    let generator = ClaudeConditionGenerator::new(4);
+
+    // Simulates a truncated response — two complete conditions, third cut off mid-JSON
+    let json = r#"```json
+{
+  "conditions": [
+    {
+      "id": "8",
+      "implementation": "ctx.external.evaluate(\"data_clearing_required\")",
+      "confidence": "high",
+      "reasoning": "External condition",
+      "is_external": true,
+      "external_name": "data_clearing_required"
+    },
+    {
+      "id": "9",
+      "implementation": "ctx.external.evaluate(\"sender_is_msb\")",
+      "confidence": "high",
+      "reasoning": "Requires registry lookup",
+      "is_external": true,
+      "external_name": "sender_is_msb"
+    },
+    {
+      "id": "10",
+      "implementation": "ctx.external."#;
+
+    let conditions = generator.parse_response(json).unwrap();
+    assert_eq!(conditions.len(), 2, "should recover 2 complete conditions");
+    assert_eq!(conditions[0].condition_number, 8);
+    assert_eq!(conditions[1].condition_number, 9);
+}
+
+#[test]
+fn test_parse_truncated_markdown_block_no_closing_fence() {
+    let generator = ClaudeConditionGenerator::new(4);
+
+    // Complete JSON but markdown block has no closing ```
+    let json = r#"```json
+{
+  "conditions": [
+    {
+      "id": "42",
+      "implementation": "ConditionResult::True",
+      "confidence": "high",
+      "reasoning": "Always true",
+      "is_external": false
+    }
+  ]
+}
+"#;
+
+    let conditions = generator.parse_response(json).unwrap();
+    assert_eq!(conditions.len(), 1);
+    assert_eq!(conditions[0].condition_number, 42);
+}
+
+#[test]
 fn test_parse_response_mixed_confidence() {
     let generator = ClaudeConditionGenerator::new(4);
 

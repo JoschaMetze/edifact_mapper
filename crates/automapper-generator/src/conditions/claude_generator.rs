@@ -82,23 +82,39 @@ impl ClaudeConditionGenerator {
     }
 
     /// Parses the JSON response from Claude into GeneratedCondition structs.
+    ///
+    /// Handles truncated responses by recovering as many complete condition
+    /// entries as possible from the partial JSON.
     pub fn parse_response(
         &self,
         raw_response: &str,
     ) -> Result<Vec<GeneratedCondition>, GeneratorError> {
         let cleaned = strip_markdown_code_blocks(raw_response);
 
-        let response: ClaudeConditionResponse =
-            serde_json::from_str(&cleaned).map_err(|e| GeneratorError::ClaudeCli {
-                message: format!(
-                    "failed to parse Claude JSON response: {}. Response was: {}",
-                    e,
-                    &cleaned[..cleaned.len().min(500)]
-                ),
-            })?;
+        // Try full parse first
+        let entries: Vec<ClaudeConditionEntry> =
+            if let Ok(response) = serde_json::from_str::<ClaudeConditionResponse>(&cleaned) {
+                response.conditions
+            } else {
+                // Response may be truncated — try to recover individual condition objects
+                let recovered = recover_partial_conditions(&cleaned);
+                if recovered.is_empty() {
+                    return Err(GeneratorError::ClaudeCli {
+                        message: format!(
+                            "failed to parse Claude JSON response (no recoverable conditions). Response was: {}",
+                            &cleaned[..cleaned.len().min(500)]
+                        ),
+                    });
+                }
+                eprintln!(
+                    "WARNING: Response was truncated, recovered {} complete conditions",
+                    recovered.len()
+                );
+                recovered
+            };
 
         let mut results = Vec::new();
-        for entry in response.conditions {
+        for entry in entries {
             let condition_number: u32 =
                 entry.id.parse().map_err(|e| GeneratorError::ClaudeCli {
                     message: format!("invalid condition ID '{}': {}", entry.id, e),
@@ -124,6 +140,7 @@ impl ClaudeConditionGenerator {
 }
 
 /// Strips markdown code block wrappers (```json ... ```) from a response string.
+/// Handles both complete (``` ... ```) and truncated (``` ... <eof>) blocks.
 fn strip_markdown_code_blocks(response: &str) -> String {
     let trimmed = response.trim();
 
@@ -131,13 +148,82 @@ fn strip_markdown_code_blocks(response: &str) -> String {
         let rest = if let Some(newline_pos) = trimmed.find('\n') {
             &trimmed[newline_pos + 1..]
         } else {
-            trimmed
+            return trimmed.to_string();
         };
 
+        // Complete block: strip closing ```
         if let Some(stripped) = rest.strip_suffix("```") {
             return stripped.trim().to_string();
         }
+
+        // Truncated block: no closing ```, just strip the opening line
+        return rest.trim().to_string();
     }
 
     trimmed.to_string()
+}
+
+/// Recovers complete condition entries from a truncated JSON response.
+///
+/// Finds each `{ "id": ... }` object within the conditions array by
+/// tracking brace depth, and parses those that are complete.
+fn recover_partial_conditions(json: &str) -> Vec<ClaudeConditionEntry> {
+    let mut results = Vec::new();
+
+    // Find the start of the conditions array
+    let Some(arr_start) = json.find('"').and_then(|_| json.find('[')) else {
+        return results;
+    };
+
+    let bytes = json.as_bytes();
+    let mut i = arr_start + 1;
+
+    while i < bytes.len() {
+        // Skip whitespace and commas
+        if bytes[i] == b' ' || bytes[i] == b'\n' || bytes[i] == b'\r' || bytes[i] == b'\t' || bytes[i] == b',' {
+            i += 1;
+            continue;
+        }
+
+        // Found start of an object
+        if bytes[i] == b'{' {
+            let obj_start = i;
+            let mut depth = 1;
+            i += 1;
+
+            // Track whether we're inside a string (to handle braces in string values)
+            let mut in_string = false;
+            let mut escape_next = false;
+
+            while i < bytes.len() && depth > 0 {
+                if escape_next {
+                    escape_next = false;
+                    i += 1;
+                    continue;
+                }
+                match bytes[i] {
+                    b'\\' if in_string => escape_next = true,
+                    b'"' => in_string = !in_string,
+                    b'{' if !in_string => depth += 1,
+                    b'}' if !in_string => depth -= 1,
+                    _ => {}
+                }
+                i += 1;
+            }
+
+            if depth == 0 {
+                // Complete object — try to parse it
+                let obj_str = &json[obj_start..i];
+                if let Ok(entry) = serde_json::from_str::<ClaudeConditionEntry>(obj_str) {
+                    results.push(entry);
+                }
+            }
+            // If depth > 0, the object was truncated — skip it
+        } else {
+            // End of array or unexpected character
+            break;
+        }
+    }
+
+    results
 }

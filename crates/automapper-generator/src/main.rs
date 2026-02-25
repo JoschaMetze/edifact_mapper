@@ -113,7 +113,7 @@ enum Commands {
         mig_path: Option<PathBuf>,
 
         /// Batch size for conditions per API call
-        #[arg(long, default_value = "50")]
+        #[arg(long, default_value = "10")]
         batch_size: usize,
 
         /// Dry run — parse only, don't call Claude
