@@ -1,0 +1,31 @@
+# Prozessdaten (process data) mapping for PID 55010 (Anfrage zur Beendigung der Zuordnung).
+#
+# Source: SG4 top-level segments (IDE, DTM, STS)
+# IDE+24+<vorgangsnummer>             -> vorgangId (Transaktion)
+# DTM+154:<datum>:102                 -> annahmedatum (Annahmedatum eines Dokuments, CCYYMMDD)
+# STS+7++<transaktionsgrund>+<ergaenzung>+<ergaenzungBefristet>
+#
+# DTM uses qualifier 154 (Annahmedatum) with format 102 (CCYYMMDD), not 92/93 with 303.
+# STS has full Transaktionsgrund structure (indices 0..4).
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.0" = { target = "", default = "24" }
+"ide.1" = "vorgangId"
+
+# DTM+154 (Annahmedatum eines Dokuments)
+"dtm[154].0.0" = { target = "", default = "154" }
+"dtm[154].0.1" = "annahmedatum"
+"dtm[154].0.2" = { target = "", default = "102" }
+
+# STS segment — Transaktionsgrund
+"sts.0" = { target = "", default = "7" }
+"sts.2" = "transaktionsgrund"
+"sts.3" = "transaktionsgrundErgaenzung"
+"sts.4" = "transaktionsgrundErgaenzungBefristeteAnmeldung"

@@ -1,0 +1,24 @@
+# Prozessdaten (process data) mapping for PID 55012 (Ablehnung Beendigung der Zuordnung).
+#
+# Source: SG4 top-level segments (IDE, STS)
+# IDE+24+<vorgangsnummer>             -> vorgangId (Transaktion)
+# STS+E01+<status>+<pruefschritt>:<ebd>::<ref>
+#
+# No DTM or FTX segment in SG4 for this PID.
+# STS has "Status der Antwort" structure (E01), indices 0..2.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.0" = { target = "", default = "24" }
+"ide.1" = "vorgangId"
+
+# STS segment — Status der Antwort (E01)
+"sts.0" = { target = "", default = "E01" }
+"sts.1" = "antwortStatus"
+"sts.2" = "pruefschritt"

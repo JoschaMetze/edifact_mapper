@@ -1,0 +1,20 @@
+# Geschaeftspartner (andere zugehörige Partei) mapping.
+#
+# Source: SG4.SG12 -> NAD+VY (andere zugehörige Partei)
+# Identifies a related market partner (e.g. previous LF/MSB) by MP-ID.
+
+[meta]
+entity = "Geschaeftspartner"
+bo4e_type = "Geschaeftspartner"
+companion_type = "GeschaeftspartnerEdifact"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12_vy"
+discriminator = "NAD.0.0=VY"
+
+[fields]
+"nad.0" = { target = "", default = "VY" }
+"nad.1.0" = "marktpartnerId"
+
+[companion_fields]
+"nad.1.1" = "codelisteCode"
+"nad.1.2" = "codepflegeCode"
