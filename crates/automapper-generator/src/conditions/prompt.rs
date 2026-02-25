@@ -125,12 +125,23 @@ Common external conditions in UTILMD:
 - "Datenclearing erforderlich" → data_clearing_required
 - "Wenn MP-ID in ... in der Rolle LF/NB/ÜNB/MSB" → these check market participant roles which are NOT in the EDIFACT data. Mark as external with name like `recipient_is_lf`, `sender_is_nb`, etc.
 
+## CRITICAL: AHB notation vs actual element indices
+AHB condition descriptions use shorthand EDIFACT notation that OMITS intermediate elements.
+For example, `STS+7++ZG9` does NOT mean ZG9 is at elements[2]. The `++` represents ONE empty
+element, but there may be MORE elements in the full segment structure.
+
+**Always use the "EDIFACT Segment Structure Reference" (provided in the user prompt) for
+authoritative element positions.** That reference is derived from the MIG XML schema and shows
+the exact `elements[N]` index for every data element and composite. Never guess element indices
+from the AHB shorthand notation alone.
+
 ## IMPORTANT rules for generated code
 1. Only use the `EvaluationContext` API described above. Do NOT invent fields like `ctx.transaktion`, `ctx.prozessdaten`, etc.
 2. Access segment data through `ctx.find_segment()`, `ctx.find_segments_with_qualifier()`, and element indexing.
 3. Use `.get()` and `.and_then()` for safe element access — never panic on missing data.
 4. When a condition references a specific segment qualifier (e.g., "STS+7", "NAD+MR", "LOC+Z16"), use `ctx.find_segments_with_qualifier()`.
 5. For **low confidence** conditions, set implementation to null.
+6. **Always consult the Segment Structure Reference for element indices.** Do not derive indices from EDIFACT shorthand notation in condition descriptions.
 
 Respond ONLY with a JSON object in this exact format (no markdown, no code blocks):
 {
@@ -222,14 +233,23 @@ fn build_segment_structure_context(mig: &MigSchema, conditions: &[ConditionInput
     }
 
     let mut context = String::new();
-    context.push_str("## EDIFACT Segment Structure Reference\n");
-    context.push_str("Element positions map to `segment.elements[position]`.\n");
-    context.push_str("Component sub-indices map to `segment.elements[position][sub_index]`.\n\n");
+    context.push_str("## EDIFACT Segment Structure Reference (from MIG schema)\n");
+    context.push_str("These are the AUTHORITATIVE element positions. Use these indices in your code.\n");
+    context.push_str("- `elements[N]` = element at position N (0-based, after segment tag)\n");
+    context.push_str("- `elements[N][M]` = component M within composite element N\n");
+    context.push_str("- Positions marked (empty) have no data in the MIG — they exist as empty `[]` in the parsed output.\n\n");
 
     // Include segment definitions from MIG that are referenced
     for segment in &mig.segments {
         if referenced_segments.contains(&segment.id.to_uppercase()) {
-            append_segment_doc(&mut context, &segment.id, &segment.name, &segment.data_elements, None);
+            append_full_segment_doc(context_for_segment(
+                &mut context,
+                &segment.id,
+                &segment.name,
+                &segment.data_elements,
+                &segment.composites,
+                None,
+            ));
         }
     }
 
@@ -241,24 +261,116 @@ fn build_segment_structure_context(mig: &MigSchema, conditions: &[ConditionInput
     context
 }
 
-fn append_segment_doc(
-    context: &mut String,
-    id: &str,
-    name: &str,
-    data_elements: &[crate::schema::mig::MigDataElement],
-    group_id: Option<&str>,
-) {
-    if let Some(gid) = group_id {
-        context.push_str(&format!("### {} - {} (in {})\n", id, name, gid));
+/// Holds segment info for building documentation.
+struct SegmentDocInfo<'a> {
+    context: &'a mut String,
+    id: &'a str,
+    name: &'a str,
+    data_elements: &'a [crate::schema::mig::MigDataElement],
+    composites: &'a [crate::schema::mig::MigComposite],
+    group_id: Option<&'a str>,
+}
+
+fn context_for_segment<'a>(
+    context: &'a mut String,
+    id: &'a str,
+    name: &'a str,
+    data_elements: &'a [crate::schema::mig::MigDataElement],
+    composites: &'a [crate::schema::mig::MigComposite],
+    group_id: Option<&'a str>,
+) -> SegmentDocInfo<'a> {
+    SegmentDocInfo {
+        context,
+        id,
+        name,
+        data_elements,
+        composites,
+        group_id,
+    }
+}
+
+fn append_full_segment_doc(info: SegmentDocInfo<'_>) {
+    use std::collections::BTreeMap;
+
+    let context = info.context;
+
+    if let Some(gid) = info.group_id {
+        context.push_str(&format!("### {} — {} (in {})\n", info.id, info.name, gid));
     } else {
-        context.push_str(&format!("### {} - {}\n", id, name));
+        context.push_str(&format!("### {} — {}\n", info.id, info.name));
     }
-    for de in data_elements {
-        context.push_str(&format!(
-            "- elements[{}] — DE{} ({})\n",
-            de.position, de.id, de.name
-        ));
+
+    // Build a complete position map: position → description
+    let mut position_map: BTreeMap<usize, String> = BTreeMap::new();
+
+    // Add simple data elements
+    for de in info.data_elements {
+        let mut desc = format!("DE{} ({})", de.id, de.name);
+        if !de.codes.is_empty() {
+            let code_strs: Vec<String> = de
+                .codes
+                .iter()
+                .take(8)
+                .map(|c| {
+                    if let Some(ref meaning) = c.description {
+                        format!("{}={}", c.value, meaning)
+                    } else {
+                        c.value.clone()
+                    }
+                })
+                .collect();
+            desc.push_str(&format!(" — codes: [{}]", code_strs.join(", ")));
+            if de.codes.len() > 8 {
+                desc.push_str(&format!(" +{} more", de.codes.len() - 8));
+            }
+        }
+        position_map.insert(de.position, desc);
     }
+
+    // Add composites (which contain sub-components)
+    for comp in info.composites {
+        let mut desc = format!("{} ({})", comp.id, comp.name);
+        if !comp.data_elements.is_empty() {
+            desc.push_str(" — components:");
+            for sub_de in &comp.data_elements {
+                desc.push_str(&format!(
+                    "\n    [{}][{}] DE{} ({})",
+                    comp.position, sub_de.position, sub_de.id, sub_de.name
+                ));
+                if !sub_de.codes.is_empty() {
+                    let code_strs: Vec<String> = sub_de
+                        .codes
+                        .iter()
+                        .take(6)
+                        .map(|c| {
+                            if let Some(ref meaning) = c.description {
+                                format!("{}={}", c.value, meaning)
+                            } else {
+                                c.value.clone()
+                            }
+                        })
+                        .collect();
+                    desc.push_str(&format!(" [{}]", code_strs.join(", ")));
+                    if sub_de.codes.len() > 6 {
+                        desc.push_str(&format!(" +{} more", sub_de.codes.len() - 6));
+                    }
+                }
+            }
+        }
+        position_map.insert(comp.position, desc);
+    }
+
+    // Find max position and output ALL positions including gaps
+    if let Some(&max_pos) = position_map.keys().last() {
+        for pos in 0..=max_pos {
+            if let Some(desc) = position_map.get(&pos) {
+                context.push_str(&format!("  elements[{}]: {}\n", pos, desc));
+            } else {
+                context.push_str(&format!("  elements[{}]: (empty)\n", pos));
+            }
+        }
+    }
+
     context.push('\n');
 }
 
@@ -269,13 +381,14 @@ fn append_group_segments(
 ) {
     for segment in &group.segments {
         if referenced.contains(&segment.id.to_uppercase()) {
-            append_segment_doc(
+            append_full_segment_doc(context_for_segment(
                 context,
                 &segment.id,
                 &segment.name,
                 &segment.data_elements,
+                &segment.composites,
                 Some(&group.id),
-            );
+            ));
         }
     }
     for nested in &group.nested_groups {
