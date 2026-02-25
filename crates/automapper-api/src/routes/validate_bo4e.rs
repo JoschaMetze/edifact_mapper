@@ -97,12 +97,9 @@ pub(crate) async fn validate_bo4e(
         assembler.assemble_with_diagnostics(&all_segments);
 
     // Step 6: Build AhbWorkflow and validate
-    let workflow =
-        crate::validation_bridge::ahb_workflow_from_schema(ctx.ahb, pid).ok_or_else(|| {
-            ApiError::ConversionError {
-                message: format!("PID {pid} not found in AHB"),
-            }
-        })?;
+    // PID existence was already verified by load_reverse_context
+    let workflow = crate::validation_bridge::ahb_workflow_from_schema(ctx.ahb, pid)
+        .expect("PID verified in load_reverse_context");
 
     let external: Box<dyn automapper_validation::eval::ExternalConditionProvider> =
         if let Some(ref conditions) = req.external_conditions {

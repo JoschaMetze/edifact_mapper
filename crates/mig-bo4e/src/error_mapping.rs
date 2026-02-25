@@ -94,7 +94,8 @@ impl Bo4eFieldIndex {
         // Prefix match for code/qualifier paths — longest prefix wins
         let mut best: Option<&IndexEntry> = None;
         for entry in &self.entries {
-            if edifact_field_path.starts_with(&entry.edifact_prefix)
+            if !entry.edifact_prefix.is_empty()
+                && edifact_field_path.starts_with(&entry.edifact_prefix)
                 && best
                     .map(|b| entry.edifact_prefix.len() > b.edifact_prefix.len())
                     .unwrap_or(true)

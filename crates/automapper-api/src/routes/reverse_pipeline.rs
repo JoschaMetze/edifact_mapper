@@ -109,15 +109,15 @@ pub(crate) fn render_message_segments(
 
     let unh = mig_bo4e::model::rebuild_unh(&nachricht.unh_referenz, &nachricht.nachrichten_typ);
     let unh_dis = DisassembledSegment {
-        tag: unh.id.clone(),
-        elements: unh.elements.clone(),
+        tag: unh.id,
+        elements: unh.elements,
     };
 
     let seg_count = 1 + dis_segments.len() + 1;
     let unt = mig_bo4e::model::rebuild_unt(seg_count, &nachricht.unh_referenz);
     let unt_dis = DisassembledSegment {
-        tag: unt.id.clone(),
-        elements: unt.elements.clone(),
+        tag: unt.id,
+        elements: unt.elements,
     };
 
     let mut msg_segments = vec![unh_dis];
@@ -137,8 +137,8 @@ pub(crate) fn render_full_edifact(
 
     let unb = mig_bo4e::model::rebuild_unb(&interchange.nachrichtendaten);
     let unb_segments = vec![DisassembledSegment {
-        tag: unb.id.clone(),
-        elements: unb.elements.clone(),
+        tag: unb.id,
+        elements: unb.elements,
     }];
 
     let interchange_ref = interchange
@@ -148,8 +148,8 @@ pub(crate) fn render_full_edifact(
         .unwrap_or("00000");
     let unz = mig_bo4e::model::rebuild_unz(message_parts.len(), interchange_ref);
     let unz_segments = vec![DisassembledSegment {
-        tag: unz.id.clone(),
-        elements: unz.elements.clone(),
+        tag: unz.id,
+        elements: unz.elements,
     }];
 
     let mut full_edifact = una_str;
