@@ -18,4 +18,4 @@ discriminator = "SEQ.d1229=Z98"
 # Store SEQ qualifier in companion to indicate this SG8 group was present.
 # Without this, the reverse mapper would suppress the definition when
 # zeitraumReferenz is empty (no real BO4E data), losing the SEQ+Z98 segment.
-"seq.0.0" = { target = "infoGruppeZ98", default = "Z98" }
+"seq.d1229" = { target = "infoGruppeZ98", default = "Z98" }

@@ -96,6 +96,11 @@ fn migrate_toml_content(content: &str, resolver: &ReverseResolver) -> (String, F
     let disc_re = Regex::new(r#"(discriminator\s*=\s*")([A-Z]+\.\d+(?:\.\d+)?=[^"]+)(")"#).unwrap();
     let key_re =
         Regex::new(r#"^(\s*")([a-z]+(?:\[[A-Z0-9]+\])?\.\d+(?:\.\d+)?)("\s*[=\]])"#).unwrap();
+    // Sub-table headers: [fields."loc.0"] or [companion_fields."rff.0.0".enum_map]
+    let subtable_re = Regex::new(
+        r#"(\[(fields|companion_fields)\.")([a-z]+(?:\[[A-Z0-9]+\])?\.\d+(?:\.\d+)?)("(?:\.[a-z_]+)?\])"#,
+    )
+    .unwrap();
 
     let mut stats = FileStats::default();
     let has_trailing_newline = content.ends_with('\n');
@@ -112,6 +117,22 @@ fn migrate_toml_content(content: &str, resolver: &ReverseResolver) -> (String, F
                 stats.discriminators += 1;
                 let prefix = caps.get(1).unwrap().as_str();
                 let suffix = caps.get(3).unwrap().as_str();
+                new_line = new_line.replacen(
+                    &format!("{}{}{}", prefix, original, suffix),
+                    &format!("{}{}{}", prefix, reversed, suffix),
+                    1,
+                );
+            }
+        }
+
+        // Try sub-table header replacement: [fields."loc.0"] or [companion_fields."rff.0.0"]
+        if let Some(caps) = subtable_re.captures(&new_line) {
+            let original = caps.get(3).unwrap().as_str().to_string();
+            let reversed = resolver.reverse_path(&original);
+            if reversed != original {
+                stats.paths += 1;
+                let prefix = caps.get(1).unwrap().as_str();
+                let suffix = caps.get(4).unwrap().as_str();
                 new_line = new_line.replacen(
                     &format!("{}{}{}", prefix, original, suffix),
                     &format!("{}{}{}", prefix, reversed, suffix),
@@ -253,8 +274,21 @@ impl ReverseResolver {
                 let Ok(sub_idx) = rest[1].parse::<usize>() else {
                     return path.to_string();
                 };
-                if let Some(named) = self.composite_reverse.get(&(seg_upper, elem_idx, sub_idx)) {
+                if let Some(named) =
+                    self.composite_reverse
+                        .get(&(seg_upper.clone(), elem_idx, sub_idx))
+                {
                     format!("{}{}.{}", seg_raw, qualifier_suffix, named)
+                } else if sub_idx == 0 {
+                    // 3-part path with sub_idx=0 might be a simple element (e.g., cci.0.0)
+                    if let Some(false) =
+                        self.is_composite.get(&(seg_upper.clone(), elem_idx))
+                    {
+                        if let Some(named) = self.simple_reverse.get(&(seg_upper, elem_idx)) {
+                            return format!("{}{}.{}", seg_raw, qualifier_suffix, named);
+                        }
+                    }
+                    path.to_string()
                 } else {
                     path.to_string()
                 }
@@ -524,5 +558,46 @@ entity = "Test"
         assert_eq!(output, input, "Already-named paths should not change");
         assert_eq!(stats.paths, 0);
         assert_eq!(stats.discriminators, 0);
+    }
+
+    #[test]
+    fn migrate_subtable_headers() {
+        let resolver = make_resolver();
+        let input = r#"[fields]
+"loc.1.0" = "marktlokationsId"
+
+[fields."loc.0"]
+target = ""
+default = "Z16"
+
+[companion_fields."loc.1.1"]
+target = "codestelle"
+"#;
+        let (output, stats) = migrate_toml_content(input, &resolver);
+        assert!(
+            output.contains(r#"[fields."loc.d3227"]"#),
+            "Sub-table header loc.0 should become loc.d3227"
+        );
+        assert!(
+            output.contains(r#"[companion_fields."loc.c517.d1131"]"#),
+            "Sub-table header loc.1.1 should become loc.c517.d1131"
+        );
+        // inline key also migrated
+        assert!(output.contains(r#""loc.c517.d3225""#));
+        assert_eq!(stats.paths, 3);
+    }
+
+    #[test]
+    fn migrate_subtable_with_suffix() {
+        let resolver = make_resolver();
+        let input = r#"[fields."loc.0".enum_map]
+"Z16" = "Marktlokation"
+"#;
+        let (output, stats) = migrate_toml_content(input, &resolver);
+        assert!(
+            output.contains(r#"[fields."loc.d3227".enum_map]"#),
+            "Sub-table with .enum_map suffix should be migrated"
+        );
+        assert_eq!(stats.paths, 1);
     }
 }
