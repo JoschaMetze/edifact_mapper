@@ -1,13 +1,14 @@
 # EnfgDaten Zuordnung (SG10 within SEQ+Z75) for PID 55014.
-# CCI/CAV characteristics for EnfgDaten.
+# CCI+Z61 Grundlage zur Verringerung der Umlagen nach EnFG.
+# CAV Grund der Privilegierung.
 
 [meta]
 entity = "EnfgDaten"
 bo4e_type = "EnfgDaten"
-source_group = "SG4.SG8:1.SG10"
+source_group = "SG4.SG8:3.SG10"
 source_path = "sg4.sg8_z75.sg10"
 
 [fields]
-"cav.0.0" = "merkmalswertCode"
+"cci.0" = { target = "", default = "Z61" }
 "cci.2.0" = "merkmalCode"
-"cci.1.0" = "gemesseneDimension"
+"cav.0.0" = "merkmalswertCode"

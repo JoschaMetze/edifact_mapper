@@ -1,0 +1,15 @@
+# Marktlokation Zuordnung — CCI+++Z15 (Messlokationsabgrenzung) for PID 55014.
+# First SG10 rep within SEQ+Z01.
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8:2.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.2.0=Z15"
+
+[fields]
+
+[companion_fields]
+"cci.2.0" = "messlokationsabgrenzung"

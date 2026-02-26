@@ -2,7 +2,9 @@
 #
 # Source: SG4 top-level segments (IDE, DTM, STS)
 # IDE+24+<Vorgangsnummer>                         -> vorgangId
+# DTM+92:<Datum>:303                              -> gueltigAb
 # DTM+93:<Datum>:303                              -> gueltigBis
+# STS+7++<Transaktionsgrund>+<Ergaenzung>+<Referenz>
 # STS+E01+<status>+<code>:<ebd>::<zeitraumRef>    -> Antwort-Status
 
 [meta]
@@ -16,14 +18,23 @@ source_path = "sg4"
 "ide.0" = { target = "", default = "24" }
 "ide.1" = "vorgangId"
 
-# DTM+93 (Datum)
+# DTM+92 (Beginn)
+"dtm[92].0.0" = { target = "", default = "92" }
+"dtm[92].0.1" = "gueltigAb"
+"dtm[92].0.2" = { target = "", default = "303" }
+
+# DTM+93 (Ende)
 "dtm[93].0.0" = { target = "", default = "93" }
 "dtm[93].0.1" = "gueltigBis"
 "dtm[93].0.2" = { target = "", default = "303" }
 
-# STS segment — Status der Antwort (E01)
-"sts.0.0" = "antwortKategorie"
-"sts.1.0" = "antwortStatus"
-"sts.2.0" = "pruefschrittCode"
-"sts.2.1" = "ebdNummer"
-"sts.2.3" = "zeitraumReferenz"
+# STS+7 — Transaktionsgrund
+"sts[7].0" = { target = "", default = "7" }
+"sts[7].2" = "transaktionsgrund"
+"sts[7].3" = "transaktionsgrundErgaenzung"
+"sts[7].4" = "transaktionsgrundReferenz"
+
+# STS+E01 — Antwort-Status
+"sts[E01].0.0" = "antwortKategorie"
+"sts[E01].2.0" = "pruefschrittCode"
+"sts[E01].2.1" = "ebdNummer"

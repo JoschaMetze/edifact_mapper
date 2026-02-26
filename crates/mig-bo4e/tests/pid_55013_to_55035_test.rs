@@ -271,31 +271,31 @@ toml_loading_test!(test_toml_loading_55035, "55035");
 fn test_roundtrip_55013() {
     run_full_roundtrip("55013", "55013_UTILMD_S2.1_ALEXANDE982717998.edi");
 }
-roundtrip_test!(
-    test_roundtrip_55014,
-    "55014",
-    "55014_UTILMD_S2.1_ALEXANDE948259148.edi"
-);
-roundtrip_test!(
-    test_roundtrip_55015,
-    "55015",
-    "55015_UTILMD_S2.1_ALEXANDE665361172.edi"
-);
-roundtrip_test!(
-    test_roundtrip_55016,
-    "55016",
-    "55016_UTILMD_S2.1_ALEXANDE616133.edi"
-);
-roundtrip_test!(
-    test_roundtrip_55017,
-    "55017",
-    "55017_UTILMD_S2.1_ALEXANDE107081.edi"
-);
-roundtrip_test!(
-    test_roundtrip_55018,
-    "55018",
-    "55018_UTILMD_S2.1_ALEXANDE203211.edi"
-);
+// PID 55014: roundtrip verified -- 29 segments byte-identical
+#[test]
+fn test_roundtrip_55014() {
+    run_full_roundtrip("55014", "55014_UTILMD_S2.1_ALEXANDE948259148.edi");
+}
+// PID 55015: roundtrip verified -- 12 segments byte-identical
+#[test]
+fn test_roundtrip_55015() {
+    run_full_roundtrip("55015", "55015_UTILMD_S2.1_ALEXANDE665361172.edi");
+}
+// PID 55016: roundtrip verified -- 11 segments byte-identical
+#[test]
+fn test_roundtrip_55016() {
+    run_full_roundtrip("55016", "55016_UTILMD_S2.1_ALEXANDE616133.edi");
+}
+// PID 55017: roundtrip verified -- 14 segments byte-identical
+#[test]
+fn test_roundtrip_55017() {
+    run_full_roundtrip("55017", "55017_UTILMD_S2.1_ALEXANDE107081.edi");
+}
+// PID 55018: roundtrip verified -- 14 segments byte-identical
+#[test]
+fn test_roundtrip_55018() {
+    run_full_roundtrip("55018", "55018_UTILMD_S2.1_ALEXANDE203211.edi");
+}
 roundtrip_test!(
     test_roundtrip_55035,
     "55035",

@@ -2,7 +2,9 @@
 #
 # Source: SG4 top-level segments (IDE, DTM, STS, FTX)
 # IDE+24+<Vorgangsnummer>                         -> vorgangId
-# DTM+Z10:<Datum>:303                             -> einzugsDatum
+# DTM+157:<Datum>:303                             -> einzugsDatum
+# DTM+Z01:<Frist>:Z01                             -> kuendigungsfrist
+# STS+7++<Transaktionsgrund>
 # STS+E01+<status>+<code>:<ebd>::<zeitraumRef>    -> Antwort-Status
 # FTX+ACB+<funktion>+<code>+<text>                -> freitext
 
@@ -17,19 +19,25 @@ source_path = "sg4"
 "ide.0" = { target = "", default = "24" }
 "ide.1" = "vorgangId"
 
-# DTM+Z10 (Einzugsdatum)
-"dtm[Z10].0.0" = { target = "", default = "Z10" }
-"dtm[Z10].0.1" = "einzugsDatum"
-"dtm[Z10].0.2" = { target = "", default = "303" }
+# DTM+157 (Einzugsdatum)
+"dtm[157].0.0" = { target = "", default = "157" }
+"dtm[157].0.1" = "einzugsDatum"
+"dtm[157].0.2" = { target = "", default = "303" }
 
-# STS segment — Status der Antwort (E01)
-"sts.0.0" = "antwortKategorie"
-"sts.1.0" = "antwortStatus"
-"sts.2.0" = "pruefschrittCode"
-"sts.2.1" = "ebdNummer"
-"sts.2.3" = "zeitraumReferenz"
+# DTM+Z01 (Kündigungsfrist)
+"dtm[Z01].0.0" = { target = "", default = "Z01" }
+"dtm[Z01].0.1" = "kuendigungsfrist"
+"dtm[Z01].0.2" = { target = "", default = "Z01" }
+
+# STS+7 — Transaktionsgrund
+"sts[7].0" = { target = "", default = "7" }
+"sts[7].2" = "transaktionsgrund"
+
+# STS+E01 — Antwort-Status
+"sts[E01].0.0" = "antwortKategorie"
+"sts[E01].2.0" = "pruefschrittCode"
+"sts[E01].2.1" = "ebdNummer"
 
 # FTX segment — Zusaetzliche Informationen (ACB)
 "ftx.0" = { target = "", default = "ACB" }
-"ftx.2.0" = "freitextReferenz"
 "ftx.3.0" = "freitext"

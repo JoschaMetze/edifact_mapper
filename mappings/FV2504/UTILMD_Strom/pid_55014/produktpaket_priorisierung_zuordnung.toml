@@ -1,13 +1,14 @@
 # ProduktpaketPriorisierung Zuordnung (SG10 within SEQ+ZH0) for PID 55014.
-# CCI/CAV characteristics for ProduktpaketPriorisierung.
+# CCI+Z65 Umsetzungsgradvorgabe with relevance code in element 3.
+# CAV priority code (Z75-Z79).
 
 [meta]
 entity = "ProduktpaketPriorisierung"
 bo4e_type = "ProduktpaketPriorisierung"
-source_group = "SG4.SG8:3.SG10"
+source_group = "SG4.SG8:1.SG10"
 source_path = "sg4.sg8_zh0.sg10"
 
 [fields]
+"cci.0" = { target = "", default = "Z65" }
+"cci.3" = "umsetzungsgradvorgabe"
 "cav.0.0" = "priorisierungsCode"
-"cci.2.0" = "merkmalCode"
-"cci.1.0" = "gemesseneDimension"
