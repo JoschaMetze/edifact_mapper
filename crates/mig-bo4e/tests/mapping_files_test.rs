@@ -253,8 +253,12 @@ fn test_load_pid_55002_mapping_files() {
         "Messlokation zuordnung should map CAV+Z91 (MSB assignment)"
     );
 
-    // Prozessdaten should have both DTM+92 and DTM+93
-    let prozess = tx_engine.definition_for_entity("Prozessdaten").unwrap();
+    // Prozessdaten SG4 root should have both DTM+92 and DTM+93
+    let prozess = tx_engine
+        .definitions()
+        .iter()
+        .find(|d| d.meta.entity == "Prozessdaten" && d.meta.source_group == "SG4")
+        .expect("Prozessdaten SG4 definition");
     assert!(
         prozess.fields.contains_key("dtm[92].0.1"),
         "55002 Prozessdaten should have DTM+92 (Beginn der Lieferung)"
@@ -263,4 +267,13 @@ fn test_load_pid_55002_mapping_files() {
         prozess.fields.contains_key("dtm[93].0.1"),
         "55002 Prozessdaten should have DTM+93 (Vertragsende)"
     );
+
+    // Prozessdaten RFF definitions (SG4.SG6 discriminated)
+    let rff_groups: Vec<&str> = tx_engine
+        .definitions()
+        .iter()
+        .filter(|d| d.meta.entity == "Prozessdaten" && d.meta.source_group == "SG4.SG6")
+        .filter_map(|d| d.meta.discriminator.as_deref())
+        .collect();
+    assert!(rff_groups.len() >= 3, "Should have 3 RFF discriminators for Prozessdaten, got {}", rff_groups.len());
 }

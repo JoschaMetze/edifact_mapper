@@ -178,12 +178,8 @@ fn test_forward_reverse_roundtrip_55001() {
     );
 }
 
-/// PID 55002 roundtrip test.
-///
-/// Currently #[ignore] — un-ignore once PID 55002's TOML mappings reach
-/// full roundtrip fidelity.
+/// PID 55002 roundtrip test — 36 segments byte-identical.
 #[test]
-#[ignore]
 fn test_forward_reverse_roundtrip_55002() {
     let Some(filtered_mig) = load_pid_filtered_mig("55002") else {
         eprintln!("Skipping: MIG/AHB XML not available");
