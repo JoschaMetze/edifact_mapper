@@ -1,5 +1,5 @@
 # SteuerbareRessource Zuordnung (SG10 within SEQ+ZF1) for PID 55035.
-# CCI/CAV rep 0: CCI+Z49, Steuerbarkeit.
+# CCI/CAV rep 1: CCI+++ZB3, zugeordneter Marktpartner.
 
 [meta]
 entity = "SteuerbareRessource"
@@ -7,14 +7,18 @@ bo4e_type = "SteuerbareRessource"
 companion_type = "SteuerbareRessourceEdifact"
 source_group = "SG4.SG8.SG10"
 source_path = "sg4.sg8_zf1.sg10"
-discriminator = "CCI.0.0=Z49"
+discriminator = "CCI.2.0=ZB3"
 
 [fields]
 
 [companion_fields]
-"cav.0.0" = "steuerbarkeitCode"
-"cav.0.1" = "steuerbarkeitWert"
+"cav[Z91].0.1" = "zugeordneterMp"
+"cav[Z91].0.3" = "msbEigenschaft"
 
-[companion_fields."cci.0.0"]
+[companion_fields."cci.2.0"]
 target = ""
-default = "Z49"
+default = "ZB3"
+
+[companion_fields."cav[Z91].0.0"]
+target = ""
+default = "Z91"

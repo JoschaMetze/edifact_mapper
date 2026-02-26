@@ -1,8 +1,5 @@
 # Messlokation Smartmeter-Gateway Zuordnung (SG10 within SEQ+ZF5) for PID 55035.
-# CCI/CAV attribute data, merges into entity "Messlokation".
-#
-# CAV+AMR/MMR  → messwerterfassungCode
-# CCI+<klassentypCode>+++E12  → Messwerterfassung an der Zaehleinrichtung
+# CCI/CAV rep 0: CCI+++E13, Kommunikationseinrichtung.
 
 [meta]
 entity = "Messlokation"
@@ -10,10 +7,16 @@ bo4e_type = "Messlokation"
 companion_type = "MesslokationEdifact"
 source_group = "SG4.SG8.SG10"
 source_path = "sg4.sg8_zf5.sg10"
+discriminator = "CCI.2.0=E13"
 
 [fields]
 
 [companion_fields]
-"cav.0.0" = "messwerterfassungCode"
-"cci.0" = "klassentypCode"
-"cci.2.0" = "merkmalCode"
+"cav[MME].0.0" = "kommunikationseinrichtungTyp"
+"cav[MME].0.3" = "kommunikationseinrichtungWert"
+"cav[Z30].0.0" = "geraeteId"
+"cav[Z30].0.3" = "geraeteNummer"
+
+[companion_fields."cci.2.0"]
+target = ""
+default = "E13"

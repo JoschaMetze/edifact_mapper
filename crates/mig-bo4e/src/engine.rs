@@ -939,6 +939,59 @@ impl MappingEngine {
         None
     }
 
+    /// Resolve a discriminated instance using source_path for parent navigation.
+    ///
+    /// Like `resolve_repetition` + `resolve_group_instance`, but navigates to the
+    /// parent group via source_path qualifier suffixes. Returns the matching instance
+    /// directly (not just a rep index) to avoid re-navigation in `map_forward_inner`.
+    ///
+    /// For example, `source_path = "sg4.sg8_z98.sg10"` with `discriminator = "CCI.2.0=ZB3"`
+    /// navigates to the SG8 instance with SEQ qualifier Z98, then finds the SG10 rep
+    /// where CCI element 2 component 0 equals "ZB3".
+    fn resolve_discriminated_by_source_path<'a>(
+        tree: &'a AssembledTree,
+        source_path: &str,
+        discriminator: &str,
+    ) -> Option<&'a AssembledGroupInstance> {
+        let (spec, expected) = discriminator.split_once('=')?;
+        let parts: Vec<&str> = spec.split('.').collect();
+        if parts.len() != 3 {
+            return None;
+        }
+        let tag = parts[0];
+        let element_idx: usize = parts[1].parse().ok()?;
+        let component_idx: usize = parts[2].parse().ok()?;
+
+        // Split source_path into parent + leaf
+        let sp_parts: Vec<&str> = source_path.split('.').collect();
+        if sp_parts.len() < 2 {
+            return None;
+        }
+        let parent_path = sp_parts[..sp_parts.len() - 1].join(".");
+        let (leaf_id, _) = parse_source_path_part(sp_parts.last()?);
+
+        // Navigate to parent instance via source_path
+        let parent = Self::resolve_by_source_path(tree, &parent_path)?;
+
+        // Find leaf group in parent's children
+        let leaf_group = parent
+            .child_groups
+            .iter()
+            .find(|g| g.group_id.eq_ignore_ascii_case(leaf_id))?;
+
+        // Scan reps for discriminator match
+        leaf_group.repetitions.iter().find(|instance| {
+            instance.segments.iter().any(|s| {
+                s.tag.eq_ignore_ascii_case(tag)
+                    && s.elements
+                        .get(element_idx)
+                        .and_then(|e| e.get(component_idx))
+                        .map(|v| v == expected)
+                        .unwrap_or(false)
+            })
+        })
+    }
+
     /// Map all definitions against a tree, returning a JSON object with entity names as keys.
     ///
     /// For each definition:
@@ -963,9 +1016,29 @@ impl MappingEngine {
             let entity = &def.meta.entity;
 
             let bo4e = if let Some(ref disc) = def.meta.discriminator {
-                // Has discriminator — resolve to specific rep
-                Self::resolve_repetition(tree, &def.meta.source_group, disc)
-                    .map(|rep| self.map_forward_inner(tree, def, rep, enrich_codes))
+                // Has discriminator — resolve to specific rep.
+                // Use source_path navigation when qualifiers are present
+                // (e.g., "sg4.sg8_z98.sg10" navigates to Z98's SG10 reps).
+                let use_source_path = def.meta.source_path.as_ref().is_some_and(|sp| {
+                    has_source_path_qualifiers(sp) && !def.meta.source_group.contains(':')
+                });
+                if use_source_path {
+                    // Navigate to parent via source_path, find discriminated instance
+                    Self::resolve_discriminated_by_source_path(
+                        tree,
+                        def.meta.source_path.as_deref().unwrap(),
+                        disc,
+                    )
+                    .map(|instance| {
+                        let mut r = serde_json::Map::new();
+                        self.extract_fields_from_instance(instance, def, &mut r, enrich_codes);
+                        self.extract_companion_fields(instance, def, &mut r, enrich_codes);
+                        serde_json::Value::Object(r)
+                    })
+                } else {
+                    Self::resolve_repetition(tree, &def.meta.source_group, disc)
+                        .map(|rep| self.map_forward_inner(tree, def, rep, enrich_codes))
+                }
             } else if def.meta.source_group.is_empty() {
                 // Root-level mapping — always single object
                 Some(self.map_forward_inner(tree, def, 0, enrich_codes))

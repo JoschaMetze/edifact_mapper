@@ -1,5 +1,5 @@
 # Marktlokation Zaehlerausstattung Zuordnung (SG10 within SEQ+ZE4) for PID 55035.
-# CCI/CAV rep 0: CCI+Z53++ZZD, Leistungskurvendefinition.
+# CCI/CAV rep 1: CCI+++ZA8, Geraeteeigenschaft.
 
 [meta]
 entity = "Marktlokation"
@@ -7,13 +7,10 @@ bo4e_type = "Marktlokation"
 companion_type = "MarktlokationEdifact"
 source_group = "SG4.SG8.SG10"
 source_path = "sg4.sg8_ze4.sg10"
-discriminator = "CCI.0.0=Z53"
+discriminator = "CCI.2.0=ZA8"
 
 [fields]
 
-[companion_fields]
-"cci.2.0" = "definitionsCode"
-
-[companion_fields."cci.0.0"]
+[companion_fields."cci.2.0"]
 target = ""
-default = "Z53"
+default = "ZA8"

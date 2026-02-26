@@ -1,5 +1,5 @@
 # Messlokation Zuordnung (SG10 within SEQ+ZF3) for PID 55035.
-# CCI/CAV zugeordneter Marktpartner data (gMSB only).
+# CCI/CAV zugeordneter Marktpartner data (gMSB).
 
 [meta]
 entity = "Messlokation"
@@ -12,8 +12,15 @@ source_path = "sg4.sg8_zf3.sg10"
 
 [companion_fields]
 "cci.2.0" = "merkmalCode"
-"cav.0.1" = "gmsbMpId"
+"cav[Z91].0.1" = "zugeordneterMp"
+"cav[Z91].0.3" = "msbEigenschaft"
+"cav[Z91].0.4" = "zuordnungReferenz"
+"cav[ZF0].0.1" = "gmsbMpId"
 
-[companion_fields."cav.0.0"]
+[companion_fields."cav[Z91].0.0"]
+target = ""
+default = "Z91"
+
+[companion_fields."cav[ZF0].0.0"]
 target = ""
 default = "ZF0"

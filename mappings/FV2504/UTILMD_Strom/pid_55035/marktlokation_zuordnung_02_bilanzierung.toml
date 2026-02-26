@@ -1,0 +1,19 @@
+# Marktlokation Zuordnung (SG10 within SEQ+Z98) for PID 55035.
+# CCI/CAV Bilanzierungsgebiet data (rep 1: CCI+++Z83).
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z98.sg10"
+discriminator = "CCI.2.0=Z83"
+
+[fields]
+
+[companion_fields]
+"cav.0.0" = "bilanzierungsgebietCode"
+
+[companion_fields."cci.2.0"]
+target = ""
+default = "Z83"

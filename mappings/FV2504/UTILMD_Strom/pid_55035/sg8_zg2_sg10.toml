@@ -1,8 +1,5 @@
 # TechnischeRessource Lastprofil/Klimazone Zuordnung (SG10 within SEQ+ZG2) for PID 55035.
-# CCI/CAV attribute data, merges into entity "TechnischeRessource".
-#
-# CAV+<Lastprofil-Code>  → lastprofilCode
-# CCI+Z99/ZA0+++<Klimazone-ID>:<Dienstanbieter>:<Codeliste 89/293>
+# CCI/CAV rep 0: CCI+++Z12, Profilart.
 
 [meta]
 entity = "TechnischeRessource"
@@ -10,12 +7,13 @@ bo4e_type = "TechnischeRessource"
 companion_type = "TechnischeRessourceEdifact"
 source_group = "SG4.SG8.SG10"
 source_path = "sg4.sg8_zg2.sg10"
+discriminator = "CCI.2.0=Z12"
 
 [fields]
 
 [companion_fields]
 "cav.0.0" = "lastprofilCode"
-"cci.0" = "klassentypCode"
-"cci.2.0" = "klimazoneId"
-"cci.2.1" = "dienstanbieter"
-"cci.2.2" = "codelisteKennung"
+
+[companion_fields."cci.2.0"]
+target = ""
+default = "Z12"

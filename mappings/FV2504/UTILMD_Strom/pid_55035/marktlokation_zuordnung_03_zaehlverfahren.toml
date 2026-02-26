@@ -1,0 +1,19 @@
+# Marktlokation Zuordnung (SG10 within SEQ+Z98) for PID 55035.
+# CCI/CAV Zaehlverfahren data (rep 2: CCI+++ZA6).
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z98.sg10"
+discriminator = "CCI.2.0=ZA6"
+
+[fields]
+
+[companion_fields]
+"cav.0.0" = "zaehlverfahrenCode"
+
+[companion_fields."cci.2.0"]
+target = ""
+default = "ZA6"
