@@ -3,7 +3,7 @@
 //! Supports nested group paths (e.g., "SG4.SG5") for navigating the assembled tree
 //! and provides `map_forward` / `map_reverse` for full entity conversion.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
 use mig_assembly::assembler::{
@@ -551,6 +551,10 @@ impl MappingEngine {
         // "container" definitions (e.g., SEQ entry segments) and are always kept.
         let mut has_real_data = false;
         let mut has_data_fields = false;
+        // Per-segment phantom tracking: segments with data fields but no resolved
+        // data are phantoms — their entries should be removed from field_values.
+        let mut seg_has_data_field: HashSet<String> = HashSet::new();
+        let mut seg_has_real_data: HashSet<String> = HashSet::new();
 
         for (path, field_mapping) in &def.fields {
             let (target, default, enum_map) = match field_mapping {
@@ -592,9 +596,11 @@ impl MappingEngine {
                 default.cloned()
             } else {
                 has_data_fields = true;
+                seg_has_data_field.insert(seg_key.clone());
                 let bo4e_val = self.populate_field(bo4e_value, target, path);
                 if bo4e_val.is_some() {
                     has_real_data = true;
+                    seg_has_real_data.insert(seg_key.clone());
                 }
                 // Apply reverse enum_map: BO4E value → EDIFACT value
                 let mapped_val = match (bo4e_val, enum_map) {
@@ -676,9 +682,11 @@ impl MappingEngine {
                     default.cloned()
                 } else {
                     has_data_fields = true;
+                    seg_has_data_field.insert(seg_key.clone());
                     let bo4e_val = self.populate_field(companion_value, target, path);
                     if bo4e_val.is_some() {
                         has_real_data = true;
+                        seg_has_real_data.insert(seg_key.clone());
                     }
                     let mapped_val = match (bo4e_val, enum_map) {
                         (Some(v), Some(map)) => map
@@ -711,6 +719,20 @@ impl MappingEngine {
                 }
             }
         }
+
+        // Per-segment phantom prevention for qualified segments: remove entries
+        // for segments using tag[qualifier] syntax (e.g., FTX[ACB], DTM[Z07])
+        // that have data fields but none resolved to actual BO4E values.  This
+        // prevents phantom segments when a definition maps multiple segment types
+        // and optional qualified segments are not in the original message.
+        // Unqualified segments (plain tags like SEQ, IDE) are always kept — they
+        // are typically entry/mandatory segments of their group.
+        field_values.retain(|(seg_key, _, _, _, _)| {
+            if !seg_key.contains('[') {
+                return true; // unqualified segments always kept
+            }
+            !seg_has_data_field.contains(seg_key) || seg_has_real_data.contains(seg_key)
+        });
 
         // If the definition has data fields but none resolved to actual BO4E values,
         // return an empty instance to prevent phantom segments for groups not

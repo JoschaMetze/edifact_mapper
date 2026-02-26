@@ -684,7 +684,6 @@ fn run_full_roundtrip(pid: &str, fixture_name: &str) {
 macro_rules! roundtrip_test {
     ($name:ident, $pid:expr, $fixture:expr) => {
         #[test]
-        #[ignore]
         fn $name() {
             run_full_roundtrip($pid, $fixture);
         }

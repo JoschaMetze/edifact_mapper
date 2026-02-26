@@ -1,11 +1,10 @@
-# Prozessdaten (process data) mapping for PID 55008 (Bestätigung Abmeldung).
+# Prozessdaten (process data) mapping for PID 55008 (Bestätigung Stornierung Abmeldung).
 #
 # Source: SG4 top-level segments (IDE, DTM, STS)
 # IDE+24+<vorgangsnummer>             -> vorgangId (Transaktion)
 # DTM+93:<datum>:303                  -> gueltigBis (Datum Vertragsende)
-# STS+E01+<status>+<pruefschritt>:<ebd>::<ref>
-#
-# STS has "Status der Antwort" structure (E01), indices 0..2.
+# STS+7++<grund>                      -> Transaktionsgrund
+# STS+E01++<pruefschritt>:<ebd>       -> Antwort-Status mit EBD-Referenz
 
 [meta]
 entity = "Prozessdaten"
@@ -23,7 +22,12 @@ source_path = "sg4"
 "dtm[93].c507.d2380" = "gueltigBis"
 "dtm[93].c507.d2379" = { target = "", default = "303" }
 
-# STS segment — Status der Antwort (E01)
-"sts.c601.d9015" = { target = "", default = "E01" }
-"sts.c555.d4405" = "antwortStatus"
-"sts.c556.d9013" = "pruefschritt"
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+
+# STS+E01 (Antwort-Status mit EBD-Referenz)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"

@@ -1,11 +1,12 @@
 # Prozessdaten (process data) mapping for PID 55012 (Ablehnung Beendigung der Zuordnung).
 #
-# Source: SG4 top-level segments (IDE, STS)
+# Source: SG4 top-level segments (IDE, STS, FTX)
 # IDE+24+<vorgangsnummer>             -> vorgangId (Transaktion)
-# STS+E01+<status>+<pruefschritt>:<ebd>::<ref>
+# STS+7++<grund>                      -> Transaktionsgrund
+# STS+E01++<pruefschritt>:<ebd>       -> Antwort-Status mit EBD-Referenz
+# FTX+ACB+<funktion>+<code>+<text>    -> freitext (allgemeine Hinweise)
 #
-# No DTM or FTX segment in SG4 for this PID.
-# STS has "Status der Antwort" structure (E01), indices 0..2.
+# No DTM segment in SG4 for this PID.
 
 [meta]
 entity = "Prozessdaten"
@@ -18,7 +19,17 @@ source_path = "sg4"
 "ide.d7495" = { target = "", default = "24" }
 "ide.c206.d7402" = "vorgangId"
 
-# STS segment — Status der Antwort (E01)
-"sts.c601.d9015" = { target = "", default = "E01" }
-"sts.c555.d4405" = "antwortStatus"
-"sts.c556.d9013" = "pruefschritt"
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+
+# STS+E01 (Antwort-Status mit EBD-Referenz)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"
+
+# FTX+ACB (Zusaetzliche Informationen) — optional, not in all fixtures
+"ftx[ACB].d4451" = { target = "", default = "ACB" }
+"ftx[ACB].c107.d4441" = "freitextReferenz"
+"ftx[ACB].c108.d4440" = "freitext"

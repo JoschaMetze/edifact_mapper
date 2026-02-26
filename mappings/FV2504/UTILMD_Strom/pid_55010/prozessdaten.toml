@@ -2,10 +2,11 @@
 #
 # Source: SG4 top-level segments (IDE, DTM, STS)
 # IDE+24+<vorgangsnummer>             -> vorgangId (Transaktion)
-# DTM+154:<datum>:102                 -> annahmedatum (Annahmedatum eines Dokuments, CCYYMMDD)
+# DTM+93:<datum>:303                  -> gueltigBis (Datum Vertragsende)
 # STS+7++<transaktionsgrund>+<ergaenzung>+<ergaenzungBefristet>
 #
-# DTM uses qualifier 154 (Annahmedatum) with format 102 (CCYYMMDD), not 92/93 with 303.
+# DTM+154 is in a separate file (prozessdaten_dtm154.toml) because dtm[154]
+# sorts before dtm[93] lexicographically but must appear after in EDIFACT.
 # STS has full Transaktionsgrund structure (indices 0..4).
 
 [meta]
@@ -19,13 +20,13 @@ source_path = "sg4"
 "ide.d7495" = { target = "", default = "24" }
 "ide.c206.d7402" = "vorgangId"
 
-# DTM+154 (Annahmedatum eines Dokuments)
-"dtm[154].c507.d2005" = { target = "", default = "154" }
-"dtm[154].c507.d2380" = "annahmedatum"
-"dtm[154].c507.d2379" = { target = "", default = "102" }
+# DTM+93 (Datum Vertragsende)
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
 
-# STS segment — Transaktionsgrund
-"sts.c601.d9015" = { target = "", default = "7" }
-"sts.c556.d9013" = "transaktionsgrund"
-"sts.c556_2.d9013" = "transaktionsgrundErgaenzung"
-"sts.c556_3.d9013" = "transaktionsgrundErgaenzungBefristeteAnmeldung"
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundErgaenzung"
+"sts[7].c556_3.d9013" = "transaktionsgrundErgaenzungBefristeteAnmeldung"

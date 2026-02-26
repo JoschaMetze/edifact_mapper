@@ -1,13 +1,14 @@
 # Prozessdaten (process data) mapping for PID 55003 (Ablehnung Anmeldung verb. MaLo).
 #
 # Source: SG4 top-level segments (IDE, DTM, STS, FTX)
-# IDE+24+<vorgangsnummer>             -> vorgangId (Transaktion)
-# DTM+Z08:<datum>:303                 -> datumNaechsteBearbeitung
-# STS+Z35+<status>+<pruefschritt>:<ebd>::<ref>+<lokation>::::<id>
-# FTX+ACB+<funktion>+<code>+<text>    -> freitext (allgemeine Hinweise)
+# IDE+24+<vorgangsnummer>                          -> vorgangId
+# DTM+Z07:<datum>:303                              -> gueltigAb (Lieferbeginndatum in Bearbeitung)
+# DTM+Z08:<datum>:303                              -> datumNaechsteBearbeitung
+# STS+7++<grund>+<detail>                          -> Transaktionsgrund
+# STS+E01++<pruefschritt>:<ebd>                    -> Antwort-Status mit EBD-Referenz
+# FTX+ACB+<funktion>+<code>+<text>                 -> freitext (allgemeine Hinweise)
 #
-# STS has "Status der Antwort des dritten Marktbeteiligten" structure (Z35),
-# NOT Transaktionsgrund (7). Elements: 0=Z35, 1=status, 2=pruefschritt, 3=betroffeneLokation.
+# Schema also allows STS+Z35 (3rd-party response) but not present in this fixture.
 
 [meta]
 entity = "Prozessdaten"
@@ -20,18 +21,27 @@ source_path = "sg4"
 "ide.d7495" = { target = "", default = "24" }
 "ide.c206.d7402" = "vorgangId"
 
+# DTM+Z07 (Lieferbeginndatum in Bearbeitung)
+"dtm[Z07].c507.d2005" = { target = "", default = "Z07" }
+"dtm[Z07].c507.d2380" = "gueltigAb"
+"dtm[Z07].c507.d2379" = { target = "", default = "303" }
+
 # DTM+Z08 (Datum fuer naechste Bearbeitung)
 "dtm[Z08].c507.d2005" = { target = "", default = "Z08" }
 "dtm[Z08].c507.d2380" = "datumNaechsteBearbeitung"
 "dtm[Z08].c507.d2379" = { target = "", default = "303" }
 
-# STS segment — Status der Antwort des dritten Marktbeteiligten (Z35)
-"sts.c601.d9015" = { target = "", default = "Z35" }
-"sts.c555.d4405" = "antwortStatus"
-"sts.c556.d9013" = "pruefschritt"
-"sts.c556_2.d9013" = "betroffeneLokation"
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
 
-# FTX segment — Zusaetzliche Informationen (ACB)
-"ftx.d4451" = { target = "", default = "ACB" }
-"ftx.c107.d4441" = "freitextReferenz"
-"ftx.c108.d4440" = "freitext"
+# STS+E01 (Antwort-Status mit EBD-Referenz)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"
+
+# FTX+ACB (Zusaetzliche Informationen) — optional, not in all fixtures
+"ftx[ACB].d4451" = { target = "", default = "ACB" }
+"ftx[ACB].c107.d4441" = "freitextReferenz"
+"ftx[ACB].c108.d4440" = "freitext"
