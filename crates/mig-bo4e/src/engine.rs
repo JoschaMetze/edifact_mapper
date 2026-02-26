@@ -1226,6 +1226,12 @@ impl MappingEngine {
             let mut root_segs: Vec<AssembledSegment> = Vec::new();
             let mut child_groups: Vec<AssembledGroup> = Vec::new();
 
+            // Track source_path → repetition index for parent groups (top-down).
+            // Built during depth-1 processing, used by depth-2+ defs without
+            // explicit rep indices to find their correct parent via source_path.
+            let mut source_path_to_rep: std::collections::HashMap<String, usize> =
+                std::collections::HashMap::new();
+
             for dm in &sorted_defs {
                 // Determine the BO4E value to reverse-map from
                 let bo4e_value = if dm.is_transaktionsdaten {
@@ -1248,7 +1254,27 @@ impl MappingEngine {
                 if dm.relative.is_empty() {
                     root_segs.extend(instance.segments);
                 } else {
-                    place_in_groups(&mut child_groups, &dm.relative, instance);
+                    // For depth-2+ defs without explicit rep index, resolve
+                    // parent rep from source_path matching (qualifier-based).
+                    let effective_relative = if dm.depth >= 2 {
+                        resolve_child_relative(
+                            &dm.relative,
+                            dm.def.meta.source_path.as_deref(),
+                            &source_path_to_rep,
+                        )
+                    } else {
+                        dm.relative.clone()
+                    };
+
+                    let rep_used =
+                        place_in_groups(&mut child_groups, &effective_relative, instance);
+
+                    // Track source_path → rep_index for depth-1 (parent) defs
+                    if dm.depth == 1 {
+                        if let Some(sp) = &dm.def.meta.source_path {
+                            source_path_to_rep.insert(sp.clone(), rep_used);
+                        }
+                    }
                 }
             }
 
@@ -1327,11 +1353,13 @@ fn strip_tx_group_prefix(source_group: &str, tx_group: &str) -> String {
 /// `relative_path` is the group path relative to the transaction group:
 /// - `"SG5"` → top-level child group
 /// - `"SG8:0.SG10"` → SG10 inside SG8 repetition 0
+///
+/// Returns the repetition index used at the first nesting level.
 fn place_in_groups(
     groups: &mut Vec<AssembledGroup>,
     relative_path: &str,
     instance: AssembledGroupInstance,
-) {
+) -> usize {
     let parts: Vec<&str> = relative_path.split('.').collect();
 
     if parts.len() == 1 {
@@ -1363,9 +1391,12 @@ fn place_in_groups(
             group.repetitions[rep_idx]
                 .child_groups
                 .extend(instance.child_groups);
+            rep_idx
         } else {
             // No index: append new repetition
+            let pos = group.repetitions.len();
             group.repetitions.push(instance);
+            pos
         }
     } else {
         // Nested path: e.g., "SG8:0.SG10" → place SG10 inside SG8 rep 0
@@ -1397,7 +1428,46 @@ fn place_in_groups(
             &remaining,
             instance,
         );
+        rep_idx
     }
+}
+
+/// Resolve the effective relative path for a child definition (depth >= 2).
+///
+/// If the child's relative already has an explicit parent rep index (e.g., "SG8:5.SG10"),
+/// use it as-is. Otherwise, use the `source_path` to look up the parent's actual
+/// repetition index from `source_path_to_rep`.
+///
+/// Example: relative = "SG8.SG10", source_path = "sg4.sg8_ze1.sg10"
+/// → looks up "sg4.sg8_ze1" in map → finds rep 6 → returns "SG8:6.SG10"
+fn resolve_child_relative(
+    relative: &str,
+    source_path: Option<&str>,
+    source_path_to_rep: &std::collections::HashMap<String, usize>,
+) -> String {
+    let parts: Vec<&str> = relative.split('.').collect();
+    if parts.is_empty() {
+        return relative.to_string();
+    }
+
+    // If first part already has explicit index, keep as-is
+    let (parent_id, parent_rep) = parse_group_spec(parts[0]);
+    if parent_rep.is_some() {
+        return relative.to_string();
+    }
+
+    // Try to resolve from source_path: extract parent path and look up its rep
+    if let Some(sp) = source_path {
+        if let Some((parent_path, _child)) = sp.rsplit_once('.') {
+            if let Some(rep_idx) = source_path_to_rep.get(parent_path) {
+                let rest = parts[1..].join(".");
+                return format!("{}:{}.{}", parent_id, rep_idx, rest);
+            }
+        }
+    }
+
+    // No resolution possible, keep original
+    relative.to_string()
 }
 
 /// Parse a segment tag with optional qualifier: "dtm[92]" → ("DTM", Some("92")).
@@ -2229,5 +2299,68 @@ mod tests {
         });
         let instance_enriched = engine.map_reverse(&bo4e_enriched, &def);
         assert_eq!(instance_enriched.segments[0].elements[2], vec!["Z15"]);
+    }
+
+    #[test]
+    fn test_resolve_child_relative_with_source_path() {
+        let mut map = std::collections::HashMap::new();
+        map.insert("sg4.sg8_ze1".to_string(), 6usize);
+        map.insert("sg4.sg8_z98".to_string(), 0usize);
+
+        // Child without explicit index → resolved from source_path
+        assert_eq!(
+            resolve_child_relative("SG8.SG10", Some("sg4.sg8_ze1.sg10"), &map),
+            "SG8:6.SG10"
+        );
+
+        // Child with explicit index → kept as-is
+        assert_eq!(
+            resolve_child_relative("SG8:3.SG10", Some("sg4.sg8_ze1.sg10"), &map),
+            "SG8:3.SG10"
+        );
+
+        // Source path not in map → kept as-is
+        assert_eq!(
+            resolve_child_relative("SG8.SG10", Some("sg4.sg8_unknown.sg10"), &map),
+            "SG8.SG10"
+        );
+
+        // No source_path → kept as-is
+        assert_eq!(
+            resolve_child_relative("SG8.SG10", None, &map),
+            "SG8.SG10"
+        );
+
+        // SG9 also works
+        assert_eq!(
+            resolve_child_relative("SG8.SG9", Some("sg4.sg8_z98.sg9"), &map),
+            "SG8:0.SG9"
+        );
+    }
+
+    #[test]
+    fn test_place_in_groups_returns_rep_index() {
+        let mut groups: Vec<AssembledGroup> = Vec::new();
+
+        // Append (no index) → returns position 0
+        let instance = AssembledGroupInstance {
+            segments: vec![],
+            child_groups: vec![],
+        };
+        assert_eq!(place_in_groups(&mut groups, "SG8", instance), 0);
+
+        // Append again → returns position 1
+        let instance = AssembledGroupInstance {
+            segments: vec![],
+            child_groups: vec![],
+        };
+        assert_eq!(place_in_groups(&mut groups, "SG8", instance), 1);
+
+        // Explicit index → returns that index
+        let instance = AssembledGroupInstance {
+            segments: vec![],
+            child_groups: vec![],
+        };
+        assert_eq!(place_in_groups(&mut groups, "SG8:5", instance), 5);
     }
 }
