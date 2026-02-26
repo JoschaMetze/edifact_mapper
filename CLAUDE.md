@@ -39,6 +39,14 @@ cargo build --release --workspace
 cargo run -p automapper-generator -- schema-lookup --pid 55035                # List all groups
 cargo run -p automapper-generator -- schema-lookup --pid 55035 --group sg4.sg8_zf0  # Detail for one group
 cargo run -p automapper-generator -- schema-lookup --pid 55035 --group sg4.sg8_zf0 --toml-template  # With TOML template
+
+# Migrate TOML paths from numeric to named EDIFACT ID paths
+cargo run -p automapper-generator -- migrate-paths \
+  --schema-dir crates/mig-types/src/generated/fv2504/utilmd/pids \
+  --mappings-dir mappings/FV2504/UTILMD_Strom --dry-run  # Preview changes
+cargo run -p automapper-generator -- migrate-paths \
+  --schema-dir crates/mig-types/src/generated/fv2504/utilmd/pids \
+  --mappings-dir mappings/FV2504/UTILMD_Strom             # Apply changes
 ```
 
 ## Architecture
@@ -299,13 +307,15 @@ When creating TOML mapping files for new PIDs, follow these rules:
 - When multiple TOML files map the same source group (e.g., multiple RFFs in SG6), each needs a `discriminator` (e.g., `RFF.0.0=Z13`) to select the right instance.
 - When looking up definitions in tests, use `(entity, source_group)` pairs — `definition_for_entity()` alone is ambiguous when multiple files share an entity name.
 
-**Field path convention — numeric or EDIFACT ID paths:**
-- Numeric: `loc.0` (element index 0), `loc.1.0` (element 1, component 0), `cav.0.3` (element 0, component 3).
-- EDIFACT ID: `loc.d3227` (simple element), `loc.c517.d3225` (composite + component), `cav[Z91].c889.d7111` (with qualifier).
+**Field path convention — EDIFACT ID paths (preferred):**
+- **Preferred**: EDIFACT ID paths — `loc.c517.d3225` (composite + component), `loc.d3227` (simple element), `cav[Z91].c889.d7111` (with qualifier).
+- **Legacy**: Numeric paths — `loc.1.0`, `loc.0`, `cav[Z91].0.1`. Still supported but all existing TOML files have been migrated to EDIFACT ID paths.
 - Both styles work in the same TOML file. EDIFACT ID paths are resolved to numeric at load time via `PathResolver`.
-- To use EDIFACT ID paths, the engine must be created with `MappingEngine::load(dir)?.with_path_resolver(resolver)`.
-- The `schema-lookup` CLI with `--toml-template` generates TOML using EDIFACT ID paths for readability.
-- Discriminators also support EDIFACT IDs: `LOC.d3227=Z16` resolves to `LOC.0=Z16`.
+- **PathResolver is required** on all MappingEngine instances: `MappingEngine::load(dir)?.with_path_resolver(resolver)`. Use `PathResolver::from_schema_dir(path)` to load all PID schemas at once.
+- Discriminators use EDIFACT IDs: `LOC.d3227=Z16`, `STS.c556.d9013=E01`. Resolved to 3-part numeric format (`LOC.0.0=Z16`) at load time.
+- Duplicate EDIFACT IDs use ordinal suffixes: `c556_2` (2nd occurrence of C556 in segment), `d3036_2` (2nd occurrence of 3036 in composite).
+- The `schema-lookup` CLI with `--toml-template` generates TOML using EDIFACT ID paths.
+- The `migrate-paths` CLI converts numeric paths to named: `cargo run -p automapper-generator -- migrate-paths --schema-dir ... --mappings-dir ...`
 - Empty EDIFACT values (empty string components) are omitted from BO4E JSON output — only non-empty values are included.
 - The reverse mapper pads intermediate empty elements automatically, so omitting empty values from BO4E is safe for roundtrip.
 

@@ -15,6 +15,7 @@ use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::renderer::render_edifact;
 use mig_assembly::tokenize::{parse_to_segments, split_messages};
 use mig_bo4e::engine::MappingEngine;
+use mig_bo4e::path_resolver::PathResolver;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
@@ -24,6 +25,11 @@ const AHB_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml";
 const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 const MAPPINGS_BASE: &str = "../../mappings/FV2504/UTILMD_Strom";
+const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
+
+fn path_resolver() -> PathResolver {
+    PathResolver::from_schema_dir(std::path::Path::new(SCHEMA_DIR))
+}
 
 fn load_pid_filtered_mig(pid_id: &str) -> Option<MigSchema> {
     let mig_path = Path::new(MIG_XML_PATH);
@@ -83,8 +89,12 @@ fn run_full_roundtrip(pid: &str, fixture_name: &str) {
         eprintln!("Skipping roundtrip for PID {pid}: mapping directories not found");
         return;
     }
-    let msg_engine = MappingEngine::load(&msg_dir).unwrap();
-    let tx_engine = MappingEngine::load(&tx_dir).unwrap();
+    let msg_engine = MappingEngine::load(&msg_dir)
+        .unwrap()
+        .with_path_resolver(path_resolver());
+    let tx_engine = MappingEngine::load(&tx_dir)
+        .unwrap()
+        .with_path_resolver(path_resolver());
 
     // Step 1: Tokenize and split
     let segments = parse_to_segments(edifact_input.as_bytes()).unwrap();
@@ -220,8 +230,10 @@ macro_rules! toml_loading_test {
                 return;
             }
             let msg_engine = MappingEngine::load(&msg_dir)
+                .map(|e| e.with_path_resolver(path_resolver()))
                 .unwrap_or_else(|e| panic!("Failed to load message engine: {e}"));
             let tx_engine = MappingEngine::load(&tx_dir)
+                .map(|e| e.with_path_resolver(path_resolver()))
                 .unwrap_or_else(|e| panic!("Failed to load PID {} engine: {e}", $pid));
             eprintln!(
                 "PID {} TOML loading OK: {} message + {} transaction definitions",

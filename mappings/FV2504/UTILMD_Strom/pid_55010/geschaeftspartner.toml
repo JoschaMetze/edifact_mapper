@@ -4,15 +4,15 @@ bo4e_type = "Geschaeftspartner"
 companion_type = "GeschaeftspartnerEdifact"
 source_group = "SG4.SG12"
 source_path = "sg4.sg12_vy"
-discriminator = "NAD.0.0=VY"
+discriminator = "NAD.d3035=VY"
 
 [fields]
-"nad.1.0" = "marktpartnerId"
+"nad.c082.d3039" = "marktpartnerId"
 
 [fields."nad.0"]
 target = ""
 default = "VY"
 
 [companion_fields]
-"nad.1.1" = "codelisteCode"
-"nad.1.2" = "codepflegeCode"
+"nad.c082.d1131" = "codelisteCode"
+"nad.c082.d3055" = "codepflegeCode"

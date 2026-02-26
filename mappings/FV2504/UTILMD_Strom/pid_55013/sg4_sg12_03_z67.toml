@@ -10,17 +10,17 @@ bo4e_type = "KundeDesNb"
 companion_type = "KundeDesNbEdifact"
 source_group = "SG4.SG12"
 source_path = "sg4.sg12_z67"
-discriminator = "NAD.0.0=Z67"
+discriminator = "NAD.d3035=Z67"
 
 [fields]
-"nad.0" = { target = "", default = "Z67" }
-"nad.1.0" = "identifikation"
-"nad.3.0" = "nachname"
-"nad.3.1" = "vorname"
-"nad.3.4" = "anrede"
+"nad.d3035" = { target = "", default = "Z67" }
+"nad.c082.d3039" = "identifikation"
+"nad.c080.d3036" = "nachname"
+"nad.c080.d3036_2" = "vorname"
+"nad.c080.d3036_5" = "anrede"
 
 [companion_fields]
-"nad.2.0" = "zusatzinfo"
-"nad.3.2" = "nameZeile3"
-"nad.3.3" = "nameZeile4"
-"nad.3.5" = "anredeCode"
+"nad.c058.d3124" = "zusatzinfo"
+"nad.c080.d3036_3" = "nameZeile3"
+"nad.c080.d3036_4" = "nameZeile4"
+"nad.c080.d3045" = "anredeCode"

@@ -1,7 +1,14 @@
 //! Tests for map_all_reverse() — reversing all definitions in an engine.
 
+use mig_bo4e::path_resolver::PathResolver;
 use mig_bo4e::MappingEngine;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+
+const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
+
+fn path_resolver() -> PathResolver {
+    PathResolver::from_schema_dir(Path::new(SCHEMA_DIR))
+}
 
 fn mappings_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -15,7 +22,9 @@ fn mappings_dir() -> PathBuf {
 #[test]
 fn test_map_all_reverse_message_level() {
     let msg_dir = mappings_dir().join("message");
-    let msg_engine = MappingEngine::load(&msg_dir).unwrap();
+    let msg_engine = MappingEngine::load(&msg_dir)
+        .unwrap()
+        .with_path_resolver(path_resolver());
 
     // Construct a minimal message-level BO4E JSON (Marktteilnehmer in SG2)
     let bo4e = serde_json::json!({
@@ -52,7 +61,9 @@ fn test_map_all_reverse_message_level() {
 #[test]
 fn test_map_all_reverse_transaction_level() {
     let tx_dir = mappings_dir().join("pid_55001");
-    let tx_engine = MappingEngine::load(&tx_dir).unwrap();
+    let tx_engine = MappingEngine::load(&tx_dir)
+        .unwrap()
+        .with_path_resolver(path_resolver());
 
     // Minimal transaction-level BO4E (Marktlokation in SG5)
     let bo4e = serde_json::json!({

@@ -9,11 +9,11 @@ entity = "Kontakt"
 bo4e_type = "Kontakt"
 source_group = "SG2.SG3"
 source_path = "sg2.sg3_ic"
-discriminator = "CTA.0.0=IC"
+discriminator = "CTA.d3139=IC"
 
 [fields]
-"cta.0" = { target = "", default = "IC" }
-"cta.1.0" = "kontaktNummer"
-"cta.1.1" = "kontaktName"
-"com.0.0" = "kommunikationsnummer"
-"com.0.1" = "kommunikationsart"
+"cta.d3139" = { target = "", default = "IC" }
+"cta.c056.d3413" = "kontaktNummer"
+"cta.c056.d3412" = "kontaktName"
+"com.c076.d3148" = "kommunikationsnummer"
+"com.c076.d3155" = "kommunikationsart"

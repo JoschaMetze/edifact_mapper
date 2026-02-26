@@ -164,6 +164,7 @@
     "sg4": {
       "children": {
         "sg12_z03": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3035",
             "segment": "NAD",
@@ -171,6 +172,7 @@
               "Z03"
             ]
           },
+          "entity_hint": "Zaehler",
           "segments": [
             {
               "elements": [
@@ -490,6 +492,7 @@
           "source_group": "SG12"
         },
         "sg5_z17": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -497,6 +500,7 @@
               "Z17"
             ]
           },
+          "entity_hint": "Messlokation",
           "segments": [
             {
               "elements": [
@@ -593,10 +597,12 @@
         "sg8_z03": {
           "children": {
             "sg10": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Zaehler",
               "segments": [
                 {
                   "elements": [
@@ -695,6 +701,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -702,6 +709,7 @@
               "Z03"
             ]
           },
+          "entity_hint": "Zaehler",
           "segments": [
             {
               "elements": [

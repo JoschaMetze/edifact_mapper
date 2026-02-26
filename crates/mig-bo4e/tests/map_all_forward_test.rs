@@ -9,8 +9,15 @@ use mig_assembly::assembler::Assembler;
 use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::tokenize::parse_to_segments;
 use mig_bo4e::engine::MappingEngine;
+use mig_bo4e::path_resolver::PathResolver;
 use std::collections::HashSet;
 use std::path::Path;
+
+const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
+
+fn path_resolver() -> PathResolver {
+    PathResolver::from_schema_dir(Path::new(SCHEMA_DIR))
+}
 
 const MIG_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml";
@@ -56,7 +63,9 @@ fn test_map_all_forward_55001() {
     let tree = assembler.assemble_generic(&segments).unwrap();
 
     // Load combined mapping engine (message + transaction) and call map_all_forward
-    let engine = MappingEngine::load_merged(&[msg_dir, tx_dir]).unwrap();
+    let engine = MappingEngine::load_merged(&[msg_dir, tx_dir])
+        .unwrap()
+        .with_path_resolver(path_resolver());
     let result = engine.map_all_forward(&tree);
 
     eprintln!(
@@ -217,6 +226,7 @@ fn test_map_all_forward_55001_with_code_enrichment() {
     let code_lookup = mig_bo4e::code_lookup::CodeLookup::from_schema_file(schema_path).unwrap();
     let engine = MappingEngine::load_merged(&[msg_dir, tx_dir])
         .unwrap()
+        .with_path_resolver(path_resolver())
         .with_code_lookup(code_lookup);
 
     let result = engine.map_all_forward(&tree);

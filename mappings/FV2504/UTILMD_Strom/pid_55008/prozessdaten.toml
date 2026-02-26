@@ -15,15 +15,15 @@ source_path = "sg4"
 
 [fields]
 # IDE segment (Transaktion)
-"ide.0" = { target = "", default = "24" }
-"ide.1" = "vorgangId"
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
 
 # DTM+93 (Datum Vertragsende)
-"dtm[93].0.0" = { target = "", default = "93" }
-"dtm[93].0.1" = "gueltigBis"
-"dtm[93].0.2" = { target = "", default = "303" }
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
 
 # STS segment — Status der Antwort (E01)
-"sts.0" = { target = "", default = "E01" }
-"sts.1" = "antwortStatus"
-"sts.2" = "pruefschritt"
+"sts.c601.d9015" = { target = "", default = "E01" }
+"sts.c555.d4405" = "antwortStatus"
+"sts.c556.d9013" = "pruefschritt"

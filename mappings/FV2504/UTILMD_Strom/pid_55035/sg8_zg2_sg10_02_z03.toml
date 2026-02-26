@@ -7,13 +7,13 @@ bo4e_type = "TechnischeRessource"
 companion_type = "TechnischeRessourceEdifact"
 source_group = "SG4.SG8.SG10"
 source_path = "sg4.sg8_zg2.sg10"
-discriminator = "CCI.0.0=Z03"
+discriminator = "CCI.d7059=Z03"
 
 [fields]
 
 [companion_fields]
-"cav.0.0" = "profilverfahrenCode"
-"cci.2.0" = "verfahrenCode"
+"cav.c889.d7111" = "profilverfahrenCode"
+"cci.c240.d7037" = "verfahrenCode"
 
 [companion_fields."cci.0.0"]
 target = ""

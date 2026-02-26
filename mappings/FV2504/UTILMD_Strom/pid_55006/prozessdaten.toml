@@ -16,15 +16,15 @@ source_path = "sg4"
 
 [fields]
 # IDE segment (Transaktion)
-"ide.0" = { target = "", default = "24" }
-"ide.1" = "vorgangId"
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
 
 # STS segment — Status der Antwort (E01)
-"sts.0" = { target = "", default = "E01" }
-"sts.1" = "antwortStatus"
-"sts.2" = "pruefschritt"
+"sts.c601.d9015" = { target = "", default = "E01" }
+"sts.c555.d4405" = "antwortStatus"
+"sts.c556.d9013" = "pruefschritt"
 
 # FTX segment — Zusaetzliche Informationen (ACB)
-"ftx.0" = { target = "", default = "ACB" }
-"ftx.2.0" = "freitextReferenz"
-"ftx.3.0" = "freitext"
+"ftx.d4451" = { target = "", default = "ACB" }
+"ftx.c107.d4441" = "freitextReferenz"
+"ftx.c108.d4440" = "freitext"

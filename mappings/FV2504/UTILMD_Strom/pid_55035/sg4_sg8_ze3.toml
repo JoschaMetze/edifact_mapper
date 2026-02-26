@@ -10,10 +10,10 @@ bo4e_type = "Marktlokation"
 companion_type = "MarktlokationEdifact"
 source_group = "SG4.SG8"
 source_path = "sg4.sg8_ze3"
-discriminator = "SEQ.0.0=ZE3"
+discriminator = "SEQ.d1229=ZE3"
 
 [fields]
-"seq.1.0" = "zeitraumReferenz"
+"seq.c286.d1050" = "zeitraumReferenz"
 
 [fields."seq.0"]
 target = ""
@@ -24,7 +24,7 @@ target = ""
 default = "5"
 
 [companion_fields]
-"pia.1.0" = "obisKennzahl"
+"pia.c212.d7140" = "obisKennzahl"
 
 [companion_fields."pia.1.1"]
 target = ""

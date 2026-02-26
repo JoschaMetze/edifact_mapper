@@ -1,20 +1,20 @@
-# Marktlokation Leistungskurvendefinition info (SEQ+ZE0) for PID 55035.
-# Merges into entity "Marktlokation" via deep-merge.
+# Netzlokation Leistungskurvendefinition info (SEQ+ZE0) for PID 55035.
+# Merges into entity "Netzlokation" via deep-merge.
 #
 # SEQ+ZE0+<Zeitraum-Ref>  (Informative Produkt-Daten der Netzlokation)
 # PIA+5+<Konfigurationsprodukt-Code>:Z12
 # RFF+Z32:<Netzlokations-ID>
 
 [meta]
-entity = "Marktlokation"
-bo4e_type = "Marktlokation"
-companion_type = "MarktlokationEdifact"
+entity = "Netzlokation"
+bo4e_type = "Netzlokation"
+companion_type = "NetzlokationEdifact"
 source_group = "SG4.SG8"
 source_path = "sg4.sg8_ze0"
-discriminator = "SEQ.0.0=ZE0"
+discriminator = "SEQ.d1229=ZE0"
 
 [fields]
-"seq.1.0" = "zeitraumReferenz"
+"seq.c286.d1050" = "zeitraumReferenz"
 
 [fields."seq.0"]
 target = ""
@@ -25,8 +25,8 @@ target = ""
 default = "5"
 
 [companion_fields]
-"pia.1.0" = "konfigurationsproduktCode"
-"rff.0.1" = "netzlokationsId"
+"pia.c212.d7140" = "konfigurationsproduktCode"
+"rff.c506.d1154" = "netzlokationsId"
 
 [companion_fields."pia.1.1"]
 target = ""

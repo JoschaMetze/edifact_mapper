@@ -1,18 +1,18 @@
-# Messlokation Zaehler/Geraete Zuordnung (SG10 within SEQ+ZF0) for PID 55035.
+# TechnischeRessource weitere Einrichtungen Zuordnung (SG10 within SEQ+ZF0) for PID 55035.
 # CCI/CAV rep 1: CCI+Z63, Information zu weiteren technischen Einrichtungen.
 
 [meta]
-entity = "Messlokation"
-bo4e_type = "Messlokation"
-companion_type = "MesslokationEdifact"
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+companion_type = "TechnischeRessourceEdifact"
 source_group = "SG4.SG8.SG10"
 source_path = "sg4.sg8_zf0.sg10"
-discriminator = "CCI.0.0=Z63"
+discriminator = "CCI.d7059=Z63"
 
 [fields]
 
 [companion_fields]
-"cav.0.0" = "zaehlerGeraeteCode"
+"cav.c889.d7111" = "zaehlerGeraeteCode"
 
 [companion_fields."cci.0.0"]
 target = ""

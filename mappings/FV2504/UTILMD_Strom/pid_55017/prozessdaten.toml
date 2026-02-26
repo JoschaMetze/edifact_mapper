@@ -14,20 +14,20 @@ source_path = "sg4"
 
 [fields]
 # IDE segment (Transaktion)
-"ide.0" = { target = "", default = "24" }
-"ide.1" = "vorgangId"
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
 
 # DTM+93 (Ende)
-"dtm[93].0.0" = { target = "", default = "93" }
-"dtm[93].0.1" = "gueltigBis"
-"dtm[93].0.2" = { target = "", default = "303" }
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
 
 # STS+7 — Transaktionsgrund
-"sts[7].0" = { target = "", default = "7" }
-"sts[7].2" = "transaktionsgrund"
-"sts[7].3" = "transaktionsgrundErgaenzung"
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundErgaenzung"
 
 # STS+E01 — Antwort-Status
-"sts[E01].0.0" = "antwortKategorie"
-"sts[E01].2.0" = "pruefschrittCode"
-"sts[E01].2.1" = "ebdNummer"
+"sts[E01].c601.d9015" = "antwortKategorie"
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"

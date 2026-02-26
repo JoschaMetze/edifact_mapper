@@ -1,19 +1,19 @@
-# Messlokation Zaehleinrichtung Zuordnung (SG10 within SEQ+ZF6) for PID 55035.
-# CCI/CAV attribute data, merges into entity "Messlokation".
+# Zaehler OBIS-Daten Zuordnung (SG10 within SEQ+ZF6) for PID 55035.
+# CCI/CAV attribute data, merges into entity "Zaehler".
 #
 # CAV+ZD9/ZE8/ZE9/ZB7  → konzessionsabgabeCode (Wertegranularitaet)
 # CCI+<klassentypCode>+++ZE4  → Wertegranularitaet
 
 [meta]
-entity = "Messlokation"
-bo4e_type = "Messlokation"
-companion_type = "MesslokationEdifact"
+entity = "Zaehler"
+bo4e_type = "Zaehler"
+companion_type = "ZaehlerEdifact"
 source_group = "SG4.SG8.SG10"
 source_path = "sg4.sg8_zf6.sg10"
 
 [fields]
 
 [companion_fields]
-"cav.0.0" = "konzessionsabgabeCode"
-"cci.0" = "klassentypCode"
-"cci.2.0" = "merkmalCode"
+"cav.c889.d7111" = "konzessionsabgabeCode"
+"cci.d7059" = "klassentypCode"
+"cci.c240.d7037" = "merkmalCode"

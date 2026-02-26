@@ -163,11 +163,11 @@ discriminator = "LOC.d3227=Z16"
     let tree = make_tree();
     let def = engine.definition_for_entity("Marktlokation").unwrap();
 
-    // Verify discriminator was resolved
+    // Verify discriminator was resolved (3-part format for engine compatibility)
     assert_eq!(
         def.meta.discriminator.as_deref(),
-        Some("LOC.0=Z16"),
-        "Named discriminator should resolve to numeric"
+        Some("LOC.0.0=Z16"),
+        "Named discriminator should resolve to 3-part numeric"
     );
 
     // Forward map

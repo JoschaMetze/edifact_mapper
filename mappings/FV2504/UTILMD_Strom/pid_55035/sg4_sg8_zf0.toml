@@ -1,26 +1,26 @@
-# Messlokation Zaehler/Geraeteinformation info (SEQ+ZF0) for PID 55035.
-# Merges into entity "Messlokation" via deep-merge.
+# TechnischeRessource info (SEQ+ZF0) for PID 55035.
+# Merges into entity "TechnischeRessource" via deep-merge.
 #
 # SEQ+ZF0+<Zeitraum-Ref>  (Informative Daten der Technischen Ressource)
 # RFF+Z32:<Netzlokations-ID>
 
 [meta]
-entity = "Messlokation"
-bo4e_type = "Messlokation"
-companion_type = "MesslokationEdifact"
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+companion_type = "TechnischeRessourceEdifact"
 source_group = "SG4.SG8"
 source_path = "sg4.sg8_zf0"
-discriminator = "SEQ.0.0=ZF0"
+discriminator = "SEQ.d1229=ZF0"
 
 [fields]
-"seq.1.0" = "zeitraumReferenz"
+"seq.c286.d1050" = "zeitraumReferenz"
 
 [fields."seq.0"]
 target = ""
 default = "ZF0"
 
 [companion_fields]
-"rff.0.1" = "netzlokationsId"
+"rff.c506.d1154" = "netzlokationsId"
 
 [companion_fields."rff.0.0"]
 target = ""

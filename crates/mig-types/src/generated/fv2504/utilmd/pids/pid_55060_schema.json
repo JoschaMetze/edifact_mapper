@@ -350,6 +350,7 @@
           "source_group": "SG12"
         },
         "sg5_z16": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -357,6 +358,7 @@
               "Z16"
             ]
           },
+          "entity_hint": "Marktlokation",
           "segments": [
             {
               "elements": [
@@ -411,6 +413,7 @@
           "source_group": "SG5"
         },
         "sg5_z17": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -418,6 +421,7 @@
               "Z17"
             ]
           },
+          "entity_hint": "Messlokation",
           "segments": [
             {
               "elements": [
@@ -472,6 +476,7 @@
           "source_group": "SG5"
         },
         "sg5_z18": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -479,6 +484,7 @@
               "Z18"
             ]
           },
+          "entity_hint": "Netzlokation",
           "segments": [
             {
               "elements": [
@@ -533,6 +539,7 @@
           "source_group": "SG5"
         },
         "sg5_z19": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -540,6 +547,7 @@
               "Z19"
             ]
           },
+          "entity_hint": "SteuerbareRessource",
           "segments": [
             {
               "elements": [
@@ -594,6 +602,7 @@
           "source_group": "SG5"
         },
         "sg5_z20": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -601,6 +610,7 @@
               "Z20"
             ]
           },
+          "entity_hint": "TechnischeRessource",
           "segments": [
             {
               "elements": [
@@ -655,6 +665,7 @@
           "source_group": "SG5"
         },
         "sg5_z21": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -662,6 +673,7 @@
               "Z21"
             ]
           },
+          "entity_hint": "Tranche",
           "segments": [
             {
               "elements": [
@@ -716,6 +728,7 @@
           "source_group": "SG5"
         },
         "sg5_z22": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -723,6 +736,7 @@
               "Z22"
             ]
           },
+          "entity_hint": "RuhendeMarktlokation",
           "segments": [
             {
               "elements": [
@@ -819,10 +833,12 @@
         "sg8_z98": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Marktlokation",
               "segments": [
                 {
                   "elements": [
@@ -913,10 +929,12 @@
               "source_group": "SG10"
             },
             "sg9": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "6063",
                 "segment": "QTY"
               },
+              "entity_hint": "Marktlokation",
               "segments": [
                 {
                   "elements": [
@@ -965,6 +983,7 @@
               "source_group": "SG9"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -972,6 +991,7 @@
               "Z98"
             ]
           },
+          "entity_hint": "Marktlokation",
           "segments": [
             {
               "elements": [
@@ -1039,6 +1059,7 @@
           "source_group": "SG8"
         },
         "sg8_zd5": {
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1046,6 +1067,7 @@
               "ZD5"
             ]
           },
+          "entity_hint": "Lokationsbuendel",
           "segments": [
             {
               "elements": [
@@ -1123,6 +1145,7 @@
           "source_group": "SG8"
         },
         "sg8_zd6": {
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1130,6 +1153,7 @@
               "ZD6"
             ]
           },
+          "entity_hint": "Lokationsbuendel",
           "segments": [
             {
               "elements": [
@@ -1199,10 +1223,12 @@
         "sg8_zd7": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Netzlokation",
               "segments": [
                 {
                   "elements": [
@@ -1309,6 +1335,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1316,6 +1343,7 @@
               "ZD7"
             ]
           },
+          "entity_hint": "Netzlokation",
           "segments": [
             {
               "elements": [
@@ -1383,6 +1411,7 @@
           "source_group": "SG8"
         },
         "sg8_zd9": {
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1390,6 +1419,7 @@
               "ZD9"
             ]
           },
+          "entity_hint": "Netzlokation",
           "segments": [
             {
               "elements": [
@@ -1502,10 +1532,12 @@
         "sg8_ze0": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Netzlokation",
               "segments": [
                 {
                   "elements": [
@@ -1555,6 +1587,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1562,6 +1595,7 @@
               "ZE0"
             ]
           },
+          "entity_hint": "Netzlokation",
           "segments": [
             {
               "elements": [
@@ -1674,10 +1708,12 @@
         "sg8_ze2": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Marktlokation",
               "segments": [
                 {
                   "elements": [
@@ -1731,6 +1767,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1738,6 +1775,7 @@
               "ZE2"
             ]
           },
+          "entity_hint": "Marktlokation",
           "segments": [
             {
               "elements": [
@@ -1837,10 +1875,12 @@
         "sg8_ze3": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Marktlokation",
               "segments": [
                 {
                   "elements": [
@@ -1927,6 +1967,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1934,6 +1975,7 @@
               "ZE3"
             ]
           },
+          "entity_hint": "Marktlokation",
           "segments": [
             {
               "elements": [
@@ -2046,10 +2088,12 @@
         "sg8_ze4": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Marktlokation",
               "segments": [
                 {
                   "elements": [
@@ -2099,6 +2143,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -2106,6 +2151,7 @@
               "ZE4"
             ]
           },
+          "entity_hint": "Marktlokation",
           "segments": [
             {
               "elements": [
@@ -2218,10 +2264,12 @@
         "sg8_ze7": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Tranche",
               "segments": [
                 {
                   "elements": [
@@ -2312,10 +2360,12 @@
               "source_group": "SG10"
             },
             "sg9": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "6063",
                 "segment": "QTY"
               },
+              "entity_hint": "Tranche",
               "segments": [
                 {
                   "elements": [
@@ -2364,6 +2414,7 @@
               "source_group": "SG9"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -2371,6 +2422,7 @@
               "ZE7"
             ]
           },
+          "entity_hint": "Tranche",
           "segments": [
             {
               "elements": [
@@ -2438,6 +2490,7 @@
           "source_group": "SG8"
         },
         "sg8_ze8": {
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -2445,6 +2498,7 @@
               "ZE8"
             ]
           },
+          "entity_hint": "Tranche",
           "segments": [
             {
               "elements": [
@@ -2544,10 +2598,12 @@
         "sg8_zf0": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "TechnischeRessource",
               "segments": [
                 {
                   "elements": [
@@ -2600,10 +2656,12 @@
               "source_group": "SG10"
             },
             "sg9": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "6063",
                 "segment": "QTY"
               },
+              "entity_hint": "TechnischeRessource",
               "segments": [
                 {
                   "elements": [
@@ -2652,6 +2710,7 @@
               "source_group": "SG9"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -2659,6 +2718,7 @@
               "ZF0"
             ]
           },
+          "entity_hint": "TechnischeRessource",
           "segments": [
             {
               "elements": [
@@ -2728,10 +2788,12 @@
         "sg8_zf1": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "SteuerbareRessource",
               "segments": [
                 {
                   "elements": [
@@ -2838,6 +2900,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -2845,6 +2908,7 @@
               "ZF1"
             ]
           },
+          "entity_hint": "SteuerbareRessource",
           "segments": [
             {
               "elements": [
@@ -2914,10 +2978,12 @@
         "sg8_zf2": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "SteuerbareRessource",
               "segments": [
                 {
                   "elements": [
@@ -2971,6 +3037,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -2978,6 +3045,7 @@
               "ZF2"
             ]
           },
+          "entity_hint": "SteuerbareRessource",
           "segments": [
             {
               "elements": [
@@ -3090,10 +3158,12 @@
         "sg8_zf3": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Messlokation",
               "segments": [
                 {
                   "elements": [
@@ -3180,6 +3250,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -3187,6 +3258,7 @@
               "ZF3"
             ]
           },
+          "entity_hint": "Messlokation",
           "segments": [
             {
               "elements": [
@@ -3256,10 +3328,12 @@
         "sg8_zf4": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Messlokation",
               "segments": [
                 {
                   "elements": [
@@ -3366,6 +3440,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -3373,6 +3448,7 @@
               "ZF4"
             ]
           },
+          "entity_hint": "Messlokation",
           "segments": [
             {
               "elements": [
@@ -3472,10 +3548,12 @@
         "sg8_zf5": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Zaehler",
               "segments": [
                 {
                   "elements": [
@@ -3554,6 +3632,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -3561,6 +3640,7 @@
               "ZF5"
             ]
           },
+          "entity_hint": "Zaehler",
           "segments": [
             {
               "elements": [
@@ -3630,10 +3710,12 @@
         "sg8_zf6": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Zaehler",
               "segments": [
                 {
                   "elements": [
@@ -3720,6 +3802,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -3727,6 +3810,7 @@
               "ZF6"
             ]
           },
+          "entity_hint": "Zaehler",
           "segments": [
             {
               "elements": [
@@ -3839,10 +3923,12 @@
         "sg8_zf7": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Zaehler",
               "segments": [
                 {
                   "elements": [
@@ -3947,6 +4033,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -3954,6 +4041,7 @@
               "ZF7"
             ]
           },
+          "entity_hint": "Zaehler",
           "segments": [
             {
               "elements": [
@@ -4023,10 +4111,12 @@
         "sg8_zf8": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Kommunikationseinrichtung",
               "segments": [
                 {
                   "elements": [
@@ -4121,6 +4211,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -4128,6 +4219,7 @@
               "ZF8"
             ]
           },
+          "entity_hint": "Kommunikationseinrichtung",
           "segments": [
             {
               "elements": [
@@ -4197,10 +4289,12 @@
         "sg8_zf9": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "technischenSteuereinrichtung",
               "segments": [
                 {
                   "elements": [
@@ -4279,6 +4373,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -4286,6 +4381,7 @@
               "ZF9"
             ]
           },
+          "entity_hint": "technischenSteuereinrichtung",
           "segments": [
             {
               "elements": [
@@ -4355,10 +4451,12 @@
         "sg8_zg0": {
           "children": {
             "sg10": {
+              "data_quality_hint": "informativ",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "SmartmeterGateway",
               "segments": [
                 {
                   "elements": [
@@ -4451,6 +4549,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "informativ",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -4458,6 +4557,7 @@
               "ZG0"
             ]
           },
+          "entity_hint": "SmartmeterGateway",
           "segments": [
             {
               "elements": [

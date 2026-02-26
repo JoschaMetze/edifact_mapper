@@ -12,6 +12,7 @@ use mig_assembly::assembler::{AssembledTree, Assembler};
 use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::tokenize::parse_to_segments;
 use mig_bo4e::engine::MappingEngine;
+use mig_bo4e::path_resolver::PathResolver;
 use mig_types::segment::OwnedSegment;
 use std::collections::HashSet;
 use std::path::Path;
@@ -23,6 +24,11 @@ const AHB_XML_PATH: &str =
 const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/pid_55001";
 const MESSAGE_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/message";
+const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
+
+fn path_resolver() -> PathResolver {
+    PathResolver::from_schema_dir(std::path::Path::new(SCHEMA_DIR))
+}
 
 fn load_pid_filtered_mig(pid_id: &str) -> Option<(MigSchema, HashSet<String>)> {
     let mig_path = Path::new(MIG_XML_PATH);
@@ -56,7 +62,9 @@ fn load_engine() -> Option<MappingEngine> {
     if !msg_dir.exists() || !tx_dir.exists() {
         return None;
     }
-    MappingEngine::load_merged(&[msg_dir, tx_dir]).ok()
+    MappingEngine::load_merged(&[msg_dir, tx_dir])
+        .ok()
+        .map(|e| e.with_path_resolver(path_resolver()))
 }
 
 // ── Marktlokation: SG4.SG5 → LOC+Z16 ──

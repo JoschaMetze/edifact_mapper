@@ -1,25 +1,31 @@
 {
-  "generated_at": "2026-02-25T13:06:44Z",
+  "generated_at": "2026-02-25T13:36:32Z",
   "ahb_file": "UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml",
   "format_version": "FV2504",
   "conditions": {
+    "17": {
+      "confidence": "high",
+      "reasoning": "Group-scoped: checks SEQ+Z01/Z80/Z81 within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "f99c24cd",
+      "is_external": false
+    },
+    "32": {
+      "confidence": "medium",
+      "reasoning": "SG8 groups for 'Referenz auf die Lokationsbündelstruktur' are identified by SEQ with codes Z78/ZC7/ZC8/ZD5. Each such SG8 begins with exactly one such SEQ, so counting all SEQ segments with those codes gives the number of Lokationsbündelstruktur SG8 instances in the message. More than 1 → True.",
+      "description_hash": "79265978",
+      "is_external": false
+    },
+    "15": {
+      "confidence": "high",
+      "reasoning": "Group-scoped: checks SEQ+Z98 within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "07b13291",
+      "is_external": false
+    },
     "5": {
       "confidence": "high",
       "reasoning": "The sender MP-ID (NAD+MS) is present in the message, but whether that market participant acts in the role LF (Lieferant) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
       "description_hash": "a1466d0d",
       "is_external": true
-    },
-    "34": {
-      "confidence": "low",
-      "reasoning": "Whether this message is a response to a deactivation request ('Antwort auf Deaktivierung') is business process state that cannot be determined from EDIFACT segment content alone. Requires external runtime context about the originating process flow.",
-      "description_hash": "f7259e99",
-      "is_external": true
-    },
-    "33": {
-      "confidence": "low",
-      "reasoning": "This requires checking whether PIA+5 DE7140 in an SG8 containing SEQ+Z79 holds a code from a specific column ('Code der Produkteigenschaft 9991000002272, Lieferant als Empfänger der Vergütung') of an external code list from chapter 6. The set of valid codes for that column is not derivable from the EDIFACT data itself and must come from the external specification document.",
-      "description_hash": "f5438ef0",
-      "is_external": false
     },
     "7": {
       "confidence": "high",
@@ -27,46 +33,10 @@
       "description_hash": "101bffb4",
       "is_external": false
     },
-    "16": {
+    "20": {
       "confidence": "high",
-      "reasoning": "Per the segment reference for STS 'Status der Antwort': elements[0][0]=E01, elements[2][0]=Code des Prüfschritts. Z12 (Ablehnung Vertragsbindung) at elements[2][0] matches AHB STS+E01++Z12. Returns True when this specific STS is present.",
-      "description_hash": "01e37a5a",
-      "is_external": false
-    },
-    "13": {
-      "confidence": "high",
-      "reasoning": "Per the segment reference for STS 'Status der Antwort': elements[0][0]=E01 (Statuskategorie), elements[1]=empty Status field, elements[2][0]=Code des Prüfschritts. AHB STS+E01++Z01 confirms elements[2][0] for the Prüfschritt code Z01. Condition is True ('nicht vorhanden') when absent.",
-      "description_hash": "95c62c31",
-      "is_external": false
-    },
-    "21": {
-      "confidence": "high",
-      "reasoning": "Group-scoped: checks CCI+++ZA6 within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
-      "description_hash": "cff72c8d",
-      "is_external": false
-    },
-    "18": {
-      "confidence": "high",
-      "reasoning": "Checks absence of DTM+93 (Ende zum, elements[0][0] = \"93\"). Condition is true when no such segment is present. Straightforward negated existence check on a well-defined segment qualifier.",
-      "description_hash": "b2b52d1a",
-      "is_external": false
-    },
-    "25": {
-      "confidence": "high",
-      "reasoning": "Checks for CCI with elements[0][0]==\"Z22\" (Veräußerungsform der erzeugenden Marktlokation, per schema codes [Z22=]) and elements[2][0]==\"Z91\". The schema description for Z91 is explicitly '§ 21 Abs. 1 Nr. 1 EEG 2017 (Marktprämie)', making Z91 the unambiguous code for Marktprämie. Both element positions are confirmed from CCI — Veräußerungsform schema entry.",
-      "description_hash": "3bebab6e",
-      "is_external": false
-    },
-    "27": {
-      "confidence": "high",
-      "reasoning": "DTM+Z01 = Kündigungsfrist des Vertrags. elements[0][0]='Z01' (qualifier), elements[0][1]=DE2380 (the period/duration value, e.g. '1M0T' or '2W1R'). 'an vierter Stelle' = character at 0-based index 3. Checks for 'T' (Termin) or 'R' (Rhythmus) at that position.",
-      "description_hash": "fc0cba01",
-      "is_external": false
-    },
-    "22": {
-      "confidence": "medium",
-      "reasoning": "The condition instructs that the Zeitraum-ID (DE1156) from a matching SG6 RFF+Z47/Z48/Z49 (Verwendungszeitraum der Daten) must be entered. Interpreted as: this condition is True when such an RFF segment (with qualifier Z47, Z48, or Z49 at elements[0][0]) is present in the message. The schema for RFF — Verwendungszeitraum der Daten lists those qualifiers at elements[0][0]. Confidence medium because the wording is instructional rather than a pure boolean predicate.",
-      "description_hash": "077d9210",
+      "reasoning": "Group-scoped: checks SEQ+Z01 AND CCI+Z30++Z07 co-occurrence within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "a5387753",
       "is_external": false
     },
     "19": {
@@ -81,76 +51,34 @@
       "description_hash": "ff6dde96",
       "is_external": false
     },
-    "1": {
-      "confidence": "high",
-      "reasoning": "'Wenn Aufteilung vorhanden' checks whether message splitting is present — a business context decision that cannot be determined from the EDIFACT message content alone. Matches the canonical external condition from the examples.",
-      "description_hash": "4ebb4e5c",
-      "is_external": true
-    },
-    "17": {
-      "confidence": "high",
-      "reasoning": "Group-scoped: checks SEQ+Z01/Z80/Z81 within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
-      "description_hash": "f99c24cd",
-      "is_external": false
-    },
-    "24": {
-      "confidence": "high",
-      "reasoning": "Group-scoped: checks STS+E01++A25/A99 within SG4 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
-      "description_hash": "17b52555",
-      "is_external": false
-    },
-    "10": {
-      "confidence": "high",
-      "reasoning": "Per the segment reference, STS+7 Transaktionsgrundergänzung für Lieferende bei befristeter Anmeldung is at elements[4][0]. The AHB shorthand STS+7++xxx+xxx+E01/E03 has five positional fields after the tag: elements[0]=7, elements[1]=empty, elements[2]=Transaktionsgrund, elements[3]=Transaktionsgrundergänzung, elements[4]=Lieferende qualifier. Check for E01 or E03.",
-      "description_hash": "d04ca26f",
-      "is_external": false
-    },
-    "6": {
-      "confidence": "high",
-      "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role ÜNB (Übertragungsnetzbetreiber) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
-      "description_hash": "4b435776",
-      "is_external": true
-    },
-    "11": {
-      "confidence": "high",
-      "reasoning": "Per the segment reference, STS+7 Transaktionsgrund is at elements[2][0]. The AHB shorthand STS+7++ZG9/ZH1/ZH2 maps: elements[0][0]=7, elements[1]=empty, elements[2][0]=Transaktionsgrund. Returns True (condition 'nicht vorhanden') when none of ZG9/ZH1/ZH2 appear.",
-      "description_hash": "321d0c62",
-      "is_external": false
-    },
-    "35": {
-      "confidence": "high",
-      "reasoning": "Identical lookup to condition 27 (DTM+Z01, elements[0][1]=DE2380, char at index 3) but checks exclusively for 'T' (Termin), not 'R'. Condition 27 is the union (T or R); condition 35 is the narrower T-only case.",
-      "description_hash": "4f52c394",
-      "is_external": false
-    },
-    "20": {
-      "confidence": "high",
-      "reasoning": "Group-scoped: checks SEQ+Z01 AND CCI+Z30++Z07 co-occurrence within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
-      "description_hash": "a5387753",
-      "is_external": false
-    },
-    "32": {
+    "38": {
       "confidence": "medium",
-      "reasoning": "SG8 groups for 'Referenz auf die Lokationsbündelstruktur' are identified by SEQ with codes Z78/ZC7/ZC8/ZD5. Each such SG8 begins with exactly one such SEQ, so counting all SEQ segments with those codes gives the number of Lokationsbündelstruktur SG8 instances in the message. More than 1 → True.",
-      "description_hash": "79265978",
-      "is_external": false
+      "reasoning": "GROUP-SCOPED. This condition enforces that only property codes permitted for the specific product code found in PIA+5 DE7140 (SEQ+Z79, same SG8) are used. Resolving which property codes are allowed for a given product code requires a cross-reference lookup in the external code list for section 6.1 — this cannot be evaluated from the EDIFACT message structure alone.",
+      "description_hash": "40eb619a",
+      "is_external": true
     },
     "31": {
-      "confidence": "low",
-      "reasoning": "Whether the message represents a correction ('Korrektur erfolgt') is business process or workflow state that cannot be determined from EDIFACT segment content alone. This typically depends on external process tracking or PID-level context not embedded in individual segments.",
+      "confidence": "medium",
+      "reasoning": "Whether a correction (Korrektur) is occurring is encoded in the STS Transaktionsgrund field. The exact Transaktionsgrund codes denoting a correction in this UTILMD variant are not listed in the segment structure reference, making this an external business-context condition rather than a structurally derivable one.",
       "description_hash": "c93779d2",
       "is_external": true
     },
-    "4": {
-      "confidence": "high",
-      "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role LF (Lieferant) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
-      "description_hash": "55130474",
+    "30": {
+      "confidence": "medium",
+      "reasoning": "Whether a message is a response to an activation (Antwort auf Aktivierung) depends on the Transaktionsgrund code in the STS segment. The exact STS Transaktionsgrund codes identifying activation responses for controllable resources (steuerbare Ressource) in UTILMD FV2504 are not provided in the segment structure reference and require business-context resolution via the external provider.",
+      "description_hash": "96276831",
       "is_external": true
     },
-    "36": {
-      "confidence": "low",
-      "reasoning": "GROUP-SCOPED condition requiring knowledge of specific code list values from chapter 6.1 ('Anmeldung einer Zuordnung des LFN', column 'Code der Produkteigenschaft (Wertebereich)'). While the group-scoped check for SEQ+Z79 and PIA+5 in the same SG8 is implementable, correctly filtering DE7140 to codes present in that specific code list column requires the external specification document values, which are not available from EDIFACT data alone.",
-      "description_hash": "43dbfa86",
+    "8": {
+      "confidence": "high",
+      "reasoning": "Whether data clearing is required cannot be determined from the EDIFACT message content alone — it depends on business/contractual context external to the message.",
+      "description_hash": "d48f1537",
+      "is_external": true
+    },
+    "18": {
+      "confidence": "high",
+      "reasoning": "Checks absence of DTM+93 (Ende zum, elements[0][0] = \"93\"). Condition is true when no such segment is present. Straightforward negated existence check on a well-defined segment qualifier.",
+      "description_hash": "b2b52d1a",
       "is_external": false
     },
     "9": {
@@ -159,35 +87,125 @@
       "description_hash": "d9990b82",
       "is_external": true
     },
+    "22": {
+      "confidence": "medium",
+      "reasoning": "The condition instructs that the Zeitraum-ID (DE1156) from a matching SG6 RFF+Z47/Z48/Z49 (Verwendungszeitraum der Daten) must be entered. Interpreted as: this condition is True when such an RFF segment (with qualifier Z47, Z48, or Z49 at elements[0][0]) is present in the message. The schema for RFF — Verwendungszeitraum der Daten lists those qualifiers at elements[0][0]. Confidence medium because the wording is instructional rather than a pure boolean predicate.",
+      "description_hash": "077d9210",
+      "is_external": false
+    },
+    "34": {
+      "confidence": "medium",
+      "reasoning": "Symmetric counterpart to condition 30 for deactivation (Deaktivierung). Whether a message is a deactivation response depends on the STS Transaktionsgrund code. The specific code values for deactivation responses in UTILMD FV2504 are not confirmed in the segment structure reference and must be resolved via external business context.",
+      "description_hash": "f7259e99",
+      "is_external": true
+    },
+    "33": {
+      "confidence": "medium",
+      "reasoning": "Checks whether the product code in PIA DE7140 (within any SG8 containing SEQ+Z79) belongs to the code list subset for product property 9991000002272 ('Lieferant' / recipient of feed-in compensation) defined in chapter 6. Code list membership cannot be evaluated from the EDIFACT message alone — it requires the external configuration code list to look up which product codes are assigned to that property column.",
+      "description_hash": "f5438ef0",
+      "is_external": true
+    },
+    "25": {
+      "confidence": "high",
+      "reasoning": "Checks for CCI with elements[0][0]==\"Z22\" (Veräußerungsform der erzeugenden Marktlokation, per schema codes [Z22=]) and elements[2][0]==\"Z91\". The schema description for Z91 is explicitly '§ 21 Abs. 1 Nr. 1 EEG 2017 (Marktprämie)', making Z91 the unambiguous code for Marktprämie. Both element positions are confirmed from CCI — Veräußerungsform schema entry.",
+      "description_hash": "3bebab6e",
+      "is_external": false
+    },
+    "39": {
+      "confidence": "medium",
+      "reasoning": "GROUP-SCOPED. Checks whether the optional condition specified in the 'Wertedetails für Position' column of the external code list is fulfilled for the product code in PIA+5 DE7140 (SEQ+Z79, same SG8). These per-product-code positional conditions are defined entirely in the external code list and cannot be derived from the EDIFACT message structure.",
+      "description_hash": "85f3b302",
+      "is_external": true
+    },
+    "10": {
+      "confidence": "high",
+      "reasoning": "Per the segment reference, STS+7 Transaktionsgrundergänzung für Lieferende bei befristeter Anmeldung is at elements[4][0]. The AHB shorthand STS+7++xxx+xxx+E01/E03 has five positional fields after the tag: elements[0]=7, elements[1]=empty, elements[2]=Transaktionsgrund, elements[3]=Transaktionsgrundergänzung, elements[4]=Lieferende qualifier. Check for E01 or E03.",
+      "description_hash": "d04ca26f",
+      "is_external": false
+    },
+    "36": {
+      "confidence": "medium",
+      "reasoning": "GROUP-SCOPED. Checks whether in the same SG8, the product code in PIA+5 DE7140 (paired with SEQ+Z79) belongs to the code list for section 6.1 'Anmeldung einer Zuordnung des LFN (UTILMD)' — specifically the 'Code der Produkteigenschaft (Wertebereich)' column. Code list membership requires external reference data not present in the EDIFACT message itself.",
+      "description_hash": "43dbfa86",
+      "is_external": true
+    },
+    "35": {
+      "confidence": "high",
+      "reasoning": "Identical lookup to condition 27 (DTM+Z01, elements[0][1]=DE2380, char at index 3) but checks exclusively for 'T' (Termin), not 'R'. Condition 27 is the union (T or R); condition 35 is the narrower T-only case.",
+      "description_hash": "4f52c394",
+      "is_external": false
+    },
+    "13": {
+      "confidence": "high",
+      "reasoning": "Per the segment reference for STS 'Status der Antwort': elements[0][0]=E01 (Statuskategorie), elements[1]=empty Status field, elements[2][0]=Code des Prüfschritts. AHB STS+E01++Z01 confirms elements[2][0] for the Prüfschritt code Z01. Condition is True ('nicht vorhanden') when absent.",
+      "description_hash": "95c62c31",
+      "is_external": false
+    },
+    "11": {
+      "confidence": "high",
+      "reasoning": "Per the segment reference, STS+7 Transaktionsgrund is at elements[2][0]. The AHB shorthand STS+7++ZG9/ZH1/ZH2 maps: elements[0][0]=7, elements[1]=empty, elements[2][0]=Transaktionsgrund. Returns True (condition 'nicht vorhanden') when none of ZG9/ZH1/ZH2 appear.",
+      "description_hash": "321d0c62",
+      "is_external": false
+    },
+    "1": {
+      "confidence": "high",
+      "reasoning": "'Wenn Aufteilung vorhanden' checks whether message splitting is present — a business context decision that cannot be determined from the EDIFACT message content alone. Matches the canonical external condition from the examples.",
+      "description_hash": "4ebb4e5c",
+      "is_external": true
+    },
+    "16": {
+      "confidence": "high",
+      "reasoning": "Per the segment reference for STS 'Status der Antwort': elements[0][0]=E01, elements[2][0]=Code des Prüfschritts. Z12 (Ablehnung Vertragsbindung) at elements[2][0] matches AHB STS+E01++Z12. Returns True when this specific STS is present.",
+      "description_hash": "01e37a5a",
+      "is_external": false
+    },
+    "6": {
+      "confidence": "high",
+      "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role ÜNB (Übertragungsnetzbetreiber) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
+      "description_hash": "4b435776",
+      "is_external": true
+    },
+    "37": {
+      "confidence": "medium",
+      "reasoning": "Whether a registration/change (Anmeldung/Änderung) is time-limited (befristet) is semantically about whether an end-date has been specified. While it may correlate with the presence of a specific DTM qualifier (e.g., DTM+36 for period end), the exact DTM qualifier used to signal 'befristet' in this UTILMD PID context is not confirmed in the segment structure reference. Marking as external to avoid misidentifying the wrong qualifier.",
+      "description_hash": "8ae2fa4a",
+      "is_external": true
+    },
     "12": {
       "confidence": "high",
       "reasoning": "DTM 'Ende zum (nächstmöglichen Termin)' uses qualifier 471 at elements[0][0] per the segment reference. Condition is True ('nicht vorhanden') when no such DTM segment exists.",
       "description_hash": "c8244b0e",
       "is_external": false
     },
-    "15": {
-      "confidence": "high",
-      "reasoning": "Group-scoped: checks SEQ+Z98 within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
-      "description_hash": "07b13291",
-      "is_external": false
-    },
-    "8": {
-      "confidence": "high",
-      "reasoning": "Whether data clearing is required cannot be determined from the EDIFACT message content alone — it depends on business/contractual context external to the message.",
-      "description_hash": "d48f1537",
-      "is_external": true
-    },
-    "30": {
-      "confidence": "low",
-      "reasoning": "Whether this message is a response to an activation request ('Antwort auf Aktivierung') is business process state that cannot be determined from the EDIFACT segments alone. It depends on the originating process type and message flow context, which is external to the message content.",
-      "description_hash": "96276831",
-      "is_external": true
-    },
     "14": {
       "confidence": "medium",
       "reasoning": "'Wenn Datum bekannt' (When date is known) reflects whether the sender has knowledge of a specific date at the time of sending. This cannot be determined from the EDIFACT message structure itself — a missing DTM segment is ambiguous between 'date unknown' and 'date not applicable'. Requires external business context.",
       "description_hash": "d089cab4",
       "is_external": true
+    },
+    "21": {
+      "confidence": "high",
+      "reasoning": "Group-scoped: checks CCI+++ZA6 within SG4→SG8 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "cff72c8d",
+      "is_external": false
+    },
+    "24": {
+      "confidence": "high",
+      "reasoning": "Group-scoped: checks STS+E01++A25/A99 within SG4 instances using GroupNavigator, falls back to message-wide search when navigator is unavailable.",
+      "description_hash": "17b52555",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "high",
+      "reasoning": "The recipient MP-ID (NAD+MR) is present in the message, but whether that market participant acts in the role LF (Lieferant) cannot be determined from EDIFACT data alone — it requires an external market participant registry lookup.",
+      "description_hash": "55130474",
+      "is_external": true
+    },
+    "27": {
+      "confidence": "high",
+      "reasoning": "DTM+Z01 = Kündigungsfrist des Vertrags. elements[0][0]='Z01' (qualifier), elements[0][1]=DE2380 (the period/duration value, e.g. '1M0T' or '2W1R'). 'an vierter Stelle' = character at 0-based index 3. Checks for 'T' (Termin) or 'R' (Rhythmus) at that position.",
+      "description_hash": "fc0cba01",
+      "is_external": false
     }
   }
 }

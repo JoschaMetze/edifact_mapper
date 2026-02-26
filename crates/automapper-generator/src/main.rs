@@ -281,6 +281,21 @@ enum Commands {
         toml_template: bool,
     },
 
+    /// Migrate TOML mapping files from numeric paths to EDIFACT ID paths
+    MigratePaths {
+        /// Directory containing pid_*_schema.json files
+        #[arg(long)]
+        schema_dir: PathBuf,
+
+        /// Root directory of TOML mappings (e.g., mappings/FV2504/UTILMD_Strom)
+        #[arg(long)]
+        mappings_dir: PathBuf,
+
+        /// Preview changes without writing files
+        #[arg(long, default_value = "false")]
+        dry_run: bool,
+    },
+
     /// Generate TypeScript type definitions from TOML mappings and PID schemas
     GenerateTypescript {
         /// PIDs to generate types for (comma-separated, e.g., "55001,55002")
@@ -1166,6 +1181,38 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                     "{}",
                     automapper_generator::codegen::schema_lookup::print_group_list(&schema)
                 );
+            }
+
+            Ok(())
+        }
+        Commands::MigratePaths {
+            schema_dir,
+            mappings_dir,
+            dry_run,
+        } => {
+            eprintln!(
+                "Migrating TOML paths in {:?} using schemas from {:?}{}",
+                mappings_dir,
+                schema_dir,
+                if dry_run { " [dry-run]" } else { "" }
+            );
+
+            let stats = automapper_generator::codegen::path_migration::migrate_toml_dir(
+                &schema_dir,
+                &mappings_dir,
+                dry_run,
+            )?;
+
+            eprintln!(
+                "\n=== Migration {} ===",
+                if dry_run { "Preview" } else { "Complete" }
+            );
+            eprintln!("  Files processed: {}", stats.files_processed);
+            eprintln!("  Files changed:   {}", stats.files_changed);
+            eprintln!("  Paths migrated:  {}", stats.paths_migrated);
+            eprintln!("  Discriminators:  {}", stats.discriminators_migrated);
+            if stats.unresolved > 0 {
+                eprintln!("  Unresolved:      {}", stats.unresolved);
             }
 
             Ok(())

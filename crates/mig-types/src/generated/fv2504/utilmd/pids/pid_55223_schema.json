@@ -207,6 +207,7 @@
           "source_group": "SG5"
         },
         "sg5_z16": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -214,6 +215,7 @@
               "Z16"
             ]
           },
+          "entity_hint": "Marktlokation",
           "segments": [
             {
               "elements": [
@@ -268,6 +270,7 @@
           "source_group": "SG5"
         },
         "sg5_z21": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -275,6 +278,7 @@
               "Z21"
             ]
           },
+          "entity_hint": "Tranche",
           "segments": [
             {
               "elements": [
@@ -375,6 +379,7 @@
           "source_group": "SG6"
         },
         "sg8_z22": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -382,6 +387,7 @@
               "Z22"
             ]
           },
+          "entity_hint": "Summenzeitreihe",
           "segments": [
             {
               "elements": [
@@ -438,10 +444,12 @@
         "sg8_z47": {
           "children": {
             "sg10": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Datenstand",
               "segments": [
                 {
                   "elements": [
@@ -530,10 +538,12 @@
               "source_group": "SG10"
             },
             "sg9": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "6063",
                 "segment": "QTY"
               },
+              "entity_hint": "Datenstand",
               "segments": [
                 {
                   "elements": [
@@ -625,6 +635,7 @@
               "source_group": "SG9"
             }
           },
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -632,6 +643,7 @@
               "Z47"
             ]
           },
+          "entity_hint": "Datenstand",
           "segments": [
             {
               "elements": [
@@ -657,10 +669,12 @@
         "sg8_z48": {
           "children": {
             "sg10": {
+              "data_quality_hint": "abgerechnet",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "BilanzkreissummenzeitreihedesÜNB",
               "segments": [
                 {
                   "elements": [
@@ -713,10 +727,12 @@
               "source_group": "SG10"
             },
             "sg9": {
+              "data_quality_hint": "abgerechnet",
               "discriminator": {
                 "element": "6063",
                 "segment": "QTY"
               },
+              "entity_hint": "BilanzkreissummenzeitreihedesÜNB",
               "segments": [
                 {
                   "elements": [
@@ -808,6 +824,7 @@
               "source_group": "SG9"
             }
           },
+          "data_quality_hint": "abgerechnet",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -815,6 +832,7 @@
               "Z48"
             ]
           },
+          "entity_hint": "BilanzkreissummenzeitreihedesÜNB",
           "segments": [
             {
               "elements": [
@@ -871,10 +889,12 @@
         "sg8_z49": {
           "children": {
             "sg10": {
+              "data_quality_hint": "abgerechnet",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "BilanzierungsgebietssummenzeitreihedesÜNB",
               "segments": [
                 {
                   "elements": [
@@ -927,10 +947,12 @@
               "source_group": "SG10"
             },
             "sg9": {
+              "data_quality_hint": "abgerechnet",
               "discriminator": {
                 "element": "6063",
                 "segment": "QTY"
               },
+              "entity_hint": "BilanzierungsgebietssummenzeitreihedesÜNB",
               "segments": [
                 {
                   "elements": [
@@ -1022,6 +1044,7 @@
               "source_group": "SG9"
             }
           },
+          "data_quality_hint": "abgerechnet",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1029,6 +1052,7 @@
               "Z49"
             ]
           },
+          "entity_hint": "BilanzierungsgebietssummenzeitreihedesÜNB",
           "segments": [
             {
               "elements": [

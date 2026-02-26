@@ -6,12 +6,18 @@
 use mig_assembly::pid_detect::detect_pid;
 use mig_assembly::tokenize::parse_to_segments;
 use mig_bo4e::engine::MappingEngine;
+use mig_bo4e::path_resolver::PathResolver;
 use mig_types::generated::fv2504::utilmd::pids::pid_55001::Pid55001;
 use std::path::Path;
 
 const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
 const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/pid_55001";
 const MESSAGE_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/message";
+const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
+
+fn path_resolver() -> PathResolver {
+    PathResolver::from_schema_dir(std::path::Path::new(SCHEMA_DIR))
+}
 
 #[test]
 fn test_full_pid_pipeline_55001() {
@@ -74,7 +80,9 @@ fn test_full_pid_pipeline_55001() {
         return;
     }
 
-    let engine = MappingEngine::load_merged(&[msg_dir, tx_dir]).unwrap();
+    let engine = MappingEngine::load_merged(&[msg_dir, tx_dir])
+        .unwrap()
+        .with_path_resolver(path_resolver());
     assert!(
         !engine.definitions().is_empty(),
         "Should load TOML mapping definitions"

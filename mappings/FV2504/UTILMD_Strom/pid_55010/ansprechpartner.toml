@@ -4,16 +4,16 @@ bo4e_type = "Ansprechpartner"
 companion_type = "AnsprechpartnerEdifact"
 source_group = "SG4.SG12"
 source_path = "sg4.sg12_z09"
-discriminator = "NAD.0.0=Z09"
+discriminator = "NAD.d3035=Z09"
 
 [fields]
-"nad.3.0" = "nachname"
-"nad.3.1" = "vorname"
-"nad.3.4" = "anrede"
+"nad.c080.d3036" = "nachname"
+"nad.c080.d3036_2" = "vorname"
+"nad.c080.d3036_5" = "anrede"
 
 [fields."nad.0"]
 target = ""
 default = "Z09"
 
 [companion_fields]
-"nad.3.5" = "anredeCode"
+"nad.c080.d3045" = "anredeCode"

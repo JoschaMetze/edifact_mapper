@@ -1,21 +1,21 @@
-# Messlokation Wandlerfaktor Zuordnung (SG10 within SEQ+ZF0) for PID 55035.
-# CCI/CAV rep 0: CCI+Z56, Fernablesbarkeit.
+# TechnischeRessource Art und Nutzung Zuordnung (SG10 within SEQ+ZF0) for PID 55035.
+# CCI/CAV rep 0: CCI+Z56, Art und Nutzung der Technischen Ressource.
 
 [meta]
-entity = "Messlokation"
-bo4e_type = "Messlokation"
-companion_type = "MesslokationEdifact"
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+companion_type = "TechnischeRessourceEdifact"
 source_group = "SG4.SG8.SG10"
 source_path = "sg4.sg8_zf0.sg10"
-discriminator = "CCI.0.0=Z56"
+discriminator = "CCI.d7059=Z56"
 
 [fields]
 
 [companion_fields]
-"cav[ZF9].0.0" = "fernablesbarkeit"
-"cav[ZG8].0.0" = "nachrichtenuebermittlung"
-"cav[ZH1].0.0" = "geraetekategorie"
-"cav[ZH4].0.0" = "dienstleistungskategorie"
+"cav[ZF9].c889.d7111" = "fernablesbarkeit"
+"cav[ZG8].c889.d7111" = "nachrichtenuebermittlung"
+"cav[ZH1].c889.d7111" = "geraetekategorie"
+"cav[ZH4].c889.d7111" = "dienstleistungskategorie"
 
 [companion_fields."cci.0.0"]
 target = ""

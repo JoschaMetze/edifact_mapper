@@ -120,8 +120,9 @@ pub fn generate_pid_scaffolds(
         }
         if !group.segments.is_empty() {
             let entity_hint = group
-                .ahb_name
+                .entity_hint
                 .as_deref()
+                .or(group.ahb_name.as_deref())
                 .unwrap_or(&group.group_id)
                 .replace(", ", "_")
                 .replace(' ', "_");

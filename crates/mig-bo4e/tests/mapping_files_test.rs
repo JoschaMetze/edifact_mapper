@@ -1,7 +1,13 @@
 use mig_bo4e::engine::MappingEngine;
+use mig_bo4e::path_resolver::PathResolver;
 use std::path::Path;
 
 const MESSAGE_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/message";
+const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
+
+fn path_resolver() -> PathResolver {
+    PathResolver::from_schema_dir(Path::new(SCHEMA_DIR))
+}
 
 #[test]
 fn test_load_message_level_mapping_files() {
@@ -11,7 +17,9 @@ fn test_load_message_level_mapping_files() {
         return;
     }
 
-    let engine = MappingEngine::load(msg_dir).unwrap();
+    let engine = MappingEngine::load(msg_dir)
+        .unwrap()
+        .with_path_resolver(path_resolver());
     assert_eq!(
         engine.definitions().len(),
         3,
@@ -32,7 +40,9 @@ fn test_load_real_mapping_files() {
     }
 
     // Transaction-level only
-    let tx_engine = MappingEngine::load(tx_dir).unwrap();
+    let tx_engine = MappingEngine::load(tx_dir)
+        .unwrap()
+        .with_path_resolver(path_resolver());
     assert!(
         tx_engine.definitions().len() >= 14,
         "Expected at least 14 transaction mapping files for pid_55001, got {}",
@@ -65,7 +75,9 @@ fn test_load_real_mapping_files() {
         .is_some());
 
     // Combined engine should have all entities
-    let combined = MappingEngine::load_merged(&[msg_dir, tx_dir]).unwrap();
+    let combined = MappingEngine::load_merged(&[msg_dir, tx_dir])
+        .unwrap()
+        .with_path_resolver(path_resolver());
     assert!(
         combined.definitions().len() >= 17,
         "Combined should have at least 17 mapping files, got {}",
@@ -103,7 +115,9 @@ fn test_marktlokation_mapping_structure() {
         return;
     }
 
-    let engine = MappingEngine::load(mappings_dir).unwrap();
+    let engine = MappingEngine::load(mappings_dir)
+        .unwrap()
+        .with_path_resolver(path_resolver());
     let def = engine
         .definitions()
         .iter()
@@ -123,7 +137,9 @@ fn test_geschaeftspartner_mapping_fields() {
         return;
     }
 
-    let engine = MappingEngine::load(mappings_dir).unwrap();
+    let engine = MappingEngine::load(mappings_dir)
+        .unwrap()
+        .with_path_resolver(path_resolver());
     let def = engine.definition_for_entity("Geschaeftspartner").unwrap();
 
     assert_eq!(def.meta.source_group, "SG4.SG12");
@@ -143,7 +159,9 @@ fn test_load_pid_55002_mapping_files() {
     }
 
     // Transaction-level only
-    let tx_engine = MappingEngine::load(tx_dir).unwrap();
+    let tx_engine = MappingEngine::load(tx_dir)
+        .unwrap()
+        .with_path_resolver(path_resolver());
     assert!(
         tx_engine.definitions().len() >= 16,
         "Expected at least 16 transaction mapping files for pid_55002, got {}",
@@ -176,7 +194,9 @@ fn test_load_pid_55002_mapping_files() {
     );
 
     // Combined engine should have everything
-    let combined = MappingEngine::load_merged(&[msg_dir, tx_dir]).unwrap();
+    let combined = MappingEngine::load_merged(&[msg_dir, tx_dir])
+        .unwrap()
+        .with_path_resolver(path_resolver());
     assert!(combined.definition_for_entity("Marktteilnehmer").is_some());
     assert!(combined.definition_for_entity("Nachricht").is_some());
     assert!(combined.definition_for_entity("Kontakt").is_some());

@@ -7,6 +7,7 @@ use automapper_generator::parsing::ahb_parser::parse_ahb;
 use automapper_generator::schema::ahb::AhbSchema;
 use mig_assembly::ConversionService;
 use mig_bo4e::code_lookup::CodeLookup;
+use mig_bo4e::path_resolver::PathResolver;
 use mig_bo4e::segment_structure::SegmentStructure;
 use mig_bo4e::MappingEngine;
 
@@ -100,11 +101,32 @@ impl MigServiceRegistry {
                             }
                             let variant = variant_entry.file_name().to_string_lossy().to_string();
 
+                            // Build PathResolver for EDIFACT ID path resolution
+                            let msg_type =
+                                variant.split('_').next().unwrap_or(&variant).to_lowercase();
+                            let fv_lower = fv.to_lowercase();
+                            let schema_dir_path = format!(
+                                "crates/mig-types/src/generated/{}/{}/pids",
+                                fv_lower, msg_type
+                            );
+                            let resolver = if std::path::Path::new(&schema_dir_path).is_dir() {
+                                Some(PathResolver::from_schema_dir(std::path::Path::new(
+                                    &schema_dir_path,
+                                )))
+                            } else {
+                                None
+                            };
+
                             // Load message-level engine (shared across PIDs)
                             let message_dir = variant_path.join("message");
                             if message_dir.is_dir() {
                                 match MappingEngine::load(&message_dir) {
                                     Ok(engine) => {
+                                        let engine = if let Some(ref r) = resolver {
+                                            engine.with_path_resolver(r.clone())
+                                        } else {
+                                            engine
+                                        };
                                         // Attach CodeLookup from any available PID schema
                                         // (root_segments are identical across all PIDs)
                                         let engine = attach_code_lookup_for_message(
@@ -153,6 +175,11 @@ impl MigServiceRegistry {
                                     };
                                     match load_result {
                                         Ok(engine) => {
+                                            let engine = if let Some(ref r) = resolver {
+                                                engine.with_path_resolver(r.clone())
+                                            } else {
+                                                engine
+                                            };
                                             // Attach MIG-derived SegmentStructure if available
                                             let engine = if let Some(svc) = services.get(&fv) {
                                                 engine.with_segment_structure(
@@ -182,6 +209,11 @@ impl MigServiceRegistry {
                                     // Also load transaction-only engine (PID dir only, no message defs)
                                     match MappingEngine::load(&pid_path) {
                                         Ok(tx_engine) => {
+                                            let tx_engine = if let Some(ref r) = resolver {
+                                                tx_engine.with_path_resolver(r.clone())
+                                            } else {
+                                                tx_engine
+                                            };
                                             let tx_engine = if let Some(svc) = services.get(&fv) {
                                                 tx_engine.with_segment_structure(
                                                     SegmentStructure::from_mig(svc.mig()),

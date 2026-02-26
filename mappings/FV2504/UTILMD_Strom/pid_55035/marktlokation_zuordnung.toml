@@ -7,16 +7,16 @@ bo4e_type = "Marktlokation"
 companion_type = "MarktlokationEdifact"
 source_group = "SG4.SG8.SG10"
 source_path = "sg4.sg8_z98.sg10"
-discriminator = "CCI.2.0=ZB3"
+discriminator = "CCI.c240.d7037=ZB3"
 
 [fields]
 
 [companion_fields]
-"cci.2.0" = "merkmalCode"
-"cav[Z90].0.1" = "prognosegrundlageMpId"
-"cav[Z91].0.1" = "zugeordneterMp"
-"cav[Z91].0.3" = "msbEigenschaft"
-"cav[Z91].0.4" = "zuordnungReferenz"
+"cci.c240.d7037" = "merkmalCode"
+"cav[Z90].c889.d1131" = "prognosegrundlageMpId"
+"cav[Z91].c889.d1131" = "zugeordneterMp"
+"cav[Z91].c889.d7110" = "msbEigenschaft"
+"cav[Z91].c889.d7110_2" = "zuordnungReferenz"
 
 [companion_fields."cav[Z90].0.0"]
 target = ""

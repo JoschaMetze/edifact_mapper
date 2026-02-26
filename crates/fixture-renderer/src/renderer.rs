@@ -15,6 +15,7 @@ use mig_bo4e::model::{
     extract_nachrichtendaten, extract_unh_fields, rebuild_unb, rebuild_unh, rebuild_unt,
     rebuild_unz, MappedMessage, Transaktion,
 };
+use mig_bo4e::path_resolver::PathResolver;
 use mig_bo4e::MappingEngine;
 
 use crate::RendererError;
@@ -79,6 +80,23 @@ pub fn render_fixture(
     let (msg_engine, tx_engine) =
         MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
             .map_err(|e| RendererError::Mapping(e.to_string()))?;
+
+    // Apply PathResolver for EDIFACT ID path resolution
+    let fv_lower = input.format_version.to_lowercase();
+    let msg_type_lower = input.message_type.to_lowercase();
+    let schema_dir_path = format!(
+        "crates/mig-types/src/generated/{}/{}/pids",
+        fv_lower, msg_type_lower
+    );
+    let (msg_engine, tx_engine) = if Path::new(&schema_dir_path).is_dir() {
+        let resolver = PathResolver::from_schema_dir(Path::new(&schema_dir_path));
+        (
+            msg_engine.with_path_resolver(resolver.clone()),
+            tx_engine.with_path_resolver(resolver),
+        )
+    } else {
+        (msg_engine, tx_engine)
+    };
 
     // 5. Process each message through forward+reverse roundtrip
     let assembler = Assembler::new(&filtered_mig);
@@ -207,6 +225,23 @@ pub fn generate_canonical_bo4e(
     let (msg_engine, tx_engine) =
         MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
             .map_err(|e| RendererError::Mapping(e.to_string()))?;
+
+    // Apply PathResolver for EDIFACT ID path resolution
+    let fv_lower = input.format_version.to_lowercase();
+    let msg_type_lower = input.message_type.to_lowercase();
+    let schema_dir_path = format!(
+        "crates/mig-types/src/generated/{}/{}/pids",
+        fv_lower, msg_type_lower
+    );
+    let (msg_engine, tx_engine) = if Path::new(&schema_dir_path).is_dir() {
+        let resolver = PathResolver::from_schema_dir(Path::new(&schema_dir_path));
+        (
+            msg_engine.with_path_resolver(resolver.clone()),
+            tx_engine.with_path_resolver(resolver),
+        )
+    } else {
+        (msg_engine, tx_engine)
+    };
 
     // 6. Process first message
     let msg = chunks.messages.first().ok_or(RendererError::NoMessages)?;

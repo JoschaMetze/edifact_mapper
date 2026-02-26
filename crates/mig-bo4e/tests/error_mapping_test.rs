@@ -6,6 +6,7 @@ use automapper_generator::schema::mig::MigSchema;
 use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_bo4e::engine::MappingEngine;
 use mig_bo4e::error_mapping::Bo4eFieldIndex;
+use mig_bo4e::path_resolver::PathResolver;
 use std::collections::HashSet;
 use std::path::Path;
 
@@ -15,6 +16,11 @@ const AHB_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml";
 const MAPPINGS_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/pid_55001";
 const MESSAGE_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/message";
+const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
+
+fn path_resolver() -> PathResolver {
+    PathResolver::from_schema_dir(std::path::Path::new(SCHEMA_DIR))
+}
 
 fn load_pid_filtered_mig(pid_id: &str) -> Option<MigSchema> {
     let mig_path = Path::new(MIG_XML_PATH);
@@ -35,7 +41,12 @@ fn load_split_engines() -> Option<(MappingEngine, MappingEngine)> {
     if !msg_dir.exists() || !tx_dir.exists() {
         return None;
     }
-    MappingEngine::load_split(msg_dir, tx_dir).ok()
+    MappingEngine::load_split(msg_dir, tx_dir)
+        .ok()
+        .map(|(m, t)| {
+            let r = path_resolver();
+            (m.with_path_resolver(r.clone()), t.with_path_resolver(r))
+        })
 }
 
 #[test]

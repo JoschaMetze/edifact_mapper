@@ -568,6 +568,7 @@
           "source_group": "SG12"
         },
         "sg12_z25": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3035",
             "segment": "NAD",
@@ -575,6 +576,7 @@
               "Z25"
             ]
           },
+          "entity_hint": "Ueberfuehrungszeitreihe",
           "segments": [
             {
               "elements": [
@@ -910,6 +912,7 @@
           "source_group": "SG12"
         },
         "sg5_z16": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -917,6 +920,7 @@
               "Z16"
             ]
           },
+          "entity_hint": "Marktlokation",
           "segments": [
             {
               "elements": [
@@ -1066,10 +1070,12 @@
         "sg8_z01": {
           "children": {
             "sg10": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Marktlokation",
               "segments": [
                 {
                   "elements": [
@@ -1170,10 +1176,12 @@
               "source_group": "SG10"
             },
             "sg9": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "6063",
                 "segment": "QTY"
               },
+              "entity_hint": "Marktlokation",
               "segments": [
                 {
                   "elements": [
@@ -1222,6 +1230,7 @@
               "source_group": "SG9"
             }
           },
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1229,6 +1238,7 @@
               "Z01"
             ]
           },
+          "entity_hint": "Marktlokation",
           "segments": [
             {
               "elements": [
@@ -1267,10 +1277,12 @@
         "sg8_z08": {
           "children": {
             "sg10": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Profil",
               "segments": [
                 {
                   "elements": [
@@ -1359,6 +1371,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1366,6 +1379,7 @@
               "Z08"
             ]
           },
+          "entity_hint": "Profil",
           "segments": [
             {
               "elements": [
@@ -1404,10 +1418,12 @@
         "sg8_z21": {
           "children": {
             "sg10": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Profil",
               "segments": [
                 {
                   "elements": [
@@ -1496,6 +1512,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1503,6 +1520,7 @@
               "Z21"
             ]
           },
+          "entity_hint": "Profil",
           "segments": [
             {
               "elements": [
@@ -1541,10 +1559,12 @@
         "sg8_z38": {
           "children": {
             "sg10": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Profil",
               "segments": [
                 {
                   "elements": [
@@ -1593,6 +1613,7 @@
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1600,6 +1621,7 @@
               "Z38"
             ]
           },
+          "entity_hint": "Profil",
           "segments": [
             {
               "elements": [

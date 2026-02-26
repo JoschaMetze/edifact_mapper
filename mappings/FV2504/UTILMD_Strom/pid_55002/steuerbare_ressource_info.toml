@@ -10,17 +10,17 @@ bo4e_type = "SteuerbareRessource"
 companion_type = "SteuerbareRessourceEdifact"
 source_group = "SG4.SG8"
 source_path = "sg4.sg8_zf1"
-discriminator = "SEQ.0.0=ZF1"
+discriminator = "SEQ.d1229=ZF1"
 
 [fields]
-"seq.1.0" = "zeitraumReferenz"
+"seq.c286.d1050" = "zeitraumReferenz"
 
 [fields."seq.0"]
 target = ""
 default = "ZF1"
 
 [companion_fields]
-"rff.0.1" = "referenzSteuerbareRessource"
+"rff.c506.d1154" = "referenzSteuerbareRessource"
 
 [companion_fields."rff.0.0"]
 target = ""

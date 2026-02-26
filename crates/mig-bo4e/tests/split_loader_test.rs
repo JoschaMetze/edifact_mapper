@@ -1,5 +1,12 @@
 use mig_bo4e::engine::MappingEngine;
+use mig_bo4e::path_resolver::PathResolver;
 use std::path::PathBuf;
+
+const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
+
+fn path_resolver() -> PathResolver {
+    PathResolver::from_schema_dir(std::path::Path::new(SCHEMA_DIR))
+}
 
 fn mappings_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -22,6 +29,9 @@ fn test_load_split_message_and_transaction() {
     }
 
     let (msg_engine, tx_engine) = MappingEngine::load_split(&message_dir, &tx_dir).unwrap();
+    let resolver = path_resolver();
+    let msg_engine = msg_engine.with_path_resolver(resolver.clone());
+    let tx_engine = tx_engine.with_path_resolver(resolver);
 
     // Message engine should have Marktteilnehmer, Nachricht, Kontakt
     let msg_defs = msg_engine.definitions();
@@ -68,6 +78,9 @@ fn test_load_split_55002() {
     }
 
     let (msg_engine, tx_engine) = MappingEngine::load_split(&message_dir, &tx_dir).unwrap();
+    let resolver = path_resolver();
+    let msg_engine = msg_engine.with_path_resolver(resolver.clone());
+    let tx_engine = tx_engine.with_path_resolver(resolver);
 
     // Message engine is shared — same as 55001
     assert!(
@@ -107,6 +120,9 @@ fn test_load_split_55013() {
     }
 
     let (msg_engine, tx_engine) = MappingEngine::load_split(&message_dir, &tx_dir).unwrap();
+    let resolver = path_resolver();
+    let msg_engine = msg_engine.with_path_resolver(resolver.clone());
+    let tx_engine = tx_engine.with_path_resolver(resolver);
 
     // Message engine is shared
     assert!(

@@ -9,12 +9,12 @@ bo4e_type = "Marktlokation"
 companion_type = "MarktlokationEdifact"
 source_group = "SG4.SG8:1.SG10"
 source_path = "sg4.sg8_z98.sg10"
-discriminator = "CCI.0.0=Z42"
+discriminator = "CCI.d7059=Z42"
 
 [fields]
 
 [companion_fields]
-"cci.2.0" = "betriebszustand"
+"cci.c240.d7037" = "betriebszustand"
 
 [companion_fields."cci.0.0"]
 target = ""

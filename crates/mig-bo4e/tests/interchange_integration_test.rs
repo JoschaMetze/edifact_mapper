@@ -1,6 +1,7 @@
 //! End-to-end test: EDIFACT fixture → split → assemble → map → Interchange hierarchy.
 
-use std::path::PathBuf;
+use mig_bo4e::path_resolver::PathResolver;
+use std::path::{Path, PathBuf};
 
 fn fixture_path(name: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -10,6 +11,12 @@ fn fixture_path(name: &str) -> PathBuf {
         .unwrap()
         .join("example_market_communication_bo4e_transactions")
         .join(name)
+}
+
+const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
+
+fn path_resolver() -> PathResolver {
+    PathResolver::from_schema_dir(Path::new(SCHEMA_DIR))
 }
 
 fn mappings_dir() -> PathBuf {
@@ -65,6 +72,9 @@ fn test_interchange_hierarchy_from_55001_fixture() {
     if msg_dir.is_dir() && tx_dir.is_dir() {
         let (msg_engine, tx_engine) =
             mig_bo4e::MappingEngine::load_split(&msg_dir, &tx_dir).unwrap();
+        let resolver = path_resolver();
+        let msg_engine = msg_engine.with_path_resolver(resolver.clone());
+        let tx_engine = tx_engine.with_path_resolver(resolver);
 
         // Load MIG XML and assemble the message for full pipeline test
         let mig_xml = PathBuf::from(env!("CARGO_MANIFEST_DIR"))

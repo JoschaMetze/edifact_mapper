@@ -1,26 +1,26 @@
-# Messlokation Smartmeter-Gateway info (SEQ+ZF5) for PID 55035.
-# Merges into entity "Messlokation" via deep-merge.
+# Zaehler info (SEQ+ZF5) for PID 55035.
+# Merges into entity "Zaehler" via deep-merge.
 #
 # SEQ+ZF5+<Zeitraum-Ref>  (Informative Zaehleinrichtungsdaten)
 # RFF+Z14:<Smartmeter-Gateway-ID>
 
 [meta]
-entity = "Messlokation"
-bo4e_type = "Messlokation"
-companion_type = "MesslokationEdifact"
+entity = "Zaehler"
+bo4e_type = "Zaehler"
+companion_type = "ZaehlerEdifact"
 source_group = "SG4.SG8"
 source_path = "sg4.sg8_zf5"
-discriminator = "SEQ.0.0=ZF5"
+discriminator = "SEQ.d1229=ZF5"
 
 [fields]
-"seq.1.0" = "zeitraumReferenz"
+"seq.c286.d1050" = "zeitraumReferenz"
 
 [fields."seq.0"]
 target = ""
 default = "ZF5"
 
 [companion_fields]
-"rff.0.1" = "smartmeterGatewayId"
+"rff.c506.d1154" = "smartmeterGatewayId"
 
 [companion_fields."rff.0.0"]
 target = ""

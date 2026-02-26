@@ -14,21 +14,21 @@ source_path = "sg4"
 
 [fields]
 # IDE segment (Transaktion)
-"ide.0" = { target = "", default = "24" }
-"ide.1" = "vorgangId"
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
 
 # STS+7 — Transaktionsgrund
-"sts[7].0" = { target = "", default = "7" }
-"sts[7].2" = "transaktionsgrund"
-"sts[7].3" = "transaktionsgrundErgaenzung"
-"sts[7].4" = "transaktionsgrundReferenz"
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundErgaenzung"
+"sts[7].c556_3.d9013" = "transaktionsgrundReferenz"
 
 # STS+E01 — Antwort-Status
-"sts[E01].0.0" = "antwortKategorie"
-"sts[E01].2.0" = "pruefschrittCode"
-"sts[E01].2.1" = "ebdNummer"
+"sts[E01].c601.d9015" = "antwortKategorie"
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"
 
 # FTX segment — Zusaetzliche Informationen (ACB)
-"ftx.0" = { target = "", default = "ACB" }
-"ftx.2.0" = "freitextReferenz"
-"ftx.3.0" = "freitext"
+"ftx.d4451" = { target = "", default = "ACB" }
+"ftx.c107.d4441" = "freitextReferenz"
+"ftx.c108.d4440" = "freitext"

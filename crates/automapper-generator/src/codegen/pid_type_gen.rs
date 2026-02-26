@@ -6,8 +6,401 @@
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
+use serde::{Deserialize, Serialize};
+
 use crate::schema::ahb::{AhbSchema, Pruefidentifikator};
 use crate::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
+
+// ---------------------------------------------------------------------------
+// Qualifier Code Name Parsing
+// ---------------------------------------------------------------------------
+
+/// Metadata derived from a MIG/AHB qualifier code name.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct QualifierMeta {
+    /// The qualifier code (e.g., "ZF0", "Z98").
+    pub code: String,
+    /// BO4E entity name (e.g., "Marktlokation", "TechnischeRessource").
+    pub entity: String,
+    /// Data quality/context: "informativ", "erwartet", "im_system", "differenz", or "base".
+    pub data_quality: String,
+    /// Content type (e.g., "Daten", "OBIS-Daten", "Produkt-Daten", "Profildaten").
+    pub content_type: String,
+    /// Original code name for reference.
+    pub mig_name: String,
+}
+
+/// Bidirectional qualifier lookup map.
+///
+/// Separates SEQ (D_1229) and LOC (D_3227) code namespaces since the same
+/// code value can have different meanings in different data elements.
+///
+/// Forward: (element_type, code) → QualifierMeta
+/// Reverse: (entity, data_quality, content_type) → code
+#[derive(Debug, Clone)]
+pub struct QualifierMap {
+    /// SEQ D_1229 qualifier codes (SG8 discrimination).
+    seq_codes: HashMap<String, QualifierMeta>,
+    /// LOC D_3227 qualifier codes (SG5 discrimination).
+    loc_codes: HashMap<String, QualifierMeta>,
+    /// Reverse lookup for SEQ codes: (entity, quality, content) → code.
+    by_entity: HashMap<(String, String, String), String>,
+}
+
+impl QualifierMap {
+    /// Build a qualifier map from MIG and AHB sources.
+    ///
+    /// Walks MIG `D_1229` (SEQ) and `D_3227` (LOC) code definitions,
+    /// then enriches with AHB codes (which is the superset, especially for
+    /// quality-prefixed variants like "Informative", "Erwartete", etc.).
+    pub fn from_mig_and_ahb(mig: &MigSchema, ahb: &AhbSchema) -> Self {
+        let mut seq_codes: HashMap<String, QualifierMeta> = HashMap::new();
+        let mut loc_codes: HashMap<String, QualifierMeta> = HashMap::new();
+
+        // 1) Walk MIG D_1229 codes (SEQ qualifiers)
+        for group in &mig.segment_groups {
+            collect_qualifier_codes_from_group(group, "1229", &mut seq_codes);
+        }
+        // Walk MIG D_3227 codes (LOC qualifiers for SG5)
+        for group in &mig.segment_groups {
+            collect_qualifier_codes_from_group(group, "3227", &mut loc_codes);
+        }
+
+        // 2) Walk AHB field codes for D_1229 and D_3227 (superset)
+        for pid in &ahb.workflows {
+            for field in &pid.fields {
+                let is_seq = field.segment_path.ends_with("SEQ/1229")
+                    || field.segment_path.ends_with("/1229");
+                let is_loc = field.segment_path.ends_with("LOC/3227")
+                    || field.segment_path.ends_with("/3227");
+                if !is_seq && !is_loc {
+                    continue;
+                }
+                let target = if is_seq {
+                    &mut seq_codes
+                } else {
+                    &mut loc_codes
+                };
+                for code in &field.codes {
+                    if target.contains_key(&code.value) {
+                        continue;
+                    }
+                    let name = if !code.name.is_empty() {
+                        &code.name
+                    } else if let Some(ref desc) = code.description {
+                        desc
+                    } else {
+                        continue;
+                    };
+                    if let Some(mut meta) = parse_qualifier_code_name(name) {
+                        meta.code = code.value.clone();
+                        target.insert(code.value.clone(), meta);
+                    }
+                }
+            }
+        }
+
+        // Build reverse map from SEQ codes (primary for SG8)
+        let mut by_entity = HashMap::new();
+        for (code, meta) in &seq_codes {
+            let key = (
+                meta.entity.clone(),
+                meta.data_quality.clone(),
+                meta.content_type.clone(),
+            );
+            by_entity.entry(key).or_insert_with(|| code.clone());
+        }
+
+        Self {
+            seq_codes,
+            loc_codes,
+            by_entity,
+        }
+    }
+
+    /// Look up metadata for a qualifier code.
+    ///
+    /// Checks SEQ (D_1229) codes first, then LOC (D_3227) codes.
+    pub fn get(&self, code: &str) -> Option<&QualifierMeta> {
+        self.seq_codes
+            .get(code)
+            .or_else(|| self.loc_codes.get(code))
+    }
+
+    /// Look up metadata specifically from SEQ D_1229 codes.
+    pub fn get_seq(&self, code: &str) -> Option<&QualifierMeta> {
+        self.seq_codes.get(code)
+    }
+
+    /// Look up metadata specifically from LOC D_3227 codes.
+    pub fn get_loc(&self, code: &str) -> Option<&QualifierMeta> {
+        self.loc_codes.get(code)
+    }
+
+    /// Reverse lookup: find the SEQ qualifier code for a given entity, data quality, and content type.
+    pub fn reverse_lookup(
+        &self,
+        entity: &str,
+        data_quality: &str,
+        content_type: &str,
+    ) -> Option<&str> {
+        self.by_entity
+            .get(&(
+                entity.to_string(),
+                data_quality.to_string(),
+                content_type.to_string(),
+            ))
+            .map(|s| s.as_str())
+    }
+}
+
+/// Recursively collect qualifier codes from a MIG segment group.
+fn collect_qualifier_codes_from_group(
+    group: &MigSegmentGroup,
+    target_de_id: &str,
+    by_code: &mut HashMap<String, QualifierMeta>,
+) {
+    for seg in &group.segments {
+        // Check direct data elements
+        for de in &seg.data_elements {
+            if de.id == target_de_id {
+                for code_def in &de.codes {
+                    if by_code.contains_key(&code_def.value) {
+                        continue;
+                    }
+                    let name = code_def
+                        .description
+                        .as_deref()
+                        .filter(|d| !d.is_empty())
+                        .unwrap_or(&code_def.name);
+                    if let Some(mut meta) = parse_qualifier_code_name(name) {
+                        meta.code = code_def.value.clone();
+                        by_code.insert(code_def.value.clone(), meta);
+                    }
+                }
+            }
+        }
+        // Check composite data elements
+        for comp in &seg.composites {
+            for de in &comp.data_elements {
+                if de.id == target_de_id {
+                    for code_def in &de.codes {
+                        if by_code.contains_key(&code_def.value) {
+                            continue;
+                        }
+                        let name = code_def
+                            .description
+                            .as_deref()
+                            .filter(|d| !d.is_empty())
+                            .unwrap_or(&code_def.name);
+                        if let Some(mut meta) = parse_qualifier_code_name(name) {
+                            meta.code = code_def.value.clone();
+                            by_code.insert(code_def.value.clone(), meta);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for nested in &group.nested_groups {
+        collect_qualifier_codes_from_group(nested, target_de_id, by_code);
+    }
+}
+
+/// Parse a MIG/AHB qualifier code name into entity, data quality, and content type.
+///
+/// Handles patterns like:
+/// - "Daten der Marktlokation" → entity=Marktlokation, quality=base, content=Daten
+/// - "Informative Daten der Technischen Ressource" → entity=TechnischeRessource, quality=informativ
+/// - "Erwartete OBIS-Daten der Zähleinrichtung" → entity=Zaehler, quality=erwartet
+/// - "Im System vorhandene Daten der Marktlokation" → entity=Marktlokation, quality=im_system
+/// - "Differenz-Netznutzungsabrechnungsdaten der Marktlokation" → entity=Marktlokation, quality=differenz
+pub fn parse_qualifier_code_name(name: &str) -> Option<QualifierMeta> {
+    let name = name.trim();
+    if name.is_empty() {
+        return None;
+    }
+
+    // Try static fallback first for non-standard names
+    if let Some(meta) = static_qualifier_fallback(name) {
+        return Some(meta);
+    }
+
+    // 1) Strip quality prefix
+    let (data_quality, remainder) = strip_quality_prefix(name);
+
+    // 2) Split on " der " or " des " (last occurrence) to get content_type and entity_raw
+    let (content_type, entity_raw) = split_on_entity_marker(remainder)?;
+
+    // 3) Normalize entity name to BO4E type
+    let entity = normalize_entity_name(entity_raw)?;
+
+    Some(QualifierMeta {
+        code: String::new(), // Filled in by caller
+        entity,
+        data_quality: data_quality.to_string(),
+        content_type: content_type.to_string(),
+        mig_name: name.to_string(),
+    })
+}
+
+/// Strip a quality prefix from a code name, returning (quality, remainder).
+fn strip_quality_prefix(name: &str) -> (&str, &str) {
+    if let Some(rest) = name.strip_prefix("Informative ") {
+        ("informativ", rest)
+    } else if let Some(rest) = name.strip_prefix("Informatives ") {
+        ("informativ", rest)
+    } else if let Some(rest) = name.strip_prefix("Erwartete ") {
+        ("erwartet", rest)
+    } else if let Some(rest) = name.strip_prefix("Erwartetes ") {
+        ("erwartet", rest)
+    } else if let Some(rest) = name.strip_prefix("Im System vorhandene ") {
+        ("im_system", rest)
+    } else if let Some(rest) = name.strip_prefix("Im System vorhandenes ") {
+        ("im_system", rest)
+    } else if let Some(rest) = name.strip_prefix("Differenz-") {
+        ("differenz", rest)
+    } else if let Some(rest) = name.strip_prefix("Abgerechnete ") {
+        ("abgerechnet", rest)
+    } else {
+        ("base", name)
+    }
+}
+
+/// Split a content+entity string on " der " or " des " (first occurrence).
+///
+/// Returns (content_type, entity_raw) or None if no marker found.
+///
+/// Uses the **first** occurrence because compound entity names like
+/// "Kunden des Lieferanten" should stay intact — "Daten des Kunden des Lieferanten"
+/// should split into ("Daten", "Kunden des Lieferanten").
+fn split_on_entity_marker(s: &str) -> Option<(&str, &str)> {
+    // Try " der " first occurrence
+    if let Some(pos) = s.find(" der ") {
+        return Some((&s[..pos], &s[pos + 5..]));
+    }
+    // Try " des " first occurrence
+    if let Some(pos) = s.find(" des ") {
+        return Some((&s[..pos], &s[pos + 5..]));
+    }
+    None
+}
+
+/// Normalize a German entity name from MIG/AHB to a BO4E type name.
+fn normalize_entity_name(raw: &str) -> Option<String> {
+    let raw = raw.trim();
+    // Exact match first
+    match raw {
+        "Marktlokation" => return Some("Marktlokation".to_string()),
+        "Messlokation" => return Some("Messlokation".to_string()),
+        "Netzlokation" => return Some("Netzlokation".to_string()),
+        "NeLo" => return Some("Netzlokation".to_string()),
+        "Tranche" => return Some("Tranche".to_string()),
+        "Summenzeitreihe" => return Some("Summenzeitreihe".to_string()),
+        "Überführungszeitreihe" => return Some("Ueberfuehrungszeitreihe".to_string()),
+        "Ruhende Marktlokation" => return Some("RuhendeMarktlokation".to_string()),
+        // German declension forms
+        "Technischen Ressource" => return Some("TechnischeRessource".to_string()),
+        "Technische Ressource" => return Some("TechnischeRessource".to_string()),
+        "Steuerbaren Ressource" => return Some("SteuerbareRessource".to_string()),
+        "Steuerbare Ressource" => return Some("SteuerbareRessource".to_string()),
+        // Equipment
+        "Zähleinrichtung" => return Some("Zaehler".to_string()),
+        "Zähleinrichtung / Smartmeter-Gateway" => return Some("Zaehler".to_string()),
+        "Steuerbox" => return Some("Steuerbox".to_string()),
+        // People/partners
+        "Kunden des Lieferanten" | "Kunden" => return Some("Geschaeftspartner".to_string()),
+        // Other
+        "ÜNB" => return Some("Datenstand".to_string()),
+        "NB" => return Some("Datenstand".to_string()),
+        "Lokationsbündelstruktur" => return Some("Lokationsbuendel".to_string()),
+        _ => {}
+    }
+
+    // Partial matches for compound names
+    if raw.contains("Marktlokation") {
+        return Some("Marktlokation".to_string());
+    }
+    if raw.contains("Messlokation") {
+        return Some("Messlokation".to_string());
+    }
+    if raw.contains("Netzlokation") || raw.contains("NeLo") {
+        return Some("Netzlokation".to_string());
+    }
+    if raw.contains("Tranche") {
+        return Some("Tranche".to_string());
+    }
+    if raw.contains("Technische") || raw.contains("Technischen") {
+        return Some("TechnischeRessource".to_string());
+    }
+    if raw.contains("Steuerbare") || raw.contains("Steuerbaren") {
+        return Some("SteuerbareRessource".to_string());
+    }
+
+    // Unknown entity — return as-is with spaces removed
+    Some(raw.replace(' ', ""))
+}
+
+/// Static fallback map for codes whose names don't follow the standard pattern.
+///
+/// Also handles quality-prefixed variants of static names (e.g., "Informative Zähleinrichtungsdaten").
+fn static_qualifier_fallback(name: &str) -> Option<QualifierMeta> {
+    // Try exact match first (base quality)
+    if let Some(meta) = static_base_match(name) {
+        return Some(meta);
+    }
+
+    // Try stripping quality prefix and matching the remainder
+    let (quality, remainder) = strip_quality_prefix(name);
+    if quality != "base" {
+        if let Some(mut meta) = static_base_match(remainder) {
+            meta.data_quality = quality.to_string();
+            meta.mig_name = name.to_string();
+            return Some(meta);
+        }
+    }
+
+    None
+}
+
+/// Match a base (no quality prefix) name to a static entity.
+fn static_base_match(name: &str) -> Option<QualifierMeta> {
+    let (entity, content_type) = match name {
+        // SG5 LOC qualifiers — simple entity names
+        "Marktlokation" => ("Marktlokation", "Standort"),
+        "Messlokation" => ("Messlokation", "Standort"),
+        "Netzlokation" => ("Netzlokation", "Standort"),
+        "Steuerbare Ressource" => ("SteuerbareRessource", "Standort"),
+        "Technische Ressource" => ("TechnischeRessource", "Standort"),
+        "Tranche" => ("Tranche", "Standort"),
+        "Ruhende Marktlokation" => ("RuhendeMarktlokation", "Standort"),
+        // Non-standard SG8 names — no " der "/" des " marker
+        "Zähleinrichtungsdaten" => ("Zaehler", "Daten"),
+        "Wandlerdaten" => ("Zaehler", "Wandlerdaten"),
+        "Profilschardaten" => ("Profil", "Profilschardaten"),
+        "Profildaten" => ("Profil", "Profildaten"),
+        "Referenzprofildaten" => ("Profil", "Referenzprofildaten"),
+        "Smartmeter-Gateway" => ("SmartmeterGateway", "Daten"),
+        "Steuerbox" => ("Steuerbox", "Daten"),
+        "Kommunikationseinrichtungsdaten" => ("Kommunikationseinrichtung", "Daten"),
+        "Bestandteil eines Produktpakets" => ("Produktpaket", "Bestandteil"),
+        "Priorisierung erforderliches Produktpaket" => ("Produktpaket", "Priorisierung"),
+        "Meldepunkt" => ("Meldepunkt", "Standort"),
+        // Lokationsbündel variants
+        "Referenz auf die Lokationsbündelstruktur" => ("Lokationsbuendel", "Referenz"),
+        "Zuordnung Lokation zum Objektcode des Lokationsbündels" => {
+            ("Lokationsbuendel", "Zuordnung")
+        }
+        _ => return None,
+    };
+    Some(QualifierMeta {
+        code: String::new(),
+        entity: entity.to_string(),
+        data_quality: "base".to_string(),
+        content_type: content_type.to_string(),
+        mig_name: name.to_string(),
+    })
+}
 
 /// Analyzed structure of a single PID.
 #[derive(Debug, Clone)]
@@ -35,6 +428,11 @@ pub struct PidGroupInfo {
     /// Trigger segment + data element for qualifier discrimination.
     /// E.g., ("NAD", "3035") for SG2, ("SEQ", "1229") for SG8.
     pub discriminator: Option<(String, String)>,
+    /// Canonical BO4E entity name derived from MIG/AHB qualifier code name.
+    pub entity_hint: Option<String>,
+    /// Data quality context derived from MIG/AHB qualifier code name.
+    /// Values: "base", "informativ", "erwartet", "im_system", "differenz", "abgerechnet".
+    pub data_quality_hint: Option<String>,
     /// Nested child groups present in this PID's usage.
     pub child_groups: Vec<PidGroupInfo>,
     /// Segments present in this group for this PID.
@@ -64,6 +462,8 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                     ahb_status: field.ahb_status.clone(),
                     ahb_name: None,
                     discriminator: None,
+                    entity_hint: None,
+                    data_quality_hint: None,
                     child_groups: Vec::new(),
                     segments: BTreeSet::new(),
                     segment_mig_numbers: BTreeMap::new(),
@@ -87,6 +487,8 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                         ahb_status: field.ahb_status.clone(),
                         ahb_name: None,
                         discriminator: None,
+                        entity_hint: None,
+                        data_quality_hint: None,
                         child_groups: Vec::new(),
                         segments: child_segments,
                         segment_mig_numbers: BTreeMap::new(),
@@ -176,12 +578,14 @@ fn derive_ahb_name(
         })
 }
 
-/// Populate discriminator and ahb_name on top-level groups and their children.
+/// Populate discriminator, ahb_name, entity_hint, and data_quality_hint
+/// on top-level groups and their children.
 fn enrich_group_info(
     group: &mut PidGroupInfo,
     pid: &Pruefidentifikator,
     mig: &MigSchema,
     parent_path: &str,
+    qualifier_map: &QualifierMap,
 ) {
     let group_path = if parent_path.is_empty() {
         group.group_id.clone()
@@ -199,9 +603,36 @@ fn enrich_group_info(
         }
     }
 
-    // Recursively enrich child groups
+    // Derive entity_hint and data_quality_hint from qualifier codes.
+    // Use the appropriate namespace based on discriminator segment type.
+    if group.entity_hint.is_none() {
+        let is_loc = group
+            .discriminator
+            .as_ref()
+            .is_some_and(|(seg, _)| seg == "LOC");
+        for q in &group.qualifier_values {
+            let meta = if is_loc {
+                qualifier_map.get_loc(q)
+            } else {
+                qualifier_map.get_seq(q)
+            };
+            if let Some(meta) = meta {
+                group.entity_hint = Some(meta.entity.clone());
+                group.data_quality_hint = Some(meta.data_quality.clone());
+                break;
+            }
+        }
+    }
+
+    // Recursively enrich child groups — children inherit parent's hints
     for child in &mut group.child_groups {
-        enrich_group_info(child, pid, mig, &group_path);
+        if child.entity_hint.is_none() {
+            child.entity_hint.clone_from(&group.entity_hint);
+        }
+        if child.data_quality_hint.is_none() {
+            child.data_quality_hint.clone_from(&group.data_quality_hint);
+        }
+        enrich_group_info(child, pid, mig, &group_path, qualifier_map);
     }
 }
 
@@ -213,8 +644,9 @@ fn enrich_group_info(
 pub fn analyze_pid_structure_with_qualifiers(
     pid: &Pruefidentifikator,
     mig: &MigSchema,
-    _ahb: &AhbSchema,
+    ahb: &AhbSchema,
 ) -> PidStructure {
+    let qualifier_map = QualifierMap::from_mig_and_ahb(mig, ahb);
     let mut top_level_segments: BTreeSet<String> = BTreeSet::new();
     let mut group_map: BTreeMap<String, GroupOccurrenceTracker> = BTreeMap::new();
 
@@ -306,7 +738,7 @@ pub fn analyze_pid_structure_with_qualifiers(
 
     // Enrich all groups with discriminator and AHB name info
     for group in &mut groups {
-        enrich_group_info(group, pid, mig, "");
+        enrich_group_info(group, pid, mig, "", &qualifier_map);
     }
 
     PidStructure {
@@ -501,6 +933,8 @@ impl GroupOccurrenceTracker {
                     ahb_status,
                     ahb_name: None,
                     discriminator: None,
+                    entity_hint: None,
+                    data_quality_hint: None,
                     child_groups: nested
                         .into_iter()
                         .map(|(nid, segs)| {
@@ -511,6 +945,8 @@ impl GroupOccurrenceTracker {
                                 ahb_status: String::new(),
                                 ahb_name: None,
                                 discriminator: None,
+                                entity_hint: None,
+                                data_quality_hint: None,
                                 child_groups: Vec::new(),
                                 segments: segs,
                                 segment_mig_numbers: nums,
@@ -529,6 +965,8 @@ impl GroupOccurrenceTracker {
                         ahb_status: occ.ahb_status,
                         ahb_name: None,
                         discriminator: None,
+                        entity_hint: None,
+                        data_quality_hint: None,
                         child_groups: occ
                             .nested_groups
                             .into_iter()
@@ -544,6 +982,8 @@ impl GroupOccurrenceTracker {
                                     ahb_status: String::new(),
                                     ahb_name: None,
                                     discriminator: None,
+                                    entity_hint: None,
+                                    data_quality_hint: None,
                                     child_groups: Vec::new(),
                                     segments: segs,
                                     segment_mig_numbers: nums,
@@ -563,6 +1003,8 @@ impl GroupOccurrenceTracker {
             ahb_status: String::new(),
             ahb_name: None,
             discriminator: None,
+            entity_hint: None,
+            data_quality_hint: None,
             child_groups,
             segments: self.segments,
             segment_mig_numbers: self.segment_numbers,
@@ -1064,6 +1506,19 @@ fn group_to_schema_value(
         serde_json::Value::String(group.group_id.clone()),
     );
 
+    if let Some(ref hint) = group.entity_hint {
+        obj.insert(
+            "entity_hint".to_string(),
+            serde_json::Value::String(hint.clone()),
+        );
+    }
+    if let Some(ref quality) = group.data_quality_hint {
+        obj.insert(
+            "data_quality_hint".to_string(),
+            serde_json::Value::String(quality.clone()),
+        );
+    }
+
     if let Some(ref disc) = group.discriminator {
         let mut d = serde_json::Map::new();
         d.insert(
@@ -1550,5 +2005,242 @@ mod tests {
         let pid = ahb.workflows.iter().find(|p| p.id == "55001").unwrap();
         let source = generate_pid_from_segments(pid, &mig, &ahb);
         insta::assert_snapshot!("pid_55001_from_segments", source);
+    }
+
+    // -----------------------------------------------------------------------
+    // Qualifier code name parser tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_parse_base_daten_der_entity() {
+        let m = parse_qualifier_code_name("Daten der Marktlokation").unwrap();
+        assert_eq!(m.entity, "Marktlokation");
+        assert_eq!(m.data_quality, "base");
+        assert_eq!(m.content_type, "Daten");
+    }
+
+    #[test]
+    fn test_parse_informative_daten() {
+        let m = parse_qualifier_code_name("Informative Daten der Technischen Ressource").unwrap();
+        assert_eq!(m.entity, "TechnischeRessource");
+        assert_eq!(m.data_quality, "informativ");
+        assert_eq!(m.content_type, "Daten");
+    }
+
+    #[test]
+    fn test_parse_erwartete_obis_daten() {
+        let m = parse_qualifier_code_name("Erwartete OBIS-Daten der Zähleinrichtung").unwrap();
+        assert_eq!(m.entity, "Zaehler");
+        assert_eq!(m.data_quality, "erwartet");
+        assert_eq!(m.content_type, "OBIS-Daten");
+    }
+
+    #[test]
+    fn test_parse_im_system_vorhandene() {
+        let m = parse_qualifier_code_name("Im System vorhandene Daten der Marktlokation").unwrap();
+        assert_eq!(m.entity, "Marktlokation");
+        assert_eq!(m.data_quality, "im_system");
+        assert_eq!(m.content_type, "Daten");
+    }
+
+    #[test]
+    fn test_parse_differenz() {
+        let m =
+            parse_qualifier_code_name("Differenz-Netznutzungsabrechnungsdaten der Marktlokation")
+                .unwrap();
+        assert_eq!(m.entity, "Marktlokation");
+        assert_eq!(m.data_quality, "differenz");
+    }
+
+    #[test]
+    fn test_parse_netzlokation_variant() {
+        let m = parse_qualifier_code_name("Daten der Netzlokation").unwrap();
+        assert_eq!(m.entity, "Netzlokation");
+        assert_eq!(m.data_quality, "base");
+    }
+
+    #[test]
+    fn test_parse_steuerbare_ressource() {
+        let m = parse_qualifier_code_name("Daten der Steuerbaren Ressource").unwrap();
+        assert_eq!(m.entity, "SteuerbareRessource");
+        assert_eq!(m.data_quality, "base");
+    }
+
+    #[test]
+    fn test_parse_tranche() {
+        let m = parse_qualifier_code_name("Daten der Tranche").unwrap();
+        assert_eq!(m.entity, "Tranche");
+        assert_eq!(m.data_quality, "base");
+    }
+
+    #[test]
+    fn test_parse_produkt_daten() {
+        let m = parse_qualifier_code_name("Produkt-Daten der Marktlokation").unwrap();
+        assert_eq!(m.entity, "Marktlokation");
+        assert_eq!(m.data_quality, "base");
+        assert_eq!(m.content_type, "Produkt-Daten");
+    }
+
+    #[test]
+    fn test_parse_kunden_des_lieferanten() {
+        let m = parse_qualifier_code_name("Daten des Kunden des Lieferanten").unwrap();
+        assert_eq!(m.entity, "Geschaeftspartner");
+        assert_eq!(m.data_quality, "base");
+    }
+
+    #[test]
+    fn test_parse_static_fallback_zaehler() {
+        let m = parse_qualifier_code_name("Zähleinrichtungsdaten").unwrap();
+        assert_eq!(m.entity, "Zaehler");
+        assert_eq!(m.data_quality, "base");
+    }
+
+    #[test]
+    fn test_parse_static_fallback_smartmeter() {
+        let m = parse_qualifier_code_name("Smartmeter-Gateway").unwrap();
+        assert_eq!(m.entity, "SmartmeterGateway");
+        assert_eq!(m.data_quality, "base");
+    }
+
+    #[test]
+    fn test_parse_static_fallback_loc_entity() {
+        let m = parse_qualifier_code_name("Marktlokation").unwrap();
+        assert_eq!(m.entity, "Marktlokation");
+        assert_eq!(m.data_quality, "base");
+    }
+
+    #[test]
+    fn test_parse_empty_returns_none() {
+        assert!(parse_qualifier_code_name("").is_none());
+    }
+
+    #[test]
+    fn test_qualifier_map_from_mig_and_ahb() {
+        let (mig, ahb) = load_mig_ahb();
+        let qmap = QualifierMap::from_mig_and_ahb(&mig, &ahb);
+
+        // Z01 from MIG: "Daten der Marktlokation"
+        let z01 = qmap.get("Z01").expect("Z01 should be in map");
+        assert_eq!(z01.entity, "Marktlokation");
+        assert_eq!(z01.data_quality, "base");
+
+        // ZF0 from AHB: "Informative Daten der Technischen Ressource"
+        let zf0 = qmap.get("ZF0").expect("ZF0 should be in map");
+        assert_eq!(zf0.entity, "TechnischeRessource");
+        assert_eq!(zf0.data_quality, "informativ");
+
+        // Z98 from AHB: "Informative Daten der Marktlokation"
+        let z98 = qmap.get("Z98").expect("Z98 should be in map");
+        assert_eq!(z98.entity, "Marktlokation");
+        assert_eq!(z98.data_quality, "informativ");
+
+        // ZF3 from AHB: "Informative Daten der Messlokation"
+        let zf3 = qmap.get("ZF3").expect("ZF3 should be in map");
+        assert_eq!(zf3.entity, "Messlokation");
+        assert_eq!(zf3.data_quality, "informativ");
+
+        // SG5 LOC codes (from MIG D_3227) — separate namespace
+        let z16 = qmap.get_loc("Z16").expect("Z16 should be in LOC map");
+        assert_eq!(z16.entity, "Marktlokation");
+    }
+
+    #[test]
+    fn test_qualifier_map_reverse_lookup() {
+        let (mig, ahb) = load_mig_ahb();
+        let qmap = QualifierMap::from_mig_and_ahb(&mig, &ahb);
+
+        // Reverse: Marktlokation + base + Daten → some code (Z01 or Z29)
+        let code = qmap.reverse_lookup("Marktlokation", "base", "Daten");
+        assert!(
+            code.is_some(),
+            "Should find a code for Marktlokation base Daten"
+        );
+        // Verify the returned code maps back to the right entity
+        let meta = qmap.get_seq(code.unwrap()).unwrap();
+        assert_eq!(meta.entity, "Marktlokation");
+        assert_eq!(meta.data_quality, "base");
+    }
+
+    #[test]
+    fn test_pid_55035_entity_hints() {
+        let (mig, ahb) = load_mig_ahb();
+        let pid = ahb.workflows.iter().find(|p| p.id == "55035").unwrap();
+        let structure = analyze_pid_structure_with_qualifiers(pid, &mig, &ahb);
+
+        let sg4 = structure
+            .groups
+            .iter()
+            .find(|g| g.group_id == "SG4")
+            .unwrap();
+
+        // sg8_zf0 → TechnischeRessource
+        let sg8_zf0 = sg4
+            .child_groups
+            .iter()
+            .find(|c| c.qualifier_values == vec!["ZF0"])
+            .expect("should have ZF0 group");
+        assert_eq!(
+            sg8_zf0.entity_hint.as_deref(),
+            Some("TechnischeRessource"),
+            "ZF0 = Informative Daten der Technischen Ressource"
+        );
+        assert_eq!(sg8_zf0.data_quality_hint.as_deref(), Some("informativ"));
+
+        // sg8_zf3 → Messlokation
+        let sg8_zf3 = sg4
+            .child_groups
+            .iter()
+            .find(|c| c.qualifier_values == vec!["ZF3"])
+            .expect("should have ZF3 group");
+        assert_eq!(
+            sg8_zf3.entity_hint.as_deref(),
+            Some("Messlokation"),
+            "ZF3 = Informative Daten der Messlokation"
+        );
+
+        // sg8_z98 → Marktlokation
+        let sg8_z98 = sg4
+            .child_groups
+            .iter()
+            .find(|c| c.qualifier_values == vec!["Z98"])
+            .expect("should have Z98 group");
+        assert_eq!(
+            sg8_z98.entity_hint.as_deref(),
+            Some("Marktlokation"),
+            "Z98 = Informative Daten der Marktlokation"
+        );
+
+        // sg8_zd7 → Netzlokation
+        let sg8_zd7 = sg4
+            .child_groups
+            .iter()
+            .find(|c| c.qualifier_values == vec!["ZD7"])
+            .expect("should have ZD7 group");
+        assert_eq!(
+            sg8_zd7.entity_hint.as_deref(),
+            Some("Netzlokation"),
+            "ZD7 = Informative Daten der Netzlokation"
+        );
+
+        // sg8_ze1 → Marktlokation (Netznutzungsabrechnungsdaten)
+        let sg8_ze1 = sg4
+            .child_groups
+            .iter()
+            .find(|c| c.qualifier_values == vec!["ZE1"])
+            .expect("should have ZE1 group");
+        assert_eq!(
+            sg8_ze1.entity_hint.as_deref(),
+            Some("Marktlokation"),
+            "ZE1 = Informative Netznutzungsabrechnungsdaten der Marktlokation"
+        );
+
+        // Children should inherit parent's entity_hint
+        for child in &sg8_zf0.child_groups {
+            assert_eq!(
+                child.entity_hint.as_deref(),
+                Some("TechnischeRessource"),
+                "SG10 under ZF0 should inherit TechnischeRessource"
+            );
+        }
     }
 }

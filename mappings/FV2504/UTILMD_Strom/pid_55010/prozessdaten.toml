@@ -16,16 +16,16 @@ source_path = "sg4"
 
 [fields]
 # IDE segment (Transaktion)
-"ide.0" = { target = "", default = "24" }
-"ide.1" = "vorgangId"
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
 
 # DTM+154 (Annahmedatum eines Dokuments)
-"dtm[154].0.0" = { target = "", default = "154" }
-"dtm[154].0.1" = "annahmedatum"
-"dtm[154].0.2" = { target = "", default = "102" }
+"dtm[154].c507.d2005" = { target = "", default = "154" }
+"dtm[154].c507.d2380" = "annahmedatum"
+"dtm[154].c507.d2379" = { target = "", default = "102" }
 
 # STS segment — Transaktionsgrund
-"sts.0" = { target = "", default = "7" }
-"sts.2" = "transaktionsgrund"
-"sts.3" = "transaktionsgrundErgaenzung"
-"sts.4" = "transaktionsgrundErgaenzungBefristeteAnmeldung"
+"sts.c601.d9015" = { target = "", default = "7" }
+"sts.c556.d9013" = "transaktionsgrund"
+"sts.c556_2.d9013" = "transaktionsgrundErgaenzung"
+"sts.c556_3.d9013" = "transaktionsgrundErgaenzungBefristeteAnmeldung"

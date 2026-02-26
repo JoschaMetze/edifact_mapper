@@ -1,19 +1,19 @@
-# Messlokation Mengenangabe (SG9 within SEQ+ZE1) for PID 55035.
-# QTY segment data, merges into entity "Messlokation".
+# Marktlokation Mengenangabe (SG9 within SEQ+ZE1) for PID 55035.
+# QTY segment data, merges into entity "Marktlokation".
 #
 # QTY+Z33:<Menge>  → Mengenangabe
 
 [meta]
-entity = "Messlokation"
-bo4e_type = "Messlokation"
-companion_type = "MesslokationEdifact"
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
 source_group = "SG4.SG8.SG9"
 source_path = "sg4.sg8_ze1.sg9"
 
 [fields]
 
 [companion_fields]
-"qty.0.1" = "mengenangabe"
+"qty.c186.d6060" = "mengenangabe"
 
 [companion_fields."qty.0.0"]
 target = ""

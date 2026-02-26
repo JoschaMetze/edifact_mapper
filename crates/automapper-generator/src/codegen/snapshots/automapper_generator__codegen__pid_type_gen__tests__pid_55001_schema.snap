@@ -168,6 +168,7 @@ expression: schema
     "sg4": {
       "children": {
         "sg12_z04": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3035",
             "segment": "NAD",
@@ -175,6 +176,7 @@ expression: schema
               "Z04"
             ]
           },
+          "entity_hint": "Zaehler",
           "segments": [
             {
               "elements": [
@@ -448,6 +450,7 @@ expression: schema
           "source_group": "SG12"
         },
         "sg5_z16": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -455,6 +458,7 @@ expression: schema
               "Z16"
             ]
           },
+          "entity_hint": "Marktlokation",
           "segments": [
             {
               "elements": [
@@ -509,6 +513,7 @@ expression: schema
           "source_group": "SG5"
         },
         "sg5_z22": {
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -516,6 +521,7 @@ expression: schema
               "Z22"
             ]
           },
+          "entity_hint": "RuhendeMarktlokation",
           "segments": [
             {
               "elements": [
@@ -618,10 +624,12 @@ expression: schema
         "sg8_z01": {
           "children": {
             "sg10": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Marktlokation",
               "segments": [
                 {
                   "elements": [
@@ -675,6 +683,7 @@ expression: schema
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -682,6 +691,7 @@ expression: schema
               "Z01"
             ]
           },
+          "entity_hint": "Marktlokation",
           "segments": [
             {
               "elements": [
@@ -720,10 +730,12 @@ expression: schema
         "sg8_z75": {
           "children": {
             "sg10": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Geschaeftspartner",
               "segments": [
                 {
                   "elements": [
@@ -844,6 +856,7 @@ expression: schema
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -851,6 +864,7 @@ expression: schema
               "Z75"
             ]
           },
+          "entity_hint": "Geschaeftspartner",
           "segments": [
             {
               "elements": [
@@ -889,10 +903,12 @@ expression: schema
         "sg8_z79": {
           "children": {
             "sg10": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Produktpaket",
               "segments": [
                 {
                   "elements": [
@@ -959,6 +975,7 @@ expression: schema
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -966,6 +983,7 @@ expression: schema
               "Z79"
             ]
           },
+          "entity_hint": "Produktpaket",
           "segments": [
             {
               "elements": [
@@ -1047,10 +1065,12 @@ expression: schema
         "sg8_zh0": {
           "children": {
             "sg10": {
+              "data_quality_hint": "base",
               "discriminator": {
                 "element": "7059",
                 "segment": "CCI"
               },
+              "entity_hint": "Produktpaket",
               "segments": [
                 {
                   "elements": [
@@ -1157,6 +1177,7 @@ expression: schema
               "source_group": "SG10"
             }
           },
+          "data_quality_hint": "base",
           "discriminator": {
             "element": "1229",
             "segment": "SEQ",
@@ -1164,6 +1185,7 @@ expression: schema
               "ZH0"
             ]
           },
+          "entity_hint": "Produktpaket",
           "segments": [
             {
               "elements": [
