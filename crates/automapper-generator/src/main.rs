@@ -259,6 +259,28 @@ enum Commands {
         output_dir: PathBuf,
     },
 
+    /// Look up PID schema context for TOML mapping authoring
+    SchemaLookup {
+        /// PID number (e.g., "55035")
+        #[arg(long)]
+        pid: String,
+
+        /// Directory containing pid_*_schema.json files
+        #[arg(
+            long,
+            default_value = "crates/mig-types/src/generated/fv2504/utilmd/pids"
+        )]
+        schema_dir: PathBuf,
+
+        /// Group path to show detail for (e.g., "sg4.sg8_zf0"). Omit to list all groups.
+        #[arg(long)]
+        group: Option<String>,
+
+        /// Include a pre-filled TOML template in the output
+        #[arg(long, default_value = "false")]
+        toml_template: bool,
+    },
+
     /// Generate TypeScript type definitions from TOML mappings and PID schemas
     GenerateTypescript {
         /// PIDs to generate types for (comma-separated, e.g., "55001,55002")
@@ -738,7 +760,10 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                     );
                 }
                 Err(e) => {
-                    eprintln!("Warning: rustfmt not available ({}), skipping formatting", e);
+                    eprintln!(
+                        "Warning: rustfmt not available ({}), skipping formatting",
+                        e
+                    );
                 }
             }
 
@@ -1095,6 +1120,52 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
 
             if diff.is_empty() {
                 println!("\nNo differences found.");
+            }
+
+            Ok(())
+        }
+        Commands::SchemaLookup {
+            pid,
+            schema_dir,
+            group,
+            toml_template,
+        } => {
+            let schema_path = schema_dir.join(format!("pid_{}_schema.json", pid.to_lowercase()));
+            if !schema_path.exists() {
+                return Err(automapper_generator::GeneratorError::FileNotFound(
+                    schema_path,
+                ));
+            }
+            let schema: serde_json::Value =
+                serde_json::from_str(&std::fs::read_to_string(&schema_path)?)?;
+
+            if let Some(ref group_path) = group {
+                match automapper_generator::codegen::schema_lookup::print_group_detail(
+                    &schema, group_path,
+                ) {
+                    Some(detail) => {
+                        println!("{}", detail);
+                        if toml_template {
+                            if let Some(template) =
+                                automapper_generator::codegen::schema_lookup::print_toml_template(
+                                    &schema, group_path,
+                                )
+                            {
+                                println!("---\n");
+                                println!("{}", template);
+                            }
+                        }
+                    }
+                    None => {
+                        eprintln!("Group '{}' not found in PID {} schema", group_path, pid);
+                        std::process::exit(1);
+                    }
+                }
+            } else {
+                println!(
+                    "{}",
+                    automapper_generator::codegen::schema_lookup::print_group_list(&schema)
+                );
             }
 
             Ok(())

@@ -21,6 +21,7 @@ pub mod error;
 pub mod error_mapping;
 pub mod handlers;
 pub mod model;
+pub mod path_resolver;
 pub mod segment_structure;
 
 pub use engine::MappingEngine;

@@ -6,6 +6,8 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
+use crate::path_resolver::PathResolver;
+
 /// Root mapping definition — one per TOML file.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MappingDefinition {
@@ -61,4 +63,33 @@ pub struct StructuredFieldMapping {
 pub struct ComplexHandlerRef {
     pub name: String,
     pub description: Option<String>,
+}
+
+impl MappingDefinition {
+    /// Normalize all EDIFACT ID paths to numeric indices using the given resolver.
+    ///
+    /// Resolves named paths in field keys, companion_field keys, and discriminators.
+    /// Already-numeric paths pass through unchanged.
+    pub fn normalize_paths(&mut self, resolver: &PathResolver) {
+        // Normalize discriminator
+        if let Some(ref disc) = self.meta.discriminator {
+            self.meta.discriminator = Some(resolver.resolve_discriminator(disc));
+        }
+
+        // Normalize field keys
+        self.fields = self
+            .fields
+            .iter()
+            .map(|(k, v)| (resolver.resolve_path(k), v.clone()))
+            .collect();
+
+        // Normalize companion_fields keys
+        if let Some(ref cf) = self.companion_fields {
+            self.companion_fields = Some(
+                cf.iter()
+                    .map(|(k, v)| (resolver.resolve_path(k), v.clone()))
+                    .collect(),
+            );
+        }
+    }
 }

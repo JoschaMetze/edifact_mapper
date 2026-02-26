@@ -109,6 +109,18 @@ impl MappingEngine {
         self
     }
 
+    /// Attach a path resolver to normalize EDIFACT ID paths to numeric indices.
+    ///
+    /// This allows TOML mapping files to use named paths like `loc.c517.d3225`
+    /// instead of numeric indices like `loc.1.0`. Resolution happens once at
+    /// load time — the engine hot path is completely unchanged.
+    pub fn with_path_resolver(mut self, resolver: crate::path_resolver::PathResolver) -> Self {
+        for def in &mut self.definitions {
+            def.normalize_paths(&resolver);
+        }
+        self
+    }
+
     /// Get all loaded definitions.
     pub fn definitions(&self) -> &[MappingDefinition] {
         &self.definitions
@@ -312,8 +324,9 @@ impl MappingEngine {
         // entry-segment qualifiers (e.g., SEQ qualifier Z98).
         let instance = if let Some(ref sp) = def.meta.source_path {
             if has_source_path_qualifiers(sp) && !def.meta.source_group.contains(':') {
-                Self::resolve_by_source_path(tree, sp)
-                    .or_else(|| Self::resolve_group_instance(tree, &def.meta.source_group, repetition))
+                Self::resolve_by_source_path(tree, sp).or_else(|| {
+                    Self::resolve_group_instance(tree, &def.meta.source_group, repetition)
+                })
             } else {
                 Self::resolve_group_instance(tree, &def.meta.source_group, repetition)
             }
@@ -2510,10 +2523,7 @@ mod tests {
         );
 
         // No source_path → kept as-is
-        assert_eq!(
-            resolve_child_relative("SG8.SG10", None, &map),
-            "SG8.SG10"
-        );
+        assert_eq!(resolve_child_relative("SG8.SG10", None, &map), "SG8.SG10");
 
         // SG9 also works
         assert_eq!(
@@ -2572,11 +2582,7 @@ mod tests {
                                     repetitions: vec![AssembledGroupInstance {
                                         segments: vec![AssembledSegment {
                                             tag: "CCI".to_string(),
-                                            elements: vec![
-                                                vec![],
-                                                vec![],
-                                                vec!["ZB3".to_string()],
-                                            ],
+                                            elements: vec![vec![], vec![], vec!["ZB3".to_string()]],
                                         }],
                                         child_groups: vec![],
                                     }],
@@ -2592,11 +2598,7 @@ mod tests {
                                     repetitions: vec![AssembledGroupInstance {
                                         segments: vec![AssembledSegment {
                                             tag: "CCI".to_string(),
-                                            elements: vec![
-                                                vec![],
-                                                vec![],
-                                                vec!["ZE6".to_string()],
-                                            ],
+                                            elements: vec![vec![], vec![], vec!["ZE6".to_string()]],
                                         }],
                                         child_groups: vec![],
                                     }],

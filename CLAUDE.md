@@ -34,6 +34,11 @@ cargo fmt --all -- --check       # Format check
 cargo fmt --all                  # Auto-format
 cargo bench -p mig-assembly      # MIG-driven pipeline benchmarks (includes batch)
 cargo build --release --workspace
+
+# Schema lookup CLI — inspect PID schemas for TOML mapping authoring
+cargo run -p automapper-generator -- schema-lookup --pid 55035                # List all groups
+cargo run -p automapper-generator -- schema-lookup --pid 55035 --group sg4.sg8_zf0  # Detail for one group
+cargo run -p automapper-generator -- schema-lookup --pid 55035 --group sg4.sg8_zf0 --toml-template  # With TOML template
 ```
 
 ## Architecture
@@ -173,15 +178,21 @@ The MIG XML defines ALL possible segments/groups for a message type (e.g., UTILM
 
 Follow this step-by-step process when adding BO4E mappings for a new PID.
 
-**Step 1: Read the PID schema JSON**
+**Step 1: Read the PID schema JSON (or use schema-lookup CLI)**
 ```bash
 # Primary reference — always start here
 cat crates/mig-types/src/generated/fv2504/utilmd/pids/pid_NNNNN_schema.json
+
+# Or use the schema-lookup CLI for structured output:
+cargo run -p automapper-generator -- schema-lookup --pid NNNNN              # List all groups
+cargo run -p automapper-generator -- schema-lookup --pid NNNNN --group sg4.sg8_zf0  # Detail with EDIFACT ID paths
+cargo run -p automapper-generator -- schema-lookup --pid NNNNN --group sg4.sg8_zf0 --toml-template  # Pre-filled TOML
 ```
 This is the single source of truth. It tells you:
 - Which SG groups exist (sg5_z16, sg8_z98, sg12_z04, etc.)
 - What segments each group contains (LOC, SEQ, CCI, CAV, NAD, RFF, etc.)
 - Element indices and component sub-indices for field paths
+- EDIFACT ID paths (e.g., `loc.c517.d3225` for LOC element 1, component 0)
 - Discriminator codes (LOC qualifier Z16/Z17, SEQ qualifier Z98/ZD7, etc.)
 - Which codes are AHB-filtered (only valid codes for this PID)
 
@@ -288,9 +299,13 @@ When creating TOML mapping files for new PIDs, follow these rules:
 - When multiple TOML files map the same source group (e.g., multiple RFFs in SG6), each needs a `discriminator` (e.g., `RFF.0.0=Z13`) to select the right instance.
 - When looking up definitions in tests, use `(entity, source_group)` pairs — `definition_for_entity()` alone is ambiguous when multiple files share an entity name.
 
-**Field path convention — always use numeric indices:**
-- Use `loc.0` (element index 0), `loc.1.0` (element 1, component 0), `cav.0.3` (element 0, component 3).
-- Named paths (`loc.d3227`, `loc.c517.d3225`) are deprecated — they're ambiguous and harder to maintain.
+**Field path convention — numeric or EDIFACT ID paths:**
+- Numeric: `loc.0` (element index 0), `loc.1.0` (element 1, component 0), `cav.0.3` (element 0, component 3).
+- EDIFACT ID: `loc.d3227` (simple element), `loc.c517.d3225` (composite + component), `cav[Z91].c889.d7111` (with qualifier).
+- Both styles work in the same TOML file. EDIFACT ID paths are resolved to numeric at load time via `PathResolver`.
+- To use EDIFACT ID paths, the engine must be created with `MappingEngine::load(dir)?.with_path_resolver(resolver)`.
+- The `schema-lookup` CLI with `--toml-template` generates TOML using EDIFACT ID paths for readability.
+- Discriminators also support EDIFACT IDs: `LOC.d3227=Z16` resolves to `LOC.0=Z16`.
 - Empty EDIFACT values (empty string components) are omitted from BO4E JSON output — only non-empty values are included.
 - The reverse mapper pads intermediate empty elements automatically, so omitting empty values from BO4E is safe for roundtrip.
 
