@@ -232,9 +232,26 @@ For each group, consult the schema to determine:
 ```bash
 ls example_market_communication_bo4e_transactions/UTILMD/FV2504/*NNNNN*
 ```
-If a fixture exists, write roundtrip tests. If not, write at least a load test to verify TOML parsing.
+If a fixture exists, write a full EDIFACT roundtrip test. If not, write at least a TOML loading test.
 
-**Step 7: Verify**
+**Step 7: Write EDIFACT roundtrip tests (REQUIRED)**
+
+TOML loading tests and JSON key presence tests are NOT sufficient. They pass even when half the mappings are missing. Every PID with a fixture file MUST have a full pipeline roundtrip test:
+
+```
+EDIFACT → tokenize → split → assemble(PID-filtered MIG)
+  → map_interchange(forward) → map_interchange_reverse
+  → disassemble → render → compare with original EDIFACT
+```
+
+This is the only test that catches:
+- Missing TOML files (segments not consumed → not reconstructed)
+- Wrong field paths (values extracted incorrectly → different on roundtrip)
+- Phantom segments from defaults (reverse generates segments not in original)
+
+Reference implementation: `crates/mig-bo4e/tests/reverse_roundtrip_test.rs` (PID 55001 — passes byte-identical). Use `run_full_roundtrip()` from `pid_55013_to_55035_test.rs` as the reusable pattern.
+
+**Step 8: Verify**
 ```bash
 cargo test -p mig-bo4e -- --nocapture  # all mapping tests
 cargo clippy -p mig-bo4e -- -D warnings
@@ -287,6 +304,12 @@ When creating TOML mapping files for new PIDs, follow these rules:
 - `{entity}_info.toml` — SG8 SEQ group enrichment (e.g., `marktlokation_info.toml`)
 - `{entity}_zuordnung.toml` — SG10 CCI/CAV attribute mapping (e.g., `marktlokation_zuordnung.toml`)
 - `{entity}_rff_{qualifier}.toml` — discriminated RFF mappings (e.g., `prozessdaten_rff_z13.toml`)
+
+**Known generator bug — entity filename collisions:**
+- The `generate-pid-mappings` tool uses entity-based filenames. When SG5 and SG8 both map to the same entity (e.g., both → "Marktlokation"), the SG8 file collides with the existing SG5 file and gets silently skipped.
+- Always manually verify that every group in the PID schema JSON has a TOML file. Compare the schema's `fields` tree against the TOML directory listing.
+- SG6 RFF files are also commonly missed by the generator — check for them explicitly.
+- After running the generator, count TOML files vs schema groups to catch gaps.
 
 ## Implementation Plans
 
