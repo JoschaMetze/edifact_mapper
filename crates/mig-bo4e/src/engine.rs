@@ -1077,6 +1077,20 @@ impl MappingEngine {
             } else if def.meta.source_group.is_empty() {
                 // Root-level mapping — always single object
                 Some(self.map_forward_inner(tree, def, 0, enrich_codes))
+            } else if def.meta.source_path.as_ref().is_some_and(|sp| {
+                has_source_path_qualifiers(sp)
+            }) {
+                // Source path has qualifier suffixes (e.g., "sg4.sg8_zd7.sg10")
+                // — navigate via entry-segment qualifiers instead of hardcoded :N
+                // indices from source_group.  Returns None when the qualified parent
+                // doesn't exist in the tree (e.g., no SEQ+ZD7 in this message).
+                let sp = def.meta.source_path.as_deref().unwrap();
+                Self::resolve_by_source_path(tree, sp).map(|instance| {
+                    let mut r = serde_json::Map::new();
+                    self.extract_fields_from_instance(instance, def, &mut r, enrich_codes);
+                    self.extract_companion_fields(instance, def, &mut r, enrich_codes);
+                    serde_json::Value::Object(r)
+                })
             } else {
                 let num_reps = Self::count_repetitions(tree, &def.meta.source_group);
                 if num_reps <= 1 {

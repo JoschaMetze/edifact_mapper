@@ -81,15 +81,7 @@ fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSe
 
 /// Fixtures with known mapping gaps that prevent byte-identical roundtrip.
 /// These are legitimate issues to fix later, not test bugs.
-const KNOWN_INCOMPLETE: &[&str] = &[
-    // DEV fixtures have extra long text components in NAD segments (d3036_2..d3036_5)
-    // that are not yet mapped — roundtrip drops those components.
-    "55001_UTILMD_S2.1_DEV-86943-2.edi",
-    "55001_UTILMD_S2.1_DEV-86943-3.edi",
-    "55001_UTILMD_S2.1_DEV-86943-4.edi",
-    // macosi fixture has different SG8 structure — SEQ/CCI ordering mismatch in reverse.
-    "55002_UTILMD_S2.1_ALEXANDE104683_macosi.edi",
-];
+const KNOWN_INCOMPLETE: &[&str] = &[];
 
 /// Full pipeline roundtrip for a PID, testing ALL available fixtures:
 /// EDIFACT → tokenize → split → assemble → map_interchange
@@ -271,3 +263,4 @@ fn test_forward_reverse_roundtrip_55001() {
 fn test_forward_reverse_roundtrip_55002() {
     run_full_roundtrip("55002");
 }
+
