@@ -1,0 +1,17 @@
+# Transaktionsnummer (RFF+TN) — merges into Prozessdaten.
+#
+# RFF+TN:<Vorgangsnummer>  -> transaktionsnummer
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "RFF.0.0=TN"
+
+[fields]
+"rff.0.1" = "transaktionsnummer"
+
+[fields."rff.0.0"]
+target = ""
+default = "TN"

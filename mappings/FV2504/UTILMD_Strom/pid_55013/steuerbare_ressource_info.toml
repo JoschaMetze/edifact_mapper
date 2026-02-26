@@ -1,0 +1,27 @@
+# SteuerbareRessource informative data (SEQ+ZF1) for PID 55013.
+# Merges into entity "SteuerbareRessource" via deep-merge.
+#
+# SEQ+ZF1+<Zeitraum-Ref>  (Informative Daten der Steuerbaren Ressource)
+# RFF+Z38:<Steuerbare-Ressource-ID>  -> reference to SteuerbareRessource from SG5 LOC+Z19
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf1"
+discriminator = "SEQ.0.0=ZF1"
+
+[fields]
+"seq.1.0" = "zeitraumReferenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZF1"
+
+[companion_fields]
+"rff.0.1" = "referenzSteuerbareRessource"
+
+[companion_fields."rff.0.0"]
+target = ""
+default = "Z38"

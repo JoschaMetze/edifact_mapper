@@ -199,10 +199,10 @@ fn test_load_split_55013() {
         "55013 should have SG9 definition for Marktlokation Jahresverbrauchsprognose"
     );
 
-    // Verify total definition count (17 TOML files in pid_55013)
+    // Verify total definition count (26 TOML files in pid_55013)
     assert_eq!(
         tx_defs.len(),
-        17,
-        "55013 transaction engine should have exactly 17 definitions"
+        26,
+        "55013 transaction engine should have exactly 26 definitions"
     );
 }

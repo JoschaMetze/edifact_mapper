@@ -1,0 +1,27 @@
+# Messlokation informative data (SEQ+ZF3) for PID 55013.
+# Merges into entity "Messlokation" via deep-merge.
+#
+# SEQ+ZF3+<Zeitraum-Ref>  (Informative Daten der Messlokation)
+# RFF+Z19:<Messlokations-ID>  -> reference to Messlokation from SG5 LOC+Z17
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf3"
+discriminator = "SEQ.0.0=ZF3"
+
+[fields]
+"seq.1.0" = "zeitraumReferenz"
+
+[fields."seq.0"]
+target = ""
+default = "ZF3"
+
+[companion_fields]
+"rff.0.1" = "referenzMesslokation"
+
+[companion_fields."rff.0.0"]
+target = ""
+default = "Z19"
