@@ -236,7 +236,7 @@ Read the schema's `fields` object and create one TOML file per group. Use this m
 | `sg4.sg6` | `prozessdaten_rff_{qual}.toml` | RFF qualifier, merges into "Prozessdaten" |
 | `sg4.sg8_zXX` | `{entity}_info.toml` | SEQ code → parent LOC entity |
 | `sg4.sg8_zXX.sg10` | `{entity}_zuordnung.toml` | CCI/CAV → parent LOC entity companion |
-| `sg4.sg12_zNN` | `{entity}.toml` | NAD qualifier (Z04/Z09 etc.) |
+| `sg4.sg12_zNN` | `geschaeftspartner.toml` | Always "Geschaeftspartner" — see NAD entity reuse pattern below |
 
 **Step 5: Write each TOML file**
 
@@ -290,6 +290,7 @@ When creating TOML mapping files for new PIDs, follow these rules:
 - Map to existing BO4E core types (Marktlokation, Messlokation, Netzlokation, etc.) and their `*Edifact` companion types.
 - SEQ/CCI/CAV "info" and "zuordnung" groups are NOT separate entities — they enrich their parent LOC entity. Use `entity = "Marktlokation"` (not `entity = "MarktlokationInfo"`).
 - RFF groups with different qualifiers (Z13, TN, Z60) that describe the same concept merge into one entity (e.g., all into `Prozessdaten`) using discriminators, not separate entity types.
+- **NAD/SG12 segments**: ALL NAD qualifiers (Z04, Z09, Z63–Z70, etc.) map to `Geschaeftspartner` — see **NAD/SG12 entity reuse** section below. Do NOT create per-qualifier types like `KundeDesLf` or `Marktlokationsanschrift`.
 - Reference the C# project's `*Edifact` companion types to understand entity boundaries. If the C# code stores a field on `MarktlokationEdifact`, use `companion_fields` in the TOML, not a new entity.
 
 **One TOML file = one source group instance:**
@@ -323,6 +324,49 @@ When creating TOML mapping files for new PIDs, follow these rules:
 - STS segment structure varies significantly between PIDs (e.g., 55001 uses `STS+7++E01+ZW4+E03` for Transaktionsgrund, while 55002 uses `STS+E01+<status>+<pruefschritt>:<ebd>::<ref>` for Antwort-Status).
 - Always check the PID schema JSON for the actual STS element/composite layout before writing STS field mappings.
 - DTM qualifiers also vary: 55001 has DTM+92 and DTM+93, 55002 only has DTM+93.
+
+**NAD/SG12 entity reuse — single Geschaeftspartner type for ALL NAD qualifiers:**
+
+The C# reference uses ONE `GeschaeftspartnerMapper` for all NAD qualifiers (Z04, Z09, Z48, Z50, Z63–Z70, DP, VN, KN, Z25). Follow this pattern — do NOT create per-qualifier BO4E types.
+
+- **All SG12/NAD segments** → `entity = "Geschaeftspartner"`, `bo4e_type = "Geschaeftspartner"`, `companion_type = "GeschaeftspartnerEdifact"`.
+- **NAD qualifier** stored in `companion_fields`: `"nad.d3035" = "nad_qualifier"` — this is what distinguishes Z65 (KundeDesLf) from Z66 (KorrespondenzanschriftKundeLf) etc.
+- **One TOML file per PID** for all SG12 groups: map the superset of all NAD fields (C082 ID, C080 name, C058 additional info, C059 address, d3164 city, d3251 postal code, d3207 country, C819 region). Fields not present in a specific NAD instance are auto-omitted.
+- **No discriminator needed**: when a PID has multiple SG12 reps (e.g., 55013 has 7), omitting the discriminator makes the engine auto-produce an array of Geschaeftspartner objects. Each array element captures only the non-empty fields for that qualifier.
+- **Reverse mapping**: each array element becomes a separate SG12 rep. The `nad_qualifier` companion field writes the qualifier code (Z65, Z66, etc.) back to `NAD.d3035`.
+- **Anti-pattern**: Do NOT create types like `KundeDesLf`, `KorrespondenzanschriftKundeLf`, `Marktlokationsanschrift`, `Anschlussnehmer`, `Hausverwalter` — these are all structurally identical NAD segments differing only by qualifier code.
+- **Scope**: This applies to informative NAD qualifiers (Z63–Z70), business party NADs (Z04, Z09), and extended NADs (Z03, Z05, Z07, Z08, Z25, Z26, DP, VN, KN, etc.). ALL are Geschaeftspartner.
+- **`deep_merge_insert` caveat**: Do NOT use discriminators with same entity name — the engine merges same-named entities, causing data loss when fields overlap. Instead, omit discriminators to get array output.
+
+Example TOML (covers all SG12 variants in one file):
+```toml
+[meta]
+entity = "Geschaeftspartner"
+bo4e_type = "Geschaeftspartner"
+companion_type = "GeschaeftspartnerEdifact"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12"
+
+[fields]
+"nad.c082.d3039" = "identifikation"
+"nad.c080.d3036" = "nachname"
+"nad.c080.d3036_2" = "vorname"
+"nad.c080.d3036_3" = "titel"
+"nad.c080.d3036_5" = "anrede"
+"nad.c058.d3124" = "zusatzinfo"
+"nad.c059.d3042" = "strasse"
+"nad.c059.d3042_3" = "hausnummer"
+"nad.d3164" = "ort"
+"nad.d3251" = "postleitzahl"
+"nad.d3207" = "land"
+"nad.c819.d3229" = "region"
+
+[companion_fields]
+"nad.d3035" = "nad_qualifier"
+"nad.c082.d1131" = "codelist_code"
+"nad.c082.d3055" = "codepflege_code"
+"nad.c080.d3036_4" = "name_format_code"
+```
 
 **File naming convention:**
 - `{entity}.toml` — primary LOC/base mapping (e.g., `marktlokation.toml`)

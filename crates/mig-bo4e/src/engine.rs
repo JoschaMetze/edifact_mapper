@@ -1393,35 +1393,46 @@ impl MappingEngine {
                     }
                 };
 
-                let instance = tx_engine.map_reverse(bo4e_value, dm.def);
-
-                // Skip empty instances (definition had no real BO4E data)
-                if instance.segments.is_empty() && instance.child_groups.is_empty() {
-                    continue;
-                }
-
-                if dm.relative.is_empty() {
-                    root_segs.extend(instance.segments);
+                // Handle array entities: each element becomes a separate group rep.
+                // This supports the NAD/SG12 pattern where multiple NAD qualifiers
+                // (Z63-Z70) map to a single "Geschaeftspartner" entity as an array.
+                let items: Vec<&serde_json::Value> = if bo4e_value.is_array() {
+                    bo4e_value.as_array().unwrap().iter().collect()
                 } else {
-                    // For depth-2+ defs without explicit rep index, resolve
-                    // parent rep from source_path matching (qualifier-based).
-                    let effective_relative = if dm.depth >= 2 {
-                        resolve_child_relative(
-                            &dm.relative,
-                            dm.def.meta.source_path.as_deref(),
-                            &source_path_to_rep,
-                        )
+                    vec![bo4e_value]
+                };
+
+                for item in &items {
+                    let instance = tx_engine.map_reverse(item, dm.def);
+
+                    // Skip empty instances (definition had no real BO4E data)
+                    if instance.segments.is_empty() && instance.child_groups.is_empty() {
+                        continue;
+                    }
+
+                    if dm.relative.is_empty() {
+                        root_segs.extend(instance.segments);
                     } else {
-                        dm.relative.clone()
-                    };
+                        // For depth-2+ defs without explicit rep index, resolve
+                        // parent rep from source_path matching (qualifier-based).
+                        let effective_relative = if dm.depth >= 2 {
+                            resolve_child_relative(
+                                &dm.relative,
+                                dm.def.meta.source_path.as_deref(),
+                                &source_path_to_rep,
+                            )
+                        } else {
+                            dm.relative.clone()
+                        };
 
-                    let rep_used =
-                        place_in_groups(&mut child_groups, &effective_relative, instance);
+                        let rep_used =
+                            place_in_groups(&mut child_groups, &effective_relative, instance);
 
-                    // Track source_path → rep_index for depth-1 (parent) defs
-                    if dm.depth == 1 {
-                        if let Some(sp) = &dm.def.meta.source_path {
-                            source_path_to_rep.insert(sp.clone(), rep_used);
+                        // Track source_path → rep_index for depth-1 (parent) defs
+                        if dm.depth == 1 {
+                            if let Some(sp) = &dm.def.meta.source_path {
+                                source_path_to_rep.insert(sp.clone(), rep_used);
+                            }
                         }
                     }
                 }
