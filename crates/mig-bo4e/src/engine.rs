@@ -28,8 +28,10 @@ impl MappingEngine {
     pub fn load(dir: &Path) -> Result<Self, MappingError> {
         let mut definitions = Vec::new();
 
-        for entry in std::fs::read_dir(dir)? {
-            let entry = entry?;
+        let mut entries: Vec<_> = std::fs::read_dir(dir)?.filter_map(|e| e.ok()).collect();
+        entries.sort_by_key(|e| e.file_name());
+
+        for entry in entries {
             let path = entry.path();
             if path.extension().map(|e| e == "toml").unwrap_or(false) {
                 let content = std::fs::read_to_string(&path)?;
@@ -465,6 +467,15 @@ impl MappingEngine {
         let mut field_values: Vec<(String, String, usize, usize, String)> =
             Vec::with_capacity(def.fields.len());
 
+        // Track whether any field with a non-empty target resolved to an actual
+        // BO4E value.  When a definition has data fields but none resolved to
+        // values, only defaults (qualifiers) would be emitted — producing phantom
+        // segments for groups not present in the original EDIFACT message.
+        // Definitions with ONLY qualifier/default fields (no data targets) are
+        // "container" definitions (e.g., SEQ entry segments) and are always kept.
+        let mut has_real_data = false;
+        let mut has_data_fields = false;
+
         for (path, field_mapping) in &def.fields {
             let (target, default, enum_map) = match field_mapping {
                 FieldMapping::Simple(t) => (t.as_str(), None, None),
@@ -504,7 +515,11 @@ impl MappingEngine {
             let val = if target.is_empty() {
                 default.cloned()
             } else {
+                has_data_fields = true;
                 let bo4e_val = self.populate_field(bo4e_value, target, path);
+                if bo4e_val.is_some() {
+                    has_real_data = true;
+                }
                 // Apply reverse enum_map: BO4E value → EDIFACT value
                 let mapped_val = match (bo4e_val, enum_map) {
                     (Some(v), Some(map)) => {
@@ -584,7 +599,11 @@ impl MappingEngine {
                 let val = if target.is_empty() {
                     default.cloned()
                 } else {
+                    has_data_fields = true;
                     let bo4e_val = self.populate_field(companion_value, target, path);
+                    if bo4e_val.is_some() {
+                        has_real_data = true;
+                    }
                     let mapped_val = match (bo4e_val, enum_map) {
                         (Some(v), Some(map)) => map
                             .iter()
@@ -615,6 +634,17 @@ impl MappingEngine {
                     }
                 }
             }
+        }
+
+        // If the definition has data fields but none resolved to actual BO4E values,
+        // return an empty instance to prevent phantom segments for groups not
+        // present in the original EDIFACT message.  Definitions with only
+        // qualifier/default fields (has_data_fields=false) are always kept.
+        if has_data_fields && !has_real_data {
+            return AssembledGroupInstance {
+                segments: vec![],
+                child_groups: vec![],
+            };
         }
 
         // Build segments with elements/components in correct positions.
@@ -1209,6 +1239,11 @@ impl MappingEngine {
                 };
 
                 let instance = tx_engine.map_reverse(bo4e_value, dm.def);
+
+                // Skip empty instances (definition had no real BO4E data)
+                if instance.segments.is_empty() && instance.child_groups.is_empty() {
+                    continue;
+                }
 
                 if dm.relative.is_empty() {
                     root_segs.extend(instance.segments);

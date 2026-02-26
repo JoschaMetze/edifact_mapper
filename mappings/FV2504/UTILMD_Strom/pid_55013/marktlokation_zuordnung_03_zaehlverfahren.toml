@@ -1,0 +1,22 @@
+# Marktlokation Zuordnung Zaehlverfahren (SG10 within SEQ+Z98) for PID 55013.
+# CCI/CAV Prognosegrundlage, merges into entity "Marktlokation".
+#
+# CCI+++ZA6                    -> Zaehlverfahren/Prognosegrundlage qualifier
+# CAV+E02                      -> SLP/SEP
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8:1.SG10"
+source_path = "sg4.sg8_z98.sg10"
+discriminator = "CCI.2.0=ZA6"
+
+[fields]
+
+[companion_fields]
+"cav.0.0" = "prognosegrundlage"
+
+[companion_fields."cci.2.0"]
+target = ""
+default = "ZA6"

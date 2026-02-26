@@ -2,7 +2,8 @@
 #
 # Source: SG4 top-level segments (IDE, DTM, STS)
 # IDE+24+<Vorgangsnummer>         -> vorgangId (Transaktion)
-# DTM+93:<Datum>:303              -> gueltigBis (Datum)
+# DTM+92:<Datum>:303              -> gueltigAb (Beginn)
+# DTM+93:<Datum>:303              -> gueltigBis (Ende)
 # STS+7++<Transaktionsgrund>+<Ergaenzung>+<BefristeteAnmeldung>
 
 [meta]
@@ -16,7 +17,12 @@ source_path = "sg4"
 "ide.0" = { target = "", default = "24" }
 "ide.1" = "vorgangId"
 
-# DTM+93 (Datum)
+# DTM+92 (Beginn)
+"dtm[92].0.0" = { target = "", default = "92" }
+"dtm[92].0.1" = "gueltigAb"
+"dtm[92].0.2" = { target = "", default = "303" }
+
+# DTM+93 (Ende)
 "dtm[93].0.0" = { target = "", default = "93" }
 "dtm[93].0.1" = "gueltigBis"
 "dtm[93].0.2" = { target = "", default = "303" }

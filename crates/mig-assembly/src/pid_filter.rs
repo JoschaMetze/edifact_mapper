@@ -52,16 +52,19 @@ fn filter_segments(segments: &[MigSegment], ahb_numbers: &HashSet<String>) -> Ve
 
 /// Filter segment groups: keep a group if its entry segment's Number
 /// is in the AHB set (or has no Number). Within kept groups, recursively
-/// filter segments and nested groups.
+/// filter segments and nested groups. Then merge groups with the same ID
+/// into a single group definition so the assembler can handle all
+/// repetitions of a group type (e.g., multiple SG8 SEQ variants).
 fn filter_groups(
     groups: &[MigSegmentGroup],
     ahb_numbers: &HashSet<String>,
 ) -> Vec<MigSegmentGroup> {
-    groups
+    let filtered: Vec<MigSegmentGroup> = groups
         .iter()
         .filter(|group| group_matches_ahb(group, ahb_numbers))
         .map(|group| filter_group_contents(group, ahb_numbers))
-        .collect()
+        .collect();
+    merge_same_id_groups(filtered)
 }
 
 /// Check if a group should be kept: its entry segment (first segment)
@@ -94,6 +97,97 @@ fn filter_group_contents(
         segments: filter_segments(&group.segments, ahb_numbers),
         nested_groups: filter_groups(&group.nested_groups, ahb_numbers),
     }
+}
+
+/// Merge groups with the same ID into a single group definition.
+///
+/// After PID filtering, the MIG may contain multiple groups with the same ID
+/// but different variants (e.g., 4 SG8 definitions for SEQ+ZD7, Z98, ZF1, ZF3).
+/// The assembler matches groups by entry tag only and would consume all repetitions
+/// under the first definition. Merging produces a single group per ID with the union
+/// of all segments and nested groups, enabling the assembler to handle all variants.
+fn merge_same_id_groups(groups: Vec<MigSegmentGroup>) -> Vec<MigSegmentGroup> {
+    // Collect groups by ID, preserving first-seen order
+    let mut seen_ids: Vec<String> = Vec::new();
+    let mut by_id: Vec<Vec<MigSegmentGroup>> = Vec::new();
+
+    for g in groups {
+        if let Some(pos) = seen_ids.iter().position(|id| *id == g.id) {
+            by_id[pos].push(g);
+        } else {
+            seen_ids.push(g.id.clone());
+            by_id.push(vec![g]);
+        }
+    }
+
+    by_id
+        .into_iter()
+        .map(|variants| {
+            if variants.len() == 1 {
+                variants.into_iter().next().unwrap()
+            } else {
+                merge_group_variants(variants)
+            }
+        })
+        .collect()
+}
+
+/// Merge multiple variants of the same group into one.
+///
+/// Segments are unioned by tag: for each tag, include the maximum number of
+/// occurrences found in any single variant (e.g., if one variant has 2 CAV
+/// segments and others have 1, the merged group has 2). Order is preserved
+/// from the first variant that introduces each tag.
+///
+/// Nested groups are collected from all variants and recursively merged.
+/// They are sorted by numeric suffix (SG9 before SG10) to maintain
+/// standard EDIFACT group ordering.
+fn merge_group_variants(variants: Vec<MigSegmentGroup>) -> MigSegmentGroup {
+    let first = &variants[0];
+
+    // Merge segments: for each tag, keep max count across variants
+    let mut merged_segments: Vec<MigSegment> = Vec::new();
+    for variant in &variants {
+        for seg in &variant.segments {
+            let count_in_merged = merged_segments.iter().filter(|s| s.id == seg.id).count();
+            let count_in_variant = variant.segments.iter().filter(|s| s.id == seg.id).count();
+            if count_in_variant > count_in_merged {
+                for _ in 0..(count_in_variant - count_in_merged) {
+                    merged_segments.push(seg.clone());
+                }
+            }
+        }
+    }
+
+    // Collect all nested groups from all variants and recursively merge
+    let mut all_nested: Vec<MigSegmentGroup> = Vec::new();
+    for variant in &variants {
+        all_nested.extend(variant.nested_groups.iter().cloned());
+    }
+    let mut merged_nested = merge_same_id_groups(all_nested);
+    // Sort by group number (SG9 < SG10) for standard EDIFACT ordering
+    merged_nested.sort_by_key(|g| extract_group_number(&g.id));
+
+    MigSegmentGroup {
+        id: first.id.clone(),
+        name: first.name.clone(),
+        description: first.description.clone(),
+        counter: first.counter.clone(),
+        level: first.level,
+        max_rep_std: variants.iter().map(|v| v.max_rep_std).max().unwrap_or(1),
+        max_rep_spec: variants.iter().map(|v| v.max_rep_spec).max().unwrap_or(1),
+        status_std: first.status_std.clone(),
+        status_spec: first.status_spec.clone(),
+        segments: merged_segments,
+        nested_groups: merged_nested,
+    }
+}
+
+/// Extract numeric suffix from a group ID (e.g., "SG10" → 10).
+fn extract_group_number(id: &str) -> u32 {
+    id.strip_prefix("SG")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(u32::MAX)
 }
 
 #[cfg(test)]
@@ -214,6 +308,96 @@ mod tests {
         assert_eq!(filtered.segments[1].id, "UNB");
         assert_eq!(filtered.segments[2].id, "UNH");
         assert_eq!(filtered.segments[3].id, "UNZ");
+    }
+
+    #[test]
+    fn test_filter_merges_same_id_groups() {
+        // Simulate 3 SG8 variants (ZD7, Z98, ZF1) like in PID 55013
+        let sg8_zd7 = group(
+            "SG8",
+            vec![seg("SEQ", Some("00089")), seg("RFF", Some("00090"))],
+            vec![group(
+                "SG10",
+                vec![seg("CCI", Some("00092")), seg("CAV", Some("00093"))],
+                vec![],
+            )],
+        );
+        let sg8_z98 = group(
+            "SG8",
+            vec![seg("SEQ", Some("00114"))],
+            vec![
+                group("SG9", vec![seg("QTY", Some("00116"))], vec![]),
+                group(
+                    "SG10",
+                    vec![seg("CCI", Some("00122")), seg("CAV", Some("00125"))],
+                    vec![],
+                ),
+            ],
+        );
+        let sg8_zf3 = group(
+            "SG8",
+            vec![seg("SEQ", Some("00291")), seg("RFF", Some("00292"))],
+            vec![group(
+                "SG10",
+                vec![
+                    seg("CCI", Some("00295")),
+                    seg("CAV", Some("00296")),
+                    seg("CAV", Some("00297")),
+                ],
+                vec![],
+            )],
+        );
+
+        let sg4 = group(
+            "SG4",
+            vec![seg("IDE", Some("00020"))],
+            vec![sg8_zd7, sg8_z98, sg8_zf3],
+        );
+
+        let mig = MigSchema {
+            message_type: "UTILMD".to_string(),
+            variant: None,
+            version: "S2.1".to_string(),
+            publication_date: String::new(),
+            author: String::new(),
+            format_version: "FV2504".to_string(),
+            source_file: String::new(),
+            segments: vec![],
+            segment_groups: vec![sg4],
+        };
+
+        let ahb_numbers: HashSet<String> = [
+            "00020", "00089", "00090", "00092", "00093", "00114", "00116", "00122", "00125",
+            "00291", "00292", "00295", "00296", "00297",
+        ]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+
+        let filtered = filter_mig_for_pid(&mig, &ahb_numbers);
+        let sg4 = &filtered.segment_groups[0];
+
+        // All 3 SG8 variants should be merged into 1
+        assert_eq!(sg4.nested_groups.len(), 1, "SG8 variants should be merged");
+        let sg8 = &sg4.nested_groups[0];
+        assert_eq!(sg8.id, "SG8");
+
+        // Merged segments: SEQ (from all) + RFF (from ZD7/ZF3)
+        let seg_tags: Vec<&str> = sg8.segments.iter().map(|s| s.id.as_str()).collect();
+        assert_eq!(seg_tags, vec!["SEQ", "RFF"]);
+
+        // Merged nested groups: SG9 (from Z98) + SG10 (from all), sorted by number
+        assert_eq!(sg8.nested_groups.len(), 2, "should have SG9 and SG10");
+        assert_eq!(sg8.nested_groups[0].id, "SG9");
+        assert_eq!(sg8.nested_groups[1].id, "SG10");
+
+        // SG10 should have merged segments: CCI + 2 CAVs (max from ZF3)
+        let sg10_tags: Vec<&str> = sg8.nested_groups[1]
+            .segments
+            .iter()
+            .map(|s| s.id.as_str())
+            .collect();
+        assert_eq!(sg10_tags, vec!["CCI", "CAV", "CAV"]);
     }
 
     #[test]

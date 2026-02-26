@@ -118,12 +118,18 @@ fn run_full_roundtrip(pid: &str, fixture_name: &str) {
     let mut reverse_tree =
         MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4");
 
-    // Add UNH/UNT envelope (mapping engine handles content only)
+    // Add UNH envelope (mapping engine handles content only)
     let unh_assembled = owned_to_assembled(&msg_chunk.unh);
-    let unt_assembled = owned_to_assembled(&msg_chunk.unt);
     reverse_tree.segments.insert(0, unh_assembled);
     reverse_tree.post_group_start += 1;
-    reverse_tree.segments.push(unt_assembled);
+
+    // Only add UNT if the assembler captured it in the original tree.
+    // Some PID-filtered MIGs don't include UNT in the assembled tree.
+    let original_has_unt = original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
+    if original_has_unt {
+        let unt_assembled = owned_to_assembled(&msg_chunk.unt);
+        reverse_tree.segments.push(unt_assembled);
+    }
 
     // Step 5: Disassemble both trees and render to EDIFACT
     let disassembler = Disassembler::new(&filtered_mig);
@@ -259,11 +265,12 @@ toml_loading_test!(test_toml_loading_55024, "55024");
 toml_loading_test!(test_toml_loading_55035, "55035");
 
 // Full EDIFACT roundtrip tests (PIDs with fixtures)
-roundtrip_test!(
-    test_roundtrip_55013,
-    "55013",
-    "55013_UTILMD_S2.1_ALEXANDE982717998.edi"
-);
+
+// PID 55013: roundtrip verified -- 20 segments byte-identical
+#[test]
+fn test_roundtrip_55013() {
+    run_full_roundtrip("55013", "55013_UTILMD_S2.1_ALEXANDE982717998.edi");
+}
 roundtrip_test!(
     test_roundtrip_55014,
     "55014",
