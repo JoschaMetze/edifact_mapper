@@ -87,13 +87,7 @@ fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSe
 
 /// Fixtures with known mapping gaps that prevent byte-identical roundtrip.
 /// These are legitimate issues to fix later, not test bugs.
-const KNOWN_INCOMPLETE: &[&str] = &[
-    // Has 6 LOC segments (extra LOC+Z22) not yet mapped — reverse produces only 5.
-    "55013_UTILMD_S2.1_DEV91654.edi",
-    "55013_UTILMD_S2.1_DEV94060.edi",
-    // Has a second DTM and FTX segment not yet mapped.
-    "55018_UTILMD_S2.1_ALEXANDE655513684.edi",
-];
+const KNOWN_INCOMPLETE: &[&str] = &[];
 
 /// Full pipeline roundtrip for ALL fixtures of a PID:
 /// EDIFACT -> tokenize -> split -> assemble -> map_interchange
@@ -177,8 +171,7 @@ fn run_full_roundtrip(pid: &str) {
         reverse_tree.post_group_start += 1;
 
         // Only add UNT if the assembler captured it in the original tree.
-        let original_has_unt =
-            original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
+        let original_has_unt = original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
         if original_has_unt {
             let unt_assembled = owned_to_assembled(&msg_chunk.unt);
             reverse_tree.segments.push(unt_assembled);
@@ -260,9 +253,7 @@ fn run_full_roundtrip(pid: &str) {
         tested += 1;
     }
 
-    eprintln!(
-        "PID {pid}: {tested} fixtures passed, {skipped} skipped (known incomplete)",
-    );
+    eprintln!("PID {pid}: {tested} fixtures passed, {skipped} skipped (known incomplete)",);
 }
 
 /// TOML loading test -- verifies all TOML files parse correctly.

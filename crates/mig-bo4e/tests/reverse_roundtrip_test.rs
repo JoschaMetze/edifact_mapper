@@ -166,8 +166,7 @@ fn run_full_roundtrip(pid: &str) {
         reverse_tree.segments.insert(0, unh_assembled);
         reverse_tree.post_group_start += 1;
 
-        let original_has_unt =
-            original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
+        let original_has_unt = original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
         if original_has_unt {
             let unt_assembled = owned_to_assembled(&msg_chunk.unt);
             reverse_tree.segments.push(unt_assembled);
@@ -249,9 +248,7 @@ fn run_full_roundtrip(pid: &str) {
         tested += 1;
     }
 
-    eprintln!(
-        "PID {pid}: {tested} fixtures passed, {skipped} skipped (known incomplete)",
-    );
+    eprintln!("PID {pid}: {tested} fixtures passed, {skipped} skipped (known incomplete)",);
 }
 
 #[test]
@@ -263,4 +260,3 @@ fn test_forward_reverse_roundtrip_55001() {
 fn test_forward_reverse_roundtrip_55002() {
     run_full_roundtrip("55002");
 }
-

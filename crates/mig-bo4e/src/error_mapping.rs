@@ -107,7 +107,7 @@ impl Bo4eFieldIndex {
     }
 
     fn collect_fields(
-        field_map: &std::collections::BTreeMap<String, FieldMapping>,
+        field_map: &indexmap::IndexMap<String, FieldMapping>,
         group_path: &str,
         mig: &MigSchema,
         is_companion: bool,

@@ -19,6 +19,11 @@ source_path = "sg4"
 "ide.d7495" = { target = "", default = "24" }
 "ide.c206.d7402" = "vorgangId"
 
+# DTM+Z05 (gegenüber Kunde bestätigtes Kündigungsdatum)
+"dtm[Z05].c507.d2005" = { target = "", default = "Z05" }
+"dtm[Z05].c507.d2380" = "bestaetigterKuendigungsterminKunde"
+"dtm[Z05].c507.d2379" = { target = "", default = "303" }
+
 # DTM+157 (Einzugsdatum)
 "dtm[157].c507.d2005" = { target = "", default = "157" }
 "dtm[157].c507.d2380" = "einzugsDatum"
@@ -39,5 +44,5 @@ source_path = "sg4"
 "sts[E01].c556.d1131" = "ebdNummer"
 
 # FTX segment — Zusaetzliche Informationen (ACB)
-"ftx.d4451" = { target = "", default = "ACB" }
-"ftx.c108.d4440" = "freitext"
+"ftx[ACB].d4451" = { target = "", default = "ACB" }
+"ftx[ACB].c108.d4440" = "freitext"

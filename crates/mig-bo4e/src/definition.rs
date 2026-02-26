@@ -3,6 +3,7 @@
 //! These types are deserialized from TOML mapping files
 //! in the `mappings/{format_version}/{message_type}_{variant}/` directory.
 
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -12,8 +13,10 @@ use crate::path_resolver::PathResolver;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MappingDefinition {
     pub meta: MappingMeta,
-    pub fields: BTreeMap<String, FieldMapping>,
-    pub companion_fields: Option<BTreeMap<String, FieldMapping>>,
+    /// Field mappings — uses IndexMap to preserve TOML file insertion order,
+    /// which determines reverse-mapping segment ordering (e.g., DTM+Z05 before DTM+Z01).
+    pub fields: IndexMap<String, FieldMapping>,
+    pub companion_fields: Option<IndexMap<String, FieldMapping>>,
     pub complex_handlers: Option<Vec<ComplexHandlerRef>>,
 }
 
@@ -41,7 +44,7 @@ pub enum FieldMapping {
     /// Structured: with optional transform, condition, etc.
     Structured(StructuredFieldMapping),
     /// Nested group mappings
-    Nested(BTreeMap<String, FieldMapping>),
+    Nested(IndexMap<String, FieldMapping>),
 }
 
 /// A structured field mapping with optional transform and condition.

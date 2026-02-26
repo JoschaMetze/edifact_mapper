@@ -623,8 +623,7 @@ fn run_full_roundtrip(pid: &str) {
         reverse_tree.post_group_start += 1;
 
         // Only add UNT if the assembler captured it in the original tree.
-        let original_has_unt =
-            original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
+        let original_has_unt = original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
         if original_has_unt {
             let unt_assembled = owned_to_assembled(&msg_chunk.unt);
             reverse_tree.segments.push(unt_assembled);
@@ -705,10 +704,7 @@ fn run_full_roundtrip(pid: &str) {
         );
     }
 
-    eprintln!(
-        "PID {pid}: all {} fixtures passed",
-        fixtures.len()
-    );
+    eprintln!("PID {pid}: all {} fixtures passed", fixtures.len());
 }
 
 macro_rules! roundtrip_test {

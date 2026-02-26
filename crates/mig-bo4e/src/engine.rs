@@ -246,6 +246,68 @@ impl MappingEngine {
         Some(current_instance)
     }
 
+    /// Resolve ALL matching instances for a source_path, returning a Vec.
+    ///
+    /// Like `resolve_by_source_path` but returns all repetitions matching
+    /// at any level, not just the first.  For example, if there are two SG5
+    /// reps with LOC+Z17, `resolve_all_by_source_path(tree, "sg4.sg5_z17")`
+    /// returns both.  For deeper paths like "sg4.sg8_zf3.sg10", if there are
+    /// two SG8 reps with ZF3, it returns SG10 children from both.
+    pub fn resolve_all_by_source_path<'a>(
+        tree: &'a AssembledTree,
+        source_path: &str,
+    ) -> Vec<&'a AssembledGroupInstance> {
+        let parts: Vec<&str> = source_path.split('.').collect();
+        if parts.is_empty() {
+            return vec![];
+        }
+
+        // First part: match against top-level groups
+        let (first_id, first_qualifier) = parse_source_path_part(parts[0]);
+        let first_group = match tree
+            .groups
+            .iter()
+            .find(|g| g.group_id.eq_ignore_ascii_case(first_id))
+        {
+            Some(g) => g,
+            None => return vec![],
+        };
+
+        let mut current_instances: Vec<&AssembledGroupInstance> = if let Some(q) = first_qualifier {
+            find_all_reps_by_entry_qualifier(&first_group.repetitions, q)
+        } else {
+            first_group.repetitions.iter().collect()
+        };
+
+        // Navigate remaining parts, branching at each level when multiple
+        // instances match a qualifier (e.g., two SG8 reps with ZF3).
+        for part in &parts[1..] {
+            let (group_id, qualifier) = parse_source_path_part(part);
+            let mut next_instances = Vec::new();
+
+            for instance in &current_instances {
+                if let Some(child_group) = instance
+                    .child_groups
+                    .iter()
+                    .find(|g| g.group_id.eq_ignore_ascii_case(group_id))
+                {
+                    if let Some(q) = qualifier {
+                        next_instances.extend(find_all_reps_by_entry_qualifier(
+                            &child_group.repetitions,
+                            q,
+                        ));
+                    } else {
+                        next_instances.extend(child_group.repetitions.iter());
+                    }
+                }
+            }
+
+            current_instances = next_instances;
+        }
+
+        current_instances
+    }
+
     /// Extract a field from a group instance by path.
     ///
     /// Supports qualifier-based segment selection with `tag[qualifier]` syntax:
@@ -983,50 +1045,6 @@ impl MappingEngine {
     /// For example, `source_path = "sg4.sg8_z98.sg10"` with `discriminator = "CCI.2.0=ZB3"`
     /// navigates to the SG8 instance with SEQ qualifier Z98, then finds the SG10 rep
     /// where CCI element 2 component 0 equals "ZB3".
-    fn resolve_discriminated_by_source_path<'a>(
-        tree: &'a AssembledTree,
-        source_path: &str,
-        discriminator: &str,
-    ) -> Option<&'a AssembledGroupInstance> {
-        let (spec, expected) = discriminator.split_once('=')?;
-        let parts: Vec<&str> = spec.split('.').collect();
-        if parts.len() != 3 {
-            return None;
-        }
-        let tag = parts[0];
-        let element_idx: usize = parts[1].parse().ok()?;
-        let component_idx: usize = parts[2].parse().ok()?;
-
-        // Split source_path into parent + leaf
-        let sp_parts: Vec<&str> = source_path.split('.').collect();
-        if sp_parts.len() < 2 {
-            return None;
-        }
-        let parent_path = sp_parts[..sp_parts.len() - 1].join(".");
-        let (leaf_id, _) = parse_source_path_part(sp_parts.last()?);
-
-        // Navigate to parent instance via source_path
-        let parent = Self::resolve_by_source_path(tree, &parent_path)?;
-
-        // Find leaf group in parent's children
-        let leaf_group = parent
-            .child_groups
-            .iter()
-            .find(|g| g.group_id.eq_ignore_ascii_case(leaf_id))?;
-
-        // Scan reps for discriminator match
-        leaf_group.repetitions.iter().find(|instance| {
-            instance.segments.iter().any(|s| {
-                s.tag.eq_ignore_ascii_case(tag)
-                    && s.elements
-                        .get(element_idx)
-                        .and_then(|e| e.get(component_idx))
-                        .map(|v| v == expected)
-                        .unwrap_or(false)
-            })
-        })
-    }
-
     /// Map all definitions against a tree, returning a JSON object with entity names as keys.
     ///
     /// For each definition:
@@ -1051,25 +1069,42 @@ impl MappingEngine {
             let entity = &def.meta.entity;
 
             let bo4e = if let Some(ref disc) = def.meta.discriminator {
-                // Has discriminator — resolve to specific rep.
+                // Has discriminator — resolve to matching rep(s).
                 // Use source_path navigation when qualifiers are present
-                // (e.g., "sg4.sg8_z98.sg10" navigates to Z98's SG10 reps).
-                let use_source_path = def.meta.source_path.as_ref().is_some_and(|sp| {
-                    has_source_path_qualifiers(sp) && !def.meta.source_group.contains(':')
-                });
+                // (e.g., "sg4.sg8_z98.sg10" navigates to Z98's SG10 reps,
+                //  "sg4.sg5_z17" finds all LOC+Z17 when there are multiple).
+                let use_source_path = def
+                    .meta
+                    .source_path
+                    .as_ref()
+                    .is_some_and(|sp| has_source_path_qualifiers(sp));
                 if use_source_path {
-                    // Navigate to parent via source_path, find discriminated instance
-                    Self::resolve_discriminated_by_source_path(
-                        tree,
-                        def.meta.source_path.as_deref().unwrap(),
-                        disc,
-                    )
-                    .map(|instance| {
+                    // Navigate via source_path, then filter by discriminator.
+                    let sp = def.meta.source_path.as_deref().unwrap();
+                    let all_instances = Self::resolve_all_by_source_path(tree, sp);
+                    // Apply discriminator filter to resolved instances
+                    let instances: Vec<_> = if let Some(matcher) = DiscriminatorMatcher::parse(disc)
+                    {
+                        all_instances
+                            .into_iter()
+                            .filter(|inst| matcher.matches(inst))
+                            .collect()
+                    } else {
+                        all_instances
+                    };
+                    let extract = |instance: &AssembledGroupInstance| {
                         let mut r = serde_json::Map::new();
                         self.extract_fields_from_instance(instance, def, &mut r, enrich_codes);
                         self.extract_companion_fields(instance, def, &mut r, enrich_codes);
                         serde_json::Value::Object(r)
-                    })
+                    };
+                    match instances.len() {
+                        0 => None,
+                        1 => Some(extract(instances[0])),
+                        _ => Some(serde_json::Value::Array(
+                            instances.iter().map(|i| extract(i)).collect(),
+                        )),
+                    }
                 } else {
                     Self::resolve_repetition(tree, &def.meta.source_group, disc)
                         .map(|rep| self.map_forward_inner(tree, def, rep, enrich_codes))
@@ -1077,20 +1112,32 @@ impl MappingEngine {
             } else if def.meta.source_group.is_empty() {
                 // Root-level mapping — always single object
                 Some(self.map_forward_inner(tree, def, 0, enrich_codes))
-            } else if def.meta.source_path.as_ref().is_some_and(|sp| {
-                has_source_path_qualifiers(sp)
-            }) {
+            } else if def
+                .meta
+                .source_path
+                .as_ref()
+                .is_some_and(|sp| has_source_path_qualifiers(sp))
+            {
                 // Source path has qualifier suffixes (e.g., "sg4.sg8_zd7.sg10")
                 // — navigate via entry-segment qualifiers instead of hardcoded :N
                 // indices from source_group.  Returns None when the qualified parent
                 // doesn't exist in the tree (e.g., no SEQ+ZD7 in this message).
+                // When multiple reps match the qualifier, produces an array.
                 let sp = def.meta.source_path.as_deref().unwrap();
-                Self::resolve_by_source_path(tree, sp).map(|instance| {
+                let instances = Self::resolve_all_by_source_path(tree, sp);
+                let extract = |instance: &AssembledGroupInstance| {
                     let mut r = serde_json::Map::new();
                     self.extract_fields_from_instance(instance, def, &mut r, enrich_codes);
                     self.extract_companion_fields(instance, def, &mut r, enrich_codes);
                     serde_json::Value::Object(r)
-                })
+                };
+                match instances.len() {
+                    0 => None,
+                    1 => Some(extract(instances[0])),
+                    _ => Some(serde_json::Value::Array(
+                        instances.iter().map(|i| extract(i)).collect(),
+                    )),
+                }
             } else {
                 let num_reps = Self::count_repetitions(tree, &def.meta.source_group);
                 if num_reps <= 1 {
@@ -1391,8 +1438,8 @@ impl MappingEngine {
             }
         }
 
-        // Augment shallow definitions with explicit rep indices from the map.
-        // E.g., SG8 def with source_path "sg4.sg8_z79" gets relative "SG8:0".
+        // Augment shallow definitions with explicit rep indices from the map,
+        // but only for single-rep cases (no multi-rep — those use dynamic tracking).
         for dm in &mut sorted_defs {
             if dm.depth == 1 && !dm.relative.contains(':') {
                 if let Some(sp) = &dm.def.meta.source_path {
@@ -1411,10 +1458,11 @@ impl MappingEngine {
             let mut root_segs: Vec<AssembledSegment> = Vec::new();
             let mut child_groups: Vec<AssembledGroup> = Vec::new();
 
-            // Track source_path → repetition index for parent groups (top-down).
+            // Track source_path → repetition indices for parent groups (top-down).
             // Built during depth-1 processing, used by depth-2+ defs without
             // explicit rep indices to find their correct parent via source_path.
-            let mut source_path_to_rep: std::collections::HashMap<String, usize> =
+            // Vec<usize> supports multi-rep parents (e.g., two SG8+ZF3 reps).
+            let mut source_path_to_rep: std::collections::HashMap<String, Vec<usize>> =
                 std::collections::HashMap::new();
 
             for dm in &sorted_defs {
@@ -1430,15 +1478,15 @@ impl MappingEngine {
                 };
 
                 // Handle array entities: each element becomes a separate group rep.
-                // This supports the NAD/SG12 pattern where multiple NAD qualifiers
-                // (Z63-Z70) map to a single "Geschaeftspartner" entity as an array.
+                // This supports both the NAD/SG12 pattern (multiple qualifiers) and
+                // the multi-rep pattern (e.g., two LOC+Z17 Messlokationen).
                 let items: Vec<&serde_json::Value> = if bo4e_value.is_array() {
                     bo4e_value.as_array().unwrap().iter().collect()
                 } else {
                     vec![bo4e_value]
                 };
 
-                for item in &items {
+                for (item_idx, item) in items.iter().enumerate() {
                     let instance = tx_engine.map_reverse(item, dm.def);
 
                     // Skip empty instances (definition had no real BO4E data)
@@ -1451,12 +1499,25 @@ impl MappingEngine {
                     } else {
                         // For depth-2+ defs without explicit rep index, resolve
                         // parent rep from source_path matching (qualifier-based).
+                        // item_idx selects the correct parent rep for multi-rep entities.
                         let effective_relative = if dm.depth >= 2 {
+                            // Multi-rep: strip hardcoded parent :N indices so
+                            // resolve_child_relative uses source_path lookup instead.
+                            let rel = if items.len() > 1 {
+                                strip_all_rep_indices(&dm.relative)
+                            } else {
+                                dm.relative.clone()
+                            };
                             resolve_child_relative(
-                                &dm.relative,
+                                &rel,
                                 dm.def.meta.source_path.as_deref(),
                                 &source_path_to_rep,
+                                item_idx,
                             )
+                        } else if items.len() > 1 && item_idx > 0 {
+                            // Multi-rep entity with hardcoded :N index: first item uses
+                            // the original index, subsequent items append (strip :N).
+                            strip_rep_index(&dm.relative)
                         } else {
                             dm.relative.clone()
                         };
@@ -1467,7 +1528,10 @@ impl MappingEngine {
                         // Track source_path → rep_index for depth-1 (parent) defs
                         if dm.depth == 1 {
                             if let Some(sp) = &dm.def.meta.source_path {
-                                source_path_to_rep.insert(sp.clone(), rep_used);
+                                source_path_to_rep
+                                    .entry(sp.clone())
+                                    .or_default()
+                                    .push(rep_used);
                             }
                         }
                     }
@@ -1554,6 +1618,23 @@ fn find_rep_by_entry_qualifier<'a>(
                 .is_some_and(|v| v.eq_ignore_ascii_case(qualifier))
         })
     })
+}
+
+/// Find ALL repetitions whose entry segment qualifier matches (case-insensitive).
+fn find_all_reps_by_entry_qualifier<'a>(
+    reps: &'a [AssembledGroupInstance],
+    qualifier: &str,
+) -> Vec<&'a AssembledGroupInstance> {
+    reps.iter()
+        .filter(|inst| {
+            inst.segments.first().is_some_and(|seg| {
+                seg.elements
+                    .first()
+                    .and_then(|e| e.first())
+                    .is_some_and(|v| v.eq_ignore_ascii_case(qualifier))
+            })
+        })
+        .collect()
 }
 
 /// Check if a source_path contains qualifier suffixes (e.g., "sg8_z98").
@@ -1682,12 +1763,16 @@ fn place_in_groups(
 /// use it as-is. Otherwise, use the `source_path` to look up the parent's actual
 /// repetition index from `source_path_to_rep`.
 ///
-/// Example: relative = "SG8.SG10", source_path = "sg4.sg8_ze1.sg10"
-/// → looks up "sg4.sg8_ze1" in map → finds rep 6 → returns "SG8:6.SG10"
+/// `item_idx` selects which parent rep to use when the parent created multiple reps
+/// (e.g., two SG8 reps with ZF3 → item_idx 0 picks the first, 1 picks the second).
+///
+/// Example: relative = "SG8.SG10", source_path = "sg4.sg8_zf3.sg10"
+/// → looks up "sg4.sg8_zf3" in map → finds reps [3, 4] → item_idx=1 → returns "SG8:4.SG10"
 fn resolve_child_relative(
     relative: &str,
     source_path: Option<&str>,
-    source_path_to_rep: &std::collections::HashMap<String, usize>,
+    source_path_to_rep: &std::collections::HashMap<String, Vec<usize>>,
+    item_idx: usize,
 ) -> String {
     let parts: Vec<&str> = relative.split('.').collect();
     if parts.is_empty() {
@@ -1703,7 +1788,13 @@ fn resolve_child_relative(
     // Try to resolve from source_path: extract parent path and look up its rep
     if let Some(sp) = source_path {
         if let Some((parent_path, _child)) = sp.rsplit_once('.') {
-            if let Some(rep_idx) = source_path_to_rep.get(parent_path) {
+            if let Some(rep_indices) = source_path_to_rep.get(parent_path) {
+                // Use the item_idx-th parent rep, falling back to last if out of range
+                let rep_idx = rep_indices
+                    .get(item_idx)
+                    .or_else(|| rep_indices.last())
+                    .copied()
+                    .unwrap_or(0);
                 let rest = parts[1..].join(".");
                 return format!("{}:{}.{}", parent_id, rep_idx, rest);
             }
@@ -1712,6 +1803,67 @@ fn resolve_child_relative(
 
     // No resolution possible, keep original
     relative.to_string()
+}
+
+/// Parsed discriminator for filtering assembled group instances.
+///
+/// Discriminator format: "TAG.element_idx.component_idx=VALUE"
+/// E.g., "LOC.0.0=Z17" → match LOC segments where elements[0][0] == "Z17"
+struct DiscriminatorMatcher<'a> {
+    tag: &'a str,
+    element_idx: usize,
+    component_idx: usize,
+    expected: &'a str,
+}
+
+impl<'a> DiscriminatorMatcher<'a> {
+    fn parse(disc: &'a str) -> Option<Self> {
+        let (spec, expected) = disc.split_once('=')?;
+        let parts: Vec<&str> = spec.split('.').collect();
+        if parts.len() != 3 {
+            return None;
+        }
+        Some(Self {
+            tag: parts[0],
+            element_idx: parts[1].parse().ok()?,
+            component_idx: parts[2].parse().ok()?,
+            expected,
+        })
+    }
+
+    fn matches(&self, instance: &AssembledGroupInstance) -> bool {
+        instance.segments.iter().any(|s| {
+            s.tag.eq_ignore_ascii_case(self.tag)
+                && s.elements
+                    .get(self.element_idx)
+                    .and_then(|e| e.get(self.component_idx))
+                    .map(|v| v == self.expected)
+                    .unwrap_or(false)
+        })
+    }
+}
+
+/// Strip explicit rep index from a relative path: "SG5:4" → "SG5", "SG8:3" → "SG8".
+/// Used for multi-rep entities where subsequent items should append rather than
+/// merge into the same rep position.
+fn strip_rep_index(relative: &str) -> String {
+    let (id, _) = parse_group_spec(relative);
+    id.to_string()
+}
+
+/// Strip all explicit rep indices from a multi-part relative path:
+/// "SG8:3.SG10" → "SG8.SG10", "SG8:3.SG10:0" → "SG8.SG10".
+/// Used for multi-rep depth-2+ entities so resolve_child_relative uses
+/// source_path lookup instead of hardcoded indices.
+fn strip_all_rep_indices(relative: &str) -> String {
+    relative
+        .split('.')
+        .map(|part| {
+            let (id, _) = parse_group_spec(part);
+            id
+        })
+        .collect::<Vec<_>>()
+        .join(".")
 }
 
 /// Parse a segment tag with optional qualifier: "dtm[92]" → ("DTM", Some("92")).
@@ -1763,6 +1915,38 @@ fn deep_merge_insert(
     bo4e: serde_json::Value,
 ) {
     if let Some(existing) = result.get_mut(entity) {
+        // Array + Array: element-wise merge (same entity from multiple TOML defs,
+        // each producing an array for multi-rep groups like two LOC+Z17).
+        if let (Some(existing_arr), Some(new_arr)) =
+            (existing.as_array().map(|a| a.len()), bo4e.as_array())
+        {
+            if existing_arr == new_arr.len() {
+                let existing_arr = existing.as_array_mut().unwrap();
+                for (existing_elem, new_elem) in existing_arr.iter_mut().zip(new_arr) {
+                    if let (Some(existing_map), Some(new_map)) =
+                        (existing_elem.as_object_mut(), new_elem.as_object())
+                    {
+                        for (k, v) in new_map {
+                            if let Some(existing_v) = existing_map.get_mut(k) {
+                                if let (Some(existing_inner), Some(new_inner)) =
+                                    (existing_v.as_object_mut(), v.as_object())
+                                {
+                                    for (ik, iv) in new_inner {
+                                        existing_inner
+                                            .entry(ik.clone())
+                                            .or_insert_with(|| iv.clone());
+                                    }
+                                }
+                            } else {
+                                existing_map.insert(k.clone(), v.clone());
+                            }
+                        }
+                    }
+                }
+                return;
+            }
+        }
+        // Object + Object: field-level merge
         if let (Some(existing_map), serde_json::Value::Object(new_map)) =
             (existing.as_object_mut(), &bo4e)
         {
@@ -1832,9 +2016,9 @@ fn set_nested_value_json(
 mod tests {
     use super::*;
     use crate::definition::{MappingDefinition, MappingMeta, StructuredFieldMapping};
-    use std::collections::BTreeMap;
+    use indexmap::IndexMap;
 
-    fn make_def(fields: BTreeMap<String, FieldMapping>) -> MappingDefinition {
+    fn make_def(fields: IndexMap<String, FieldMapping>) -> MappingDefinition {
         MappingDefinition {
             meta: MappingMeta {
                 entity: "Test".to_string(),
@@ -1907,12 +2091,12 @@ mod tests {
         let msg_engine = MappingEngine::from_definitions(vec![]);
 
         // Transaction defs
-        let mut tx_fields = BTreeMap::new();
+        let mut tx_fields: IndexMap<String, FieldMapping> = IndexMap::new();
         tx_fields.insert(
             "ide.1".to_string(),
             FieldMapping::Simple("vorgangId".to_string()),
         );
-        let mut malo_fields = BTreeMap::new();
+        let mut malo_fields: IndexMap<String, FieldMapping> = IndexMap::new();
         malo_fields.insert(
             "loc.1".to_string(),
             FieldMapping::Simple("marktlokationsId".to_string()),
@@ -1967,7 +2151,7 @@ mod tests {
     #[test]
     fn test_map_reverse_pads_intermediate_empty_elements() {
         // NAD+Z09+++Muster:Max — positions 0 and 3 populated, 1 and 2 should become [""]
-        let mut fields = BTreeMap::new();
+        let mut fields = IndexMap::new();
         fields.insert(
             "nad.0".to_string(),
             FieldMapping::Structured(StructuredFieldMapping {
@@ -2012,7 +2196,7 @@ mod tests {
     #[test]
     fn test_map_reverse_no_padding_when_contiguous() {
         // DTM+92:20250531:303 — all three components in element 0, no gaps
-        let mut fields = BTreeMap::new();
+        let mut fields = IndexMap::new();
         fields.insert(
             "dtm.0.0".to_string(),
             FieldMapping::Structured(StructuredFieldMapping {
@@ -2092,7 +2276,7 @@ mod tests {
         };
 
         // Message-level definition maps SG2
-        let mut msg_fields = BTreeMap::new();
+        let mut msg_fields: IndexMap<String, FieldMapping> = IndexMap::new();
         msg_fields.insert(
             "nad.0".to_string(),
             FieldMapping::Simple("marktrolle".to_string()),
@@ -2167,7 +2351,7 @@ mod tests {
         };
 
         // Transaction-level definitions: prozessdaten (root of SG4) + marktlokation (SG5)
-        let mut proz_fields = BTreeMap::new();
+        let mut proz_fields: IndexMap<String, FieldMapping> = IndexMap::new();
         proz_fields.insert(
             "ide.1".to_string(),
             FieldMapping::Simple("vorgangId".to_string()),
@@ -2186,7 +2370,7 @@ mod tests {
             complex_handlers: None,
         };
 
-        let mut malo_fields = BTreeMap::new();
+        let mut malo_fields: IndexMap<String, FieldMapping> = IndexMap::new();
         malo_fields.insert(
             "loc.1".to_string(),
             FieldMapping::Simple("marktlokationsId".to_string()),
@@ -2280,7 +2464,7 @@ mod tests {
         };
 
         // Message-level definitions
-        let mut msg_fields = BTreeMap::new();
+        let mut msg_fields: IndexMap<String, FieldMapping> = IndexMap::new();
         msg_fields.insert(
             "nad.0".to_string(),
             FieldMapping::Simple("marktrolle".to_string()),
@@ -2300,7 +2484,7 @@ mod tests {
         }];
 
         // Transaction-level definitions (source_group includes SG4 prefix)
-        let mut tx_fields = BTreeMap::new();
+        let mut tx_fields: IndexMap<String, FieldMapping> = IndexMap::new();
         tx_fields.insert(
             "ide.1".to_string(),
             FieldMapping::Simple("vorgangId".to_string()),
@@ -2352,7 +2536,7 @@ mod tests {
     #[test]
     fn test_map_reverse_with_segment_structure_pads_trailing() {
         // STS+7++E01 — position 0 and 2 populated, MIG says 5 elements
-        let mut fields = BTreeMap::new();
+        let mut fields = IndexMap::new();
         fields.insert(
             "sts.0".to_string(),
             FieldMapping::Structured(StructuredFieldMapping {
@@ -2461,7 +2645,7 @@ mod tests {
             post_group_start: 0,
         };
 
-        let mut companion_fields = BTreeMap::new();
+        let mut companion_fields: IndexMap<String, FieldMapping> = IndexMap::new();
         companion_fields.insert(
             "cci.2".to_string(),
             FieldMapping::Simple("haushaltskunde".to_string()),
@@ -2476,7 +2660,7 @@ mod tests {
                 source_path: Some("sg4.sg8_z01.sg10".to_string()),
                 discriminator: None,
             },
-            fields: BTreeMap::new(),
+            fields: IndexMap::new(),
             companion_fields: Some(companion_fields),
             complex_handlers: None,
         };
@@ -2501,7 +2685,7 @@ mod tests {
     #[test]
     fn test_reverse_mapping_accepts_enriched_companion() {
         // Reverse mapping should accept both plain string and enriched object format
-        let mut companion_fields = BTreeMap::new();
+        let mut companion_fields: IndexMap<String, FieldMapping> = IndexMap::new();
         companion_fields.insert(
             "cci.2".to_string(),
             FieldMapping::Simple("haushaltskunde".to_string()),
@@ -2516,7 +2700,7 @@ mod tests {
                 source_path: None,
                 discriminator: None,
             },
-            fields: BTreeMap::new(),
+            fields: IndexMap::new(),
             companion_fields: Some(companion_fields),
             complex_handlers: None,
         };
@@ -2547,35 +2731,50 @@ mod tests {
 
     #[test]
     fn test_resolve_child_relative_with_source_path() {
-        let mut map = std::collections::HashMap::new();
-        map.insert("sg4.sg8_ze1".to_string(), 6usize);
-        map.insert("sg4.sg8_z98".to_string(), 0usize);
+        let mut map: std::collections::HashMap<String, Vec<usize>> =
+            std::collections::HashMap::new();
+        map.insert("sg4.sg8_ze1".to_string(), vec![6]);
+        map.insert("sg4.sg8_z98".to_string(), vec![0]);
 
         // Child without explicit index → resolved from source_path
         assert_eq!(
-            resolve_child_relative("SG8.SG10", Some("sg4.sg8_ze1.sg10"), &map),
+            resolve_child_relative("SG8.SG10", Some("sg4.sg8_ze1.sg10"), &map, 0),
             "SG8:6.SG10"
         );
 
         // Child with explicit index → kept as-is
         assert_eq!(
-            resolve_child_relative("SG8:3.SG10", Some("sg4.sg8_ze1.sg10"), &map),
+            resolve_child_relative("SG8:3.SG10", Some("sg4.sg8_ze1.sg10"), &map, 0),
             "SG8:3.SG10"
         );
 
         // Source path not in map → kept as-is
         assert_eq!(
-            resolve_child_relative("SG8.SG10", Some("sg4.sg8_unknown.sg10"), &map),
+            resolve_child_relative("SG8.SG10", Some("sg4.sg8_unknown.sg10"), &map, 0),
             "SG8.SG10"
         );
 
         // No source_path → kept as-is
-        assert_eq!(resolve_child_relative("SG8.SG10", None, &map), "SG8.SG10");
+        assert_eq!(
+            resolve_child_relative("SG8.SG10", None, &map, 0),
+            "SG8.SG10"
+        );
 
         // SG9 also works
         assert_eq!(
-            resolve_child_relative("SG8.SG9", Some("sg4.sg8_z98.sg9"), &map),
+            resolve_child_relative("SG8.SG9", Some("sg4.sg8_z98.sg9"), &map, 0),
             "SG8:0.SG9"
+        );
+
+        // Multi-rep parent: item_idx selects the correct parent rep
+        map.insert("sg4.sg8_zf3".to_string(), vec![3, 4]);
+        assert_eq!(
+            resolve_child_relative("SG8.SG10", Some("sg4.sg8_zf3.sg10"), &map, 0),
+            "SG8:3.SG10"
+        );
+        assert_eq!(
+            resolve_child_relative("SG8.SG10", Some("sg4.sg8_zf3.sg10"), &map, 1),
+            "SG8:4.SG10"
         );
     }
 
