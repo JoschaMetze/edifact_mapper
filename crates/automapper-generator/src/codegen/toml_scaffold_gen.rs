@@ -54,36 +54,61 @@ pub fn generate_group_scaffold(
                 .unwrap_or(&mig_seg.name);
             out.push_str(&format!("# --- {} ({}) ---\n", seg_id, seg_name));
 
-            // Emit data element paths with name/code comments
-            for (ei, de) in mig_seg.data_elements.iter().enumerate() {
+            // Emit data element paths with EDIFACT ID names
+            for de in &mig_seg.data_elements {
                 let de_name = de
                     .description
                     .as_deref()
                     .filter(|d| !d.is_empty())
                     .unwrap_or(&de.name);
                 let codes_hint = format_codes_hint_from_mig(&de.codes);
+                let de_id_lower = format!("d{}", de.id);
                 out.push_str(&format!("# D{} {}{}\n", de.id, de_name, codes_hint));
-                out.push_str(&format!("\"{seg_lower}.{ei}\" = {{ target = \"\" }}\n"));
+                out.push_str(&format!(
+                    "\"{seg_lower}.{de_id_lower}\" = {{ target = \"\" }}\n"
+                ));
             }
-            // Emit composite element paths with name/code comments
-            for (ci, comp) in mig_seg.composites.iter().enumerate() {
-                let elem_idx = mig_seg.data_elements.len() + ci;
+            // Emit composite element paths with EDIFACT ID names
+            // Track composite ID occurrences for ordinal suffixes
+            let mut comp_id_count: HashMap<String, usize> = HashMap::new();
+            for comp in &mig_seg.composites {
+                let comp_id_lower = comp.id.to_lowercase();
+                let count = comp_id_count.entry(comp_id_lower.clone()).or_insert(0);
+                *count += 1;
+                let comp_key = if *count == 1 {
+                    comp_id_lower
+                } else {
+                    format!("{}_{}", comp_id_lower, count)
+                };
+
                 let comp_name = comp
                     .description
                     .as_deref()
                     .filter(|d| !d.is_empty())
                     .unwrap_or(&comp.name);
                 out.push_str(&format!("# {} {}\n", comp.id, comp_name));
-                for (di, de) in comp.data_elements.iter().enumerate() {
+
+                // Track data element ID occurrences within composite for ordinal suffixes
+                let mut de_id_count: HashMap<String, usize> = HashMap::new();
+                for de in &comp.data_elements {
                     let de_name = de
                         .description
                         .as_deref()
                         .filter(|d| !d.is_empty())
                         .unwrap_or(&de.name);
                     let codes_hint = format_codes_hint_from_mig(&de.codes);
+                    let de_id_lower = format!("d{}", de.id);
+                    let dcount = de_id_count.entry(de_id_lower.clone()).or_insert(0);
+                    *dcount += 1;
+                    let de_key = if *dcount == 1 {
+                        de_id_lower
+                    } else {
+                        format!("{}_{}", de_id_lower, dcount)
+                    };
+
                     out.push_str(&format!("#   D{} {}{}\n", de.id, de_name, codes_hint));
                     out.push_str(&format!(
-                        "\"{seg_lower}.{elem_idx}.{di}\" = {{ target = \"\" }}\n"
+                        "\"{seg_lower}.{comp_key}.{de_key}\" = {{ target = \"\" }}\n"
                     ));
                 }
             }
@@ -212,7 +237,10 @@ mod tests {
             "Should have source_path"
         );
         assert!(scaffold.contains("[fields]"), "Should have fields section");
-        assert!(scaffold.contains("\"nad."), "Should have NAD element paths");
+        assert!(
+            scaffold.contains("\"nad.d") || scaffold.contains("\"nad.c"),
+            "Should have NAD element paths with EDIFACT IDs"
+        );
     }
 
     #[test]
