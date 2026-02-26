@@ -185,6 +185,55 @@ impl MappingEngine {
         None
     }
 
+    /// Navigate the assembled tree using a source_path with qualifier suffixes.
+    ///
+    /// Source paths like `"sg4.sg8_z98.sg10"` encode qualifiers inline:
+    /// `sg8_z98` means "find the SG8 repetition whose entry segment has qualifier Z98".
+    /// Parts without underscores (e.g., `sg4`, `sg10`) use the first repetition.
+    ///
+    /// Returns `None` if any part of the path can't be resolved.
+    pub fn resolve_by_source_path<'a>(
+        tree: &'a AssembledTree,
+        source_path: &str,
+    ) -> Option<&'a AssembledGroupInstance> {
+        let parts: Vec<&str> = source_path.split('.').collect();
+        if parts.is_empty() {
+            return None;
+        }
+
+        let (first_id, first_qualifier) = parse_source_path_part(parts[0]);
+        let first_group = tree
+            .groups
+            .iter()
+            .find(|g| g.group_id.eq_ignore_ascii_case(first_id))?;
+
+        let mut current_instance = if let Some(q) = first_qualifier {
+            find_rep_by_entry_qualifier(&first_group.repetitions, q)?
+        } else {
+            first_group.repetitions.first()?
+        };
+
+        if parts.len() == 1 {
+            return Some(current_instance);
+        }
+
+        for part in &parts[1..] {
+            let (group_id, qualifier) = parse_source_path_part(part);
+            let child_group = current_instance
+                .child_groups
+                .iter()
+                .find(|g| g.group_id.eq_ignore_ascii_case(group_id))?;
+
+            current_instance = if let Some(q) = qualifier {
+                find_rep_by_entry_qualifier(&child_group.repetitions, q)?
+            } else {
+                child_group.repetitions.first()?
+            };
+        }
+
+        Some(current_instance)
+    }
+
     /// Extract a field from a group instance by path.
     ///
     /// Supports qualifier-based segment selection with `tag[qualifier]` syntax:
@@ -256,7 +305,21 @@ impl MappingEngine {
             return serde_json::Value::Object(result);
         }
 
-        let instance = Self::resolve_group_instance(tree, &def.meta.source_group, repetition);
+        // Try source_path-based resolution when:
+        //   1. source_path has qualifier suffixes (e.g., "sg4.sg8_z98.sg10")
+        //   2. source_group has no explicit :N indices (those take priority)
+        // This allows definitions without positional indices to navigate via
+        // entry-segment qualifiers (e.g., SEQ qualifier Z98).
+        let instance = if let Some(ref sp) = def.meta.source_path {
+            if has_source_path_qualifiers(sp) && !def.meta.source_group.contains(':') {
+                Self::resolve_by_source_path(tree, sp)
+                    .or_else(|| Self::resolve_group_instance(tree, &def.meta.source_group, repetition))
+            } else {
+                Self::resolve_group_instance(tree, &def.meta.source_group, repetition)
+            }
+        } else {
+            Self::resolve_group_instance(tree, &def.meta.source_group, repetition)
+        };
 
         if let Some(instance) = instance {
             self.extract_fields_from_instance(instance, def, &mut result, enrich_codes);
@@ -1323,6 +1386,54 @@ impl MappingEngine {
 }
 
 /// Parse a group path part with optional repetition: "SG8:1" → ("SG8", Some(1)).
+/// Parse a source_path part into (group_id, optional_qualifier).
+///
+/// `"sg8_z98"` → `("sg8", Some("z98"))`
+/// `"sg4"` → `("sg4", None)`
+/// `"sg10"` → `("sg10", None)`
+fn parse_source_path_part(part: &str) -> (&str, Option<&str>) {
+    // Find the first underscore that separates group from qualifier.
+    // Source path parts look like "sg8_z98", "sg4", "sg10", "sg12_z04".
+    // The group ID is always "sgN", so the underscore after the digits is the separator.
+    if let Some(pos) = part.find('_') {
+        let group = &part[..pos];
+        let qualifier = &part[pos + 1..];
+        if !qualifier.is_empty() {
+            return (group, Some(qualifier));
+        }
+    }
+    (part, None)
+}
+
+/// Find a group repetition whose entry segment has a matching qualifier.
+///
+/// The entry segment is the first segment in the instance (e.g., SEQ for SG8).
+/// The qualifier is matched against `elements[0][0]` (case-insensitive).
+fn find_rep_by_entry_qualifier<'a>(
+    reps: &'a [AssembledGroupInstance],
+    qualifier: &str,
+) -> Option<&'a AssembledGroupInstance> {
+    reps.iter().find(|inst| {
+        inst.segments.first().is_some_and(|seg| {
+            seg.elements
+                .first()
+                .and_then(|e| e.first())
+                .is_some_and(|v| v.eq_ignore_ascii_case(qualifier))
+        })
+    })
+}
+
+/// Check if a source_path contains qualifier suffixes (e.g., "sg8_z98").
+fn has_source_path_qualifiers(source_path: &str) -> bool {
+    source_path.split('.').any(|part| {
+        if let Some(pos) = part.find('_') {
+            pos < part.len() - 1
+        } else {
+            false
+        }
+    })
+}
+
 fn parse_group_spec(part: &str) -> (&str, Option<usize>) {
     if let Some(colon_pos) = part.find(':') {
         let id = &part[..colon_pos];
@@ -2362,5 +2473,102 @@ mod tests {
             child_groups: vec![],
         };
         assert_eq!(place_in_groups(&mut groups, "SG8:5", instance), 5);
+    }
+
+    #[test]
+    fn test_resolve_by_source_path() {
+        use mig_assembly::assembler::*;
+
+        // Build a tree: SG4[0] → SG8 with two reps (Z98 and ZD7) → each has SG10
+        let tree = AssembledTree {
+            segments: vec![],
+            groups: vec![AssembledGroup {
+                group_id: "SG4".to_string(),
+                repetitions: vec![AssembledGroupInstance {
+                    segments: vec![],
+                    child_groups: vec![AssembledGroup {
+                        group_id: "SG8".to_string(),
+                        repetitions: vec![
+                            AssembledGroupInstance {
+                                segments: vec![AssembledSegment {
+                                    tag: "SEQ".to_string(),
+                                    elements: vec![vec!["Z98".to_string()]],
+                                }],
+                                child_groups: vec![AssembledGroup {
+                                    group_id: "SG10".to_string(),
+                                    repetitions: vec![AssembledGroupInstance {
+                                        segments: vec![AssembledSegment {
+                                            tag: "CCI".to_string(),
+                                            elements: vec![
+                                                vec![],
+                                                vec![],
+                                                vec!["ZB3".to_string()],
+                                            ],
+                                        }],
+                                        child_groups: vec![],
+                                    }],
+                                }],
+                            },
+                            AssembledGroupInstance {
+                                segments: vec![AssembledSegment {
+                                    tag: "SEQ".to_string(),
+                                    elements: vec![vec!["ZD7".to_string()]],
+                                }],
+                                child_groups: vec![AssembledGroup {
+                                    group_id: "SG10".to_string(),
+                                    repetitions: vec![AssembledGroupInstance {
+                                        segments: vec![AssembledSegment {
+                                            tag: "CCI".to_string(),
+                                            elements: vec![
+                                                vec![],
+                                                vec![],
+                                                vec!["ZE6".to_string()],
+                                            ],
+                                        }],
+                                        child_groups: vec![],
+                                    }],
+                                }],
+                            },
+                        ],
+                    }],
+                }],
+            }],
+            post_group_start: 0,
+        };
+
+        // Resolve SG10 under Z98
+        let inst = MappingEngine::resolve_by_source_path(&tree, "sg4.sg8_z98.sg10");
+        assert!(inst.is_some());
+        assert_eq!(inst.unwrap().segments[0].elements[2][0], "ZB3");
+
+        // Resolve SG10 under ZD7
+        let inst = MappingEngine::resolve_by_source_path(&tree, "sg4.sg8_zd7.sg10");
+        assert!(inst.is_some());
+        assert_eq!(inst.unwrap().segments[0].elements[2][0], "ZE6");
+
+        // Unknown qualifier → None
+        let inst = MappingEngine::resolve_by_source_path(&tree, "sg4.sg8_zzz.sg10");
+        assert!(inst.is_none());
+
+        // Without qualifier → first rep (Z98)
+        let inst = MappingEngine::resolve_by_source_path(&tree, "sg4.sg8.sg10");
+        assert!(inst.is_some());
+        assert_eq!(inst.unwrap().segments[0].elements[2][0], "ZB3");
+    }
+
+    #[test]
+    fn test_parse_source_path_part() {
+        assert_eq!(parse_source_path_part("sg4"), ("sg4", None));
+        assert_eq!(parse_source_path_part("sg8_z98"), ("sg8", Some("z98")));
+        assert_eq!(parse_source_path_part("sg10"), ("sg10", None));
+        assert_eq!(parse_source_path_part("sg12_z04"), ("sg12", Some("z04")));
+    }
+
+    #[test]
+    fn test_has_source_path_qualifiers() {
+        assert!(has_source_path_qualifiers("sg4.sg8_z98.sg10"));
+        assert!(has_source_path_qualifiers("sg4.sg8_ze1.sg9"));
+        assert!(!has_source_path_qualifiers("sg4.sg6"));
+        assert!(!has_source_path_qualifiers("sg4.sg8.sg10"));
     }
 }
