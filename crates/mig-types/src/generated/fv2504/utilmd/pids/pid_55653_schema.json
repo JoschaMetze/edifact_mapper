@@ -15,6 +15,43 @@
             {
               "elements": [
                 {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
                   "components": [
                     {
                       "id": "3148",
@@ -58,43 +95,6 @@
               ],
               "id": "COM",
               "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Informationskontakt",
-                      "value": "IC"
-                    }
-                  ],
-                  "id": "3139",
-                  "index": 0,
-                  "name": "Funktion des Ansprechpartners, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "3413",
-                      "name": "Kontakt, Nummer",
-                      "sub_index": 0,
-                      "type": "data"
-                    },
-                    {
-                      "id": "3412",
-                      "name": "Name vom Ansprechpartner",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C056",
-                  "index": 1,
-                  "name": "Kontaktangaben"
-                }
-              ],
-              "id": "CTA",
-              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
             }
           ],
           "source_group": "SG3"
@@ -105,6 +105,59 @@
         "segment": "NAD"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        },
         {
           "elements": [
             {
@@ -443,41 +496,35 @@
                     {
                       "codes": [
                         {
-                          "name": "Verwendung der Daten bis",
-                          "value": "Z26"
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
                         }
                       ],
-                      "id": "2005",
-                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
-                      "id": "2380",
-                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
-                      "sub_index": 1,
-                      "type": "data"
-                    },
-                    {
                       "codes": [
                         {
-                          "name": "CCYYMMDDHHMMZZZ",
-                          "value": "303"
+                          "name": "GPKE / Änderung Daten der MeLo vom MSB an LF",
+                          "value": "55653"
                         }
                       ],
-                      "id": "2379",
-                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
-                      "sub_index": 2,
+                      "id": "1154",
+                      "name": "Prüfidentifikator",
+                      "sub_index": 1,
                       "type": "code"
                     }
                   ],
-                  "composite": "C507",
+                  "composite": "C506",
                   "index": 0,
-                  "name": "Datum/Uhrzeit/Zeitspanne"
+                  "name": "Referenz"
                 }
               ],
-              "id": "DTM",
-              "name": "Hier wird der Zeitpunkt genannt, bis zu dem die im Vorgang enthaltenen Daten zu verwenden sind."
+              "id": "RFF",
+              "name": "Prüfidentifikator"
             },
             {
               "elements": [
@@ -519,6 +566,92 @@
               ],
               "id": "RFF",
               "name": "Bemerkung: Im DE1156 \"Zeitraum-ID\" dieses RFF-Segments wird die Nummer des Zeitraums genannt, auf die sich die Daten der einzelnen SG6 RFF, SG8 SEQ, SG12 NAD beziehen (wobei mit dem voranstehenden und allen folgenden SG6 RFF alle SG6 gemeint sind, die nicht \"Verwendungszeitraum der Daten\" heißen, d. h. die nicht diese Segmentgruppe sind. Im jeweiligen SG6 RFF DE1154, SG8 SEQ DE1050, SG12 RFF DE1154 wird die Nummer des Zeitraums eingetragen, der den Zeitraum festlegt, für den die Daten beschrieben werden (d. h. für den sie z. B. \"gültig\", \"erwartet\", oder \"..\" sind). Die Nummer der Zeitraum-ID beginnt in jedem SG4 IDE+24 je untenstehender Kombinationsmöglichkeit mit der Nummer 1 und wird immer um eins hochgezählt, vom ältesten zum jüngsten Zeitraum (d. h. der älteste Zeitraum eines Vorgangs hat immer die Zeitraum-ID 1). Für die Codes des DE1153 gelten folgende Kombinationsmöglichkeiten: 1. Kombinationsmöglichkeit: Z47 Im System vorhandene Daten und Z54 Im System keine Daten vorhanden  2. Kombinationsmöglichkeit: Z48 Erwartete Daten und Z55 Keine Daten erwartet 3. Kombinationsmöglichkeit: Z49 Gültige Daten und Z53 Keine Daten"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Verwendung der Daten ab",
+                          "value": "Z25"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYYMMDDHHMMZZZ",
+                          "value": "303"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Verwendung der Daten ab"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Verwendung der Daten bis",
+                          "value": "Z26"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYYMMDDHHMMZZZ",
+                          "value": "303"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Hier wird der Zeitpunkt genannt, bis zu dem die im Vorgang enthaltenen Daten zu verwenden sind."
             }
           ],
           "source_group": "SG6"
@@ -533,35 +666,6 @@
               },
               "entity_hint": "Zaehler",
               "segments": [
-                {
-                  "elements": [
-                    {
-                      "components": [
-                        {
-                          "codes": [
-                            {
-                              "name": "Einrichtungszähler",
-                              "value": "ERZ"
-                            },
-                            {
-                              "name": "Zweirichtungszähler",
-                              "value": "ZRZ"
-                            }
-                          ],
-                          "id": "7111",
-                          "name": "Energierichtung",
-                          "sub_index": 0,
-                          "type": "code"
-                        }
-                      ],
-                      "composite": "C889",
-                      "index": 0,
-                      "name": "Merkmalswert"
-                    }
-                  ],
-                  "id": "CAV",
-                  "name": "Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals aus dem vorangegangenen CCI Segment."
-                },
                 {
                   "elements": [
                     {
@@ -605,6 +709,206 @@
                   ],
                   "id": "CCI",
                   "name": "Es wird ein Zählertyp angegeben, der in den nachfolgenden CAV-Segmenten spezifiziert wird."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "analoger Haushaltszähler (Drehstrom)",
+                              "value": "AHZ"
+                            },
+                            {
+                              "name": "analoger Wechselstromzähler",
+                              "value": "WSZ"
+                            },
+                            {
+                              "name": "Lastgangzähler",
+                              "value": "LAZ"
+                            },
+                            {
+                              "name": "Maximumzähler",
+                              "value": "MAZ"
+                            },
+                            {
+                              "name": "moderne Messeinrichtung nach MsbG",
+                              "value": "MME"
+                            },
+                            {
+                              "name": "elektronischer Haushaltszähler",
+                              "value": "EHZ"
+                            },
+                            {
+                              "name": "Individuelle Abstimmung (Sonderausstattung)",
+                              "value": "IVA"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "EDL40",
+                              "value": "Z01"
+                            },
+                            {
+                              "name": "EDL21",
+                              "value": "Z02"
+                            },
+                            {
+                              "name": "sonstiger EHZ",
+                              "value": "Z03"
+                            },
+                            {
+                              "name": "Standard",
+                              "value": "Z04"
+                            },
+                            {
+                              "name": "MeDa-Zähler",
+                              "value": "Z05"
+                            }
+                          ],
+                          "id": "7110",
+                          "name": "Zählertyp",
+                          "sub_index": 3,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals aus dem vorangegangenen CCI Segment."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Gerätenummer",
+                              "value": "Z30"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Code für die Nummer des Gerätes",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "1.Teil Nummer bzw. Zeichenfolge auf dem Gerät",
+                          "sub_index": 3,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "2.Teil Nummer bzw. Zeichenfolge auf dem Gerät",
+                          "sub_index": 4,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Wenn die Identifikationsnummer länger als 35 Zeichen ist erfolgt eine Fortführung im 2. DE7110."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Eintarif",
+                              "value": "ETZ"
+                            },
+                            {
+                              "name": "Zweitarif",
+                              "value": "ZTZ"
+                            },
+                            {
+                              "name": "Mehrtarif",
+                              "value": "NTZ"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Stromzählereinrichtungen",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals aus dem vorangegangenen CCI Segment. Es wird die Information des tatsächlich verbauten Gerätes angegeben. Es besteht keine logische Abhängigkeit zur OBIS-Kennzahl. Zum Beispiel es handelt sich um einen NTZ, es wird jedoch nur die OBIS 1.8.0 übermittelt, da die anderen Register nicht verwendet werden."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Einrichtungszähler",
+                              "value": "ERZ"
+                            },
+                            {
+                              "name": "Zweirichtungszähler",
+                              "value": "ZRZ"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Energierichtung",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals aus dem vorangegangenen CCI Segment."
                 }
               ],
               "source_group": "SG10"
@@ -620,37 +924,6 @@
           },
           "entity_hint": "Zaehler",
           "segments": [
-            {
-              "elements": [
-                {
-                  "components": [
-                    {
-                      "codes": [
-                        {
-                          "name": "Smartmeter-Gateway",
-                          "value": "Z14"
-                        }
-                      ],
-                      "id": "1153",
-                      "name": "Referenz, Qualifier",
-                      "sub_index": 0,
-                      "type": "code"
-                    },
-                    {
-                      "id": "1154",
-                      "name": "Identifikation / Nummer des Smartmeter-Gateways",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C506",
-                  "index": 0,
-                  "name": "Referenz"
-                }
-              ],
-              "id": "RFF",
-              "name": "Zuordnung der Zähleinrichtung zu dem Smartmeter-Gateway worüber die Kommunikation erfolgt."
-            },
             {
               "elements": [
                 {
@@ -681,6 +954,37 @@
               ],
               "id": "SEQ",
               "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die Zähleinrichtungsdaten eines Vorgangs enthalten alle Informationen, die sich auf eine einzelne Zähleinrichtung beziehen. Enthält ein Vorgang mehrere Zähleinrichtungen, so ist diese Segmentgruppe für jede einzelne Zähleinrichtung zu wiederholen und zu übermitteln. Jede Zähleinrichtung einer Messlokation wird separat in einer SG8 SEQ-Gruppe aufgelistet. Die Messlokation, dem die Zähleinrichtung zugeordnet ist, wird mit Hilfe des SG8 RFF „Referenz auf die Messlokation“ übermittelt."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Smartmeter-Gateway",
+                          "value": "Z14"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Identifikation / Nummer des Smartmeter-Gateways",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zuordnung der Zähleinrichtung zu dem Smartmeter-Gateway worüber die Kommunikation erfolgt."
             }
           ],
           "source_group": "SG8"
@@ -695,6 +999,99 @@
               },
               "entity_hint": "Zaehler",
               "segments": [
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Wandler",
+                              "value": "Z25"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment dient zur Identifizierung und Beschreibung von spezifischen Eigenschaften. Diese Angaben werden in den nachfolgenden CAV-Segmenten spezifiziert."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Gerätenummer",
+                              "value": "Z30"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "Gerätenummer",
+                          "sub_index": 3,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "2.Teil Nummer bzw. Zeichenfolge auf dem Gerät",
+                          "sub_index": 4,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Bei einem Wandlersatz kann das CAV-Segment wiederholt werden um alle Gerätenummern zu übermitteln. Wenn die Identifikationsnummer länger als 35 Zeichen ist erfolgt eine Fortführung im 2. DE7110."
+                },
                 {
                   "elements": [
                     {
@@ -749,50 +1146,6 @@
                   ],
                   "id": "CAV",
                   "name": "Hinweis: DE7110: Bei Spannungswandler wird kein Wandlerfaktor angegeben, da der Wandlerfaktor bereits beim Stromwandler berücksichtigt wird."
-                },
-                {
-                  "elements": [
-                    {
-                      "id": "7059",
-                      "index": 0,
-                      "name": "Klassentyp, Code",
-                      "type": "data"
-                    },
-                    {
-                      "components": [
-                        {
-                          "id": "6313",
-                          "name": "Gemessene Dimension, Code",
-                          "sub_index": 0,
-                          "type": "data"
-                        }
-                      ],
-                      "composite": "C502",
-                      "index": 1,
-                      "name": "Einzelheiten zu Maßangaben"
-                    },
-                    {
-                      "components": [
-                        {
-                          "codes": [
-                            {
-                              "name": "Wandler",
-                              "value": "Z25"
-                            }
-                          ],
-                          "id": "7037",
-                          "name": "Merkmal, Code",
-                          "sub_index": 0,
-                          "type": "code"
-                        }
-                      ],
-                      "composite": "C240",
-                      "index": 2,
-                      "name": "Merkmalsbeschreibung"
-                    }
-                  ],
-                  "id": "CCI",
-                  "name": "Dieses Segment dient zur Identifizierung und Beschreibung von spezifischen Eigenschaften. Diese Angaben werden in den nachfolgenden CAV-Segmenten spezifiziert."
                 }
               ],
               "source_group": "SG10"
@@ -808,37 +1161,6 @@
           },
           "entity_hint": "Zaehler",
           "segments": [
-            {
-              "elements": [
-                {
-                  "components": [
-                    {
-                      "codes": [
-                        {
-                          "name": "Gerätenummer des Zählers",
-                          "value": "MG"
-                        }
-                      ],
-                      "id": "1153",
-                      "name": "Referenz, Qualifier",
-                      "sub_index": 0,
-                      "type": "code"
-                    },
-                    {
-                      "id": "1154",
-                      "name": "Gerätenummer aus SG8 SEQ+Z03 CCI+++E13/CAV+Z30",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C506",
-                  "index": 0,
-                  "name": "Referenz"
-                }
-              ],
-              "id": "RFF",
-              "name": "Dieses Segment dient zur Angabe der Referenz auf die Gerätenummer des Zählers im DE7110 im SG8 SEQ+Z03 CCI+++E13 CAV+Z30.  Es ist zu berücksichtigen, dass ein Wandlersatz / Blockwandler auch mehreren Zählern zugeordnet sein kann. Dies wird über eine Wiederholung der SG8 RFF \"Referenz auf Zählernummer\" übermittelt."
-            },
             {
               "elements": [
                 {
@@ -869,6 +1191,37 @@
               ],
               "id": "SEQ",
               "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die Wandlerdaten eines Vorgangs enthalten alle Informationen, die sich auf einen einzelnen Wandlersatz / Blockwandler von Messlokationen beziehen. Enthält ein Vorgang mehrere Wandlersätze / Blockwandler, so ist diese Segmentgruppe für jeden einzelnen Wandlersatz / Blockwandler zu wiederholen und zu übermitteln. Wenn in einem Vorgang mehrere Wandler / Wandlersätze übermittelt werden müssen, ist das SG8 SEQ „Wandlerdaten“ entsprechend der Anzahl bzw. je Satz bei Wandlern zu wiederholen. Hinweis: Ein Wandlersatz besteht aus einem Wandler je Phase eines Stromkreises. Somit sind drei Wandler bei einem Wandlersatz vorhanden. Bei einem Blockwandler sind die Wandler alle einem Gehäuse gemeinsam verbaut. Somit gibt es bei einem Blockwandler nur eine Gerätenummer in einem Stromkreis."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Gerätenummer des Zählers",
+                          "value": "MG"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Gerätenummer aus SG8 SEQ+Z03 CCI+++E13/CAV+Z30",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Dieses Segment dient zur Angabe der Referenz auf die Gerätenummer des Zählers im DE7110 im SG8 SEQ+Z03 CCI+++E13 CAV+Z30.  Es ist zu berücksichtigen, dass ein Wandlersatz / Blockwandler auch mehreren Zählern zugeordnet sein kann. Dies wird über eine Wiederholung der SG8 RFF \"Referenz auf Zählernummer\" übermittelt."
             }
           ],
           "source_group": "SG8"
@@ -883,49 +1236,6 @@
               },
               "entity_hint": "SmartmeterGateway",
               "segments": [
-                {
-                  "elements": [
-                    {
-                      "components": [
-                        {
-                          "codes": [
-                            {
-                              "name": "Gerätenummer",
-                              "value": "Z30"
-                            }
-                          ],
-                          "id": "7111",
-                          "name": "Code für die Nummer des Gerätes",
-                          "sub_index": 0,
-                          "type": "code"
-                        },
-                        {
-                          "id": "1131",
-                          "name": "Codeliste, Code",
-                          "sub_index": 1,
-                          "type": "data"
-                        },
-                        {
-                          "id": "3055",
-                          "name": "Verantwortliche Stelle für die Codepflege, Code",
-                          "sub_index": 2,
-                          "type": "data"
-                        },
-                        {
-                          "id": "7110",
-                          "name": "Nummer bzw. Zeichenfolge auf dem Gerät",
-                          "sub_index": 3,
-                          "type": "data"
-                        }
-                      ],
-                      "composite": "C889",
-                      "index": 0,
-                      "name": "Merkmalswert"
-                    }
-                  ],
-                  "id": "CAV",
-                  "name": "Identifikation / Nummer des Gerätes"
-                },
                 {
                   "elements": [
                     {
@@ -969,6 +1279,49 @@
                   ],
                   "id": "CCI",
                   "name": "Smartmeter-Gateway"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Gerätenummer",
+                              "value": "Z30"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Code für die Nummer des Gerätes",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "Nummer bzw. Zeichenfolge auf dem Gerät",
+                          "sub_index": 3,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Identifikation / Nummer des Gerätes"
                 }
               ],
               "source_group": "SG10"
@@ -1031,43 +1384,6 @@
                 {
                   "elements": [
                     {
-                      "components": [
-                        {
-                          "codes": [
-                            {
-                              "name": "Höchstspannung",
-                              "value": "E03"
-                            },
-                            {
-                              "name": "Hochspannung",
-                              "value": "E04"
-                            },
-                            {
-                              "name": "Mittelspannung",
-                              "value": "E05"
-                            },
-                            {
-                              "name": "Niederspannung",
-                              "value": "E06"
-                            }
-                          ],
-                          "id": "7111",
-                          "name": "Spannungsebene der Messlokation",
-                          "sub_index": 0,
-                          "type": "code"
-                        }
-                      ],
-                      "composite": "C889",
-                      "index": 0,
-                      "name": "Merkmalswert"
-                    }
-                  ],
-                  "id": "CAV",
-                  "name": "Zur Angabe des Wertes eines bestimmten Merkmals. Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals im vorangegangen CCI Segment."
-                },
-                {
-                  "elements": [
-                    {
                       "id": "7059",
                       "index": 0,
                       "name": "Klassentyp, Code",
@@ -1108,6 +1424,43 @@
                   ],
                   "id": "CCI",
                   "name": "Diese Segmentgruppe von CCI CAV dient der Beschreibung, in welcher Spannungsebene die Messlokation liegt."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Höchstspannung",
+                              "value": "E03"
+                            },
+                            {
+                              "name": "Hochspannung",
+                              "value": "E04"
+                            },
+                            {
+                              "name": "Mittelspannung",
+                              "value": "E05"
+                            },
+                            {
+                              "name": "Niederspannung",
+                              "value": "E06"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Spannungsebene der Messlokation",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Zur Angabe des Wertes eines bestimmten Merkmals. Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals im vorangegangen CCI Segment."
                 }
               ],
               "source_group": "SG10"
@@ -1170,6 +1523,225 @@
                 {
                   "elements": [
                     {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Wertegranularität",
+                              "value": "ZE4"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Mit der Wertegranularität wird angegeben in welchem Intervall Werte der im PIA+5 DE7143 genannten OBIS-Kennzahl im Markt bereitgestellt werden."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Jährlich",
+                              "value": "ZD9"
+                            },
+                            {
+                              "name": "Halbjährlich",
+                              "value": "ZE8"
+                            },
+                            {
+                              "name": "Quartalsweise",
+                              "value": "ZE9"
+                            },
+                            {
+                              "name": "Monatlich",
+                              "value": "ZB7"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Wertegranularität"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Code der Zählzeitdefinition",
+                          "value": "Z39"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "7037",
+                          "name": "Code der Zählzeitdefinition",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Zugeordnete Zählzeitdefinition"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Code des Zählzeitregisters",
+                          "value": "Z38"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "7037",
+                          "name": "Code des Zählzeitregisters",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Zugeordnetes Zählzeitregister"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Produkt",
+                          "value": "11"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Vor- und Nachkommastellen des Zählwerkes",
+                              "value": "Z33"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment dient zur Identifizierung und Beschreibung von spezifischen Eigenschaften. Diese Angaben werden im nachfolgenden CAV Segment spezifiziert."
+                },
+                {
+                  "elements": [
+                    {
                       "components": [
                         {
                           "id": "7111",
@@ -1209,6 +1781,68 @@
                   ],
                   "id": "CAV",
                   "name": "Hinweis: DE7110: Der Wert muss eine natürliche Zahl oder 0 sein."
+                },
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Lokale Kennzeichnung zu Kontrollzwecken",
+                              "value": "Z63"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7036",
+                          "name": "Bezeichnung des Zählwerks auf dem Gerät",
+                          "sub_index": 3,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment dient zur Identifizierung und Beschreibung der lokalen Kennzeichnung auf dem Gerät (z. B. HT oder NT) zur Zuordnung der OBIS Kennzahl. Bei kME mit nicht registrierender Leistungsmessung oder mME an den Messlokationen enthält das DE7036 die Zählwerkskennzeichnung des Gerätes (HT, NT, T1, T2, T3, 1, 2, 3, 1.8.1, ...). Bei iMS sind jedem Register eine OBIS-Kennzahl und eine Registerbezeichnung im Smart Meter Gateway zugeordnet, was damit der lokalen Kennzeichnung auf dem Gerät entspricht. Von der mME, die mit dem Smartmetergateway verbunden ist und damit das iMS bildet, wird weder die OBIS-Kennzahl noch die Registerbezeichnung in der Marktkommunikation ausgetauscht."
                 },
                 {
                   "elements": [
@@ -1283,43 +1917,66 @@
                 {
                   "codes": [
                     {
-                      "name": "Produktidentifikation",
-                      "value": "5"
+                      "name": "OBIS-Daten der Zähleinrichtung",
+                      "value": "Z20"
                     }
                   ],
-                  "id": "4347",
+                  "id": "1229",
                   "index": 0,
-                  "name": "Produkt-/Erzeugnisnummer, Qualifier",
+                  "name": "Handlung, Code",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
-                      "id": "7140",
-                      "name": "OBIS-Kennzahl der Zähleinrichtung",
+                      "id": "1050",
+                      "name": "Referenz auf Zeitraum-ID",
                       "sub_index": 0,
                       "type": "data"
-                    },
+                    }
+                  ],
+                  "composite": "C286",
+                  "index": 1,
+                  "name": "Information über eine Folge"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die OBIS-Daten eines Vorgangs enthalten alle Informationen, die sich auf das Register mit der angegebenen OBIS-Kennzahl einer Zähleinrichtung / Smartmeter-Gateway beziehen, die im Rahmen der Marktkommunikation benötigt werden. Enthält ein Vorgang mehrere Register und somit mehrere OBIS-Kennzahlen, so ist diese Segmentgruppe für jede einzelne OBIS-Kennzahl/Objekt zu wiederholen und zu übermitteln."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
                     {
                       "codes": [
                         {
-                          "name": "OBIS-Kennzahl",
-                          "value": "SRW"
+                          "name": "Gerätenummer des Zählers",
+                          "value": "MG"
+                        },
+                        {
+                          "name": "Smartmeter-Gateway",
+                          "value": "Z14"
                         }
                       ],
-                      "id": "7143",
-                      "name": "Art der Produkt-/Leistungsnummer, Code",
-                      "sub_index": 1,
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
                       "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Bei DE1153 MG: Gerätenummer aus SG8 SEQ+Z03 / SG10 CCI+++E13 / CAV+Z30 Bei DE1153 Z14: Gerätenummer aus SG8 SEQ+Z13 / SG10 CCI+++Z75 / CAV+Z30",
+                      "sub_index": 1,
+                      "type": "data"
                     }
                   ],
-                  "composite": "C212",
-                  "index": 1,
-                  "name": "Art der Messwerte (OBIS-Kennzahlen)"
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
                 }
               ],
-              "id": "PIA",
-              "name": "Dieses Segment wird benutzt, um die Produktidentifikation beim Austausch von Daten zu Energiemengen innerhalb der deutschen Energiewirtschaft zu gewährleisten. Diese Identifikation, die Beschreibung und die strukturelle Zuordnung der Werte erfolgt durch OBIS-Kennzahlen.  DE7140: Es wird die OBIS-Kennzahl gemäß EDI@Energy Codeliste der OBIS-Kennzahlen und Medien angegeben. Die Einheiten (kWh, kvarh) sind implizit in der OBIS-Kennzahl enthalten."
+              "id": "RFF",
+              "name": "Dieses Segment dient zur Angabe der Referenz auf die Gerätenummer des Zählers / Smartmeter-Gateway."
             },
             {
               "elements": [
@@ -1357,31 +2014,43 @@
                 {
                   "codes": [
                     {
-                      "name": "OBIS-Daten der Zähleinrichtung",
-                      "value": "Z20"
+                      "name": "Produktidentifikation",
+                      "value": "5"
                     }
                   ],
-                  "id": "1229",
+                  "id": "4347",
                   "index": 0,
-                  "name": "Handlung, Code",
+                  "name": "Produkt-/Erzeugnisnummer, Qualifier",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
-                      "id": "1050",
-                      "name": "Referenz auf Zeitraum-ID",
+                      "id": "7140",
+                      "name": "OBIS-Kennzahl der Zähleinrichtung",
                       "sub_index": 0,
                       "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "OBIS-Kennzahl",
+                          "value": "SRW"
+                        }
+                      ],
+                      "id": "7143",
+                      "name": "Art der Produkt-/Leistungsnummer, Code",
+                      "sub_index": 1,
+                      "type": "code"
                     }
                   ],
-                  "composite": "C286",
+                  "composite": "C212",
                   "index": 1,
-                  "name": "Information über eine Folge"
+                  "name": "Art der Messwerte (OBIS-Kennzahlen)"
                 }
               ],
-              "id": "SEQ",
-              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die OBIS-Daten eines Vorgangs enthalten alle Informationen, die sich auf das Register mit der angegebenen OBIS-Kennzahl einer Zähleinrichtung / Smartmeter-Gateway beziehen, die im Rahmen der Marktkommunikation benötigt werden. Enthält ein Vorgang mehrere Register und somit mehrere OBIS-Kennzahlen, so ist diese Segmentgruppe für jede einzelne OBIS-Kennzahl/Objekt zu wiederholen und zu übermitteln."
+              "id": "PIA",
+              "name": "Dieses Segment wird benutzt, um die Produktidentifikation beim Austausch von Daten zu Energiemengen innerhalb der deutschen Energiewirtschaft zu gewährleisten. Diese Identifikation, die Beschreibung und die strukturelle Zuordnung der Werte erfolgt durch OBIS-Kennzahlen.  DE7140: Es wird die OBIS-Kennzahl gemäß EDI@Energy Codeliste der OBIS-Kennzahlen und Medien angegeben. Die Einheiten (kWh, kvarh) sind implizit in der OBIS-Kennzahl enthalten."
             }
           ],
           "source_group": "SG8"

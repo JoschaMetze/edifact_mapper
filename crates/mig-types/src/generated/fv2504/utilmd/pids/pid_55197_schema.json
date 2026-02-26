@@ -15,6 +15,43 @@
             {
               "elements": [
                 {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
                   "components": [
                     {
                       "id": "3148",
@@ -58,43 +95,6 @@
               ],
               "id": "COM",
               "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Informationskontakt",
-                      "value": "IC"
-                    }
-                  ],
-                  "id": "3139",
-                  "index": 0,
-                  "name": "Funktion des Ansprechpartners, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "3413",
-                      "name": "Kontakt, Nummer",
-                      "sub_index": 0,
-                      "type": "data"
-                    },
-                    {
-                      "id": "3412",
-                      "name": "Name vom Ansprechpartner",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C056",
-                  "index": 1,
-                  "name": "Kontaktangaben"
-                }
-              ],
-              "id": "CTA",
-              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
             }
           ],
           "source_group": "SG3"
@@ -105,6 +105,59 @@
         "segment": "NAD"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        },
         {
           "elements": [
             {
@@ -265,6 +318,56 @@
                 {
                   "elements": [
                     {
+                      "codes": [
+                        {
+                          "name": "Struktur",
+                          "value": "15"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Summenzeitreihentyp",
+                              "value": "Z21"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "In dieser Segmentgruppe von CCI / CAV wird der Überführungszeitreihentyp der Überführungszeitreihen zugewiesen. Die Kennzeichnung des Überführungszeitreihentyps hat nach der EDI@Energy Codeliste für Zeitreihentypen zu erfolgen. Besonderheit bei MaBiS (BAS-Clearinglisten): Des Weiteren wird diese Segmentgruppe genutzt, um eine EUZ zu übermitteln, da diese über das 4-Tupel Bilanzierungsgebiet, EEG-Zeitreihentyp, Bilanzkreis-an und Bilanzkreis-von identifiziert wird."
+                },
+                {
+                  "elements": [
+                    {
                       "components": [
                         {
                           "codes": [
@@ -286,6 +389,94 @@
                   ],
                   "id": "CAV",
                   "name": "Überführungszeitreihentyp"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Regelzone",
+                          "value": "Z18"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "7037",
+                          "name": "Regelzone",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment wird zur Angabe der Regelzone benutzt, für welche die Stammdaten gelten."
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Bilanzkreis",
+                          "value": "Z19"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "7037",
+                          "name": "Bilanzkreis",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment wird zur Angabe des Bilanzkreises benutzt. Hier muss der vom BDEW vergebene EIC-Code verwendet werden. Es wird der Bilanzkreis bzw. das Konto angegeben auf dem die Bilanzierung durchgeführt wird."
                 },
                 {
                   "elements": [
@@ -382,6 +573,24 @@
                 {
                   "codes": [
                     {
+                      "name": "Produkt-Daten der Überführungszeitreihe",
+                      "value": "Z25"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die Produkt-Daten der Überführungszeitreihe eines Vorgangs enthalten alle Informationen, die sich auf eine einzelne Produktidentifikatoren einer Überführungszeitreihe beziehen."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
                       "name": "Produktidentifikation",
                       "value": "5"
                     }
@@ -419,24 +628,6 @@
               ],
               "id": "PIA",
               "name": "Dieses Segment wird benutzt, um die Produktidentifikation beim Austausch von Daten zu Energiemengen innerhalb der deutschen Energiewirtschaft zu gewährleisten. Diese Identifikation, die Beschreibung und die strukturelle Zuordnung der Werte erfolgt durch Produktidentifikatoren."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Produkt-Daten der Überführungszeitreihe",
-                      "value": "Z25"
-                    }
-                  ],
-                  "id": "1229",
-                  "index": 0,
-                  "name": "Handlung, Code",
-                  "type": "code"
-                }
-              ],
-              "id": "SEQ",
-              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die Produkt-Daten der Überführungszeitreihe eines Vorgangs enthalten alle Informationen, die sich auf eine einzelne Produktidentifikatoren einer Überführungszeitreihe beziehen."
             }
           ],
           "source_group": "SG8"
@@ -447,6 +638,37 @@
         "segment": "IDE"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Transaktion",
+                  "value": "24"
+                }
+              ],
+              "id": "7495",
+              "index": 0,
+              "name": "Objekt, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "7402",
+                  "name": "Vorgangsnummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C206",
+              "index": 1,
+              "name": "Identifikationsnummer"
+            }
+          ],
+          "id": "IDE",
+          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
+        },
         {
           "elements": [
             {
@@ -489,37 +711,6 @@
           ],
           "id": "DTM",
           "name": "Dieses Segment wird benutzt, um den Beginn der Zuordnung einer Marktlokation bzw. Tranche zu einem Bilanzkreis mitzuteilen."
-        },
-        {
-          "elements": [
-            {
-              "codes": [
-                {
-                  "name": "Transaktion",
-                  "value": "24"
-                }
-              ],
-              "id": "7495",
-              "index": 0,
-              "name": "Objekt, Qualifier",
-              "type": "code"
-            },
-            {
-              "components": [
-                {
-                  "id": "7402",
-                  "name": "Vorgangsnummer",
-                  "sub_index": 0,
-                  "type": "data"
-                }
-              ],
-              "composite": "C206",
-              "index": 1,
-              "name": "Identifikationsnummer"
-            }
-          ],
-          "id": "IDE",
-          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
         }
       ],
       "source_group": "SG4"

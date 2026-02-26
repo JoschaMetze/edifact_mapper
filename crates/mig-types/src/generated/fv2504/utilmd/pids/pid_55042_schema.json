@@ -15,6 +15,43 @@
             {
               "elements": [
                 {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
                   "components": [
                     {
                       "id": "3148",
@@ -58,43 +95,6 @@
               ],
               "id": "COM",
               "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Informationskontakt",
-                      "value": "IC"
-                    }
-                  ],
-                  "id": "3139",
-                  "index": 0,
-                  "name": "Funktion des Ansprechpartners, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "3413",
-                      "name": "Kontakt, Nummer",
-                      "sub_index": 0,
-                      "type": "data"
-                    },
-                    {
-                      "id": "3412",
-                      "name": "Name vom Ansprechpartner",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C056",
-                  "index": 1,
-                  "name": "Kontaktangaben"
-                }
-              ],
-              "id": "CTA",
-              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
             }
           ],
           "source_group": "SG3"
@@ -105,6 +105,59 @@
         "segment": "NAD"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        },
         {
           "elements": [
             {
@@ -991,6 +1044,50 @@
                 {
                   "elements": [
                     {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Zählertyp",
+                              "value": "E13"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Es wird ein Zählertyp angegeben, der in den nachfolgenden CAV-Segmenten spezifiziert wird."
+                },
+                {
+                  "elements": [
+                    {
                       "components": [
                         {
                           "codes": [
@@ -1036,50 +1133,6 @@
                   ],
                   "id": "CAV",
                   "name": "Wenn die Identifikationsnummer länger als 35 Zeichen ist erfolgt eine Fortführung im 2. DE7110."
-                },
-                {
-                  "elements": [
-                    {
-                      "id": "7059",
-                      "index": 0,
-                      "name": "Klassentyp, Code",
-                      "type": "data"
-                    },
-                    {
-                      "components": [
-                        {
-                          "id": "6313",
-                          "name": "Gemessene Dimension, Code",
-                          "sub_index": 0,
-                          "type": "data"
-                        }
-                      ],
-                      "composite": "C502",
-                      "index": 1,
-                      "name": "Einzelheiten zu Maßangaben"
-                    },
-                    {
-                      "components": [
-                        {
-                          "codes": [
-                            {
-                              "name": "Zählertyp",
-                              "value": "E13"
-                            }
-                          ],
-                          "id": "7037",
-                          "name": "Merkmal, Code",
-                          "sub_index": 0,
-                          "type": "code"
-                        }
-                      ],
-                      "composite": "C240",
-                      "index": 2,
-                      "name": "Merkmalsbeschreibung"
-                    }
-                  ],
-                  "id": "CCI",
-                  "name": "Es wird ein Zählertyp angegeben, der in den nachfolgenden CAV-Segmenten spezifiziert wird."
                 }
               ],
               "source_group": "SG10"
@@ -1138,43 +1191,33 @@
         {
           "elements": [
             {
-              "components": [
+              "codes": [
                 {
-                  "codes": [
-                    {
-                      "name": "Vertrag",
-                      "value": "9"
-                    }
-                  ],
-                  "id": "7431",
-                  "name": "Vereinbarung, Qualifier",
-                  "sub_index": 0,
-                  "type": "code"
-                },
-                {
-                  "codes": [
-                    {
-                      "name": "Vertrag zwischen AN und MSB",
-                      "value": "Z04"
-                    },
-                    {
-                      "name": "Vertragsbeendigung liegt vor",
-                      "value": "Z06"
-                    }
-                  ],
-                  "id": "7433",
-                  "name": "Beauftragung oder Beendigung liegt vor",
-                  "sub_index": 1,
-                  "type": "code"
+                  "name": "Transaktion",
+                  "value": "24"
                 }
               ],
-              "composite": "C543",
+              "id": "7495",
               "index": 0,
-              "name": "Art der Vereinbarung, Identifikation"
+              "name": "Objekt, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "7402",
+                  "name": "Vorgangsnummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C206",
+              "index": 1,
+              "name": "Identifikationsnummer"
             }
           ],
-          "id": "AGR",
-          "name": "Es erfolgt die Angabe, ob ein entsprechender Vertrag zwischen dem Anschlussnutzer und MSB vorliegt. Zusätzlich kann auch noch angegeben werden, ob auch die Vertragsbeendigung mit dem vorigen Vertragspartner vor der Anmeldung beendet wurde und vorliegt. Entsprechend oft ist dieses Segment zu wiederholen."
+          "id": "IDE",
+          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
         },
         {
           "elements": [
@@ -1218,37 +1261,6 @@
           ],
           "id": "DTM",
           "name": "Dieses Segment wird benutzt, um den geplanten Beginn einer Leistung oder einer Zuordnung zu bestimmen. Hier wird der geplante Leistungsbeginn für den Messstellenbetrieb angegeben."
-        },
-        {
-          "elements": [
-            {
-              "codes": [
-                {
-                  "name": "Transaktion",
-                  "value": "24"
-                }
-              ],
-              "id": "7495",
-              "index": 0,
-              "name": "Objekt, Qualifier",
-              "type": "code"
-            },
-            {
-              "components": [
-                {
-                  "id": "7402",
-                  "name": "Vorgangsnummer",
-                  "sub_index": 0,
-                  "type": "data"
-                }
-              ],
-              "composite": "C206",
-              "index": 1,
-              "name": "Identifikationsnummer"
-            }
-          ],
-          "id": "IDE",
-          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
         },
         {
           "elements": [
@@ -1408,6 +1420,47 @@
           ],
           "id": "STS",
           "name": "Zur Angabe eines Status. Dieses Segment wird benutzt um den Transaktionsgrund mitzuteilen. Der Transaktionsgrund beschreibt den Geschäftsvorfall zur Kategorie genauer. Dies dient der Plausibilisierung und Prozesssteuerung. Die Erläuterung zu den einzelnen Transaktionsgründen ist im DE9013 beschrieben."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Vertrag",
+                      "value": "9"
+                    }
+                  ],
+                  "id": "7431",
+                  "name": "Vereinbarung, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Vertrag zwischen AN und MSB",
+                      "value": "Z04"
+                    },
+                    {
+                      "name": "Vertragsbeendigung liegt vor",
+                      "value": "Z06"
+                    }
+                  ],
+                  "id": "7433",
+                  "name": "Beauftragung oder Beendigung liegt vor",
+                  "sub_index": 1,
+                  "type": "code"
+                }
+              ],
+              "composite": "C543",
+              "index": 0,
+              "name": "Art der Vereinbarung, Identifikation"
+            }
+          ],
+          "id": "AGR",
+          "name": "Es erfolgt die Angabe, ob ein entsprechender Vertrag zwischen dem Anschlussnutzer und MSB vorliegt. Zusätzlich kann auch noch angegeben werden, ob auch die Vertragsbeendigung mit dem vorigen Vertragspartner vor der Anmeldung beendet wurde und vorliegt. Entsprechend oft ist dieses Segment zu wiederholen."
         }
       ],
       "source_group": "SG4"

@@ -34,12 +34,13 @@ pub fn generate_group_scaffold(
     out.push_str("[fields]\n");
 
     // For each segment in the group, enumerate its element paths with metadata comments
-    for seg_id in &group.segments {
+    for entry in &group.segments {
+        let seg_id = &entry.tag;
         // Direct Number-based lookup, fall back to top-level MIG search
-        let mig_seg = group
-            .segment_mig_numbers
-            .get(seg_id)
-            .and_then(|num| number_index.get(num).copied())
+        let mig_seg = entry
+            .mig_number
+            .as_ref()
+            .and_then(|num| number_index.get(num.as_str()).copied())
             .or_else(|| {
                 mig.segments
                     .iter()

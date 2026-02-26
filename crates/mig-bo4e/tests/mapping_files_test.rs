@@ -237,7 +237,7 @@ fn test_load_pid_55002_mapping_files() {
         );
     }
 
-    // Messlokation zuordnung should use ZF0 (gMSB), not Z91
+    // Messlokation zuordnung should have both CAV+Z91 and CAV+ZF0
     let melo_zuordnung = tx_engine
         .definitions()
         .iter()
@@ -245,18 +245,22 @@ fn test_load_pid_55002_mapping_files() {
         .expect("Messlokation SG10 definition");
     let cf = melo_zuordnung.companion_fields.as_ref().unwrap();
     assert!(
-        cf.contains_key("cav.0.1"),
-        "Messlokation zuordnung should map CAV without qualifier (ZF0 only)"
+        cf.contains_key("cav[ZF0].0.1"),
+        "Messlokation zuordnung should map CAV+ZF0 (gMSB)"
+    );
+    assert!(
+        cf.contains_key("cav[Z91].0.1"),
+        "Messlokation zuordnung should map CAV+Z91 (MSB assignment)"
     );
 
-    // Prozessdaten should NOT have DTM+92 (only DTM+93 in 55002)
+    // Prozessdaten should have both DTM+92 and DTM+93
     let prozess = tx_engine.definition_for_entity("Prozessdaten").unwrap();
     assert!(
-        !prozess.fields.contains_key("dtm[92].0.1"),
-        "55002 Prozessdaten should not have DTM+92"
+        prozess.fields.contains_key("dtm[92].0.1"),
+        "55002 Prozessdaten should have DTM+92 (Beginn der Lieferung)"
     );
     assert!(
         prozess.fields.contains_key("dtm[93].0.1"),
-        "55002 Prozessdaten should have DTM+93"
+        "55002 Prozessdaten should have DTM+93 (Vertragsende)"
     );
 }

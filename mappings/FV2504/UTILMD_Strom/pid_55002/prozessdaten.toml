@@ -1,9 +1,13 @@
 # Prozessdaten (process data) mapping for PID 55002 (Bestätigung Anmeldung verb. MaLo).
 #
 # Source: SG4 top-level segments (IDE, DTM, STS)
-# IDE+24+<Vorgangsnummer>         -> vorgang_id (Transaktion)
-# DTM+93:<Datum>:303              -> gueltig_bis (Datum Vertragsende)
-# STS+E01+<status>+<code>:<ebd>::<ref> -> Antwort-Status mit EBD-Referenz
+# IDE+24+<Vorgangsnummer>                          -> vorgangId
+# DTM+92:<Datum>:303                               -> gueltigAb  (Beginn der Lieferung)
+# DTM+93:<Datum>:303                               -> gueltigBis (Datum Vertragsende)
+# STS+7++<grund>+<detail>+<ergaenzung>             -> Transaktionsgrund
+# STS+E01++<status>:<ebd>                          -> Antwort-Status mit EBD-Referenz
+#
+# Uses qualifier-based segment selection: dtm[92]/dtm[93] and sts[7]/sts[E01].
 
 [meta]
 entity = "Prozessdaten"
@@ -13,26 +17,26 @@ source_path = "sg4"
 
 [fields]
 # IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
 "ide.c206.d7402" = "vorgangId"
 
+# DTM+92 (Beginn der Lieferung) — composite C507: qualifier, value, format
+"dtm[92].c507.d2005" = { target = "", default = "92" }
+"dtm[92].c507.d2380" = "gueltigAb"
+"dtm[92].c507.d2379" = { target = "", default = "303" }
+
 # DTM+93 (Datum Vertragsende)
+"dtm[93].c507.d2005" = { target = "", default = "93" }
 "dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
 
-# STS segment — Status der Antwort
-"sts.c601.d9015" = "antwortKategorie"
-"sts.c555.d4405" = "antwortStatus"
-"sts.c556.d9013" = "pruefschrittCode"
-"sts.c556.d1131" = "ebdNummer"
-"sts.c556.d9012" = "zeitraumReferenz"
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+"sts[7].c556_3.d9013" = "transaktionsgrundErgaenzung"
 
-[fields."ide.d7495"]
-target = ""
-default = "24"
-
-[fields."dtm[93].c507.d2005"]
-target = ""
-default = "93"
-
-[fields."dtm[93].c507.d2379"]
-target = ""
-default = "303"
+# STS+E01 (Antwort-Status mit EBD-Referenz)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"

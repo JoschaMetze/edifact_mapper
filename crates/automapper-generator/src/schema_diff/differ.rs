@@ -353,8 +353,14 @@ fn diff_codes(old: &BTreeMap<String, FlatGroup>, new: &BTreeMap<String, FlatGrou
             continue;
         };
 
-        for new_seg in &new_group.segments {
-            let Some(old_seg) = old_group.segments.iter().find(|s| s.tag == new_seg.tag) else {
+        // Match segments by position (not tag alone) to handle multiple
+        // segments with the same tag (e.g., DTM+92 and DTM+93).
+        for (seg_idx, new_seg) in new_group.segments.iter().enumerate() {
+            let Some(old_seg) = old_group
+                .segments
+                .get(seg_idx)
+                .filter(|s| s.tag == new_seg.tag)
+            else {
                 continue;
             };
 
@@ -435,8 +441,12 @@ fn diff_elements(
             continue;
         };
 
-        for new_seg in &new_group.segments {
-            let Some(old_seg) = old_group.segments.iter().find(|s| s.tag == new_seg.tag) else {
+        for (seg_idx, new_seg) in new_group.segments.iter().enumerate() {
+            let Some(old_seg) = old_group
+                .segments
+                .get(seg_idx)
+                .filter(|s| s.tag == new_seg.tag)
+            else {
                 continue;
             };
 

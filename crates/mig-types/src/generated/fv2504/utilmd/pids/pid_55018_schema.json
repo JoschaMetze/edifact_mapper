@@ -15,6 +15,43 @@
             {
               "elements": [
                 {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
                   "components": [
                     {
                       "id": "3148",
@@ -58,43 +95,6 @@
               ],
               "id": "COM",
               "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Informationskontakt",
-                      "value": "IC"
-                    }
-                  ],
-                  "id": "3139",
-                  "index": 0,
-                  "name": "Funktion des Ansprechpartners, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "3413",
-                      "name": "Kontakt, Nummer",
-                      "sub_index": 0,
-                      "type": "data"
-                    },
-                    {
-                      "id": "3412",
-                      "name": "Name vom Ansprechpartner",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C056",
-                  "index": 1,
-                  "name": "Kontaktangaben"
-                }
-              ],
-              "id": "CTA",
-              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
             }
           ],
           "source_group": "SG3"
@@ -105,6 +105,59 @@
         "segment": "NAD"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        },
         {
           "elements": [
             {
@@ -176,6 +229,43 @@
                     {
                       "codes": [
                         {
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "GPKE / Ablehnung Kündigung",
+                          "value": "55018"
+                        }
+                      ],
+                      "id": "1154",
+                      "name": "Prüfidentifikator",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Prüfidentifikator"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
                           "name": "Transaktions-Referenznummer",
                           "value": "TN"
                         }
@@ -209,6 +299,170 @@
         "segment": "IDE"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Transaktion",
+                  "value": "24"
+                }
+              ],
+              "id": "7495",
+              "index": 0,
+              "name": "Objekt, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "7402",
+                  "name": "Vorgangsnummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C206",
+              "index": 1,
+              "name": "Identifikationsnummer"
+            }
+          ],
+          "id": "IDE",
+          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "gegenüber Kunde bestätigtes Kündigungsdatum",
+                      "value": "Z05"
+                    },
+                    {
+                      "name": "gegenüber Lieferant bestätigtes Kündigungsdatum",
+                      "value": "Z06"
+                    }
+                  ],
+                  "id": "2005",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "2380",
+                  "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "CCYYMMDDHHMMZZZ",
+                      "value": "303"
+                    }
+                  ],
+                  "id": "2379",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C507",
+              "index": 0,
+              "name": "Datum/Uhrzeit/Zeitspanne"
+            }
+          ],
+          "id": "DTM",
+          "name": "Dieses Segment wird benutzt, um den Kündigungstermin des bereits wirksam gekündigten Vertrages mitzuteilen. Zudem wird unterschieden, ob die Kündigung durch den Kunden oder einen anderen berechtigten Marktpartner angestoßen wurde."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Gültigkeit, Beginndatum",
+                      "value": "157"
+                    }
+                  ],
+                  "id": "2005",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "2380",
+                  "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "CCYYMMDDHHMMZZZ",
+                      "value": "303"
+                    }
+                  ],
+                  "id": "2379",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C507",
+              "index": 0,
+              "name": "Datum/Uhrzeit/Zeitspanne"
+            }
+          ],
+          "id": "DTM",
+          "name": "Änderung zum, Gültigkeit, Beginndatum"
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Kündigungsfrist",
+                      "value": "Z01"
+                    }
+                  ],
+                  "id": "2005",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "2380",
+                  "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "ZZRB",
+                      "value": "Z01"
+                    }
+                  ],
+                  "id": "2379",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C507",
+              "index": 0,
+              "name": "Datum/Uhrzeit/Zeitspanne"
+            }
+          ],
+          "id": "DTM",
+          "name": "Dieses Segment wird benutzt, um die Kündigungsfrist zu übermitteln. DE2379: Mit Z01 wird eine individuell erstellte Formatierung zur Abbildung der Kündigungsfristenmöglichkeiten aufgebaut. Zur Abbildung der Kündigungsfristen ist das Format ZZRB anzuwenden, das im Detail folgendes bedeutet: ZZ ist die Nennung einer Anzahl von Tagen oder Monaten bis zum Bezugszeitpunkt. Anschließend erfolgt unter R die Angabe der Einheit (T = Tag(e), W = Woche(n), M = Monat(e)) der mit ZZ beschriebenen Zahl. Mit B wird der Bezugszeitpunkt (M = zum Monatsende, Q = zum Quartalsende, H = zum Halbjahresende, J = zum Jahresende, T = Termin, der im SG4 DTM+Z10 \"Kündigungstermin des Vertrags\" genannt wird, R = rollierend zu beliebigem Termin in der Zukunft unter Einhaltung der Frist) ausgedrückt. Die Bezugszeitpunkte sind Angaben, die sich immer auf das Kalenderjahr beziehen."
+        },
         {
           "elements": [
             {
@@ -259,107 +513,149 @@
         {
           "elements": [
             {
-              "codes": [
+              "components": [
                 {
-                  "name": "Zusätzliche Informationen (für allgemeine Hinweise)",
-                  "value": "ACB"
+                  "codes": [
+                    {
+                      "name": "Transaktionsgrund",
+                      "value": "7"
+                    }
+                  ],
+                  "id": "9015",
+                  "name": "Statuskategorie, Code",
+                  "sub_index": 0,
+                  "type": "code"
                 }
               ],
-              "id": "4451",
+              "composite": "C601",
               "index": 0,
-              "name": "Textbezug, Qualifier",
-              "type": "code"
-            },
-            {
-              "id": "4453",
-              "index": 1,
-              "name": "Textfunktion, Code",
-              "type": "data"
+              "name": "Statuskategorie"
             },
             {
               "components": [
                 {
-                  "id": "4441",
-                  "name": "Freier Text, Code",
+                  "id": "4405",
+                  "name": "Status, Code",
                   "sub_index": 0,
                   "type": "data"
                 }
               ],
-              "composite": "C107",
+              "composite": "C555",
+              "index": 1,
+              "name": "Status"
+            },
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
+                      "value": "E03"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Transaktionsgrund",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C556",
               "index": 2,
-              "name": "Text-Referenz"
+              "name": "Statusanlaß"
             },
             {
               "components": [
                 {
-                  "id": "4440",
-                  "name": "Text für allgemeine Information",
+                  "codes": [
+                    {
+                      "name": "Der LFN wird einer Marktlokation vollständig zugeordnet (vollständige (100%ige) Zuordnung).\r\nDieser Geschäftsvorfall ist auch für die Änderung von einer tranchierten Marktlokation in eine nicht tranchierte Marktlokation anzuwenden.",
+                      "value": "ZW0"
+                    },
+                    {
+                      "name": "Der LFN wird einer bestehenden Tranche vollständig zugeordnet (vollständige (100%ige) Zuordnung). \r\nDieser Geschäftsvorfall ist bei einem direkten Übergang, d. h. lückenlosem Zuordnungsende und -beginn und unter Beibehaltung der Tranche, anzuwenden.",
+                      "value": "ZW1"
+                    },
+                    {
+                      "name": "Der LFN wird einer neu zu bildenden Tranche zugeordnet (anteiliger Zuordnungsvorgang unter Bildung neuer Tranchen",
+                      "value": "ZW2"
+                    },
+                    {
+                      "name": "Erzeugende Marktlokation",
+                      "value": "ZW3"
+                    },
+                    {
+                      "name": "Verbrauchende Marktlokation",
+                      "value": "ZW4"
+                    },
+                    {
+                      "name": "Tranche",
+                      "value": "ZW5"
+                    },
+                    {
+                      "name": "Pauschale Marktlokation",
+                      "value": "ZW6"
+                    },
+                    {
+                      "name": "Gemessene Marktlokation",
+                      "value": "ZW7"
+                    },
+                    {
+                      "name": "Fall 1",
+                      "value": "ZW8"
+                    },
+                    {
+                      "name": "Fall 2",
+                      "value": "ZW9"
+                    },
+                    {
+                      "name": "Fall 3",
+                      "value": "ZX0"
+                    },
+                    {
+                      "name": "Fall 4",
+                      "value": "ZX1"
+                    },
+                    {
+                      "name": "ruhende Marktlokation",
+                      "value": "ZAP"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Dieses Datenelement definiert weitere Details zum Transaktionsgrund.",
                   "sub_index": 0,
-                  "type": "data"
-                },
-                {
-                  "id": "4440",
-                  "name": "Freier Text",
-                  "sub_index": 1,
-                  "type": "data"
-                },
-                {
-                  "id": "4440",
-                  "name": "Freier Text",
-                  "sub_index": 2,
-                  "type": "data"
-                },
-                {
-                  "id": "4440",
-                  "name": "Freier Text",
-                  "sub_index": 3,
-                  "type": "data"
-                },
-                {
-                  "id": "4440",
-                  "name": "Freier Text",
-                  "sub_index": 4,
-                  "type": "data"
+                  "type": "code"
                 }
               ],
-              "composite": "C108",
+              "composite": "C556",
               "index": 3,
-              "name": "Text"
-            }
-          ],
-          "id": "FTX",
-          "name": "Dieses Segment dient der Angabe von unformatierten oder codierten Textinformationen.  Hinweise: DE4440: Der in diesen Datenelementen enthaltene Text muss in Deutsch verfasst sein."
-        },
-        {
-          "elements": [
-            {
-              "codes": [
-                {
-                  "name": "Transaktion",
-                  "value": "24"
-                }
-              ],
-              "id": "7495",
-              "index": 0,
-              "name": "Objekt, Qualifier",
-              "type": "code"
+              "name": "Statusanlaß"
             },
             {
               "components": [
                 {
-                  "id": "7402",
-                  "name": "Vorgangsnummer",
+                  "codes": [
+                    {
+                      "name": "Kunde verlässt eine schon bestehende Marktlokation",
+                      "value": "E01"
+                    },
+                    {
+                      "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
+                      "value": "E03"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Dieses Datenelement definiert den Transaktionsgrund für das Lieferende einer Marktlokation bzw. Tranche bei einer befristeten Anmeldung.",
                   "sub_index": 0,
-                  "type": "data"
+                  "type": "code"
                 }
               ],
-              "composite": "C206",
-              "index": 1,
-              "name": "Identifikationsnummer"
+              "composite": "C556",
+              "index": 4,
+              "name": "Statusanlaß"
             }
           ],
-          "id": "IDE",
-          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
+          "id": "STS",
+          "name": "Zur Angabe eines Status. Dieses Segment wird benutzt um den Transaktionsgrund mitzuteilen. Der Transaktionsgrund beschreibt den Geschäftsvorfall zur Kategorie genauer. Dies dient der Plausibilisierung und Prozesssteuerung. Die Erläuterung zu den einzelnen Transaktionsgründen ist im DE9013 beschrieben."
         },
         {
           "elements": [
@@ -435,6 +731,80 @@
           ],
           "id": "STS",
           "name": "DE9013 Diesem Datenelement werden Codes aus den Codelisten des Dokumentes „Entscheidungsbaum-Diagramme“ verwendet. Jeder Entscheidungsbaum gilt als Codeliste. Die relevante Codeliste wird im DE1131 angegeben. Somit sind nur die Codes in einem Anwendungsfall möglich, welche in dem zugehörigen Entscheidungsbaum aufgeführt sind.  DE1131 des Segments ist genutzt und enthält die Codes der Entscheidungsbaumdiagramme bzw. die Codes der im Dokument Entscheidungsbaum-Diagramme enthaltenen Code-Tabellen, die in der Nachricht verwendet werden."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Zusätzliche Informationen (für allgemeine Hinweise)",
+                  "value": "ACB"
+                }
+              ],
+              "id": "4451",
+              "index": 0,
+              "name": "Textbezug, Qualifier",
+              "type": "code"
+            },
+            {
+              "id": "4453",
+              "index": 1,
+              "name": "Textfunktion, Code",
+              "type": "data"
+            },
+            {
+              "components": [
+                {
+                  "id": "4441",
+                  "name": "Freier Text, Code",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C107",
+              "index": 2,
+              "name": "Text-Referenz"
+            },
+            {
+              "components": [
+                {
+                  "id": "4440",
+                  "name": "Text für allgemeine Information",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 2,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 3,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 4,
+                  "type": "data"
+                }
+              ],
+              "composite": "C108",
+              "index": 3,
+              "name": "Text"
+            }
+          ],
+          "id": "FTX",
+          "name": "Dieses Segment dient der Angabe von unformatierten oder codierten Textinformationen.  Hinweise: DE4440: Der in diesen Datenelementen enthaltene Text muss in Deutsch verfasst sein."
         }
       ],
       "source_group": "SG4"

@@ -414,6 +414,30 @@ pub struct PidStructure {
     pub top_level_segments: Vec<String>,
 }
 
+/// A segment entry within a PID group, keyed by MIG number to allow
+/// multiple segments with the same tag (e.g., DTM+92 and DTM+93).
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct SegmentEntry {
+    pub tag: String,
+    pub mig_number: Option<String>,
+}
+
+/// Push a `SegmentEntry` into a list, deduplicating:
+/// - by `mig_number` if present (same MIG number = same segment variant)
+/// - by `tag` with `mig_number == None` otherwise (prevents duplicating unknown segments)
+fn push_segment_deduped(entries: &mut Vec<SegmentEntry>, entry: SegmentEntry) {
+    if let Some(ref num) = entry.mig_number {
+        if !entries.iter().any(|e| e.mig_number.as_deref() == Some(num)) {
+            entries.push(entry);
+        }
+    } else if !entries
+        .iter()
+        .any(|e| e.tag == entry.tag && e.mig_number.is_none())
+    {
+        entries.push(entry);
+    }
+}
+
 /// Information about a segment group's usage within a PID.
 #[derive(Debug, Clone)]
 pub struct PidGroupInfo {
@@ -435,10 +459,10 @@ pub struct PidGroupInfo {
     pub data_quality_hint: Option<String>,
     /// Nested child groups present in this PID's usage.
     pub child_groups: Vec<PidGroupInfo>,
-    /// Segments present in this group for this PID.
-    pub segments: BTreeSet<String>,
-    /// MIG Number for each segment (seg_id → Number). Used for direct MIG segment lookup.
-    pub segment_mig_numbers: BTreeMap<String, String>,
+    /// Segments present in this group for this PID. Each entry carries the segment tag
+    /// and an optional MIG number, allowing same-tag segments with different numbers
+    /// (e.g., DTM+92 and DTM+93) to coexist.
+    pub segments: Vec<SegmentEntry>,
 }
 
 /// Analyze which MIG tree nodes a PID uses, based on its AHB field definitions.
@@ -465,21 +489,32 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                     entity_hint: None,
                     data_quality_hint: None,
                     child_groups: Vec::new(),
-                    segments: BTreeSet::new(),
-                    segment_mig_numbers: BTreeMap::new(),
+                    segments: Vec::new(),
                 });
 
             if parts.len() > 1 && !parts[1].starts_with("SG") {
-                entry.segments.insert(parts[1].to_string());
+                push_segment_deduped(
+                    &mut entry.segments,
+                    SegmentEntry {
+                        tag: parts[1].to_string(),
+                        mig_number: None,
+                    },
+                );
             }
 
             // Handle nested groups (SG4/SG8/...)
             if parts.len() > 1 && parts[1].starts_with("SG") {
                 let child_id = parts[1].to_string();
                 if !entry.child_groups.iter().any(|c| c.group_id == child_id) {
-                    let mut child_segments = BTreeSet::new();
+                    let mut child_segments = Vec::new();
                     if parts.len() > 2 && !parts[2].starts_with("SG") {
-                        child_segments.insert(parts[2].to_string());
+                        push_segment_deduped(
+                            &mut child_segments,
+                            SegmentEntry {
+                                tag: parts[2].to_string(),
+                                mig_number: None,
+                            },
+                        );
                     }
                     entry.child_groups.push(PidGroupInfo {
                         group_id: child_id,
@@ -491,7 +526,6 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                         data_quality_hint: None,
                         child_groups: Vec::new(),
                         segments: child_segments,
-                        segment_mig_numbers: BTreeMap::new(),
                     });
                 } else if parts.len() > 2 && !parts[2].starts_with("SG") {
                     if let Some(child) = entry
@@ -499,7 +533,13 @@ pub fn analyze_pid_structure(pid: &Pruefidentifikator, _mig: &MigSchema) -> PidS
                         .iter_mut()
                         .find(|c| c.group_id == child_id)
                     {
-                        child.segments.insert(parts[2].to_string());
+                        push_segment_deduped(
+                            &mut child.segments,
+                            SegmentEntry {
+                                tag: parts[2].to_string(),
+                                mig_number: None,
+                            },
+                        );
                     }
                 }
             }
@@ -753,8 +793,7 @@ pub fn analyze_pid_structure_with_qualifiers(
 /// Tracks multiple occurrences of child groups under a parent.
 struct GroupOccurrenceTracker {
     group_id: String,
-    segments: BTreeSet<String>,
-    segment_numbers: BTreeMap<String, String>,
+    segments: Vec<SegmentEntry>,
     child_trackers: BTreeMap<String, ChildGroupTracker>,
 }
 
@@ -767,28 +806,27 @@ struct ChildGroupTracker {
 struct ChildOccurrence {
     qualifier_values: Vec<String>,
     ahb_status: String,
-    segments: BTreeSet<String>,
-    segment_numbers: BTreeMap<String, String>,
-    nested_groups: BTreeMap<String, BTreeSet<String>>,
-    nested_segment_numbers: BTreeMap<String, BTreeMap<String, String>>,
+    segments: Vec<SegmentEntry>,
+    nested_groups: BTreeMap<String, Vec<SegmentEntry>>,
 }
 
 impl GroupOccurrenceTracker {
     fn new(group_id: String) -> Self {
         Self {
             group_id,
-            segments: BTreeSet::new(),
-            segment_numbers: BTreeMap::new(),
+            segments: Vec::new(),
             child_trackers: BTreeMap::new(),
         }
     }
 
     fn add_segment(&mut self, seg_id: &str, mig_number: Option<&str>) {
-        self.segments.insert(seg_id.to_string());
-        if let Some(num) = mig_number {
-            self.segment_numbers
-                .insert(seg_id.to_string(), num.to_string());
-        }
+        push_segment_deduped(
+            &mut self.segments,
+            SegmentEntry {
+                tag: seg_id.to_string(),
+                mig_number: mig_number.map(|s| s.to_string()),
+            },
+        );
     }
 
     fn ensure_child(&mut self, child_id: &str) -> &mut ChildGroupTracker {
@@ -810,10 +848,8 @@ impl GroupOccurrenceTracker {
         tracker.occurrences.push(ChildOccurrence {
             qualifier_values,
             ahb_status,
-            segments: BTreeSet::new(),
-            segment_numbers: BTreeMap::new(),
+            segments: Vec::new(),
             nested_groups: BTreeMap::new(),
-            nested_segment_numbers: BTreeMap::new(),
         });
     }
 
@@ -832,10 +868,8 @@ impl GroupOccurrenceTracker {
             tracker.occurrences.push(ChildOccurrence {
                 qualifier_values: Vec::new(),
                 ahb_status,
-                segments: BTreeSet::new(),
-                segment_numbers: BTreeMap::new(),
+                segments: Vec::new(),
                 nested_groups: BTreeMap::new(),
-                nested_segment_numbers: BTreeMap::new(),
             });
         }
     }
@@ -843,24 +877,23 @@ impl GroupOccurrenceTracker {
     fn add_child_segment(&mut self, child_id: &str, seg_id: &str, mig_number: Option<&str>) {
         let tracker = self.ensure_child(child_id);
         if let Some(occ) = tracker.occurrences.last_mut() {
-            occ.segments.insert(seg_id.to_string());
-            if let Some(num) = mig_number {
-                occ.segment_numbers
-                    .insert(seg_id.to_string(), num.to_string());
-            }
+            push_segment_deduped(
+                &mut occ.segments,
+                SegmentEntry {
+                    tag: seg_id.to_string(),
+                    mig_number: mig_number.map(|s| s.to_string()),
+                },
+            );
         } else {
             // No occurrence started yet — create a default one
-            let mut segment_numbers = BTreeMap::new();
-            if let Some(num) = mig_number {
-                segment_numbers.insert(seg_id.to_string(), num.to_string());
-            }
             tracker.occurrences.push(ChildOccurrence {
                 qualifier_values: Vec::new(),
                 ahb_status: String::new(),
-                segments: BTreeSet::from([seg_id.to_string()]),
-                segment_numbers,
+                segments: vec![SegmentEntry {
+                    tag: seg_id.to_string(),
+                    mig_number: mig_number.map(|s| s.to_string()),
+                }],
                 nested_groups: BTreeMap::new(),
-                nested_segment_numbers: BTreeMap::new(),
             });
         }
     }
@@ -881,16 +914,14 @@ impl GroupOccurrenceTracker {
     ) {
         let tracker = self.ensure_child(child_id);
         if let Some(occ) = tracker.occurrences.last_mut() {
-            occ.nested_groups
-                .entry(nested_id.to_string())
-                .or_default()
-                .insert(seg_id.to_string());
-            if let Some(num) = mig_number {
-                occ.nested_segment_numbers
-                    .entry(nested_id.to_string())
-                    .or_default()
-                    .insert(seg_id.to_string(), num.to_string());
-            }
+            let nested = occ.nested_groups.entry(nested_id.to_string()).or_default();
+            push_segment_deduped(
+                nested,
+                SegmentEntry {
+                    tag: seg_id.to_string(),
+                    mig_number: mig_number.map(|s| s.to_string()),
+                },
+            );
         }
     }
 
@@ -901,30 +932,14 @@ impl GroupOccurrenceTracker {
             if tracker.occurrences.len() <= 1 {
                 // Single occurrence — merge into one PidGroupInfo
                 let occ = tracker.occurrences.into_iter().next();
-                let (
-                    qualifier_values,
-                    ahb_status,
-                    segments,
-                    segment_numbers,
-                    nested,
-                    nested_numbers,
-                ) = match occ {
+                let (qualifier_values, ahb_status, segments, nested) = match occ {
                     Some(o) => (
                         o.qualifier_values,
                         o.ahb_status,
                         o.segments,
-                        o.segment_numbers,
                         o.nested_groups,
-                        o.nested_segment_numbers,
                     ),
-                    None => (
-                        Vec::new(),
-                        String::new(),
-                        BTreeSet::new(),
-                        BTreeMap::new(),
-                        BTreeMap::new(),
-                        BTreeMap::new(),
-                    ),
+                    None => (Vec::new(), String::new(), Vec::new(), BTreeMap::new()),
                 };
 
                 child_groups.push(PidGroupInfo {
@@ -937,24 +952,19 @@ impl GroupOccurrenceTracker {
                     data_quality_hint: None,
                     child_groups: nested
                         .into_iter()
-                        .map(|(nid, segs)| {
-                            let nums = nested_numbers.get(&nid).cloned().unwrap_or_default();
-                            PidGroupInfo {
-                                group_id: nid,
-                                qualifier_values: Vec::new(),
-                                ahb_status: String::new(),
-                                ahb_name: None,
-                                discriminator: None,
-                                entity_hint: None,
-                                data_quality_hint: None,
-                                child_groups: Vec::new(),
-                                segments: segs,
-                                segment_mig_numbers: nums,
-                            }
+                        .map(|(nid, segs)| PidGroupInfo {
+                            group_id: nid,
+                            qualifier_values: Vec::new(),
+                            ahb_status: String::new(),
+                            ahb_name: None,
+                            discriminator: None,
+                            entity_hint: None,
+                            data_quality_hint: None,
+                            child_groups: Vec::new(),
+                            segments: segs,
                         })
                         .collect(),
                     segments,
-                    segment_mig_numbers: segment_numbers,
                 });
             } else {
                 // Multiple occurrences — create separate entries
@@ -970,28 +980,19 @@ impl GroupOccurrenceTracker {
                         child_groups: occ
                             .nested_groups
                             .into_iter()
-                            .map(|(nid, segs)| {
-                                let nums = occ
-                                    .nested_segment_numbers
-                                    .get(&nid)
-                                    .cloned()
-                                    .unwrap_or_default();
-                                PidGroupInfo {
-                                    group_id: nid,
-                                    qualifier_values: Vec::new(),
-                                    ahb_status: String::new(),
-                                    ahb_name: None,
-                                    discriminator: None,
-                                    entity_hint: None,
-                                    data_quality_hint: None,
-                                    child_groups: Vec::new(),
-                                    segments: segs,
-                                    segment_mig_numbers: nums,
-                                }
+                            .map(|(nid, segs)| PidGroupInfo {
+                                group_id: nid,
+                                qualifier_values: Vec::new(),
+                                ahb_status: String::new(),
+                                ahb_name: None,
+                                discriminator: None,
+                                entity_hint: None,
+                                data_quality_hint: None,
+                                child_groups: Vec::new(),
+                                segments: segs,
                             })
                             .collect(),
                         segments: occ.segments,
-                        segment_mig_numbers: occ.segment_numbers,
                     });
                 }
             }
@@ -1007,7 +1008,6 @@ impl GroupOccurrenceTracker {
             data_quality_hint: None,
             child_groups,
             segments: self.segments,
-            segment_mig_numbers: self.segment_numbers,
         }
     }
 }
@@ -1170,8 +1170,9 @@ fn collect_wrapper_defs(
     }
 
     // Merge with existing definition (union of segments + child fields)
+    let tag_set: BTreeSet<String> = group.segments.iter().map(|e| e.tag.clone()).collect();
     if let Some(existing) = defs.get_mut(&wrapper_name) {
-        existing.segments.extend(group.segments.iter().cloned());
+        existing.segments.extend(tag_set);
         for field in &child_fields {
             if !existing.child_fields.contains(field) {
                 existing.child_fields.push(field.clone());
@@ -1182,7 +1183,7 @@ fn collect_wrapper_defs(
             wrapper_name,
             WrapperDef {
                 doc,
-                segments: group.segments.clone(),
+                segments: tag_set,
                 child_fields,
             },
         );
@@ -1549,19 +1550,22 @@ fn group_to_schema_value(
     let segments: Vec<_> = group
         .segments
         .iter()
-        .map(|seg_id| {
-            let mig_number = group.segment_mig_numbers.get(seg_id);
+        .map(|entry| {
+            let mig_number = entry.mig_number.as_ref();
 
             // Direct Number-based lookup (precise), fall back to group search
             let mig_seg = mig_number
-                .and_then(|num| number_index.get(num).copied())
-                .or_else(|| find_segment_in_mig(seg_id, &group.group_id, mig));
+                .and_then(|num| number_index.get(num.as_str()).copied())
+                .or_else(|| find_segment_in_mig(&entry.tag, &group.group_id, mig));
 
             if let Some(mig_seg) = mig_seg {
                 segment_to_schema_value(mig_seg, mig_number, ahb_codes)
             } else {
                 let mut s = serde_json::Map::new();
-                s.insert("id".to_string(), serde_json::Value::String(seg_id.clone()));
+                s.insert(
+                    "id".to_string(),
+                    serde_json::Value::String(entry.tag.clone()),
+                );
                 serde_json::Value::Object(s)
             }
         })
@@ -2242,5 +2246,154 @@ mod tests {
                 "SG10 under ZF0 should inherit TechnischeRessource"
             );
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // SegmentEntry deduplication tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_push_segment_deduped_by_mig_number() {
+        let mut entries = Vec::new();
+        push_segment_deduped(
+            &mut entries,
+            SegmentEntry {
+                tag: "DTM".to_string(),
+                mig_number: Some("100".to_string()),
+            },
+        );
+        push_segment_deduped(
+            &mut entries,
+            SegmentEntry {
+                tag: "DTM".to_string(),
+                mig_number: Some("101".to_string()),
+            },
+        );
+        // Same mig_number should not duplicate
+        push_segment_deduped(
+            &mut entries,
+            SegmentEntry {
+                tag: "DTM".to_string(),
+                mig_number: Some("100".to_string()),
+            },
+        );
+        assert_eq!(entries.len(), 2, "Two DTMs with different numbers");
+        assert_eq!(entries[0].mig_number.as_deref(), Some("100"));
+        assert_eq!(entries[1].mig_number.as_deref(), Some("101"));
+    }
+
+    #[test]
+    fn test_push_segment_deduped_no_mig_number() {
+        let mut entries = Vec::new();
+        push_segment_deduped(
+            &mut entries,
+            SegmentEntry {
+                tag: "DTM".to_string(),
+                mig_number: None,
+            },
+        );
+        push_segment_deduped(
+            &mut entries,
+            SegmentEntry {
+                tag: "DTM".to_string(),
+                mig_number: None,
+            },
+        );
+        push_segment_deduped(
+            &mut entries,
+            SegmentEntry {
+                tag: "STS".to_string(),
+                mig_number: None,
+            },
+        );
+        assert_eq!(entries.len(), 2, "One DTM (no number) and one STS");
+    }
+
+    #[test]
+    fn test_pid_55002_sg4_has_both_dtm_and_sts() {
+        let (mig, ahb) = load_mig_ahb();
+        let pid = ahb.workflows.iter().find(|p| p.id == "55002").unwrap();
+        let structure = analyze_pid_structure_with_qualifiers(pid, &mig, &ahb);
+
+        let sg4 = structure
+            .groups
+            .iter()
+            .find(|g| g.group_id == "SG4")
+            .unwrap();
+
+        // SG4 should have multiple DTM entries (DTM+92 and DTM+93)
+        let dtm_count = sg4.segments.iter().filter(|e| e.tag == "DTM").count();
+        assert!(
+            dtm_count >= 2,
+            "SG4 should have at least 2 DTM entries (92 and 93), got {}",
+            dtm_count
+        );
+
+        // SG4 should have multiple STS entries (STS+7 and STS+E01)
+        let sts_count = sg4.segments.iter().filter(|e| e.tag == "STS").count();
+        assert!(
+            sts_count >= 2,
+            "SG4 should have at least 2 STS entries (7 and E01), got {}",
+            sts_count
+        );
+    }
+
+    #[test]
+    fn test_pid_55002_schema_sg6_has_all_rff() {
+        let (mig, ahb) = load_mig_ahb();
+        let pid = ahb.workflows.iter().find(|p| p.id == "55002").unwrap();
+        let schema_json = generate_pid_schema(pid, &mig, &ahb);
+        let schema: serde_json::Value = serde_json::from_str(&schema_json).unwrap();
+
+        // Navigate into sg4 → children to find sg6 entries
+        let sg4 = schema["fields"]["sg4"].as_object().unwrap();
+        let children = sg4.get("children").and_then(|c| c.as_object());
+        assert!(
+            children.is_some(),
+            "SG4 should have children (including SG6)"
+        );
+
+        let children = children.unwrap();
+        // Collect all SG6 children
+        let sg6_keys: Vec<&String> = children.keys().filter(|k| k.starts_with("sg6")).collect();
+        assert!(
+            !sg6_keys.is_empty(),
+            "SG4 should have SG6 children for RFF segments"
+        );
+
+        // Each SG6 child should have RFF segments — verify at least one has multiple RFFs
+        // or that there are multiple SG6 child groups
+        let total_rff_count: usize = sg6_keys
+            .iter()
+            .filter_map(|k| children[*k]["segments"].as_array())
+            .flat_map(|segs| segs.iter())
+            .filter(|seg| seg["id"].as_str() == Some("RFF"))
+            .count();
+        assert!(
+            total_rff_count >= 2,
+            "SG6 children should cover multiple RFF qualifiers, got {}",
+            total_rff_count
+        );
+    }
+
+    #[test]
+    fn test_pid_55001_sg4_has_both_dtm_codes() {
+        let (mig, ahb) = load_mig_ahb();
+        let pid = ahb.workflows.iter().find(|p| p.id == "55001").unwrap();
+        let structure = analyze_pid_structure_with_qualifiers(pid, &mig, &ahb);
+
+        let sg4 = structure
+            .groups
+            .iter()
+            .find(|g| g.group_id == "SG4")
+            .unwrap();
+
+        // PID 55001 has DTM+92 and DTM+93 in SG4
+        let dtm_count = sg4.segments.iter().filter(|e| e.tag == "DTM").count();
+        assert!(
+            dtm_count >= 2,
+            "55001 SG4 should have at least 2 DTM entries (92 and 93), got {}",
+            dtm_count
+        );
     }
 }

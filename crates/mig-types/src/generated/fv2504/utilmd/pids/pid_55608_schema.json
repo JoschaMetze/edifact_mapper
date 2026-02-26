@@ -15,6 +15,43 @@
             {
               "elements": [
                 {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
                   "components": [
                     {
                       "id": "3148",
@@ -58,43 +95,6 @@
               ],
               "id": "COM",
               "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Informationskontakt",
-                      "value": "IC"
-                    }
-                  ],
-                  "id": "3139",
-                  "index": 0,
-                  "name": "Funktion des Ansprechpartners, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "3413",
-                      "name": "Kontakt, Nummer",
-                      "sub_index": 0,
-                      "type": "data"
-                    },
-                    {
-                      "id": "3412",
-                      "name": "Name vom Ansprechpartner",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C056",
-                  "index": 1,
-                  "name": "Kontaktangaben"
-                }
-              ],
-              "id": "CTA",
-              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
             }
           ],
           "source_group": "SG3"
@@ -105,6 +105,59 @@
         "segment": "NAD"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        },
         {
           "elements": [
             {
@@ -176,6 +229,43 @@
                     {
                       "codes": [
                         {
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "GPKE / Bestätigung Zuordnung des LF zur erz. MaLo/ Tranche",
+                          "value": "55608"
+                        }
+                      ],
+                      "id": "1154",
+                      "name": "Prüfidentifikator",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Prüfidentifikator"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
                           "name": "Transaktions-Referenznummer",
                           "value": "TN"
                         }
@@ -213,6 +303,67 @@
               },
               "entity_hint": "Produktpaket",
               "segments": [
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Produkteigenschaft",
+                          "value": "Z66"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Produkteigenschaft"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Code der Produkteigenschaft",
+                              "value": "ZH9"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "Code der Produkteigenschaft",
+                          "sub_index": 3,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Die Codes der Produkteigenschaften sind in der Codeliste der Konfigurationen beschrieben"
+                },
                 {
                   "elements": [
                     {
@@ -255,24 +406,6 @@
                   ],
                   "id": "CAV",
                   "name": "Die Wertedetails zum Produkt sind in der Codeliste der Konfigurationen beschrieben"
-                },
-                {
-                  "elements": [
-                    {
-                      "codes": [
-                        {
-                          "name": "Produkteigenschaft",
-                          "value": "Z66"
-                        }
-                      ],
-                      "id": "7059",
-                      "index": 0,
-                      "name": "Klassentyp, Code",
-                      "type": "code"
-                    }
-                  ],
-                  "id": "CCI",
-                  "name": "Produkteigenschaft"
                 }
               ],
               "source_group": "SG10"
@@ -288,6 +421,37 @@
           },
           "entity_hint": "Produktpaket",
           "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": " Bestandteil eines Produktpakets",
+                      "value": "Z79"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "1050",
+                      "name": "Produktpaket-ID",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C286",
+                  "index": 1,
+                  "name": "Information über eine Folge"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Mit der Produktpaket-ID können mehrere Produkte, zu einem Produktpaket zusammengefasst werden. Dazu sind so viele SG8 SEQ+Z79 mit identischem Wert in diesem DE anzugeben, wie das Produktpaket Produkte enthält. Die einzelnen Produkte sind in PIA+5 DE7140 zu nennen. Auch wenn nur ein Produkt benötigt wird, ist eine Produktpaket-ID anzugeben und es somit einem Produktpaket zuzuweisen."
+            },
             {
               "elements": [
                 {
@@ -330,37 +494,6 @@
               ],
               "id": "PIA",
               "name": "Die Produkt-Codes sind in der Codeliste der Konfigurationen beschrieben"
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": " Bestandteil eines Produktpakets",
-                      "value": "Z79"
-                    }
-                  ],
-                  "id": "1229",
-                  "index": 0,
-                  "name": "Handlung, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "1050",
-                      "name": "Produktpaket-ID",
-                      "sub_index": 0,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C286",
-                  "index": 1,
-                  "name": "Information über eine Folge"
-                }
-              ],
-              "id": "SEQ",
-              "name": "Mit der Produktpaket-ID können mehrere Produkte, zu einem Produktpaket zusammengefasst werden. Dazu sind so viele SG8 SEQ+Z79 mit identischem Wert in diesem DE anzugeben, wie das Produktpaket Produkte enthält. Die einzelnen Produkte sind in PIA+5 DE7140 zu nennen. Auch wenn nur ein Produkt benötigt wird, ist eine Produktpaket-ID anzugeben und es somit einem Produktpaket zuzuweisen."
             }
           ],
           "source_group": "SG8"
@@ -375,47 +508,6 @@
               },
               "entity_hint": "Produktpaket",
               "segments": [
-                {
-                  "elements": [
-                    {
-                      "components": [
-                        {
-                          "codes": [
-                            {
-                              "name": "1. Priorität",
-                              "value": "Z75"
-                            },
-                            {
-                              "name": "2. Priorität",
-                              "value": "Z76"
-                            },
-                            {
-                              "name": "3. Priorität",
-                              "value": "Z77"
-                            },
-                            {
-                              "name": "4. Priorität",
-                              "value": "Z78"
-                            },
-                            {
-                              "name": "5. Priorität",
-                              "value": "Z79"
-                            }
-                          ],
-                          "id": "7111",
-                          "name": "Priorität",
-                          "sub_index": 0,
-                          "type": "code"
-                        }
-                      ],
-                      "composite": "C889",
-                      "index": 0,
-                      "name": "Merkmalswert"
-                    }
-                  ],
-                  "id": "CAV",
-                  "name": "Priorisierung erforderliches Produktpaket"
-                },
                 {
                   "elements": [
                     {
@@ -475,6 +567,47 @@
                   ],
                   "id": "CCI",
                   "name": "Umsetzungsgradvorgabe des Produktpakets"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "1. Priorität",
+                              "value": "Z75"
+                            },
+                            {
+                              "name": "2. Priorität",
+                              "value": "Z76"
+                            },
+                            {
+                              "name": "3. Priorität",
+                              "value": "Z77"
+                            },
+                            {
+                              "name": "4. Priorität",
+                              "value": "Z78"
+                            },
+                            {
+                              "name": "5. Priorität",
+                              "value": "Z79"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Priorität",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Priorisierung erforderliches Produktpaket"
                 }
               ],
               "source_group": "SG10"
@@ -533,6 +666,80 @@
         {
           "elements": [
             {
+              "codes": [
+                {
+                  "name": "Transaktion",
+                  "value": "24"
+                }
+              ],
+              "id": "7495",
+              "index": 0,
+              "name": "Objekt, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "7402",
+                  "name": "Vorgangsnummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C206",
+              "index": 1,
+              "name": "Identifikationsnummer"
+            }
+          ],
+          "id": "IDE",
+          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Datum Vertragsbeginn",
+                      "value": "92"
+                    }
+                  ],
+                  "id": "2005",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "2380",
+                  "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "CCYYMMDDHHMMZZZ",
+                      "value": "303"
+                    }
+                  ],
+                  "id": "2379",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C507",
+              "index": 0,
+              "name": "Datum/Uhrzeit/Zeitspanne"
+            }
+          ],
+          "id": "DTM",
+          "name": "Dieses Segment wird benutzt, um den Beginn einer Lieferung oder einer Zuordnung zu bestimmen."
+        },
+        {
+          "elements": [
+            {
               "components": [
                 {
                   "codes": [
@@ -576,107 +783,113 @@
         {
           "elements": [
             {
-              "codes": [
+              "components": [
                 {
-                  "name": "Internetseite",
-                  "value": "Z13"
+                  "codes": [
+                    {
+                      "name": "Transaktionsgrund",
+                      "value": "7"
+                    }
+                  ],
+                  "id": "9015",
+                  "name": "Statuskategorie, Code",
+                  "sub_index": 0,
+                  "type": "code"
                 }
               ],
-              "id": "4451",
+              "composite": "C601",
               "index": 0,
-              "name": "Textbezug, Qualifier",
-              "type": "code"
-            },
-            {
-              "id": "4453",
-              "index": 1,
-              "name": "Textfunktion, Code",
-              "type": "data"
+              "name": "Statuskategorie"
             },
             {
               "components": [
                 {
-                  "id": "4441",
-                  "name": "Passwort",
+                  "id": "4405",
+                  "name": "Status, Code",
                   "sub_index": 0,
                   "type": "data"
                 }
               ],
-              "composite": "C107",
+              "composite": "C555",
+              "index": 1,
+              "name": "Status"
+            },
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
+                      "value": "E03"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Transaktionsgrund",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C556",
               "index": 2,
-              "name": "Text-Referenz"
+              "name": "Statusanlaß"
             },
             {
               "components": [
                 {
-                  "id": "4440",
-                  "name": "Link zur Abtretungserklärung / Vollmacht vom Kunden",
+                  "codes": [
+                    {
+                      "name": "Fall 1",
+                      "value": "ZW8"
+                    },
+                    {
+                      "name": "Fall 2",
+                      "value": "ZW9"
+                    },
+                    {
+                      "name": "Fall 3",
+                      "value": "ZX0"
+                    },
+                    {
+                      "name": "Fall 4",
+                      "value": "ZX1"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Dieses Datenelement definiert weitere Details zum Transaktionsgrund.",
                   "sub_index": 0,
-                  "type": "data"
-                },
-                {
-                  "id": "4440",
-                  "name": "Freier Text",
-                  "sub_index": 1,
-                  "type": "data"
-                },
-                {
-                  "id": "4440",
-                  "name": "Freier Text",
-                  "sub_index": 2,
-                  "type": "data"
-                },
-                {
-                  "id": "4440",
-                  "name": "Freier Text",
-                  "sub_index": 3,
-                  "type": "data"
-                },
-                {
-                  "id": "4440",
-                  "name": "Freier Text",
-                  "sub_index": 4,
-                  "type": "data"
+                  "type": "code"
                 }
               ],
-              "composite": "C108",
+              "composite": "C556",
               "index": 3,
-              "name": "Text"
-            }
-          ],
-          "id": "FTX",
-          "name": "Der Link zur Abtretungserklärung / Vollmacht vom Kunde zum Produkt ist in der Codeliste der Konfigurationen beschrieben"
-        },
-        {
-          "elements": [
-            {
-              "codes": [
-                {
-                  "name": "Transaktion",
-                  "value": "24"
-                }
-              ],
-              "id": "7495",
-              "index": 0,
-              "name": "Objekt, Qualifier",
-              "type": "code"
+              "name": "Statusanlaß"
             },
             {
               "components": [
                 {
-                  "id": "7402",
-                  "name": "Vorgangsnummer",
+                  "codes": [
+                    {
+                      "name": "Kunde verlässt eine schon bestehende Marktlokation",
+                      "value": "E01"
+                    },
+                    {
+                      "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
+                      "value": "E03"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Dieses Datenelement definiert den Transaktionsgrund für das Lieferende einer Marktlokation bzw. Tranche bei einer befristeten Anmeldung.",
                   "sub_index": 0,
-                  "type": "data"
+                  "type": "code"
                 }
               ],
-              "composite": "C206",
-              "index": 1,
-              "name": "Identifikationsnummer"
+              "composite": "C556",
+              "index": 4,
+              "name": "Statusanlaß"
             }
           ],
-          "id": "IDE",
-          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
+          "id": "STS",
+          "name": "Zur Angabe eines Status. Dieses Segment wird benutzt um den Transaktionsgrund mitzuteilen. Der Transaktionsgrund beschreibt den Geschäftsvorfall zur Kategorie genauer. Dies dient der Plausibilisierung und Prozesssteuerung. Die Erläuterung zu den einzelnen Transaktionsgründen ist im DE9013 beschrieben."
         },
         {
           "elements": [
@@ -764,6 +977,80 @@
           ],
           "id": "STS",
           "name": "DE9013 Diesem Datenelement werden Codes aus den Codelisten des Dokumentes „Entscheidungsbaum-Diagramme“ verwendet. Jeder Entscheidungsbaum gilt als Codeliste. Die relevante Codeliste wird im DE1131 angegeben. Somit sind nur die Codes in einem Anwendungsfall möglich, welche in dem zugehörigen Entscheidungsbaum aufgeführt sind.  DE1131 des Segments ist genutzt und enthält die Codes der Entscheidungsbaumdiagramme bzw. die Codes der im Dokument Entscheidungsbaum-Diagramme enthaltenen Code-Tabellen, die in der Nachricht verwendet werden."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Internetseite",
+                  "value": "Z13"
+                }
+              ],
+              "id": "4451",
+              "index": 0,
+              "name": "Textbezug, Qualifier",
+              "type": "code"
+            },
+            {
+              "id": "4453",
+              "index": 1,
+              "name": "Textfunktion, Code",
+              "type": "data"
+            },
+            {
+              "components": [
+                {
+                  "id": "4441",
+                  "name": "Passwort",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C107",
+              "index": 2,
+              "name": "Text-Referenz"
+            },
+            {
+              "components": [
+                {
+                  "id": "4440",
+                  "name": "Link zur Abtretungserklärung / Vollmacht vom Kunden",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 2,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 3,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 4,
+                  "type": "data"
+                }
+              ],
+              "composite": "C108",
+              "index": 3,
+              "name": "Text"
+            }
+          ],
+          "id": "FTX",
+          "name": "Der Link zur Abtretungserklärung / Vollmacht vom Kunde zum Produkt ist in der Codeliste der Konfigurationen beschrieben"
         }
       ],
       "source_group": "SG4"

@@ -15,6 +15,43 @@
             {
               "elements": [
                 {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
                   "components": [
                     {
                       "id": "3148",
@@ -58,43 +95,6 @@
               ],
               "id": "COM",
               "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Informationskontakt",
-                      "value": "IC"
-                    }
-                  ],
-                  "id": "3139",
-                  "index": 0,
-                  "name": "Funktion des Ansprechpartners, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "3413",
-                      "name": "Kontakt, Nummer",
-                      "sub_index": 0,
-                      "type": "data"
-                    },
-                    {
-                      "id": "3412",
-                      "name": "Name vom Ansprechpartner",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C056",
-                  "index": 1,
-                  "name": "Kontaktangaben"
-                }
-              ],
-              "id": "CTA",
-              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
             }
           ],
           "source_group": "SG3"
@@ -105,6 +105,59 @@
         "segment": "NAD"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        },
         {
           "elements": [
             {
@@ -1202,41 +1255,66 @@
                     {
                       "codes": [
                         {
-                          "name": "Verwendung der Daten bis",
-                          "value": "Z26"
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
                         }
                       ],
-                      "id": "2005",
-                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
-                      "id": "2380",
-                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
-                      "sub_index": 1,
-                      "type": "data"
-                    },
-                    {
                       "codes": [
                         {
-                          "name": "CCYYMMDDHHMMZZZ",
-                          "value": "303"
+                          "name": "GPKE / Rückmeldung / Anfrage Daten der MaLo vom LF an NB",
+                          "value": "55622"
                         }
                       ],
-                      "id": "2379",
-                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
-                      "sub_index": 2,
+                      "id": "1154",
+                      "name": "Prüfidentifikator",
+                      "sub_index": 1,
                       "type": "code"
                     }
                   ],
-                  "composite": "C507",
+                  "composite": "C506",
                   "index": 0,
-                  "name": "Datum/Uhrzeit/Zeitspanne"
+                  "name": "Referenz"
                 }
               ],
-              "id": "DTM",
-              "name": "Hier wird der Zeitpunkt genannt, bis zu dem die im Vorgang enthaltenen Daten zu verwenden sind."
+              "id": "RFF",
+              "name": "Prüfidentifikator"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Transaktions-Referenznummer",
+                          "value": "TN"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Vorgangsnummer",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Dieses Segment dient zur Angabe der Referenz auf die Vorgangsnummer einer vorangegangenen Meldung. DE1154: Referenznummer aus dem IDE-Segment einer Anfragenachricht"
             },
             {
               "elements": [
@@ -1286,6 +1364,92 @@
               ],
               "id": "RFF",
               "name": "Bemerkung: Im DE1156 \"Zeitraum-ID\" dieses RFF-Segments wird die Nummer des Zeitraums genannt, auf die sich die Daten der einzelnen SG6 RFF, SG8 SEQ, SG12 NAD beziehen (wobei mit dem voranstehenden und allen folgenden SG6 RFF alle SG6 gemeint sind, die nicht \"Verwendungszeitraum der Daten\" heißen, d. h. die nicht diese Segmentgruppe sind. Im jeweiligen SG6 RFF DE1154, SG8 SEQ DE1050, SG12 RFF DE1154 wird die Nummer des Zeitraums eingetragen, der den Zeitraum festlegt, für den die Daten beschrieben werden (d. h. für den sie z. B. \"gültig\", \"erwartet\", oder \"..\" sind). Die Nummer der Zeitraum-ID beginnt in jedem SG4 IDE+24 je untenstehender Kombinationsmöglichkeit mit der Nummer 1 und wird immer um eins hochgezählt, vom ältesten zum jüngsten Zeitraum (d. h. der älteste Zeitraum eines Vorgangs hat immer die Zeitraum-ID 1). Für die Codes des DE1153 gelten folgende Kombinationsmöglichkeiten: 1. Kombinationsmöglichkeit: Z47 Im System vorhandene Daten und Z54 Im System keine Daten vorhanden  2. Kombinationsmöglichkeit: Z48 Erwartete Daten und Z55 Keine Daten erwartet 3. Kombinationsmöglichkeit: Z49 Gültige Daten und Z53 Keine Daten"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Verwendung der Daten ab",
+                          "value": "Z25"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYYMMDDHHMMZZZ",
+                          "value": "303"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Verwendung der Daten ab"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Verwendung der Daten bis",
+                          "value": "Z26"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYYMMDDHHMMZZZ",
+                          "value": "303"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Hier wird der Zeitpunkt genannt, bis zu dem die im Vorgang enthaltenen Daten zu verwenden sind."
             }
           ],
           "source_group": "SG6"
@@ -1300,6 +1464,443 @@
               },
               "entity_hint": "Marktlokation",
               "segments": [
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Zugeordneter Marktpartner",
+                              "value": "ZB3"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment dient zur Angabe der einer Marktlokation zugeordneten Marktpartner."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "MSB",
+                              "value": "Z91"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "MP-ID",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Grundzuständiger Messstellenbetreiber",
+                              "value": "Z39"
+                            },
+                            {
+                              "name": "Wettbewerblicher Messstellenbetreiber",
+                              "value": "Z40"
+                            },
+                            {
+                              "name": "Auffangmessstellenbetreiber",
+                              "value": "Z41"
+                            }
+                          ],
+                          "id": "7110",
+                          "name": "Eigenschaft des Messstellenbetreiber an der Lokation",
+                          "sub_index": 3,
+                          "type": "code"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Auf vertraglicher Grundlage gegenüber Anschlussnutzer / Anschlussnehmer",
+                              "value": "Z19"
+                            },
+                            {
+                              "name": "In der Ausübung der Weiterverpflichtung durch den gMSB",
+                              "value": "Z20"
+                            }
+                          ],
+                          "id": "7110",
+                          "name": "Art der Leistungserbringung",
+                          "sub_index": 4,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment dient zur Angabe des Messstellenbetreibers, der der Marktlokation zugeordnet ist. Hinweis zu zweiten DE7110 \"Art der Leistungserbringung\": Handelt es sich bei der Marktlokation bei dem zugeordneten MSB um den gMSB ist Z19 anzugeben. Handelt es sich bei der Marktlokation bei dem zugeordneten MSB um den wMSB ist Z19 anzugeben wenn der wMSB einen aktiven Vertrag mit dem Anschlussnutzer bzw. Anschlussnehmer hat. Bei einer Weiterverpflichtung entsteht die Situation, dass der wMSB keine Vertragsbeziehung zum Anschlussnutzer bzw. Anschlussnehmer mehr hat. Seine Leistung, die er durch die Weiterverpflichtung erbringt, muss er gegenüber dem gMSB abrechnen und somit im DE7110 Z20 anzugeben. Dies bedeutet, wenn der Messstellenbetrieb bei mME oder iMS über den LF abgerechnet werden soll muss dies zwischen gMSB und LF vereinbart werden. Bei kME erfolgt für den Zeitraum der Weiterverpflichtung die Abrechnung über die Netznutzungsabrechnung durch den NB."
+                },
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Spannungsebene der Marktlokation",
+                              "value": "E03"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Spannungsebene der Marktlokation"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Höchstspannung",
+                              "value": "E03"
+                            },
+                            {
+                              "name": "Hochspannung",
+                              "value": "E04"
+                            },
+                            {
+                              "name": "Mittelspannung",
+                              "value": "E05"
+                            },
+                            {
+                              "name": "Niederspannung",
+                              "value": "E06"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Spannungsebene der Marktlokation",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Diese Segmentgruppe von CCI CAV dient zur Beschreibung der Spannungsebene an welcher die Marktlokation angeschlossen ist."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Hös/HS Umspannung",
+                              "value": "E07"
+                            },
+                            {
+                              "name": "HS/MS Umspannung",
+                              "value": "E08"
+                            },
+                            {
+                              "name": "MS/NS Umspannung",
+                              "value": "E09"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Umspannung der Marktlokation",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Bei Marktlokationen, die direkt an Umspannanlagen angeschlossen sind, wird zusätzlich zum CAV-Segment „Spannungsebene der Marktlokation“ das CAV-Segment „Umspannung der Marktlokation“ mit einem der Codes E07 - E09 genutzt. Diese Präzisierung ist für die Festlegung der Netznutzungsentgelte bei entsprechender Gestaltung der Preisblätter erforderlich."
+                },
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Messtechnische Einordnung der Marktlokation",
+                              "value": "Z83"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "In dieser Segmentgruppe von CCI CAV wird angegeben, welche messtechnische Einordnung die Marktlokation besitzt."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Anzuwenden wenn alle Messlokationen, die zur Erfassung der Energiewerte der Marktlokation erforderlich sind mit iMS ausgestattet sind.",
+                              "value": "Z52"
+                            },
+                            {
+                              "name": "Anzuwenden wenn noch mindestens eine Messlokation, die zur Erfassung der Energiewerte der Marktlokation mit kME oder mME ausgestattet ist.",
+                              "value": "Z53"
+                            },
+                            {
+                              "name": "Anzuwenden wenn keine Messlokation, zur Erfassung der Energiewerte der Marktlokation vorhanden ist (Pauschale-Marktlokation).",
+                              "value": "Z68"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Zur Angabe des Wertes eines bestimmten Merkmals. Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals im vorangegangen CCI Segment."
+                },
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Art der erzeugenden Marktlokation",
+                              "value": "Z34"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Diese Segmentgruppe von CCI CAV dient der Beschreibung um welche Art der erzeugenden Marktlokation es sich handelt."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "EEG-Marktlokation ohne DV-Pflicht",
+                              "value": "Z33"
+                            },
+                            {
+                              "name": "KWKG-Marktlokation ohne DV-Pflicht",
+                              "value": "Z34"
+                            },
+                            {
+                              "name": "sonstige Marktlokation",
+                              "value": "Z35"
+                            },
+                            {
+                              "name": "EEG-Marktlokation mit DV-Pflicht",
+                              "value": "Z37"
+                            },
+                            {
+                              "name": "KWKG-Marktlokation mit DV-Pflicht",
+                              "value": "Z46"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Zur Angabe des Wertes eines bestimmten Merkmals. Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals im vorangegangen CCI Segment"
+                },
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Empfänger der Vergütung",
+                              "value": "Z89"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment wird verwendet, um Angaben zum Empfänger der Vergütung bei der erzeugenden Marktlokation bzw. Tranche zu machen."
+                },
                 {
                   "elements": [
                     {
@@ -1346,6 +1947,68 @@
                   ],
                   "id": "CAV",
                   "name": "Zur Angabe des Wertes eines bestimmten Merkmals. Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals im vorangegangen CCI Segment."
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Gesetzliche Kategorie",
+                          "value": "Z22"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Veräußerungsform nach § 20 Abs. 1 Nr. 3 EEG 2014 („Einspeisevergütung nach § 37“) bzw. § 21 Abs. 2 EEG 2017 oder  § 20 Abs. 1 Nr. 4 EEG 2014 („Einspeisevergütung nach § 38“) bzw. § 21b Abs. 1 Nr. 2 EEG 2017 (Ausfallvergütung)",
+                              "value": "Z90"
+                            },
+                            {
+                              "name": "Veräußerungsform nach § 20 Abs. 1 Nr. 1 EEG 2014 („Geförderte Direktvermarktung\") bzw. § 21 Abs. 1 Nr. 1 EEG 2017 (Marktprämie)",
+                              "value": "Z91"
+                            },
+                            {
+                              "name": "Veräußerungsform ohne gesetzliche  Vergütung (z.B. nach § 20 Abs. 1 Nr. 2 EEG 2014 („Sonstige Direktvermarktung\") bzw. § 21b Abs. 1 Nr. 3 EEG 2017 ...)",
+                              "value": "Z92"
+                            },
+                            {
+                              "name": "KWKG-Vergütung",
+                              "value": "Z94"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Veräußerungsform der erzeugenden Marktlokation"
                 },
                 {
                   "elements": [
@@ -1471,6 +2134,139 @@
                 {
                   "elements": [
                     {
+                      "codes": [
+                        {
+                          "name": "Stromverbrauchsart",
+                          "value": "Z17"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Hier erfolgt die Angabe für welchen Verwendungszweck die Stromentnahme an der OBIS-Kennzahl der Marktlokation erfolgt."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Hierunter ist Strom zu verstehen, der ausschließlich zum Betrieb von Endverbrauchsgeräten (z.B. Radio, Fernseher, Kühlschrank, Beleuchtung...) genutzt wird.",
+                              "value": "Z64"
+                            },
+                            {
+                              "name": "Hierunter ist Strom zu verstehen, der zur Wärmebedarfsdeckung (z.B. Standspeicherheizung, Fußbodenspeicherheizungen, Wärmepumpe....) eingesetzt wird.",
+                              "value": "Z65"
+                            },
+                            {
+                              "name": "E-Mobilität",
+                              "value": "ZE5"
+                            },
+                            {
+                              "name": "Straßenbeleuchtung",
+                              "value": "ZA8"
+                            },
+                            {
+                              "name": "Steuerung Wärmeabgabe",
+                              "value": "ZB3"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Verbrauchsart",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Das Segment dient dazu, den Verwendungszweck des Stroms der Marktlokation zu definieren, der im durch das Register der referenzierten OBIS-Kennzahl erfasst wird. Zu Kraft/Licht und Wärme: Unter Kraft/Licht ist der Strom zu verstehen, der für den Betrieb von Endverbrauchsgeräten (z.B. Fernseher, Kühlschrank, Beleuchtung...) genutzt wird. Die Nutzung als Wärme ist immer zu wählen, wenn der Strom dazu dient, eine oder mehrere Wohn-/Geschäftseinheiten umfänglich mit Wärme (Standspeicherheizungen, Fußbodenspeicherheizung, Wärmepumpe...) zu versorgen. Beinhaltet das Register ausschließlich die verbrauchte Strommenge zur Erzeugung von Wärmeenergie ist Z65 Wärme zu verwenden. Beinhaltet das Register ausschließlich die verbrauchte Strommenge zur Erzeugung von Kraft/Licht-Energie ist Z64 Kraft / Licht zu verwenden. Sollte an einem Register mehrere Verwendungszweicke vorliegen, so ist dies durch Wiederholen dieses Segementes auszudrücken."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Netzbetreiber kann die Verbrauchseinrichtung einer Marktlokation unterbrechen. Es kommen gesonderte Netzentgelte für die Marktlokation zum Tragen.",
+                              "value": "Z62"
+                            },
+                            {
+                              "name": "Netzbetreiber kann die Verbrauchseinrichtung einer Marktlokation nicht unterbrechen. Es kommen normale Netzentgelte zum Tragen.",
+                              "value": "Z63"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Unterbrechbarkeit",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment dient zur Angabe, ob eine Unterbrechung der Verbrauchseinrichtung durch den Netzbetreiber möglich ist. Die Unterbrechbarkeit kann ausschlaggebend für die Sondervertragskunden-Konzessionsabgabe bei Heizungskunden sein."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Hierunter fallen Heizungsanlagen bei denen das Speichermedium (z.B. Standspeicherheizkörper, Estrich als Fußbodenspeicher) während lastschwacher Zeiten aufgeladen wird und während des Tages Wärme abgeben.",
+                              "value": "Z56"
+                            },
+                            {
+                              "name": "Wärmepumpen entziehen der Umwelt (Luft, Wasser oder Erdreich) Wärme und heben mit technischem Verfahren die Temperatur auf ein Temperaturniveau an, um Gebäude zu heizen. Der Stromverbrauch steht somit immer in zeitlicher Verbindung zur Wärmeerzeugung.",
+                              "value": "Z57"
+                            },
+                            {
+                              "name": "Hierunter fallen Heizungsanlagen, die direkt und damit zeitgleich elektrische Energie in Wärme umwandeln (z.B. Konvektionsheizung, Infrarotheizung, Flächenheizung).",
+                              "value": "Z61"
+                            },
+                            {
+                              "name": "Wärmepumpe (Wärme und Kälte)",
+                              "value": "ZV5"
+                            },
+                            {
+                              "name": "Wärmepumpe (Kälte)",
+                              "value": "ZV6"
+                            },
+                            {
+                              "name": "Wärmepumpe (Wärme)",
+                              "value": "ZV7"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Wärmenutzung",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Das Segment dient dazu, im Falle der Wärmenutzung eine genauere Angabe über die Wärmenutzung zu definieren."
+                },
+                {
+                  "elements": [
+                    {
                       "components": [
                         {
                           "codes": [
@@ -1500,24 +2296,6 @@
                   ],
                   "id": "CAV",
                   "name": "Das Segment dient dazu, im Falle der E-Mobilität eine genauere Angabe über die Art der E-Mobilität zu definieren."
-                },
-                {
-                  "elements": [
-                    {
-                      "codes": [
-                        {
-                          "name": "Stromverbrauchsart",
-                          "value": "Z17"
-                        }
-                      ],
-                      "id": "7059",
-                      "index": 0,
-                      "name": "Klassentyp, Code",
-                      "type": "code"
-                    }
-                  ],
-                  "id": "CCI",
-                  "name": "Hier erfolgt die Angabe für welchen Verwendungszweck die Stromentnahme an der OBIS-Kennzahl der Marktlokation erfolgt."
                 }
               ],
               "source_group": "SG10"
@@ -1534,37 +2312,6 @@
           },
           "entity_hint": "Marktlokation",
           "segments": [
-            {
-              "elements": [
-                {
-                  "components": [
-                    {
-                      "codes": [
-                        {
-                          "name": "OBIS-Kennzahl",
-                          "value": "Z10"
-                        }
-                      ],
-                      "id": "1153",
-                      "name": "Referenz, Qualifier",
-                      "sub_index": 0,
-                      "type": "code"
-                    },
-                    {
-                      "id": "1154",
-                      "name": "OBIS-Kennzahl",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C506",
-                  "index": 0,
-                  "name": "Referenz"
-                }
-              ],
-              "id": "RFF",
-              "name": "Referenz auf die OBIS-Kennzahl der Marktlokation"
-            },
             {
               "elements": [
                 {
@@ -1599,6 +2346,37 @@
               ],
               "id": "SEQ",
               "name": "Verbrauchsart und Nutzung der OBIS-Kennzahl der Marktlokation"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "OBIS-Kennzahl",
+                          "value": "Z10"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "OBIS-Kennzahl",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Referenz auf die OBIS-Kennzahl der Marktlokation"
             }
           ],
           "source_group": "SG8"
@@ -1615,6 +2393,41 @@
           },
           "entity_hint": "Marktlokation",
           "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Erwartete Produkt-Daten der Marktlokation des NB",
+                      "value": "ZD3"
+                    },
+                    {
+                      "name": "Im System vorhandene Produkt-Daten der Marktlokation des NB",
+                      "value": "ZD4"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "1050",
+                      "name": "Referenz auf Zeitraum-ID",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C286",
+                  "index": 1,
+                  "name": "Information über eine Folge"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die Produkt-Daten der Marktlokation des NB enthalten alle Informationen, die sich auf das Register mit der angegebenen Produktidentifikartor einer Marktlokation beziehen."
+            },
             {
               "elements": [
                 {
@@ -1663,41 +2476,6 @@
               ],
               "id": "PIA",
               "name": "Dieses Segment wird benutzt, um die Produktidentifikation beim Austausch von Daten zu Energiemengen in den Redispatch 2.0 Prozessen zu gewährleisten."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Erwartete Produkt-Daten der Marktlokation des NB",
-                      "value": "ZD3"
-                    },
-                    {
-                      "name": "Im System vorhandene Produkt-Daten der Marktlokation des NB",
-                      "value": "ZD4"
-                    }
-                  ],
-                  "id": "1229",
-                  "index": 0,
-                  "name": "Handlung, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "1050",
-                      "name": "Referenz auf Zeitraum-ID",
-                      "sub_index": 0,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C286",
-                  "index": 1,
-                  "name": "Information über eine Folge"
-                }
-              ],
-              "id": "SEQ",
-              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Objekt zuzuordnen. Die Produkt-Daten der Marktlokation des NB enthalten alle Informationen, die sich auf das Register mit der angegebenen Produktidentifikartor einer Marktlokation beziehen."
             }
           ],
           "source_group": "SG8"
@@ -1738,6 +2516,109 @@
           ],
           "id": "IDE",
           "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig. Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Nummer in einem IDE+24 darf sowohl in diesem als auch in dem anderem IDE+Z01 nicht mehr genutzt werden."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Transaktionsgrund",
+                      "value": "7"
+                    }
+                  ],
+                  "id": "9015",
+                  "name": "Statuskategorie, Code",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C601",
+              "index": 0,
+              "name": "Statuskategorie"
+            },
+            {
+              "components": [
+                {
+                  "id": "4405",
+                  "name": "Status, Code",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C555",
+              "index": 1,
+              "name": "Status"
+            },
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Änderung Daten der MaLo",
+                      "value": "ZX6"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Transaktionsgrund",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C556",
+              "index": 2,
+              "name": "Statusanlaß"
+            },
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Erzeugende Marktlokation",
+                      "value": "ZW3"
+                    },
+                    {
+                      "name": "Verbrauchende Marktlokation",
+                      "value": "ZW4"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Dieses Datenelement definiert weitere Details zum Transaktionsgrund.",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C556",
+              "index": 3,
+              "name": "Statusanlaß"
+            },
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Kunde verlässt eine schon bestehende Marktlokation",
+                      "value": "E01"
+                    },
+                    {
+                      "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
+                      "value": "E03"
+                    }
+                  ],
+                  "id": "9013",
+                  "name": "Dieses Datenelement definiert den Transaktionsgrund für das Lieferende einer Marktlokation bzw. Tranche bei einer befristeten Anmeldung.",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C556",
+              "index": 4,
+              "name": "Statusanlaß"
+            }
+          ],
+          "id": "STS",
+          "name": "Zur Angabe eines Status. Dieses Segment wird benutzt um den Transaktionsgrund mitzuteilen. Der Transaktionsgrund beschreibt den Geschäftsvorfall zur Kategorie genauer. Dies dient der Plausibilisierung und Prozesssteuerung. Die Erläuterung zu den einzelnen Transaktionsgründen ist im DE9013 beschrieben."
         },
         {
           "elements": [

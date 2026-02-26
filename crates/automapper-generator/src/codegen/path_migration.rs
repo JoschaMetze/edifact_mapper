@@ -281,9 +281,7 @@ impl ReverseResolver {
                     format!("{}{}.{}", seg_raw, qualifier_suffix, named)
                 } else if sub_idx == 0 {
                     // 3-part path with sub_idx=0 might be a simple element (e.g., cci.0.0)
-                    if let Some(false) =
-                        self.is_composite.get(&(seg_upper.clone(), elem_idx))
-                    {
+                    if let Some(false) = self.is_composite.get(&(seg_upper.clone(), elem_idx)) {
                         if let Some(named) = self.simple_reverse.get(&(seg_upper, elem_idx)) {
                             return format!("{}{}.{}", seg_raw, qualifier_suffix, named);
                         }

@@ -15,6 +15,43 @@
             {
               "elements": [
                 {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
                   "components": [
                     {
                       "id": "3148",
@@ -58,43 +95,6 @@
               ],
               "id": "COM",
               "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Informationskontakt",
-                      "value": "IC"
-                    }
-                  ],
-                  "id": "3139",
-                  "index": 0,
-                  "name": "Funktion des Ansprechpartners, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "3413",
-                      "name": "Kontakt, Nummer",
-                      "sub_index": 0,
-                      "type": "data"
-                    },
-                    {
-                      "id": "3412",
-                      "name": "Name vom Ansprechpartner",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C056",
-                  "index": 1,
-                  "name": "Kontaktangaben"
-                }
-              ],
-              "id": "CTA",
-              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
             }
           ],
           "source_group": "SG3"
@@ -105,6 +105,59 @@
         "segment": "NAD"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        },
         {
           "elements": [
             {
@@ -345,6 +398,74 @@
                     {
                       "codes": [
                         {
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "MaBiS / Antwort auf DZÜ Liste",
+                          "value": "55224"
+                        }
+                      ],
+                      "id": "1154",
+                      "name": "Prüfidentifikator",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Prüfidentifikator"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Transaktions-Referenznummer",
+                          "value": "TN"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Referenz, Identifikation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Referenzangaben"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
                           "name": "Transaktions-Referenznummer",
                           "value": "TN"
                         }
@@ -386,6 +507,24 @@
             {
               "elements": [
                 {
+                  "codes": [
+                    {
+                      "name": "Daten der Summenzeitreihe",
+                      "value": "Z22"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Meldepunkt zuzuordnen. Die SG8 Daten des MaBiS-ZP eines Vorgangs enthält alle Informationen, die sich auf eine einzelne MaBiS-ZP in einem Vorgang beziehen."
+            },
+            {
+              "elements": [
+                {
                   "components": [
                     {
                       "codes": [
@@ -413,24 +552,6 @@
               ],
               "id": "RFF",
               "name": "Über dieses Segment erfolgt die Referenzierung auf die Version der betrachteten Zeitreihe. Es dient zur Angabe der Version der Zeitreihe nach MaBiS. Hinweis: Bei der Übermittlung von Summenzeitreihen in der MaBiS mittels MSCONS wird eine Version vergeben und als Zeitstempel in einem DTM+293 (Fertigstellungsdatum/ -zeit) übermittelt. Die Version wird im DE2380 und seit dem 1. Oktober 2022 im Format „CCYYMMDDHHMMSSZZZ“ und der Zeitzone UTC (Format: ZZZ = +00) übermittelt. Die Referenzangaben werden somit hier ebenfalls im Format „CCYYMMDDHHMMSSZZZ“ angegeben. Für weitere Details siehe Einführungsszenario zur Weiterentwicklung der Netzzugangsbedingungen Strom – BK6-20-160."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Daten der Summenzeitreihe",
-                      "value": "Z22"
-                    }
-                  ],
-                  "id": "1229",
-                  "index": 0,
-                  "name": "Handlung, Code",
-                  "type": "code"
-                }
-              ],
-              "id": "SEQ",
-              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Meldepunkt zuzuordnen. Die SG8 Daten des MaBiS-ZP eines Vorgangs enthält alle Informationen, die sich auf eine einzelne MaBiS-ZP in einem Vorgang beziehen."
             }
           ],
           "source_group": "SG8"
@@ -448,20 +569,154 @@
                 {
                   "elements": [
                     {
+                      "codes": [
+                        {
+                          "name": "Bilanzkreis",
+                          "value": "Z19"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "7037",
+                          "name": "Bilanzkreis",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Bilanzkreis"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Bilanzierungsgebiet",
+                          "value": "Z20"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "7037",
+                          "name": "Bilanzierungsgebiet",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment wird zur Angabe des Bilanzierungsgebietes in dem die Marktlokation liegt benutzt, für die die Stammdaten gelten."
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Struktur",
+                          "value": "15"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
                       "components": [
                         {
                           "codes": [
                             {
-                              "name": "Lokation im Regelbetrieb",
-                              "value": "ZG3"
-                            },
+                              "name": "Summenzeitreihentyp",
+                              "value": "Z21"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "In dieser Segmentgruppe von CCI CAV wird der Zeitreihentyp der Marktlokation zugewiesen. Die Kennzeichnung des Zeitreihentyps hat nach der EDI@Energy Codeliste für Zeitreihentypen zu erfolgen."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
                             {
-                              "name": "Lokation außerhalb des Regelbetriebs (Stilllegung)",
-                              "value": "ZG4"
+                              "name": "Beispielcode",
+                              "value": "XYZ"
                             }
                           ],
                           "id": "7111",
-                          "name": "Merkmalswert, Code",
+                          "name": "Angabe des Codes aus der EDI@Energy Codeliste der Zeitreihentypen.",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -472,7 +727,54 @@
                     }
                   ],
                   "id": "CAV",
-                  "name": "Bemerkung: In diesem Segment wird angegeben, ob die Lokation sich im Regelbetrieb bezogen auf die Bilanzierung befindet oder nicht. Ist dem ÜNB nach einer ersten Bilanzierung die „Beendigung der Aggregationsverantwortung“ mit dem Transaktionsgrund \"Z33 Auszug wegen Stilllegung“ mitgeteilt worden, liegen dem ÜNB zum Zeitpunkt der Erstellung der DZÜ-Liste die Stammdaten zum Segment \"Datenstand des ÜNB\" für den Zeitraum der DZÜ-Liste nicht mehr vor. Die Betriebssituation der Lokation ist dann mit „Lokation außerhalb des Regelbetriebs (Stilllegung)“ anzugeben."
+                  "name": "Zeitreihentyp"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Standardlastprofil",
+                          "value": "Z02"
+                        },
+                        {
+                          "name": "Standardeinspeiseprofil",
+                          "value": "Z04"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Zur Kennzeichnung und Beschreibung eines bestimmten Merkmals. Diese Segmentgruppe bestehend aus CCI und CAV dient zur Identifizierung und Beschreibung von spezifischen Eigenschaften, des normierten Profils (Strom)."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Dieser Code ist in der Anwendung durch einen zulässigen Code aus der vom NB gültigen Liste der Profildefinitionen zu ersetzen!",
+                              "value": "XYZ"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Es dürfen nur Codes aus der gültigen Liste der Profildefinitionen des jeweiligen NB und zugehörigem Bilanzierungsgebiet eingetragen werden.",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Zur Angabe des Wertes eines bestimmten Merkmals. Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals im vorangegangen CCI Segment."
                 },
                 {
                   "elements": [
@@ -527,6 +829,35 @@
                   ],
                   "id": "CCI",
                   "name": "In diesem Segment wird angegeben, welcher Marktrolle die Aggregationsverantwortung (Bilanzierung) zugeordnet ist."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Lokation im Regelbetrieb",
+                              "value": "ZG3"
+                            },
+                            {
+                              "name": "Lokation außerhalb des Regelbetriebs (Stilllegung)",
+                              "value": "ZG4"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Bemerkung: In diesem Segment wird angegeben, ob die Lokation sich im Regelbetrieb bezogen auf die Bilanzierung befindet oder nicht. Ist dem ÜNB nach einer ersten Bilanzierung die „Beendigung der Aggregationsverantwortung“ mit dem Transaktionsgrund \"Z33 Auszug wegen Stilllegung“ mitgeteilt worden, liegen dem ÜNB zum Zeitpunkt der Erstellung der DZÜ-Liste die Stammdaten zum Segment \"Datenstand des ÜNB\" für den Zeitraum der DZÜ-Liste nicht mehr vor. Die Betriebssituation der Lokation ist dann mit „Lokation außerhalb des Regelbetriebs (Stilllegung)“ anzugeben."
                 }
               ],
               "source_group": "SG10"
@@ -546,41 +877,41 @@
                         {
                           "codes": [
                             {
-                              "name": "Bilanzierungsende",
-                              "value": "159"
+                              "name": "Veranschlagte Jahresmenge Gesamt",
+                              "value": "31"
                             }
                           ],
-                          "id": "2005",
-                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                          "id": "6063",
+                          "name": "Menge, Qualifier",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
-                          "id": "2380",
-                          "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                          "id": "6060",
+                          "name": "Mengenangabe",
                           "sub_index": 1,
                           "type": "data"
                         },
                         {
                           "codes": [
                             {
-                              "name": "CCYYMMDDHHMMZZZ",
-                              "value": "303"
+                              "name": "Kilowattstunde",
+                              "value": "KWH"
                             }
                           ],
-                          "id": "2379",
-                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                          "id": "6411",
+                          "name": "Maßeinheit, Code",
                           "sub_index": 2,
                           "type": "code"
                         }
                       ],
-                      "composite": "C507",
+                      "composite": "C186",
                       "index": 0,
-                      "name": "Datum/Uhrzeit/Zeitspanne"
+                      "name": "Mengenangaben"
                     }
                   ],
-                  "id": "DTM",
-                  "name": "Bilanzierungsende"
+                  "id": "QTY",
+                  "name": "Dieses Segment gibt die Jahresverbrauchprognose der Marktlokation an."
                 },
                 {
                   "elements": [
@@ -624,6 +955,92 @@
                   ],
                   "id": "QTY",
                   "name": "In diesem Segment wird die aus Sicht des NB zu bilanzierende Energiemenge der Marktlokation bzw. Tranche übermittelt."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Bilanzierungsbeginn",
+                              "value": "158"
+                            }
+                          ],
+                          "id": "2005",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "2380",
+                          "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "CCYYMMDDHHMMZZZ",
+                              "value": "303"
+                            }
+                          ],
+                          "id": "2379",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C507",
+                      "index": 0,
+                      "name": "Datum/Uhrzeit/Zeitspanne"
+                    }
+                  ],
+                  "id": "DTM",
+                  "name": "Bilanzierungsbeginn"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Bilanzierungsende",
+                              "value": "159"
+                            }
+                          ],
+                          "id": "2005",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "2380",
+                          "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "CCYYMMDDHHMMZZZ",
+                              "value": "303"
+                            }
+                          ],
+                          "id": "2379",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C507",
+                      "index": 0,
+                      "name": "Datum/Uhrzeit/Zeitspanne"
+                    }
+                  ],
+                  "id": "DTM",
+                  "name": "Bilanzierungsende"
                 }
               ],
               "source_group": "SG9"
@@ -666,6 +1083,100 @@
         "segment": "IDE"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Liste",
+                  "value": "Z01"
+                }
+              ],
+              "id": "7495",
+              "index": 0,
+              "name": "Objekt, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "7402",
+                  "name": "Listennummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C206",
+              "index": 1,
+              "name": "Identifikationsnummer"
+            }
+          ],
+          "id": "IDE",
+          "name": "Bemerkung:  Hinweis zu DE7402: Es ist zu beachten, dass eine Vorgangsnummer / Listennummer nicht im IDE+Z01 und in einem IDE+24 verwendet wird. Die Eindeutigkeit ist sowohl für das IDE+Z01 als auch für das IDE+24 übergreifend einzuhalten. Das bedeutet, eine bereits verwendete Nummer in einem IDE+Z01 darf in einem anderem IDE+24 nicht mehr genutzt werden.  In einem Use-Case (z. B. Übermittlung der Lieferantenclearingliste) kann es erforderlich sein, eine große Menge an Informationen übermitteln zu müssen, die aus technischen Gründen nicht in einer UTILMD Nachricht übertragen werden können. Um diesen Use- Case gerecht zu werden, ist es erforderlich die Informationen in mehrere UTILMD Nachrichten aufzuteilen (Details siehe UNH). Bei einer Aufteilung der Liste ist für die gesamte Liste eine Listennummer zu vergeben. Diese Listennummer ist bei einer Aufteilung in mehrere UTILMD Nachrichten in allen IDE+Z01 die zusammengefasst die gesamte Liste darstellen anzugeben."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Status der Antwort",
+                      "value": "E01"
+                    }
+                  ],
+                  "id": "9015",
+                  "name": "Statuskategorie, Code",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C601",
+              "index": 0,
+              "name": "Statuskategorie"
+            },
+            {
+              "components": [
+                {
+                  "id": "4405",
+                  "name": "Status, Code",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C555",
+              "index": 1,
+              "name": "Status"
+            },
+            {
+              "components": [
+                {
+                  "id": "9013",
+                  "name": "Code des Prüfschritts",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "EBD Nr. E_0070",
+                      "value": "E_0070"
+                    }
+                  ],
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "code"
+                }
+              ],
+              "composite": "C556",
+              "index": 2,
+              "name": "Statusanlaß"
+            }
+          ],
+          "id": "STS",
+          "name": "DE9013 Diesem Datenelement werden Codes aus den Codelisten des Dokumentes „Entscheidungsbaum-Diagramme“ verwendet. Jeder Entscheidungsbaum gilt als Codeliste. Die relevante Codeliste wird im DE1131 angegeben. Somit sind nur die Codes in einem Anwendungsfall möglich, welche in dem zugehörigen Entscheidungsbaum aufgeführt sind.  DE1131 des Segments ist genutzt und enthält die Codes der Entscheidungsbaumdiagramme bzw. die Codes der im Dokument Entscheidungsbaum-Diagramme enthaltenen Code-Tabellen, die in der Nachricht verwendet werden."
+        },
         {
           "elements": [
             {

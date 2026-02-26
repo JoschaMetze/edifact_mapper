@@ -15,6 +15,43 @@
             {
               "elements": [
                 {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
                   "components": [
                     {
                       "id": "3148",
@@ -58,43 +95,6 @@
               ],
               "id": "COM",
               "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Informationskontakt",
-                      "value": "IC"
-                    }
-                  ],
-                  "id": "3139",
-                  "index": 0,
-                  "name": "Funktion des Ansprechpartners, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "3413",
-                      "name": "Kontakt, Nummer",
-                      "sub_index": 0,
-                      "type": "data"
-                    },
-                    {
-                      "id": "3412",
-                      "name": "Name vom Ansprechpartner",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C056",
-                  "index": 1,
-                  "name": "Kontaktangaben"
-                }
-              ],
-              "id": "CTA",
-              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
             }
           ],
           "source_group": "SG3"
@@ -105,6 +105,59 @@
         "segment": "NAD"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        },
         {
           "elements": [
             {
@@ -617,41 +670,35 @@
                     {
                       "codes": [
                         {
-                          "name": "Verwendung der Daten bis",
-                          "value": "Z26"
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
                         }
                       ],
-                      "id": "2005",
-                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
-                      "id": "2380",
-                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
-                      "sub_index": 1,
-                      "type": "data"
-                    },
-                    {
                       "codes": [
                         {
-                          "name": "CCYYMMDDHHMMZZZ",
-                          "value": "303"
+                          "name": "NBW / Lokationsbündelstruktur und DB",
+                          "value": "55690"
                         }
                       ],
-                      "id": "2379",
-                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
-                      "sub_index": 2,
+                      "id": "1154",
+                      "name": "Prüfidentifikator",
+                      "sub_index": 1,
                       "type": "code"
                     }
                   ],
-                  "composite": "C507",
+                  "composite": "C506",
                   "index": 0,
-                  "name": "Datum/Uhrzeit/Zeitspanne"
+                  "name": "Referenz"
                 }
               ],
-              "id": "DTM",
-              "name": "Hier wird der Zeitpunkt genannt, bis zu dem die im Vorgang enthaltenen Daten zu verwenden sind."
+              "id": "RFF",
+              "name": "Prüfidentifikator"
             },
             {
               "elements": [
@@ -693,6 +740,92 @@
               ],
               "id": "RFF",
               "name": "Bemerkung: Im DE1156 \"Zeitraum-ID\" dieses RFF-Segments wird die Nummer des Zeitraums genannt, auf die sich die Daten der einzelnen SG6 RFF, SG8 SEQ, SG12 NAD beziehen (wobei mit dem voranstehenden und allen folgenden SG6 RFF alle SG6 gemeint sind, die nicht \"Verwendungszeitraum der Daten\" heißen, d. h. die nicht diese Segmentgruppe sind. Im jeweiligen SG6 RFF DE1154, SG8 SEQ DE1050, SG12 RFF DE1154 wird die Nummer des Zeitraums eingetragen, der den Zeitraum festlegt, für den die Daten beschrieben werden (d. h. für den sie z. B. \"gültig\", \"erwartet\", oder \"..\" sind). Die Nummer der Zeitraum-ID beginnt in jedem SG4 IDE+24 je untenstehender Kombinationsmöglichkeit mit der Nummer 1 und wird immer um eins hochgezählt, vom ältesten zum jüngsten Zeitraum (d. h. der älteste Zeitraum eines Vorgangs hat immer die Zeitraum-ID 1). Für die Codes des DE1153 gelten folgende Kombinationsmöglichkeiten: 1. Kombinationsmöglichkeit: Z47 Im System vorhandene Daten und Z54 Im System keine Daten vorhanden  2. Kombinationsmöglichkeit: Z48 Erwartete Daten und Z55 Keine Daten erwartet 3. Kombinationsmöglichkeit: Z49 Gültige Daten und Z53 Keine Daten"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Verwendung der Daten ab",
+                          "value": "Z25"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYYMMDDHHMMZZZ",
+                          "value": "303"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Verwendung der Daten ab"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Verwendung der Daten bis",
+                          "value": "Z26"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYYMMDDHHMMZZZ",
+                          "value": "303"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Hier wird der Zeitpunkt genannt, bis zu dem die im Vorgang enthaltenen Daten zu verwenden sind."
             }
           ],
           "source_group": "SG6"
@@ -708,37 +841,6 @@
           },
           "entity_hint": "Lokationsbuendel",
           "segments": [
-            {
-              "elements": [
-                {
-                  "components": [
-                    {
-                      "codes": [
-                        {
-                          "name": "zugeordnete Marktlokation",
-                          "value": "Z16"
-                        }
-                      ],
-                      "id": "1153",
-                      "name": "Referenz, Qualifier",
-                      "sub_index": 0,
-                      "type": "code"
-                    },
-                    {
-                      "id": "1154",
-                      "name": "ID der Marktlokation",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C506",
-                  "index": 0,
-                  "name": "Referenz"
-                }
-              ],
-              "id": "RFF",
-              "name": "Zur Referenzierung auf eine ID der Marktlokationen vom SG5 LOC+Z16 \"Marktlokation\", sofern im AHB nichts Abweichendes angegeben, die der in diesem SG8 genannten Technischen Ressource zugeordnet ist."
-            },
             {
               "elements": [
                 {
@@ -769,6 +871,152 @@
               ],
               "id": "SEQ",
               "name": "Diese Segmentgruppe dient der Zuordnung der (im Vorgang) genannten Marktlokation(en), Messlokation(en), bzw. Netzlokation(en) zu den Objektcodes der Marktlokation(en), Messlokation(en), bzw. Netzlokation(en) der (im Vorgang) genannten Lokationsbündelstruktur. Hinweis zur Netzlokation: Wenn eine Netzlokation mehreren Lokationsbündel zugeordnet ist muss die SG8 SEQ+Z58 ggf. wiederholt werden um alle \"Fortlaufende Nummer eines Lokationsbündels im Geschäftsvorfall\" im RFF+Z33 (Referenz auf den Objektcode in der Lokationsbündelstruktur) für die Netzlokation anzugeben. Hintergrund: Das RFF-Segment in einer SG8 kann nur neun mal wiederholt werden."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Netzlokation",
+                          "value": "Z32"
+                        },
+                        {
+                          "name": "Marktlokation",
+                          "value": "Z18"
+                        },
+                        {
+                          "name": "Messlokation",
+                          "value": "Z19"
+                        },
+                        {
+                          "name": "Technische Ressource",
+                          "value": "Z37"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "ID einer Lokation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zur Referenzierung auf eine ID einer Marktlokation vom SG5 LOC+Z16 \"Marktlokation\" bzw. zur Referenzierung auf eine ID einer Messlokation vom SG5 LOC+Z17 \"Messlokation\" bzw. zur Referenzierung auf eine ID einer Netzlokation vom SG5 LOC+Z18 \"Netzlokation\" bzw. zur Referenzierung auf eine ID einer Technischen Ressource vom SG5 LOC+Z20 \"Technischen Ressource\""
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Objektcode der Lokation in der Lokationsbündelstruktur",
+                          "value": "Z33"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Objekt Code",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "id": "1156",
+                      "name": "Angabe der \"Fortlaufende Nummer eines Lokationsbündels im Geschäftsvorfall\" aus dem SG8 RFF+Z31 DE1156 des jeweiligen Lokationsbündels dem die in diesem SG8 SEQ+Z58 \"Zuordnung Lokation zum Objektcode des Lokationsbündels\" aufgeführte Lokation zugeordnet ist.",
+                      "sub_index": 2,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zur Referenzierung auf den Objektcode der (im Vorgang genannten) Lokationsbündelstruktur. Mit der Angabe des Objektcodes wird die Position der in der selben SG8 genannten Lokation in der im SG6 RFF+Z31 \"Referenz auf die Lokationsbündelstruktur\" genannten Lokationsbündelstruktur genannt."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "vorgelagerte Messlokation",
+                          "value": "Z34"
+                        },
+                        {
+                          "name": "vorgelagerte Netzlokation",
+                          "value": "Z35"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "ID einer Lokation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Referenz auf die ID der vorgelagerten Netzlokation / Messlokation"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "zugeordnete Marktlokation",
+                          "value": "Z16"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "ID der Marktlokation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zur Referenzierung auf eine ID der Marktlokationen vom SG5 LOC+Z16 \"Marktlokation\", sofern im AHB nichts Abweichendes angegeben, die der in diesem SG8 genannten Technischen Ressource zugeordnet ist."
             }
           ],
           "source_group": "SG8"
@@ -784,6 +1032,37 @@
           },
           "entity_hint": "Lokationsbuendel",
           "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Referenz auf die Lokationsbündelstruktur",
+                      "value": "Z78"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "1050",
+                      "name": "Referenz auf Zeitraum-ID",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C286",
+                  "index": 1,
+                  "name": "Information über eine Folge"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Die Segmentgruppe dient dazu, alle Lokationsbündelstrukturen, welche sich hinter einer Netzlokation befinden, anzugeben."
+            },
             {
               "elements": [
                 {
@@ -824,37 +1103,6 @@
               ],
               "id": "RFF",
               "name": "Mit diesem Segment wird mitgeteilt, ob sich die Struktur, der in den Segmenten LOC+Z16 \"Marktlokation\" / Z17 \"Messlokation\" / Z18 \"Netzlokation\" genannten Marktlokation(en), Messlokation(en), bzw. Netzlokation(en) mittels eines Lokationsbündelstrukturcodes beschreiben lässt (Z31) oder es dafür keinen passenden Lokationsbündelstrukturcode gibt (Z39). Wird der Code Z31 verwendet, so ist in DE1154 der entsprechende Lokationsbündelstrukturcode anzugeben. Da hinter einer Netzlokation mehrere Lokationsbündel vorhanden sein können (z. B. bei einem Mehrfamilienhaus mit mehreren Marktlokationen (Wohnungen) und einer jeweils zur Erfassung der Energiemenge der Marktlokation erforderlichen Messlokation) müssen, wenn eine Netzlokations-ID für die Netzlokation vergeben wurde, alle hinter der Netzlokation vorhandenen Marktlokationen (incl. soweit vorhanden TR) und Messlokationen mit den entsprechenden Lokationsbündelstrukturen genannt werden."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Referenz auf die Lokationsbündelstruktur",
-                      "value": "Z78"
-                    }
-                  ],
-                  "id": "1229",
-                  "index": 0,
-                  "name": "Handlung, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "1050",
-                      "name": "Referenz auf Zeitraum-ID",
-                      "sub_index": 0,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C286",
-                  "index": 1,
-                  "name": "Information über eine Folge"
-                }
-              ],
-              "id": "SEQ",
-              "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Die Segmentgruppe dient dazu, alle Lokationsbündelstrukturen, welche sich hinter einer Netzlokation befinden, anzugeben."
             }
           ],
           "source_group": "SG8"
@@ -869,6 +1117,112 @@
               },
               "entity_hint": "Marktlokation",
               "segments": [
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Zugeordneter Marktpartner",
+                              "value": "ZB3"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment dient zur Angabe der einer Marktlokation zugeordneten Marktpartner."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "LF",
+                              "value": "Z89"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "MP-ID",
+                          "sub_index": 1,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment dient zur Angabe des Lieferanten, der der Marktlokation zugeordnet ist."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "ÜNB",
+                              "value": "Z90"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "MP-ID",
+                          "sub_index": 1,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment dient zur Angabe des Übertragungsnetzbetreibers, der der Marktlokation zugeordnet ist."
+                },
                 {
                   "elements": [
                     {
@@ -1003,37 +1357,6 @@
             {
               "elements": [
                 {
-                  "components": [
-                    {
-                      "codes": [
-                        {
-                          "name": "Marktlokation",
-                          "value": "Z18"
-                        }
-                      ],
-                      "id": "1153",
-                      "name": "Referenz, Qualifier",
-                      "sub_index": 0,
-                      "type": "code"
-                    },
-                    {
-                      "id": "1154",
-                      "name": "ID der Marktlokation",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C506",
-                  "index": 0,
-                  "name": "Referenz"
-                }
-              ],
-              "id": "RFF",
-              "name": "Zur Referenzierung auf eine ID einer Marktlokation vom SG5 LOC+Z16 \"Marktlokation\", sofern im AHB nichts abweichendes angegeben ist."
-            },
-            {
-              "elements": [
-                {
                   "codes": [
                     {
                       "name": "Informative Daten der Marktlokation",
@@ -1061,6 +1384,37 @@
               ],
               "id": "SEQ",
               "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einer Marktlokation zuzuordnen. Die SG8 \"Daten der Marktlokation\" eines Vorgangs enthält alle Informationen, die sich auf eine einzelne Marktlokation in einem Vorgang beziehen."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Marktlokation",
+                          "value": "Z18"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "ID der Marktlokation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zur Referenzierung auf eine ID einer Marktlokation vom SG5 LOC+Z16 \"Marktlokation\", sofern im AHB nichts abweichendes angegeben ist."
             }
           ],
           "source_group": "SG8"
@@ -1075,6 +1429,50 @@
               },
               "entity_hint": "Netzlokation",
               "segments": [
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Zugeordneter Marktpartner",
+                              "value": "ZB3"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Diese Segmentgruppe dient zur Angabe der Marktpartner, die der im RFF+Z32 in dieser SG8 genannten Netzlokation zugeordnet sind."
+                },
                 {
                   "elements": [
                     {
@@ -1131,50 +1529,6 @@
                   ],
                   "id": "CAV",
                   "name": "Dieses Segment dient zur Angabe des Messstellenbetreibers, der der Netzlokation zugeordnet ist."
-                },
-                {
-                  "elements": [
-                    {
-                      "id": "7059",
-                      "index": 0,
-                      "name": "Klassentyp, Code",
-                      "type": "data"
-                    },
-                    {
-                      "components": [
-                        {
-                          "id": "6313",
-                          "name": "Gemessene Dimension, Code",
-                          "sub_index": 0,
-                          "type": "data"
-                        }
-                      ],
-                      "composite": "C502",
-                      "index": 1,
-                      "name": "Einzelheiten zu Maßangaben"
-                    },
-                    {
-                      "components": [
-                        {
-                          "codes": [
-                            {
-                              "name": "Zugeordneter Marktpartner",
-                              "value": "ZB3"
-                            }
-                          ],
-                          "id": "7037",
-                          "name": "Merkmal, Code",
-                          "sub_index": 0,
-                          "type": "code"
-                        }
-                      ],
-                      "composite": "C240",
-                      "index": 2,
-                      "name": "Merkmalsbeschreibung"
-                    }
-                  ],
-                  "id": "CCI",
-                  "name": "Diese Segmentgruppe dient zur Angabe der Marktpartner, die der im RFF+Z32 in dieser SG8 genannten Netzlokation zugeordnet sind."
                 }
               ],
               "source_group": "SG10"
@@ -1190,37 +1544,6 @@
           },
           "entity_hint": "Netzlokation",
           "segments": [
-            {
-              "elements": [
-                {
-                  "components": [
-                    {
-                      "codes": [
-                        {
-                          "name": "Netzlokation",
-                          "value": "Z32"
-                        }
-                      ],
-                      "id": "1153",
-                      "name": "Referenz, Qualifier",
-                      "sub_index": 0,
-                      "type": "code"
-                    },
-                    {
-                      "id": "1154",
-                      "name": "ID der Netzlokation",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C506",
-                  "index": 0,
-                  "name": "Referenz"
-                }
-              ],
-              "id": "RFF",
-              "name": "Zur Referenzierung auf eine ID einer Netzlokation vom SG5 LOC+Z18 \"Netzlokation\"."
-            },
             {
               "elements": [
                 {
@@ -1251,6 +1574,37 @@
               ],
               "id": "SEQ",
               "name": "In dieser Segmentgruppe werden die Eigenschaften zu der im RFF+Z32 dieser SG8 genannten Netzlokation übertragen, falls und inwieweit dies nötig ist."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Netzlokation",
+                          "value": "Z32"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "ID der Netzlokation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zur Referenzierung auf eine ID einer Netzlokation vom SG5 LOC+Z18 \"Netzlokation\"."
             }
           ],
           "source_group": "SG8"
@@ -1265,37 +1619,6 @@
               },
               "entity_hint": "Tranche",
               "segments": [
-                {
-                  "elements": [
-                    {
-                      "components": [
-                        {
-                          "codes": [
-                            {
-                              "name": "LF",
-                              "value": "Z89"
-                            }
-                          ],
-                          "id": "7111",
-                          "name": "Merkmalswert, Code",
-                          "sub_index": 0,
-                          "type": "code"
-                        },
-                        {
-                          "id": "1131",
-                          "name": "MP-ID",
-                          "sub_index": 1,
-                          "type": "data"
-                        }
-                      ],
-                      "composite": "C889",
-                      "index": 0,
-                      "name": "Merkmalswert"
-                    }
-                  ],
-                  "id": "CAV",
-                  "name": "Dieses Segment dient zur Angabe des Lieferanten, der der Tranche zugeordnet ist."
-                },
                 {
                   "elements": [
                     {
@@ -1339,6 +1662,37 @@
                   ],
                   "id": "CCI",
                   "name": "Dieses Segment dient zur Angabe der zugeordneten Marktpartner zu einer Tranche"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "LF",
+                              "value": "Z89"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "MP-ID",
+                          "sub_index": 1,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment dient zur Angabe des Lieferanten, der der Tranche zugeordnet ist."
                 }
               ],
               "source_group": "SG10"
@@ -1354,37 +1708,6 @@
           },
           "entity_hint": "Tranche",
           "segments": [
-            {
-              "elements": [
-                {
-                  "components": [
-                    {
-                      "codes": [
-                        {
-                          "name": "zugeordnete Marktlokation",
-                          "value": "Z16"
-                        }
-                      ],
-                      "id": "1153",
-                      "name": "Referenz, Qualifier",
-                      "sub_index": 0,
-                      "type": "code"
-                    },
-                    {
-                      "id": "1154",
-                      "name": "ID der Marktlokation",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C506",
-                  "index": 0,
-                  "name": "Referenz"
-                }
-              ],
-              "id": "RFF",
-              "name": "Zur Referenzierung auf eine ID einer Marktlokation vom SG5 LOC+Z16 \"Marktlokation\", sofern im AHB nichts Abweichendes angegeben."
-            },
             {
               "elements": [
                 {
@@ -1415,6 +1738,68 @@
               ],
               "id": "SEQ",
               "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einem Meldepunkt zuzuordnen. Die SG8 \"Daten der Tranche\" eines Vorgangs enthält alle Informationen, die sich auf eine einzelne Tranche in einem Vorgang beziehen."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Tranche",
+                          "value": "Z20"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "ID der Tranche",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zur Referenzierung auf eine ID einer Tranche vom SG5 LOC+Z21 \"Tranche\", sofern im AHB nichts Abweichendes angegeben."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "zugeordnete Marktlokation",
+                          "value": "Z16"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "ID der Marktlokation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zur Referenzierung auf eine ID einer Marktlokation vom SG5 LOC+Z16 \"Marktlokation\", sofern im AHB nichts Abweichendes angegeben."
             }
           ],
           "source_group": "SG8"
@@ -1429,6 +1814,50 @@
               },
               "entity_hint": "SteuerbareRessource",
               "segments": [
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Zugeordneter Marktpartner",
+                              "value": "ZB3"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Dieses Segment dient zur Angabe des zugeordneten Marktpartners zu einer steuerbaren Ressource."
+                },
                 {
                   "elements": [
                     {
@@ -1485,7 +1914,96 @@
                   ],
                   "id": "CAV",
                   "name": "Dieses Segment dient zur Angabe des Messstellenbetreibers, der der Steuerbaren Ressource zugeordnet ist."
+                }
+              ],
+              "source_group": "SG10"
+            }
+          },
+          "data_quality_hint": "informativ",
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "ZF1"
+            ]
+          },
+          "entity_hint": "SteuerbareRessource",
+          "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Informative Daten der Steuerbaren Ressource",
+                      "value": "ZF1"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
                 },
+                {
+                  "components": [
+                    {
+                      "id": "1050",
+                      "name": "Referenz auf Zeitraum-ID",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C286",
+                  "index": 1,
+                  "name": "Information über eine Folge"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Daten der Steuerbaren Ressource"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Steuerbare Ressource",
+                          "value": "Z38"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "ID der Steuerbaren Ressource",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zur Referenzierung auf eine ID einer Steuerbaren Ressource vom SG5 LOC+Z19 \"Steuerbare Ressource\"."
+            }
+          ],
+          "source_group": "SG8"
+        },
+        "sg8_zf3": {
+          "children": {
+            "sg10": {
+              "data_quality_hint": "informativ",
+              "discriminator": {
+                "element": "7059",
+                "segment": "CCI"
+              },
+              "entity_hint": "Messlokation",
+              "segments": [
                 {
                   "elements": [
                     {
@@ -1528,97 +2046,8 @@
                     }
                   ],
                   "id": "CCI",
-                  "name": "Dieses Segment dient zur Angabe des zugeordneten Marktpartners zu einer steuerbaren Ressource."
-                }
-              ],
-              "source_group": "SG10"
-            }
-          },
-          "data_quality_hint": "informativ",
-          "discriminator": {
-            "element": "1229",
-            "segment": "SEQ",
-            "values": [
-              "ZF1"
-            ]
-          },
-          "entity_hint": "SteuerbareRessource",
-          "segments": [
-            {
-              "elements": [
-                {
-                  "components": [
-                    {
-                      "codes": [
-                        {
-                          "name": "Steuerbare Ressource",
-                          "value": "Z38"
-                        }
-                      ],
-                      "id": "1153",
-                      "name": "Referenz, Qualifier",
-                      "sub_index": 0,
-                      "type": "code"
-                    },
-                    {
-                      "id": "1154",
-                      "name": "ID der Steuerbaren Ressource",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C506",
-                  "index": 0,
-                  "name": "Referenz"
-                }
-              ],
-              "id": "RFF",
-              "name": "Zur Referenzierung auf eine ID einer Steuerbaren Ressource vom SG5 LOC+Z19 \"Steuerbare Ressource\"."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Informative Daten der Steuerbaren Ressource",
-                      "value": "ZF1"
-                    }
-                  ],
-                  "id": "1229",
-                  "index": 0,
-                  "name": "Handlung, Code",
-                  "type": "code"
+                  "name": "Dieses Segment dient zur Angabe des zugeordneten Marktpartners zu einer Marktlokation"
                 },
-                {
-                  "components": [
-                    {
-                      "id": "1050",
-                      "name": "Referenz auf Zeitraum-ID",
-                      "sub_index": 0,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C286",
-                  "index": 1,
-                  "name": "Information über eine Folge"
-                }
-              ],
-              "id": "SEQ",
-              "name": "Daten der Steuerbaren Ressource"
-            }
-          ],
-          "source_group": "SG8"
-        },
-        "sg8_zf3": {
-          "children": {
-            "sg10": {
-              "data_quality_hint": "informativ",
-              "discriminator": {
-                "element": "7059",
-                "segment": "CCI"
-              },
-              "entity_hint": "Messlokation",
-              "segments": [
                 {
                   "elements": [
                     {
@@ -1691,50 +2120,6 @@
                   ],
                   "id": "CAV",
                   "name": "Dieses Segment dient zur Angabe des Messstellenbetreibers, der der Messlokation zugeordnet ist. Hinweis zu DE7110: Bei einer Weiterverpflichtung entsteht die Situation, dass der wMSB keine Vertragsbeziehung zum Anschlussnutzer bzw. Anschlussnehmer mehr hat. Seine Leistung, die er durch die Weiterverpflichtung erbringt, muss er gegenüber dem gMSB abrechnen. Dies bedeutet wenn der Messstellenbetrieb bei mME oder iMS über den LF abgerechnet werden soll muss dies zwischen gMSB und LF vereinbart werden. Bei kME erfolgt für den Zeitraum der Weiterverpflichtung die Abrechnung über die Netznutzungsabrechnung durch den NB."
-                },
-                {
-                  "elements": [
-                    {
-                      "id": "7059",
-                      "index": 0,
-                      "name": "Klassentyp, Code",
-                      "type": "data"
-                    },
-                    {
-                      "components": [
-                        {
-                          "id": "6313",
-                          "name": "Gemessene Dimension, Code",
-                          "sub_index": 0,
-                          "type": "data"
-                        }
-                      ],
-                      "composite": "C502",
-                      "index": 1,
-                      "name": "Einzelheiten zu Maßangaben"
-                    },
-                    {
-                      "components": [
-                        {
-                          "codes": [
-                            {
-                              "name": "Zugeordneter Marktpartner",
-                              "value": "ZB3"
-                            }
-                          ],
-                          "id": "7037",
-                          "name": "Merkmal, Code",
-                          "sub_index": 0,
-                          "type": "code"
-                        }
-                      ],
-                      "composite": "C240",
-                      "index": 2,
-                      "name": "Merkmalsbeschreibung"
-                    }
-                  ],
-                  "id": "CCI",
-                  "name": "Dieses Segment dient zur Angabe des zugeordneten Marktpartners zu einer Marktlokation"
                 }
               ],
               "source_group": "SG10"
@@ -1750,37 +2135,6 @@
           },
           "entity_hint": "Messlokation",
           "segments": [
-            {
-              "elements": [
-                {
-                  "components": [
-                    {
-                      "codes": [
-                        {
-                          "name": "Messlokation",
-                          "value": "Z19"
-                        }
-                      ],
-                      "id": "1153",
-                      "name": "Referenz, Qualifier",
-                      "sub_index": 0,
-                      "type": "code"
-                    },
-                    {
-                      "id": "1154",
-                      "name": "ID der Messlokation",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C506",
-                  "index": 0,
-                  "name": "Referenz"
-                }
-              ],
-              "id": "RFF",
-              "name": "Zur Referenzierung auf eine ID einer Messlokation vom SG5 LOC+Z17 \"Messlokation\", sofern im AHB nichts Abweichendes angegeben."
-            },
             {
               "elements": [
                 {
@@ -1811,6 +2165,37 @@
               ],
               "id": "SEQ",
               "name": "Dieses Segment wird benutzt, um die Segmentgruppe einzuleiten. Das Segment dient dazu die nachfolgenden Daten einer Messlokation zuzuordnen. Die SG8 \"Daten der Messlokation\" eines Vorgangs enthält alle Informationen, die sich auf eine einzelne Messlokation in einem Vorgang beziehen."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Messlokation",
+                          "value": "Z19"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "ID der Messlokation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zur Referenzierung auf eine ID einer Messlokation vom SG5 LOC+Z17 \"Messlokation\", sofern im AHB nichts Abweichendes angegeben."
             }
           ],
           "source_group": "SG8"

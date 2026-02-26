@@ -15,6 +15,43 @@
             {
               "elements": [
                 {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
                   "components": [
                     {
                       "id": "3148",
@@ -58,43 +95,6 @@
               ],
               "id": "COM",
               "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient."
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Informationskontakt",
-                      "value": "IC"
-                    }
-                  ],
-                  "id": "3139",
-                  "index": 0,
-                  "name": "Funktion des Ansprechpartners, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "3413",
-                      "name": "Kontakt, Nummer",
-                      "sub_index": 0,
-                      "type": "data"
-                    },
-                    {
-                      "id": "3412",
-                      "name": "Name vom Ansprechpartner",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C056",
-                  "index": 1,
-                  "name": "Kontaktangaben"
-                }
-              ],
-              "id": "CTA",
-              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
             }
           ],
           "source_group": "SG3"
@@ -105,6 +105,59 @@
         "segment": "NAD"
       },
       "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        },
         {
           "elements": [
             {
@@ -239,6 +292,291 @@
                     {
                       "codes": [
                         {
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "GPKE / Abrechnungsdaten Netznutzungsabrechnung",
+                          "value": "55218"
+                        }
+                      ],
+                      "id": "1154",
+                      "name": "Prüfidentifikator",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Prüfidentifikator"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Gültige Daten",
+                          "value": "Z49"
+                        },
+                        {
+                          "name": "Keine Daten",
+                          "value": "Z53"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Qualität des Zeitraums",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Referenz, Identifikation",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "id": "1156",
+                      "name": "Zeitraum-ID",
+                      "sub_index": 2,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Bemerkung: Im DE1156 \"Zeitraum-ID\" dieses RFF-Segments wird die Nummer des Zeitraums genannt, auf die sich die Daten der einzelnen SG6 RFF, SG8 SEQ, SG12 NAD beziehen (wobei mit dem voranstehenden und allen folgenden SG6 RFF alle SG6 gemeint sind, die nicht \"Verwendungszeitraum der Daten\" heißen, d. h. die nicht diese Segmentgruppe sind. Im jeweiligen SG6 RFF DE1154, SG8 SEQ DE1050, SG12 RFF DE1154 wird die Nummer des Zeitraums eingetragen, der den Zeitraum festlegt, für den die Daten beschrieben werden (d. h. für den sie z. B. \"gültig\", \"erwartet\", oder \"..\" sind). Die Nummer der Zeitraum-ID beginnt in jedem SG4 IDE+24 je untenstehender Kombinationsmöglichkeit mit der Nummer 1 und wird immer um eins hochgezählt, vom ältesten zum jüngsten Zeitraum (d. h. der älteste Zeitraum eines Vorgangs hat immer die Zeitraum-ID 1). Für die Codes des DE1153 gelten folgende Kombinationsmöglichkeiten: 1. Kombinationsmöglichkeit: Z47 Im System vorhandene Daten und Z54 Im System keine Daten vorhanden  2. Kombinationsmöglichkeit: Z48 Erwartete Daten und Z55 Keine Daten erwartet 3. Kombinationsmöglichkeit: Z49 Gültige Daten und Z53 Keine Daten"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Verwendung der Daten ab",
+                          "value": "Z25"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYYMMDDHHMMZZZ",
+                          "value": "303"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Verwendung der Daten ab"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Verwendung der Daten bis",
+                          "value": "Z26"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYYMMDDHHMMZZZ",
+                          "value": "303"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Hier wird der Zeitpunkt genannt, bis zu dem die im Vorgang enthaltenen Daten zu verwenden sind."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Termindaten der Marktlokation",
+                          "value": "Z50"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "ID der Marktlokation / Referenz auf Zeitraum-ID",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zur Referenzierung auf eine ID einer Marktlokation vom SG5 LOC+Z16 \"Marktlokation“, bzw. zur Angabe der Referenz auf die Zeitraum-ID Die Nutzung ist im Anwendungsfall beschrieben. Hinweis: Dieses RFF klassifiziert mit einem Code im DE1153 die in derselben Segmentgruppe enthaltenen DTM zu einem Marktlokation relevanten Inhalt  Da es in einem Vorgang dazu kommen kann, dass zu einer Marktlokation Werte zu Stammdaten zu mehr als einem Termin übermittelt werden, dient die Referenzierung im DE1154 zur Zuordnung der in dieser SG6 übermittelten Werte zu dem in SG6 Verwendungszeitraum der Daten genannten Zeitraum, der dadurch identifiziert wird, dass dort im RFF Verwendungszeitraum der Daten in DE1156 der identische Wert steht wie in diesem Segment in DE1154."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Termin der Netznutzungsabrechnung",
+                          "value": "Z21"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "MMDD",
+                          "value": "106"
+                        },
+                        {
+                          "name": "MMWW-MMWW",
+                          "value": "104"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Dieses Segment wird benutzt um den Termin, zu dem die Netznutzungsabrechnung des NB erfolgt, zu bestimmen.  Bei verbrauchenden Marktlokationen mit Jahresleistungspreissystem ist dies somit immer der 1. Januar. Hinweise : DE2379: Anwendung für den Code \"104\" in DE2379: Hier wird der Monat mit Angabe der Woche bzw. des Zeitraums der Wochen in denen die Abrechnung erfolgen soll angegeben. Das angegebene Zeitintervall beträgt maximal einen Monat. Die Wochen im Monat sind wie folgt definiert: \"01\"= 1. Woche, das geplante Soll-Ablesedatum fällt in den Zeitraum vom 01. bis einschl. 07. Kalendertag \"02\"= 2. Woche, das geplante Soll-Ablesedatum fällt in den Zeitraum vom 08. bis einschl. 14. Kalendertag \"03\"= 3. Woche, das geplante Soll-Ablesedatum fällt in den Zeitraum vom 15. bis einschl. 21. Kalendertag \"04\"= 4. Woche, das geplante Soll-Ablesedatum fällt in den Zeitraum vom 22. bis letzten Kalendertag im Monat  Der Bindestrich im Code MMWW-MMWW wird hier nur zur Optimierung der Darstellung verwendet. In der UTILMD ist der Code ohne Bindestrich (MMWWMMWW) anzuwenden.  Anwendung für den Code \"106\" in DE2379: Es wird der tagesscharfe Abrechnungstermin mitgeteilt zu dem die Abrechnung erfolgen soll. Der angegebene tagesscharfe Abrechnungstermin ist als Beginn des angegebenen Tages zu verstehen. Der in Schaltjahren vorkommende Tag 29.02. ist nicht zu übermitteln, sondern durch den 28.02. zu ersetzen."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Nächste Netznutzungsabrechnung",
+                          "value": "Z09"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYY",
+                          "value": "602"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Dieses Segment wird benutzt, um dem LF mitzuteilen in welchem Jahr die nächste Netznutzungsabrechnung des NB stattfindet.  In der Antwort auf die Anmeldung ist das die erste Netznutzungsabrechnung. Bei der Verwendung in einer Stammdatenänderung wird das Jahr angegeben in welchem die im DTM+Z09 zum ersten bzw. wenn sich das Datum nicht geändert hat, zum nächsten Mal stattfindet. Bei verbrauchenden Marktlokationen mit Jahresleistungspreissystem ist das Jahr des Zeitpunkts (gesetzlicher deutscher Zeit) des Lieferbeginns zu ermitteln. Der Wert ist um 1 zu erhöhen und in DE2380 einzutragen."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
                           "name": "Netznutzungsabrechnungs- bzw. Einspeisevergütungsintervall des NB",
                           "value": "Z22"
                         }
@@ -274,37 +612,6 @@
               ],
               "id": "DTM",
               "name": "DE2380: Es wird die Anzahl der Monate angegeben, bis zu denen die nächste Netznutzungsabrechnung gegenüber dem Kunden des NB in Bezug auf den festgelegten Termin der Netznutzungsabrechnung erfolgt. Ausgehend vom Termin der Netznutzungsabrechnung des NB wird die Anzahl der Monate zur nächsten Abrechnung angegeben. Ist der Wert kleiner als 12, so sind mittels des angegebenen Zeitintervalls weitere Abrechnungstermine zu ermitteln.  Somit ist erlaubt: 1 - monatlich 3 - vierteljährlich 6 - halbjährlich 12 - jährlich Bei verbrauchenden Marktlokationen mit Jahresleistungspreissystem ist DE2380 mit 12 zu füllen. Bei verbrauchenden Marktlokationen mit Monatsleistungspreissystem ist DE2380 mit 1 zu füllen."
-            },
-            {
-              "elements": [
-                {
-                  "components": [
-                    {
-                      "codes": [
-                        {
-                          "name": "Termindaten der Marktlokation",
-                          "value": "Z50"
-                        }
-                      ],
-                      "id": "1153",
-                      "name": "Referenz, Qualifier",
-                      "sub_index": 0,
-                      "type": "code"
-                    },
-                    {
-                      "id": "1154",
-                      "name": "ID der Marktlokation / Referenz auf Zeitraum-ID",
-                      "sub_index": 1,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C506",
-                  "index": 0,
-                  "name": "Referenz"
-                }
-              ],
-              "id": "RFF",
-              "name": "Zur Referenzierung auf eine ID einer Marktlokation vom SG5 LOC+Z16 \"Marktlokation“, bzw. zur Angabe der Referenz auf die Zeitraum-ID Die Nutzung ist im Anwendungsfall beschrieben. Hinweis: Dieses RFF klassifiziert mit einem Code im DE1153 die in derselben Segmentgruppe enthaltenen DTM zu einem Marktlokation relevanten Inhalt  Da es in einem Vorgang dazu kommen kann, dass zu einer Marktlokation Werte zu Stammdaten zu mehr als einem Termin übermittelt werden, dient die Referenzierung im DE1154 zur Zuordnung der in dieser SG6 übermittelten Werte zu dem in SG6 Verwendungszeitraum der Daten genannten Zeitraum, der dadurch identifiziert wird, dass dort im RFF Verwendungszeitraum der Daten in DE1156 der identische Wert steht wie in diesem Segment in DE1154."
             }
           ],
           "source_group": "SG6"
@@ -319,6 +626,243 @@
               },
               "entity_hint": "Marktlokation",
               "segments": [
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Verbrauchsaufteilung (in %) für temperaturabhängige Marktlokation",
+                              "value": "E17"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Diese Segmentgruppe von CCI CAV dient zur Identifizierung und Beschreibung von spezifischen Eigenschaften, die an dieser Marktlokation gelten. Verbrauchsaufteilung: Hier wird ein Prozentwert für die Aufteilung der ermittelten Energiemenge bei einer gemeinsam gemessenen Marktlokation eingestellt. Die Berechnung der gemessenen Energiemenge für Schwachlast und nicht Schwachlast erfolgt nach folgender Systematik: 1. [Gemessene Energiemenge der OBIS \"nicht Schwachlast\"] * [DE7110 in % / 100%] = [zu verlagernde Energiemenge] 2. [Gemessene Energiemenge der OBIS \"Schwachlast\"] - [zu verlagernde Energiemenge] = [Ermittelte Energiemenge für Schwachlast] 3. [Gemessene Energiemenge der OBIS \"nicht Schwachlast\"] + [zu verlagernde Energiemenge] = [Ermittelte Energiemenge für nicht Schwachlast]"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Verbrauchsaufteilung in %",
+                              "value": "Z22"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7110",
+                          "name": "Verbrauchsaufteilung in %",
+                          "sub_index": 3,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Zur Angabe des Wertes eines bestimmten Merkmals. Dieses Segment dient zur genaueren Wertspezifizierung des Merkmals im vorangegangen CCI Segment."
+                },
+                {
+                  "elements": [
+                    {
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Netznutzung",
+                              "value": "Z88"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Diese Segmentgruppe von CCI CAV dient der Angabe von Details der Netznutzung für die im Vorgang genannte Marktlokation."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Netznutzungsvertrag",
+                              "value": "Z74"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Direkter Vertrag zwischen Kunden und NB",
+                              "value": "Z08"
+                            },
+                            {
+                              "name": "Vertrag zwischen Lieferanten und NB",
+                              "value": "Z09"
+                            }
+                          ],
+                          "id": "7110",
+                          "name": "Merkmalswert",
+                          "sub_index": 3,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment wird verwendet, um Angaben zum Netznutzungsvertrag zu machen. Durch die Darstellung der Beziehung der Vertragsparteien wird die gewünschte oder vorhandene vertragliche Regelung zur verbrauchenden Marktlokation mitgeteilt."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Zahlung der Netznutzung",
+                              "value": "Z73"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "Codeliste, Code",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Kunde",
+                              "value": "Z10"
+                            },
+                            {
+                              "name": "Lieferant",
+                              "value": "Z11"
+                            }
+                          ],
+                          "id": "7110",
+                          "name": "Merkmalswert",
+                          "sub_index": 3,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment wird verwendet, um Angaben zum Netznutzungsvertrag oder zur Art der Lieferung zu machen. Unabhängig von dem Netznutzungsvertrag wird hier festgelegt, wer die Netznutzung der verbrauchenden Marktlokation bezahlt."
+                },
                 {
                   "elements": [
                     {
@@ -371,50 +915,6 @@
                   ],
                   "id": "CAV",
                   "name": "Anwendung Z12: Kann der Lieferant mit den vom MSB erhaltenen Mengen, unter Hinzunahme der im Rahmen der Marktkommunikation zu der Marktlokation ausgetauschten Informationen, den Lieferschein prüfen, so ist der Code Z12 zu verwenden. Die für die Prüfung des Lieferscheins benötigten Informationen hängen von der Art der Marktlokation ab und sind, falls für die Marktlokation vorhanden: Berechnungsformel, Verbrauchsaufteilung und Messwerte. Bei Umlagerung von Mengen bei \"gemeinsam gemessenen Marktlokationen\" kann ein Lieferschein erstellt werden, da dem LF alle Daten hierzu vorliegen. Diese Marktlokationen werden mit Z12 „In der Marktkommunikation ausgetauschte Daten“ gekennzeichnet. Anwendung Z13: Es gibt vereinzelte Marktlokationen bei denen zwischen NB und Anschlussnutzer eine Vereinbarung existiert auf Grund der die vom MSB ermittelten Werte, welche die Grundlage für den Lieferschein bilden nicht zu den Werten der Netznutzungsabrechnung passt. Diese Marktlokationen werden mit Z13 „Abweichend vertraglich mit Anschlussnutzer vereinbarte Grundlage“ gekennzeichnet."
-                },
-                {
-                  "elements": [
-                    {
-                      "id": "7059",
-                      "index": 0,
-                      "name": "Klassentyp, Code",
-                      "type": "data"
-                    },
-                    {
-                      "components": [
-                        {
-                          "id": "6313",
-                          "name": "Gemessene Dimension, Code",
-                          "sub_index": 0,
-                          "type": "data"
-                        }
-                      ],
-                      "composite": "C502",
-                      "index": 1,
-                      "name": "Einzelheiten zu Maßangaben"
-                    },
-                    {
-                      "components": [
-                        {
-                          "codes": [
-                            {
-                              "name": "Netznutzung",
-                              "value": "Z88"
-                            }
-                          ],
-                          "id": "7037",
-                          "name": "Merkmal, Code",
-                          "sub_index": 0,
-                          "type": "code"
-                        }
-                      ],
-                      "composite": "C240",
-                      "index": 2,
-                      "name": "Merkmalsbeschreibung"
-                    }
-                  ],
-                  "id": "CCI",
-                  "name": "Diese Segmentgruppe von CCI CAV dient der Angabe von Details der Netznutzung für die im Vorgang genannte Marktlokation."
                 }
               ],
               "source_group": "SG10"
@@ -477,33 +977,158 @@
                 {
                   "elements": [
                     {
+                      "codes": [
+                        {
+                          "name": "Berechnungspreis",
+                          "value": "Z44"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
                       "components": [
                         {
                           "codes": [
                             {
-                              "name": "NB",
-                              "value": "Z88"
+                              "name": "Tag",
+                              "value": "ZD8"
                             }
                           ],
-                          "id": "7111",
-                          "name": "Merkmalswert, Code",
+                          "id": "7037",
+                          "name": "Maßeinheit",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
                           "id": "1131",
-                          "name": "MP-ID",
+                          "name": "Codeliste, Code",
                           "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3055",
+                          "name": "Verantwortliche Stelle für die Codepflege, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "7036",
+                          "name": "Preisangabe für Singulär genutztes Betriebsmittel je Menge aus QTY+Z33 (Menge der Singulär genutzen Betriebsmittel) der selben SG9",
+                          "sub_index": 3,
                           "type": "data"
                         }
                       ],
-                      "composite": "C889",
-                      "index": 0,
-                      "name": "Merkmalswert"
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
                     }
                   ],
-                  "id": "CAV",
-                  "name": "Dieses Segment dient zur Angabe des Netzbetreibers, der das Konzessionsgebiet zu dieser Marktlokation bisher verantwortet hat und dessen Preisblatt für das laufende Kalenderjahr noch Anwendung findet.."
+                  "id": "CCI",
+                  "name": "Preisangabe für Singulär genutzte Betriebsmittel"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Code der Zählzeitdefinition",
+                          "value": "Z39"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "7037",
+                          "name": "Code der Zählzeitdefinition",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Zugeordnete Zählzeitdefinition"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Code des Zählzeitregisters",
+                          "value": "Z38"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "7037",
+                          "name": "Code des Zählzeitregisters",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Zugeordnetes Zählzeitregister"
                 },
                 {
                   "elements": [
@@ -548,6 +1173,37 @@
                   ],
                   "id": "CCI",
                   "name": "Dieses Segment dient zur Angabe der einer Marktlokation zugeordneten Marktpartner."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "NB",
+                              "value": "Z88"
+                            }
+                          ],
+                          "id": "7111",
+                          "name": "Merkmalswert, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "1131",
+                          "name": "MP-ID",
+                          "sub_index": 1,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C889",
+                      "index": 0,
+                      "name": "Merkmalswert"
+                    }
+                  ],
+                  "id": "CAV",
+                  "name": "Dieses Segment dient zur Angabe des Netzbetreibers, der das Konzessionsgebiet zu dieser Marktlokation bisher verantwortet hat und dessen Preisblatt für das laufende Kalenderjahr noch Anwendung findet.."
                 }
               ],
               "source_group": "SG10"
@@ -560,6 +1216,143 @@
               },
               "entity_hint": "Marktlokation",
               "segments": [
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Anzahl der abzurechenden Positionen der Gruppenartikel-ID / Artikel-ID",
+                              "value": "Z38"
+                            }
+                          ],
+                          "id": "6063",
+                          "name": "Menge, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "6060",
+                          "name": "Menge",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Stück",
+                              "value": "H87"
+                            }
+                          ],
+                          "id": "6411",
+                          "name": "Maßeinheit, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C186",
+                      "index": 0,
+                      "name": "Mengenangaben"
+                    }
+                  ],
+                  "id": "QTY",
+                  "name": "Hiermit wird die Anzahl der abzurechenden Positionen der Gruppenartikel-ID / Artikel-ID angeben. Z. B. wenn in der Netznutzungsabrechnung mehrere Zähler oder Wandlersätze abgerechnet werden müssen"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Gemeinderabatt",
+                              "value": "Z16"
+                            }
+                          ],
+                          "id": "6063",
+                          "name": "Menge, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "6060",
+                          "name": "Mengenangabe in %",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Prozent",
+                              "value": "P1"
+                            }
+                          ],
+                          "id": "6411",
+                          "name": "Maßeinheit, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C186",
+                      "index": 0,
+                      "name": "Mengenangaben"
+                    }
+                  ],
+                  "id": "QTY",
+                  "name": "Hier erfolgt die Angabe zum Preisnachlass der Netznutzungsentgelte für den Eigenverbrauch von Gemeinden nach Konzessionsabgabenverordnung §3. Hinweis: DE6060: Wenn kein Preisnachlass erfolgt, wird der Prozentwert von \"0\" übermittelt. Gleiches gilt, wenn per Stammdatenänderung ein Preisnachlass nicht länger vorhanden ist. Wird der Gemeinderabatt nicht über die Netznutzungsabrechnung gegenüber dem Lieferanten weitergegeben, erfolgt hier ebenfalls die Angabe von \"0\" Prozent."
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Zuschlag",
+                              "value": "Z34"
+                            },
+                            {
+                              "name": "Abschlag",
+                              "value": "Z35"
+                            },
+                            {
+                              "name": "Kein Zu-/Abschlag",
+                              "value": "Z37"
+                            }
+                          ],
+                          "id": "6063",
+                          "name": "Menge, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "6060",
+                          "name": "Mengenangabe in %",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Prozent",
+                              "value": "P1"
+                            }
+                          ],
+                          "id": "6411",
+                          "name": "Maßeinheit, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C186",
+                      "index": 0,
+                      "name": "Mengenangaben"
+                    }
+                  ],
+                  "id": "QTY",
+                  "name": "Dieses Segment dient zur Übermittlung von Abschlägen (im Sinne von Rabatten auf einen Preis) bzw. Zuschlägen (im Sinne Aufschlägen auf einen Preis) bzw. der expliziten Aussage, dass weder ein Ab- noch ein Zuschlag für diese Leistung erhoben wird. Werden mehrere Zu- oder Abschläge angegeben wirken diese jeweils auf dem zur Artikel-ID hinterlegtem Preis multiplikativ, wobei der Wert des Gemeinderabatts in dieser Multiplikation immer zu berücksichtigen ist. Wird über dieses Segment ein oder mehrere Rabatt(e) gewährt, so müssen dies zusätzliche, vom Gemeinderabatt abweichende Abschläge sein. Der Gemeinderabatt ist ausschließlich in QTY+Z16 anzugeben. Hinweis: DE6060: Wenn kein Zuschlag oder Abschlag erfolgt, wird der Prozentwert von \"0\" übermittelt, auch wenn dies bereits vmittels des Codes Z37 in DE6063 ausgesagt wird. Gleiches gilt, wenn per Stammdatenänderung ein Zuschlag oder Abschlag nicht länger vorhanden ist."
+                },
                 {
                   "elements": [
                     {
@@ -611,6 +1404,41 @@
                 {
                   "codes": [
                     {
+                      "name": "Netznutzungsabrechnungsdaten der Marktlokation",
+                      "value": "Z45"
+                    },
+                    {
+                      "name": "Differenz-Netznutzungsabrechnungsdaten der Marktlokation",
+                      "value": "Z84"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "1050",
+                      "name": "Referenz auf Zeitraum-ID",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C286",
+                  "index": 1,
+                  "name": "Information über eine Folge"
+                }
+              ],
+              "id": "SEQ",
+              "name": "Hinweis zur den Codes - Z84 Differenz-Netznutzungsabrechnungsdaten der Marktlokation - Z96 Erwartete Differenz-Netznutzungsabrechnungsdaten der Marktlokation und - Z97 Im System vorhandene Differenz- Netznutzungsabrechnungsdaten der Marktlokation  Mit Differenz-Netznutzungsabrechnungsdaten sind die Netznutzungsabrechnungsdaten gemeint, die bei einem unterjährigen Lieferantenwechsel an einer Marktlokation in der Abrechnungssystematik Arbeits-/Leistungspreis, mit dem alten LF vereinbart wurden und dem neuen ebenfalls in der Regel ab Jahresbeginn des Jahres in der er der Marktlokation zugeordnet wurde, zur Verfügung gestellt werden müssen."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
                       "name": "Gruppenartikel-ID / Artikel-ID",
                       "value": "Z02"
                     }
@@ -652,41 +1480,6 @@
               ],
               "id": "PIA",
               "name": "Gruppenartikel-ID / Artikel-ID"
-            },
-            {
-              "elements": [
-                {
-                  "codes": [
-                    {
-                      "name": "Netznutzungsabrechnungsdaten der Marktlokation",
-                      "value": "Z45"
-                    },
-                    {
-                      "name": "Differenz-Netznutzungsabrechnungsdaten der Marktlokation",
-                      "value": "Z84"
-                    }
-                  ],
-                  "id": "1229",
-                  "index": 0,
-                  "name": "Handlung, Code",
-                  "type": "code"
-                },
-                {
-                  "components": [
-                    {
-                      "id": "1050",
-                      "name": "Referenz auf Zeitraum-ID",
-                      "sub_index": 0,
-                      "type": "data"
-                    }
-                  ],
-                  "composite": "C286",
-                  "index": 1,
-                  "name": "Information über eine Folge"
-                }
-              ],
-              "id": "SEQ",
-              "name": "Hinweis zur den Codes - Z84 Differenz-Netznutzungsabrechnungsdaten der Marktlokation - Z96 Erwartete Differenz-Netznutzungsabrechnungsdaten der Marktlokation und - Z97 Im System vorhandene Differenz- Netznutzungsabrechnungsdaten der Marktlokation  Mit Differenz-Netznutzungsabrechnungsdaten sind die Netznutzungsabrechnungsdaten gemeint, die bei einem unterjährigen Lieferantenwechsel an einer Marktlokation in der Abrechnungssystematik Arbeits-/Leistungspreis, mit dem alten LF vereinbart wurden und dem neuen ebenfalls in der Regel ab Jahresbeginn des Jahres in der er der Marktlokation zugeordnet wurde, zur Verfügung gestellt werden müssen."
             }
           ],
           "source_group": "SG8"

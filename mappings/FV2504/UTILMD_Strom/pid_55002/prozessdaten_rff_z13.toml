@@ -1,0 +1,18 @@
+# Pruefidentifikator (RFF+Z13) — merges into Prozessdaten.
+#
+# Source: SG4.SG6 -> RFF segment (qualifier Z13 = PID reference)
+# RFF+Z13:55002  ->  pruefidentifikator
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "RFF.c506.d1153=Z13"
+
+[fields]
+"rff.c506.d1154" = "pruefidentifikator"
+
+[fields."rff.c506.d1153"]
+target = ""
+default = "Z13"
