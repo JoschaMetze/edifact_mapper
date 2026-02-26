@@ -162,40 +162,10 @@ fn test_load_split_55013() {
         "55013 should have TechnischeRessource"
     );
 
-    // SG12 NAD entities
+    // SG12 NAD: unified Geschaeftspartner entity (all NAD qualifiers Z63-Z70)
     assert!(
-        tx_defs
-            .iter()
-            .any(|d| d.meta.entity == "Marktlokationsanschrift"),
-        "55013 should have Marktlokationsanschrift (NAD+Z63)"
-    );
-    assert!(
-        tx_defs.iter().any(|d| d.meta.entity == "KundeDesLf"),
-        "55013 should have KundeDesLf (NAD+Z65)"
-    );
-    assert!(
-        tx_defs
-            .iter()
-            .any(|d| d.meta.entity == "KorrespondenzanschriftKundeLf"),
-        "55013 should have KorrespondenzanschriftKundeLf (NAD+Z66)"
-    );
-    assert!(
-        tx_defs.iter().any(|d| d.meta.entity == "KundeDesNb"),
-        "55013 should have KundeDesNb (NAD+Z67)"
-    );
-    assert!(
-        tx_defs
-            .iter()
-            .any(|d| d.meta.entity == "KorrespondenzanschriftKundeNb"),
-        "55013 should have KorrespondenzanschriftKundeNb (NAD+Z68)"
-    );
-    assert!(
-        tx_defs.iter().any(|d| d.meta.entity == "Anschlussnehmer"),
-        "55013 should have Anschlussnehmer (NAD+Z69)"
-    );
-    assert!(
-        tx_defs.iter().any(|d| d.meta.entity == "Hausverwalter"),
-        "55013 should have Hausverwalter (NAD+Z70)"
+        tx_defs.iter().any(|d| d.meta.entity == "Geschaeftspartner"),
+        "55013 should have Geschaeftspartner (unified NAD SG12)"
     );
 
     // SG9 within SG8_Z98 should enrich Marktlokation
@@ -215,10 +185,11 @@ fn test_load_split_55013() {
         "55013 should have SG9 definition for Marktlokation Jahresverbrauchsprognose"
     );
 
-    // Verify total definition count (31 TOML files in pid_55013)
+    // Verify total definition count (25 TOML files in pid_55013)
+    // Was 31 before NAD/SG12 consolidation (7 files → 1 unified Geschaeftspartner)
     assert_eq!(
         tx_defs.len(),
-        31,
-        "55013 transaction engine should have exactly 31 definitions"
+        25,
+        "55013 transaction engine should have exactly 25 definitions"
     );
 }

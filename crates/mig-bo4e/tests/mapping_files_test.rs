@@ -275,5 +275,9 @@ fn test_load_pid_55002_mapping_files() {
         .filter(|d| d.meta.entity == "Prozessdaten" && d.meta.source_group == "SG4.SG6")
         .filter_map(|d| d.meta.discriminator.as_deref())
         .collect();
-    assert!(rff_groups.len() >= 3, "Should have 3 RFF discriminators for Prozessdaten, got {}", rff_groups.len());
+    assert!(
+        rff_groups.len() >= 3,
+        "Should have 3 RFF discriminators for Prozessdaten, got {}",
+        rff_groups.len()
+    );
 }
