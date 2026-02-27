@@ -10,12 +10,13 @@ description = "MIG-guided EDIFACT tree assembly — parse RawSegments into typed
 edifact-types.workspace = true
 edifact-parser.workspace = true
 mig-types = { path = "../mig-types" }
-automapper-generator = { path = "../automapper-generator" }
+quick-xml.workspace = true
 thiserror.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 
 [dev-dependencies]
+automapper-generator = { path = "../automapper-generator" }
 insta.workspace = true
 criterion.workspace = true
 rayon.workspace = true

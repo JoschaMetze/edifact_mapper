@@ -4,8 +4,8 @@
 //! and verifies that all entity keys are produced with correct values.
 
 use automapper_generator::parsing::ahb_parser::parse_ahb;
-use automapper_generator::parsing::mig_parser::parse_mig;
 use mig_assembly::assembler::Assembler;
+use mig_assembly::parsing::parse_mig;
 use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::tokenize::parse_to_segments;
 use mig_bo4e::engine::MappingEngine;

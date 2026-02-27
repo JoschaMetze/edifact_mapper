@@ -4,7 +4,7 @@
 //! corresponding data in the assembled tree, emits segments in MIG order.
 
 use crate::assembler::{AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree};
-use automapper_generator::schema::mig::{MigSchema, MigSegmentGroup};
+use mig_types::schema::mig::{MigSchema, MigSegmentGroup};
 
 /// Output segment from disassembly (owned data, ready for rendering).
 #[derive(Debug, Clone)]
@@ -144,7 +144,7 @@ mod tests {
     use crate::assembler::{
         AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree,
     };
-    use automapper_generator::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
+    use mig_types::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 
     fn make_mig_segment(id: &str) -> MigSegment {
         MigSegment {

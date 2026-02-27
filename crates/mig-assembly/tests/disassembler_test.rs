@@ -1,10 +1,10 @@
 //! Integration tests for disassembler with real MIG schemas.
 
-use automapper_generator::parsing::mig_parser::parse_mig;
-use automapper_generator::schema::mig::MigSchema;
 use mig_assembly::assembler::Assembler;
 use mig_assembly::disassembler::Disassembler;
+use mig_assembly::parsing::parse_mig;
 use mig_assembly::tokenize::parse_to_segments;
+use mig_types::schema::mig::MigSchema;
 use std::path::Path;
 
 const MIG_XML_PATH: &str =

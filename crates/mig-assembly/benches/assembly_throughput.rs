@@ -49,13 +49,8 @@ fn bench_assembly(c: &mut Criterion) {
         return;
     }
 
-    let mig = automapper_generator::parsing::mig_parser::parse_mig(
-        mig_path,
-        "UTILMD",
-        Some("Strom"),
-        "FV2504",
-    )
-    .unwrap();
+    let mig =
+        mig_assembly::parsing::parse_mig(mig_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
 
     let fixture_dir =
         Path::new("../../example_market_communication_bo4e_transactions/UTILMD/FV2504");

@@ -1,5 +1,5 @@
-use automapper_generator::schema::mig::*;
 use mig_assembly::service::ConversionService;
+use mig_types::schema::mig::*;
 
 fn make_minimal_mig() -> MigSchema {
     MigSchema {

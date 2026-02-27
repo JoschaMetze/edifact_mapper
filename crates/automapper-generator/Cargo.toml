@@ -21,6 +21,8 @@ hex = "0.4"
 chrono = { version = "0.4", features = ["serde"] }
 glob = "0.3"
 toml = "0.8"
+mig-types = { path = "../mig-types" }
+mig-assembly = { path = "../mig-assembly" }
 
 [dev-dependencies]
 insta = { version = "1", features = ["yaml", "redactions"] }

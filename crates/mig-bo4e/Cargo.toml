@@ -9,7 +9,6 @@ description = "Declarative TOML-based MIG-tree to BO4E mapping engine"
 [dependencies]
 mig-types = { path = "../mig-types" }
 mig-assembly = { path = "../mig-assembly" }
-automapper-generator = { path = "../automapper-generator" }
 bo4e-extensions.workspace = true
 indexmap = { version = "2", features = ["serde"] }
 serde.workspace = true
@@ -18,6 +17,7 @@ toml.workspace = true
 thiserror.workspace = true
 
 [dev-dependencies]
+automapper-generator = { path = "../automapper-generator" }
 edifact-types.workspace = true
 insta.workspace = true
 tempfile.workspace = true

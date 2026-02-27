@@ -322,6 +322,41 @@ enum Commands {
         #[arg(long)]
         output_dir: PathBuf,
     },
+
+    /// Generate a synthetic EDIFACT fixture from a PID schema JSON.
+    GenerateFixture {
+        /// Path to the PID schema JSON file (e.g., pid_55043_schema.json)
+        #[arg(long)]
+        pid_schema: PathBuf,
+
+        /// Output path for the generated .edi file
+        #[arg(long)]
+        output: PathBuf,
+
+        /// Validate the generated fixture against MIG/AHB schemas
+        #[arg(long)]
+        validate: bool,
+
+        /// Path to MIG XML file (required when --validate is set)
+        #[arg(long)]
+        mig_xml: Option<PathBuf>,
+
+        /// Path to AHB XML file (required when --validate is set)
+        #[arg(long)]
+        ahb_xml: Option<PathBuf>,
+
+        /// EDIFACT message type (default: UTILMD)
+        #[arg(long, default_value = "UTILMD")]
+        message_type: Option<String>,
+
+        /// Message type variant (default: Strom)
+        #[arg(long, default_value = "Strom")]
+        variant: Option<String>,
+
+        /// Format version (default: FV2504)
+        #[arg(long, default_value = "FV2504")]
+        format_version: Option<String>,
+    },
 }
 
 /// Parses an existing generated condition evaluator `.rs` file and extracts
@@ -1291,6 +1326,80 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 return Err(automapper_generator::GeneratorError::Validation {
                     message: format!("{} errors found", report.errors.len()),
                 });
+            }
+
+            Ok(())
+        }
+        Commands::GenerateFixture {
+            pid_schema,
+            output,
+            validate,
+            mig_xml,
+            ahb_xml,
+            message_type,
+            variant,
+            format_version,
+        } => {
+            eprintln!("Generating fixture from schema: {:?}", pid_schema);
+
+            let schema_str = std::fs::read_to_string(&pid_schema)?;
+            let schema: serde_json::Value = serde_json::from_str(&schema_str)?;
+
+            let pid = schema["pid"].as_str().unwrap_or("unknown");
+            let beschreibung = schema["beschreibung"].as_str().unwrap_or("");
+            eprintln!("  PID: {} ({})", pid, beschreibung);
+
+            let edi = automapper_generator::fixture_generator::generate_fixture(&schema);
+
+            // Count segments (lines ending with ')
+            let seg_count = edi.matches('\'').count();
+            eprintln!("  Generated {} segments", seg_count);
+
+            if let Some(parent) = output.parent() {
+                std::fs::create_dir_all(parent).ok();
+            }
+            std::fs::write(&output, &edi)?;
+
+            eprintln!("  Output: {:?}", output);
+
+            if validate {
+                let mig_path =
+                    mig_xml.ok_or_else(|| automapper_generator::GeneratorError::Validation {
+                        message: "--mig-xml is required when --validate is set".to_string(),
+                    })?;
+                let ahb_path =
+                    ahb_xml.ok_or_else(|| automapper_generator::GeneratorError::Validation {
+                        message: "--ahb-xml is required when --validate is set".to_string(),
+                    })?;
+                let msg_type = message_type.as_deref().unwrap_or("UTILMD");
+                let var = variant.as_deref();
+                let fv = format_version.as_deref().unwrap_or("FV2504");
+
+                eprintln!("\nValidating fixture against MIG/AHB...");
+                let result = automapper_generator::fixture_generator::validate_fixture(
+                    &edi, pid, &mig_path, &ahb_path, msg_type, var, fv,
+                )?;
+
+                eprintln!("  Tokenized: {} segments", result.segment_count);
+                eprintln!(
+                    "  Assembled: {} segments in {} groups",
+                    result.assembled_segment_count, result.assembled_group_count
+                );
+
+                for warning in &result.warnings {
+                    eprintln!("  WARNING: {}", warning);
+                }
+                for error in &result.errors {
+                    eprintln!("  ERROR: {}", error);
+                }
+
+                if result.is_ok() {
+                    eprintln!("  Validation PASSED");
+                } else {
+                    return Err(automapper_generator::GeneratorError::Validation {
+                        message: format!("{} validation errors", result.errors.len()),
+                    });
+                }
             }
 
             Ok(())

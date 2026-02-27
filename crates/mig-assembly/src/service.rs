@@ -6,10 +6,10 @@
 use std::path::Path;
 
 use crate::assembler::Assembler;
+use crate::parsing::parse_mig;
 use crate::tokenize::parse_to_segments;
 use crate::AssemblyError;
-use automapper_generator::parsing::mig_parser::parse_mig;
-use automapper_generator::schema::mig::MigSchema;
+use mig_types::schema::mig::MigSchema;
 
 /// High-level service that holds a parsed MIG schema and provides
 /// convenient methods for EDIFACT conversion.

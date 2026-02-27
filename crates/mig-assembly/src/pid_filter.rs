@@ -5,7 +5,7 @@
 //! This module filters a full MIG schema to produce a PID-specific one
 //! that the assembler can use without ambiguity.
 
-use automapper_generator::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
+use mig_types::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 use std::collections::HashSet;
 
 /// Filter a MIG schema to only include segments and groups whose
@@ -193,7 +193,7 @@ fn extract_group_number(id: &str) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use automapper_generator::schema::mig::MigSegment;
+    use mig_types::schema::mig::MigSegment;
 
     fn seg(id: &str, number: Option<&str>) -> MigSegment {
         MigSegment {

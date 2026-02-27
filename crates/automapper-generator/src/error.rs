@@ -42,4 +42,7 @@ pub enum GeneratorError {
 
     #[error("file not found: {0}")]
     FileNotFound(PathBuf),
+
+    #[error("assembly error: {0}")]
+    Assembly(#[from] mig_assembly::AssemblyError),
 }

@@ -17,5 +17,6 @@
 pub mod cursor;
 pub mod generated;
 pub mod navigator;
+pub mod schema;
 pub mod segment;
 pub mod traits;

@@ -6,7 +6,7 @@
 
 use std::collections::HashMap;
 
-use automapper_generator::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
+use mig_types::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 
 /// Maps segment tags to their expected element count from the MIG schema.
 ///

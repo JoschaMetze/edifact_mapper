@@ -3,11 +3,11 @@
 //! Uses insta for snapshot testing to detect regressions in assembly output.
 
 use automapper_generator::parsing::ahb_parser::parse_ahb;
-use automapper_generator::parsing::mig_parser::parse_mig;
-use automapper_generator::schema::mig::MigSchema;
 use mig_assembly::assembler::{AssembledGroup, AssembledTree, Assembler};
+use mig_assembly::parsing::parse_mig;
 use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::tokenize::parse_to_segments;
+use mig_types::schema::mig::MigSchema;
 use std::collections::HashSet;
 use std::path::Path;
 

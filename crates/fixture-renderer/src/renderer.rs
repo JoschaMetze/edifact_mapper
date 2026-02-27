@@ -72,9 +72,8 @@ pub fn render_fixture(
 
     // 3. Read and tokenize source EDIFACT
     let edi_bytes = std::fs::read(source_edi_path)?;
-    let segments =
-        parse_to_segments(&edi_bytes).map_err(|e| RendererError::Assembly(e.to_string()))?;
-    let chunks = split_messages(segments).map_err(|e| RendererError::Assembly(e.to_string()))?;
+    let segments = parse_to_segments(&edi_bytes)?;
+    let chunks = split_messages(segments)?;
 
     // 4. Load mapping engines
     let (msg_engine, tx_engine) =
@@ -107,9 +106,7 @@ pub fn render_fixture(
 
     for msg_chunk in &chunks.messages {
         // Assemble message body (segments between UNH and UNT)
-        let tree = assembler
-            .assemble_generic(&msg_chunk.body)
-            .map_err(|e| RendererError::Assembly(e.to_string()))?;
+        let tree = assembler.assemble_generic(&msg_chunk.body)?;
 
         // Forward map to BO4E
         let mapped = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", true);
@@ -214,9 +211,8 @@ pub fn generate_canonical_bo4e(
 
     // 3. Tokenize and split
     let edi_bytes = std::fs::read(source_edi_path)?;
-    let segments =
-        parse_to_segments(&edi_bytes).map_err(|e| RendererError::Assembly(e.to_string()))?;
-    let chunks = split_messages(segments).map_err(|e| RendererError::Assembly(e.to_string()))?;
+    let segments = parse_to_segments(&edi_bytes)?;
+    let chunks = split_messages(segments)?;
 
     // 4. Extract envelope data
     let nachrichtendaten = extract_nachrichtendaten(&chunks.envelope);
@@ -248,9 +244,7 @@ pub fn generate_canonical_bo4e(
     let (unh_ref, nachrichten_typ) = extract_unh_fields(&msg.unh);
 
     let assembler = Assembler::new(&filtered_mig);
-    let tree = assembler
-        .assemble_generic(&msg.body)
-        .map_err(|e| RendererError::Assembly(e.to_string()))?;
+    let tree = assembler.assemble_generic(&msg.body)?;
 
     // 7. Forward map
     let mapped: MappedMessage =

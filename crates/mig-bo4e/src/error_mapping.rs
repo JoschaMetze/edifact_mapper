@@ -6,7 +6,7 @@
 //! like `stammdaten.Marktlokation.marktlokationsId` so users can find
 //! the source of the problem in their BO4E input.
 
-use automapper_generator::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
+use mig_types::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 
 use crate::definition::{FieldMapping, MappingDefinition};
 

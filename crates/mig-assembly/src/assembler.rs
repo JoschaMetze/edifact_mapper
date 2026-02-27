@@ -9,7 +9,7 @@ use crate::diagnostic::{StructureDiagnostic, StructureDiagnosticKind};
 use crate::matcher;
 use crate::tokenize::OwnedSegment;
 use crate::AssemblyError;
-use automapper_generator::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
+use mig_types::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 use serde::{Deserialize, Serialize};
 
 /// A generic assembled tree node (before PID-specific typing).
@@ -199,9 +199,7 @@ impl<'a> Assembler<'a> {
                         if cursor.is_exhausted() {
                             break;
                         }
-                        if let Some(assembled) =
-                            self.try_consume_segment(segments, cursor, slot)?
-                        {
+                        if let Some(assembled) = self.try_consume_segment(segments, cursor, slot)? {
                             instance.segments.push(assembled);
                         }
                     }

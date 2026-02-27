@@ -17,6 +17,7 @@ pub mod disassembler;
 pub mod error;
 pub mod matcher;
 pub mod navigator;
+pub mod parsing;
 pub mod pid_detect;
 pub mod pid_filter;
 pub mod renderer;

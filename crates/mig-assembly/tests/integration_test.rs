@@ -2,11 +2,11 @@
 //!
 //! Tests use both synthetic EDIFACT data and real MIG XML + fixture files.
 
-use automapper_generator::parsing::mig_parser::parse_mig;
-use automapper_generator::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 use mig_assembly::assembler::Assembler;
+use mig_assembly::parsing::parse_mig;
 use mig_assembly::pid_detect::detect_pid;
 use mig_assembly::tokenize::parse_to_segments;
+use mig_types::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 use std::path::Path;
 
 // ---------------------------------------------------------------------------

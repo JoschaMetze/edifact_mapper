@@ -12,7 +12,7 @@ pub enum RendererError {
     Generator(#[from] automapper_generator::GeneratorError),
 
     #[error("assembly error: {0}")]
-    Assembly(String),
+    Assembly(#[from] mig_assembly::AssemblyError),
 
     #[error("mapping error: {0}")]
     Mapping(String),

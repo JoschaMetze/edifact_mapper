@@ -8,8 +8,8 @@ use crate::disassembler::Disassembler;
 use crate::renderer::render_edifact;
 use crate::tokenize::parse_to_segments;
 use crate::AssemblyError;
-use automapper_generator::schema::mig::MigSchema;
 use edifact_types::EdifactDelimiters;
+use mig_types::schema::mig::MigSchema;
 
 /// Perform a full roundtrip: parse EDIFACT, assemble into tree, disassemble, render back.
 ///
@@ -80,7 +80,7 @@ fn detect_newline_style(input: &str, seg_term: char) -> Option<&'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use automapper_generator::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
+    use mig_types::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 
     fn make_mig_segment(id: &str) -> MigSegment {
         MigSegment {
