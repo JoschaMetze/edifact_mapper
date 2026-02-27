@@ -1,0 +1,1777 @@
+{
+  "beschreibung": "Stornorechnung",
+  "fields": {
+    "sg1": {
+      "discriminator": {
+        "element": "1153",
+        "segment": "RFF"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Prüfidentifikator",
+                      "value": "Z13"
+                    }
+                  ],
+                  "id": "1153",
+                  "name": "Referenz, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Prüfidentifikator",
+                      "value": "31004"
+                    }
+                  ],
+                  "id": "1154",
+                  "name": "Referenz, Identifikation",
+                  "sub_index": 1,
+                  "type": "code"
+                }
+              ],
+              "composite": "C506",
+              "index": 0,
+              "name": "Referenz"
+            }
+          ],
+          "id": "RFF",
+          "name": "Das Segment dient zur Übermittlung des Prüfidentifikators."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Ursprungsrechnungsnummer",
+                      "value": "OI"
+                    }
+                  ],
+                  "id": "1153",
+                  "name": "Referenz, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "1154",
+                  "name": "Referenz, Identifikation",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C506",
+              "index": 0,
+              "name": "Referenz"
+            }
+          ],
+          "id": "RFF",
+          "name": "Bei Stornorechnungen, bei der Abrechnung von Verzugskosten und der Sonderrechnung wird hier durch Angabe des Qualifiers „OI“ auf die Ursprungsrechnung referenziert. Die Referenzierung auf die Ursprungsrechnung erfolgt unabhängig davon ob die Ursprungsrechnung als Original oder Duplikat übertragen wurde."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Referenzdatum/-zeit",
+                      "value": "171"
+                    }
+                  ],
+                  "id": "2005",
+                  "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "2380",
+                  "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "CCYYMMDDHHMMZZZ",
+                      "value": "303"
+                    }
+                  ],
+                  "id": "2379",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C507",
+              "index": 0,
+              "name": "Datum/Uhrzeit/Zeitspanne"
+            }
+          ],
+          "id": "DTM",
+          "name": "Dieses Segment muss immer angegeben werden, wenn im vorherigen RFF+OI-Segment der Hinweis auf eine referenzierte Rechnung erfolgt ist. Es ist das Nachrichtendatum (DTM+137) der Ursprungsrechnung anzugeben."
+        }
+      ],
+      "source_group": "SG1"
+    },
+    "sg2": {
+      "children": {
+        "sg3": {
+          "discriminator": {
+            "element": "1153",
+            "segment": "RFF"
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Umsatzsteuernummer",
+                          "value": "VA"
+                        },
+                        {
+                          "name": "Steuernummer",
+                          "value": "FC"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Referenz, Identifikation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Der Gesetzgeber verpflichtet Firmen zur Angabe der Steuernummer oder der Umsatzsteuernummer (die vielfach auch als Umsatzsteueridentifikationsnummer (Umsatzsteuer-ID) bezeichnet wird), so dass dieses Segment mit dem Qualifier FC (Steuernummer) oder VA (Umsatzsteuernummer) beim NAD-Segment durch den Nachrichtensender = Rechnungssteller gefüllt werden muss. Welche angegeben wird, entscheidet der Rechnungssteller."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Umsatzsteuernummer",
+                          "value": "VA"
+                        },
+                        {
+                          "name": "Steuernummer",
+                          "value": "FC"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Referenz, Identifikation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Der Gesetzgeber verpflichtet Firmen zur Angabe der Steuernummer oder der Umsatzsteuernummer (die vielfach auch als Umsatzsteueridentifikationsnummer (Umsatzsteuer-ID) bezeichnet wird), so dass dieses Segment mit dem Qualifier FC (Steuernummer) oder VA (Umsatzsteuernummer) beim NAD-Segment durch den Nachrichtensender = Rechnungssteller gefüllt werden muss. Welche angegeben wird, entscheidet der Rechnungssteller."
+            }
+          ],
+          "source_group": "SG3"
+        },
+        "sg5_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Kontakt",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "id": "3148",
+                      "name": "Kommunikationsadresse, Identifikation",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "Elektronische Post",
+                          "value": "EM"
+                        },
+                        {
+                          "name": "Telefax",
+                          "value": "FX"
+                        },
+                        {
+                          "name": "Telefon",
+                          "value": "TE"
+                        },
+                        {
+                          "name": "weiteres Telefon",
+                          "value": "AJ"
+                        },
+                        {
+                          "name": "Handy",
+                          "value": "AL"
+                        }
+                      ],
+                      "id": "3155",
+                      "name": "Art des Kommunikationsmittels, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C076",
+                  "index": 0,
+                  "name": "Kommunikationsverbindung"
+                }
+              ],
+              "id": "COM",
+              "name": "Ein Segment zur Angabe von Kommunikationsnummer und -typ des im vorangegangenen CTA-Segment angegebenen Sachbearbeiters oder der Abteilung. DE3155: Für jede Adressart ist maximal eine Adresse anzugeben."
+            }
+          ],
+          "source_group": "SG5"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "id": "3164",
+              "index": 5,
+              "name": "Ortsname, Klartext",
+              "type": "data"
+            },
+            {
+              "id": "3251",
+              "index": 7,
+              "name": "Postleitzahl",
+              "type": "data"
+            },
+            {
+              "id": "3207",
+              "index": 8,
+              "name": "ISO 3166-1 = Alpha-2-Code",
+              "type": "data"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    },
+                    {
+                      "name": "DE, DVGW Service & Consult GmbH",
+                      "value": "332"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            },
+            {
+              "components": [
+                {
+                  "id": "3124",
+                  "name": "Zeile für Name und Anschrift",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C058",
+              "index": 2,
+              "name": "Name und Anschrift"
+            },
+            {
+              "components": [
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 2,
+                  "type": "data"
+                },
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 3,
+                  "type": "data"
+                },
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 4,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Struktur von Personennamen",
+                      "value": "Z01"
+                    },
+                    {
+                      "name": "Struktur der Firmenbezeichnung",
+                      "value": "Z02"
+                    }
+                  ],
+                  "id": "3045",
+                  "name": "Format für den Namen des Beteiligten, Code",
+                  "sub_index": 5,
+                  "type": "code"
+                }
+              ],
+              "composite": "C080",
+              "index": 3,
+              "name": "Name des Beteiligten"
+            },
+            {
+              "components": [
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 2,
+                  "type": "data"
+                },
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 3,
+                  "type": "data"
+                }
+              ],
+              "composite": "C059",
+              "index": 4,
+              "name": "Straße"
+            },
+            {
+              "components": [
+                {
+                  "id": "3229",
+                  "name": "Land-Untereinheit, Nummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C819",
+              "index": 6,
+              "name": "Land-Untereinheit, Einzelheiten"
+            }
+          ],
+          "id": "NAD",
+          "name": "Dieses Segment wird zur Identifikation des Nachrichtensenders (= Rechnungserstellers) genutzt. Weiterführende Informationen zur Anwendung der Datenelementgruppe C059 sind aus den Allgemeinen Festlegungen zu entnehmen. DE3039: Zur Identifikation der Partner wird die MP-ID angegeben."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Nachrichtenempfänger",
+                  "value": "MR"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "id": "3164",
+              "index": 5,
+              "name": "Ortsname, Klartext",
+              "type": "data"
+            },
+            {
+              "id": "3251",
+              "index": 7,
+              "name": "Postleitzahl",
+              "type": "data"
+            },
+            {
+              "id": "3207",
+              "index": 8,
+              "name": "ISO 3166-1 = Alpha-2-Code",
+              "type": "data"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    },
+                    {
+                      "name": "DE, DVGW Service & Consult GmbH",
+                      "value": "332"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            },
+            {
+              "components": [
+                {
+                  "id": "3124",
+                  "name": "Zeile für Name und Anschrift",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C058",
+              "index": 2,
+              "name": "Name und Anschrift"
+            },
+            {
+              "components": [
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 2,
+                  "type": "data"
+                },
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 3,
+                  "type": "data"
+                },
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 4,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Struktur von Personennamen",
+                      "value": "Z01"
+                    },
+                    {
+                      "name": "Struktur der Firmenbezeichnung",
+                      "value": "Z02"
+                    }
+                  ],
+                  "id": "3045",
+                  "name": "Format für den Namen des Beteiligten, Code",
+                  "sub_index": 5,
+                  "type": "code"
+                }
+              ],
+              "composite": "C080",
+              "index": 3,
+              "name": "Name des Beteiligten"
+            },
+            {
+              "components": [
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 2,
+                  "type": "data"
+                },
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 3,
+                  "type": "data"
+                }
+              ],
+              "composite": "C059",
+              "index": 4,
+              "name": "Straße"
+            },
+            {
+              "components": [
+                {
+                  "id": "3229",
+                  "name": "Land-Untereinheit, Nummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C819",
+              "index": 6,
+              "name": "Land-Untereinheit, Einzelheiten"
+            }
+          ],
+          "id": "NAD",
+          "name": "Dieses Segment wird zur Identifikation des Nachrichtenempfängers (= Rechnungsempfängers) genutzt. Weiterführende Informationen zur Anwendung der Datenelementgruppe C059 sind aus den Allgemeinen Festlegungen zu entnehmen. DE3039: Zur Identifikation der Partner wird die MP-ID angegeben."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Lieferanschrift",
+                  "value": "DP"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "id": "3164",
+              "index": 5,
+              "name": "Ortsname, Klartext",
+              "type": "data"
+            },
+            {
+              "id": "3251",
+              "index": 7,
+              "name": "Postleitzahl",
+              "type": "data"
+            },
+            {
+              "id": "3207",
+              "index": 8,
+              "name": "ISO 3166-1 = Alpha-2-Code",
+              "type": "data"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "Beteiligter, Identifikation",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            },
+            {
+              "components": [
+                {
+                  "id": "3124",
+                  "name": "Zusatzinformation zur Identifizierung",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "3124",
+                  "name": "Zeile für Name und Anschrift",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "id": "3124",
+                  "name": "Zeile für Name und Anschrift",
+                  "sub_index": 2,
+                  "type": "data"
+                },
+                {
+                  "id": "3124",
+                  "name": "Zeile für Name und Anschrift",
+                  "sub_index": 3,
+                  "type": "data"
+                },
+                {
+                  "id": "3124",
+                  "name": "Zeile für Name und Anschrift",
+                  "sub_index": 4,
+                  "type": "data"
+                }
+              ],
+              "composite": "C058",
+              "index": 2,
+              "name": "Name und Anschrift"
+            },
+            {
+              "components": [
+                {
+                  "id": "3036",
+                  "name": "Beteiligter",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C080",
+              "index": 3,
+              "name": "Name des Beteiligten"
+            },
+            {
+              "components": [
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 2,
+                  "type": "data"
+                },
+                {
+                  "id": "3042",
+                  "name": "Straße und Hausnummer oder Postfach",
+                  "sub_index": 3,
+                  "type": "data"
+                }
+              ],
+              "composite": "C059",
+              "index": 4,
+              "name": "Straße"
+            },
+            {
+              "components": [
+                {
+                  "id": "3229",
+                  "name": "Land-Untereinheit, Nummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C819",
+              "index": 6,
+              "name": "Land-Untereinheit, Einzelheiten"
+            }
+          ],
+          "id": "NAD",
+          "name": "Dieses Segment wird zur Identifikation der Markt-, Mess-, Netzlokation oder Steuerbaren Ressource genutzt. Sie ist immer mindestens durch PLZ und Ort zu identifizieren. Die Messlokation findet Anwendung, wenn z. B. der MSB die Abrechnung für die Weiterverpflichtung des Messstellenbetriebs im Auftrag des NB abrechnet oder er Geräte an den neuen MSB verkauft. Weiterführende Informationen zur Anwendung der Datenelementgruppen C058 und C059 sind aus den Allgemeinen Festlegungen zu entnehmen."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Meldepunkt",
+                  "value": "172"
+                }
+              ],
+              "id": "3227",
+              "index": 0,
+              "name": "Ortsangabe, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3225",
+                  "name": "Identifikator",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C517",
+              "index": 1,
+              "name": "Ortsangabe"
+            }
+          ],
+          "id": "LOC",
+          "name": "Hier wird die ID der Markt-, Mess-, Netzlokation oder Steuerbaren Ressource genutzt."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Netzkonto",
+                  "value": "ZSH"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "Beteiligter, Identifikation",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "Dieses Segment wird zur Angabe von Netzbetreiberkontonummern verwendet."
+        }
+      ],
+      "source_group": "SG2"
+    },
+    "sg50": {
+      "discriminator": {
+        "element": "5025",
+        "segment": "MOA"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Rechnungsbetrag",
+                      "value": "77"
+                    }
+                  ],
+                  "id": "5025",
+                  "name": "Geldbetrag, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "5004",
+                  "name": "Geldbetrag",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C516",
+              "index": 0,
+              "name": "Geldbetrag"
+            }
+          ],
+          "id": "MOA",
+          "name": "Die Summe aller Rechnungspositionen (Summe aller „SG52 MOA+125“) zzgl. der Umsatzsteuer (Summe aller „SG52 MOA+161“) ergibt den Rechnungsbetrag („77“).  Bei einer Rechnungsstornierung sind die Vorzeichen im Verhältnis zur Ursprungsrechnung zu negieren. Beispiel 1 (Guthaben/Rückerstattung): MOA+77:11900' MOA+113:12000' MOA+9:-100' Beispiel 2 (Forderung): MOA+77:11902.5' MOA+113:9000' MOA+Z01:1000' MOA+9:1902.5' Beispiel 3 (Abschlagsrechnung) MOA+77:1190' MOA+9:1190'"
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Vorausbezahlter Betrag (inkl. USt.)",
+                      "value": "113"
+                    }
+                  ],
+                  "id": "5025",
+                  "name": "Geldbetrag, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "5004",
+                  "name": "Geldbetrag",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C516",
+              "index": 0,
+              "name": "Geldbetrag"
+            }
+          ],
+          "id": "MOA",
+          "name": "Sofern die SG50 Vorausbezahlter Betrag (inkl. USt.) in einer Rechnung vorhanden, gilt, dass die Summe aller SG50 Vorausbezahlter Betrag (inkl. USt.) einer Rechnung die Summe aller „SG52 MOA+113“ ergeben muss.  Bei einer Rechnungsstornierung sind die Vorzeichen im Verhältnis zur Ursprungsrechnung zu negieren. Beispiel 1 (Guthaben/Rückerstattung): MOA+77:11900' MOA+113:12000' MOA+9:-100' Beispiel 2 (Forderung): MOA+77:11902.5' MOA+113:9000' MOA+Z01:1000' MOA+9:1902.5' Beispiel 3 (Abschlagsrechnung) MOA+77:1190' MOA+9:1190'"
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Gemeinderabatt",
+                      "value": "Z01"
+                    }
+                  ],
+                  "id": "5025",
+                  "name": "Geldbetrag, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "5004",
+                  "name": "Geldbetrag",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C516",
+              "index": 0,
+              "name": "Geldbetrag"
+            }
+          ],
+          "id": "MOA",
+          "name": "Bei einer Rechnungsstornierung sind die Vorzeichen im Verhältnis zur Ursprungsrechnung zu negieren. Beispiel 1 (Guthaben/Rückerstattung): MOA+77:11900' MOA+113:12000' MOA+9:-100' Beispiel 2 (Forderung): MOA+77:11902.5' MOA+113:9000' MOA+Z01:1000' MOA+9:1902.5' Beispiel 3 (Abschlagsrechnung) MOA+77:1190' MOA+9:1190'"
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Fälliger Betrag (inkl. USt.)",
+                      "value": "9"
+                    }
+                  ],
+                  "id": "5025",
+                  "name": "Geldbetrag, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "5004",
+                  "name": "Geldbetrag",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C516",
+              "index": 0,
+              "name": "Geldbetrag"
+            }
+          ],
+          "id": "MOA",
+          "name": "Der fällige Betrag ergibt sich, in dem von SG50 MOA+77 (\"Rechnungsbetrag (inkl. USt.)\") alle vorhandenen SG50 MOA+113 (\"Vorausbezahlter Betrag (inkl. USt.)\") und sofern vorhanden SG50+Z01 (\"Gemeinderabatt\") abgezogen werden.  Bei einer Rechnungsstornierung sind die Vorzeichen im Verhältnis zur Ursprungsrechnung zu negieren. Beispiel 1 (Guthaben/Rückerstattung): MOA+77:11900' MOA+113:12000' MOA+9:-100' Beispiel 2 (Forderung): MOA+77:11902.5' MOA+113:9000' MOA+Z01:1000' MOA+9:1902.5' Beispiel 3 (Abschlagsrechnung) MOA+77:1190' MOA+9:1190'"
+        }
+      ],
+      "source_group": "SG50"
+    },
+    "sg52": {
+      "discriminator": {
+        "element": "5283",
+        "segment": "TAX"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Steuer",
+                  "value": "7"
+                }
+              ],
+              "id": "5283",
+              "index": 0,
+              "name": "Zoll-/Steuer-/Gebührenfunktion, Qualifier",
+              "type": "code"
+            },
+            {
+              "id": "5286",
+              "index": 3,
+              "name": "Zoll-/Steuer-/Gebühren, Veranlagungsbasis, Menge",
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Einheitssatz (Standard)",
+                  "value": "S"
+                },
+                {
+                  "name": "nicht steuerbar",
+                  "value": "O"
+                },
+                {
+                  "name": "Reverse Charge / Steuerschuldnerschaft des Leistungsempfängers",
+                  "value": "AE"
+                }
+              ],
+              "id": "5305",
+              "index": 5,
+              "name": "Zoll-/Steuer-/Gebührenkategorie, Code",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Umsatzsteuer",
+                      "value": "VAT"
+                    }
+                  ],
+                  "id": "5153",
+                  "name": "Zoll-/Steuer-/Gebühren-Art, Code",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C241",
+              "index": 1,
+              "name": "Zoll-/Steuer-/Gebührenart"
+            },
+            {
+              "components": [
+                {
+                  "id": "5289",
+                  "name": "Zoll-/Steuer-/Gebührenkonto, Code",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C533",
+              "index": 2,
+              "name": "Verrechnungseinzelheiten von Zoll/Steuer/Gebühren"
+            },
+            {
+              "components": [
+                {
+                  "id": "5279",
+                  "name": "Zoll-/Steuer-/Gebührenrate, Code",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "data"
+                },
+                {
+                  "id": "5278",
+                  "name": "Aktueller Zoll-/Steuersatz (bei USt.)",
+                  "sub_index": 3,
+                  "type": "data"
+                }
+              ],
+              "composite": "C243",
+              "index": 4,
+              "name": "Zoll-/Steuer-/Gebühren"
+            }
+          ],
+          "id": "TAX",
+          "name": "Dieses Segment wird benutzt, um je Steuerkategorie die Gesamtsteuerangaben für die Rechnung zu spezifizieren. DE5278: Der Wert darf nicht negativ sein."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Vorausbezahlter Betrag (inkl. USt.)",
+                      "value": "113"
+                    }
+                  ],
+                  "id": "5025",
+                  "name": "Geldbetrag, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "5004",
+                  "name": "Geldbetrag",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C516",
+              "index": 0,
+              "name": "Geldbetrag"
+            }
+          ],
+          "id": "MOA",
+          "name": "Bei Angabe von Umsatzsteuerbeträgen (Qualifier „7“ in DE5283 des TAX-Segmentes) identifizieren der Qualifier „161“ im DE5025 den Steuer- und der Qualifier „125“ den steuerpflichtigen Betrag. Sollten in der Rechnung verschiedene Umsatzsteuersätze enthalten sein, so wiederholt sich die Segmentgruppe SG52 TAX-MOA entsprechend der Anzahl der Steuersätze. Im Falle vorher gezahlter Abschlagsbeträge müssen mit den Qualifiern „113“ und „115“ die Summe der bereits bezahlten Abschläge und der zugehörigen Steuerbeträge ausgewiesen werden.  Beispiel der gesamten Segmentgruppe SG52 TAX-MOA bei USt.-Wechsel und Vorauszahlungen: TAX+7+VAT+++:::16+S' MOA+125:1000' MOA+161:160' MOA+113:116' MOA+115:16' TAX+7+VAT+++:::19+S' MOA+125:1000' MOA+161:190' MOA+113:119' MOA+115:19’"
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Vorausbezahlte Steuern (USt.-Anteil des vorausbezahlten Betrages)",
+                      "value": "115"
+                    }
+                  ],
+                  "id": "5025",
+                  "name": "Geldbetrag, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "5004",
+                  "name": "Geldbetrag",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C516",
+              "index": 0,
+              "name": "Geldbetrag"
+            }
+          ],
+          "id": "MOA",
+          "name": "Bei Angabe von Umsatzsteuerbeträgen (Qualifier „7“ in DE5283 des TAX-Segmentes) identifizieren der Qualifier „161“ im DE5025 den Steuer- und der Qualifier „125“ den steuerpflichtigen Betrag. Sollten in der Rechnung verschiedene Umsatzsteuersätze enthalten sein, so wiederholt sich die Segmentgruppe SG52 TAX-MOA entsprechend der Anzahl der Steuersätze. Im Falle vorher gezahlter Abschlagsbeträge müssen mit den Qualifiern „113“ und „115“ die Summe der bereits bezahlten Abschläge und der zugehörigen Steuerbeträge ausgewiesen werden.  Beispiel der gesamten Segmentgruppe SG52 TAX-MOA bei USt.-Wechsel und Vorauszahlungen: TAX+7+VAT+++:::16+S' MOA+125:1000' MOA+161:160' MOA+113:116' MOA+115:16' TAX+7+VAT+++:::19+S' MOA+125:1000' MOA+161:190' MOA+113:119' MOA+115:19’"
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Besteuerungsgrundlage",
+                      "value": "125"
+                    }
+                  ],
+                  "id": "5025",
+                  "name": "Geldbetrag, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "5004",
+                  "name": "Geldbetrag",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C516",
+              "index": 0,
+              "name": "Geldbetrag"
+            }
+          ],
+          "id": "MOA",
+          "name": "Bei Angabe von Umsatzsteuerbeträgen (Qualifier „7“ in DE5283 des TAX-Segmentes) identifizieren der Qualifier „161“ im DE5025 den Steuer- und der Qualifier „125“ den steuerpflichtigen Betrag. Sollten in der Rechnung verschiedene Umsatzsteuersätze enthalten sein, so wiederholt sich die Segmentgruppe SG52 TAX-MOA entsprechend der Anzahl der Steuersätze. Im Falle vorher gezahlter Abschlagsbeträge müssen mit den Qualifiern „113“ und „115“ die Summe der bereits bezahlten Abschläge und der zugehörigen Steuerbeträge ausgewiesen werden.  Beispiel der gesamten Segmentgruppe SG52 TAX-MOA bei USt.-Wechsel und Vorauszahlungen: TAX+7+VAT+++:::16+S' MOA+125:1000' MOA+161:160' MOA+113:116' MOA+115:16' TAX+7+VAT+++:::19+S' MOA+125:1000' MOA+161:190' MOA+113:119' MOA+115:19’"
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Steuer-/Gebühren-/Abgabebetrag",
+                      "value": "161"
+                    }
+                  ],
+                  "id": "5025",
+                  "name": "Geldbetrag, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "5004",
+                  "name": "Geldbetrag",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C516",
+              "index": 0,
+              "name": "Geldbetrag"
+            }
+          ],
+          "id": "MOA",
+          "name": "Bei Angabe von Umsatzsteuerbeträgen (Qualifier „7“ in DE5283 des TAX-Segmentes) identifizieren der Qualifier „161“ im DE5025 den Steuer- und der Qualifier „125“ den steuerpflichtigen Betrag. Sollten in der Rechnung verschiedene Umsatzsteuersätze enthalten sein, so wiederholt sich die Segmentgruppe SG52 TAX-MOA entsprechend der Anzahl der Steuersätze. Im Falle vorher gezahlter Abschlagsbeträge müssen mit den Qualifiern „113“ und „115“ die Summe der bereits bezahlten Abschläge und der zugehörigen Steuerbeträge ausgewiesen werden.  Beispiel der gesamten Segmentgruppe SG52 TAX-MOA bei USt.-Wechsel und Vorauszahlungen: TAX+7+VAT+++:::16+S' MOA+125:1000' MOA+161:160' MOA+113:116' MOA+115:16' TAX+7+VAT+++:::19+S' MOA+125:1000' MOA+161:190' MOA+113:119' MOA+115:19’"
+        }
+      ],
+      "source_group": "SG52"
+    },
+    "sg7": {
+      "discriminator": {
+        "element": "6347",
+        "segment": "CUX"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Referenzwährung",
+                      "value": "2"
+                    }
+                  ],
+                  "id": "6347",
+                  "name": "Währungsverwendung, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Euro",
+                      "value": "EUR"
+                    }
+                  ],
+                  "id": "6345",
+                  "name": "Währung, Code",
+                  "sub_index": 1,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Währung der Rechnung",
+                      "value": "4"
+                    }
+                  ],
+                  "id": "6343",
+                  "name": "Währung, Qualifier",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C504",
+              "index": 0,
+              "name": "Währungsangaben"
+            }
+          ],
+          "id": "CUX",
+          "name": "Dieses Segment wird benutzt, um die Währung für die gesamte Rechnung auf Euro festzulegen."
+        }
+      ],
+      "source_group": "SG7"
+    },
+    "sg8": {
+      "discriminator": {
+        "element": "4279",
+        "segment": "PYT"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Fixdatum",
+                  "value": "3"
+                }
+              ],
+              "id": "4279",
+              "index": 0,
+              "name": "Zahlungsbedingung, Qualifier",
+              "type": "code"
+            }
+          ],
+          "id": "PYT",
+          "name": "Dieses Segment wird vom Absender zur Angabe der Zahlungskonditionen für die gesamte Rechnung verwendet. Es gibt an, dass das Fälligkeitsdatum festgelegt ist und wird im nachfolgenden DTM-Segment spezifiziert."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Fälligkeitsdatum",
+                      "value": "265"
+                    }
+                  ],
+                  "id": "2005",
+                  "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "2380",
+                  "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "CCYYMMDDHHMMZZZ",
+                      "value": "303"
+                    }
+                  ],
+                  "id": "2379",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C507",
+              "index": 0,
+              "name": "Datum/Uhrzeit/Zeitspanne"
+            }
+          ],
+          "id": "DTM",
+          "name": "Dieses Segment wird für das Fälligkeitsdatum verwendet."
+        }
+      ],
+      "source_group": "SG8"
+    }
+  },
+  "format_version": "FV2604",
+  "kommunikation_von": "ReErst an ReEmpf",
+  "pid": "31004",
+  "root_segments": [
+    {
+      "elements": [
+        {
+          "codes": [
+            {
+              "name": "Duplikat",
+              "value": "7"
+            },
+            {
+              "name": "Original",
+              "value": "9"
+            }
+          ],
+          "id": "1225",
+          "index": 2,
+          "name": "Nachrichtenfunktion, Code",
+          "type": "code"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Handelsrechnung",
+                  "value": "380"
+                },
+                {
+                  "name": "Selbst ausgestellte Rechnung (engl.: \"Self-billed invoice\")",
+                  "value": "389"
+                },
+                {
+                  "name": "Storno einer Belastung.",
+                  "value": "457"
+                },
+                {
+                  "name": "Storno für selbst ausgestellte Rechnung (Gutschrift im Gutschriftsverfahren)",
+                  "value": "Z25"
+                }
+              ],
+              "id": "1001",
+              "name": "Dokumentenname, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C002",
+          "index": 0,
+          "name": "Dokumenten-/Nachrichtenname"
+        },
+        {
+          "components": [
+            {
+              "id": "1004",
+              "name": "Eindeutige EDI-Nachrichtennummer, vergeben vom Absender des Dokuments, entspricht der Rechnungsnummer",
+              "sub_index": 0,
+              "type": "data"
+            }
+          ],
+          "composite": "C106",
+          "index": 1,
+          "name": "Dokumenten-/Nachrichten-Identifikation"
+        }
+      ],
+      "id": "BGM",
+      "name": "Dieses Segment dient dazu, Typ und Funktion einer Nachricht anzuzeigen und die Identifikationsnummer zu übermitteln. Hinweise: DE1001: Der Codewert 380 ist bei Turnus- und Schlussrechnungen unabhängig davon zu verwenden, ob in der Summe ein Entgelt für Netznutzung angefordert oder erstattet wird. Ein Erstattungsentgelt (in der Praxis häufig auch als kaufmännische Gutschrift bezeichnet) ist durch ein negatives Vorzeichen beim zugehörigen Betrag (SG50 MOA) zu identifizieren.  Zur Identifizierung von umsatzsteuerrechtlichen Gutschriften gemäß § 14, Abs. 2 UStG ist ausschließlich der Codewert 389 - selbst ausgestellte Rechnung - zu verwenden.  457 = Storno einer Belastung - ist anzuwenden bei Stornierung von Handelsrechnungen Z25 = Storno für selbst ausgestellte Rechnung (Gutschrift im Gutschriftsverfahren) - ist anzuwenden bei Stornierung von selbst ausgestellten Rechnungen  DE1225: Die Nachrichtenfunktion, codiert ist ein kritisches Datenelement in diesem Segment. Sie betrifft alle Daten einer Nachricht. Demzufolge muss pro Nachrichtenfunktion eine Nachricht erstellt werden. Es gilt die folgende Regel für den Codewert: 9 = Original-Rechnungen werden immer mit diesem Qualifier bezeichnet. 7 = Dieser Qualifier wird verwendet, um anzuzeigen, dass diese Nachricht (INVOIC/Rechnung) schon einmal übermittelt wurde. Entscheidend hierfür ist die Sicht des Rechnungsstellers. Beim Rechnungsempfänger ist eine derartige INVOIC wie ein Original zu behandeln."
+    },
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtendatum/-zeit",
+                  "value": "137"
+                }
+              ],
+              "id": "2005",
+              "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "id": "2380",
+              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+              "sub_index": 1,
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "CCYYMMDDHHMMZZZ",
+                  "value": "303"
+                }
+              ],
+              "id": "2379",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+              "sub_index": 2,
+              "type": "code"
+            }
+          ],
+          "composite": "C507",
+          "index": 0,
+          "name": "Datum/Uhrzeit/Zeitspanne"
+        }
+      ],
+      "id": "DTM",
+      "name": "Dieses Segment wird zur Angabe des Dokumentendatums verwendet.  Hinweise: Das Dokumentendatum muss angegeben werden. Bei Rechnungen ist dies das Rechnungsdatum (wird teilweise auch als Belegdatum bezeichnet)."
+    },
+    {
+      "elements": [
+        {
+          "codes": [
+            {
+              "name": "Meldeinformationen",
+              "value": "REG"
+            }
+          ],
+          "id": "4451",
+          "index": 0,
+          "name": "Textbezug, Qualifier",
+          "type": "code"
+        },
+        {
+          "id": "4453",
+          "index": 1,
+          "name": "Textfunktion, Code",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Reverse Charge gemäß §13b UStG / Steuerschuldnerschaft des Leistungsempfängers",
+                  "value": "RCH"
+                }
+              ],
+              "id": "4441",
+              "name": "Freier Text, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C107",
+          "index": 2,
+          "name": "Text-Referenz"
+        }
+      ],
+      "id": "FTX",
+      "name": "Dieses Segment ist für Rechnungen zu verwenden, bei denen gemäß § 13b UStG die Steuerschuld auf den Leistungsempfänger übergeht."
+    },
+    {
+      "elements": [
+        {
+          "id": "7077",
+          "index": 0,
+          "name": "Beschreibungsformat, Code",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Abschlussrechnung",
+                  "value": "ABR"
+                },
+                {
+                  "name": "Abschlagsrechnung",
+                  "value": "ABS"
+                },
+                {
+                  "name": "Turnusrechnung",
+                  "value": "JVR"
+                },
+                {
+                  "name": "Monatsrechnung",
+                  "value": "MVR"
+                },
+                {
+                  "name": "Rechnung für WiM",
+                  "value": "WIM"
+                },
+                {
+                  "name": "Zwischenrechnung",
+                  "value": "ZVR"
+                },
+                {
+                  "name": "Integrierte 13. Rechnung",
+                  "value": "13I"
+                },
+                {
+                  "name": "13. Rechnung",
+                  "value": "13R"
+                },
+                {
+                  "name": "Mehr-/Mindermengenabrechnung",
+                  "value": "MMM"
+                },
+                {
+                  "name": "Rechnung für Messstellenbetrieb",
+                  "value": "MSB"
+                },
+                {
+                  "name": "Kapazitätsrechnung",
+                  "value": "NAP"
+                },
+                {
+                  "name": "Rechnung für Sperren und Wiederinbetriebnahme",
+                  "value": "Z43"
+                },
+                {
+                  "name": "Verzugskostenrechnung",
+                  "value": "Z44"
+                },
+                {
+                  "name": "Blindarbeitrechnung",
+                  "value": "Z45"
+                },
+                {
+                  "name": "Sonderrechnung",
+                  "value": "SOR"
+                },
+                {
+                  "name": "Abrechnung von Konfigurationen (Universalbestellprozess)",
+                  "value": "KON"
+                },
+                {
+                  "name": "Abrechnung von Technik",
+                  "value": "TEC"
+                }
+              ],
+              "id": "7081",
+              "name": "Produkt/Leistung, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C272",
+          "index": 1,
+          "name": "Produkt/Leistung"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Marktlokation liefert Energie ins Netz.",
+                  "value": "Z06"
+                },
+                {
+                  "name": "Marktlokation entnimmt Energie aus dem Netz.",
+                  "value": "Z07"
+                }
+              ],
+              "id": "7009",
+              "name": "Produkt-/Leistungsbeschreibung, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C273",
+          "index": 2,
+          "name": "Produkt-/Leistungsbeschreibung"
+        }
+      ],
+      "id": "IMD",
+      "name": "Dieses Segment wird zur Beschreibung des Rechnungstyps benutzt.  Die Liste wird bei Bedarf vom BDEW erweitert.  DE7081 Erläuterung der codierten Rechnungstypen:  Marktlokation mit der Netznutzungsabrechnungsvariante Arbeitspreis/Grundpreis ABR Abschlussrechnung, wird verwendet bei Auszug/Lieferantenwechsel für Monatsrechnung und Jahresrechnung. Wenn eine Turnus- und eine Schlussrechnung zusammenfallen, wird der Qualifier ABR genutzt. ABS Abschlagsrechnungen werden fristgerecht vor der jeweiligen Fälligkeit an den Rechnungsempfänger übertragen. JVR Turnusrechnung (ehemals Jahresrechnung), der turnusmäßige Abrechnungszeitraum beträgt normalerweise ein Jahr. Es kann aber davon abweichend ein kürzeres Intervall (z. B. monatlich oder vierteljährlich) zwischen den Marktpartnern vereinbart werden.  ZVR Zwischenrechnung wird verwendet, wenn innerhalb eines Abrechnungsturnus eine Zwischenrechnung erstellt wird. Beispiel: Abrechnungsturnus 1.6. bis 30.5. Es wird eine Ablesung zum 31.12. durchgeführt und hierüber eine Rechnung erstellt. Diese wird als Zwischenabrechnung gekennzeichnet. Wird später für den Rest der Abrechnungsperiode (1.1. bis 30.5) eine Rechnung erstellt, so wird diese als JVR gekennzeichnet.  Marktlokation mit der Netznutzungsabrechnungsvariante Arbeitspreis/Leistungspreis MVR Monatsrechnung wird verwendet bei monatlichem Abrechnungszyklus. Dieses Kennzeichen wird auch bei der gleitenden Nachberechnung im Zuge der Erstellung vorläufiger Monatsrechnungen verwendet. 13I Der Qualifier 13I ist zu nutzen, wenn innerhalb einer Rechnung sowohl die letzte (vorläufige) Monatsrechnung als auch die Jahres- bzw. Abschlussrechnung integriert ist, d. h. auch bei sogenannten gleitenden Nachberechnungen.  13R In diesem Fall wird eine Jahresrechnung (oder eine Abschlussrechnung) erstellt, dabei werden die zwölf monatlichen Abrechnungen (die z. B. mit Durchschnittspreis erstellt wurden) als bereits geleistete Zahlungen innerhalb dieser Rechnung berücksichtigt.  Wechselprozesse im Messwesen (WiM) WIM Über Rechnungen für WiM können Überlassung und Verkauf von Messeinrichtungen sowie sonstige Dienstleistungen, die sich aus der WiM ergeben, abgerechnet werden. MSB Mit diesem Rechnungstyp wird der Messstellenbetrieb abgerechnet.  Mehr- und Mindermengenabrechnung (MMMA) MMM Mit diesem Rechnungstyp wird die MMMA übertragen.  Kapazitätsabrechnung an Ausspeisepunkten zu Letztverbrauchern NAP Mit diesem Rechnungstyp wird die Kapazitätsabrechnung lt. GeLi Gas (BK7-06-07) übertragen.  Zusatzleistungen Z43 \t Mit diesem Rechnungstyp wird die Beauftragung der Unterbrechung und Wiederherstellung der Anschlussnutzung übertragen. Z44 Mit diesem Rechnungstyp werden Verzugskosten in Rechnung gestellt. Z45 Mit diesem Rechnnungstyp wird Blindarbeit in Rechnung stellt. SOR Mit diesem Rechnungstyp können Bestandteile einer Jahresrechnung korrigiert werden, ohne dass diese storniert werden muss. KON Mit diesem Rechnungstyp werden Konfigurationen gegenüber ESA, LF und NB abgerechnet.  TEC Mit diesem Rechnungstyp werden Leistungen abgerechnet, die im Rahmen der Prozesse zur Änderung der Technik an Lokationen bestellt wurden."
+    },
+    {
+      "elements": [
+        {
+          "id": "0062",
+          "index": 0,
+          "name": "Eindeutige Nachrichtenreferenz in einer Übertragungsdatei des Absenders. Nummer der Nachrichten einer Übertragungsdatei im Datenaustausch. Identisch mit DE0062 im UNT, i. d. R. vom sendenden Konverter vergeben.",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Rechnung",
+                  "value": "INVOIC"
+                }
+              ],
+              "id": "0065",
+              "name": "Nachrichtentyp-Kennung",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Entwurfs-Version",
+                  "value": "D"
+                }
+              ],
+              "id": "0052",
+              "name": "Versionsnummer des Nachrichtentyps",
+              "sub_index": 1,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Ausgabe 2006 - A",
+                  "value": "06A"
+                }
+              ],
+              "id": "0054",
+              "name": "Freigabenummer des Nachrichtentyps",
+              "sub_index": 2,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "UN/CEFACT",
+                  "value": "UN"
+                }
+              ],
+              "id": "0051",
+              "name": "Verwaltende Organisation",
+              "sub_index": 3,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "",
+                  "value": "2.8e"
+                }
+              ],
+              "id": "0057",
+              "name": "Anwendungscode der zuständigen Organisation",
+              "sub_index": 4,
+              "type": "code"
+            }
+          ],
+          "composite": "S009",
+          "index": 1,
+          "name": "Nachrichten-Kennung"
+        }
+      ],
+      "id": "UNH",
+      "name": "Dieses Segment dient dazu, eine Nachricht zu eröffnen, zu identifizieren und zu spezifizieren.  Die Datenelemente 0065, 0052, 0054 und 0051 deklarieren die Nachricht als UNSM des Verzeichnisses D.06A unter Kontrolle der Vereinten Nationen. Hinweis: DE0057: Es werden die Versions- und Release-Nummern der Nachrichtenbeschreibungen angegeben."
+    },
+    {
+      "elements": [
+        {
+          "codes": [
+            {
+              "name": "Trennung von Positions- und Summenteil",
+              "value": "S"
+            }
+          ],
+          "id": "0081",
+          "index": 0,
+          "name": "Abschnittskennung, codiert",
+          "type": "code"
+        }
+      ],
+      "id": "UNS",
+      "name": "Dieses Segment dient der Trennung von Positions- und Summenteil einer Nachricht."
+    },
+    {
+      "elements": [
+        {
+          "id": "0074",
+          "index": 0,
+          "name": "Hier wird die Gesamtzahl der Segmente einer Nachricht angegeben",
+          "type": "data"
+        },
+        {
+          "id": "0062",
+          "index": 1,
+          "name": "Die Referenznummer aus dem UNH-Segment muss hier wiederholt werden",
+          "type": "data"
+        }
+      ],
+      "id": "UNT",
+      "name": "Das UNT-Segment ist ein Muss-Segment in UN/EDIFACT. Es muss immer das letzte Segment in einer Nachricht sein."
+    }
+  ]
+}

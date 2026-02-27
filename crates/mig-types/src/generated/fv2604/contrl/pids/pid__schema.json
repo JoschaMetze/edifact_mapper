@@ -1,0 +1,728 @@
+{
+  "beschreibung": "Syntaxfehler-meldung in der Nachricht",
+  "fields": {
+    "sg1": {
+      "children": {
+        "sg2": {
+          "discriminator": {
+            "element": "0085",
+            "segment": "UCS"
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "id": "0096",
+                  "index": 0,
+                  "name": "Segmentposition in der Nachricht",
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Mitteilung, dass ein mit M oder R gekennzeichnetes Nutzdaten-Segment fehlt.",
+                      "value": "13"
+                    },
+                    {
+                      "name": "Mitteilung, dass der Empfänger die Verwendung des Typs von Segment, an der identifizierten Position nicht unterstützt.",
+                      "value": "15"
+                    },
+                    {
+                      "name": "Mitteilung, dass das identifizierte Segment zu viele Datenelemente oder Datenelementgruppen enthält.",
+                      "value": "16"
+                    },
+                    {
+                      "name": "Mitteilung, dass die in der Übertragungsdatei verwendeten Service-Zeichen nicht als Service-Zeichen gültig sind. Diese Zeichen werden entweder im UNA angezeigt oder nach der in UNB angezeigten Syntax-Kennung definiert oder in einer Datenaustauschvereinbarung definiert. Wenn dieser Code in den Segmenten UCS oder UCD verwendet wird, folgt das ungültige Zeichen unmittelbar dem identifizierten Teil der Übertragungsdatei.",
+                      "value": "22"
+                    },
+                    {
+                      "name": "Mitteilung, dass ein Segment zu oft wiederholt wurde.",
+                      "value": "35"
+                    },
+                    {
+                      "name": "Mitteilung, dass eine Segmentgruppe zu oft wiederholt wurde.",
+                      "value": "36"
+                    }
+                  ],
+                  "id": "0085",
+                  "index": 1,
+                  "name": "Syntax-Fehler, codiert",
+                  "type": "code"
+                }
+              ],
+              "id": "UCS",
+              "name": "SG2: Eine Gruppe von Segmenten, die als Antwort auf ein mit einem oder mehreren Fehlern behaftetes Segment gesendet wird und das ein Bestandteil der im Segment UCM in Segmentgruppe 1 identifizierten Nachricht war. Die SG2 ist anzugeben, wenn der Syntax-Fehler der entsprechenden Nachricht nicht in einem der Segmente UNH oder UNT enthalten war. Zu UCS: Ein Segment, das ein Segment in der Nachricht identifiziert, um anzuzeigen, dass dieses Segment einen Fehler enthält, und zur Identifizierung jedes Fehlers bezogen auf das gesamte Segment. DE0096: Die numerische Zählerposition eines bestimmten Segments innerhalb der empfangenen Nachricht. Die Zählung beginnt mit dem Segment UNH und schließt dieses mit ein. Die Zählung beginnt mit 1. Um ein fehlerhaftes Segment zu kennzeichnen, wird die entsprechende Zählerposition des Segmentes verwendet. Um ein fehlendes Segment zu melden, wird die Zählerposition des zuvor verarbeiteten Segments verwendet, auf dem das fehlende Segment hätte folgen müssen. Eine fehlende Segmentgruppe wird durch das fehlende erste Segment in der Gruppe gekennzeichnet. DE0085: Dieses Datenelement wird nur dann angegeben, wenn das UCD-Segment nicht angegeben werden kann. Es ist der Code zur Anzeige des aufgedeckten Syntax-Fehlers anzugeben."
+            }
+          ],
+          "source_group": "SG2"
+        },
+        "sg2_13_15_16_22_35_36": {
+          "discriminator": {
+            "element": "0085",
+            "segment": "UCS",
+            "values": [
+              "13",
+              "15",
+              "16",
+              "22",
+              "35",
+              "36"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "id": "0096",
+                  "index": 0,
+                  "name": "Segmentposition in der Nachricht",
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Mitteilung, dass ein mit M oder R gekennzeichnetes Nutzdaten-Segment fehlt.",
+                      "value": "13"
+                    },
+                    {
+                      "name": "Mitteilung, dass der Empfänger die Verwendung des Typs von Segment, an der identifizierten Position nicht unterstützt.",
+                      "value": "15"
+                    },
+                    {
+                      "name": "Mitteilung, dass das identifizierte Segment zu viele Datenelemente oder Datenelementgruppen enthält.",
+                      "value": "16"
+                    },
+                    {
+                      "name": "Mitteilung, dass die in der Übertragungsdatei verwendeten Service-Zeichen nicht als Service-Zeichen gültig sind. Diese Zeichen werden entweder im UNA angezeigt oder nach der in UNB angezeigten Syntax-Kennung definiert oder in einer Datenaustauschvereinbarung definiert. Wenn dieser Code in den Segmenten UCS oder UCD verwendet wird, folgt das ungültige Zeichen unmittelbar dem identifizierten Teil der Übertragungsdatei.",
+                      "value": "22"
+                    },
+                    {
+                      "name": "Mitteilung, dass ein Segment zu oft wiederholt wurde.",
+                      "value": "35"
+                    },
+                    {
+                      "name": "Mitteilung, dass eine Segmentgruppe zu oft wiederholt wurde.",
+                      "value": "36"
+                    }
+                  ],
+                  "id": "0085",
+                  "index": 1,
+                  "name": "Syntax-Fehler, codiert",
+                  "type": "code"
+                }
+              ],
+              "id": "UCS",
+              "name": "SG2: Eine Gruppe von Segmenten, die als Antwort auf ein mit einem oder mehreren Fehlern behaftetes Segment gesendet wird und das ein Bestandteil der im Segment UCM in Segmentgruppe 1 identifizierten Nachricht war. Die SG2 ist anzugeben, wenn der Syntax-Fehler der entsprechenden Nachricht nicht in einem der Segmente UNH oder UNT enthalten war. Zu UCS: Ein Segment, das ein Segment in der Nachricht identifiziert, um anzuzeigen, dass dieses Segment einen Fehler enthält, und zur Identifizierung jedes Fehlers bezogen auf das gesamte Segment. DE0096: Die numerische Zählerposition eines bestimmten Segments innerhalb der empfangenen Nachricht. Die Zählung beginnt mit dem Segment UNH und schließt dieses mit ein. Die Zählung beginnt mit 1. Um ein fehlerhaftes Segment zu kennzeichnen, wird die entsprechende Zählerposition des Segmentes verwendet. Um ein fehlendes Segment zu melden, wird die Zählerposition des zuvor verarbeiteten Segments verwendet, auf dem das fehlende Segment hätte folgen müssen. Eine fehlende Segmentgruppe wird durch das fehlende erste Segment in der Gruppe gekennzeichnet. DE0085: Dieses Datenelement wird nur dann angegeben, wenn das UCD-Segment nicht angegeben werden kann. Es ist der Code zur Anzeige des aufgedeckten Syntax-Fehlers anzugeben."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Mitteilung, dass der Wert eines einfachen Datenelements, einer Datenelementgruppe oder eines Gruppendatenelements nicht den entsprechenden Spezifikationen entspricht (z. B. Qualifier nicht aus erlaubtem Wertebereich oder ungültiges Datumsformat).",
+                      "value": "12"
+                    },
+                    {
+                      "name": "Mitteilung, dass ein mit M oder R gekennzeichnetes Datenelement, eine Datenelementgruppe oder ein Gruppendatenelement fehlt.",
+                      "value": "13"
+                    },
+                    {
+                      "name": "Mitteilung, dass die identifizierte Datenelementgruppe zu viele Gruppendatenelemente enthält.",
+                      "value": "16"
+                    },
+                    {
+                      "name": "Mitteilung, dass die im Datenelement verwendete Dezimalschreibung nicht mit derjenigen im UNA angezeigten übereinstimmt.",
+                      "value": "19"
+                    },
+                    {
+                      "name": "Mitteilung, dass ein oder mehrere in der Übertragungsdatei verwendete Zeichen nach der definierten Syntax-Ebene im Segment UNB ungültig sind. Das ungültige Zeichen ist Teil der Bezugsebene oder folgt unmittelbar dem identifizierten Teil der Übertragungsdatei.",
+                      "value": "21"
+                    },
+                    {
+                      "name": "Mitteilung, dass die in der Übertragungsdatei verwendeten Service-Zeichen nicht als Service-Zeichen gültig sind. Diese Zeichen werden entweder im UNA angezeigt oder nach der in UNB angezeigten Syntax-Kennung definiert oder in einer Datenaustauschvereinbarung definiert. Wenn dieser Code in den Segmenten UCS oder UCD verwendet wird, folgt das ungültige Zeichen unmittelbar dem identifizierten Teil der Übertragungsdatei.",
+                      "value": "22"
+                    },
+                    {
+                      "name": "Mitteilung, dass ein oder mehrere numerische Zeichen in einem alphabetischen (Gruppen-)Datenelement oder ein oder mehrere alphabetische Zeichen in einem numerischen (Gruppen-)Datenelement verwendet wurden.",
+                      "value": "37"
+                    },
+                    {
+                      "name": "Mitteilung, dass vor einem Dezimalzeichen nicht eine oder mehrere Ziffern stehen.",
+                      "value": "38"
+                    },
+                    {
+                      "name": "Mitteilung, dass die Länge eines empfangenen Datenelements die maximale Länge nach der Datenelementbeschreibung überschreitet.",
+                      "value": "39"
+                    },
+                    {
+                      "name": "Mitteilung, dass die Länge eines empfangenen Datenelements die Mindestlänge nach der Datenelementbeschreibung unterschreitet.",
+                      "value": "40"
+                    }
+                  ],
+                  "id": "0085",
+                  "index": 0,
+                  "name": "Syntax-Fehler, codiert",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "0098",
+                      "name": "Segmentposition des fehlerhaften Datenelements / Datenelementgruppe",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "0104",
+                      "name": "Position des fehlerhaften Gruppendatenelements",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "S011",
+                  "index": 1,
+                  "name": "Datenelement-Identifikation"
+                }
+              ],
+              "id": "UCD",
+              "name": "Ein Segment, das ein fehlerhaftes einfaches Datenelement, eine fehlerhafte Datenelementgruppe oder ein fehlerhaftes Gruppendatenelement im Segment identifiziert. Das Segment wird durch das Segment UCS in Segmentgruppe 2 gekennzeichnet. Darüber hinaus dient dieses Segment zur Angabe der Art des Fehlers. Das Segment muss angegeben werden, wenn der identifizierte Syntaxfehler an einer Stelle vorkommt, die die Befüllung dieses Segments zulässt.  S011: Identifikation der Position eines fehlerhaften Datenelements. DE0098: In diesem DE wird die numerische Zählerposition des fehlerhaften Datenelements bzw. der Datenelementgruppe in der das fehlerhafte Gruppendatenelement enthalten ist, angegeben. Die Segment-Kennung und jedes folgende Datenelement oder jede Datenelementgruppe, das/die in der Segmentbeschreibung definiert ist, soll den Zähler um 1 erhöhen. Der Segment-Bezeichner hat die Positionsnummer 1. DE0104: Dieses DE wird benötigt, wenn der Syntaxfehler in einem Gruppendatenelement enthalten ist. Es wird die Position des fehlerhaften Gruppendatenelements angegeben. Jedes Gruppendatenelement, das in der Beschreibung der Datenelementgruppe definiert ist, erhöht den Zähler um 1. Die Zählung beginnt mit dem ersten Gruppendatenelement in der Datenelementgruppe mit 1."
+            }
+          ],
+          "source_group": "SG2"
+        }
+      },
+      "discriminator": {
+        "element": "0083",
+        "segment": "UCM"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "id": "0062",
+              "index": 0,
+              "name": "Nachrichten-Referenznummer",
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Diese Ebene und alle tieferen Ebenen zurückgewiesen",
+                  "value": "4"
+                }
+              ],
+              "id": "0083",
+              "index": 2,
+              "name": "Aktion, codiert",
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Mitteilung, dass der Wert eines einfachen Datenelements, einer Datenelementgruppe oder eines Gruppendatenelements nicht den entsprechenden Spezifikationen entspricht.",
+                  "value": "12"
+                },
+                {
+                  "name": "Mitteilung, dass ein Servicesegment, Datenelement, eine Datenelementgruppe oder ein Gruppendatenelement fehlt.",
+                  "value": "13"
+                },
+                {
+                  "name": "Mitteilung, dass das identifizierte Segment zu viele Datenelemente oder die identifizierte Datenelementgruppe zu viele Gruppendatenelemente enthält.",
+                  "value": "16"
+                },
+                {
+                  "name": "Mitteilung, dass ein oder mehrere in der Übertragungsdatei verwendete Zeichen nach der definierten Syntax-Ebene im Segment UNB ungültig sind. Das ungültige Zeichen ist Teil der Bezugsebene oder folgt unmittelbar dem identifizierten Teil der Übertragungsdatei.",
+                  "value": "21"
+                },
+                {
+                  "name": "Mitteilung, dass die in der Übertragungsdatei verwendeten Service-Zeichen nicht als Service-Zeichen gültig sind. Diese Zeichen werden entweder im UNA angezeigt oder nach der in UNB angezeigten Syntax-Kennung definiert oder in einer Datenaustauschvereinbarung definiert. Wenn dieser Code in den Segmenten UCS oder UCD verwendet wird, folgt das ungültige Zeichen unmittelbar dem identifizierten Teil der Übertragungsdatei.",
+                  "value": "22"
+                },
+                {
+                  "name": "Mitteilung, dass ein Duplikat einer Nachricht in der zugrundeliegenden Übertragungsdatei gefunden wurde.",
+                  "value": "26"
+                },
+                {
+                  "name": "Mitteilung, dass die Prüfreferenzen im Segment UNH nicht denen im Segment UNT entsprechen.",
+                  "value": "28"
+                },
+                {
+                  "name": "Mitteilung, dass die Anzahl der Segmente nicht der im Segmenten UNT angegebenen Anzahl entspricht.",
+                  "value": "29"
+                },
+                {
+                  "name": "Mitteilung, dass die Länge eines empfangenen Datenelements die maximale Länge nach der Datenelementbeschreibung überschreitet.",
+                  "value": "39"
+                }
+              ],
+              "id": "0085",
+              "index": 3,
+              "name": "Syntax-Fehler, codiert",
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Nachrichten-Kopfsegment",
+                  "value": "UNH"
+                },
+                {
+                  "name": "Nachrichten-Endesegment",
+                  "value": "UNT"
+                }
+              ],
+              "id": "0013",
+              "index": 4,
+              "name": "Service-Segmentbezeichner, codiert",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Anwendungsfehler- und Bestätigungs-Nachricht",
+                      "value": "APERAK"
+                    },
+                    {
+                      "name": "Handelsunstimmigkeit",
+                      "value": "COMDIS"
+                    },
+                    {
+                      "name": "Multimodaler Statusbericht",
+                      "value": "IFTSTA"
+                    },
+                    {
+                      "name": "Prüfbericht",
+                      "value": "INSRPT"
+                    },
+                    {
+                      "name": "Rechnung",
+                      "value": "INVOIC"
+                    },
+                    {
+                      "name": "Bericht über den Verbrauch messbarer Dienstleistungen",
+                      "value": "MSCONS"
+                    },
+                    {
+                      "name": "Bestelländerung",
+                      "value": "ORDCHG"
+                    },
+                    {
+                      "name": "Bestellung",
+                      "value": "ORDERS"
+                    },
+                    {
+                      "name": "Bestellantwort",
+                      "value": "ORDRSP"
+                    },
+                    {
+                      "name": "Partnerstammdaten",
+                      "value": "PARTIN"
+                    },
+                    {
+                      "name": "Preisliste/Katalog",
+                      "value": "PRICAT"
+                    },
+                    {
+                      "name": "Angebot",
+                      "value": "QUOTES"
+                    },
+                    {
+                      "name": "Zahlungsavis",
+                      "value": "REMADV"
+                    },
+                    {
+                      "name": "Anfrage",
+                      "value": "REQOTE"
+                    },
+                    {
+                      "name": "Netzanschluss-Stammdaten",
+                      "value": "UTILMD"
+                    },
+                    {
+                      "name": "Netznutzungszeiten-Nachricht",
+                      "value": "UTILTS"
+                    }
+                  ],
+                  "id": "0065",
+                  "name": "Nachrichtentyp-Kennung",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Entwurfs-Version",
+                      "value": "D"
+                    }
+                  ],
+                  "id": "0052",
+                  "name": "Versionsnummer des Nachrichtentyps",
+                  "sub_index": 1,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Beispielcode - dieser Code ist in der Anwendung durch einen zulässigen Code zu ersetzen!",
+                      "value": "XYZ"
+                    }
+                  ],
+                  "id": "0054",
+                  "name": "Freigabenummer des Nachrichtentyps der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
+                  "sub_index": 2,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "UN/CEFACT",
+                      "value": "UN"
+                    }
+                  ],
+                  "id": "0051",
+                  "name": "Verwaltende Organisation",
+                  "sub_index": 3,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Beispielcode - dieser Code ist in der Anwendung durch einen zulässigen Code zu ersetzen!",
+                      "value": "XYZ"
+                    }
+                  ],
+                  "id": "0057",
+                  "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
+                  "sub_index": 4,
+                  "type": "code"
+                }
+              ],
+              "composite": "S009",
+              "index": 1,
+              "name": "Nachrichten-Kennung"
+            },
+            {
+              "components": [
+                {
+                  "id": "0098",
+                  "name": "Segmentposition des fehlerhaften Datenelements / Datenelementgruppe",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "0104",
+                  "name": "Position des fehlerhaften Gruppendatenelements",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "S011",
+              "index": 5,
+              "name": "Datenelement-Identifikation"
+            }
+          ],
+          "id": "UCM",
+          "name": "SG1: Eine Gruppe von Segmenten, die als Antwort auf eine in der zugrundeliegenden Übertragungsdatei – gekennzeichnet im Segment UCI – enthaltene Nachricht gesendet wird. UCM: Ein Segment, das eine Nachricht in der zugrundeliegenden Übertragungsdatei identifiziert. Die Nachricht wird durch das Kopieren der Datenelemente zur Nachrichten-Referenznummer und zur Nachrichten-Kennung in die identischen Datenelemente dieses Segmentes identifiziert. Ein fehlerhaftes oder fehlendes UNH- oder UNT-Segment wird identifiziert.  DE0062: Dieses DE enthält die eindeutige Nachrichten-Referenznummer der fehlerhaften Nachricht, die in der Übertragungsdatei enthalten ist, deren Datenaustauschreferenz in DE0020 der CONTRL angegeben ist. DE0085: Ist der Syntaxfehler im UNH- oder UNT-Segment der Nachricht, ist dieses Datenelement mit dem Code zu füllen, der den dort aufgefundenen Syntaxfehler beschreibt. S011: Identifikation der Position eines fehlerhaften Datenelements. DE0098: In diesem DE wird die numerische Zählerposition des fehlerhaften Datenelements bzw. der Datenelementgruppe in der das fehlerhafte Gruppendatenelement enthalten ist, angegeben. Die Segment-Kennung und jedes folgende Datenelement oder jede Datenelementgruppe, das/die in der Segmentbeschreibung definiert ist, soll den Zähler um 1 erhöhen. Der Segment-Bezeichner hat die Positionsnummer 1. DE0104: Dieses DE wird benötigt, wenn der Syntaxfehler in einem Gruppendatenelement enthalten ist. Es wird die Position des fehlerhaften Gruppendatenelements angegeben. Jedes Gruppendatenelement, das in der Beschreibung der Datenelementgruppe definiert ist, erhöht den Zähler um 1. Die Zählung beginnt mit dem ersten Gruppendatenelement in der Datenelementgruppe mit 1."
+        }
+      ],
+      "source_group": "SG1"
+    }
+  },
+  "format_version": "FV2604",
+  "kommunikation_von": "",
+  "pid": "",
+  "root_segments": [
+    {
+      "elements": [
+        {
+          "id": "0020",
+          "index": 0,
+          "name": "Eindeutige Referenz zur Identifikation der Übertragungsdatei, vergeben vom Absender. Diese bezieht sich auf den Inhalt des DE0020 im UNB-Segment der Übertragungsdatei deren Syntaxprüfergebnis übermittelt wird.",
+          "type": "data"
+        },
+        {
+          "codes": [
+            {
+              "name": "Diese Ebene und alle tieferen Ebenen zurückgewiesen",
+              "value": "4"
+            },
+            {
+              "name": "Übertragung bestätigt (keine Syntaxfehler)",
+              "value": "7"
+            }
+          ],
+          "id": "0083",
+          "index": 3,
+          "name": "Aktion, codiert",
+          "type": "code"
+        },
+        {
+          "codes": [
+            {
+              "name": "Mitteilung, dass die Syntax-Version und/oder -ebene vom Empfänger nicht unterstützt wird.",
+              "value": "2"
+            },
+            {
+              "name": "Mitteilung, dass der Empfänger der Übertragungsdatei (S003) vom tatsächlichen Empfänger abweicht. ",
+              "value": "7"
+            },
+            {
+              "name": "Mitteilung, dass der Wert eines einfachen Datenelements, einer Datenelementgruppe oder eines Gruppendatenelements nicht den entsprechenden Spezifikationen entspricht.",
+              "value": "12"
+            },
+            {
+              "name": "Mitteilung, dass ein mit M oder R gekennzeichnetes Service- oder Nutzdaten-Segment, Datenelement, eine Datenelementgruppe oder ein Gruppendatenelement fehlt.",
+              "value": "13"
+            },
+            {
+              "name": "Mitteilung, dass das identifizierte Segment zu viele Datenelemente oder die identifizierte Datenelementgruppe zu viele Gruppendatenelemente enthält.",
+              "value": "16"
+            },
+            {
+              "name": "Mitteilung, dass ein im UNA angezeigtes Zeichen als Service-Zeichen ungültig ist.",
+              "value": "20"
+            },
+            {
+              "name": "Mitteilung, dass ein oder mehrere in der Übertragungsdatei verwendete Zeichen nach der definierten Syntax-Ebene im Segment UNB ungültig sind. Das ungültige Zeichen ist Teil der Bezugsebene oder folgt unmittelbar dem identifizierten Teil der Übertragungsdatei.",
+              "value": "21"
+            },
+            {
+              "name": "Mitteilung, dass der Absender der Übertragungsdatei (S002) unbekannt ist (MP- ID bei Empfänger nicht bekannt).",
+              "value": "23"
+            },
+            {
+              "name": "Mitteilung, dass die Test-Verarbeitung für die angegebene Übertragungsdatei, Nachrichtengruppe oder Nachricht nicht durchgeführt werden konnte.",
+              "value": "25"
+            },
+            {
+              "name": "Mitteilung, dass ein mögliches Duplikat einer früher empfangenen Übertragungsdatei gefunden wurde. Die frühere Übertragung kann zurückgewiesen worden sein  (Datenaustauschreferenz des Absenders bei Empfänger bereits bekannt).",
+              "value": "26"
+            },
+            {
+              "name": "Mitteilung, dass die Prüfreferenzen im Segment UNB nicht denen in den Segment UNZ entsprechen.",
+              "value": "28"
+            },
+            {
+              "name": "Mitteilung, dass die Anzahl der Nachrichten nicht der im Segment UNZ angegebenen Anzahl entspricht.",
+              "value": "29"
+            },
+            {
+              "name": "Mitteilung, dass die Übertragungsdatei keine Nachrichten enthielt.",
+              "value": "32"
+            }
+          ],
+          "id": "0085",
+          "index": 4,
+          "name": "Syntax-Fehler, codiert",
+          "type": "code"
+        },
+        {
+          "codes": [
+            {
+              "name": "Trennzeichenvorgabe",
+              "value": "UNA"
+            },
+            {
+              "name": "Nutzdaten-Kopfsegment",
+              "value": "UNB"
+            },
+            {
+              "name": "Nutzdaten-Endesegment",
+              "value": "UNZ"
+            }
+          ],
+          "id": "0013",
+          "index": 5,
+          "name": "Service-Segmentbezeichner, codiert",
+          "type": "code"
+        },
+        {
+          "components": [
+            {
+              "id": "0004",
+              "name": "MP-ID",
+              "sub_index": 0,
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "GS1",
+                  "value": "14"
+                },
+                {
+                  "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                  "value": "500"
+                },
+                {
+                  "name": "DE, DVGW (Deutsche Vereinigung des Gas- und Wasserfaches e.V.)",
+                  "value": "502"
+                }
+              ],
+              "id": "0007",
+              "name": "Teilnehmerbezeichnung, Qualifier",
+              "sub_index": 1,
+              "type": "code"
+            }
+          ],
+          "composite": "S002",
+          "index": 1,
+          "name": "Absender der Übertragungsdatei"
+        },
+        {
+          "components": [
+            {
+              "id": "0010",
+              "name": "MP-ID",
+              "sub_index": 0,
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "GS1",
+                  "value": "14"
+                },
+                {
+                  "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                  "value": "500"
+                },
+                {
+                  "name": "DE, DVGW (Deutsche Vereinigung des Gas- und Wasserfaches e.V.)",
+                  "value": "502"
+                }
+              ],
+              "id": "0007",
+              "name": "Teilnehmerbezeichnung, Qualifier",
+              "sub_index": 1,
+              "type": "code"
+            }
+          ],
+          "composite": "S003",
+          "index": 2,
+          "name": "Empfänger der Übertragungsdatei"
+        },
+        {
+          "components": [
+            {
+              "id": "0098",
+              "name": "Segmentposition des fehlerhaften Datenelements / Datenelementgruppe",
+              "sub_index": 0,
+              "type": "data"
+            },
+            {
+              "id": "0104",
+              "name": "Position des fehlerhaften Gruppendatenelements",
+              "sub_index": 1,
+              "type": "data"
+            }
+          ],
+          "composite": "S011",
+          "index": 6,
+          "name": "Datenelement-Identifikation"
+        }
+      ],
+      "id": "UCI",
+      "name": "Dieses Segment identifiziert die Übertragungsdatei, auf die geantwortet wird. Es enthält zusätzlich die Anzeige des Empfangs der Übertragungsdatei, sowie die Bestätigung oder Zurückweisung (vorgenommene Aktion) der Übertragungsdatei. In den Datenelementgruppen S002 und S003 werden die Marktpartner-IDs aus der Übertragungsdatei übernommen. Die zugrundeliegende Übertragungsdatei wird durch das Kopieren der Datenelemente zum Absender der Übertragungsdatei, zum Empfänger der Übertragungsdatei und zur Datenaustauschreferenz in die identischen Datenelemente dieses Segmentes identifiziert. DE0020: Eindeutige Referenznummer zur Identifizierung der Übertragungsdatei, auf die Bezug genommen wird.  DE0085: Es wird der passende Code zur Anzeige des aufgedeckten Syntax-Fehlers eingetragen. DE0013: Es wird der Code zur Identifizierung des Segments angegeben, das den in DE0085 spezifizierten Syntaxfehler enthält, sofern eines der drei Servicesegmente eindeutig als Fehlerursache zugeordnet werden kann. S011: Identifikation der Position eines fehlerhaften Datenelements.  DE0098: In diesem DE wird die numerische Zählerposition des fehlerhaften Datenelements bzw. der Datenelementgruppe in der das fehlerhafte Gruppendatenelement enthalten ist, angegeben. Die Segment-Kennung und jedes folgende Datenelement oder jede Datenelementgruppe, das/die in der Segmentbeschreibung definiert ist, soll den Zähler um 1 erhöhen. Der Segment-Bezeichner hat die Positionsnummer 1. DE0104: Dieses DE wird benötigt, wenn der Syntaxfehler in einem Gruppendatenelement enthalten ist. Es wird die Position des fehlerhaften Gruppendatenelements angegeben. Jedes Gruppendatenelement, das in der Beschreibung der Datenelementgruppe definiert ist, erhöht den Zähler um 1. Die Zählung beginnt mit dem ersten Gruppendatenelement in der Datenelementgruppe mit 1."
+    },
+    {
+      "elements": [
+        {
+          "id": "0062",
+          "index": 0,
+          "name": "Eindeutige Nachrichtenreferenz des Absenders. Laufende Nummer der Nachrichten im Datenaustausch. Identisch mit DE0062 im UNT, i. d. R. vom sendenden Konverter vergeben.",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Syntax- und Servicebericht",
+                  "value": "CONTRL"
+                }
+              ],
+              "id": "0065",
+              "name": "Nachrichtentyp-Kennung",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Entwurfs-Version",
+                  "value": "D"
+                }
+              ],
+              "id": "0052",
+              "name": "Versionsnummer des Nachrichtentyps",
+              "sub_index": 1,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Dritte Ausgabe (CONTRL-Nachricht)",
+                  "value": "3"
+                }
+              ],
+              "id": "0054",
+              "name": "Freigabenummer des Nachrichtentyps",
+              "sub_index": 2,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "UN/CEFACT",
+                  "value": "UN"
+                }
+              ],
+              "id": "0051",
+              "name": "Verwaltende Organisation",
+              "sub_index": 3,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
+                  "value": "2.0b"
+                }
+              ],
+              "id": "0057",
+              "name": "Anwendungscode der zuständigen Organisation",
+              "sub_index": 4,
+              "type": "code"
+            }
+          ],
+          "composite": "S009",
+          "index": 1,
+          "name": "Nachrichten-Kennung"
+        }
+      ],
+      "id": "UNH",
+      "name": "Ein Service-Segment, mit dem eine Nachricht beginnt und das diese eindeutig identifiziert. Die Nachrichtentyp-Kennung für die Nachricht Syntax- und Servicebericht ist CONTRL. Die Datenelemente 0065, 0052, 0054 und 0051 deklarieren die Nachricht als UNSM des Syntax und Service Report Message Verzeichnisses Version 3 unter Kontrolle der Vereinten Nationen."
+    },
+    {
+      "elements": [
+        {
+          "id": "0074",
+          "index": 0,
+          "name": "Hier wird die Gesamtzahl der Segmente einer Nachricht angegeben.",
+          "type": "data"
+        },
+        {
+          "id": "0062",
+          "index": 1,
+          "name": "Die Referenznummer aus dem UNH-Segment muss hier wiederholt werden.",
+          "type": "data"
+        }
+      ],
+      "id": "UNT",
+      "name": "Ein Service-Segment, das eine Nachricht beendet und die Gesamtzahl der Segmente in der Nachricht sowie die Nachrichten-Referenznummer angibt. DE0074: Zähler, der die Anzahl der Segmente in einer Nachricht anzeigt (Kontrollzähler einschließlich UNH und UNT). DE0062: Eindeutige Referenznummer der Nachricht, vergeben vom Absender (Muss in UNH und UNT identisch sein)."
+    }
+  ]
+}

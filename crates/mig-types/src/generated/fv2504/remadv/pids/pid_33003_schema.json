@@ -1,0 +1,1179 @@
+{
+  "beschreibung": "Strom Abweisung Kopf und Summe",
+  "fields": {
+    "sg1": {
+      "children": {
+        "sg3_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Informationsstelle",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Abteilung oder Bearbeiter, Code",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Abteilung oder Bearbeiter",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Abteilung oder Bearbeiter"
+                }
+              ],
+              "id": "CTA",
+              "name": "Es wird empfohlen, die Segmentgruppe 3 mindestens bei einem Nichtzahlungs-REMADV zu versenden. Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "id": "3148",
+                      "name": "Kommunikationsadresse, Identifikation",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "E-Mail",
+                          "value": "EM"
+                        },
+                        {
+                          "name": "Telefax",
+                          "value": "FX"
+                        },
+                        {
+                          "name": "Telefon",
+                          "value": "TE"
+                        },
+                        {
+                          "name": "weiteres Telefon",
+                          "value": "AJ"
+                        },
+                        {
+                          "name": "Handy",
+                          "value": "AL"
+                        }
+                      ],
+                      "id": "3155",
+                      "name": "Kommunikationsweg/-dienst, Qualifier",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C076",
+                  "index": 0,
+                  "name": "Kommunikationsverbindung"
+                }
+              ],
+              "id": "COM",
+              "name": "Ein Segment zur Angabe von Kommunikationsnummer und -typ des im vorangegangenen CTA-Segments angegebenen Sachbearbeiters oder der Abteilung.  DE3155: Es ist jeder Qualifier max. einmal zu verwenden."
+            }
+          ],
+          "source_group": "SG3"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Partner wird die MP-ID angegeben."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Nachrichtenempfänger",
+                  "value": "MR"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Partner wird die MP-ID angegeben."
+        }
+      ],
+      "source_group": "SG1"
+    },
+    "sg4": {
+      "discriminator": {
+        "element": "6347",
+        "segment": "CUX"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Referenzwährung",
+                      "value": "2"
+                    }
+                  ],
+                  "id": "6347",
+                  "name": "Währungsverwendung, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "ISO 4217 3-Alpha Code",
+                      "value": "EUR"
+                    }
+                  ],
+                  "id": "6345",
+                  "name": "ISO 4217 3-Alpha Code",
+                  "sub_index": 1,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Zahlungswährung",
+                      "value": "11"
+                    }
+                  ],
+                  "id": "6343",
+                  "name": "Währung, Qualifier",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C504",
+              "index": 0,
+              "name": "Währungsangaben"
+            }
+          ],
+          "id": "CUX",
+          "name": "Dieses Segment wird benutzt, um die Währung für die gesamte Rechnung auf Euro festzulegen."
+        }
+      ],
+      "source_group": "SG4"
+    },
+    "sg5": {
+      "children": {
+        "sg7": {
+          "discriminator": {
+            "element": "1082",
+            "segment": "AJT"
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "id": "4465",
+                  "index": 0,
+                  "name": "Code des Prüfschritts",
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "EBD Nr. E_0210",
+                      "value": "E_0210"
+                    },
+                    {
+                      "name": "EBD Nr. E_0259",
+                      "value": "E_0259"
+                    },
+                    {
+                      "name": "EBD Nr. E_0264",
+                      "value": "E_0264"
+                    },
+                    {
+                      "name": "EBD Nr. E_0266",
+                      "value": "E_0266"
+                    },
+                    {
+                      "name": "EBD Nr. E_0406",
+                      "value": "E_0406"
+                    },
+                    {
+                      "name": "EBD Nr. E_0407",
+                      "value": "E_0407"
+                    },
+                    {
+                      "name": "EBD Nr. E_0515",
+                      "value": "E_0515"
+                    },
+                    {
+                      "name": "EBD Nr. E_0517",
+                      "value": "E_0517"
+                    },
+                    {
+                      "name": "EBD Nr. E_0519",
+                      "value": "E_0519"
+                    },
+                    {
+                      "name": "EBD Nr. E_0521",
+                      "value": "E_0521"
+                    },
+                    {
+                      "name": "EBD Nr. E_0566",
+                      "value": "E_0566"
+                    },
+                    {
+                      "name": "EBD Nr. E_0568",
+                      "value": "E_0568"
+                    }
+                  ],
+                  "id": "1082",
+                  "index": 1,
+                  "name": "Positionsnummer",
+                  "type": "code"
+                }
+              ],
+              "id": "AJT",
+              "name": "Dieses Segment dient der Angabe des Abweichungsgrundes gegenüber dem im DOC-Segment referenzierten Dokument. Es sind möglichst alle im Rahmen der Rechnungsprüfung erkannten Ablehnungsgründe durch Wiederholung der Segmentgruppe aufzuführen. Hinweise: E_0210 EBD Nr. E_0210 Rechnung verarbeiten Codeliste zur Prüfung der Abrechnung des Messstellenbetrieb zwischen MSB und LF E_0243 EBD Nr. E_0243_Storno verarbeiten Codeliste zur Prüfung für die Antwort auf eine Stornierung (Abrechnung Messstellenbetrieb gegenüber dem LF) E_0259 EBD Nr. E_0259 Rechnung verarbeiten Codeliste zur Prüfung der Abrechnung von Dienstleistungen zwischen MSB und MSB E_0261 EBD Nr. E_0261_Storno verarbeiten Codeliste zur Prüfung für die Antwort auf eine Stornierung (Abrechnung von Dienstleistungen) E_0264 EBD Nr. E_0264 zur Prüfung der Abrechnung einer für den ESA erbrachten Leistung E_0266 EBD Nr. E_0266 zur erneuten Prüfung der Abrechnung einer für den ESA erbrachten Leistung E_0267 EBD Nr. E_0267 zur Prüfung für die Antwort auf eine Stornierung (Abrechnung einer für den ESA erbrachten Leistung) E_0406 EBD Nr. E_0406 EBD zur Prüfung der Netznutzungsrechnung zwischen NB und LF E_0407 EBD Nr. E_0407 EBD zur erneuten Prüfung der Netznutzungsrechnung nach Erhalt der COMDIS E_0459 EBD Nr. E_0459 EBD zur Prüfung für die Antwort auf eine Stornierung (Netznutzungsrechnung) E_0503 EBD Nr. E_0503 EBD zur Prüfung der Abrechnung einer sonstigen Leistung. Dies kann die Rechnung zur Beauftragung der Unterbrechung der Anschlussnutzung (Sperren) oder die Rechnung zu Verzugskosten beinhalten E_0505 EBD Nr. E_0505 EBD zur erneuten Prüfung der Abrechnung einer sonstigen Leistung. Dies kann die Rechnung zur Beauftragung der Unterbrechung der Anschlussnutzung (Sperren) oder die Rechnung zu Verzugskosten beinhalten E_0506 EBD Nr. E_0506 EBD zur Prüfung für die Antwort auf eine Stornierung (Abrechnung einer sonstigen Leistung) E_0515 EBD Nr. E_0515 zur Prüfung der Abrechnung Leistungen des Preisblatts A des MSB zwischen MSB und NB E_0517 EBD Nr. E_0517 zur erneuten Prüfung der Abrechnung Leistungen des Preisblatts A des MSB zwischen MSB und NB E_0518 EBD Nr. E_0518 zur Prüfung für die Antwort auf eine Stornierung (Abrechnung Preisblatts A des MSB zwischen MSB und NB) E_0519 EBD Nr. E_0519 zur Prüfung der Abrechnung Leistungen des Preisblatts A des MSB zwischen MSB und LF E_0521 EBD Nr. E_0521 zur erneuten Prüfung der Abrechnung Leistungen des Preisblatts A des MSB zwischen MSB und LF E_0522 EBD Nr. E_0522 zur Prüfung für die Antwort auf eine Stornierung (Abrechnung Preisblatts A des MSB zwischen MSB und LF) E_0566 EBD Nr. E_0566 Rechnung Messtellenbetrieb mit iMS gegenüber dem NB prüfen E_0568 EBD Nr. E_0568 erneut Rechnung Messtellenbetrieb mit iMS gegenüber dem NB prüfen E_0569 EBD Nr. E_0569 Prüfen, ob Antwort auf Stornierung erforderlich (MSB mit iMS zwischen MSB und NB) E_0804 EBD Nr. E_0804 Prüfen, ob Antwort auf Stornierung erforderlich (MMMA zwischen NB und LF) E_0806 EBD Nr. E_0806 Püfen, ob Antwort auf Stornierung erforderlich (MMMA zwischen NB und MGV) E_1007 EBD Nr. E_1007_Rechnung einer sonstigen Leistung prüfen. Dies kann für die Rechnung zur Beauftragung der Unterbrechung der Anschlussnutzung (Sperren) oder die Rechnung zu Verzugskosten beinhalten (Gas). E_1009 EBD Nr. E_1009_erneut Rechnung einer sonstigen Leistung prüfen. Dies kann für die Rechnung zur Beauftragung der Unterbrechung der Anschlussnutzung (Sperren) oder die Rechnung zu Verzugskosten beinhalten (Gas). E_1010 EBD Nr. E_1010_Prüfen, ob Antwort auf Stornierung erforderlich (Abrechnung einer sonstigen Leistung Gas) G_0079 Codeliste Gas Nr. G_0079 Codeliste für die Prüfung der Kapazitätsrechnung G_0080 Codeliste Gas Nr. G_0080 Codeliste für die Prüfung der aggregierten Menge und des Abrechnungszeitraums zwischen NB und MGV (entspricht dem EBD E_0802) G_0081 Codeliste Gas Nr. G_0081 Codeliste zur Prüfung der Netznutzungsrechnung zwischen NB und LF (Gas) G_0083 Codeliste Gas Nr. G_0083 Codeliste zur Prüfung zur Ablehnung der Rechnung vom NB an den MSBA G_0084 Codeliste Gas Nr. G_0084 Codeliste zur Prüfung Ablehnung der Rechnung vom MSBN an den MSBA G_0085 Codeliste Gas Nr. G_0085 Codeliste zur Prüfung auf die Stornorechnung (Rechnung vom NB an den MSBA G_0086 Codeliste Gas Nr. G_0086 Codeliste zur Prüfung auf die Stornorechnung (Rechnung vom MSBN an den MSBA) G_0087 Codeliste Gas Nr. G_0087 Codeliste zur Prüfung auf die Stornorechnung (NN-Rechnung zwischen NB und LF (Gas)) GS_002 Codeliste Gas und Strom Nr. GS_002 Codeliste zur Prüfung der Mehr-/Mindermengenabrechnung zwischen NB und LF (entspricht dem EBD E_0801)"
+            }
+          ],
+          "source_group": "SG7"
+        },
+        "sg7_e_0210_e_0259_e_0264_e_0266_e_0406_e_0407_e_0515_e_0517_e_0519_e_0521_e_0566_e_0568": {
+          "discriminator": {
+            "element": "1082",
+            "segment": "AJT",
+            "values": [
+              "E_0210",
+              "E_0259",
+              "E_0264",
+              "E_0266",
+              "E_0406",
+              "E_0407",
+              "E_0515",
+              "E_0517",
+              "E_0519",
+              "E_0521",
+              "E_0566",
+              "E_0568"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "id": "4465",
+                  "index": 0,
+                  "name": "Code des Prüfschritts",
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "EBD Nr. E_0210",
+                      "value": "E_0210"
+                    },
+                    {
+                      "name": "EBD Nr. E_0259",
+                      "value": "E_0259"
+                    },
+                    {
+                      "name": "EBD Nr. E_0264",
+                      "value": "E_0264"
+                    },
+                    {
+                      "name": "EBD Nr. E_0266",
+                      "value": "E_0266"
+                    },
+                    {
+                      "name": "EBD Nr. E_0406",
+                      "value": "E_0406"
+                    },
+                    {
+                      "name": "EBD Nr. E_0407",
+                      "value": "E_0407"
+                    },
+                    {
+                      "name": "EBD Nr. E_0515",
+                      "value": "E_0515"
+                    },
+                    {
+                      "name": "EBD Nr. E_0517",
+                      "value": "E_0517"
+                    },
+                    {
+                      "name": "EBD Nr. E_0519",
+                      "value": "E_0519"
+                    },
+                    {
+                      "name": "EBD Nr. E_0521",
+                      "value": "E_0521"
+                    },
+                    {
+                      "name": "EBD Nr. E_0566",
+                      "value": "E_0566"
+                    },
+                    {
+                      "name": "EBD Nr. E_0568",
+                      "value": "E_0568"
+                    }
+                  ],
+                  "id": "1082",
+                  "index": 1,
+                  "name": "Positionsnummer",
+                  "type": "code"
+                }
+              ],
+              "id": "AJT",
+              "name": "Dieses Segment dient der Angabe des Abweichungsgrundes gegenüber dem im DOC-Segment referenzierten Dokument. Es sind möglichst alle im Rahmen der Rechnungsprüfung erkannten Ablehnungsgründe durch Wiederholung der Segmentgruppe aufzuführen. Hinweise: E_0210 EBD Nr. E_0210 Rechnung verarbeiten Codeliste zur Prüfung der Abrechnung des Messstellenbetrieb zwischen MSB und LF E_0243 EBD Nr. E_0243_Storno verarbeiten Codeliste zur Prüfung für die Antwort auf eine Stornierung (Abrechnung Messstellenbetrieb gegenüber dem LF) E_0259 EBD Nr. E_0259 Rechnung verarbeiten Codeliste zur Prüfung der Abrechnung von Dienstleistungen zwischen MSB und MSB E_0261 EBD Nr. E_0261_Storno verarbeiten Codeliste zur Prüfung für die Antwort auf eine Stornierung (Abrechnung von Dienstleistungen) E_0264 EBD Nr. E_0264 zur Prüfung der Abrechnung einer für den ESA erbrachten Leistung E_0266 EBD Nr. E_0266 zur erneuten Prüfung der Abrechnung einer für den ESA erbrachten Leistung E_0267 EBD Nr. E_0267 zur Prüfung für die Antwort auf eine Stornierung (Abrechnung einer für den ESA erbrachten Leistung) E_0406 EBD Nr. E_0406 EBD zur Prüfung der Netznutzungsrechnung zwischen NB und LF E_0407 EBD Nr. E_0407 EBD zur erneuten Prüfung der Netznutzungsrechnung nach Erhalt der COMDIS E_0459 EBD Nr. E_0459 EBD zur Prüfung für die Antwort auf eine Stornierung (Netznutzungsrechnung) E_0503 EBD Nr. E_0503 EBD zur Prüfung der Abrechnung einer sonstigen Leistung. Dies kann die Rechnung zur Beauftragung der Unterbrechung der Anschlussnutzung (Sperren) oder die Rechnung zu Verzugskosten beinhalten E_0505 EBD Nr. E_0505 EBD zur erneuten Prüfung der Abrechnung einer sonstigen Leistung. Dies kann die Rechnung zur Beauftragung der Unterbrechung der Anschlussnutzung (Sperren) oder die Rechnung zu Verzugskosten beinhalten E_0506 EBD Nr. E_0506 EBD zur Prüfung für die Antwort auf eine Stornierung (Abrechnung einer sonstigen Leistung) E_0515 EBD Nr. E_0515 zur Prüfung der Abrechnung Leistungen des Preisblatts A des MSB zwischen MSB und NB E_0517 EBD Nr. E_0517 zur erneuten Prüfung der Abrechnung Leistungen des Preisblatts A des MSB zwischen MSB und NB E_0518 EBD Nr. E_0518 zur Prüfung für die Antwort auf eine Stornierung (Abrechnung Preisblatts A des MSB zwischen MSB und NB) E_0519 EBD Nr. E_0519 zur Prüfung der Abrechnung Leistungen des Preisblatts A des MSB zwischen MSB und LF E_0521 EBD Nr. E_0521 zur erneuten Prüfung der Abrechnung Leistungen des Preisblatts A des MSB zwischen MSB und LF E_0522 EBD Nr. E_0522 zur Prüfung für die Antwort auf eine Stornierung (Abrechnung Preisblatts A des MSB zwischen MSB und LF) E_0566 EBD Nr. E_0566 Rechnung Messtellenbetrieb mit iMS gegenüber dem NB prüfen E_0568 EBD Nr. E_0568 erneut Rechnung Messtellenbetrieb mit iMS gegenüber dem NB prüfen E_0569 EBD Nr. E_0569 Prüfen, ob Antwort auf Stornierung erforderlich (MSB mit iMS zwischen MSB und NB) E_0804 EBD Nr. E_0804 Prüfen, ob Antwort auf Stornierung erforderlich (MMMA zwischen NB und LF) E_0806 EBD Nr. E_0806 Püfen, ob Antwort auf Stornierung erforderlich (MMMA zwischen NB und MGV) E_1007 EBD Nr. E_1007_Rechnung einer sonstigen Leistung prüfen. Dies kann für die Rechnung zur Beauftragung der Unterbrechung der Anschlussnutzung (Sperren) oder die Rechnung zu Verzugskosten beinhalten (Gas). E_1009 EBD Nr. E_1009_erneut Rechnung einer sonstigen Leistung prüfen. Dies kann für die Rechnung zur Beauftragung der Unterbrechung der Anschlussnutzung (Sperren) oder die Rechnung zu Verzugskosten beinhalten (Gas). E_1010 EBD Nr. E_1010_Prüfen, ob Antwort auf Stornierung erforderlich (Abrechnung einer sonstigen Leistung Gas) G_0079 Codeliste Gas Nr. G_0079 Codeliste für die Prüfung der Kapazitätsrechnung G_0080 Codeliste Gas Nr. G_0080 Codeliste für die Prüfung der aggregierten Menge und des Abrechnungszeitraums zwischen NB und MGV (entspricht dem EBD E_0802) G_0081 Codeliste Gas Nr. G_0081 Codeliste zur Prüfung der Netznutzungsrechnung zwischen NB und LF (Gas) G_0083 Codeliste Gas Nr. G_0083 Codeliste zur Prüfung zur Ablehnung der Rechnung vom NB an den MSBA G_0084 Codeliste Gas Nr. G_0084 Codeliste zur Prüfung Ablehnung der Rechnung vom MSBN an den MSBA G_0085 Codeliste Gas Nr. G_0085 Codeliste zur Prüfung auf die Stornorechnung (Rechnung vom NB an den MSBA G_0086 Codeliste Gas Nr. G_0086 Codeliste zur Prüfung auf die Stornorechnung (Rechnung vom MSBN an den MSBA) G_0087 Codeliste Gas Nr. G_0087 Codeliste zur Prüfung auf die Stornorechnung (NN-Rechnung zwischen NB und LF (Gas)) GS_002 Codeliste Gas und Strom Nr. GS_002 Codeliste zur Prüfung der Mehr-/Mindermengenabrechnung zwischen NB und LF (entspricht dem EBD E_0801)"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Zugehörige Rechnungen",
+                          "value": "AFL"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Referenz, Identifikation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Zugehörige Rechnung"
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Information über Abweichung",
+                      "value": "ABO"
+                    }
+                  ],
+                  "id": "4451",
+                  "index": 0,
+                  "name": "Textbezug, Qualifier",
+                  "type": "code"
+                },
+                {
+                  "id": "4453",
+                  "index": 1,
+                  "name": "Textfunktion, Code",
+                  "type": "data"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "4441",
+                      "name": "Freier Text, Code",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C107",
+                  "index": 2,
+                  "name": "Text-Referenz"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "4440",
+                      "name": "Nähere Erläuterung des Abweichungsgrundes",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Wenn 512 Zeichen nicht ausreichen kann das DE4440 innerhalb des FTX-Segmentes bis zu fünf Mal wiederholt werden",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Freier Text",
+                      "sub_index": 2,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Freier Text",
+                      "sub_index": 3,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Freier Text",
+                      "sub_index": 4,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C108",
+                  "index": 3,
+                  "name": "Text"
+                }
+              ],
+              "id": "FTX",
+              "name": "Wenn für den Abweichungsgrund (SG7 AJT) der Qualifier 28 (Sonstiges) oder Z63 (COMDIS wird abgelehnt) verwendet wird, muss der Abweichungsgrund in diesem Segment näher erläutert werden. Außerdem besteht die Möglichkeit zusätzliche Informationen zu den übrigen Qualifiern zu übermitteln."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Enthaltene Abschläge",
+                      "value": "Z14"
+                    }
+                  ],
+                  "id": "4451",
+                  "index": 0,
+                  "name": "Textbezug, Qualifier",
+                  "type": "code"
+                },
+                {
+                  "id": "4453",
+                  "index": 1,
+                  "name": "Textfunktion, Code",
+                  "type": "data"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "4441",
+                      "name": "Freier Text, Code",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C107",
+                  "index": 2,
+                  "name": "Text-Referenz"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "4440",
+                      "name": "Rechnungsnummer einer Abschlagsrechnung",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Rechnungsnummer einer Abschlagsrechnung",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Rechnungsnummer einer Abschlagsrechnung",
+                      "sub_index": 2,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Rechnungsnummer einer Abschlagsrechnung",
+                      "sub_index": 3,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Rechnungsnummer einer Abschlagsrechnung",
+                      "sub_index": 4,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C108",
+                  "index": 3,
+                  "name": "Text"
+                }
+              ],
+              "id": "FTX",
+              "name": "In diesem Segment werden alle Rechnungsnummern der betroffenen Abschlagsrechnungen angegeben."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Positionsnummern aus dem Angebot",
+                      "value": "Z16"
+                    }
+                  ],
+                  "id": "4451",
+                  "index": 0,
+                  "name": "Textbezug, Qualifier",
+                  "type": "code"
+                },
+                {
+                  "id": "4453",
+                  "index": 1,
+                  "name": "Textfunktion, Code",
+                  "type": "data"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "4441",
+                      "name": "Freier Text, Code",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C107",
+                  "index": 2,
+                  "name": "Text-Referenz"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "4440",
+                      "name": "Positionsnummer eines Angebotes",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Positionsnummer eines Angebotes",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Positionsnummer eines Angebotes",
+                      "sub_index": 2,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Positionsnummer eines Angebotes",
+                      "sub_index": 3,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Positionsnummer eines Angebotes",
+                      "sub_index": 4,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C108",
+                  "index": 3,
+                  "name": "Text"
+                }
+              ],
+              "id": "FTX",
+              "name": "In diesem Segment werden alle Positionsnummern der betroffenen Angebote angegeben."
+            }
+          ],
+          "source_group": "SG7"
+        }
+      },
+      "discriminator": {
+        "element": "1001",
+        "segment": "DOC"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Handelsrechnung",
+                      "value": "380"
+                    },
+                    {
+                      "name": "Selbst ausgestellte Rechnung (engl.: \"Self-billed invoice\")",
+                      "value": "389"
+                    },
+                    {
+                      "name": "Storno einer Belastung.",
+                      "value": "457"
+                    },
+                    {
+                      "name": "Storno für selbst ausgestellte Rechnung (Gutschrift im Gutschriftsverfahren)",
+                      "value": "Z25"
+                    }
+                  ],
+                  "id": "1001",
+                  "name": "Dokumentenname, Code",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C002",
+              "index": 0,
+              "name": "Dokumenten-/Nachrichtenname"
+            },
+            {
+              "components": [
+                {
+                  "id": "1004",
+                  "name": "Dokumentennummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C503",
+              "index": 1,
+              "name": "Dokument-/Nachricht-Einzelheiten"
+            }
+          ],
+          "id": "DOC",
+          "name": "Dieses Segment enthält Angaben zu den Dokumenten, z. B. eine Gruppe von Rechnungen, auf die sich das Zahlungsavis bezieht. Der Positionsteil des Zahlungsavis wird durch Wiederholungen der DOC-Segmentgruppe gebildet."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Fälliger Betrag (inkl. USt.)",
+                      "value": "9"
+                    }
+                  ],
+                  "id": "5025",
+                  "name": "Geldbetrag, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "5004",
+                  "name": "Geldbetrag",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C516",
+              "index": 0,
+              "name": "Geldbetrag"
+            }
+          ],
+          "id": "MOA",
+          "name": "Dieses Segment dient der Angabe monetärer Werte zum Dokument, auf das sich das vorangegangene DOC-Segment bezieht."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Überweisungsbetrag",
+                      "value": "12"
+                    }
+                  ],
+                  "id": "5025",
+                  "name": "Geldbetrag, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "5004",
+                  "name": "Geldbetrag",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C516",
+              "index": 0,
+              "name": "Geldbetrag"
+            }
+          ],
+          "id": "MOA",
+          "name": "Dieses Segment dient der Angabe monetärer Werte zum Dokument, auf das sich das vorangegangene DOC-Segment bezieht."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Dokumenten-/Nachrichtendatum/-zeit",
+                      "value": "137"
+                    }
+                  ],
+                  "id": "2005",
+                  "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "2380",
+                  "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "CCYYMMDDHHMMZZZ",
+                      "value": "303"
+                    }
+                  ],
+                  "id": "2379",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C507",
+              "index": 0,
+              "name": "Datum/Uhrzeit/Zeitspanne"
+            }
+          ],
+          "id": "DTM",
+          "name": "Dieses Segment dient der Festlegung von Datumsangaben, die sich auf das Dokument im DOC Segment beziehen. DE2005: Das Dokumentendatum (Codewert 137) muss zu jeder Rechnung angegeben werden. Das heißt, sowohl bei einer Zahlungs- wie auch bei einer Nicht-Zahlungs-REMADV ist dieses Datum zu jeder referenzierten Rechnung anzugeben."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Referenznummer einer vorangegangenen Nachricht",
+                      "value": "ACW"
+                    }
+                  ],
+                  "id": "1153",
+                  "name": "Referenz, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "1154",
+                  "name": "Referenznummer",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C506",
+              "index": 0,
+              "name": "Referenz"
+            }
+          ],
+          "id": "RFF",
+          "name": "Dieses Segment dient zur Referenzierung auf eine vorherige COMDIS-Nachricht."
+        }
+      ],
+      "source_group": "SG5"
+    }
+  },
+  "format_version": "FV2504",
+  "kommunikation_von": "ReEmpf an ReErst",
+  "pid": "33003",
+  "root_segments": [
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Abgelehnte Forderung (Nicht-Zahlungsavis)",
+                  "value": "239"
+                },
+                {
+                  "name": "Zahlungsavis",
+                  "value": "481"
+                }
+              ],
+              "id": "1001",
+              "name": "Dokumentenname, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C002",
+          "index": 0,
+          "name": "Dokumenten-/Nachrichtenname"
+        },
+        {
+          "components": [
+            {
+              "id": "1004",
+              "name": "Zahlungsavisnummer vergeben vom Absender des Dokuments",
+              "sub_index": 0,
+              "type": "data"
+            }
+          ],
+          "composite": "C106",
+          "index": 1,
+          "name": "Dokumenten-/Nachrichten-Identifikation"
+        }
+      ],
+      "id": "BGM",
+      "name": "Dieses Segment dient dazu, Typ und Funktion einer Nachricht anzuzeigen und die Identifikationsnummer zu übermitteln. DE1001: Je nach Wert in diesem Datenelement sind entweder ausschließlich Zahlungsbeträge (481) oder ausschließlich Zahlungsablehnungen (239) in einer REMADV-Nachricht zu übermitteln."
+    },
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtendatum/-zeit",
+                  "value": "137"
+                }
+              ],
+              "id": "2005",
+              "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "id": "2380",
+              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+              "sub_index": 1,
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "CCYYMMDDHHMMZZZ",
+                  "value": "303"
+                }
+              ],
+              "id": "2379",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+              "sub_index": 2,
+              "type": "code"
+            }
+          ],
+          "composite": "C507",
+          "index": 0,
+          "name": "Datum/Uhrzeit/Zeitspanne"
+        }
+      ],
+      "id": "DTM",
+      "name": "Dieses Segment dient der Festlegung von Datumsangaben, die sich auf das komplette Zahlungsavis beziehen. DE2005: Das Dokumentendatum (Codewert 137) muss im Zahlungsavis angegeben werden."
+    },
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Überweisungsbetrag",
+                  "value": "12"
+                }
+              ],
+              "id": "5025",
+              "name": "Geldbetrag, Qualifier",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "id": "5004",
+              "name": "Geldbetrag",
+              "sub_index": 1,
+              "type": "data"
+            }
+          ],
+          "composite": "C516",
+          "index": 0,
+          "name": "Geldbetrag"
+        }
+      ],
+      "id": "MOA",
+      "name": "Dieses Segment dient der Angabe der Gesamtsumme eines Zahlungsavis. Die Währung des überwiesenen Betrags wurde bereits im CUX-Segment des Kopfteils übertragen."
+    },
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Prüfidentifikator",
+                  "value": "Z13"
+                }
+              ],
+              "id": "1153",
+              "name": "Referenz, Qualifier",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Bestätigung",
+                  "value": "33001"
+                },
+                {
+                  "name": "Abweisung",
+                  "value": "33002"
+                },
+                {
+                  "name": "Abweisung Kopf und Summe",
+                  "value": "33003"
+                },
+                {
+                  "name": "Abweisung Position",
+                  "value": "33004"
+                }
+              ],
+              "id": "1154",
+              "name": "Prüfidentifikator",
+              "sub_index": 1,
+              "type": "code"
+            }
+          ],
+          "composite": "C506",
+          "index": 0,
+          "name": "Referenz"
+        }
+      ],
+      "id": "RFF",
+      "name": "Prüfidentifikator"
+    },
+    {
+      "elements": [
+        {
+          "id": "0062",
+          "index": 0,
+          "name": "Eindeutige Nachrichtenreferenz in einer Übertragungsdatei des Absenders. Nummer der Nachrichten einer Übertragungsdatei im Datenaustausch. Identisch mit DE0062 im UNT, i. d. R. vom sendenden Konverter vergeben.",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Zahlungsavis",
+                  "value": "REMADV"
+                }
+              ],
+              "id": "0065",
+              "name": "Nachrichtentyp-Kennung",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Entwurfs-Version",
+                  "value": "D"
+                }
+              ],
+              "id": "0052",
+              "name": "Versionsnummer des Nachrichtentyps",
+              "sub_index": 1,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Ausgabe 2005 - A",
+                  "value": "05A"
+                }
+              ],
+              "id": "0054",
+              "name": "Freigabenummer des Nachrichtentyps",
+              "sub_index": 2,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "UN/CEFACT",
+                  "value": "UN"
+                }
+              ],
+              "id": "0051",
+              "name": "Verwaltende Organisation",
+              "sub_index": 3,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
+                  "value": "2.9c"
+                }
+              ],
+              "id": "0057",
+              "name": "Es wird Versions- und Release-Nummer der Nachrichtenbeschreibung angegeben.",
+              "sub_index": 4,
+              "type": "code"
+            }
+          ],
+          "composite": "S009",
+          "index": 1,
+          "name": "Nachrichten-Kennung"
+        }
+      ],
+      "id": "UNH",
+      "name": "Dieses Segment dient dazu, eine Nachricht zu eröffnen, zu identifizieren und zu spezifizieren. Die Datenelemente 0065, 0052, 0054 und 0051 deklarieren die Nachricht als UNSM des Verzeichnisses D.05A unter Kontrolle der Vereinten Nationen."
+    },
+    {
+      "elements": [
+        {
+          "codes": [
+            {
+              "name": "Trennung von Positions- und Summenteil",
+              "value": "S"
+            }
+          ],
+          "id": "0081",
+          "index": 0,
+          "name": "Abschnittskennung, codiert",
+          "type": "code"
+        }
+      ],
+      "id": "UNS",
+      "name": "Dieses Segment dient der Trennung von Positions- und Summenteil einer Nachricht."
+    },
+    {
+      "elements": [
+        {
+          "id": "0074",
+          "index": 0,
+          "name": "Hier wird die Gesamtzahl der Segmente einer Nachricht angegeben",
+          "type": "data"
+        },
+        {
+          "id": "0062",
+          "index": 1,
+          "name": "Die Referenznummer aus dem UNH-Segment muss hier wiederholt werden",
+          "type": "data"
+        }
+      ],
+      "id": "UNT",
+      "name": "Das UNT-Segment ist ein Muss-Segment in UN/EDIFACT. Es muss immer das letzte Segment in einer Nachricht sein."
+    }
+  ]
+}

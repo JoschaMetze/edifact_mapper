@@ -1,0 +1,43 @@
+//! Per-PID composition types.
+//! Do not edit manually.
+
+pub mod pid_19011;
+pub mod pid_19012;
+pub mod pid_19013;
+pub mod pid_19014;
+pub mod pid_19015;
+pub mod pid_19016;
+pub mod pid_19116;
+pub mod pid_19117;
+pub mod pid_19118;
+pub mod pid_19119;
+pub mod pid_19120;
+pub mod pid_19121;
+pub mod pid_19123;
+pub mod pid_19124;
+pub mod pid_19127;
+pub mod pid_19128;
+pub mod pid_19129;
+pub mod pid_19133;
+pub mod pid_19131;
+pub mod pid_19132;
+pub mod pid_19130;
+pub mod pid_19110;
+pub mod pid_19101;
+pub mod pid_19102;
+pub mod pid_19103;
+pub mod pid_19115;
+pub mod pid_19114;
+pub mod pid_19104;
+pub mod pid_19302;
+pub mod pid_19301;
+pub mod pid_19204;
+pub mod pid_19002;
+pub mod pid_19001;
+pub mod pid_19004;
+pub mod pid_19003;
+pub mod pid_19006;
+pub mod pid_19005;
+pub mod pid_19007;
+pub mod pid_19010;
+pub mod pid_19009;

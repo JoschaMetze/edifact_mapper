@@ -1,0 +1,1227 @@
+{
+  "beschreibung": "EnFG Informationen",
+  "fields": {
+    "sg1": {
+      "children": {
+        "sg2_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Kontakt",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "id": "3148",
+                      "name": "Nummer / E-Mail Adresse",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "E-Mail",
+                          "value": "EM"
+                        },
+                        {
+                          "name": "Telefax",
+                          "value": "FX"
+                        },
+                        {
+                          "name": "Telefon",
+                          "value": "TE"
+                        },
+                        {
+                          "name": "weiteres Telefon",
+                          "value": "AJ"
+                        },
+                        {
+                          "name": "Handy",
+                          "value": "AL"
+                        }
+                      ],
+                      "id": "3155",
+                      "name": "Art des Kommunikationsmittels, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C076",
+                  "index": 0,
+                  "name": "Kommunikationsverbindung"
+                }
+              ],
+              "id": "COM",
+              "name": "Ein Segment zur Angabe von Kommunikationsnummer und -typ des im vorangegangenen CTA-Segments angegebenen Sachbearbeiters oder der Abteilung."
+            }
+          ],
+          "source_group": "SG2"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Nachrichtenempfänger",
+                  "value": "MR"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "Dieses Segment wird zur Identifikation der Geschäftspartner genutzt, die im Vorgang beteiligt sind. Absender (i. d. R. Datenverantwortlicher) und Empfänger müssen angegeben werden. Hier wird der Empfänger angegeben. DE3039: Zur Identifikation der Partner wird die MP-ID angegeben. DE3055: In der Sparte Strom sind nur die Werte 9 und 293 zu verwenden."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "Dieses Segment wird zur Identifikation der Geschäftspartner genutzt, die im Vorgang beteiligt sind. Absender (i. d. R. Datenverantwortlicher) und Empfänger müssen angegeben werden. Hier wird der Absender angegeben. DE3039: Zur Identifikation der Partner wird die MP-ID angegeben. DE3055: In der Sparte Strom sind nur die Werte 9 und 293 zu verwenden."
+        }
+      ],
+      "source_group": "SG1"
+    },
+    "sg14": {
+      "children": {
+        "sg15": {
+          "children": {
+            "sg16": {
+              "discriminator": {
+                "element": "7008",
+                "segment": "EFI"
+              },
+              "segments": [
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "id": "1508",
+                          "name": "Dateiname",
+                          "sub_index": 0,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Privilegierte Energiemenge",
+                              "value": "Z02"
+                            }
+                          ],
+                          "id": "7008",
+                          "name": "Produkt-/Leistungsbeschreibung",
+                          "sub_index": 1,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C077",
+                      "index": 0,
+                      "name": "Datei, Identifikation"
+                    }
+                  ],
+                  "id": "EFI",
+                  "name": "Privilegierte Energiemenge"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Verarbeitung, Beginndatum/-zeit",
+                              "value": "163"
+                            }
+                          ],
+                          "id": "2005",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "2380",
+                          "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "CCYYMMDDHHMMZZZ",
+                              "value": "303"
+                            }
+                          ],
+                          "id": "2379",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C507",
+                      "index": 0,
+                      "name": "Datum/Uhrzeit/Zeitspanne"
+                    }
+                  ],
+                  "id": "DTM",
+                  "name": "Beginn des Zeitraums"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Verarbeitung, Endedatum/-zeit",
+                              "value": "164"
+                            }
+                          ],
+                          "id": "2005",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "2380",
+                          "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "CCYYMMDDHHMMZZZ",
+                              "value": "303"
+                            }
+                          ],
+                          "id": "2379",
+                          "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C507",
+                      "index": 0,
+                      "name": "Datum/Uhrzeit/Zeitspanne"
+                    }
+                  ],
+                  "id": "DTM",
+                  "name": "Ende des Zeitraums"
+                },
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Erreichte Menge in dem Zeitintervall",
+                              "value": "136"
+                            }
+                          ],
+                          "id": "6063",
+                          "name": "Menge, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "6060",
+                          "name": "Menge",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Kilowattstunde",
+                              "value": "KWH"
+                            }
+                          ],
+                          "id": "6411",
+                          "name": "Maßeinheit, Code",
+                          "sub_index": 2,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C186",
+                      "index": 0,
+                      "name": "Mengenangaben"
+                    }
+                  ],
+                  "id": "QTY",
+                  "name": "In diesem Segment ist die Energiemenge in kWh anzugeben, die privilegiert werden soll."
+                }
+              ],
+              "source_group": "SG16"
+            },
+            "sg17": {
+              "discriminator": {
+                "element": "3035",
+                "segment": "NAD"
+              },
+              "segments": [
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Kunde des LF",
+                          "value": "Z09"
+                        }
+                      ],
+                      "id": "3035",
+                      "index": 0,
+                      "name": "Beteiligter, Qualifier",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "3039",
+                          "name": "Beteiligter, Identifikation",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C082",
+                      "index": 1,
+                      "name": "Identifikation des Beteiligten"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "3124",
+                          "name": "Zeile für Name und Anschrift",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C058",
+                      "index": 2,
+                      "name": "Name und Anschrift"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "3036",
+                          "name": "Name",
+                          "sub_index": 0,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3036",
+                          "name": "Beteiligter",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3036",
+                          "name": "Beteiligter",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3036",
+                          "name": "Beteiligter",
+                          "sub_index": 3,
+                          "type": "data"
+                        },
+                        {
+                          "id": "3036",
+                          "name": "Beteiligter",
+                          "sub_index": 4,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Struktur von Personennamen",
+                              "value": "Z01"
+                            },
+                            {
+                              "name": "Struktur der Firmenbezeichnung",
+                              "value": "Z02"
+                            }
+                          ],
+                          "id": "3045",
+                          "name": "Format für den Namen des Beteiligten, Code",
+                          "sub_index": 5,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C080",
+                      "index": 3,
+                      "name": "Name des Beteiligten"
+                    }
+                  ],
+                  "id": "NAD",
+                  "name": "Name und Anschrift"
+                }
+              ],
+              "source_group": "SG17"
+            },
+            "sg25": {
+              "discriminator": null,
+              "segments": [
+                {
+                  "elements": [
+                    {
+                      "id": "1496",
+                      "index": 0,
+                      "name": "Positionsnummer",
+                      "type": "data"
+                    }
+                  ],
+                  "id": "GID",
+                  "name": "Sendungspositionseinzelheiten"
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Zusätzliche Informationen (für allgemeine Hinweise)",
+                          "value": "ACB"
+                        }
+                      ],
+                      "id": "4451",
+                      "index": 0,
+                      "name": "Textbezug, Qualifier",
+                      "type": "code"
+                    },
+                    {
+                      "id": "4453",
+                      "index": 1,
+                      "name": "Textfunktion, Code",
+                      "type": "data"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "4441",
+                          "name": "Freier Text, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C107",
+                      "index": 2,
+                      "name": "Text-Referenz"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "4440",
+                          "name": "Freier Text",
+                          "sub_index": 0,
+                          "type": "data"
+                        },
+                        {
+                          "id": "4440",
+                          "name": "Freier Text",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "4440",
+                          "name": "Freier Text",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "4440",
+                          "name": "Freier Text",
+                          "sub_index": 3,
+                          "type": "data"
+                        },
+                        {
+                          "id": "4440",
+                          "name": "Freier Text",
+                          "sub_index": 4,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C108",
+                      "index": 3,
+                      "name": "Text"
+                    }
+                  ],
+                  "id": "FTX",
+                  "name": "Sollten über die codierbaren Informationen hinaus weitere Informationen vom LF an den NB mitzuteilen sein, um die Privilegierung für die Marktlokation begründen zu können, sind diese in diesem Segment anzugeben."
+                }
+              ],
+              "source_group": "SG25"
+            }
+          },
+          "discriminator": {
+            "element": "9015",
+            "segment": "STS"
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Grund der Privilegierung nach EnFG",
+                          "value": "Z41"
+                        }
+                      ],
+                      "id": "9015",
+                      "name": "Statuskategorie, Code",
+                      "sub_index": 0,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C601",
+                  "index": 0,
+                  "name": "Statuskategorie"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "4405",
+                      "name": "Status, Code",
+                      "sub_index": 0,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C555",
+                  "index": 1,
+                  "name": "Status"
+                },
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
+                          "value": "ZU5"
+                        },
+                        {
+                          "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
+                          "value": "ZU6"
+                        },
+                        {
+                          "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
+                          "value": "ZU7"
+                        },
+                        {
+                          "name": "§§ 25 - 27 EnFG Herstellung von Grünen Wasserstoff",
+                          "value": "ZU8"
+                        },
+                        {
+                          "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
+                          "value": "ZU9"
+                        },
+                        {
+                          "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
+                          "value": "ZV0"
+                        },
+                        {
+                          "name": "§ 37 EnFG Schienenbahnen",
+                          "value": "ZV1"
+                        },
+                        {
+                          "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
+                          "value": "ZV2"
+                        },
+                        {
+                          "name": "§ 39 EnFG Landstromanlagen",
+                          "value": "ZV3"
+                        }
+                      ],
+                      "id": "9013",
+                      "name": "Statusanlass, Code",
+                      "sub_index": 0,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C556",
+                  "index": 2,
+                  "name": "Statusanlaß"
+                },
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
+                          "value": "ZU5"
+                        },
+                        {
+                          "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
+                          "value": "ZU6"
+                        },
+                        {
+                          "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
+                          "value": "ZU7"
+                        },
+                        {
+                          "name": "§§ 25 - 27 EnFG Herstellung von Grünen Wasserstoff",
+                          "value": "ZU8"
+                        },
+                        {
+                          "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
+                          "value": "ZU9"
+                        },
+                        {
+                          "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
+                          "value": "ZV0"
+                        },
+                        {
+                          "name": "§ 37 EnFG Schienenbahnen",
+                          "value": "ZV1"
+                        },
+                        {
+                          "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
+                          "value": "ZV2"
+                        },
+                        {
+                          "name": "§ 39 EnFG Landstromanlagen",
+                          "value": "ZV3"
+                        }
+                      ],
+                      "id": "9013",
+                      "name": "Statusanlass, Code",
+                      "sub_index": 0,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C556",
+                  "index": 3,
+                  "name": "Statusanlaß"
+                },
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
+                          "value": "ZU5"
+                        },
+                        {
+                          "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
+                          "value": "ZU6"
+                        },
+                        {
+                          "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
+                          "value": "ZU7"
+                        },
+                        {
+                          "name": "§§ 25 - 27 EnFG Herstellung von Grünen Wasserstoff",
+                          "value": "ZU8"
+                        },
+                        {
+                          "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
+                          "value": "ZU9"
+                        },
+                        {
+                          "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
+                          "value": "ZV0"
+                        },
+                        {
+                          "name": "§ 37 EnFG Schienenbahnen",
+                          "value": "ZV1"
+                        },
+                        {
+                          "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
+                          "value": "ZV2"
+                        },
+                        {
+                          "name": "§ 39 EnFG Landstromanlagen",
+                          "value": "ZV3"
+                        }
+                      ],
+                      "id": "9013",
+                      "name": "Statusanlass, Code",
+                      "sub_index": 0,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C556",
+                  "index": 4,
+                  "name": "Statusanlaß"
+                },
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
+                          "value": "ZU5"
+                        },
+                        {
+                          "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
+                          "value": "ZU6"
+                        },
+                        {
+                          "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
+                          "value": "ZU7"
+                        },
+                        {
+                          "name": "§§ 25 - 27 EnFG Herstellung von Grünen Wasserstoff",
+                          "value": "ZU8"
+                        },
+                        {
+                          "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
+                          "value": "ZU9"
+                        },
+                        {
+                          "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
+                          "value": "ZV0"
+                        },
+                        {
+                          "name": "§ 37 EnFG Schienenbahnen",
+                          "value": "ZV1"
+                        },
+                        {
+                          "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
+                          "value": "ZV2"
+                        },
+                        {
+                          "name": "§ 39 EnFG Landstromanlagen",
+                          "value": "ZV3"
+                        }
+                      ],
+                      "id": "9013",
+                      "name": "Statusanlass, Code",
+                      "sub_index": 0,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C556",
+                  "index": 5,
+                  "name": "Statusanlaß"
+                },
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
+                          "value": "ZU5"
+                        },
+                        {
+                          "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
+                          "value": "ZU6"
+                        },
+                        {
+                          "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
+                          "value": "ZU7"
+                        },
+                        {
+                          "name": "§§ 25 - 27 EnFG Herstellung von Grünen Wasserstoff",
+                          "value": "ZU8"
+                        },
+                        {
+                          "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
+                          "value": "ZU9"
+                        },
+                        {
+                          "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
+                          "value": "ZV0"
+                        },
+                        {
+                          "name": "§ 37 EnFG Schienenbahnen",
+                          "value": "ZV1"
+                        },
+                        {
+                          "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
+                          "value": "ZV2"
+                        },
+                        {
+                          "name": "§ 39 EnFG Landstromanlagen",
+                          "value": "ZV3"
+                        }
+                      ],
+                      "id": "9013",
+                      "name": "Statusanlass, Code",
+                      "sub_index": 0,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C556",
+                  "index": 6,
+                  "name": "Statusanlaß"
+                }
+              ],
+              "id": "STS",
+              "name": "Es wird der Grund bzw. die Gründe genannt, weshalb die Marktlokation nach EnFG zu privilegieren ist."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "GPKE / Privilegierungsinformation nach EnFG",
+                          "value": "21045"
+                        }
+                      ],
+                      "id": "1154",
+                      "name": "Prüfidentifikator",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Prüfidentifikator"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Gültigkeitszeitspanne",
+                          "value": "273"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYY",
+                          "value": "602"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Es ist das Jahr anzugeben, auf das sich die in dieser Segmentgruppe ausgetauschten Informationen beziehen."
+            }
+          ],
+          "source_group": "SG15"
+        }
+      },
+      "discriminator": null,
+      "segments": [
+        {
+          "elements": [
+            {
+              "id": "1490",
+              "index": 0,
+              "name": "Vorgangsnummer",
+              "type": "data"
+            }
+          ],
+          "id": "CNI",
+          "name": "Die Vorgangsnummer ist eine fortlaufende Nummer, die in jeder Nachricht bei 1 beginnt und fortlaufend aufsteigend vergeben wird."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Meldepunkt",
+                  "value": "172"
+                }
+              ],
+              "id": "3227",
+              "index": 0,
+              "name": "Ortsangabe, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3225",
+                  "name": "Identifikator",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C517",
+              "index": 1,
+              "name": "Ortsangabe"
+            }
+          ],
+          "id": "LOC",
+          "name": "Hier wird die ID der Messlokation oder die ID der Marktlokation übertragen."
+        }
+      ],
+      "source_group": "SG14"
+    }
+  },
+  "format_version": "FV2604",
+  "kommunikation_von": "LF an NB",
+  "pid": "21045",
+  "root_segments": [
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "MaBiS Meldung(en)",
+                  "value": "Z03"
+                },
+                {
+                  "name": "WiM Meldung(en)",
+                  "value": "Z09"
+                },
+                {
+                  "name": "GPKE Meldung(en)",
+                  "value": "Z33"
+                },
+                {
+                  "name": "Redispatch Meldung(en)",
+                  "value": "Z49"
+                },
+                {
+                  "name": "Beendigung einer Konfiguration",
+                  "value": "Z72"
+                },
+                {
+                  "name": "Bestellung einer Konfiguration",
+                  "value": "Z73"
+                },
+                {
+                  "name": "EnFG Informationen",
+                  "value": "Z86"
+                }
+              ],
+              "id": "1001",
+              "name": "Dokumentenname, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C002",
+          "index": 0,
+          "name": "Dokumenten-/Nachrichtenname"
+        },
+        {
+          "components": [
+            {
+              "id": "1004",
+              "name": "EDI-Nachrichtennummer vergeben vom Absender des Dokuments. Eindeutige Referenz zur Identifikation der Übertragungsdatei.",
+              "sub_index": 0,
+              "type": "data"
+            }
+          ],
+          "composite": "C106",
+          "index": 1,
+          "name": "Dokumenten-/Nachrichten-Identifikation"
+        }
+      ],
+      "id": "BGM",
+      "name": "Dieses Segment dient dazu, Typ und Funktion anzuzeigen und die Identifikationsnummer zu übermitteln."
+    },
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtendatum/-zeit",
+                  "value": "137"
+                }
+              ],
+              "id": "2005",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "id": "2380",
+              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+              "sub_index": 1,
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "CCYYMMDDHHMMZZZ",
+                  "value": "303"
+                }
+              ],
+              "id": "2379",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+              "sub_index": 2,
+              "type": "code"
+            }
+          ],
+          "composite": "C507",
+          "index": 0,
+          "name": "Datum/Uhrzeit/Zeitspanne"
+        }
+      ],
+      "id": "DTM",
+      "name": "Dieses Segment wird zur Angabe des Dokumentendatums verwendet. DE2005: Das Dokumentendatum (Codewert 137) muss angegeben werden."
+    },
+    {
+      "elements": [
+        {
+          "id": "0062",
+          "index": 0,
+          "name": "Eindeutige Nachrichtenreferenz des Absenders. Laufende Nummer der Nachrichten im Datenaustausch. Identisch mit DE0062 im UNT, i. d. R. vom sendenden Konverter vergeben.",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Multimodaler Statusbericht",
+                  "value": "IFTSTA"
+                }
+              ],
+              "id": "0065",
+              "name": "Nachrichtentyp-Kennung",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Entwurfs-Version",
+                  "value": "D"
+                }
+              ],
+              "id": "0052",
+              "name": "Versionsnummer des Nachrichtentyps",
+              "sub_index": 1,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Ausgabe 2018 - A",
+                  "value": "18A"
+                }
+              ],
+              "id": "0054",
+              "name": "Freigabenummer des Nachrichtentyps",
+              "sub_index": 2,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "UN/CEFACT",
+                  "value": "UN"
+                }
+              ],
+              "id": "0051",
+              "name": "Verwaltende Organisation",
+              "sub_index": 3,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
+                  "value": "2.0g"
+                }
+              ],
+              "id": "0057",
+              "name": "Anwendungscode der zuständigen Organisation",
+              "sub_index": 4,
+              "type": "code"
+            }
+          ],
+          "composite": "S009",
+          "index": 1,
+          "name": "Nachrichten-Kennung"
+        }
+      ],
+      "id": "UNH",
+      "name": "Dieses Segment dient dazu, eine Nachricht zu eröffnen, zu identifizieren und zu spezifizieren. Die Datenelemente 0065, 0052, 0054 und 0051 deklarieren die Nachricht als UNSM des Verzeichnisses D.18A unter Kontrolle der Vereinten Nationen. Hinweis: DE0057: Es werden die Versions- und Release-Nummern der Nachrichtenbeschreibungen angegeben."
+    },
+    {
+      "elements": [
+        {
+          "id": "0074",
+          "index": 0,
+          "name": "Hier wird die Gesamtzahl der Segmente einer Nachricht angegeben",
+          "type": "data"
+        },
+        {
+          "id": "0062",
+          "index": 1,
+          "name": "Die Referenznummer aus dem UNH-Segment muss hier wiederholt werden",
+          "type": "data"
+        }
+      ],
+      "id": "UNT",
+      "name": "Das UNT-Segment ist ein Muss-Segment in UN/EDIFACT. Es muss immer das letzte Segment in einer Nachricht sein."
+    }
+  ]
+}

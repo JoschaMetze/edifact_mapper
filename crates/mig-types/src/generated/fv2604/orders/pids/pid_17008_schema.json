@@ -1,0 +1,671 @@
+{
+  "beschreibung": "Abbestellung von Werten",
+  "fields": {
+    "sg1": {
+      "discriminator": {
+        "element": "1153",
+        "segment": "RFF"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Referenznummer einer vorangegangenen Nachricht",
+                      "value": "ACW"
+                    }
+                  ],
+                  "id": "1153",
+                  "name": "Referenz, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "1154",
+                  "name": "Nachrichtennummer",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C506",
+              "index": 0,
+              "name": "Referenz"
+            }
+          ],
+          "id": "RFF",
+          "name": "Referenz auf die Nachrichtennummer (BGM DE1004) aus einer vorangegangenen Nachricht"
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Prüfidentifikator",
+                      "value": "Z13"
+                    }
+                  ],
+                  "id": "1153",
+                  "name": "Referenz, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Abbestellung von Werten für ESA",
+                      "value": "17008"
+                    }
+                  ],
+                  "id": "1154",
+                  "name": "Prüfidentifikator",
+                  "sub_index": 1,
+                  "type": "code"
+                }
+              ],
+              "composite": "C506",
+              "index": 0,
+              "name": "Referenz"
+            }
+          ],
+          "id": "RFF",
+          "name": "Prüfidentifikator"
+        }
+      ],
+      "source_group": "SG1"
+    },
+    "sg2": {
+      "children": {
+        "sg5_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Kontakt",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "id": "3148",
+                      "name": "Nummer / Adresse",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "Elektronische Post",
+                          "value": "EM"
+                        },
+                        {
+                          "name": "Telefax",
+                          "value": "FX"
+                        },
+                        {
+                          "name": "Telefon",
+                          "value": "TE"
+                        },
+                        {
+                          "name": "weiteres Telefon",
+                          "value": "AJ"
+                        },
+                        {
+                          "name": "Handy",
+                          "value": "AL"
+                        }
+                      ],
+                      "id": "3155",
+                      "name": "Art des Kommunikationsmittels, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C076",
+                  "index": 0,
+                  "name": "Kommunikationsverbindung"
+                }
+              ],
+              "id": "COM",
+              "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient. Ein Segment zur Angabe von Kommunikationsnummer und -typ des im vorangegangenen CTA-Segments angegebenen Sachbearbeiters oder der Abteilung."
+            }
+          ],
+          "source_group": "SG5"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Partner wird die MP-ID angegeben."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Nachrichtenempfänger",
+                  "value": "MR"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Partner wird die MP-ID angegeben."
+        }
+      ],
+      "source_group": "SG2"
+    }
+  },
+  "format_version": "FV2604",
+  "kommunikation_von": "ESA an MSB",
+  "pid": "17008",
+  "root_segments": [
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Prozessdatenbericht",
+                  "value": "7"
+                },
+                {
+                  "name": "Bilanzkreiszuordnungsliste",
+                  "value": "E40"
+                },
+                {
+                  "name": "Clearingliste",
+                  "value": "Z05"
+                },
+                {
+                  "name": "Zeitreihen im Rahmen der Bilanzkreisabrechnung",
+                  "value": "BK"
+                },
+                {
+                  "name": "Geräteübernahme",
+                  "value": "Z10"
+                },
+                {
+                  "name": "Weiterverpflichtung zum Betrieb der Messlokation",
+                  "value": "Z11"
+                },
+                {
+                  "name": "Änderung der Technik der Lokation",
+                  "value": "Z12"
+                },
+                {
+                  "name": "Gerätewechselabsicht",
+                  "value": "Z13"
+                },
+                {
+                  "name": "Stammdaten der Markt- oder Messlokation",
+                  "value": "Z14"
+                },
+                {
+                  "name": "normiertes Profil/Profilschar",
+                  "value": "Z19"
+                },
+                {
+                  "name": "Bilanzierte Menge (MMMA)",
+                  "value": "Z23"
+                },
+                {
+                  "name": "Allokationsliste (MMMA)",
+                  "value": "Z24"
+                },
+                {
+                  "name": "Energiemenge und Leistungsmaximum",
+                  "value": "Z28"
+                },
+                {
+                  "name": "Abrechnung des Messstellenbetriebs vom MSB an den LF",
+                  "value": "Z29"
+                },
+                {
+                  "name": "Änderung Prognosegrundlage",
+                  "value": "Z30"
+                },
+                {
+                  "name": "Änderung Gerätekonfiguration",
+                  "value": "Z31"
+                },
+                {
+                  "name": "Reklamation von Werten",
+                  "value": "Z34"
+                },
+                {
+                  "name": "Redispatch Einzelzeitreihe Ausfallarbeit",
+                  "value": "Z45"
+                },
+                {
+                  "name": "Lastgang Marktlokation, Tranche",
+                  "value": "Z48"
+                },
+                {
+                  "name": "Sperrung",
+                  "value": "Z51"
+                },
+                {
+                  "name": "Entsperrung",
+                  "value": "Z52"
+                },
+                {
+                  "name": "Reklamation der Übersicht der Definitionen oder einer Definition",
+                  "value": "Z55"
+                },
+                {
+                  "name": "Änderung individueller Konfiguration",
+                  "value": "Z56"
+                },
+                {
+                  "name": "Übermittlung von Werten an ESA",
+                  "value": "Z57"
+                },
+                {
+                  "name": "Reklamation Profil/Profilschar",
+                  "value": "Z58"
+                },
+                {
+                  "name": "Stammdaten der Marktlokation",
+                  "value": "Z61"
+                },
+                {
+                  "name": "Stammdaten der Messlokation",
+                  "value": "Z62"
+                },
+                {
+                  "name": "Änderung",
+                  "value": "Z68"
+                },
+                {
+                  "name": "Beendigung einer Konfiguration",
+                  "value": "Z72"
+                },
+                {
+                  "name": "Bestellung einer Konfiguration",
+                  "value": "Z73"
+                },
+                {
+                  "name": "Bestellung eines Angebots einer Konfiguration",
+                  "value": "Z74"
+                },
+                {
+                  "name": "Reklamation einer Konfiguration",
+                  "value": "Z76"
+                },
+                {
+                  "name": "Bestellung Änderung Abrechnungsdaten",
+                  "value": "Z91"
+                },
+                {
+                  "name": "Einrichtung Konfiguration aufgrund Zuordnung LF",
+                  "value": "Z92"
+                },
+                {
+                  "name": "Bestellung eines Angebots Änderung der Technik der Lokation",
+                  "value": "Z93"
+                }
+              ],
+              "id": "1001",
+              "name": "Dokumentenname, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C002",
+          "index": 0,
+          "name": "Dokumenten-/Nachrichtenname"
+        },
+        {
+          "components": [
+            {
+              "id": "1004",
+              "name": "EDI-Nachrichtennummer, vergeben vom Absender des Dokuments. Die Dokumentennummer stellt die Auftragsnummer dar, die in den entsprechenden Antworten anzugeben ist.",
+              "sub_index": 0,
+              "type": "data"
+            }
+          ],
+          "composite": "C106",
+          "index": 1,
+          "name": "Dokumenten-/Nachrichten-Identifikation"
+        }
+      ],
+      "id": "BGM",
+      "name": "Dieses Segment dient dazu, Typ und Funktion einer Nachricht anzuzeigen und die Identifikationsnummer zu übermitteln. DE1001: Darin ist die Kategorie der gesamten Nachricht festgelegt."
+    },
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtendatum/-zeit",
+                  "value": "137"
+                }
+              ],
+              "id": "2005",
+              "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "id": "2380",
+              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+              "sub_index": 1,
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "CCYYMMDDHHMMZZZ",
+                  "value": "303"
+                }
+              ],
+              "id": "2379",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+              "sub_index": 2,
+              "type": "code"
+            }
+          ],
+          "composite": "C507",
+          "index": 0,
+          "name": "Datum/Uhrzeit/Zeitspanne"
+        }
+      ],
+      "id": "DTM",
+      "name": "Dieses Segment wird zur Angabe des Nachrichtendatums verwendet."
+    },
+    {
+      "elements": [
+        {
+          "id": "7077",
+          "index": 0,
+          "name": "Beschreibungsformat, Code",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Start Abo",
+                  "value": "Z01"
+                },
+                {
+                  "name": "Ende Abo",
+                  "value": "Z02"
+                },
+                {
+                  "name": "ohne Abo",
+                  "value": "Z03"
+                }
+              ],
+              "id": "7081",
+              "name": "Abonnement",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C272",
+          "index": 1,
+          "name": "Produkt/Leistung"
+        }
+      ],
+      "id": "IMD",
+      "name": "Abonnement"
+    },
+    {
+      "elements": [
+        {
+          "id": "0062",
+          "index": 0,
+          "name": "Eindeutige Nachrichtenreferenz des Absenders. Nummer der Nachrichten einer Übertragungsdatei im Datenaustausch. Identisch mit DE0062 im UNT, i. d. R. vom sendenden Konverter vergeben.",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Bestellung",
+                  "value": "ORDERS"
+                }
+              ],
+              "id": "0065",
+              "name": "Nachrichtentyp-Kennung",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Entwurfs-Version",
+                  "value": "D"
+                }
+              ],
+              "id": "0052",
+              "name": "Versionsnummer des Nachrichtentyps",
+              "sub_index": 1,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Ausgabe 2009 - B",
+                  "value": "09B"
+                }
+              ],
+              "id": "0054",
+              "name": "Freigabenummer des Nachrichtentyps",
+              "sub_index": 2,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "UN/CEFACT",
+                  "value": "UN"
+                }
+              ],
+              "id": "0051",
+              "name": "Verwaltende Organisation",
+              "sub_index": 3,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
+                  "value": "1.4b"
+                }
+              ],
+              "id": "0057",
+              "name": "Anwendungscode der zuständigen Organisation",
+              "sub_index": 4,
+              "type": "code"
+            }
+          ],
+          "composite": "S009",
+          "index": 1,
+          "name": "Nachrichten-Kennung"
+        }
+      ],
+      "id": "UNH",
+      "name": "Dieses Segment dient dazu, eine Nachricht zu eröffnen, zu identifizieren und zu spezifizieren."
+    },
+    {
+      "elements": [
+        {
+          "codes": [
+            {
+              "name": "Trennung von Positions- und Summenteil",
+              "value": "S"
+            }
+          ],
+          "id": "0081",
+          "index": 0,
+          "name": "Abschnittskennung, codiert",
+          "type": "code"
+        }
+      ],
+      "id": "UNS",
+      "name": "Abschnitts-Kontrollsegment"
+    },
+    {
+      "elements": [
+        {
+          "id": "0074",
+          "index": 0,
+          "name": "Hier wird die Gesamtzahl der Segmente einer Nachricht angegeben.",
+          "type": "data"
+        },
+        {
+          "id": "0062",
+          "index": 1,
+          "name": "Die Referenznummer aus dem UNH-Segment muss hier wiederholt werden.",
+          "type": "data"
+        }
+      ],
+      "id": "UNT",
+      "name": "Das UNT-Segment ist ein Muss-Segment in UN/EDIFACT. Es muss immer das letzte Segment in einer Nachricht sein."
+    }
+  ]
+}

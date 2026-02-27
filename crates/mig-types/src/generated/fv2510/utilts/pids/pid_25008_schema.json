@@ -1,0 +1,846 @@
+{
+  "beschreibung": "Übermittlung einer ausgerollten Schaltzeitdefinition",
+  "fields": {
+    "sg2": {
+      "children": {
+        "sg3_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Name vom Ansprechpartner",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "id": "3148",
+                      "name": "Nummer / Adresse",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "Elektronische Post",
+                          "value": "EM"
+                        },
+                        {
+                          "name": "Telefax",
+                          "value": "FX"
+                        },
+                        {
+                          "name": "Telefon",
+                          "value": "TE"
+                        },
+                        {
+                          "name": "weiteres Telefon",
+                          "value": "AJ"
+                        },
+                        {
+                          "name": "Handy",
+                          "value": "AL"
+                        }
+                      ],
+                      "id": "3155",
+                      "name": "Art des Kommunikationsmittels, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C076",
+                  "index": 0,
+                  "name": "Kommunikationsverbindung"
+                }
+              ],
+              "id": "COM",
+              "name": "Ein Segment zur Angabe von Kommunikationsnummer und -typ des im vorangegangenen CTA-Segments angegebenen Sachbearbeiters oder der Abteilung."
+            }
+          ],
+          "source_group": "SG3"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Nachrichtenempfänger",
+                  "value": "MR"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Marktpartner wird die MP-ID angegeben."
+        }
+      ],
+      "source_group": "SG2"
+    },
+    "sg5": {
+      "children": {
+        "sg6": {
+          "discriminator": {
+            "element": "1153",
+            "segment": "RFF"
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "Ausgerollte Schaltzeitdefinition",
+                          "value": "25008"
+                        }
+                      ],
+                      "id": "1154",
+                      "name": "Referenz, Identifikation",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Dieses Segment dient zur Übermittlung des Prüfidentifikators."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Beantragungsnummer",
+                          "value": "AGI"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Referenz, Identifikation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "In diesem Segment wird die Dokumentenummer des Geschäftsvorfalls der Reklamation angegeben."
+            }
+          ],
+          "source_group": "SG6"
+        },
+        "sg8_z73": {
+          "children": {
+            "sg9": {
+              "discriminator": {
+                "element": "7037",
+                "segment": "CCI"
+              },
+              "segments": [
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Schalthandlung",
+                          "value": "Z58"
+                        }
+                      ],
+                      "id": "7059",
+                      "index": 0,
+                      "name": "Klassentyp, Code",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "id": "6313",
+                          "name": "Gemessene Dimension, Code",
+                          "sub_index": 0,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C502",
+                      "index": 1,
+                      "name": "Einzelheiten zu Maßangaben"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Leistung an der Lokation an",
+                              "value": "ZF4"
+                            },
+                            {
+                              "name": "Leistung an der Lokation aus",
+                              "value": "ZF5"
+                            }
+                          ],
+                          "id": "7037",
+                          "name": "Merkmal, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C240",
+                      "index": 2,
+                      "name": "Merkmalsbeschreibung"
+                    }
+                  ],
+                  "id": "CCI",
+                  "name": "Angabe der Schalthandlung zu einem Schaltzeitänderungszeitpunkt."
+                }
+              ],
+              "source_group": "SG9"
+            }
+          },
+          "discriminator": {
+            "element": "1229",
+            "segment": "SEQ",
+            "values": [
+              "Z73"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Ausgerollte Schaltzeitdefinition",
+                      "value": "Z73"
+                    }
+                  ],
+                  "id": "1229",
+                  "index": 0,
+                  "name": "Handlung, Code",
+                  "type": "code"
+                }
+              ],
+              "id": "SEQ",
+              "name": "In dieser Segmentgruppe werden die Eigenschaften der Schaltdefinition und einer ausgerollten Schaltzeitdefinitionen definiert."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Schaltzeitänderungszeitpunkt",
+                          "value": "Z44"
+                        }
+                      ],
+                      "id": "2005",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "2380",
+                      "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "CCYYMMDDHHMMZZZ",
+                          "value": "303"
+                        },
+                        {
+                          "name": "HHMM",
+                          "value": "401"
+                        }
+                      ],
+                      "id": "2379",
+                      "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "sub_index": 2,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C507",
+                  "index": 0,
+                  "name": "Datum/Uhrzeit/Zeitspanne"
+                }
+              ],
+              "id": "DTM",
+              "name": "Angabe eines Zeitpunktes, zu dem eine Schalthandlung stattfindet."
+            }
+          ],
+          "source_group": "SG8"
+        }
+      },
+      "discriminator": {
+        "element": "7495",
+        "segment": "IDE"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Transaktion",
+                  "value": "24"
+                }
+              ],
+              "id": "7495",
+              "index": 0,
+              "name": "Objekt, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "7402",
+                  "name": "Vorgangsnummer",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C206",
+              "index": 1,
+              "name": "Identifikationsnummer"
+            }
+          ],
+          "id": "IDE",
+          "name": "Dieses Segment dient zur datei- und nachrichtenübergreifenden eindeutigen Identifikation eines einzelnen Vorgangs. Die Nutzung der vollen Zeichenlänge ist nicht notwendig.  Hinweis zu DE7402: Es ist zu beachten, dass die Eindeutigkeit nachrichtenübergreifend eingehalten werden muss. Das bedeutet, eine bereits verwendete Vorgangsnummer in dem IDE+24 Segment darf auch in einer später versendeten Nachricht nicht mehr genutzt werden."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Code der Definition",
+                  "value": "Z09"
+                }
+              ],
+              "id": "3227",
+              "index": 0,
+              "name": "Ortsangabe, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3225",
+                  "name": "Code der Definition",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C517",
+              "index": 1,
+              "name": "Ortsangabe"
+            }
+          ],
+          "id": "LOC",
+          "name": "In diesem Segment wird der Code einer Definition übermittelt."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Gültigkeitsbeginn",
+                      "value": "Z34"
+                    }
+                  ],
+                  "id": "2005",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "2380",
+                  "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "CCYYMMDDHHMMZZZ",
+                      "value": "303"
+                    }
+                  ],
+                  "id": "2379",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C507",
+              "index": 0,
+              "name": "Datum/Uhrzeit/Zeitspanne"
+            }
+          ],
+          "id": "DTM",
+          "name": "Dieses Segment wird zur Angabe des Gültigkeitsbeginn der ausgerollten Definition verwendet."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Gültigkeitsende",
+                      "value": "Z35"
+                    }
+                  ],
+                  "id": "2005",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "2380",
+                  "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "CCYYMMDDHHMMZZZ",
+                      "value": "303"
+                    }
+                  ],
+                  "id": "2379",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C507",
+              "index": 0,
+              "name": "Datum/Uhrzeit/Zeitspanne"
+            }
+          ],
+          "id": "DTM",
+          "name": "Dieses Segment wird zur Angabe des Gültigkeitsende einer ausgerollten Definition verwendet."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Fertigstellungsdatum/-zeit",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "2005",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "2380",
+                  "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "CCYYMMDDHHMMSSZZZ",
+                      "value": "304"
+                    }
+                  ],
+                  "id": "2379",
+                  "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C507",
+              "index": 0,
+              "name": "Datum/Uhrzeit/Zeitspanne"
+            }
+          ],
+          "id": "DTM",
+          "name": "Dieses Segment wird zur Angabe der Version der Übersicht einer Definition oder einer ausgerollten Definition verwendet. Die Versionsangabe vergibt der Absender in seinem IT-System. Ein neue Versionsangabe wird genau dann vergeben, wenn inhaltliche Änderungen in der Übersicht einer Definition oder in der ausgerollten Definition durchgeführt wurden, diese wird gegenüber allen Empfängern verwendet."
+        }
+      ],
+      "source_group": "SG5"
+    }
+  },
+  "format_version": "FV2510",
+  "kommunikation_von": "NB an LF / MSB\r\nLF an NB, MSB",
+  "pid": "25008",
+  "root_segments": [
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Berechnungsformel",
+                  "value": "Z36"
+                },
+                {
+                  "name": "Ausgerollte Zählzeitdefinition",
+                  "value": "Z59"
+                },
+                {
+                  "name": "Übersicht Zählzeitdefinitionen",
+                  "value": "Z60"
+                },
+                {
+                  "name": "Übersicht Schaltzeitdefinitionen",
+                  "value": "Z78"
+                },
+                {
+                  "name": "Übersicht Leistungskurvendefinitionen",
+                  "value": "Z79"
+                },
+                {
+                  "name": "Ausgerollte Schaltzeitdefinition",
+                  "value": "Z80"
+                },
+                {
+                  "name": "Ausgerollte Leistungskurvendefinition",
+                  "value": "Z81"
+                }
+              ],
+              "id": "1001",
+              "name": "Dokumentenname, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C002",
+          "index": 0,
+          "name": "Dokumenten-/Nachrichtenname"
+        },
+        {
+          "components": [
+            {
+              "id": "1004",
+              "name": "EDI-Nachrichtennummer vergeben vom Absender des Dokuments",
+              "sub_index": 0,
+              "type": "data"
+            }
+          ],
+          "composite": "C106",
+          "index": 1,
+          "name": "Dokumenten-/Nachrichten-Identifikation"
+        }
+      ],
+      "id": "BGM",
+      "name": "Dieses Segment dient dazu, Typ und Funktion anzuzeigen und die Identifikationsnummer zu übermitteln."
+    },
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtendatum/-zeit",
+                  "value": "137"
+                }
+              ],
+              "id": "2005",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "id": "2380",
+              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+              "sub_index": 1,
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "CCYYMMDDHHMMZZZ",
+                  "value": "303"
+                }
+              ],
+              "id": "2379",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+              "sub_index": 2,
+              "type": "code"
+            }
+          ],
+          "composite": "C507",
+          "index": 0,
+          "name": "Datum/Uhrzeit/Zeitspanne"
+        }
+      ],
+      "id": "DTM",
+      "name": "Dieses Segment wird zur Angabe des Dokumentendatums verwendet."
+    },
+    {
+      "elements": [
+        {
+          "id": "0062",
+          "index": 0,
+          "name": "Eindeutige Nachrichtenreferenz in einer Nachricht des Absenders. Nummer der Nachrichten einer Übertragungsdatei im Datenaustausch. Identisch mit DE0062 im UNT, i. d. R. vom sendenden Konverter vergeben.",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Netznutzungszeiten-Nachricht",
+                  "value": "UTILTS"
+                }
+              ],
+              "id": "0065",
+              "name": "Nachrichtentyp-Kennung",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Entwurfs-Version",
+                  "value": "D"
+                }
+              ],
+              "id": "0052",
+              "name": "Versionsnummer des Nachrichtentyps",
+              "sub_index": 1,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Ausgabe 2018 - A",
+                  "value": "18A"
+                }
+              ],
+              "id": "0054",
+              "name": "Freigabenummer des Nachrichtentyps",
+              "sub_index": 2,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "UN/CEFACT",
+                  "value": "UN"
+                }
+              ],
+              "id": "0051",
+              "name": "Verwaltende Organisation",
+              "sub_index": 3,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
+                  "value": "1.1e"
+                }
+              ],
+              "id": "0057",
+              "name": "Anwendungscode der zuständigen Organisation",
+              "sub_index": 4,
+              "type": "code"
+            }
+          ],
+          "composite": "S009",
+          "index": 1,
+          "name": "Nachrichten-Kennung"
+        }
+      ],
+      "id": "UNH",
+      "name": "Dieses Segment dient dazu, eine Nachricht zu eröffnen, zu identifizieren und zu spezifizieren."
+    },
+    {
+      "elements": [
+        {
+          "id": "0074",
+          "index": 0,
+          "name": "Hier wird die Gesamtzahl der Segmente einer Nachricht angegeben.",
+          "type": "data"
+        },
+        {
+          "id": "0062",
+          "index": 1,
+          "name": "Die Referenznummer aus dem UNH-Segment muss hier wiederholt werden.",
+          "type": "data"
+        }
+      ],
+      "id": "UNT",
+      "name": "Das UNT-Segment ist ein Muss-Segment in UN/EDIFACT. Es muss immer das letzte Segment in einer Nachricht sein."
+    }
+  ]
+}

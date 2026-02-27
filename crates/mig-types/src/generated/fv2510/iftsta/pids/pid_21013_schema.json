@@ -1,0 +1,609 @@
+{
+  "beschreibung": "Status-meldung",
+  "fields": {
+    "sg1": {
+      "children": {
+        "sg2_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Kontakt",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "id": "3148",
+                      "name": "Nummer / E-Mail Adresse",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "E-Mail",
+                          "value": "EM"
+                        },
+                        {
+                          "name": "Telefax",
+                          "value": "FX"
+                        },
+                        {
+                          "name": "Telefon",
+                          "value": "TE"
+                        },
+                        {
+                          "name": "weiteres Telefon",
+                          "value": "AJ"
+                        },
+                        {
+                          "name": "Handy",
+                          "value": "AL"
+                        }
+                      ],
+                      "id": "3155",
+                      "name": "Art des Kommunikationsmittels, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C076",
+                  "index": 0,
+                  "name": "Kommunikationsverbindung"
+                }
+              ],
+              "id": "COM",
+              "name": "Ein Segment zur Angabe von Kommunikationsnummer und -typ des im vorangegangenen CTA-Segments angegebenen Sachbearbeiters oder der Abteilung."
+            }
+          ],
+          "source_group": "SG2"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Nachrichtenempfänger",
+                  "value": "MR"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    },
+                    {
+                      "name": "DE, DVGW Service & Consult GmbH",
+                      "value": "332"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "Dieses Segment wird zur Identifikation der Geschäftspartner genutzt, die im Vorgang beteiligt sind. Absender (i. d. R. Datenverantwortlicher) und Empfänger müssen angegeben werden. Hier wird der Empfänger angegeben. DE3039: Zur Identifikation der Partner wird die MP-ID angegeben. DE3055: In der Sparte Strom sind nur die Werte 9 und 293 zu verwenden."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    },
+                    {
+                      "name": "DE, DVGW Service & Consult GmbH",
+                      "value": "332"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "Dieses Segment wird zur Identifikation der Geschäftspartner genutzt, die im Vorgang beteiligt sind. Absender (i. d. R. Datenverantwortlicher) und Empfänger müssen angegeben werden. Hier wird der Absender angegeben. DE3039: Zur Identifikation der Partner wird die MP-ID angegeben. DE3055: In der Sparte Strom sind nur die Werte 9 und 293 zu verwenden."
+        }
+      ],
+      "source_group": "SG1"
+    },
+    "sg14": {
+      "children": {
+        "sg15": {
+          "discriminator": {
+            "element": "9015",
+            "segment": "STS"
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "MSB-Wechsel nach MsbG",
+                          "value": "Z10"
+                        }
+                      ],
+                      "id": "9015",
+                      "name": "Statuskategorie, Code",
+                      "sub_index": 0,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C601",
+                  "index": 0,
+                  "name": "Statuskategorie"
+                },
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "gescheitert",
+                          "value": "Z13"
+                        }
+                      ],
+                      "id": "4405",
+                      "name": "Status, Code",
+                      "sub_index": 0,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C555",
+                  "index": 1,
+                  "name": "Status"
+                },
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Ablehnung wg. Fristüberschreitung",
+                          "value": "E17"
+                        }
+                      ],
+                      "id": "9013",
+                      "name": "Code des Prüfschritts",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "Codeliste Gas Nr. G_0055",
+                          "value": "G_0055"
+                        },
+                        {
+                          "name": "Codeliste Strom Nr. S_0057",
+                          "value": "S_0057"
+                        }
+                      ],
+                      "id": "1131",
+                      "name": "Codeliste, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C556",
+                  "index": 2,
+                  "name": "Statusanlaß"
+                }
+              ],
+              "id": "STS",
+              "name": "MSB-Wechselstatus"
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Prüfidentifikator",
+                          "value": "Z13"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "WiM / Statusmeldung (gescheitert) vom NB an MSBN / MSBA / LF",
+                          "value": "21013"
+                        }
+                      ],
+                      "id": "1154",
+                      "name": "Prüfidentifikator",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Prüfidentifikator"
+            }
+          ],
+          "source_group": "SG15"
+        }
+      },
+      "discriminator": null,
+      "segments": [
+        {
+          "elements": [
+            {
+              "id": "1490",
+              "index": 0,
+              "name": "Vorgangsnummer",
+              "type": "data"
+            }
+          ],
+          "id": "CNI",
+          "name": "Die Vorgangsnummer ist eine fortlaufende Nummer, die in jeder Nachricht bei 1 beginnt und fortlaufend aufsteigend vergeben wird."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Meldepunkt",
+                  "value": "172"
+                }
+              ],
+              "id": "3227",
+              "index": 0,
+              "name": "Ortsangabe, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3225",
+                  "name": "Identifikator",
+                  "sub_index": 0,
+                  "type": "data"
+                }
+              ],
+              "composite": "C517",
+              "index": 1,
+              "name": "Ortsangabe"
+            }
+          ],
+          "id": "LOC",
+          "name": "Hier wird die ID der Messlokation oder die ID der Marktlokation übertragen."
+        }
+      ],
+      "source_group": "SG14"
+    }
+  },
+  "format_version": "FV2510",
+  "kommunikation_von": "NB an MSBN / MSBA / LF",
+  "pid": "21013",
+  "root_segments": [
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "MaBiS Meldung(en)",
+                  "value": "Z03"
+                },
+                {
+                  "name": "WiM Meldung(en)",
+                  "value": "Z09"
+                },
+                {
+                  "name": "GPKE Meldung(en)",
+                  "value": "Z33"
+                },
+                {
+                  "name": "Redispatch Meldung(en)",
+                  "value": "Z49"
+                },
+                {
+                  "name": "Beendigung einer Konfiguration",
+                  "value": "Z72"
+                },
+                {
+                  "name": "Bestellung einer Konfiguration",
+                  "value": "Z73"
+                },
+                {
+                  "name": "EnFG Informationen",
+                  "value": "Z86"
+                }
+              ],
+              "id": "1001",
+              "name": "Dokumentenname, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C002",
+          "index": 0,
+          "name": "Dokumenten-/Nachrichtenname"
+        },
+        {
+          "components": [
+            {
+              "id": "1004",
+              "name": "EDI-Nachrichtennummer vergeben vom Absender des Dokuments. Eindeutige Referenz zur Identifikation der Übertragungsdatei.",
+              "sub_index": 0,
+              "type": "data"
+            }
+          ],
+          "composite": "C106",
+          "index": 1,
+          "name": "Dokumenten-/Nachrichten-Identifikation"
+        }
+      ],
+      "id": "BGM",
+      "name": "Dieses Segment dient dazu, Typ und Funktion anzuzeigen und die Identifikationsnummer zu übermitteln."
+    },
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtendatum/-zeit",
+                  "value": "137"
+                }
+              ],
+              "id": "2005",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "id": "2380",
+              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+              "sub_index": 1,
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "CCYYMMDDHHMMZZZ",
+                  "value": "303"
+                }
+              ],
+              "id": "2379",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+              "sub_index": 2,
+              "type": "code"
+            }
+          ],
+          "composite": "C507",
+          "index": 0,
+          "name": "Datum/Uhrzeit/Zeitspanne"
+        }
+      ],
+      "id": "DTM",
+      "name": "Dieses Segment wird zur Angabe des Dokumentendatums verwendet. DE2005: Das Dokumentendatum (Codewert 137) muss angegeben werden."
+    },
+    {
+      "elements": [
+        {
+          "id": "0062",
+          "index": 0,
+          "name": "Eindeutige Nachrichtenreferenz des Absenders. Laufende Nummer der Nachrichten im Datenaustausch. Identisch mit DE0062 im UNT, i. d. R. vom sendenden Konverter vergeben.",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Multimodaler Statusbericht",
+                  "value": "IFTSTA"
+                }
+              ],
+              "id": "0065",
+              "name": "Nachrichtentyp-Kennung",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Entwurfs-Version",
+                  "value": "D"
+                }
+              ],
+              "id": "0052",
+              "name": "Versionsnummer des Nachrichtentyps",
+              "sub_index": 1,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Ausgabe 2018 - A",
+                  "value": "18A"
+                }
+              ],
+              "id": "0054",
+              "name": "Freigabenummer des Nachrichtentyps",
+              "sub_index": 2,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "UN/CEFACT",
+                  "value": "UN"
+                }
+              ],
+              "id": "0051",
+              "name": "Verwaltende Organisation",
+              "sub_index": 3,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
+                  "value": "2.0g"
+                }
+              ],
+              "id": "0057",
+              "name": "Anwendungscode der zuständigen Organisation",
+              "sub_index": 4,
+              "type": "code"
+            }
+          ],
+          "composite": "S009",
+          "index": 1,
+          "name": "Nachrichten-Kennung"
+        }
+      ],
+      "id": "UNH",
+      "name": "Dieses Segment dient dazu, eine Nachricht zu eröffnen, zu identifizieren und zu spezifizieren. Die Datenelemente 0065, 0052, 0054 und 0051 deklarieren die Nachricht als UNSM des Verzeichnisses D.18A unter Kontrolle der Vereinten Nationen. Hinweis: DE0057: Es werden die Versions- und Release-Nummern der Nachrichtenbeschreibungen angegeben."
+    },
+    {
+      "elements": [
+        {
+          "id": "0074",
+          "index": 0,
+          "name": "Hier wird die Gesamtzahl der Segmente einer Nachricht angegeben",
+          "type": "data"
+        },
+        {
+          "id": "0062",
+          "index": 1,
+          "name": "Die Referenznummer aus dem UNH-Segment muss hier wiederholt werden",
+          "type": "data"
+        }
+      ],
+      "id": "UNT",
+      "name": "Das UNT-Segment ist ein Muss-Segment in UN/EDIFACT. Es muss immer das letzte Segment in einer Nachricht sein."
+    }
+  ]
+}

@@ -1026,13 +1026,14 @@ impl MappingEngine {
         };
 
         // Scan all repetitions for the matching discriminator
+        let expected_values: Vec<&str> = expected.split('|').collect();
         for (rep_idx, instance) in leaf_group.repetitions.iter().enumerate() {
             let matches = instance.segments.iter().any(|s| {
                 s.tag.eq_ignore_ascii_case(tag)
                     && s.elements
                         .get(element_idx)
                         .and_then(|e| e.get(component_idx))
-                        .map(|v| v == expected)
+                        .map(|v| expected_values.iter().any(|ev| v == ev))
                         .unwrap_or(false)
             });
             if matches {
@@ -1041,6 +1042,103 @@ impl MappingEngine {
         }
 
         None
+    }
+
+    /// Like `resolve_repetition`, but returns ALL matching rep indices instead of just the first.
+    ///
+    /// This is used for multi-Zeitscheibe support where multiple SG6 reps may match
+    /// the same discriminator (e.g., multiple RFF+Z49 time slices).
+    pub fn resolve_all_repetitions(
+        tree: &AssembledTree,
+        group_path: &str,
+        discriminator: &str,
+    ) -> Vec<usize> {
+        let Some((spec, expected)) = discriminator.split_once('=') else {
+            return Vec::new();
+        };
+        let parts: Vec<&str> = spec.split('.').collect();
+        if parts.len() != 3 {
+            return Vec::new();
+        }
+        let tag = parts[0];
+        let element_idx: usize = match parts[1].parse() {
+            Ok(v) => v,
+            Err(_) => return Vec::new(),
+        };
+        let component_idx: usize = match parts[2].parse() {
+            Ok(v) => v,
+            Err(_) => return Vec::new(),
+        };
+
+        // Navigate to the parent and get the leaf group with all its repetitions
+        let path_parts: Vec<&str> = group_path.split('.').collect();
+
+        let leaf_group = if path_parts.len() == 1 {
+            let (group_id, _) = parse_group_spec(path_parts[0]);
+            match tree.groups.iter().find(|g| g.group_id == group_id) {
+                Some(g) => g,
+                None => return Vec::new(),
+            }
+        } else {
+            let parent_parts = &path_parts[..path_parts.len() - 1];
+            let mut current_instance = {
+                let (first_id, first_rep) = parse_group_spec(parent_parts[0]);
+                let first_group = match tree.groups.iter().find(|g| g.group_id == first_id) {
+                    Some(g) => g,
+                    None => return Vec::new(),
+                };
+                match first_group.repetitions.get(first_rep.unwrap_or(0)) {
+                    Some(i) => i,
+                    None => return Vec::new(),
+                }
+            };
+            for part in &parent_parts[1..] {
+                let (group_id, explicit_rep) = parse_group_spec(part);
+                let child_group = match current_instance
+                    .child_groups
+                    .iter()
+                    .find(|g| g.group_id == group_id)
+                {
+                    Some(g) => g,
+                    None => return Vec::new(),
+                };
+                current_instance = match child_group.repetitions.get(explicit_rep.unwrap_or(0)) {
+                    Some(i) => i,
+                    None => return Vec::new(),
+                };
+            }
+            let (leaf_id, _) = match path_parts.last() {
+                Some(p) => parse_group_spec(p),
+                None => return Vec::new(),
+            };
+            match current_instance
+                .child_groups
+                .iter()
+                .find(|g| g.group_id == leaf_id)
+            {
+                Some(g) => g,
+                None => return Vec::new(),
+            }
+        };
+
+        // Collect ALL matching rep indices
+        let expected_values: Vec<&str> = expected.split('|').collect();
+        let mut result = Vec::new();
+        for (rep_idx, instance) in leaf_group.repetitions.iter().enumerate() {
+            let matches = instance.segments.iter().any(|s| {
+                s.tag.eq_ignore_ascii_case(tag)
+                    && s.elements
+                        .get(element_idx)
+                        .and_then(|e| e.get(component_idx))
+                        .map(|v| expected_values.iter().any(|ev| v == ev))
+                        .unwrap_or(false)
+            });
+            if matches {
+                result.push(rep_idx);
+            }
+        }
+
+        result
     }
 
     /// Resolve a discriminated instance using source_path for parent navigation.
@@ -1113,8 +1211,16 @@ impl MappingEngine {
                         )),
                     }
                 } else {
-                    Self::resolve_repetition(tree, &def.meta.source_group, disc)
-                        .map(|rep| self.map_forward_inner(tree, def, rep, enrich_codes))
+                    let reps = Self::resolve_all_repetitions(tree, &def.meta.source_group, disc);
+                    match reps.len() {
+                        0 => None,
+                        1 => Some(self.map_forward_inner(tree, def, reps[0], enrich_codes)),
+                        _ => Some(serde_json::Value::Array(
+                            reps.iter()
+                                .map(|&rep| self.map_forward_inner(tree, def, rep, enrich_codes))
+                                .collect(),
+                        )),
+                    }
                 }
             } else if def.meta.source_group.is_empty() {
                 // Root-level mapping — always single object
@@ -1814,13 +1920,15 @@ fn resolve_child_relative(
 
 /// Parsed discriminator for filtering assembled group instances.
 ///
-/// Discriminator format: "TAG.element_idx.component_idx=VALUE"
+/// Discriminator format: "TAG.element_idx.component_idx=VALUE" or
+/// "TAG.element_idx.component_idx=VAL1|VAL2" (pipe-separated multi-value).
 /// E.g., "LOC.0.0=Z17" → match LOC segments where elements[0][0] == "Z17"
+/// E.g., "RFF.0.0=Z49|Z53" → match RFF where elements[0][0] is Z49 OR Z53
 struct DiscriminatorMatcher<'a> {
     tag: &'a str,
     element_idx: usize,
     component_idx: usize,
-    expected: &'a str,
+    expected_values: Vec<&'a str>,
 }
 
 impl<'a> DiscriminatorMatcher<'a> {
@@ -1834,7 +1942,7 @@ impl<'a> DiscriminatorMatcher<'a> {
             tag: parts[0],
             element_idx: parts[1].parse().ok()?,
             component_idx: parts[2].parse().ok()?,
-            expected,
+            expected_values: expected.split('|').collect(),
         })
     }
 
@@ -1844,7 +1952,7 @@ impl<'a> DiscriminatorMatcher<'a> {
                 && s.elements
                     .get(self.element_idx)
                     .and_then(|e| e.get(self.component_idx))
-                    .map(|v| v == self.expected)
+                    .map(|v| self.expected_values.iter().any(|ev| v == ev))
                     .unwrap_or(false)
         })
     }

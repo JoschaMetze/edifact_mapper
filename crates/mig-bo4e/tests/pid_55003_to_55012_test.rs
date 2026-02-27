@@ -130,13 +130,19 @@ const PID_SPECS: &[PidTestSpec] = &[
             "geschaeftspartner",
             "ansprechpartner",
             "enfgDaten",
+            "zeitscheibe",
         ],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
     PidTestSpec {
         pid: "55110",
         fixture: "55110_UTILMD_S2.1_ALEXANDE178268.edi",
-        tx_stammdaten_keys: &["marktlokation", "geschaeftspartner", "ansprechpartner"],
+        tx_stammdaten_keys: &[
+            "marktlokation",
+            "geschaeftspartner",
+            "ansprechpartner",
+            "zeitscheibe",
+        ],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
     PidTestSpec {
@@ -172,37 +178,37 @@ const PID_SPECS: &[PidTestSpec] = &[
     PidTestSpec {
         pid: "55136",
         fixture: "55136_UTILMD_S2.1_ALEXANDE416834.edi",
-        tx_stammdaten_keys: &["marktlokation", "geschaeftspartner"],
+        tx_stammdaten_keys: &["marktlokation", "geschaeftspartner", "zeitscheibe"],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
     PidTestSpec {
         pid: "55225",
         fixture: "55225_UTILMD_S2.1_ALEXANDE205069.edi",
-        tx_stammdaten_keys: &["netzlokation"],
+        tx_stammdaten_keys: &["netzlokation", "zeitscheibe"],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
     PidTestSpec {
         pid: "55232",
         fixture: "55232_UTILMD_S2.1_ALEXANDE155134.edi",
-        tx_stammdaten_keys: &["netzlokation"],
+        tx_stammdaten_keys: &["netzlokation", "zeitscheibe"],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
     PidTestSpec {
         pid: "55615",
         fixture: "55615_UTILMD_S2.1_DEV-89186.edi",
-        tx_stammdaten_keys: &["netzlokation"],
+        tx_stammdaten_keys: &["netzlokation", "zeitscheibe"],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
     PidTestSpec {
         pid: "55618",
         fixture: "55618_UTILMD_S2.1_ALEXANDE426380.edi",
-        tx_stammdaten_keys: &["steuerbareRessource"],
+        tx_stammdaten_keys: &["steuerbareRessource", "zeitscheibe"],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
     PidTestSpec {
         pid: "55620",
         fixture: "55620_UTILMD_S2.1_ALEXANDE180967.edi",
-        tx_stammdaten_keys: &["messlokation"],
+        tx_stammdaten_keys: &["messlokation", "zeitscheibe"],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
     PidTestSpec {
@@ -711,8 +717,7 @@ fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSe
 /// Fixtures with known mapping gaps that prevent byte-identical roundtrip.
 /// These are legitimate issues to fix later, not test bugs.
 ///
-/// macosi fixture uses SEQ+ZF3 instead of Z18 and has two RFF+Z49 time slices —
-/// our single-Zeitscheibe mapping can't handle it.
+/// macosi fixture uses SEQ+ZF3 instead of Z18 — no TOML mapping for that variant yet.
 const KNOWN_INCOMPLETE: &[&str] = &["55620_UTILMD_S2.1_ALEXANDE121980_macosi.edi"];
 
 /// Full pipeline roundtrip for ALL fixtures of a PID:

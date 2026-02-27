@@ -1,0 +1,1009 @@
+{
+  "beschreibung": "Preisblätter MSB-Leistungen",
+  "fields": {
+    "sg1": {
+      "discriminator": {
+        "element": "1153",
+        "segment": "RFF"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Referenznummer einer vorangegangenen Nachricht",
+                      "value": "ACW"
+                    }
+                  ],
+                  "id": "1153",
+                  "name": "Referenz, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "id": "1154",
+                  "name": "Referenz, Identifikation",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C506",
+              "index": 0,
+              "name": "Referenz"
+            }
+          ],
+          "id": "RFF",
+          "name": "Dieses Segment dient zur Übermittlung der Dokumentennummer einer vorausgegangenen Meldung. Es muss die Dokumentennummer der Nachricht angegeben werden, in deren Gültigkeitszeitraum der Gültigkeitsbeginn dieser Nachricht liegt. Alle Nachrichten mit einem jüngeren Gültigkeitsbeginn werden dadurch ungültig. Werden sie noch benötigt, müssen sie erneut gesendet werden, wobei die Nachricht, die das Ende der Gültigkeit dieser Nachricht festlegt, in diesem Segment die Dokumentnummer dieser Nachricht enthalten muss."
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Prüfidentifikator",
+                      "value": "Z13"
+                    }
+                  ],
+                  "id": "1153",
+                  "name": "Referenz, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Preisblatt MSB-Leistungen",
+                      "value": "27002"
+                    }
+                  ],
+                  "id": "1154",
+                  "name": "Prüfidentifikator",
+                  "sub_index": 1,
+                  "type": "code"
+                }
+              ],
+              "composite": "C506",
+              "index": 0,
+              "name": "Referenz"
+            }
+          ],
+          "id": "RFF",
+          "name": "Das Segment dient zur Übermittlung des Prüfidentifikators."
+        }
+      ],
+      "source_group": "SG1"
+    },
+    "sg17": {
+      "children": {
+        "sg36": {
+          "children": {
+            "sg40": {
+              "discriminator": {
+                "element": "5125",
+                "segment": "PRI"
+              },
+              "segments": [
+                {
+                  "elements": [
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Berechnungspreis",
+                              "value": "CAL"
+                            }
+                          ],
+                          "id": "5125",
+                          "name": "Preis, Qualifier",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "5118",
+                          "name": "Preis, Betrag",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "5375",
+                          "name": "Preisart, Code",
+                          "sub_index": 2,
+                          "type": "data"
+                        },
+                        {
+                          "id": "5387",
+                          "name": "Preisart, Code",
+                          "sub_index": 3,
+                          "type": "data"
+                        },
+                        {
+                          "id": "5284",
+                          "name": "Einzelpreisbasis, Menge",
+                          "sub_index": 4,
+                          "type": "data"
+                        },
+                        {
+                          "codes": [
+                            {
+                              "name": "Jahr",
+                              "value": "ANN"
+                            }
+                          ],
+                          "id": "6411",
+                          "name": "Maßeinheit, Code",
+                          "sub_index": 5,
+                          "type": "code"
+                        }
+                      ],
+                      "composite": "C509",
+                      "index": 0,
+                      "name": "Preisinformation"
+                    }
+                  ],
+                  "id": "PRI",
+                  "name": "Dieses Segment wird benutzt, um Preisangaben für die aktuelle Position anzugeben. Es handelt sich um einen Nettopreis ohne USt.-Anteil. Der hier übertragene Preis muss immer der Logik folgen, dass in der INVOIC wie folgt gerechnet werden kann: Menge (QTY-Segment) * Preis (PRI-Segment unter Berücksichtigung von DE5284 und DE6411) = Positionsbetrag (MOA-Segment).  Hinweis zu DE5284 und DE6411 im Anwendungsfall \"Ausgleichsenergiepreis\": Diese Angaben sind in diesem Fall nötig, um den Umrechnungsfaktor zwischen der im angegebenen Preis benutzen Mengenbasis und in der MSCONS verwendeten und davon abweichenden Mengenbasis zu übermittelten. Hinweis zum Preisblatt: Die Angaben in den Segmenten LIN (ohne den Inhalt des DE1082), PIA und IMD eines Preises müssen sich in mindestens einem der genutzten Datenelemente von den Inhalten der Datenelemente jedes anderen Preises unterscheiden. Im DE6411 ist die Maßeinheit ANN nur bei zeitabhängigen Preisen zu verwenden."
+                },
+                {
+                  "elements": [
+                    {
+                      "codes": [
+                        {
+                          "name": "jährlicher Mengenbereich",
+                          "value": "10"
+                        }
+                      ],
+                      "id": "6167",
+                      "index": 0,
+                      "name": "Wertebereich, Qualifier",
+                      "type": "code"
+                    },
+                    {
+                      "components": [
+                        {
+                          "codes": [
+                            {
+                              "name": "Stück",
+                              "value": "H87"
+                            },
+                            {
+                              "name": "Tag",
+                              "value": "DAY"
+                            },
+                            {
+                              "name": "Kilowattstunde",
+                              "value": "KWH"
+                            }
+                          ],
+                          "id": "6411",
+                          "name": "Maßeinheit, Code",
+                          "sub_index": 0,
+                          "type": "code"
+                        },
+                        {
+                          "id": "6162",
+                          "name": "Wertebereichsgrenze, untere",
+                          "sub_index": 1,
+                          "type": "data"
+                        },
+                        {
+                          "id": "6152",
+                          "name": "Wertebereichsgrenze, obere",
+                          "sub_index": 2,
+                          "type": "data"
+                        }
+                      ],
+                      "composite": "C280",
+                      "index": 1,
+                      "name": "Wertebereich"
+                    }
+                  ],
+                  "id": "RNG",
+                  "name": "Wird die Leistung, deren Artikel-ID in LIN-Segment genannt ist, je Zone mit unterschiedlichen Preisen in Rechnung gestellt, so werden in diesem Segment die Zonengrenzen angegeben."
+                }
+              ],
+              "source_group": "SG40"
+            }
+          },
+          "discriminator": {
+            "element": "7143",
+            "segment": "LIN"
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "id": "1082",
+                  "index": 0,
+                  "name": "Vom Programm vergebene Positionsnummer innerhalb der Nachricht (fortlaufende Nummer von 1 bis n)",
+                  "type": "data"
+                },
+                {
+                  "id": "1229",
+                  "index": 1,
+                  "name": "Handlung, Code",
+                  "type": "data"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "7140",
+                      "name": "Artikelnummer des BDEW / Artikel-ID des BDEW",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "Artikelnummer",
+                          "value": "Z01"
+                        },
+                        {
+                          "name": "Artikel-ID",
+                          "value": "Z09"
+                        }
+                      ],
+                      "id": "7143",
+                      "name": "Art der Produkt-/Leistungsnummer, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C212",
+                  "index": 2,
+                  "name": "Waren-/Leistungsnummer, Identifikation"
+                }
+              ],
+              "id": "LIN",
+              "name": "Dieses Segment zeigt den Beginn des Positionsteils innerhalb der Nachricht an. Der Positionsteil wird durch Wiederholung von Segmentgruppen gebildet, die immer mit einem LIN-Segment beginnen. DE7140: Es sind ausschließlich Codes nutzbar, die in der jeweils gültigen Version der EDI@Energy-Codeliste der Artikelnummern und Artikel-ID enthalten sind."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Zusätzliche Identifikation",
+                      "value": "1"
+                    }
+                  ],
+                  "id": "4347",
+                  "index": 0,
+                  "name": "Produkt-/Erzeugnisnummer, Qualifier",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "7140",
+                      "name": "Code des Preisschlüsselstamms",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "Preisschlüsselstamm",
+                          "value": "Z06"
+                        }
+                      ],
+                      "id": "7143",
+                      "name": "Art der Produkt-/Leistungsnummer, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C212",
+                  "index": 1,
+                  "name": "Preisschlüsselstamm"
+                }
+              ],
+              "id": "PIA",
+              "name": "Das Segment dient zur Übermittlung des Preisschlüsselstamms. Der Preisschlüsselstamm wird vom Ersteller der PRICAT vergeben. Ein Preisschlüsselstamm muss je PRICAT-Ersteller eindeutig sein."
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Code (aus der Liste einer codepflegenden Organisation)",
+                      "value": "C"
+                    },
+                    {
+                      "name": "Freier Text",
+                      "value": "F"
+                    },
+                    {
+                      "name": "Teilstrukturiert (Code und Text)",
+                      "value": "X"
+                    }
+                  ],
+                  "id": "7077",
+                  "index": 0,
+                  "name": "Beschreibungsformat, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "§ 31 MsbG, Abs. 1 Punkt 1\r\nAngemessenes Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 100 000 Kilowattstunden",
+                          "value": "Z15"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 1 Punkt 2\r\nNicht mehr als 200 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 50 000 bis einschließlich 100 000 Kilowattstunden",
+                          "value": "Z16"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 1 Punkt 3\r\nNicht mehr als 170 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 20 000 bis einschließlich 50 000 Kilowattstunden",
+                          "value": "Z17"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 1 Punkt 4\r\nNicht mehr als 130 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 10 000 bis einschließlich 20 000 Kilowattstunden",
+                          "value": "Z18"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 1 Punkt 5\r\nNicht mehr als 100 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit unterbrechbaren Verbrauchseinrichtung nach § 14a EnWG",
+                          "value": "Z19"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 1 Punkt 6\r\nNicht mehr als 100 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 6 000 bis einschließlich 10 000 Kilowattstunden",
+                          "value": "Z20"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 2 Punkt 1\r\nNicht mehr als 100 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit installierter Leistung über 7 bis einschließlich 15 Kilowatt",
+                          "value": "Z21"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 2 Punkt 2\r\nNicht mehr als 130 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit installierter Leistung über 15 bis einschließlich 30 Kilowatt",
+                          "value": "Z22"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 2 Punkt 3\r\nNicht mehr als 200 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit installierter Leistung über 30 bis einschließlich 100 Kilowatt",
+                          "value": "Z23"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 2 Punkt 4\r\nangemessenes Entgelt für mit iMS ausgestattete Marktlokation mit installierter Leistung über 100 Kilowatt",
+                          "value": "Z24"
+                        },
+                        {
+                          "name": "§ 32 MsbG,\r\nnicht mehr als 20 Euro brutto jährlich für mit mME ausgestattete Marktlokation",
+                          "value": "Z25"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 3 Punkt 1\r\nAb 2020 nicht mehr als 60 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 4 000 bis einschließlich 6 000 Kilowattstunden",
+                          "value": "Z28"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 3 Punkt 2\r\nAb 2020 nicht mehr als 40 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 3 000 bis einschließlich 4 000 Kilowattstunden",
+                          "value": "Z29"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 3 Punkt 3\r\nAb 2020 nicht mehr als 30 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 2 000 bis einschließlich 3 000 Kilowattstunden",
+                          "value": "Z30"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 3 Punkt 4\r\nAb 2020 nicht mehr als 23 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch bis einschließlich 2 000 Kilowattstunden",
+                          "value": "Z31"
+                        },
+                        {
+                          "name": "§ 31 MsbG, Abs. 3\r\nAb 2018 nicht mehr als 60 Euro brutto jährlich für optional mit iMS ausgestattete Neuanlage einer Marktlokation",
+                          "value": "Z32"
+                        },
+                        {
+                          "name": "Zusatzleistung",
+                          "value": "Z41"
+                        }
+                      ],
+                      "id": "7081",
+                      "name": "Produkt/Leistung, Code",
+                      "sub_index": 0,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C272",
+                  "index": 1,
+                  "name": "Produkt/Leistung"
+                },
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Höchstspannung",
+                          "value": "Z08"
+                        },
+                        {
+                          "name": "Hochspannung",
+                          "value": "Z09"
+                        },
+                        {
+                          "name": "Mittelspannung",
+                          "value": "Z10"
+                        },
+                        {
+                          "name": "Niederspannung",
+                          "value": "Z11"
+                        }
+                      ],
+                      "id": "7009",
+                      "name": "Spannungsebene der Primärwicklung des Wandlers",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1131",
+                      "name": "Codeliste, Code",
+                      "sub_index": 1,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3055",
+                      "name": "Verantwortliche Stelle für die Codepflege, Code",
+                      "sub_index": 2,
+                      "type": "data"
+                    },
+                    {
+                      "id": "7008",
+                      "name": "Produkt-/Leistungsbeschreibung",
+                      "sub_index": 3,
+                      "type": "data"
+                    },
+                    {
+                      "id": "7008",
+                      "name": "Produkt-/Leistungsbeschreibung",
+                      "sub_index": 4,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C273",
+                  "index": 2,
+                  "name": "Produkt-/Leistungsbeschreibung"
+                }
+              ],
+              "id": "IMD",
+              "name": "Das Segment dient zur Übermittlung der Produktbeschreibung."
+            }
+          ],
+          "source_group": "SG36"
+        }
+      },
+      "discriminator": {
+        "element": "5379",
+        "segment": "PGI"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "keine Gruppe genutzt",
+                  "value": "9"
+                }
+              ],
+              "id": "5379",
+              "index": 0,
+              "name": "Produktgruppen-Art, Code",
+              "type": "code"
+            }
+          ],
+          "id": "PGI",
+          "name": "Dieses Segment wird genutzt, um die darunterliegende Segmentgruppe eröffnen zu können."
+        }
+      ],
+      "source_group": "SG17"
+    },
+    "sg2": {
+      "children": {
+        "sg4_ic": {
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "3412",
+                      "name": "Kontakt",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "id": "3148",
+                      "name": "Kommunikationsadresse, Identifikation",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "codes": [
+                        {
+                          "name": "E-Mail",
+                          "value": "EM"
+                        },
+                        {
+                          "name": "Telefax",
+                          "value": "FX"
+                        },
+                        {
+                          "name": "Telefon",
+                          "value": "TE"
+                        },
+                        {
+                          "name": "weiteres Telefon",
+                          "value": "AJ"
+                        },
+                        {
+                          "name": "Handy",
+                          "value": "AL"
+                        }
+                      ],
+                      "id": "3155",
+                      "name": "Art des Kommunikationsmittels, Code",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C076",
+                  "index": 0,
+                  "name": "Kommunikationsverbindung"
+                }
+              ],
+              "id": "COM",
+              "name": "Ein Segment zur Angabe von Kommunikationsnummer und -typ des im vorangegangenen CTA-Segments angegebenen Sachbearbeiters oder der Abteilung. DE3155: Es ist jeder Qualifier max. einmal zu verwenden."
+            }
+          ],
+          "source_group": "SG4"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Nachrichtenempfänger",
+                  "value": "MR"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Partner wird die MP-ID angegeben."
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Partner wird die MP-ID angegeben."
+        }
+      ],
+      "source_group": "SG2"
+    },
+    "sg6": {
+      "discriminator": {
+        "element": "6347",
+        "segment": "CUX"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "Referenzwährung",
+                      "value": "2"
+                    }
+                  ],
+                  "id": "6347",
+                  "name": "Währungsverwendung, Qualifier",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Euro",
+                      "value": "EUR"
+                    }
+                  ],
+                  "id": "6345",
+                  "name": "Währung, Code",
+                  "sub_index": 1,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "name": "Währung der Preisliste",
+                      "value": "8"
+                    }
+                  ],
+                  "id": "6343",
+                  "name": "Währung, Qualifier",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C504",
+              "index": 0,
+              "name": "Währungsangaben"
+            }
+          ],
+          "id": "CUX",
+          "name": "Dieses Segment wird benutzt, um Währungsangaben für die gesamte Preisliste anzugeben."
+        }
+      ],
+      "source_group": "SG6"
+    }
+  },
+  "format_version": "FV2604",
+  "kommunikation_von": "MSB an LF / NB",
+  "pid": "27002",
+  "root_segments": [
+    {
+      "elements": [
+        {
+          "id": "1225",
+          "index": 2,
+          "name": "Nachrichtenfunktion, Code",
+          "type": "data"
+        },
+        {
+          "id": "4343",
+          "index": 3,
+          "name": "Art der Antwort, Code",
+          "type": "data"
+        },
+        {
+          "codes": [
+            {
+              "name": "Dokument nicht verfügbar",
+              "value": "11"
+            }
+          ],
+          "id": "1373",
+          "index": 4,
+          "name": "Dokumentenstatus, Code",
+          "type": "code"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Ausgleichsenergiepreis",
+                  "value": "Z04"
+                },
+                {
+                  "name": "Preisblatt Messstellenbetrieb",
+                  "value": "Z32"
+                },
+                {
+                  "name": "Preisblatt Sperren / Entsperren und Verzugskosten",
+                  "value": "Z54"
+                },
+                {
+                  "name": "Preisblatt Netznutzung ohne gemeindespezifische Konzessionsabgaben",
+                  "value": "Z64"
+                },
+                {
+                  "name": "Preisblatt Blindarbeit",
+                  "value": "Z67"
+                },
+                {
+                  "name": "Preisblatt Netznutzung: Gemeindespezifische Konzessionsabgaben",
+                  "value": "Z70"
+                },
+                {
+                  "name": "Preisblatt Konfigurationen",
+                  "value": "Z77"
+                },
+                {
+                  "name": "Preisblatt Technik",
+                  "value": "Z94"
+                }
+              ],
+              "id": "1001",
+              "name": "Dokumentenname, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C002",
+          "index": 0,
+          "name": "Dokumenten-/Nachrichtenname"
+        },
+        {
+          "components": [
+            {
+              "id": "1004",
+              "name": "EDI-Nachrichtennummer vergeben vom Absender des Dokuments. Eindeutige Referenz zur Identifikation der Nachricht.",
+              "sub_index": 0,
+              "type": "data"
+            }
+          ],
+          "composite": "C106",
+          "index": 1,
+          "name": "Dokumenten-/Nachrichten-Identifikation"
+        }
+      ],
+      "id": "BGM",
+      "name": "Dieses Segment dient dazu, Typ und Funktion anzuzeigen und die Identifikationsnummer zu übermitteln. DE1373: Mit dem Code 11 kann die Aussage getroffen werden, dass das Preisblatt ohne Inhalt übermittelt und somit keine Leistung dieses Preisblatttyps angeboten wird. Folgendes Informationstripel stellt eine Eindeutigkeit einer PRICAT zur Übertragung des Ausgleichsenergiepreises her: Inhalt von DE1004 des BGM-Segments (d. h. die EDI-Nachrichtennummer) Inhalt von DE2380 des DTM-Segments mit DE2005 = 492 (d. h. das Betrachtungszeitintervall) Inhalt von DE3039 von SG2-NAD mit DE3035 = MS (d. h. MP-ID des PRICAT-Versenders) Sollte der Fall eintreten, dass Inhalte einer PRICAT falsch sind, so ändert sich an diesem Informationstripel der neuen, die korrigierten Daten enthaltenden PRICAT die EDI-Nachrichtennummer. Die Entscheidung welche PRICAT zu verwenden ist, ergibt sich über das in DE2380 des DTM-Segments mit DE2005 = 137 (d. h. das Dokumentendatum), wobei immer das jüngste Dokument gültig ist. Die Eindeutigkeit aller anderen Preisblätter als das zur Übermittlung der Ausgleichsenergiepreise ist durch die EDI-Nachrichtennummer (Inhalt von DE1004 des BGM-Segments) und der MP-ID des PRICAT-Versenders, d. h. dem Inhalt des DE3039 von SG2-NAD mit DE3035 = MS gegeben."
+    },
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Bilanzierungsdatum, -zeit, -periode",
+                  "value": "492"
+                }
+              ],
+              "id": "2005",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "id": "2380",
+              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+              "sub_index": 1,
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "name": "CCYYMM",
+                  "value": "610"
+                }
+              ],
+              "id": "2379",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+              "sub_index": 2,
+              "type": "code"
+            }
+          ],
+          "composite": "C507",
+          "index": 0,
+          "name": "Datum/Uhrzeit/Zeitspanne"
+        }
+      ],
+      "id": "DTM",
+      "name": "Das Segment dient zur Übermittlung des Betrachtungszeitintervalls. Das Betrachtungszeitintervall ist immer ein Kalendermonat."
+    },
+    {
+      "elements": [
+        {
+          "id": "0062",
+          "index": 0,
+          "name": "Eindeutige Nachrichtenreferenz des Absenders. Laufende Nummer der Nachrichten im Datenaustausch. Identisch mit DE0062 im UNT, i. d. R. vom sendenden Konverter vergeben.",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "name": "Preisliste/Katalog",
+                  "value": "PRICAT"
+                }
+              ],
+              "id": "0065",
+              "name": "Nachrichtentyp-Kennung",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Entwurfs-Version",
+                  "value": "D"
+                }
+              ],
+              "id": "0052",
+              "name": "Versionsnummer des Nachrichtentyps",
+              "sub_index": 1,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Ausgabe 2020 - B",
+                  "value": "20B"
+                }
+              ],
+              "id": "0054",
+              "name": "Freigabenummer des Nachrichtentyps",
+              "sub_index": 2,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "UN/CEFACT",
+                  "value": "UN"
+                }
+              ],
+              "id": "0051",
+              "name": "Verwaltende Organisation",
+              "sub_index": 3,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
+                  "value": "2.0e"
+                }
+              ],
+              "id": "0057",
+              "name": "Anwendungscode der zuständigen Organisation",
+              "sub_index": 4,
+              "type": "code"
+            }
+          ],
+          "composite": "S009",
+          "index": 1,
+          "name": "Nachrichten-Kennung"
+        }
+      ],
+      "id": "UNH",
+      "name": "Dieses Segment dient dazu, eine Nachricht zu eröffnen, zu identifizieren und zu spezifizieren. Die Datenelemente 0065, 0052, 0054 und 0051 deklarieren die Nachricht als UNSM des Verzeichnisses D.20B unter Kontrolle der Vereinten Nationen. Hinweis: DE0057: Es werden die Versions- und Release-Nummern der Nachrichtenbeschreibungen angegeben."
+    },
+    {
+      "elements": [
+        {
+          "id": "0074",
+          "index": 0,
+          "name": "Hier wird die Gesamtzahl der Segmente einer Nachricht angegeben.",
+          "type": "data"
+        },
+        {
+          "id": "0062",
+          "index": 1,
+          "name": "Die Referenznummer aus dem UNH-Segment muss hier wiederholt werden.",
+          "type": "data"
+        }
+      ],
+      "id": "UNT",
+      "name": "Das UNT-Segment ist ein Muss-Segment in UN/EDIFACT. Es muss immer das letzte Segment in einer Nachricht sein."
+    }
+  ]
+}
