@@ -145,7 +145,7 @@ impl CodeLookup {
                             element_index,
                             0,
                         );
-                        entries.insert(key, meanings);
+                        entries.entry(key).or_default().extend(meanings);
                     }
                 }
             }
@@ -167,7 +167,7 @@ impl CodeLookup {
                                     element_index,
                                     sub_index,
                                 );
-                                entries.insert(key, meanings);
+                                entries.entry(key).or_default().extend(meanings);
                             }
                         }
                     }
@@ -433,5 +433,99 @@ mod tests {
                 "Missing meaning for NAD qualifier {code} at base path sg4.sg12"
             );
         }
+    }
+
+    #[test]
+    fn test_multi_segment_code_merge() {
+        // SG10 with 3 CCI segments at same element position but different codes.
+        // All codes should be merged, not overwritten by last CCI.
+        let schema = serde_json::json!({
+            "fields": {
+                "sg4": {
+                    "children": {
+                        "sg8_z98": {
+                            "children": {
+                                "sg10": {
+                                    "segments": [
+                                        {
+                                            "id": "CCI",
+                                            "elements": [{"index": 2, "components": [{
+                                                "sub_index": 0, "type": "code",
+                                                "codes": [{"value": "ZB3", "name": "Zugeordneter Marktpartner"}]
+                                            }]}]
+                                        },
+                                        {
+                                            "id": "CAV",
+                                            "elements": [{"index": 0, "components": [{
+                                                "sub_index": 0, "type": "code",
+                                                "codes": [{"value": "Z91", "name": "MSB"}]
+                                            }]}]
+                                        },
+                                        {
+                                            "id": "CCI",
+                                            "elements": [{"index": 2, "components": [{
+                                                "sub_index": 0, "type": "code",
+                                                "codes": [{"value": "E03", "name": "Spannungsebene"}]
+                                            }]}]
+                                        },
+                                        {
+                                            "id": "CAV",
+                                            "elements": [{"index": 0, "components": [{
+                                                "sub_index": 0, "type": "code",
+                                                "codes": [
+                                                    {"value": "E05", "name": "Mittelspannung"},
+                                                    {"value": "E06", "name": "Niederspannung"}
+                                                ]
+                                            }]}]
+                                        },
+                                        {
+                                            "id": "CCI",
+                                            "elements": [{"index": 2, "components": [{
+                                                "sub_index": 0, "type": "code",
+                                                "codes": [
+                                                    {"value": "Z15", "name": "Haushaltskunde"},
+                                                    {"value": "Z18", "name": "Kein Haushaltskunde"}
+                                                ]
+                                            }]}]
+                                        }
+                                    ],
+                                    "source_group": "SG10"
+                                }
+                            },
+                            "segments": [],
+                            "source_group": "SG8"
+                        }
+                    },
+                    "segments": [],
+                    "source_group": "SG4"
+                }
+            }
+        });
+
+        let lookup = CodeLookup::from_schema_value(&schema);
+
+        // All CCI codes at (2,0) should be present (merged, not overwritten)
+        assert_eq!(
+            lookup.meaning_for("sg4.sg8_z98.sg10", "CCI", 2, 0, "ZB3"),
+            Some("Zugeordneter Marktpartner")
+        );
+        assert_eq!(
+            lookup.meaning_for("sg4.sg8_z98.sg10", "CCI", 2, 0, "E03"),
+            Some("Spannungsebene")
+        );
+        assert_eq!(
+            lookup.meaning_for("sg4.sg8_z98.sg10", "CCI", 2, 0, "Z15"),
+            Some("Haushaltskunde")
+        );
+
+        // All CAV codes at (0,0) should be present
+        assert_eq!(
+            lookup.meaning_for("sg4.sg8_z98.sg10", "CAV", 0, 0, "Z91"),
+            Some("MSB")
+        );
+        assert_eq!(
+            lookup.meaning_for("sg4.sg8_z98.sg10", "CAV", 0, 0, "E06"),
+            Some("Niederspannung")
+        );
     }
 }
