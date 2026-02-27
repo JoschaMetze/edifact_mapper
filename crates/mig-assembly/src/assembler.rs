@@ -171,14 +171,55 @@ impl<'a> Assembler<'a> {
                 child_groups: Vec::new(),
             };
 
-            // Consume segments within this group instance
-            for group_seg in &mig_group.segments {
+            // Consume segments within this group instance.
+            // Process MIG slots in tag runs: for consecutive slots with the
+            // same tag, consume ALL matching input segments — not just the
+            // defined count. This handles real-world fixtures with more
+            // repetitions than the merged MIG predicts (e.g., 6 RFFs when
+            // the schema defines max 4).
+            //
+            // The entry segment (first tag run) is consumed bounded — one per
+            // defined slot — because the outer while loop uses the entry tag
+            // to delineate group repetitions.
+            let mut slot_idx = 0;
+            let mut is_entry_run = true;
+            while slot_idx < mig_group.segments.len() {
                 if cursor.is_exhausted() {
                     break;
                 }
-                if let Some(assembled) = self.try_consume_segment(segments, cursor, group_seg)? {
-                    instance.segments.push(assembled);
+                let current_tag = &mig_group.segments[slot_idx].id;
+                let run_len = mig_group.segments[slot_idx..]
+                    .iter()
+                    .take_while(|s| s.id == *current_tag)
+                    .count();
+
+                if is_entry_run {
+                    // Entry tag: consume at most run_len (preserves group boundaries)
+                    for slot in &mig_group.segments[slot_idx..slot_idx + run_len] {
+                        if cursor.is_exhausted() {
+                            break;
+                        }
+                        if let Some(assembled) =
+                            self.try_consume_segment(segments, cursor, slot)?
+                        {
+                            instance.segments.push(assembled);
+                        }
+                    }
+                    is_entry_run = false;
+                } else {
+                    // Non-entry tag: greedily consume all matching segments
+                    while !cursor.is_exhausted() {
+                        let seg = &segments[cursor.position()];
+                        if matcher::matches_segment_tag(&seg.id, current_tag) {
+                            instance.segments.push(owned_to_assembled(seg));
+                            cursor.advance();
+                        } else {
+                            break;
+                        }
+                    }
                 }
+
+                slot_idx += run_len;
             }
 
             // Consume nested groups

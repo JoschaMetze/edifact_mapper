@@ -92,6 +92,10 @@ impl<'a> Disassembler<'a> {
         // Emit segments in MIG order using tag-based lookup with consumption tracking.
         // This handles both assembler output (in MIG order) and reverse-mapped trees
         // (may be in arbitrary order).
+        //
+        // After MIG-guided emission, any remaining unconsumed segments are appended.
+        // This handles cases where the assembler captured more segments than the MIG
+        // defines (e.g., 6 RFFs when the merged MIG only has 4 slots).
         let mut consumed = vec![false; instance.segments.len()];
         for mig_seg in &mig_group.segments {
             if let Some(idx) = instance
@@ -102,6 +106,12 @@ impl<'a> Disassembler<'a> {
             {
                 output.push(assembled_to_disassembled(&instance.segments[idx]));
                 consumed[idx] = true;
+            }
+        }
+        // Emit any remaining segments not matched by MIG slots
+        for (i, seg) in instance.segments.iter().enumerate() {
+            if !consumed[i] {
+                output.push(assembled_to_disassembled(seg));
             }
         }
 

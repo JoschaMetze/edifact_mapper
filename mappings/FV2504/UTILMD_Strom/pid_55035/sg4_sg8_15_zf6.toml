@@ -14,7 +14,6 @@ source_path = "sg4.sg8_zf6"
 discriminator = "SEQ.d1229=ZF6"
 
 [fields]
-"seq.c286.d1050" = "zeitraumReferenz"
 
 [fields."seq.d1229"]
 target = ""
@@ -26,12 +25,17 @@ default = "5"
 
 [companion_fields]
 "pia.c212.d7140" = "obisKennzahl"
-"rff.c506.d1154" = "referenzIdentifikation"
+"rff[Z14].c506.d1154" = "smartmeterGatewayId"
+"rff[AGK].c506.d1154" = "referenzIdentifikation"
 
 [companion_fields."pia.c212.d7143"]
 target = ""
 default = "SRW"
 
-[companion_fields."rff.c506.d1153"]
+[companion_fields."rff[Z14].c506.d1153"]
+target = ""
+default = "Z14"
+
+[companion_fields."rff[AGK].c506.d1153"]
 target = ""
 default = "AGK"

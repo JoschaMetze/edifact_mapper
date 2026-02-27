@@ -12,8 +12,6 @@ source_path = "sg4.sg8_zg2"
 discriminator = "SEQ.d1229=ZG2"
 
 [fields]
-"seq.c286.d1050" = "zeitraumReferenz"
 
-[fields."seq.d1229"]
-target = ""
-default = "ZG2"
+[companion_fields]
+"seq.d1229" = "seqQualifierZG2"

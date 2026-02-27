@@ -87,7 +87,13 @@ fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSe
 
 /// Fixtures with known mapping gaps that prevent byte-identical roundtrip.
 /// These are legitimate issues to fix later, not test bugs.
-const KNOWN_INCOMPLETE: &[&str] = &[];
+const KNOWN_INCOMPLETE: &[&str] = &[
+    // DEV-77392: ZD6 block 1 has duplicate RFF+Z16 — qualifier syntax only captures first match.
+    "55035_UTILMD_S2.1_DEV-77392.edi",
+    // DEV-77392-3: ZD6 blocks have repeated RFF qualifiers (Z34×2, Z35×2, Z16×2) —
+    // engine's rff[qualifier] syntax cannot capture multiple instances of the same qualifier.
+    "55035_UTILMD_S2.1_DEV-77392-3.edi",
+];
 
 /// Full pipeline roundtrip for ALL fixtures of a PID:
 /// EDIFACT -> tokenize -> split -> assemble -> map_interchange
@@ -284,25 +290,6 @@ macro_rules! toml_loading_test {
     };
 }
 
-/// Full EDIFACT roundtrip test -- byte-identical verification.
-///
-/// Currently #[ignore] because:
-/// 1. Reverse mapping generates phantom segments from TOML defaults for groups
-///    not present in the fixture (e.g., SG8+ZD7 info/zuordnung defaults).
-/// 2. Some forward mappings don't capture all fixture segments (e.g., dual STS).
-///
-/// Run with: `cargo test -p mig-bo4e -- --ignored test_roundtrip_`
-/// Un-ignore as each PID's mappings reach full roundtrip fidelity.
-macro_rules! roundtrip_test {
-    ($name:ident, $pid:expr) => {
-        #[test]
-        #[ignore]
-        fn $name() {
-            run_full_roundtrip($pid);
-        }
-    };
-}
-
 // TOML loading tests (all PIDs, no fixture needed)
 toml_loading_test!(test_toml_loading_55013, "55013");
 toml_loading_test!(test_toml_loading_55014, "55014");
@@ -341,5 +328,8 @@ fn test_roundtrip_55017() {
 fn test_roundtrip_55018() {
     run_full_roundtrip("55018");
 }
-roundtrip_test!(test_roundtrip_55035, "55035");
+#[test]
+fn test_roundtrip_55035() {
+    run_full_roundtrip("55035");
+}
 // PIDs 55022, 55023, 55024 have no fixture files -- TOML loading tests only.

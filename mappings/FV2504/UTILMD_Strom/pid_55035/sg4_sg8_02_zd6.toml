@@ -1,0 +1,67 @@
+# LokationsbuendelZuordnung (SEQ+ZD6) for PID 55035.
+# Own entity to avoid deep_merge conflicts with single-instance Netzlokation groups.
+#
+# SEQ+ZD6  (Informative Zuordnung Lokation zum Objektcode des Lokationsbuendels)
+# 4 reps, each with 3-4 RFF segments (Z32/Z18/Z19/Z37, Z33, Z34, sometimes Z16)
+
+[meta]
+entity = "LokationsbuendelZuordnung"
+bo4e_type = "LokationsbuendelZuordnung"
+companion_type = "LokationsbuendelZuordnungEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zd6"
+discriminator = "SEQ.d1229=ZD6"
+
+[fields]
+
+[fields."seq.d1229"]
+target = ""
+default = "ZD6"
+
+[companion_fields]
+# First RFF varies per rep: Z32 (NeLo-Ref), Z18 (MaLo-ID), Z19 (MeLo-ID), Z37 (TecRes-ID)
+"rff[Z32].c506.d1154" = "netzlokationsRef"
+"rff[Z18].c506.d1154" = "marktlokationsRef"
+"rff[Z19].c506.d1154" = "messlokationsRef"
+"rff[Z37].c506.d1154" = "technischeRessourceRef"
+
+# Common RFFs in every rep
+"rff[Z33].c506.d1154" = "lokationsbuendelId"
+"rff[Z34].c506.d1154" = "messlokationsIdRef"
+
+# Optional RFFs (only in some reps)
+"rff[Z35].c506.d1154" = "technischeRessourceIdRef"
+"rff[Z16].c506.d1154" = "marktlokationsId"
+
+# Qualifier defaults
+[companion_fields."rff[Z32].c506.d1153"]
+target = ""
+default = "Z32"
+
+[companion_fields."rff[Z18].c506.d1153"]
+target = ""
+default = "Z18"
+
+[companion_fields."rff[Z19].c506.d1153"]
+target = ""
+default = "Z19"
+
+[companion_fields."rff[Z37].c506.d1153"]
+target = ""
+default = "Z37"
+
+[companion_fields."rff[Z33].c506.d1153"]
+target = ""
+default = "Z33"
+
+[companion_fields."rff[Z34].c506.d1153"]
+target = ""
+default = "Z34"
+
+[companion_fields."rff[Z35].c506.d1153"]
+target = ""
+default = "Z35"
+
+[companion_fields."rff[Z16].c506.d1153"]
+target = ""
+default = "Z16"

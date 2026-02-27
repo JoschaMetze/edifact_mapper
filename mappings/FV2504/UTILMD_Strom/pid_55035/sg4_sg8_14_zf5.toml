@@ -13,15 +13,19 @@ source_path = "sg4.sg8_zf5"
 discriminator = "SEQ.d1229=ZF5"
 
 [fields]
-"seq.c286.d1050" = "zeitraumReferenz"
 
 [fields."seq.d1229"]
 target = ""
 default = "ZF5"
 
 [companion_fields]
-"rff.c506.d1154" = "smartmeterGatewayId"
+"rff[Z19].c506.d1154" = "messlokationsId"
+"rff[Z14].c506.d1154" = "smartmeterGatewayId"
 
-[companion_fields."rff.c506.d1153"]
+[companion_fields."rff[Z19].c506.d1153"]
+target = ""
+default = "Z19"
+
+[companion_fields."rff[Z14].c506.d1153"]
 target = ""
 default = "Z14"

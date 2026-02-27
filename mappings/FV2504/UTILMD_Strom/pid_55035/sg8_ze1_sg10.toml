@@ -1,13 +1,12 @@
-# Marktlokation Netznutzungsabrechnungsdaten Zuordnung (SG10 within SEQ+ZE1) for PID 55035.
-# CCI/CAV attribute data, merges into entity "Marktlokation".
+# Netznutzungsabrechnungsdaten Zuordnung (SG10 within SEQ+ZE1) for PID 55035.
+# CCI/CAV attribute data for Netznutzungsabrechnungsdaten entity.
 #
 # CCI+++Z38  → Code des Zaehlzeitregisters
-# CCI.2.0    → zaehlzeitregisterCode
 
 [meta]
-entity = "Marktlokation"
-bo4e_type = "Marktlokation"
-companion_type = "MarktlokationEdifact"
+entity = "Netznutzungsabrechnungsdaten"
+bo4e_type = "Netznutzungsabrechnungsdaten"
+companion_type = "NetznutzungsabrechnungsdatenEdifact"
 source_group = "SG4.SG8.SG10"
 source_path = "sg4.sg8_ze1.sg10"
 
@@ -15,7 +14,3 @@ source_path = "sg4.sg8_ze1.sg10"
 
 [companion_fields]
 "cci.c240.d7037" = "zaehlzeitregisterCode"
-
-[companion_fields."cci.d7059"]
-target = ""
-default = "Z38"

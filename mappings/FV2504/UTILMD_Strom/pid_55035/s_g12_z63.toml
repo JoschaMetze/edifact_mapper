@@ -12,9 +12,21 @@ source_path = "sg4.sg12_z63"
 discriminator = "NAD.d3035=Z63"
 
 [fields]
-"nad.d3035" = { target = "", default = "Z63" }
-"nad.c082.d3039" = "marktpartnerId"
+"nad.c082.d3039" = "identifikation"
+"nad.c080.d3036" = "nachname"
+"nad.c080.d3036_2" = "vorname"
+"nad.c080.d3036_3" = "titel"
+"nad.c080.d3036_5" = "anrede"
+"nad.c058.d3124" = "zusatzinfo"
+"nad.c059.d3042" = "strasse"
+"nad.c059.d3042_3" = "hausnummer"
+"nad.d3164" = "ort"
+"nad.d3251" = "postleitzahl"
+"nad.d3207" = "land"
+"nad.c819.d3229" = "region"
 
 [companion_fields]
-"nad.c082.d1131" = "codelisteCode"
-"nad.c082.d3055" = "codepflegeCode"
+"nad.d3035" = "nad_qualifier"
+"nad.c082.d1131" = "codelist_code"
+"nad.c082.d3055" = "codepflege_code"
+"nad.c080.d3036_4" = "name_format_code"

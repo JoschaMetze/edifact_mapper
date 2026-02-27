@@ -1,7 +1,5 @@
-# TechnischeRessource Mengenangabe (SG9 within SEQ+ZF0) for PID 55035.
-# QTY segment data, merges into entity "TechnischeRessource".
-#
-# QTY+Z42:<Menge>:KWH  → Mengenangabe
+# TechnischeRessource QTY+Z42 (Energiemenge) — SG9 within SEQ+ZF0 for PID 55035.
+# Each SG9 instance has exactly 1 QTY. Discriminated by QTY qualifier.
 
 [meta]
 entity = "TechnischeRessource"
@@ -9,16 +7,14 @@ bo4e_type = "TechnischeRessource"
 companion_type = "TechnischeRessourceEdifact"
 source_group = "SG4.SG8.SG9"
 source_path = "sg4.sg8_zf0.sg9"
+discriminator = "QTY.c186.d6063=Z42"
 
 [fields]
 
 [companion_fields]
-"qty.c186.d6060" = "mengenangabe"
+"qty.c186.d6060" = "energiemenge"
+"qty.c186.d6411" = "energiemengeEinheit"
 
 [companion_fields."qty.c186.d6063"]
 target = ""
 default = "Z42"
-
-[companion_fields."qty.c186.d6411"]
-target = ""
-default = "KWH"

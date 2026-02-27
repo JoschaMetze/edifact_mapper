@@ -13,15 +13,24 @@ source_path = "sg4.sg8_zf0"
 discriminator = "SEQ.d1229=ZF0"
 
 [fields]
-"seq.c286.d1050" = "zeitraumReferenz"
 
 [fields."seq.d1229"]
 target = ""
 default = "ZF0"
 
 [companion_fields]
-"rff.c506.d1154" = "netzlokationsId"
+"rff[Z37].c506.d1154" = "technischeRessourceId"
+"rff[Z38].c506.d1154" = "steuerbareRessourceId"
+"rff[Z32].c506.d1154" = "netzlokationsId"
 
-[companion_fields."rff.c506.d1153"]
+[companion_fields."rff[Z37].c506.d1153"]
+target = ""
+default = "Z37"
+
+[companion_fields."rff[Z38].c506.d1153"]
+target = ""
+default = "Z38"
+
+[companion_fields."rff[Z32].c506.d1153"]
 target = ""
 default = "Z32"

@@ -13,13 +13,12 @@ source_path = "sg4.sg8_zd5"
 discriminator = "SEQ.d1229=ZD5"
 
 [fields]
-"seq.c286.d1050" = "zeitraumReferenz"
 
 [fields."seq.d1229"]
 target = ""
 default = "ZD5"
 
 [companion_fields]
-"rff.c506.d1153" = "lokationsbuendelstrukturQualifier"
 "rff.c506.d1154" = "lokationsbuendelstrukturId"
-"rff.c506.d1156" = "fortlaufendeNummer"
+
+"rff.c506.d1153" = "lokationsbuendelstrukturQualifier"

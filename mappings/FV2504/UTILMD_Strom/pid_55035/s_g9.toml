@@ -1,7 +1,7 @@
 # Marktlokation Mengenangabe (SG9 within SEQ+Z98) for PID 55035.
 # QTY segment data, merges into entity "Marktlokation".
 #
-# QTY+31:<Mengenangabe>:KWH  → Jahresverbrauchsprognose
+# QTY+265:<Menge>:<Einheit>  → Jahresverbrauchsprognose
 
 [meta]
 entity = "Marktlokation"
@@ -13,12 +13,9 @@ source_path = "sg4.sg8_z98.sg9"
 [fields]
 
 [companion_fields]
-"qty.c186.d6060" = "mengenangabe"
+"qty.c186.d6060" = "jahresverbrauchsprognose"
+"qty.c186.d6411" = "jahresverbrauchsprognoseEinheit"
 
 [companion_fields."qty.c186.d6063"]
 target = ""
-default = "31"
-
-[companion_fields."qty.c186.d6411"]
-target = ""
-default = "KWH"
+default = "265"
