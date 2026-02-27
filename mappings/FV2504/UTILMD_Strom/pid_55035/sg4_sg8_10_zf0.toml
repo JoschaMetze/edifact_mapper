@@ -20,12 +20,18 @@ default = "ZF0"
 
 [companion_fields]
 "rff[Z37].c506.d1154" = "technischeRessourceId"
+"rff[Z34].c506.d1154" = "messlokationsIdRef"
+"rff[Z34,1].c506.d1154" = "messlokationsIdRef2"
 "rff[Z38].c506.d1154" = "steuerbareRessourceId"
 "rff[Z32].c506.d1154" = "netzlokationsId"
 
 [companion_fields."rff[Z37].c506.d1153"]
 target = ""
 default = "Z37"
+
+[companion_fields."rff[Z34].c506.d1153"]
+target = ""
+default = "Z34"
 
 [companion_fields."rff[Z38].c506.d1153"]
 target = ""

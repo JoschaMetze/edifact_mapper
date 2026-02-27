@@ -319,23 +319,29 @@ impl MappingEngine {
             return None;
         }
 
-        // Parse segment tag and optional qualifier: "dtm[92]" → ("DTM", Some("92"))
-        let (segment_tag, qualifier) = parse_tag_qualifier(parts[0]);
+        // Parse segment tag, optional qualifier, and occurrence index:
+        // "dtm[92]" → ("DTM", Some("92"), 0), "rff[Z34,1]" → ("RFF", Some("Z34"), 1)
+        let (segment_tag, qualifier, occurrence) = parse_tag_qualifier(parts[0]);
 
         let segment = if let Some(q) = qualifier {
-            instance.segments.iter().find(|s| {
-                s.tag.eq_ignore_ascii_case(&segment_tag)
-                    && s.elements
-                        .first()
-                        .and_then(|e| e.first())
-                        .map(|v| v.as_str())
-                        == Some(q)
-            })?
+            instance
+                .segments
+                .iter()
+                .filter(|s| {
+                    s.tag.eq_ignore_ascii_case(&segment_tag)
+                        && s.elements
+                            .first()
+                            .and_then(|e| e.first())
+                            .map(|v| v.as_str())
+                            == Some(q)
+                })
+                .nth(occurrence)?
         } else {
             instance
                 .segments
                 .iter()
-                .find(|s| s.tag.eq_ignore_ascii_case(&segment_tag))?
+                .filter(|s| s.tag.eq_ignore_ascii_case(&segment_tag))
+                .nth(occurrence)?
         };
 
         Self::resolve_field_path(segment, &parts[1..])
@@ -442,7 +448,7 @@ impl MappingEngine {
                             (&self.code_lookup, &def.meta.source_path)
                         {
                             let parts: Vec<&str> = path.split('.').collect();
-                            let (seg_tag, _qualifier) = parse_tag_qualifier(parts[0]);
+                            let (seg_tag, _qualifier, _occ) = parse_tag_qualifier(parts[0]);
                             let (element_idx, component_idx) =
                                 Self::parse_element_component(&parts[1..]);
 
@@ -519,7 +525,7 @@ impl MappingEngine {
                         (&self.code_lookup, &def.meta.source_path)
                     {
                         let parts: Vec<&str> = path.split('.').collect();
-                        let (seg_tag, _qualifier) = parse_tag_qualifier(parts[0]);
+                        let (seg_tag, _qualifier, _occ) = parse_tag_qualifier(parts[0]);
                         let (element_idx, component_idx) =
                             Self::parse_element_component(&parts[1..]);
 
@@ -632,8 +638,9 @@ impl MappingEngine {
                 continue;
             }
 
-            let (seg_tag, qualifier) = parse_tag_qualifier(parts[0]);
-            // Use the raw first part as segment key to group fields by segment instance
+            let (seg_tag, qualifier, _occ) = parse_tag_qualifier(parts[0]);
+            // Use the raw first part as segment key to group fields by segment instance.
+            // Indexed qualifiers like "RFF[Z34,1]" produce a distinct key from "RFF[Z34]".
             let seg_key = parts[0].to_uppercase();
             let sub_path = &parts[1..];
 
@@ -721,7 +728,7 @@ impl MappingEngine {
                     continue;
                 }
 
-                let (seg_tag, qualifier) = parse_tag_qualifier(parts[0]);
+                let (seg_tag, qualifier, _occ) = parse_tag_qualifier(parts[0]);
                 let seg_key = parts[0].to_uppercase();
                 let sub_path = &parts[1..];
 
@@ -1866,14 +1873,24 @@ fn strip_all_rep_indices(relative: &str) -> String {
         .join(".")
 }
 
-/// Parse a segment tag with optional qualifier: "dtm[92]" → ("DTM", Some("92")).
-fn parse_tag_qualifier(tag_part: &str) -> (String, Option<&str>) {
+/// Parse a segment tag with optional qualifier and occurrence index.
+///
+/// - `"dtm[92]"`    → `("DTM", Some("92"), 0)` — first (default) occurrence
+/// - `"rff[Z34,1]"` → `("RFF", Some("Z34"), 1)` — second occurrence (0-indexed)
+/// - `"rff"`         → `("RFF", None, 0)`
+fn parse_tag_qualifier(tag_part: &str) -> (String, Option<&str>, usize) {
     if let Some(bracket_start) = tag_part.find('[') {
         let tag = tag_part[..bracket_start].to_uppercase();
-        let qualifier = tag_part[bracket_start + 1..].trim_end_matches(']');
-        (tag, Some(qualifier))
+        let inner = tag_part[bracket_start + 1..].trim_end_matches(']');
+        if let Some(comma_pos) = inner.find(',') {
+            let qualifier = &inner[..comma_pos];
+            let index = inner[comma_pos + 1..].parse::<usize>().unwrap_or(0);
+            (tag, Some(qualifier), index)
+        } else {
+            (tag, Some(inner), 0)
+        }
     } else {
-        (tag_part.to_uppercase(), None)
+        (tag_part.to_uppercase(), None, 0)
     }
 }
 

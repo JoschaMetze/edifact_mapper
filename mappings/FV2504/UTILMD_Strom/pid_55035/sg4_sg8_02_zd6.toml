@@ -33,6 +33,11 @@ default = "ZD6"
 "rff[Z35].c506.d1154" = "technischeRessourceIdRef"
 "rff[Z16].c506.d1154" = "marktlokationsId"
 
+# 2nd occurrence of repeated qualifiers (DEV-77392 fixtures)
+"rff[Z34,1].c506.d1154" = "messlokationsIdRef2"
+"rff[Z35,1].c506.d1154" = "technischeRessourceIdRef2"
+"rff[Z16,1].c506.d1154" = "marktlokationsId2"
+
 # Qualifier defaults
 [companion_fields."rff[Z32].c506.d1153"]
 target = ""

@@ -87,13 +87,12 @@ fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSe
 
 /// Fixtures with known mapping gaps that prevent byte-identical roundtrip.
 /// These are legitimate issues to fix later, not test bugs.
-const KNOWN_INCOMPLETE: &[&str] = &[
-    // DEV-77392: ZD6 block 1 has duplicate RFF+Z16 — qualifier syntax only captures first match.
-    "55035_UTILMD_S2.1_DEV-77392.edi",
-    // DEV-77392-3: ZD6 blocks have repeated RFF qualifiers (Z34×2, Z35×2, Z16×2) —
-    // engine's rff[qualifier] syntax cannot capture multiple instances of the same qualifier.
-    "55035_UTILMD_S2.1_DEV-77392-3.edi",
-];
+///
+/// DEV-77392-3: ZD7 SG10 rep ordering differs from all other fixtures
+/// (CCI+ZB3 before CCI+ZF3 instead of after). Reverse mapper always emits
+/// in TOML-defined order which matches 4/5 fixtures. Inherent limitation —
+/// roundtrip loses SG10 rep ordering information.
+const KNOWN_INCOMPLETE: &[&str] = &["55035_UTILMD_S2.1_DEV-77392-3.edi"];
 
 /// Full pipeline roundtrip for ALL fixtures of a PID:
 /// EDIFACT -> tokenize -> split -> assemble -> map_interchange
