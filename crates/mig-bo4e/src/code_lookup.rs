@@ -208,9 +208,10 @@ impl CodeLookup {
                 for (key, meanings) in entries.iter() {
                     if key.0 == variant_path {
                         let agg_key = (key.1.clone(), key.2, key.3);
-                        merged.entry(agg_key).or_default().extend(
-                            meanings.iter().map(|(k, v)| (k.clone(), v.clone())),
-                        );
+                        merged
+                            .entry(agg_key)
+                            .or_default()
+                            .extend(meanings.iter().map(|(k, v)| (k.clone(), v.clone())));
                     }
                 }
             }

@@ -229,14 +229,13 @@ pub(crate) async fn convert_v2(
                     let validator = automapper_validation::EdifactValidator::new(evaluator);
 
                     // Assemble tree for navigator + structure diagnostics
-                    let (tree, structure_diagnostics) =
-                        if let Some(ref fmig) = last_filtered_mig {
-                            let assembler = Assembler::new(fmig);
-                            let (t, d) = assembler.assemble_with_diagnostics(&val_segments);
-                            (Some(t), d)
-                        } else {
-                            (None, vec![])
-                        };
+                    let (tree, structure_diagnostics) = if let Some(ref fmig) = last_filtered_mig {
+                        let assembler = Assembler::new(fmig);
+                        let (t, d) = assembler.assemble_with_diagnostics(&val_segments);
+                        (Some(t), d)
+                    } else {
+                        (None, vec![])
+                    };
 
                     // Validate with navigator when tree is available (avoids
                     // false positives for mandatory fields in absent optional groups)
