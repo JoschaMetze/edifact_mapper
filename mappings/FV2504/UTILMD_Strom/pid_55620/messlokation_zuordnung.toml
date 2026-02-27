@@ -1,0 +1,23 @@
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z18.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "merkmalCode"
+"cav[Z91].c889.d1131" = "zugeordneterMp"
+"cav[Z91].c889.d7110" = "msbEigenschaft"
+"cav[Z91].c889.d7110_2" = "artLeistungserbringung"
+"cav[ZF0].c889.d1131" = "gmsbMpId"
+
+[companion_fields."cav[Z91].c889.d7111"]
+target = ""
+default = "Z91"
+
+[companion_fields."cav[ZF0].c889.d7111"]
+target = ""
+default = "ZF0"

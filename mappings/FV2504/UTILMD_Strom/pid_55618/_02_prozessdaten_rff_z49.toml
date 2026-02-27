@@ -1,0 +1,34 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+companion_type = "ProzessdatenEdifact"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "RFF.c506.d1153=Z49"
+
+[fields]
+
+[companion_fields]
+"rff.c506.d1156" = "zeitscheibeId"
+"dtm[Z25].c507.d2380" = "verwendungDerDatenAb"
+"dtm[Z26].c507.d2380" = "verwendungDerDatenBis"
+
+[companion_fields."rff.c506.d1153"]
+target = ""
+default = "Z49"
+
+[companion_fields."dtm[Z25].c507.d2005"]
+target = ""
+default = "Z25"
+
+[companion_fields."dtm[Z25].c507.d2379"]
+target = ""
+default = "303"
+
+[companion_fields."dtm[Z26].c507.d2005"]
+target = ""
+default = "Z26"
+
+[companion_fields."dtm[Z26].c507.d2379"]
+target = ""
+default = "303"
