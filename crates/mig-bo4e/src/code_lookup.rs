@@ -114,6 +114,10 @@ impl CodeLookup {
                 let child_path = format!("{}.{}", path_prefix, child_key);
                 Self::walk_group(&child_path, child_value, entries);
             }
+            // Create aggregate entries at the base path for discriminated variants.
+            // E.g., sg12_z63, sg12_z65, sg12_z66 → also register at sg12 (unioned codes).
+            // This supports TOMLs using non-discriminated source_path (e.g., "sg4.sg12").
+            Self::merge_variant_entries(path_prefix, children, entries);
         }
     }
 
@@ -168,6 +172,51 @@ impl CodeLookup {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /// Merge code entries from discriminated variant children into aggregate base-path entries.
+    ///
+    /// When the schema has `sg12_z63`, `sg12_z65`, etc., each gets its own CodeLookup entries
+    /// at `prefix.sg12_z63`, `prefix.sg12_z65`. This method also creates entries at the
+    /// base path `prefix.sg12` by unioning all codes from the variants. This supports
+    /// TOMLs that use a non-discriminated `source_path` (e.g., the Geschaeftspartner pattern).
+    fn merge_variant_entries(
+        path_prefix: &str,
+        children: &serde_json::Map<String, Value>,
+        entries: &mut HashMap<CodeLookupKey, CodeMeanings>,
+    ) {
+        // Group children by base name (part before '_'): sg12_z63 → sg12
+        let mut bases: HashMap<&str, Vec<&str>> = HashMap::new();
+        for child_key in children.keys() {
+            if let Some(underscore_pos) = child_key.find('_') {
+                let base = &child_key[..underscore_pos];
+                bases.entry(base).or_default().push(child_key);
+            }
+        }
+
+        for (base, variant_keys) in &bases {
+            if variant_keys.len() < 2 {
+                continue; // Not a discriminated group
+            }
+            let base_path = format!("{}.{}", path_prefix, base);
+            // Collect all variant-path entries and merge into base-path entries
+            let mut merged: HashMap<(String, usize, usize), CodeMeanings> = HashMap::new();
+            for variant_key in variant_keys {
+                let variant_path = format!("{}.{}", path_prefix, variant_key);
+                for (key, meanings) in entries.iter() {
+                    if key.0 == variant_path {
+                        let agg_key = (key.1.clone(), key.2, key.3);
+                        merged.entry(agg_key).or_default().extend(
+                            meanings.iter().map(|(k, v)| (k.clone(), v.clone())),
+                        );
+                    }
+                }
+            }
+            for ((seg_tag, elem_idx, comp_idx), meanings) in merged {
+                let key = (base_path.clone(), seg_tag, elem_idx, comp_idx);
+                entries.entry(key).or_default().extend(meanings);
             }
         }
     }
@@ -284,5 +333,105 @@ mod tests {
             None
         );
         assert!(!lookup.is_code_field("sg4.sg8_test.sg10", "CCI", 0, 0));
+    }
+
+    #[test]
+    fn test_discriminated_variant_merge() {
+        // Schema with discriminated SG12 variants (sg12_z63, sg12_z65)
+        let schema = serde_json::json!({
+            "fields": {
+                "sg4": {
+                    "children": {
+                        "sg12_z63": {
+                            "segments": [{
+                                "id": "NAD",
+                                "elements": [{
+                                    "index": 0,
+                                    "type": "code",
+                                    "codes": [{"value": "Z63", "name": "Standortadresse"}]
+                                }]
+                            }],
+                            "source_group": "SG12"
+                        },
+                        "sg12_z65": {
+                            "segments": [{
+                                "id": "NAD",
+                                "elements": [
+                                    {
+                                        "index": 0,
+                                        "type": "code",
+                                        "codes": [{"value": "Z65", "name": "Kunde des LF"}]
+                                    },
+                                    {
+                                        "index": 3,
+                                        "components": [{
+                                            "sub_index": 5,
+                                            "type": "code",
+                                            "codes": [
+                                                {"value": "Z01", "name": "Herr"},
+                                                {"value": "Z02", "name": "Frau"}
+                                            ]
+                                        }]
+                                    }
+                                ]
+                            }],
+                            "source_group": "SG12"
+                        }
+                    },
+                    "segments": [],
+                    "source_group": "SG4"
+                }
+            }
+        });
+
+        let lookup = CodeLookup::from_schema_value(&schema);
+
+        // Variant-specific paths still work
+        assert!(lookup.is_code_field("sg4.sg12_z63", "NAD", 0, 0));
+        assert!(lookup.is_code_field("sg4.sg12_z65", "NAD", 0, 0));
+
+        // Base path also works (merged from variants)
+        assert!(lookup.is_code_field("sg4.sg12", "NAD", 0, 0));
+        assert_eq!(
+            lookup.meaning_for("sg4.sg12", "NAD", 0, 0, "Z63"),
+            Some("Standortadresse")
+        );
+        assert_eq!(
+            lookup.meaning_for("sg4.sg12", "NAD", 0, 0, "Z65"),
+            Some("Kunde des LF")
+        );
+
+        // Anrede code from z65 also available at base path
+        assert!(lookup.is_code_field("sg4.sg12", "NAD", 3, 5));
+        assert_eq!(
+            lookup.meaning_for("sg4.sg12", "NAD", 3, 5, "Z01"),
+            Some("Herr")
+        );
+    }
+
+    #[test]
+    fn test_pid_55013_sg12_base_path() {
+        let schema_path = Path::new(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../crates/mig-types/src/generated/fv2504/utilmd/pids/pid_55013_schema.json"
+        ));
+        if !schema_path.exists() {
+            eprintln!("Skipping: PID schema not found");
+            return;
+        }
+
+        let lookup = CodeLookup::from_schema_file(schema_path).unwrap();
+
+        // Base path "sg4.sg12" should have merged NAD qualifier codes from all variants
+        assert!(lookup.is_code_field("sg4.sg12", "NAD", 0, 0));
+        // Z67 meaning comes from sg12_z67 variant
+        assert!(lookup.meaning_for("sg4.sg12", "NAD", 0, 0, "Z67").is_some());
+        // All 7 SG12 qualifiers should be present
+        for code in &["Z63", "Z65", "Z66", "Z67", "Z68", "Z69", "Z70"] {
+            assert!(
+                lookup.meaning_for("sg4.sg12", "NAD", 0, 0, code).is_some(),
+                "Missing meaning for NAD qualifier {code} at base path sg4.sg12"
+            );
+        }
     }
 }
