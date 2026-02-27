@@ -1,8 +1,19 @@
+pub mod enhancer;
+pub mod id_generators;
 mod placeholders;
+pub mod seed_data;
 mod validate;
 
 use serde_json::Value;
 
+use mig_assembly::assembler::{AssembledSegment, Assembler};
+use mig_assembly::disassembler::Disassembler;
+use mig_assembly::renderer::render_edifact;
+use mig_assembly::tokenize::{parse_to_segments, split_messages};
+use mig_bo4e::engine::MappingEngine;
+use mig_types::schema::mig::MigSchema;
+
+pub use enhancer::{build_code_map, enhance_mapped_message, EnhancerConfig};
 use placeholders::{placeholder_datetime, placeholder_for_data_element};
 pub use validate::validate_fixture;
 
@@ -63,6 +74,143 @@ pub fn generate_fixture(schema: &Value) -> String {
         .collect::<Vec<_>>()
         .join("\n")
         + "\n"
+}
+
+/// Generate an enhanced EDIFACT fixture with realistic data values.
+///
+/// Pipeline:
+/// 1. Generate basic EDIFACT from schema (placeholder values)
+/// 2. Tokenize and split into message chunks
+/// 3. Assemble using PID-filtered MIG
+/// 4. Forward map to BO4E (MappedMessage)
+/// 5. Enhance with realistic values (names, IDs, dates, addresses)
+/// 6. Reverse map back to AssembledTree
+/// 7. Disassemble and render to EDIFACT string
+/// 8. Wrap with UNB/UNZ interchange envelope
+pub fn generate_enhanced_fixture(
+    schema: &Value,
+    filtered_mig: &MigSchema,
+    msg_engine: &MappingEngine,
+    tx_engine: &MappingEngine,
+    seed: u64,
+    variant: usize,
+) -> Result<String, crate::error::GeneratorError> {
+    // Step 1: Generate basic fixture with placeholder values
+    let edi = generate_fixture(schema);
+
+    // Step 2: Tokenize
+    let segments = parse_to_segments(edi.as_bytes()).map_err(|e| {
+        crate::error::GeneratorError::Validation {
+            message: format!("tokenization of generated fixture failed: {e}"),
+        }
+    })?;
+
+    // Step 3: Split into message chunks
+    let chunks =
+        split_messages(segments).map_err(|e| crate::error::GeneratorError::Validation {
+            message: format!("message splitting failed: {e}"),
+        })?;
+
+    if chunks.messages.is_empty() {
+        return Err(crate::error::GeneratorError::Validation {
+            message: "no UNH/UNT message pairs found in generated fixture".to_string(),
+        });
+    }
+
+    let msg_chunk = &chunks.messages[0];
+
+    // Step 4: Build message segments (UNH + body + UNT)
+    let mut msg_segs = vec![msg_chunk.unh.clone()];
+    msg_segs.extend(msg_chunk.body.iter().cloned());
+    msg_segs.push(msg_chunk.unt.clone());
+
+    // Step 5: Assemble with PID-filtered MIG
+    let assembler = Assembler::new(filtered_mig);
+    let original_tree = assembler.assemble_generic(&msg_segs)?;
+
+    // Step 6: Forward map to MappedMessage
+    let mut mapped =
+        MappingEngine::map_interchange(msg_engine, tx_engine, &original_tree, "SG4", true);
+
+    // Step 7: Enhance with realistic values
+    // Collect all definitions from both engines for code map building
+    let mut all_defs: Vec<_> = msg_engine.definitions().to_vec();
+    all_defs.extend(tx_engine.definitions().iter().cloned());
+    let code_map = build_code_map(schema, &all_defs);
+    let config = EnhancerConfig::new(seed, variant);
+    enhance_mapped_message(&mut mapped, &Some(code_map), &config);
+
+    // Step 8: Reverse map back to AssembledTree
+    let mut reverse_tree =
+        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, "SG4");
+
+    // Add UNH envelope (mapping engine handles content only)
+    let unh_assembled = owned_to_assembled(&msg_chunk.unh);
+    reverse_tree.segments.insert(0, unh_assembled);
+    reverse_tree.post_group_start += 1;
+
+    // Add UNT if the original tree had it
+    let original_has_unt = original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
+    if original_has_unt {
+        let unt_assembled = owned_to_assembled(&msg_chunk.unt);
+        reverse_tree.segments.push(unt_assembled);
+    }
+
+    // Step 9: Disassemble and render to EDIFACT
+    let disassembler = Disassembler::new(filtered_mig);
+    let delimiters = edifact_types::EdifactDelimiters::default();
+
+    let dis_segments = disassembler.disassemble(&reverse_tree);
+    let message_edi = render_edifact(&dis_segments, &delimiters);
+
+    // Step 10: Wrap with UNB/UNZ envelope from the original split result
+    let unb_seg = chunks.envelope.iter().find(|s| s.id == "UNB");
+    let envelope_edi = if let Some(unb) = unb_seg {
+        // Reconstruct UNB from the parsed segment data
+        let unb_rendered = render_owned_segment(unb, &delimiters);
+        let unz_rendered = if let Some(unz) = &chunks.unz {
+            render_owned_segment(unz, &delimiters)
+        } else {
+            // Fallback UNZ
+            format!("UNZ+1+ENHANCED{seed:05}'")
+        };
+        format!("{unb_rendered}{message_edi}{unz_rendered}")
+    } else {
+        // No UNB found — return message content only
+        message_edi
+    };
+
+    Ok(envelope_edi)
+}
+
+/// Convert an OwnedSegment to an AssembledSegment.
+fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSegment {
+    AssembledSegment {
+        tag: seg.id.clone(),
+        elements: seg
+            .elements
+            .iter()
+            .map(|el| el.iter().map(|c| c.to_string()).collect())
+            .collect(),
+    }
+}
+
+/// Render an OwnedSegment to an EDIFACT string with segment terminator.
+fn render_owned_segment(
+    seg: &mig_assembly::tokenize::OwnedSegment,
+    delimiters: &edifact_types::EdifactDelimiters,
+) -> String {
+    use mig_assembly::disassembler::DisassembledSegment;
+
+    let dis_seg = DisassembledSegment {
+        tag: seg.id.clone(),
+        elements: seg
+            .elements
+            .iter()
+            .map(|el| el.iter().map(|c| c.to_string()).collect())
+            .collect(),
+    };
+    render_edifact(&[dis_seg], delimiters)
 }
 
 /// Recursively emit segments for a group and its children.

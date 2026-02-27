@@ -45,4 +45,7 @@ pub enum GeneratorError {
 
     #[error("assembly error: {0}")]
     Assembly(#[from] mig_assembly::AssemblyError),
+
+    #[error("mapping error: {0}")]
+    Mapping(#[from] mig_bo4e::error::MappingError),
 }

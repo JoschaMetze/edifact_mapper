@@ -356,6 +356,18 @@ enum Commands {
         /// Format version (default: FV2504)
         #[arg(long, default_value = "FV2504")]
         format_version: Option<String>,
+
+        /// Enhance fixture with realistic values via BO4E roundtrip
+        #[arg(long)]
+        enhance: bool,
+
+        /// Number of enhanced variants to generate (default: 1)
+        #[arg(long, default_value = "1")]
+        variants: Option<usize>,
+
+        /// Seed for deterministic generation (default: 42)
+        #[arg(long, default_value = "42")]
+        seed: Option<u64>,
     },
 }
 
@@ -1339,6 +1351,9 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             message_type,
             variant,
             format_version,
+            enhance,
+            variants,
+            seed,
         } => {
             eprintln!("Generating fixture from schema: {:?}", pid_schema);
 
@@ -1349,56 +1364,181 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             let beschreibung = schema["beschreibung"].as_str().unwrap_or("");
             eprintln!("  PID: {} ({})", pid, beschreibung);
 
-            let edi = automapper_generator::fixture_generator::generate_fixture(&schema);
-
-            // Count segments (lines ending with ')
-            let seg_count = edi.matches('\'').count();
-            eprintln!("  Generated {} segments", seg_count);
-
-            if let Some(parent) = output.parent() {
-                std::fs::create_dir_all(parent).ok();
-            }
-            std::fs::write(&output, &edi)?;
-
-            eprintln!("  Output: {:?}", output);
-
-            if validate {
+            if enhance {
+                // Enhanced mode: roundtrip through BO4E mapping engine
                 let mig_path =
                     mig_xml.ok_or_else(|| automapper_generator::GeneratorError::Validation {
-                        message: "--mig-xml is required when --validate is set".to_string(),
+                        message: "--mig-xml is required when --enhance is set".to_string(),
                     })?;
                 let ahb_path =
                     ahb_xml.ok_or_else(|| automapper_generator::GeneratorError::Validation {
-                        message: "--ahb-xml is required when --validate is set".to_string(),
+                        message: "--ahb-xml is required when --enhance is set".to_string(),
                     })?;
                 let msg_type = message_type.as_deref().unwrap_or("UTILMD");
                 let var = variant.as_deref();
                 let fv = format_version.as_deref().unwrap_or("FV2504");
 
-                eprintln!("\nValidating fixture against MIG/AHB...");
-                let result = automapper_generator::fixture_generator::validate_fixture(
-                    &edi, pid, &mig_path, &ahb_path, msg_type, var, fv,
+                // Parse MIG and AHB, filter for PID
+                let mig = mig_assembly::parsing::parse_mig(&mig_path, msg_type, var, fv)?;
+                let ahb = automapper_generator::parsing::ahb_parser::parse_ahb(
+                    &ahb_path, msg_type, var, fv,
                 )?;
+                let pid_def = ahb.workflows.iter().find(|w| w.id == pid).ok_or_else(|| {
+                    automapper_generator::GeneratorError::Validation {
+                        message: format!("PID {pid} not found in AHB"),
+                    }
+                })?;
+                let ahb_numbers: std::collections::HashSet<String> =
+                    pid_def.segment_numbers.iter().cloned().collect();
+                let filtered_mig = mig_assembly::pid_filter::filter_mig_for_pid(&mig, &ahb_numbers);
 
-                eprintln!("  Tokenized: {} segments", result.segment_count);
-                eprintln!(
-                    "  Assembled: {} segments in {} groups",
-                    result.assembled_segment_count, result.assembled_group_count
-                );
+                // Resolve mapping directories
+                let fv_lower = fv.to_lowercase();
+                let variant_suffix = var.unwrap_or("Strom");
+                let mappings_base = format!("mappings/{fv}/{msg_type}_{variant_suffix}");
+                let msg_dir = PathBuf::from(format!("{mappings_base}/message"));
+                let tx_dir = PathBuf::from(format!("{mappings_base}/pid_{pid}"));
 
-                for warning in &result.warnings {
-                    eprintln!("  WARNING: {}", warning);
+                if !msg_dir.exists() || !tx_dir.exists() {
+                    eprintln!(
+                        "  WARNING: mapping directories not found ({:?} or {:?})",
+                        msg_dir, tx_dir
+                    );
+                    eprintln!("  Falling back to unenhanced fixture generation");
+
+                    let edi = automapper_generator::fixture_generator::generate_fixture(&schema);
+                    let seg_count = edi.matches('\'').count();
+                    eprintln!("  Generated {} segments (unenhanced)", seg_count);
+
+                    if let Some(parent) = output.parent() {
+                        std::fs::create_dir_all(parent).ok();
+                    }
+                    std::fs::write(&output, &edi)?;
+                    eprintln!("  Output: {:?}", output);
+                    return Ok(());
                 }
-                for error in &result.errors {
-                    eprintln!("  ERROR: {}", error);
-                }
 
-                if result.is_ok() {
-                    eprintln!("  Validation PASSED");
+                // Load PathResolver from schema directory
+                let schema_dir = PathBuf::from(format!(
+                    "crates/mig-types/src/generated/{fv_lower}/utilmd/pids"
+                ));
+                let path_resolver =
+                    mig_bo4e::path_resolver::PathResolver::from_schema_dir(&schema_dir);
+
+                // Load mapping engines
+                let msg_engine = mig_bo4e::engine::MappingEngine::load(&msg_dir)?
+                    .with_path_resolver(path_resolver.clone());
+                let tx_engine = mig_bo4e::engine::MappingEngine::load(&tx_dir)?
+                    .with_path_resolver(path_resolver);
+
+                let variant_count = variants.unwrap_or(1);
+                let base_seed = seed.unwrap_or(42);
+
+                if variant_count <= 1 {
+                    // Single variant: output directly to the specified path
+                    let edi = automapper_generator::fixture_generator::generate_enhanced_fixture(
+                        &schema,
+                        &filtered_mig,
+                        &msg_engine,
+                        &tx_engine,
+                        base_seed,
+                        0,
+                    )?;
+
+                    let seg_count = edi.matches('\'').count();
+                    eprintln!("  Generated {} segments (enhanced)", seg_count);
+
+                    if let Some(parent) = output.parent() {
+                        std::fs::create_dir_all(parent).ok();
+                    }
+                    std::fs::write(&output, &edi)?;
+                    eprintln!("  Output: {:?}", output);
                 } else {
-                    return Err(automapper_generator::GeneratorError::Validation {
-                        message: format!("{} validation errors", result.errors.len()),
-                    });
+                    // Multiple variants: output to {stem}_v{i}.{ext}
+                    let stem = output
+                        .file_stem()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("fixture");
+                    let ext = output.extension().and_then(|e| e.to_str()).unwrap_or("edi");
+                    let parent = output.parent().unwrap_or_else(|| Path::new("."));
+
+                    std::fs::create_dir_all(parent).ok();
+
+                    for i in 0..variant_count {
+                        let variant_seed = base_seed.wrapping_add(i as u64 * 1000);
+                        let edi =
+                            automapper_generator::fixture_generator::generate_enhanced_fixture(
+                                &schema,
+                                &filtered_mig,
+                                &msg_engine,
+                                &tx_engine,
+                                variant_seed,
+                                i,
+                            )?;
+
+                        let seg_count = edi.matches('\'').count();
+                        let variant_path = parent.join(format!("{stem}_v{i}.{ext}"));
+                        std::fs::write(&variant_path, &edi)?;
+                        eprintln!(
+                            "  Variant {i}: {} segments -> {:?}",
+                            seg_count, variant_path
+                        );
+                    }
+                }
+            } else {
+                // Unenhanced mode: generate basic fixture with placeholders
+                let edi = automapper_generator::fixture_generator::generate_fixture(&schema);
+
+                let seg_count = edi.matches('\'').count();
+                eprintln!("  Generated {} segments", seg_count);
+
+                if let Some(parent) = output.parent() {
+                    std::fs::create_dir_all(parent).ok();
+                }
+                std::fs::write(&output, &edi)?;
+
+                eprintln!("  Output: {:?}", output);
+
+                if validate {
+                    let mig_path = mig_xml.ok_or_else(|| {
+                        automapper_generator::GeneratorError::Validation {
+                            message: "--mig-xml is required when --validate is set".to_string(),
+                        }
+                    })?;
+                    let ahb_path = ahb_xml.ok_or_else(|| {
+                        automapper_generator::GeneratorError::Validation {
+                            message: "--ahb-xml is required when --validate is set".to_string(),
+                        }
+                    })?;
+                    let msg_type = message_type.as_deref().unwrap_or("UTILMD");
+                    let var = variant.as_deref();
+                    let fv = format_version.as_deref().unwrap_or("FV2504");
+
+                    eprintln!("\nValidating fixture against MIG/AHB...");
+                    let result = automapper_generator::fixture_generator::validate_fixture(
+                        &edi, pid, &mig_path, &ahb_path, msg_type, var, fv,
+                    )?;
+
+                    eprintln!("  Tokenized: {} segments", result.segment_count);
+                    eprintln!(
+                        "  Assembled: {} segments in {} groups",
+                        result.assembled_segment_count, result.assembled_group_count
+                    );
+
+                    for warning in &result.warnings {
+                        eprintln!("  WARNING: {}", warning);
+                    }
+                    for error in &result.errors {
+                        eprintln!("  ERROR: {}", error);
+                    }
+
+                    if result.is_ok() {
+                        eprintln!("  Validation PASSED");
+                    } else {
+                        return Err(automapper_generator::GeneratorError::Validation {
+                            message: format!("{} validation errors", result.errors.len()),
+                        });
+                    }
                 }
             }
 
