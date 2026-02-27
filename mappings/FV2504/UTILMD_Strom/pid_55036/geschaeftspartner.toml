@@ -1,0 +1,14 @@
+[meta]
+entity = "Geschaeftspartner"
+bo4e_type = "Geschaeftspartner"
+companion_type = "GeschaeftspartnerEdifact"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12_vy"
+
+[fields]
+"nad.c082.d3039" = "identifikation"
+
+[companion_fields]
+"nad.d3035" = "nad_qualifier"
+"nad.c082.d1131" = "codelist_code"
+"nad.c082.d3055" = "codepflege_code"

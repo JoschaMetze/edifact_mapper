@@ -1,0 +1,20 @@
+[meta]
+entity = "Netzlokation"
+bo4e_type = "Netzlokation"
+companion_type = "NetzlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z71.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "merkmalCode"
+"cav[ZE4].c889.d7110" = "zahlerBlindarbeit"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "Z45"
+
+[companion_fields."cav[ZE4].c889.d7111"]
+target = ""
+default = "ZE4"

@@ -139,6 +139,54 @@ const PID_SPECS: &[PidTestSpec] = &[
         tx_stammdaten_keys: &["marktlokation", "geschaeftspartner", "ansprechpartner"],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
+    PidTestSpec {
+        pid: "55036",
+        fixture: "55036_UTILMD_S2.1_ALEXANDE348314.edi",
+        tx_stammdaten_keys: &["marktlokation", "geschaeftspartner"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55038",
+        fixture: "55038_UTILMD_S2.1_ALEXANDE180450.edi",
+        tx_stammdaten_keys: &["marktlokation", "geschaeftspartner"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55604",
+        fixture: "55604_UTILMD_S2.1_ALEXANDE6390963.edi",
+        tx_stammdaten_keys: &["marktlokation", "geschaeftspartner"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55602",
+        fixture: "55602_UTILMD_S2.1_ALEXANDE923530114.edi",
+        tx_stammdaten_keys: &[
+            "marktlokation",
+            "messlokation",
+            "netzlokation",
+            "steuerbareRessource",
+            "technischeRessource",
+        ],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55136",
+        fixture: "55136_UTILMD_S2.1_ALEXANDE416834.edi",
+        tx_stammdaten_keys: &["marktlokation", "geschaeftspartner"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55225",
+        fixture: "55225_UTILMD_S2.1_ALEXANDE205069.edi",
+        tx_stammdaten_keys: &["netzlokation"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55232",
+        fixture: "55232_UTILMD_S2.1_ALEXANDE155134.edi",
+        tx_stammdaten_keys: &["netzlokation"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
 ];
 
 // ── Helper functions ──
@@ -204,6 +252,13 @@ toml_loading_test!(test_toml_loading_55012, "55012");
 toml_loading_test!(test_toml_loading_55037, "55037");
 toml_loading_test!(test_toml_loading_55109, "55109");
 toml_loading_test!(test_toml_loading_55110, "55110");
+toml_loading_test!(test_toml_loading_55036, "55036");
+toml_loading_test!(test_toml_loading_55038, "55038");
+toml_loading_test!(test_toml_loading_55604, "55604");
+toml_loading_test!(test_toml_loading_55602, "55602");
+toml_loading_test!(test_toml_loading_55136, "55136");
+toml_loading_test!(test_toml_loading_55225, "55225");
+toml_loading_test!(test_toml_loading_55232, "55232");
 
 // ── Forward mapping tests (need fixtures + MIG/AHB XML) ──
 
@@ -393,6 +448,13 @@ forward_mapping_test!(test_forward_mapping_55012, "55012");
 forward_mapping_test!(test_forward_mapping_55037, "55037");
 forward_mapping_test!(test_forward_mapping_55109, "55109");
 forward_mapping_test!(test_forward_mapping_55110, "55110");
+forward_mapping_test!(test_forward_mapping_55036, "55036");
+forward_mapping_test!(test_forward_mapping_55038, "55038");
+forward_mapping_test!(test_forward_mapping_55604, "55604");
+forward_mapping_test!(test_forward_mapping_55602, "55602");
+forward_mapping_test!(test_forward_mapping_55136, "55136");
+forward_mapping_test!(test_forward_mapping_55225, "55225");
+forward_mapping_test!(test_forward_mapping_55232, "55232");
 
 // ── Interchange-level integration test (builds full Interchange struct) ──
 
@@ -536,6 +598,13 @@ interchange_test!(test_interchange_55012, "55012");
 interchange_test!(test_interchange_55037, "55037");
 interchange_test!(test_interchange_55109, "55109");
 interchange_test!(test_interchange_55110, "55110");
+interchange_test!(test_interchange_55036, "55036");
+interchange_test!(test_interchange_55038, "55038");
+interchange_test!(test_interchange_55604, "55604");
+interchange_test!(test_interchange_55602, "55602");
+interchange_test!(test_interchange_55136, "55136");
+interchange_test!(test_interchange_55225, "55225");
+interchange_test!(test_interchange_55232, "55232");
 
 // ── Full EDIFACT roundtrip tests ──
 
@@ -761,3 +830,10 @@ roundtrip_test!(test_roundtrip_55012, "55012");
 roundtrip_test!(test_roundtrip_55037, "55037");
 roundtrip_test!(test_roundtrip_55109, "55109");
 roundtrip_test!(test_roundtrip_55110, "55110");
+roundtrip_test!(test_roundtrip_55036, "55036");
+roundtrip_test!(test_roundtrip_55038, "55038");
+roundtrip_test!(test_roundtrip_55604, "55604");
+roundtrip_test!(test_roundtrip_55602, "55602");
+roundtrip_test!(test_roundtrip_55136, "55136");
+roundtrip_test!(test_roundtrip_55225, "55225");
+roundtrip_test!(test_roundtrip_55232, "55232");
