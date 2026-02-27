@@ -1,8 +1,8 @@
-# Marktlokation Zuordnung Lieferrichtung (SG10 within SEQ+Z98) for PID 55013.
-# CCI/CAV Lieferrichtung, merges into entity "Marktlokation".
+# Marktlokation Zuordnung Spannungsebene (SG10 within SEQ+Z98) for PID 55013.
+# CCI/CAV Spannungsebene, merges into entity "Marktlokation".
 #
-# CCI+++E03                    -> Lieferrichtung qualifier
-# CAV+E06                      -> Erzeugung und Verbrauch
+# CCI+++E03                    -> Spannungsebene qualifier
+# CAV+E06                      -> Niederspannung (E03..E06)
 
 [meta]
 entity = "Marktlokation"
@@ -15,7 +15,7 @@ discriminator = "CCI.c240.d7037=E03"
 [fields]
 
 [companion_fields]
-"cav.c889.d7111" = "lieferrichtung"
+"cav.c889.d7111" = "spannungsebene"
 
 [companion_fields."cci.c240.d7037"]
 target = ""
