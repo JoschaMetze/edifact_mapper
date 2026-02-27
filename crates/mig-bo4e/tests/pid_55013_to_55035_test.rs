@@ -87,12 +87,16 @@ fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSe
 
 /// Fixtures with known mapping gaps that prevent byte-identical roundtrip.
 /// These are legitimate issues to fix later, not test bugs.
+const KNOWN_INCOMPLETE: &[&str] = &[];
+
+/// Fixtures with non-MIG-compliant segment ordering.
+/// The roundtrip normalizes these to MIG-defined order, so byte-identical
+/// comparison fails — but the data content is correct.
 ///
-/// DEV-77392-3: ZD7 SG10 rep ordering differs from all other fixtures
-/// (CCI+ZB3 before CCI+ZF3 instead of after). Reverse mapper always emits
-/// in TOML-defined order which matches 4/5 fixtures. Inherent limitation —
-/// roundtrip loses SG10 rep ordering information.
-const KNOWN_INCOMPLETE: &[&str] = &["55035_UTILMD_S2.1_DEV-77392-3.edi"];
+/// DEV-77392-3: ZD7 SG10 has CCI+ZB3 before CCI+Z49/ZF3, contradicting
+/// the MIG which defines Steuerkanal (Z49, Nr 00091) before Zugeordnete
+/// Marktpartner (ZB3, Nr 00092). All 4 other fixtures follow MIG order.
+const KNOWN_WRONG_FIXTURE_ORDER: &[&str] = &["55035_UTILMD_S2.1_DEV-77392-3.edi"];
 
 /// Full pipeline roundtrip for ALL fixtures of a PID:
 /// EDIFACT -> tokenize -> split -> assemble -> map_interchange
@@ -132,6 +136,12 @@ fn run_full_roundtrip(pid: &str) {
 
         if KNOWN_INCOMPLETE.contains(&fixture_name) {
             eprintln!("PID {pid}: {fixture_name} -- SKIPPED (known incomplete mapping)");
+            skipped += 1;
+            continue;
+        }
+
+        if KNOWN_WRONG_FIXTURE_ORDER.contains(&fixture_name) {
+            eprintln!("PID {pid}: {fixture_name} -- SKIPPED (non-MIG-compliant segment order)");
             skipped += 1;
             continue;
         }
@@ -258,7 +268,7 @@ fn run_full_roundtrip(pid: &str) {
         tested += 1;
     }
 
-    eprintln!("PID {pid}: {tested} fixtures passed, {skipped} skipped (known incomplete)",);
+    eprintln!("PID {pid}: {tested} fixtures passed, {skipped} skipped",);
 }
 
 /// TOML loading test -- verifies all TOML files parse correctly.
