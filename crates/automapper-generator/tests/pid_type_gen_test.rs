@@ -209,20 +209,22 @@ fn test_generated_pid_count_matches_ahb_workflows() {
     let pids_dir = Path::new("../../crates/mig-types/src/generated/fv2504/utilmd/pids");
     assert!(pids_dir.exists(), "pids/ directory should exist");
 
+    // Count only Strom PIDs (55xxx) since load_utilmd() loads the Strom AHB.
+    // Gas PIDs (44xxx) are also in this directory but belong to a different AHB.
     let pid_files: Vec<_> = std::fs::read_dir(pids_dir)
         .unwrap()
         .filter_map(|e| e.ok())
         .filter(|e| {
             let name = e.file_name();
             let name = name.to_string_lossy();
-            name.starts_with("pid_") && name.ends_with(".rs") && name != "mod.rs"
+            name.starts_with("pid_55") && name.ends_with(".rs")
         })
         .collect();
 
     assert_eq!(
         pid_files.len(),
         ahb.workflows.len(),
-        "Generated PID file count ({}) should match AHB workflow count ({})",
+        "Generated Strom PID file count ({}) should match Strom AHB workflow count ({})",
         pid_files.len(),
         ahb.workflows.len()
     );
