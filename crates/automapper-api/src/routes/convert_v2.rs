@@ -11,6 +11,7 @@ use axum::routing::post;
 use axum::{Json, Router};
 
 use mig_assembly::assembler::Assembler;
+use mig_assembly::navigator::AssembledTreeNavigator;
 use mig_assembly::pid_detect::detect_pid;
 use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::tokenize::parse_to_segments;
@@ -226,26 +227,44 @@ pub(crate) async fn convert_v2(
                     let evaluator =
                         automapper_validation::UtilmdConditionEvaluatorFV2504::default();
                     let validator = automapper_validation::EdifactValidator::new(evaluator);
-                    let mut report = validator.validate(
-                        &val_segments,
-                        &val_workflow,
-                        &external,
-                        automapper_validation::ValidationLevel::Full,
-                    );
 
-                    // Add structure diagnostics if we have a filtered MIG
-                    if let Some(ref fmig) = last_filtered_mig {
-                        let assembler = Assembler::new(fmig);
-                        let (_tree, structure_diagnostics) =
-                            assembler.assemble_with_diagnostics(&val_segments);
-                        for diag in structure_diagnostics {
-                            report.add_issue(automapper_validation::ValidationIssue::new(
-                                automapper_validation::Severity::Warning,
-                                automapper_validation::ValidationCategory::Structure,
-                                automapper_validation::ErrorCodes::UNEXPECTED_SEGMENT,
-                                diag.message,
-                            ));
-                        }
+                    // Assemble tree for navigator + structure diagnostics
+                    let (tree, structure_diagnostics) =
+                        if let Some(ref fmig) = last_filtered_mig {
+                            let assembler = Assembler::new(fmig);
+                            let (t, d) = assembler.assemble_with_diagnostics(&val_segments);
+                            (Some(t), d)
+                        } else {
+                            (None, vec![])
+                        };
+
+                    // Validate with navigator when tree is available (avoids
+                    // false positives for mandatory fields in absent optional groups)
+                    let mut report = if let Some(ref t) = tree {
+                        let navigator = AssembledTreeNavigator::new(t);
+                        validator.validate_with_navigator(
+                            &val_segments,
+                            &val_workflow,
+                            &external,
+                            automapper_validation::ValidationLevel::Full,
+                            &navigator,
+                        )
+                    } else {
+                        validator.validate(
+                            &val_segments,
+                            &val_workflow,
+                            &external,
+                            automapper_validation::ValidationLevel::Full,
+                        )
+                    };
+
+                    for diag in structure_diagnostics {
+                        report.add_issue(automapper_validation::ValidationIssue::new(
+                            automapper_validation::Severity::Warning,
+                            automapper_validation::ValidationCategory::Structure,
+                            automapper_validation::ErrorCodes::UNEXPECTED_SEGMENT,
+                            diag.message,
+                        ));
                     }
 
                     let report_json =
