@@ -116,6 +116,29 @@ const PID_SPECS: &[PidTestSpec] = &[
         tx_stammdaten_keys: &[],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
+    PidTestSpec {
+        pid: "55037",
+        fixture: "55037_UTILMD_S2.1_ALEXANDE149633.edi",
+        tx_stammdaten_keys: &["marktlokation"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55109",
+        fixture: "55109_UTILMD_S2.1_ALEXANDE460784.edi",
+        tx_stammdaten_keys: &[
+            "marktlokation",
+            "geschaeftspartner",
+            "ansprechpartner",
+            "enfgDaten",
+        ],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55110",
+        fixture: "55110_UTILMD_S2.1_ALEXANDE178268.edi",
+        tx_stammdaten_keys: &["marktlokation", "geschaeftspartner", "ansprechpartner"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
 ];
 
 // ── Helper functions ──
@@ -178,6 +201,9 @@ toml_loading_test!(test_toml_loading_55009, "55009");
 toml_loading_test!(test_toml_loading_55010, "55010");
 toml_loading_test!(test_toml_loading_55011, "55011");
 toml_loading_test!(test_toml_loading_55012, "55012");
+toml_loading_test!(test_toml_loading_55037, "55037");
+toml_loading_test!(test_toml_loading_55109, "55109");
+toml_loading_test!(test_toml_loading_55110, "55110");
 
 // ── Forward mapping tests (need fixtures + MIG/AHB XML) ──
 
@@ -364,6 +390,9 @@ forward_mapping_test!(test_forward_mapping_55009, "55009");
 forward_mapping_test!(test_forward_mapping_55010, "55010");
 forward_mapping_test!(test_forward_mapping_55011, "55011");
 forward_mapping_test!(test_forward_mapping_55012, "55012");
+forward_mapping_test!(test_forward_mapping_55037, "55037");
+forward_mapping_test!(test_forward_mapping_55109, "55109");
+forward_mapping_test!(test_forward_mapping_55110, "55110");
 
 // ── Interchange-level integration test (builds full Interchange struct) ──
 
@@ -504,6 +533,9 @@ interchange_test!(test_interchange_55009, "55009");
 interchange_test!(test_interchange_55010, "55010");
 interchange_test!(test_interchange_55011, "55011");
 interchange_test!(test_interchange_55012, "55012");
+interchange_test!(test_interchange_55037, "55037");
+interchange_test!(test_interchange_55109, "55109");
+interchange_test!(test_interchange_55110, "55110");
 
 // ── Full EDIFACT roundtrip tests ──
 
@@ -726,3 +758,6 @@ roundtrip_test!(test_roundtrip_55009, "55009");
 roundtrip_test!(test_roundtrip_55010, "55010");
 roundtrip_test!(test_roundtrip_55011, "55011");
 roundtrip_test!(test_roundtrip_55012, "55012");
+roundtrip_test!(test_roundtrip_55037, "55037");
+roundtrip_test!(test_roundtrip_55109, "55109");
+roundtrip_test!(test_roundtrip_55110, "55110");

@@ -1,0 +1,26 @@
+[meta]
+entity = "Ansprechpartner"
+bo4e_type = "Ansprechpartner"
+companion_type = "AnsprechpartnerEdifact"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12_z09"
+discriminator = "NAD.d3035=Z09"
+
+[fields]
+"nad.c080.d3036" = "nachname"
+"nad.c080.d3036_2" = "vorname"
+"nad.c080.d3036_5" = "anrede"
+
+[fields."nad.d3035"]
+target = ""
+default = "Z09"
+
+[companion_fields]
+"nad.c080.d3036_3" = "namenszusatz1"
+"nad.c080.d3036_4" = "namenszusatz2"
+"nad.c080.d3045" = "anredeCode"
+"rff[Z46].c506.d1154" = "zeitscheibeRef"
+
+[companion_fields."rff[Z46].c506.d1153"]
+target = ""
+default = "Z46"

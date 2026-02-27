@@ -1,0 +1,17 @@
+[meta]
+entity = "Marktteilnehmer"
+bo4e_type = "Marktteilnehmer"
+source_group = "SG2"
+source_path = "sg2"
+
+[fields]
+"nad.c082.d3039" = "rollencodenummer"
+"nad.d3035" = "marktrolle"
+
+[fields."nad.c082.d3055"]
+target = "rollencodetyp"
+
+[fields."nad.c082.d3055".enum_map]
+293 = "BDEW"
+332 = "DVGW"
+500 = "GLN"

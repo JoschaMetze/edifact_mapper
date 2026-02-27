@@ -1,0 +1,16 @@
+[meta]
+entity = "Kontakt"
+bo4e_type = "Kontakt"
+source_group = "SG2.SG3"
+source_path = "sg2.sg3_ic"
+discriminator = "CTA.d3139=IC"
+
+[fields]
+"com.c076.d3148" = "kommunikationsnummer"
+"com.c076.d3155" = "kommunikationsart"
+"cta.c056.d3412" = "kontaktName"
+"cta.c056.d3413" = "kontaktNummer"
+
+[fields."cta.d3139"]
+target = ""
+default = "IC"
