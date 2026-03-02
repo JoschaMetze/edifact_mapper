@@ -275,12 +275,9 @@ fn build_aperak_bo4e(
     });
 
     // SG4: ERC + FTX error groups → entity "Fehler"
-    // Each SG4 has its own SG5 children (RFF+ACW, RFF+AGO, RFF+TN).
+    // Each SG4 has its own SG5 children (RFF+ACW, RFF+AGO, RFF+TN) nested inside.
     if !is_positive {
         let mut errors: Vec<serde_json::Value> = Vec::new();
-        let mut nachricht_refs: Vec<serde_json::Value> = Vec::new();
-        let mut nachricht_infos: Vec<serde_json::Value> = Vec::new();
-        let mut vorgang_infos: Vec<serde_json::Value> = Vec::new();
 
         for issue in report.errors() {
             let error_code = map_validation_issue_to_aperak_code(issue);
@@ -289,34 +286,27 @@ fn build_aperak_bo4e(
                 aperak_code_german_label(error_code),
                 issue.message,
             ));
-            errors.push(serde_json::json!({
+            let mut referenzen = serde_json::json!({
+                "nachrichtenReferenz": &meta.message_ref,
+            });
+            if let Some(ref tx_ref) = meta.transaction_ref {
+                referenzen["dokumentennummer"] = serde_json::json!(tx_ref);
+                referenzen["vorgangsnummer"] = serde_json::json!(tx_ref);
+            }
+
+            let error_obj = serde_json::json!({
                 "fehlerCode": error_code,
                 "fehlerEdifact": {
                     "abweichungsInfo": german_text,
-                }
-            }));
+                },
+                "referenzen": referenzen,
+            });
 
-            // SG4.SG5: each error gets its own set of references
-            nachricht_refs.push(serde_json::json!({
-                "nachrichtenReferenz": &meta.message_ref,
-            }));
-            if let Some(ref tx_ref) = meta.transaction_ref {
-                nachricht_infos.push(serde_json::json!({
-                    "dokumentennummer": tx_ref,
-                }));
-                vorgang_infos.push(serde_json::json!({
-                    "vorgangsnummer": tx_ref,
-                }));
-            }
+            errors.push(error_obj);
         }
 
         if !errors.is_empty() {
             result["fehler"] = serde_json::Value::Array(errors);
-            result["fehlerNachrichtRef"] = serde_json::Value::Array(nachricht_refs);
-            if !nachricht_infos.is_empty() {
-                result["fehlerNachrichtInfo"] = serde_json::Value::Array(nachricht_infos);
-                result["fehlerVorgangInfo"] = serde_json::Value::Array(vorgang_infos);
-            }
         }
     }
 
@@ -363,6 +353,10 @@ fn build_contrl_bo4e(
 }
 
 /// Render the response BO4E JSON as EDIFACT using the response engine + MIG.
+///
+/// Error segments (SG4/SG5) are rendered manually because the reverse mapper
+/// cannot distribute SG5 children across multiple SG4 parent instances.
+/// The header entities (nachricht, referenz, marktteilnehmer) are reverse-mapped normally.
 fn render_response_edifact(
     registry: &MigServiceRegistry,
     fv: &str,
@@ -384,14 +378,21 @@ fn render_response_edifact(
                 message: format!("No response MIG for {fv}/{msg_type}"),
             })?;
 
-    // Reverse map BO4E → AssembledTree
-    let tree = engine.map_all_reverse(bo4e);
+    // Strip error entities from BO4E — reverse-map only header entities
+    let header_bo4e = strip_error_entities(bo4e);
 
-    // Disassemble and render
+    // Reverse map header BO4E → AssembledTree
+    let tree = engine.map_all_reverse(&header_bo4e);
+
+    // Disassemble and render header
     let disassembler = Disassembler::new(mig);
     let dis_segments = disassembler.disassemble(&tree);
     let delimiters = edifact_types::EdifactDelimiters::default();
-    let body_edifact = render_edifact(&dis_segments, &delimiters);
+    let header_edifact = render_edifact(&dis_segments, &delimiters);
+
+    // Render error segments manually from nested fehler array
+    let error_edifact = render_error_segments(bo4e, &delimiters);
+    let error_seg_count = count_error_segments(bo4e);
 
     // Wrap with UNB/UNH/UNT/UNZ envelope
     let unh_version = match msg_type {
@@ -400,7 +401,7 @@ fn render_response_edifact(
         _ => msg_type,
     };
     let now_date = chrono_now_compact();
-    let seg_count = dis_segments.len() + 2; // +2 for UNH+UNT
+    let seg_count = dis_segments.len() + error_seg_count + 2; // +2 for UNH+UNT
 
     let mut out = String::new();
     // UNB — swap sender/receiver for response
@@ -415,14 +416,150 @@ fn render_response_edifact(
     ));
     // UNH
     out.push_str(&format!("UNH+1+{}'", unh_version));
-    // Body
-    out.push_str(&body_edifact);
+    // Header body (BGM, DTM, RFF, NAD)
+    out.push_str(&header_edifact);
+    // Error segments (ERC+FTX, then SG5 RFFs per error)
+    out.push_str(&error_edifact);
     // UNT
     out.push_str(&format!("UNT+{}+1'", seg_count));
     // UNZ
     out.push_str("UNZ+1+1'");
 
     Ok(out)
+}
+
+/// Strip error-related entities from BO4E JSON, returning only header entities.
+fn strip_error_entities(bo4e: &serde_json::Value) -> serde_json::Value {
+    if let Some(obj) = bo4e.as_object() {
+        let mut header = serde_json::Map::new();
+        for (key, value) in obj {
+            if key != "fehler" {
+                header.insert(key.clone(), value.clone());
+            }
+        }
+        serde_json::Value::Object(header)
+    } else {
+        bo4e.clone()
+    }
+}
+
+/// Render SG4/SG5 error segments manually from the nested fehler array.
+///
+/// Each fehler object produces:
+/// - `ERC+{code}'`
+/// - `FTX+ABO+++{text}'`
+/// - `RFF+ACW:{nachrichtenReferenz}'` (from referenzen)
+/// - `RFF+AGO:{dokumentennummer}'` (from referenzen, if present)
+/// - `RFF+TN:{vorgangsnummer}'` (from referenzen, if present)
+fn render_error_segments(
+    bo4e: &serde_json::Value,
+    delimiters: &edifact_types::EdifactDelimiters,
+) -> String {
+    let fehler = match bo4e.get("fehler").and_then(|v| v.as_array()) {
+        Some(arr) => arr,
+        None => return String::new(),
+    };
+
+    let release = delimiters.release as char;
+    let mut out = String::new();
+
+    for error in fehler {
+        // ERC segment
+        let code = error
+            .get("fehlerCode")
+            .and_then(|v| v.as_str())
+            .unwrap_or("Z31");
+        out.push_str(&format!("ERC+{code}'"));
+
+        // FTX+ABO segment
+        let text = error
+            .pointer("/fehlerEdifact/abweichungsInfo")
+            .and_then(|v| v.as_str())
+            .unwrap_or("");
+        out.push_str("FTX+ABO+++");
+        escape_edifact_value(text, delimiters, release, &mut out);
+        out.push('\'');
+
+        let refs = error.get("referenzen");
+
+        // SG5: RFF+ACW (message reference)
+        if let Some(ref_val) = refs
+            .and_then(|r| r.get("nachrichtenReferenz"))
+            .and_then(|v| v.as_str())
+        {
+            out.push_str("RFF+ACW:");
+            escape_edifact_value(ref_val, delimiters, release, &mut out);
+            out.push('\'');
+        }
+
+        // SG5: RFF+AGO (document number)
+        if let Some(doc_val) = refs
+            .and_then(|r| r.get("dokumentennummer"))
+            .and_then(|v| v.as_str())
+        {
+            out.push_str("RFF+AGO:");
+            escape_edifact_value(doc_val, delimiters, release, &mut out);
+            out.push('\'');
+        }
+
+        // SG5: RFF+TN (transaction reference)
+        if let Some(txn_val) = refs
+            .and_then(|r| r.get("vorgangsnummer"))
+            .and_then(|v| v.as_str())
+        {
+            out.push_str("RFF+TN:");
+            escape_edifact_value(txn_val, delimiters, release, &mut out);
+            out.push('\'');
+        }
+    }
+
+    out
+}
+
+/// Count the number of EDIFACT segments generated for errors.
+fn count_error_segments(bo4e: &serde_json::Value) -> usize {
+    let fehler = match bo4e.get("fehler").and_then(|v| v.as_array()) {
+        Some(arr) => arr,
+        None => return 0,
+    };
+
+    let mut count = 0;
+    for error in fehler {
+        count += 2; // ERC + FTX always present
+        if let Some(refs) = error.get("referenzen") {
+            if refs.get("nachrichtenReferenz").is_some() {
+                count += 1;
+            }
+            if refs.get("dokumentennummer").is_some() {
+                count += 1;
+            }
+            if refs.get("vorgangsnummer").is_some() {
+                count += 1;
+            }
+        }
+    }
+    count
+}
+
+/// Escape a value for inline EDIFACT rendering (same rules as renderer::escape_component).
+fn escape_edifact_value(
+    value: &str,
+    delimiters: &edifact_types::EdifactDelimiters,
+    release: char,
+    out: &mut String,
+) {
+    let special = [
+        delimiters.element,
+        delimiters.component,
+        delimiters.segment,
+        delimiters.release,
+    ];
+    for b in value.bytes() {
+        if special.contains(&b) {
+            out.push(release);
+        }
+        out.push(b as char);
+    }
 }
 
 /// Derive the code list responsible agency (NAD C082 d3055) from an MP-ID prefix.
@@ -687,16 +824,142 @@ mod tests {
             abo_text.contains("Required field missing"),
             "Should include original detail"
         );
-        // SG4.SG5 error references — one per error, as arrays
-        assert!(bo4e["fehlerNachrichtRef"].is_array());
-        assert_eq!(
-            bo4e["fehlerNachrichtRef"][0]["nachrichtenReferenz"],
-            "MSG001"
+        // SG5 references nested inside each fehler object as single "referenzen"
+        let refs = &bo4e["fehler"][0]["referenzen"];
+        assert_eq!(refs["nachrichtenReferenz"], "MSG001");
+        assert_eq!(refs["dokumentennummer"], "TXN001");
+        assert_eq!(refs["vorgangsnummer"], "TXN001");
+        // No top-level SG5 entities
+        assert!(bo4e.get("fehlerNachrichtRef").is_none());
+        assert!(bo4e.get("fehlerNachrichtInfo").is_none());
+        assert!(bo4e.get("fehlerVorgangInfo").is_none());
+    }
+
+    #[test]
+    fn test_negative_aperak_multiple_errors() {
+        let meta = OriginalMessageMeta {
+            interchange_ref: "INTREF001".into(),
+            sender_id: "9900000000001".into(),
+            sender_qualifier: "500".into(),
+            receiver_id: "9900000000002".into(),
+            receiver_qualifier: "500".into(),
+            sender_code_agency: "293".into(),
+            receiver_code_agency: "293".into(),
+            message_ref: "MSG001".into(),
+            transaction_ref: Some("TXN001".into()),
+        };
+
+        let mut report = automapper_validation::ValidationReport::new(
+            "UTILMD",
+            automapper_validation::ValidationLevel::Full,
         );
-        assert!(bo4e["fehlerNachrichtInfo"].is_array());
-        assert_eq!(bo4e["fehlerNachrichtInfo"][0]["dokumentennummer"], "TXN001");
-        assert!(bo4e["fehlerVorgangInfo"].is_array());
-        assert_eq!(bo4e["fehlerVorgangInfo"][0]["vorgangsnummer"], "TXN001");
+        report.add_issue(automapper_validation::ValidationIssue::new(
+            automapper_validation::Severity::Error,
+            automapper_validation::ValidationCategory::Ahb,
+            "MISSING_VALUE",
+            "First error",
+        ));
+        report.add_issue(automapper_validation::ValidationIssue::new(
+            automapper_validation::Severity::Error,
+            automapper_validation::ValidationCategory::Ahb,
+            "INVALID_CODE",
+            "Second error",
+        ));
+
+        let bo4e = build_aperak_bo4e(false, &meta, &report);
+        let errors = bo4e["fehler"].as_array().unwrap();
+        assert_eq!(errors.len(), 2);
+
+        // Each error has its own nested referenzen
+        assert_eq!(errors[0]["fehlerCode"], "Z29");
+        assert_eq!(errors[0]["referenzen"]["nachrichtenReferenz"], "MSG001");
+        assert_eq!(errors[0]["referenzen"]["dokumentennummer"], "TXN001");
+
+        assert_eq!(errors[1]["fehlerCode"], "Z39");
+        assert_eq!(errors[1]["referenzen"]["nachrichtenReferenz"], "MSG001");
+        assert_eq!(errors[1]["referenzen"]["vorgangsnummer"], "TXN001");
+    }
+
+    #[test]
+    fn test_render_error_segments() {
+        let bo4e = serde_json::json!({
+            "fehler": [
+                {
+                    "fehlerCode": "Z31",
+                    "fehlerEdifact": { "abweichungsInfo": "Zurueckweisung: test" },
+                    "referenzen": {
+                        "nachrichtenReferenz": "MSG001",
+                        "dokumentennummer": "DOC001",
+                        "vorgangsnummer": "DOC001",
+                    },
+                },
+                {
+                    "fehlerCode": "Z29",
+                    "fehlerEdifact": { "abweichungsInfo": "Pflichtfeld fehlt: field X" },
+                    "referenzen": {
+                        "nachrichtenReferenz": "MSG001",
+                        "dokumentennummer": "DOC001",
+                        "vorgangsnummer": "DOC001",
+                    },
+                }
+            ]
+        });
+
+        let delimiters = edifact_types::EdifactDelimiters::default();
+        let rendered = render_error_segments(&bo4e, &delimiters);
+
+        // Should have: ERC+FTX+RFF(ACW)+RFF(AGO)+RFF(TN) per error = 5 segments each
+        let segments: Vec<&str> = rendered.split('\'').filter(|s| !s.is_empty()).collect();
+        assert_eq!(segments.len(), 10);
+
+        // First error
+        assert_eq!(segments[0], "ERC+Z31");
+        assert!(segments[1].starts_with("FTX+ABO+++Zurueckweisung"));
+        assert_eq!(segments[2], "RFF+ACW:MSG001");
+        assert_eq!(segments[3], "RFF+AGO:DOC001");
+        assert_eq!(segments[4], "RFF+TN:DOC001");
+
+        // Second error
+        assert_eq!(segments[5], "ERC+Z29");
+        assert!(segments[6].starts_with("FTX+ABO+++Pflichtfeld"));
+        assert_eq!(segments[7], "RFF+ACW:MSG001");
+        assert_eq!(segments[8], "RFF+AGO:DOC001");
+        assert_eq!(segments[9], "RFF+TN:DOC001");
+    }
+
+    #[test]
+    fn test_count_error_segments() {
+        // With all SG5 references
+        let bo4e = serde_json::json!({
+            "fehler": [
+                {
+                    "fehlerCode": "Z31",
+                    "fehlerEdifact": {},
+                    "referenzen": {
+                        "nachrichtenReferenz": "MSG001",
+                        "dokumentennummer": "DOC001",
+                        "vorgangsnummer": "DOC001",
+                    },
+                }
+            ]
+        });
+        assert_eq!(count_error_segments(&bo4e), 5); // ERC + FTX + 3 RFFs
+
+        // Without optional SG5 references
+        let bo4e_minimal = serde_json::json!({
+            "fehler": [
+                {
+                    "fehlerCode": "Z31",
+                    "fehlerEdifact": {},
+                    "referenzen": { "nachrichtenReferenz": "MSG001" },
+                }
+            ]
+        });
+        assert_eq!(count_error_segments(&bo4e_minimal), 3); // ERC + FTX + 1 RFF
+
+        // No errors
+        let bo4e_empty = serde_json::json!({});
+        assert_eq!(count_error_segments(&bo4e_empty), 0);
     }
 
     #[test]
