@@ -15,6 +15,7 @@ fn test_register_and_invoke_handler() {
     let instance = AssembledGroupInstance {
         segments: vec![],
         child_groups: vec![],
+        skipped_segments: vec![],
     };
 
     let result = registry.invoke("test_handler", &instance);
@@ -30,6 +31,7 @@ fn test_invoke_nonexistent_handler() {
     let instance = AssembledGroupInstance {
         segments: vec![],
         child_groups: vec![],
+        skipped_segments: vec![],
     };
 
     let result = registry.invoke("missing", &instance);
@@ -55,6 +57,7 @@ fn test_handler_receives_instance_data() {
             elements: vec![vec!["Z16".to_string()]],
         }],
         child_groups: vec![],
+        skipped_segments: vec![],
     };
 
     let result = registry.invoke("extract_tag", &instance).unwrap();

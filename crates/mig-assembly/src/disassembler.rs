@@ -115,6 +115,11 @@ impl<'a> Disassembler<'a> {
             }
         }
 
+        // Re-emit skipped segments (unknown segments preserved for roundtrip fidelity)
+        for skipped in &instance.skipped_segments {
+            output.push(assembled_to_disassembled(skipped));
+        }
+
         // Child groups — lookup by group ID with consumption tracking
         let mut consumed_child = vec![false; instance.child_groups.len()];
         for nested_mig in &mig_group.nested_groups {
@@ -270,6 +275,7 @@ mod tests {
                             elements: vec![vec!["MS".to_string()]],
                         }],
                         child_groups: vec![],
+                        skipped_segments: vec![],
                     },
                     AssembledGroupInstance {
                         segments: vec![AssembledSegment {
@@ -277,6 +283,7 @@ mod tests {
                             elements: vec![vec!["MR".to_string()]],
                         }],
                         child_groups: vec![],
+                        skipped_segments: vec![],
                     },
                 ],
             }],
@@ -339,8 +346,10 @@ mod tests {
                                 },
                             ],
                             child_groups: vec![],
+                            skipped_segments: vec![],
                         }],
                     }],
+                    skipped_segments: vec![],
                 }],
             }],
         };

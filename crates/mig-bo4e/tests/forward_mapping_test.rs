@@ -17,6 +17,7 @@ fn make_test_tree() -> AssembledTree {
                     ],
                 }],
                 child_groups: vec![],
+                skipped_segments: vec![],
             }],
         }],
         post_group_start: 0,
@@ -133,6 +134,7 @@ fn test_extract_from_instance_directly() {
             elements: vec![vec!["MS".to_string()], vec!["9876543210".to_string()]],
         }],
         child_groups: vec![],
+        skipped_segments: vec![],
     };
 
     let result = MappingEngine::extract_from_instance(&instance, "nad.c082.d3039");

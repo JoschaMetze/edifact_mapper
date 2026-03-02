@@ -132,6 +132,7 @@ mod tests {
                                     make_seg("CCI", vec![vec!["Z30"], vec![], vec!["Z07"]]),
                                 ],
                                 child_groups: vec![],
+                                skipped_segments: vec![],
                             },
                             AssembledGroupInstance {
                                 segments: vec![
@@ -139,9 +140,11 @@ mod tests {
                                     make_seg("CCI", vec![vec![""], vec![], vec!["ZC0"]]),
                                 ],
                                 child_groups: vec![],
+                                skipped_segments: vec![],
                             },
                         ],
                     }],
+                    skipped_segments: vec![],
                 }],
             }],
             post_group_start: 1,

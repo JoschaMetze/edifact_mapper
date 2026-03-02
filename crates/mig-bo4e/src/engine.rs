@@ -379,6 +379,7 @@ impl MappingEngine {
             let root_instance = AssembledGroupInstance {
                 segments: tree.segments[..tree.post_group_start].to_vec(),
                 child_groups: vec![],
+                skipped_segments: Vec::new(),
             };
             self.extract_fields_from_instance(&root_instance, def, &mut result, enrich_codes);
             self.extract_companion_fields(&root_instance, def, &mut result, enrich_codes);
@@ -582,6 +583,7 @@ impl MappingEngine {
         let instance = AssembledGroupInstance {
             segments: assembled_segments,
             child_groups: vec![],
+            skipped_segments: Vec::new(),
         };
 
         let mut result = serde_json::Map::new();
@@ -811,6 +813,7 @@ impl MappingEngine {
             return AssembledGroupInstance {
                 segments: vec![],
                 child_groups: vec![],
+                skipped_segments: Vec::new(),
             };
         }
 
@@ -868,6 +871,7 @@ impl MappingEngine {
         AssembledGroupInstance {
             segments,
             child_groups: vec![],
+            skipped_segments: Vec::new(),
         }
     }
 
@@ -1694,6 +1698,7 @@ impl MappingEngine {
             sg4_reps.push(AssembledGroupInstance {
                 segments: root_segs,
                 child_groups,
+                skipped_segments: Vec::new(),
             });
         }
 
@@ -1865,6 +1870,7 @@ fn place_in_groups(
                 group.repetitions.push(AssembledGroupInstance {
                     segments: vec![],
                     child_groups: vec![],
+                    skipped_segments: Vec::new(),
                 });
             }
             group.repetitions[rep_idx]
@@ -1901,6 +1907,7 @@ fn place_in_groups(
             parent_group.repetitions.push(AssembledGroupInstance {
                 segments: vec![],
                 child_groups: vec![],
+                skipped_segments: Vec::new(),
             });
         }
 
@@ -2233,6 +2240,7 @@ mod tests {
                             elements: vec![vec!["MS".to_string()], vec!["9900123".to_string()]],
                         }],
                         child_groups: vec![],
+                        skipped_segments: vec![],
                     }],
                 },
                 AssembledGroup {
@@ -2253,8 +2261,10 @@ mod tests {
                                     ],
                                 }],
                                 child_groups: vec![],
+                                skipped_segments: vec![],
                             }],
                         }],
+                        skipped_segments: vec![],
                     }],
                 },
             ],
@@ -2433,6 +2443,7 @@ mod tests {
                             elements: vec![vec!["MS".to_string()], vec!["9900123".to_string()]],
                         }],
                         child_groups: vec![],
+                        skipped_segments: vec![],
                     }],
                 },
                 AssembledGroup {
@@ -2443,6 +2454,7 @@ mod tests {
                             elements: vec![vec!["24".to_string()], vec!["TX001".to_string()]],
                         }],
                         child_groups: vec![],
+                        skipped_segments: vec![],
                     }],
                 },
             ],
@@ -2517,8 +2529,10 @@ mod tests {
                                 ],
                             }],
                             child_groups: vec![],
+                            skipped_segments: vec![],
                         }],
                     }],
+                    skipped_segments: vec![],
                 }],
             }],
             post_group_start: 2,
@@ -2612,6 +2626,7 @@ mod tests {
                             elements: vec![vec!["MS".to_string()], vec!["9900123".to_string()]],
                         }],
                         child_groups: vec![],
+                        skipped_segments: vec![],
                     }],
                 },
                 AssembledGroup {
@@ -2623,6 +2638,7 @@ mod tests {
                                 elements: vec![vec!["24".to_string()], vec!["TX001".to_string()]],
                             }],
                             child_groups: vec![],
+                            skipped_segments: vec![],
                         },
                         AssembledGroupInstance {
                             segments: vec![AssembledSegment {
@@ -2630,6 +2646,7 @@ mod tests {
                                 elements: vec![vec!["24".to_string()], vec!["TX002".to_string()]],
                             }],
                             child_groups: vec![],
+                            skipped_segments: vec![],
                         },
                     ],
                 },
@@ -2810,10 +2827,13 @@ mod tests {
                                         elements: vec![vec![], vec![], vec!["Z15".to_string()]],
                                     }],
                                     child_groups: vec![],
+                                    skipped_segments: vec![],
                                 }],
                             }],
+                            skipped_segments: vec![],
                         }],
                     }],
+                    skipped_segments: vec![],
                 }],
             }],
             post_group_start: 0,
@@ -2960,6 +2980,7 @@ mod tests {
         let instance = AssembledGroupInstance {
             segments: vec![],
             child_groups: vec![],
+            skipped_segments: vec![],
         };
         assert_eq!(place_in_groups(&mut groups, "SG8", instance), 0);
 
@@ -2967,6 +2988,7 @@ mod tests {
         let instance = AssembledGroupInstance {
             segments: vec![],
             child_groups: vec![],
+            skipped_segments: vec![],
         };
         assert_eq!(place_in_groups(&mut groups, "SG8", instance), 1);
 
@@ -2974,6 +2996,7 @@ mod tests {
         let instance = AssembledGroupInstance {
             segments: vec![],
             child_groups: vec![],
+            skipped_segments: vec![],
         };
         assert_eq!(place_in_groups(&mut groups, "SG8:5", instance), 5);
     }
@@ -3005,8 +3028,10 @@ mod tests {
                                             elements: vec![vec![], vec![], vec!["ZB3".to_string()]],
                                         }],
                                         child_groups: vec![],
+                                        skipped_segments: vec![],
                                     }],
                                 }],
+                                skipped_segments: vec![],
                             },
                             AssembledGroupInstance {
                                 segments: vec![AssembledSegment {
@@ -3021,11 +3046,14 @@ mod tests {
                                             elements: vec![vec![], vec![], vec!["ZE6".to_string()]],
                                         }],
                                         child_groups: vec![],
+                                        skipped_segments: vec![],
                                     }],
                                 }],
+                                skipped_segments: vec![],
                             },
                         ],
                     }],
+                    skipped_segments: vec![],
                 }],
             }],
             post_group_start: 0,

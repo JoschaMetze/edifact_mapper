@@ -5,7 +5,7 @@
 
 use std::path::Path;
 
-use crate::assembler::Assembler;
+use crate::assembler::{Assembler, AssemblerConfig};
 use crate::parsing::parse_mig;
 use crate::tokenize::parse_to_segments;
 use crate::AssemblyError;
@@ -79,6 +79,43 @@ impl ConversionService {
         for msg in &chunks.messages {
             let all_segments = msg.all_segments();
             let assembler = Assembler::new(&self.mig);
+            let tree = assembler.assemble_generic(&all_segments)?;
+            trees.push(tree);
+        }
+
+        Ok((chunks, trees))
+    }
+
+    /// Convert EDIFACT input to an `AssembledTree` with custom assembler config.
+    pub fn convert_to_assembled_tree_with_config(
+        &self,
+        input: &str,
+        config: AssemblerConfig,
+    ) -> Result<crate::assembler::AssembledTree, AssemblyError> {
+        let segments = parse_to_segments(input.as_bytes())?;
+        let assembler = Assembler::with_config(&self.mig, config);
+        assembler.assemble_generic(&segments)
+    }
+
+    /// Convert a complete interchange into per-message assembled trees with custom config.
+    pub fn convert_interchange_to_trees_with_config(
+        &self,
+        input: &str,
+        config: AssemblerConfig,
+    ) -> Result<
+        (
+            crate::tokenize::InterchangeChunks,
+            Vec<crate::assembler::AssembledTree>,
+        ),
+        AssemblyError,
+    > {
+        let segments = parse_to_segments(input.as_bytes())?;
+        let chunks = crate::tokenize::split_messages(segments)?;
+
+        let mut trees = Vec::with_capacity(chunks.messages.len());
+        for msg in &chunks.messages {
+            let all_segments = msg.all_segments();
+            let assembler = Assembler::with_config(&self.mig, config.clone());
             let tree = assembler.assemble_generic(&all_segments)?;
             trees.push(tree);
         }

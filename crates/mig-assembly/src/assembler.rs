@@ -43,6 +43,11 @@ pub struct AssembledGroup {
 pub struct AssembledGroupInstance {
     pub segments: Vec<AssembledSegment>,
     pub child_groups: Vec<AssembledGroup>,
+    /// Segments that were present in the EDIFACT input but not defined in
+    /// the PID-filtered MIG for this group. Only populated when the assembler
+    /// runs with [`AssemblerConfig::skip_unknown_segments`] enabled.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub skipped_segments: Vec<AssembledSegment>,
 }
 
 impl AssembledGroupInstance {
@@ -61,17 +66,37 @@ impl AssembledGroupInstance {
     }
 }
 
+/// Configuration for the assembler.
+#[derive(Debug, Clone, Default)]
+pub struct AssemblerConfig {
+    /// When `true`, the assembler skips segments inside a group instance that
+    /// don't match any remaining MIG slot, nested-group entry, or the group's
+    /// entry tag (next repetition). Skipped segments are preserved on
+    /// [`AssembledGroupInstance::skipped_segments`] for roundtrip re-emission.
+    ///
+    /// Default: `false` (strict AHB — unknown segments stall the cursor).
+    pub skip_unknown_segments: bool,
+}
+
 /// MIG-guided assembler.
 ///
 /// Takes a MIG schema and uses it as a grammar to guide consumption
 /// of parsed EDIFACT segments. Produces a generic `AssembledTree`.
 pub struct Assembler<'a> {
     mig: &'a MigSchema,
+    config: AssemblerConfig,
 }
 
 impl<'a> Assembler<'a> {
     pub fn new(mig: &'a MigSchema) -> Self {
-        Self { mig }
+        Self {
+            mig,
+            config: AssemblerConfig::default(),
+        }
+    }
+
+    pub fn with_config(mig: &'a MigSchema, config: AssemblerConfig) -> Self {
+        Self { mig, config }
     }
 
     /// Assemble segments into a generic tree following MIG structure.
@@ -169,6 +194,7 @@ impl<'a> Assembler<'a> {
             let mut instance = AssembledGroupInstance {
                 segments: Vec::new(),
                 child_groups: Vec::new(),
+                skipped_segments: Vec::new(),
             };
 
             // Consume segments within this group instance.
@@ -218,6 +244,38 @@ impl<'a> Assembler<'a> {
                 }
 
                 slot_idx += run_len;
+
+                // Point A: Skip unknown segments between MIG slot runs.
+                // When skip mode is ON and we just finished a slot run but the
+                // current segment doesn't match any remaining MIG slot, nested
+                // group entry, or the entry tag, skip it.
+                if self.config.skip_unknown_segments {
+                    while !cursor.is_exhausted() {
+                        let seg = &segments[cursor.position()];
+                        // Stop if it matches the entry tag (next group repetition)
+                        if matcher::matches_segment_tag(&seg.id, &entry_segment.id) {
+                            break;
+                        }
+                        // Stop if it matches any remaining MIG slot
+                        if mig_group.segments[slot_idx..]
+                            .iter()
+                            .any(|s| matcher::matches_segment_tag(&seg.id, &s.id))
+                        {
+                            break;
+                        }
+                        // Stop if it matches any nested group entry
+                        if mig_group.nested_groups.iter().any(|ng| {
+                            ng.segments
+                                .first()
+                                .is_some_and(|es| matcher::matches_segment_tag(&seg.id, &es.id))
+                        }) {
+                            break;
+                        }
+                        // Unknown segment — skip it
+                        instance.skipped_segments.push(owned_to_assembled(seg));
+                        cursor.advance();
+                    }
+                }
             }
 
             // Consume nested groups
@@ -305,6 +363,7 @@ fn count_group_segments(group: &AssembledGroup) -> usize {
     let mut count = 0;
     for rep in &group.repetitions {
         count += rep.segments.len();
+        count += rep.skipped_segments.len();
         for child in &rep.child_groups {
             count += count_group_segments(child);
         }
@@ -539,6 +598,7 @@ mod tests {
                     elements: vec![vec!["Z16".to_string(), "DE000111222333".to_string()]],
                 }],
                 child_groups: vec![],
+                skipped_segments: vec![],
             }],
         };
 
@@ -554,6 +614,7 @@ mod tests {
                 },
             ],
             child_groups: vec![sg5],
+            skipped_segments: vec![],
         };
 
         let sub_tree = sg4_instance.as_assembled_tree();
@@ -640,5 +701,170 @@ mod tests {
         assert_eq!(diagnostics[0].segment_id, "FOO");
         assert_eq!(diagnostics[1].segment_id, "BAR");
         assert_eq!(diagnostics[2].segment_id, "BAZ");
+    }
+
+    // ── Skip-unknown-segments tests ──
+
+    #[test]
+    fn test_skip_unknown_segment_between_slots() {
+        // MIG group expects [SEQ, CCI], input has [SEQ, RFF, CCI].
+        // With skip ON, RFF is skipped and CCI is consumed.
+        // With skip OFF (default), CCI is lost because RFF stalls the cursor.
+        let sg8 = make_mig_group("SG8", vec!["SEQ", "CCI"], vec![]);
+        let mig = make_mig_schema(vec!["UNH"], vec![sg8.clone()]);
+
+        let segments = vec![
+            make_owned_seg("UNH", vec![vec!["001"]]),
+            make_owned_seg("SEQ", vec![vec!["Z98"]]),
+            make_owned_seg("RFF", vec![vec!["Z38", "CROSSREF"]]),
+            make_owned_seg("CCI", vec![vec!["Z30"]]),
+        ];
+
+        // Skip OFF: CCI not consumed (RFF stalls cursor after SEQ)
+        let off = Assembler::new(&mig);
+        let tree_off = off.assemble_generic(&segments).unwrap();
+        let sg8_off = &tree_off.groups[0];
+        assert_eq!(sg8_off.repetitions[0].segments.len(), 1); // Only SEQ
+        assert_eq!(sg8_off.repetitions[0].segments[0].tag, "SEQ");
+
+        // Skip ON: RFF skipped, CCI consumed
+        let on = Assembler::with_config(
+            &mig,
+            AssemblerConfig {
+                skip_unknown_segments: true,
+            },
+        );
+        let tree_on = on.assemble_generic(&segments).unwrap();
+        let sg8_on = &tree_on.groups[0];
+        assert_eq!(sg8_on.repetitions[0].segments.len(), 2); // SEQ + CCI
+        assert_eq!(sg8_on.repetitions[0].segments[0].tag, "SEQ");
+        assert_eq!(sg8_on.repetitions[0].segments[1].tag, "CCI");
+    }
+
+    #[test]
+    fn test_skip_preserves_on_instance() {
+        // Skipped segments are stored in instance.skipped_segments
+        let sg8 = make_mig_group("SG8", vec!["SEQ", "CCI"], vec![]);
+        let mig = make_mig_schema(vec!["UNH"], vec![sg8]);
+
+        let segments = vec![
+            make_owned_seg("UNH", vec![vec!["001"]]),
+            make_owned_seg("SEQ", vec![vec!["Z98"]]),
+            make_owned_seg("RFF", vec![vec!["Z38", "REF1"]]),
+            make_owned_seg("DTM", vec![vec!["92", "20250101"]]),
+            make_owned_seg("CCI", vec![vec!["Z30"]]),
+        ];
+
+        let assembler = Assembler::with_config(
+            &mig,
+            AssemblerConfig {
+                skip_unknown_segments: true,
+            },
+        );
+        let tree = assembler.assemble_generic(&segments).unwrap();
+        let instance = &tree.groups[0].repetitions[0];
+
+        assert_eq!(instance.segments.len(), 2); // SEQ + CCI
+        assert_eq!(instance.skipped_segments.len(), 2); // RFF + DTM
+        assert_eq!(instance.skipped_segments[0].tag, "RFF");
+        assert_eq!(instance.skipped_segments[1].tag, "DTM");
+    }
+
+    #[test]
+    fn test_skip_mode_off_default() {
+        // Assembler::new() doesn't skip (backwards compat)
+        let mig = make_mig_schema(vec![], vec![]);
+        let assembler = Assembler::new(&mig);
+        assert!(!assembler.config.skip_unknown_segments);
+    }
+
+    #[test]
+    fn test_skip_does_not_consume_nested_group_entry() {
+        // Skip must NOT consume segments that are nested group entries.
+        // SG4 expects [IDE, STS], nested SG5 expects [LOC].
+        // Input: IDE, FOO, STS, LOC. FOO should be skipped, LOC goes to SG5.
+        let sg5 = make_mig_group("SG5", vec!["LOC"], vec![]);
+        let sg4 = make_mig_group("SG4", vec!["IDE", "STS"], vec![sg5]);
+        let mig = make_mig_schema(vec!["UNH"], vec![sg4]);
+
+        let segments = vec![
+            make_owned_seg("UNH", vec![vec!["001"]]),
+            make_owned_seg("IDE", vec![vec!["24"]]),
+            make_owned_seg("FOO", vec![vec!["unknown"]]),
+            make_owned_seg("STS", vec![vec!["7"]]),
+            make_owned_seg("LOC", vec![vec!["Z16"]]),
+        ];
+
+        let assembler = Assembler::with_config(
+            &mig,
+            AssemblerConfig {
+                skip_unknown_segments: true,
+            },
+        );
+        let tree = assembler.assemble_generic(&segments).unwrap();
+        let sg4 = &tree.groups[0];
+        let inst = &sg4.repetitions[0];
+
+        // IDE + STS consumed, FOO skipped
+        assert_eq!(inst.segments.len(), 2);
+        assert_eq!(inst.segments[0].tag, "IDE");
+        assert_eq!(inst.segments[1].tag, "STS");
+        assert_eq!(inst.skipped_segments.len(), 1);
+        assert_eq!(inst.skipped_segments[0].tag, "FOO");
+
+        // LOC went to nested SG5
+        assert_eq!(inst.child_groups.len(), 1);
+        assert_eq!(inst.child_groups[0].group_id, "SG5");
+        assert_eq!(inst.child_groups[0].repetitions[0].segments[0].tag, "LOC");
+    }
+
+    #[test]
+    fn test_roundtrip_with_skip() {
+        // Full roundtrip: assemble with skip → disassemble → byte-identical
+        // including skipped segments in the output.
+        use crate::disassembler::Disassembler;
+        use crate::renderer::render_edifact;
+
+        let sg8 = make_mig_group("SG8", vec!["SEQ", "CCI"], vec![]);
+        let mig = make_mig_schema(vec!["UNH", "UNT"], vec![sg8]);
+
+        let segments = vec![
+            make_owned_seg("UNH", vec![vec!["001"]]),
+            make_owned_seg("SEQ", vec![vec!["Z98"]]),
+            make_owned_seg("RFF", vec![vec!["Z38", "REF1"]]),
+            make_owned_seg("CCI", vec![vec!["Z30"]]),
+            make_owned_seg("UNT", vec![vec!["4", "001"]]),
+        ];
+
+        let assembler = Assembler::with_config(
+            &mig,
+            AssemblerConfig {
+                skip_unknown_segments: true,
+            },
+        );
+        let tree = assembler.assemble_generic(&segments).unwrap();
+
+        let disassembler = Disassembler::new(&mig);
+        let dis = disassembler.disassemble(&tree);
+        let delimiters = edifact_types::EdifactDelimiters::default();
+        let rendered = render_edifact(&dis, &delimiters);
+
+        // All 5 segments should appear in output (including skipped RFF).
+        // Disassembler emits MIG-guided segments first (SEQ, CCI),
+        // then skipped segments (RFF) — so order within the group differs
+        // from the original input, but all content is preserved.
+        assert_eq!(dis.len(), 5);
+        assert_eq!(dis[0].tag, "UNH");
+        assert_eq!(dis[1].tag, "SEQ");
+        assert_eq!(dis[2].tag, "CCI");
+        assert_eq!(dis[3].tag, "RFF"); // skipped → emitted after MIG segments
+        assert_eq!(dis[4].tag, "UNT");
+
+        // Rendered output contains all segments
+        assert!(rendered.contains("UNH+001"));
+        assert!(rendered.contains("SEQ+Z98"));
+        assert!(rendered.contains("RFF+Z38:REF1"));
+        assert!(rendered.contains("CCI+Z30"));
+        assert!(rendered.contains("UNT+4:001"));
     }
 }

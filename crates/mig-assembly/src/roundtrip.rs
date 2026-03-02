@@ -3,7 +3,7 @@
 //! Validates that the assembly/disassembly process preserves data by
 //! comparing the rendered output with the original input.
 
-use crate::assembler::Assembler;
+use crate::assembler::{Assembler, AssemblerConfig};
 use crate::disassembler::Disassembler;
 use crate::renderer::render_edifact;
 use crate::tokenize::parse_to_segments;
@@ -52,6 +52,45 @@ pub fn roundtrip(input: &[u8], mig: &MigSchema) -> Result<String, AssemblyError>
                 if i + ch.len_utf8() < rendered.len() {
                     output.push_str(newline);
                 }
+            }
+        }
+    } else {
+        output.push_str(&rendered);
+    }
+
+    Ok(output)
+}
+
+/// Like [`roundtrip`] but with a custom [`AssemblerConfig`].
+pub fn roundtrip_with_config(
+    input: &[u8],
+    mig: &MigSchema,
+    config: AssemblerConfig,
+) -> Result<String, AssemblyError> {
+    let (has_una, delimiters) = EdifactDelimiters::detect(input);
+    let seg_term = delimiters.segment as char;
+    let input_str =
+        std::str::from_utf8(input).map_err(|e| AssemblyError::ParseError(e.to_string()))?;
+    let uses_newlines = detect_newline_style(input_str, seg_term);
+
+    let segments = parse_to_segments(input)?;
+    let assembler = Assembler::with_config(mig, config);
+    let tree = assembler.assemble_generic(&segments)?;
+
+    let disassembler = Disassembler::new(mig);
+    let dis_segments = disassembler.disassemble(&tree);
+
+    let mut output = String::new();
+    if has_una {
+        output.push_str(&delimiters.to_una_string());
+    }
+    let rendered = render_edifact(&dis_segments, &delimiters);
+
+    if let Some(newline) = uses_newlines {
+        for (i, ch) in rendered.char_indices() {
+            output.push(ch);
+            if ch == seg_term && i + ch.len_utf8() < rendered.len() {
+                output.push_str(newline);
             }
         }
     } else {
