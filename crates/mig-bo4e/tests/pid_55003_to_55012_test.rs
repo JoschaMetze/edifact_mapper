@@ -1054,13 +1054,7 @@ fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSe
 
 /// Fixtures with known mapping gaps that prevent byte-identical roundtrip.
 /// These are legitimate issues to fix later, not test bugs.
-///
-/// macosi fixture uses SEQ+ZF3 instead of Z18 — no TOML mapping for that variant yet.
 const KNOWN_INCOMPLETE: &[&str] = &[
-    "55620_UTILMD_S2.1_ALEXANDE121980_macosi.edi",
-    // LOC+Z21 is not defined in the PID 55175 schema (no sg5_z21 group)
-    "55175_UTILMD_S2.1_DEV-88364.edi",
-    "55175_UTILMD_S2.1_DEV-88364_macosi.edi",
     // Fixture has RFF+Z38 in SG8 that AHB does not include (Number 00279/00285 not in PID).
     // Assembler can't consume RFF after SEQ entry, so PIA/CCI/CAV segments are lost.
     "55646_UTILMD_S2.1_FELLERM1615608.edi",
