@@ -6,9 +6,9 @@
 use gloo_net::http::Request;
 
 use crate::types::{
-    ConvertV2Request, ConvertV2Response, CoordinatorInfo, FixtureListResponse, HealthResponse,
-    InspectRequest, InspectResponse, ResponseGenerationOptions, ValidateV2Request,
-    ValidateV2Response,
+    ConvertV2Request, ConvertV2Response, CoordinatorInfo, FixtureCatalogResponse,
+    FixtureListResponse, HealthResponse, InspectRequest, InspectResponse,
+    ResponseGenerationOptions, ValidateV2Request, ValidateV2Response,
 };
 
 /// Base URL for API calls. Empty string means same origin.
@@ -128,6 +128,26 @@ pub async fn list_coordinators() -> Result<Vec<CoordinatorInfo>, String> {
     if response.ok() {
         response
             .json::<Vec<CoordinatorInfo>>()
+            .await
+            .map_err(|e| format!("failed to parse response: {e}"))
+    } else {
+        let status = response.status();
+        Err(format!("HTTP {status}"))
+    }
+}
+
+/// List available message types and format versions from the fixture catalog.
+pub async fn list_fixture_catalog() -> Result<FixtureCatalogResponse, String> {
+    let url = format!("{API_BASE}/api/v1/fixtures/catalog");
+
+    let response = Request::get(&url)
+        .send()
+        .await
+        .map_err(|e| format!("request failed: {e}"))?;
+
+    if response.ok() {
+        response
+            .json::<FixtureCatalogResponse>()
             .await
             .map_err(|e| format!("failed to parse response: {e}"))
     } else {

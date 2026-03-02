@@ -36,6 +36,7 @@ use grpc::transform_proto::transform_service_server::TransformServiceServer;
         routes::inspect::inspect_edifact,
         routes::coordinators::list_coordinators,
         routes::coordinators::get_coordinator,
+        routes::fixtures::list_fixture_catalog,
         routes::fixtures::list_fixtures,
         routes::fixtures::get_fixture,
         routes::convert_v2::convert_v2,

@@ -23,3 +23,29 @@ pub struct FixtureEntry {
 pub struct FixtureListResponse {
     pub fixtures: Vec<FixtureEntry>,
 }
+
+/// Info about a single format version within a message type.
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
+pub struct FormatVersionInfo {
+    /// Format version identifier (e.g., `FV2504`).
+    pub format_version: String,
+
+    /// Number of unique fixture base names in this format version directory.
+    pub fixture_count: usize,
+}
+
+/// A message type with its available format versions.
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
+pub struct FixtureCatalogEntry {
+    /// EDIFACT message type (e.g., `UTILMD`, `APERAK`, `MSCONS`).
+    pub message_type: String,
+
+    /// Available format versions, sorted ascending.
+    pub format_versions: Vec<FormatVersionInfo>,
+}
+
+/// Response for `GET /api/v1/fixtures/catalog`.
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
+pub struct FixtureCatalogResponse {
+    pub message_types: Vec<FixtureCatalogEntry>,
+}

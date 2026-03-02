@@ -100,6 +100,12 @@ body {
     cursor: pointer;
 }
 
+.fixture-selector .fixture-select-narrow {
+    flex: 0 0 auto;
+    min-width: 120px;
+    max-width: 180px;
+}
+
 .fixture-selector .fixture-select:focus {
     outline: none;
     border-color: var(--color-primary);

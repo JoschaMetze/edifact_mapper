@@ -21,6 +21,7 @@ pub fn ConverterPage() -> impl IntoView {
     let (output, set_output) = signal(String::new());
     let direction = Direction::EdifactToBo4e;
     let (is_converting, set_is_converting) = signal(false);
+    let (format_version, set_format_version) = signal("FV2504".to_string());
 
     // Detail panel state
     let (segments, set_segments) = signal(Vec::<SegmentNode>::new());
@@ -39,6 +40,7 @@ pub fn ConverterPage() -> impl IntoView {
     // Convert action — uses v2 MIG-driven pipeline (EDIFACT -> BO4E only)
     let convert_action = Action::new_local(move |_: &()| {
         let input_val = input.get();
+        let fv = format_version.get();
 
         async move {
             set_is_converting.set(true);
@@ -59,7 +61,7 @@ pub fn ConverterPage() -> impl IntoView {
             }
 
             // Convert via v2 MIG-driven pipeline
-            match api_client::convert_v2(&input_val, "bo4e", "FV2504").await {
+            match api_client::convert_v2(&input_val, "bo4e", &fv).await {
                 Ok(resp) => {
                     set_duration_ms.set(resp.duration_ms);
                     let pretty = serde_json::to_string_pretty(&resp.result)
@@ -90,6 +92,7 @@ pub fn ConverterPage() -> impl IntoView {
     // Standalone validate action — calls /api/v2/validate directly
     let validate_action = Action::new_local(move |_: &()| {
         let input_val = input.get();
+        let fv = format_version.get();
         let gen_enabled = gen_response_enabled.get();
         let resp_type = response_type_sel.get();
         let resp_format = response_format_sel.get();
@@ -112,7 +115,7 @@ pub fn ConverterPage() -> impl IntoView {
                 None
             };
 
-            match api_client::validate_v2(&input_val, "FV2504", gen_opts).await {
+            match api_client::validate_v2(&input_val, &fv, gen_opts).await {
                 Ok(resp) => {
                     set_validation_duration_ms.set(resp.duration_ms);
                     set_validation_issues.set(extract_validation_issues(&resp.report));
@@ -186,9 +189,10 @@ pub fn ConverterPage() -> impl IntoView {
     view! {
         <div class="app-container">
             // Fixture selector bar
-            <FixtureSelector on_load=Callback::new(move |(content, _dir): (String, Direction)| {
+            <FixtureSelector on_load=Callback::new(move |(content, _dir, fv): (String, Direction, String)| {
                 set_input.set(content);
                 set_output.set(String::new());
+                set_format_version.set(fv);
             }) />
 
             // Two-panel converter layout (EDIFACT -> BO4E)

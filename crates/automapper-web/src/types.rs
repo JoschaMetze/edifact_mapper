@@ -143,6 +143,26 @@ pub struct FixtureListResponse {
     pub fixtures: Vec<FixtureEntry>,
 }
 
+/// Info about a single format version within a message type.
+#[derive(Debug, Clone, Deserialize)]
+pub struct FormatVersionInfo {
+    pub format_version: String,
+    pub fixture_count: usize,
+}
+
+/// A message type with its available format versions.
+#[derive(Debug, Clone, Deserialize)]
+pub struct FixtureCatalogEntry {
+    pub message_type: String,
+    pub format_versions: Vec<FormatVersionInfo>,
+}
+
+/// Response from `GET /api/v1/fixtures/catalog`.
+#[derive(Debug, Clone, Deserialize)]
+pub struct FixtureCatalogResponse {
+    pub message_types: Vec<FixtureCatalogEntry>,
+}
+
 /// Coordinator info.
 #[derive(Debug, Clone, Deserialize)]
 pub struct CoordinatorInfo {
