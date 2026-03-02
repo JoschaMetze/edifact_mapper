@@ -100,8 +100,9 @@ pub fn print_group_detail(schema: &Value, group_path: &str) -> Option<String> {
             let seg_id = seg.get("id").and_then(|v| v.as_str()).unwrap_or("?");
             let seg_name = seg.get("name").and_then(|v| v.as_str()).unwrap_or("");
             // Truncate long segment descriptions
-            let seg_desc = if seg_name.len() > 80 {
-                format!("{}...", &seg_name[..77])
+            let seg_desc = if seg_name.chars().count() > 80 {
+                let truncated: String = seg_name.chars().take(77).collect();
+                format!("{}...", truncated)
             } else {
                 seg_name.to_string()
             };
@@ -192,8 +193,9 @@ pub fn print_toml_template(schema: &Value, group_path: &str) -> Option<String> {
         for seg in segments {
             let seg_id = seg.get("id").and_then(|v| v.as_str()).unwrap_or("?");
             let seg_name = seg.get("name").and_then(|v| v.as_str()).unwrap_or("");
-            let seg_desc = if seg_name.len() > 60 {
-                format!("{}...", &seg_name[..57])
+            let seg_desc = if seg_name.chars().count() > 60 {
+                let truncated: String = seg_name.chars().take(57).collect();
+                format!("{}...", truncated)
             } else {
                 seg_name.to_string()
             };
@@ -370,8 +372,9 @@ fn extract_codes(value: &Value) -> Vec<(String, String)> {
                     let v = c.get("value").and_then(|v| v.as_str())?;
                     let n = c.get("name").and_then(|v| v.as_str()).unwrap_or("");
                     // Truncate long names
-                    let n_short = if n.len() > 40 {
-                        format!("{}...", &n[..37])
+                    let n_short = if n.chars().count() > 40 {
+                        let truncated: String = n.chars().take(37).collect();
+                        format!("{}...", truncated)
                     } else {
                         n.to_string()
                     };

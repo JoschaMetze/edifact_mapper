@@ -1,0 +1,21 @@
+# SG8 — SEQ+Z44 Verbrauchsart und Nutzung der OBIS-Kennzahl
+# Separate entity to avoid merge collision with SG5 Marktlokation.
+
+[meta]
+entity = "ObisKennzahlNutzung"
+bo4e_type = "ObisKennzahlNutzung"
+companion_type = "ObisKennzahlNutzungEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z44"
+discriminator = "SEQ.d1229=Z44"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ44"
+"seq.c286.d1050" = "zeitscheibeRefZ44"
+"rff[Z10].c506.d1154" = "obisKennzahl"
+
+[companion_fields."rff[Z10].c506.d1153"]
+target = ""
+default = "Z10"

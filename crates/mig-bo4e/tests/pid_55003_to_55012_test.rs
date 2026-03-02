@@ -229,6 +229,61 @@ const PID_SPECS: &[PidTestSpec] = &[
         tx_stammdaten_keys: &["messlokation"],
         tx_transaktionsdaten_keys: &["vorgangId"],
     },
+    PidTestSpec {
+        pid: "55220",
+        fixture: "55220_UTILMD_S2.1_ALEXANDE372301.edi",
+        tx_stammdaten_keys: &["marktlokation"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55655",
+        fixture: "55655_UTILMD_S2.1_ALEXANDE207290.edi",
+        tx_stammdaten_keys: &["marktlokation"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55617",
+        fixture: "55617_UTILMD_S2.1_ALEXANDE798498.edi",
+        tx_stammdaten_keys: &["technischeRessource"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55650",
+        fixture: "55650_UTILMD_S2.1_DEV-90398.edi",
+        tx_stammdaten_keys: &["marktlokation", "obisKennzahl", "produktDaten"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55175",
+        fixture: "55175_UTILMD_S2.1_ALEXANDE176492.edi",
+        tx_stammdaten_keys: &[
+            "netzlokation",
+            "marktlokation",
+            "technischeRessource",
+            "steuerbareRessource",
+            "messlokation",
+            "lokationsbuendel",
+        ],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55042",
+        fixture: "55042_UTILMD_S2.1_SXMP21-20A82AG.edi",
+        tx_stammdaten_keys: &["zaehler", "geschaeftspartner"],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
+    PidTestSpec {
+        pid: "55616",
+        fixture: "55616_UTILMD_S2.1_ALEXANDE121980_macosi.edi",
+        tx_stammdaten_keys: &[
+            "marktlokation",
+            "marktlokationDaten",
+            "obisKennzahlNutzung",
+            "zeitscheibe",
+            "geschaeftspartner",
+        ],
+        tx_transaktionsdaten_keys: &["vorgangId"],
+    },
 ];
 
 // ── Helper functions ──
@@ -307,6 +362,13 @@ toml_loading_test!(test_toml_loading_55620, "55620");
 toml_loading_test!(test_toml_loading_55621, "55621");
 toml_loading_test!(test_toml_loading_55624, "55624");
 toml_loading_test!(test_toml_loading_55626, "55626");
+toml_loading_test!(test_toml_loading_55220, "55220");
+toml_loading_test!(test_toml_loading_55655, "55655");
+toml_loading_test!(test_toml_loading_55617, "55617");
+toml_loading_test!(test_toml_loading_55650, "55650");
+toml_loading_test!(test_toml_loading_55175, "55175");
+toml_loading_test!(test_toml_loading_55042, "55042");
+toml_loading_test!(test_toml_loading_55616, "55616");
 
 // ── Forward mapping tests (need fixtures + MIG/AHB XML) ──
 
@@ -509,6 +571,13 @@ forward_mapping_test!(test_forward_mapping_55620, "55620");
 forward_mapping_test!(test_forward_mapping_55621, "55621");
 forward_mapping_test!(test_forward_mapping_55624, "55624");
 forward_mapping_test!(test_forward_mapping_55626, "55626");
+forward_mapping_test!(test_forward_mapping_55220, "55220");
+forward_mapping_test!(test_forward_mapping_55655, "55655");
+forward_mapping_test!(test_forward_mapping_55617, "55617");
+forward_mapping_test!(test_forward_mapping_55650, "55650");
+forward_mapping_test!(test_forward_mapping_55175, "55175");
+forward_mapping_test!(test_forward_mapping_55042, "55042");
+forward_mapping_test!(test_forward_mapping_55616, "55616");
 
 // ── Interchange-level integration test (builds full Interchange struct) ──
 
@@ -665,6 +734,13 @@ interchange_test!(test_interchange_55620, "55620");
 interchange_test!(test_interchange_55621, "55621");
 interchange_test!(test_interchange_55624, "55624");
 interchange_test!(test_interchange_55626, "55626");
+interchange_test!(test_interchange_55220, "55220");
+interchange_test!(test_interchange_55655, "55655");
+interchange_test!(test_interchange_55617, "55617");
+interchange_test!(test_interchange_55650, "55650");
+interchange_test!(test_interchange_55175, "55175");
+interchange_test!(test_interchange_55042, "55042");
+interchange_test!(test_interchange_55616, "55616");
 
 // ── Full EDIFACT roundtrip tests ──
 
@@ -718,7 +794,12 @@ fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSe
 /// These are legitimate issues to fix later, not test bugs.
 ///
 /// macosi fixture uses SEQ+ZF3 instead of Z18 — no TOML mapping for that variant yet.
-const KNOWN_INCOMPLETE: &[&str] = &["55620_UTILMD_S2.1_ALEXANDE121980_macosi.edi"];
+const KNOWN_INCOMPLETE: &[&str] = &[
+    "55620_UTILMD_S2.1_ALEXANDE121980_macosi.edi",
+    // LOC+Z21 is not defined in the PID 55175 schema (no sg5_z21 group)
+    "55175_UTILMD_S2.1_DEV-88364.edi",
+    "55175_UTILMD_S2.1_DEV-88364_macosi.edi",
+];
 
 /// Full pipeline roundtrip for ALL fixtures of a PID:
 /// EDIFACT -> tokenize -> split -> assemble -> map_interchange
@@ -915,3 +996,10 @@ roundtrip_test!(test_roundtrip_55620, "55620");
 roundtrip_test!(test_roundtrip_55621, "55621");
 roundtrip_test!(test_roundtrip_55624, "55624");
 roundtrip_test!(test_roundtrip_55626, "55626");
+roundtrip_test!(test_roundtrip_55220, "55220");
+roundtrip_test!(test_roundtrip_55655, "55655");
+roundtrip_test!(test_roundtrip_55617, "55617");
+roundtrip_test!(test_roundtrip_55650, "55650");
+roundtrip_test!(test_roundtrip_55175, "55175");
+roundtrip_test!(test_roundtrip_55042, "55042");
+roundtrip_test!(test_roundtrip_55616, "55616");

@@ -1,0 +1,16 @@
+# SG8 — SEQ+Z01 Daten der Marktlokation
+# Multi-rep: one per Zeitscheibe. Separate entity to avoid merge collision with SG5 Marktlokation.
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z01"
+discriminator = "SEQ.d1229=Z01"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ01"
+"seq.c286.d1050" = "zeitscheibeRefZ01"

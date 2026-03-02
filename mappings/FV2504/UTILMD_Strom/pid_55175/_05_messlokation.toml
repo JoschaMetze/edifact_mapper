@@ -1,0 +1,19 @@
+# SG5 — Messlokation (LOC+Z17) — last LOC in fixture order
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG5"
+source_path = "sg4.sg5_z17"
+discriminator = "LOC.d3227=Z17"
+
+[fields]
+"loc.c517.d3225" = "identifikation"
+
+[companion_fields]
+"loc.c517.d3224" = "zeitraumId"
+
+[companion_fields."loc.d3227"]
+target = ""
+default = "Z17"

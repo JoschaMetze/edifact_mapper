@@ -1342,6 +1342,46 @@ impl MappingEngine {
             }
         }
 
+        // Post-process: move nested groups under their parent repetitions.
+        // Definitions with multi-level source_group (e.g., "SG2.SG3") produce
+        // top-level groups that must be nested inside their parent's first repetition.
+        let nested_specs: Vec<(String, String)> = self
+            .definitions
+            .iter()
+            .filter_map(|def| {
+                let parts: Vec<&str> = def.meta.source_group.split('.').collect();
+                if parts.len() > 1 {
+                    Some((parts[0].to_string(), parts[parts.len() - 1].to_string()))
+                } else {
+                    None
+                }
+            })
+            .collect();
+        for (parent_id, child_id) in &nested_specs {
+            // Only nest if both parent and child exist at the top level
+            let has_parent = groups.iter().any(|g| g.group_id == *parent_id);
+            let has_child = groups.iter().any(|g| g.group_id == *child_id);
+            if has_parent && has_child {
+                let child_idx = groups.iter().position(|g| g.group_id == *child_id).unwrap();
+                let child_group = groups.remove(child_idx);
+                let parent = groups
+                    .iter_mut()
+                    .find(|g| g.group_id == *parent_id)
+                    .unwrap();
+                if let Some(first_rep) = parent.repetitions.first_mut() {
+                    if let Some(existing) = first_rep
+                        .child_groups
+                        .iter_mut()
+                        .find(|g| g.group_id == *child_id)
+                    {
+                        existing.repetitions.extend(child_group.repetitions);
+                    } else {
+                        first_rep.child_groups.push(child_group);
+                    }
+                }
+            }
+        }
+
         AssembledTree {
             segments: root_segments,
             groups,
@@ -1723,12 +1763,14 @@ fn find_rep_by_entry_qualifier<'a>(
     reps: &'a [AssembledGroupInstance],
     qualifier: &str,
 ) -> Option<&'a AssembledGroupInstance> {
+    // Support compound qualifiers like "za1_za2" — match any part.
+    let parts: Vec<&str> = qualifier.split('_').collect();
     reps.iter().find(|inst| {
         inst.segments.first().is_some_and(|seg| {
             seg.elements
                 .first()
                 .and_then(|e| e.first())
-                .is_some_and(|v| v.eq_ignore_ascii_case(qualifier))
+                .is_some_and(|v| parts.iter().any(|part| v.eq_ignore_ascii_case(part)))
         })
     })
 }
@@ -1738,13 +1780,15 @@ fn find_all_reps_by_entry_qualifier<'a>(
     reps: &'a [AssembledGroupInstance],
     qualifier: &str,
 ) -> Vec<&'a AssembledGroupInstance> {
+    // Support compound qualifiers like "za1_za2" — match any part.
+    let parts: Vec<&str> = qualifier.split('_').collect();
     reps.iter()
         .filter(|inst| {
             inst.segments.first().is_some_and(|seg| {
                 seg.elements
                     .first()
                     .and_then(|e| e.first())
-                    .is_some_and(|v| v.eq_ignore_ascii_case(qualifier))
+                    .is_some_and(|v| parts.iter().any(|part| v.eq_ignore_ascii_case(part)))
             })
         })
         .collect()

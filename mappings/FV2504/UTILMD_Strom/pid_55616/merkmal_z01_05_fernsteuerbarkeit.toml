@@ -1,0 +1,16 @@
+# SG10 under Z01 — CCI+Z24 Status der Fernsteuerbarkeit (no CAV)
+# CCI+Z24++Z96/Z97/Z98
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.d7059=Z24"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "fernsteuerbarkeitQualifier"
+"cci.c240.d7037" = "fernsteuerbarkeitCode"
