@@ -52,12 +52,18 @@ pub struct OriginalMessageMeta {
     pub interchange_ref: String,
     /// UNB S002 d0004 — sender identification.
     pub sender_id: String,
-    /// UNB S002 d0007 — sender qualifier.
+    /// UNB S002 d0007 — sender interchange qualifier.
     pub sender_qualifier: String,
     /// UNB S003 d0010 — receiver identification.
     pub receiver_id: String,
-    /// UNB S003 d0007 — receiver qualifier.
+    /// UNB S003 d0007 — receiver interchange qualifier.
     pub receiver_qualifier: String,
+    /// NAD+MS C082 d3055 — sender code list responsible agency (e.g., "293" for BDEW).
+    /// Falls back to UNB qualifier if no NAD+MS found.
+    pub sender_code_agency: String,
+    /// NAD+MR C082 d3055 — receiver code list responsible agency.
+    /// Falls back to UNB qualifier if no NAD+MR found.
+    pub receiver_code_agency: String,
     /// UNH d0062 — message reference number.
     pub message_ref: String,
     /// BGM d1004 or IDE d7402 — document/transaction reference.
@@ -106,7 +112,7 @@ pub fn extract_meta_from_edifact(
         }
     }
 
-    // Scan body for BGM d1004 (element 1, component 0) or IDE d7402 (element 1, component 0)
+    // Scan body for BGM, IDE, and NAD segments
     for seg in msg_body {
         if seg.id == "BGM" && seg.elements.len() > 1 && !seg.elements[1].is_empty() {
             meta.transaction_ref = Some(seg.elements[1][0].clone());
@@ -114,6 +120,29 @@ pub fn extract_meta_from_edifact(
         if seg.id == "IDE" && seg.elements.len() > 1 && !seg.elements[1].is_empty() {
             meta.transaction_ref = Some(seg.elements[1][0].clone());
         }
+        // NAD+MS/MR — extract C082 d3055 (code list responsible agency)
+        // NAD structure: element 0 = d3035 qualifier, element 1 = C082 (d3039:d1131:d3055)
+        if seg.id == "NAD" && !seg.elements.is_empty() && !seg.elements[0].is_empty() {
+            let qualifier = &seg.elements[0][0];
+            if seg.elements.len() > 1 && seg.elements[1].len() > 2 {
+                let d3055 = &seg.elements[1][2];
+                if !d3055.is_empty() {
+                    match qualifier.as_str() {
+                        "MS" => meta.sender_code_agency = d3055.clone(),
+                        "MR" => meta.receiver_code_agency = d3055.clone(),
+                        _ => {}
+                    }
+                }
+            }
+        }
+    }
+
+    // Fallback: if no NAD code agency found, derive from MP-ID prefix
+    if meta.sender_code_agency.is_empty() {
+        meta.sender_code_agency = code_agency_for_mp_id(&meta.sender_id).to_string();
+    }
+    if meta.receiver_code_agency.is_empty() {
+        meta.receiver_code_agency = code_agency_for_mp_id(&meta.receiver_id).to_string();
     }
 
     meta
@@ -221,19 +250,20 @@ fn build_aperak_bo4e(
     // marktteilnehmer.toml: fields={identifikation, codelisteCode},
     //   companion_fields under "marktteilnehmerEdifact"={marktrolle, codepflegeCode, ...}
     // Swap sender/receiver: responder (original receiver) becomes MS, original sender becomes MR
+    // codepflegeCode = NAD C082 d3055 from the original message (e.g., "293" for BDEW)
     let marktteilnehmer = serde_json::json!([
         {
             "identifikation": &meta.receiver_id,
             "marktteilnehmerEdifact": {
                 "marktrolle": "MS",
-                "codepflegeCode": &meta.receiver_qualifier,
+                "codepflegeCode": &meta.receiver_code_agency,
             }
         },
         {
             "identifikation": &meta.sender_id,
             "marktteilnehmerEdifact": {
                 "marktrolle": "MR",
-                "codepflegeCode": &meta.sender_qualifier,
+                "codepflegeCode": &meta.sender_code_agency,
             }
         }
     ]);
@@ -245,37 +275,48 @@ fn build_aperak_bo4e(
     });
 
     // SG4: ERC + FTX error groups → entity "Fehler"
+    // Each SG4 has its own SG5 children (RFF+ACW, RFF+AGO, RFF+TN).
     if !is_positive {
         let mut errors: Vec<serde_json::Value> = Vec::new();
+        let mut nachricht_refs: Vec<serde_json::Value> = Vec::new();
+        let mut nachricht_infos: Vec<serde_json::Value> = Vec::new();
+        let mut vorgang_infos: Vec<serde_json::Value> = Vec::new();
+
         for issue in report.errors() {
             let error_code = map_validation_issue_to_aperak_code(issue);
+            let german_text = sanitize_edifact_text(&format!(
+                "{}: {}",
+                aperak_code_german_label(error_code),
+                issue.message,
+            ));
             errors.push(serde_json::json!({
                 "fehlerCode": error_code,
                 "fehlerEdifact": {
-                    "abweichungsInfo": &issue.message,
+                    "abweichungsInfo": german_text,
                 }
             }));
+
+            // SG4.SG5: each error gets its own set of references
+            nachricht_refs.push(serde_json::json!({
+                "nachrichtenReferenz": &meta.message_ref,
+            }));
+            if let Some(ref tx_ref) = meta.transaction_ref {
+                nachricht_infos.push(serde_json::json!({
+                    "dokumentennummer": tx_ref,
+                }));
+                vorgang_infos.push(serde_json::json!({
+                    "vorgangsnummer": tx_ref,
+                }));
+            }
         }
+
         if !errors.is_empty() {
             result["fehler"] = serde_json::Value::Array(errors);
-        }
-
-        // SG4.SG5: discriminated by RFF qualifier
-        // fehler_01_nachricht_ref.toml (RFF+ACW) → FehlerNachrichtRef
-        result["fehlerNachrichtRef"] = serde_json::json!({
-            "nachrichtenReferenz": &meta.message_ref,
-        });
-
-        // fehler_02_nachricht_info.toml (RFF+AGO) → FehlerNachrichtInfo
-        if let Some(ref tx_ref) = meta.transaction_ref {
-            result["fehlerNachrichtInfo"] = serde_json::json!({
-                "dokumentennummer": tx_ref,
-            });
-
-            // fehler_03_vorgang_info.toml (RFF+TN) → FehlerVorgangInfo
-            result["fehlerVorgangInfo"] = serde_json::json!({
-                "vorgangsnummer": tx_ref,
-            });
+            result["fehlerNachrichtRef"] = serde_json::Value::Array(nachricht_refs);
+            if !nachricht_infos.is_empty() {
+                result["fehlerNachrichtInfo"] = serde_json::Value::Array(nachricht_infos);
+                result["fehlerVorgangInfo"] = serde_json::Value::Array(vorgang_infos);
+            }
         }
     }
 
@@ -384,11 +425,26 @@ fn render_response_edifact(
     Ok(out)
 }
 
+/// Derive the code list responsible agency (NAD C082 d3055) from an MP-ID prefix.
+///
+/// German energy market convention:
+/// - `99xxxx` → "293" (BDEW — Bundesverband der Energie- und Wasserwirtschaft)
+/// - `98xxxx` → "332" (DVGW — Deutscher Verein des Gas- und Wasserfaches)
+/// - All others → "500" (GS1 — Global Standard 1, GLN numbers)
+fn code_agency_for_mp_id(mp_id: &str) -> &'static str {
+    if mp_id.starts_with("99") {
+        "293"
+    } else if mp_id.starts_with("98") {
+        "332"
+    } else {
+        "500"
+    }
+}
+
 /// Map a validation issue to an APERAK error code.
 fn map_validation_issue_to_aperak_code(
     issue: &automapper_validation::ValidationIssue,
 ) -> &'static str {
-    // Best-effort mapping of error codes to APERAK Z-codes
     let code = &issue.code;
     if code.contains("UNEXPECTED_SEGMENT") || code.contains("REPETITION") {
         "Z40"
@@ -399,8 +455,28 @@ fn map_validation_issue_to_aperak_code(
     } else if code.contains("CODE") || code.contains("INVALID") {
         "Z39"
     } else {
-        "Z31" // Generic: "Geschäftsvorfall wird vom Empfänger zurückgewiesen"
+        "Z31"
     }
+}
+
+/// German label for an APERAK Z-code (used in FTX+ABO error description).
+fn aperak_code_german_label(code: &str) -> &'static str {
+    match code {
+        "Z29" => "Pflichtfeld fehlt",
+        "Z31" => "Zurueckweisung",
+        "Z35" => "Formatfehler",
+        "Z39" => "Ungueltiger Code",
+        "Z40" => "Strukturfehler",
+        _ => "Fehler",
+    }
+}
+
+/// Sanitize text for EDIFACT FTX segments.
+///
+/// Replaces single quotes (`'`) with double quotes (`"`) since `'` is the
+/// EDIFACT segment terminator. Even when escaped (`?'`), it can cause issues.
+fn sanitize_edifact_text(text: &str) -> String {
+    text.replace('\'', "\"")
 }
 
 /// Current timestamp in EDIFACT DTM+137 format (CCYYMMDDHHMMZZZ).
@@ -513,12 +589,15 @@ mod tests {
 
     #[test]
     fn test_positive_aperak_bo4e() {
+        // MP-IDs starting with 99 → code agency 293 (BDEW)
         let meta = OriginalMessageMeta {
             interchange_ref: "INTREF001".into(),
             sender_id: "9900000000001".into(),
             sender_qualifier: "500".into(),
             receiver_id: "9900000000002".into(),
             receiver_qualifier: "500".into(),
+            sender_code_agency: "293".into(),
+            receiver_code_agency: "293".into(),
             message_ref: "MSG001".into(),
             transaction_ref: Some("TXN001".into()),
         };
@@ -552,6 +631,15 @@ mod tests {
             bo4e["marktteilnehmer"][1]["marktteilnehmerEdifact"]["marktrolle"],
             "MR"
         );
+        // codepflegeCode should come from NAD d3055 (293), not UNB d0007 (500)
+        assert_eq!(
+            bo4e["marktteilnehmer"][0]["marktteilnehmerEdifact"]["codepflegeCode"],
+            "293"
+        );
+        assert_eq!(
+            bo4e["marktteilnehmer"][1]["marktteilnehmerEdifact"]["codepflegeCode"],
+            "293"
+        );
         // No errors
         assert!(bo4e.get("fehler").is_none());
     }
@@ -564,6 +652,8 @@ mod tests {
             sender_qualifier: "500".into(),
             receiver_id: "9900000000002".into(),
             receiver_qualifier: "500".into(),
+            sender_code_agency: "293".into(),
+            receiver_code_agency: "293".into(),
             message_ref: "MSG001".into(),
             transaction_ref: Some("TXN001".into()),
         };
@@ -585,14 +675,28 @@ mod tests {
         assert!(bo4e["fehler"].is_array());
         assert_eq!(bo4e["fehler"].as_array().unwrap().len(), 1);
         assert_eq!(bo4e["fehler"][0]["fehlerCode"], "Z29");
-        assert_eq!(
-            bo4e["fehler"][0]["fehlerEdifact"]["abweichungsInfo"],
-            "Required field missing"
+        // FTX+ABO text should be German
+        let abo_text = bo4e["fehler"][0]["fehlerEdifact"]["abweichungsInfo"]
+            .as_str()
+            .unwrap();
+        assert!(
+            abo_text.starts_with("Pflichtfeld fehlt"),
+            "Error text should be German, got: {abo_text}"
         );
-        // SG4.SG5 error references
-        assert_eq!(bo4e["fehlerNachrichtRef"]["nachrichtenReferenz"], "MSG001");
-        assert_eq!(bo4e["fehlerNachrichtInfo"]["dokumentennummer"], "TXN001");
-        assert_eq!(bo4e["fehlerVorgangInfo"]["vorgangsnummer"], "TXN001");
+        assert!(
+            abo_text.contains("Required field missing"),
+            "Should include original detail"
+        );
+        // SG4.SG5 error references — one per error, as arrays
+        assert!(bo4e["fehlerNachrichtRef"].is_array());
+        assert_eq!(
+            bo4e["fehlerNachrichtRef"][0]["nachrichtenReferenz"],
+            "MSG001"
+        );
+        assert!(bo4e["fehlerNachrichtInfo"].is_array());
+        assert_eq!(bo4e["fehlerNachrichtInfo"][0]["dokumentennummer"], "TXN001");
+        assert!(bo4e["fehlerVorgangInfo"].is_array());
+        assert_eq!(bo4e["fehlerVorgangInfo"][0]["vorgangsnummer"], "TXN001");
     }
 
     #[test]
@@ -603,6 +707,8 @@ mod tests {
             sender_qualifier: "500".into(),
             receiver_id: "9900000000002".into(),
             receiver_qualifier: "500".into(),
+            sender_code_agency: "293".into(),
+            receiver_code_agency: "293".into(),
             message_ref: "MSG001".into(),
             transaction_ref: None,
         };
@@ -634,6 +740,8 @@ mod tests {
             sender_qualifier: "500".into(),
             receiver_id: "9900000000002".into(),
             receiver_qualifier: "500".into(),
+            sender_code_agency: "293".into(),
+            receiver_code_agency: "293".into(),
             message_ref: "MSG001".into(),
             transaction_ref: None,
         };
@@ -682,5 +790,109 @@ mod tests {
         let opts = parse_response_options(None, Some("bo4e")).unwrap();
         assert_eq!(opts.response_type, None);
         assert_eq!(opts.format, ResponseFormat::Bo4e);
+    }
+
+    #[test]
+    fn test_code_agency_for_mp_id() {
+        // 99-prefix → BDEW (293)
+        assert_eq!(code_agency_for_mp_id("9900000000001"), "293");
+        assert_eq!(code_agency_for_mp_id("9978842000002"), "293");
+        // 98-prefix → DVGW (332)
+        assert_eq!(code_agency_for_mp_id("9800000000001"), "332");
+        // Other → GS1 (500)
+        assert_eq!(code_agency_for_mp_id("1234567890128"), "500");
+        assert_eq!(code_agency_for_mp_id("4012345000009"), "500");
+    }
+
+    #[test]
+    fn test_extract_meta_nad_code_agency() {
+        use mig_assembly::tokenize::OwnedSegment;
+
+        // UNB with d0007=500 (interchange qualifier)
+        let envelope = vec![OwnedSegment {
+            id: "UNB".into(),
+            elements: vec![
+                vec!["UNOC".into(), "3".into()],            // S001
+                vec!["9978842000002".into(), "500".into()], // S002 sender
+                vec!["9900269000000".into(), "500".into()], // S003 receiver
+                vec!["250331".into(), "1329".into()],       // S004
+                vec!["ALEXANDE121980".into()],              // d0020
+            ],
+            segment_number: 0,
+        }];
+
+        let unh = OwnedSegment {
+            id: "UNH".into(),
+            elements: vec![vec!["MSG001".into()]],
+            segment_number: 1,
+        };
+
+        // Body with NAD+MS/MR that have d3055=293 (different from UNB d0007=500)
+        let body = vec![
+            OwnedSegment {
+                id: "BGM".into(),
+                elements: vec![vec!["E01".into()], vec!["DOC001".into()]],
+                segment_number: 2,
+            },
+            OwnedSegment {
+                id: "NAD".into(),
+                elements: vec![
+                    vec!["MS".into()],
+                    vec!["9978842000002".into(), String::new(), "293".into()],
+                ],
+                segment_number: 3,
+            },
+            OwnedSegment {
+                id: "NAD".into(),
+                elements: vec![
+                    vec!["MR".into()],
+                    vec!["9900269000000".into(), String::new(), "293".into()],
+                ],
+                segment_number: 4,
+            },
+        ];
+
+        let meta = extract_meta_from_edifact(&envelope, &body, &unh);
+
+        // UNB qualifiers are "500"
+        assert_eq!(meta.sender_qualifier, "500");
+        assert_eq!(meta.receiver_qualifier, "500");
+        // NAD code agencies should be "293" (from NAD d3055, not UNB d0007)
+        assert_eq!(meta.sender_code_agency, "293");
+        assert_eq!(meta.receiver_code_agency, "293");
+    }
+
+    #[test]
+    fn test_extract_meta_fallback_derives_from_mp_id() {
+        use mig_assembly::tokenize::OwnedSegment;
+
+        // UNB without NAD segments in body — fallback to MP-ID derivation
+        let envelope = vec![OwnedSegment {
+            id: "UNB".into(),
+            elements: vec![
+                vec!["UNOC".into(), "3".into()],
+                vec!["9900123456789".into(), "500".into()],
+                vec!["9800987654321".into(), "500".into()],
+                vec!["260101".into(), "1200".into()],
+                vec!["REF001".into()],
+            ],
+            segment_number: 0,
+        }];
+        let unh = OwnedSegment {
+            id: "UNH".into(),
+            elements: vec![vec!["MSG001".into()]],
+            segment_number: 1,
+        };
+        let body = vec![OwnedSegment {
+            id: "BGM".into(),
+            elements: vec![vec!["E01".into()]],
+            segment_number: 2,
+        }];
+
+        let meta = extract_meta_from_edifact(&envelope, &body, &unh);
+
+        // No NAD segments → fallback derives from MP-ID prefix
+        assert_eq!(meta.sender_code_agency, "293"); // 99-prefix → BDEW
+        assert_eq!(meta.receiver_code_agency, "332"); // 98-prefix → DVGW
     }
 }
