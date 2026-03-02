@@ -1,0 +1,21 @@
+# SG4.SG5 — RFF+TN: info about the faulty transaction + FTX+AAO/Z02
+
+[meta]
+entity = "FehlerVorgangInfo"
+bo4e_type = "FehlerVorgangInfo"
+companion_type = "FehlerVorgangInfoEdifact"
+source_group = "SG4.SG5"
+source_path = "sg4.sg5"
+discriminator = "RFF.c506.d1153=TN"
+
+[fields]
+"rff.c506.d1154" = "vorgangsnummer"
+
+[companion_fields]
+"rff.c506.d1153" = { target = "", default = "TN" }
+"ftx[AAO].c108.d4440" = "freitext"
+"ftx[AAO].c108.d4440_2" = "freitextZusatz"
+"ftx[AAO].d4451" = { target = "", default = "AAO" }
+"ftx[Z02].c108.d4440" = "ortsangabe"
+"ftx[Z02].c108.d4440_2" = "ortsangabeZusatz"
+"ftx[Z02].d4451" = { target = "", default = "Z02" }

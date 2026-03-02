@@ -168,6 +168,7 @@ fn test_validate_response_serialization() {
             "issues": []
         }),
         duration_ms: 1.23,
+        response_message: None,
     };
 
     let json = serde_json::to_value(&resp).unwrap();

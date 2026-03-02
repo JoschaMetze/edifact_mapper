@@ -1,0 +1,22 @@
+# UCI — Übertragungsprüfung (interchange response)
+
+[meta]
+entity = "Uebertragungspruefung"
+bo4e_type = "Uebertragungspruefung"
+companion_type = "UebertragungspruefungEdifact"
+source_group = ""
+source_path = ""
+
+[fields]
+"uci.d0020" = "datenaustauschreferenz"
+"uci.d0083" = "aktion"
+
+[companion_fields]
+"uci.s002.d0004" = "absenderMpId"
+"uci.s002.d0007" = "absenderCodeQualifier"
+"uci.s003.d0010" = "empfaengerMpId"
+"uci.s003.d0007" = "empfaengerCodeQualifier"
+"uci.d0085" = "syntaxFehlerCode"
+"uci.d0013" = "serviceSegmentBezeichner"
+"uci.s011.d0098" = "fehlerSegmentPosition"
+"uci.s011.d0104" = "fehlerGruppendatenelementPosition"

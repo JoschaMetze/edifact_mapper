@@ -1,0 +1,21 @@
+# SG2 — RFF references + DTM
+
+[meta]
+entity = "Referenz"
+bo4e_type = "Referenz"
+companion_type = "ReferenzEdifact"
+source_group = "SG2"
+source_path = "sg2"
+
+[fields]
+"rff[ACE].c506.d1154" = "datenaustauschreferenz"
+"rff[AGO].c506.d1154" = "dokumentennummer"
+"rff[TN].c506.d1154" = "vorgangsnummer"
+"dtm[171].c507.d2380" = "referenzdatum"
+
+[companion_fields]
+"rff[ACE].c506.d1153" = { target = "", default = "ACE" }
+"rff[AGO].c506.d1153" = { target = "", default = "AGO" }
+"rff[TN].c506.d1153" = { target = "", default = "TN" }
+"dtm[171].c507.d2005" = { target = "", default = "171" }
+"dtm[171].c507.d2379" = { target = "", default = "303" }

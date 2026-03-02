@@ -1,0 +1,17 @@
+# APERAK message — BGM + DTM root segments
+
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+companion_type = "NachrichtEdifact"
+source_group = ""
+source_path = ""
+
+[fields]
+"bgm.c002.d1001" = "dokumentenCode"
+"bgm.c106.d1004" = "nachrichtennummer"
+"dtm[137].c507.d2380" = "erstellungsdatum"
+
+[companion_fields]
+"dtm[137].c507.d2005" = { target = "", default = "137" }
+"dtm[137].c507.d2379" = { target = "", default = "303" }

@@ -1,0 +1,17 @@
+# SG1.SG2 — UCS+UCD Segmentfehler (segment error report)
+
+[meta]
+entity = "Segmentfehler"
+bo4e_type = "Segmentfehler"
+companion_type = "SegmentfehlerEdifact"
+source_group = "SG1.SG2"
+source_path = "sg1.sg2"
+
+[fields]
+"ucs.d0096" = "segmentPosition"
+"ucs.d0085" = "syntaxFehlerCode"
+
+[companion_fields]
+"ucd.d0085" = "datenelementFehlerCode"
+"ucd.s011.d0098" = "fehlerDatenelementPosition"
+"ucd.s011.d0104" = "fehlerGruppendatenelementPosition"

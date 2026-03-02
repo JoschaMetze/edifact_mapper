@@ -7,6 +7,7 @@
 pub mod contracts;
 pub mod error;
 pub mod grpc;
+pub mod response_generator;
 pub mod routes;
 pub mod state;
 pub mod validation_bridge;

@@ -146,6 +146,272 @@
       ],
       "source_group": "SG2"
     },
+    "sg4": {
+      "children": {
+        "sg5": {
+          "discriminator": {
+            "element": "1153",
+            "segment": "RFF"
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "codes": [
+                        {
+                          "name": "Referenznummer einer vorangegangenen Nachricht",
+                          "value": "ACW"
+                        },
+                        {
+                          "name": "Absenderreferenz für die Original-Nachricht",
+                          "value": "AGO"
+                        },
+                        {
+                          "name": "Transaktions-Referenznummer",
+                          "value": "TN"
+                        },
+                        {
+                          "name": "MP-ID des nachfolgenden Netzbetreibers",
+                          "value": "Z08"
+                        }
+                      ],
+                      "id": "1153",
+                      "name": "Referenz, Qualifier",
+                      "sub_index": 0,
+                      "type": "code"
+                    },
+                    {
+                      "id": "1154",
+                      "name": "Referenz, Identifikation",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C506",
+                  "index": 0,
+                  "name": "Referenz"
+                }
+              ],
+              "id": "RFF",
+              "name": "Referenznummer"
+            },
+            {
+              "elements": [
+                {
+                  "codes": [
+                    {
+                      "name": "Fehlerbeschreibung (Freier Text)",
+                      "value": "AAO"
+                    },
+                    {
+                      "name": "Ortsangabe des AHB-Fehlers",
+                      "value": "Z02"
+                    }
+                  ],
+                  "id": "4451",
+                  "index": 0,
+                  "name": "Textbezug, Qualifier",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "4440",
+                      "name": "Freier Text",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "id": "4440",
+                      "name": "Freier Text",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C108",
+                  "index": 3,
+                  "name": "Text"
+                }
+              ],
+              "id": "FTX",
+              "name": "Fehlerbeschreibung / Ortsangabe"
+            }
+          ],
+          "source_group": "SG5"
+        }
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "codes": [
+                    {
+                      "name": "ID unbekannt",
+                      "value": "Z10"
+                    },
+                    {
+                      "name": "Objekt im IT-System nicht gefunden",
+                      "value": "Z14"
+                    },
+                    {
+                      "name": "Objekt im IT-System nicht eindeutig",
+                      "value": "Z15"
+                    },
+                    {
+                      "name": "Objekt nicht mehr im Netzgebiet",
+                      "value": "Z16"
+                    },
+                    {
+                      "name": "Absender dem Objekt nicht zugeordnet",
+                      "value": "Z17"
+                    },
+                    {
+                      "name": "Empfänger dem Objekt nicht zugeordnet",
+                      "value": "Z18"
+                    },
+                    {
+                      "name": "Gerätenummer an der Messlokation nicht bekannt",
+                      "value": "Z19"
+                    },
+                    {
+                      "name": "OBIS-Kennzahl am Objekt nicht bekannt",
+                      "value": "Z20"
+                    },
+                    {
+                      "name": "Geschäftsvorfallinterne Referenzierung fehlerhaft",
+                      "value": "Z21"
+                    },
+                    {
+                      "name": "Zuordnungs-Tupel unbekannt",
+                      "value": "Z24"
+                    },
+                    {
+                      "name": "Absender dem Zuordnungs-Tupel-Objekt nicht zugeordnet",
+                      "value": "Z25"
+                    },
+                    {
+                      "name": "Empfänger dem Zuordnungs-Tupel-Objekt nicht zugeordnet",
+                      "value": "Z26"
+                    },
+                    {
+                      "name": "Vorkomma-Stellenzahl des Zählwertes ist zu lang",
+                      "value": "Z27"
+                    },
+                    {
+                      "name": "Erforderliche Angabe fehlt",
+                      "value": "Z29"
+                    },
+                    {
+                      "name": "Zeitreihe unvollständig",
+                      "value": "Z30"
+                    },
+                    {
+                      "name": "Geschäftsvorfall wird vom Empfänger zurückgewiesen",
+                      "value": "Z31"
+                    },
+                    {
+                      "name": "Referenziertes Geschäftsvorfall-Tupel nicht vorhanden",
+                      "value": "Z33"
+                    },
+                    {
+                      "name": "Zeitintervall negativ oder Null",
+                      "value": "Z34"
+                    },
+                    {
+                      "name": "Format nicht eingehalten",
+                      "value": "Z35"
+                    },
+                    {
+                      "name": "Geschäftsvorfall darf vom Sender nicht gesendet werden",
+                      "value": "Z37"
+                    },
+                    {
+                      "name": "Anzahl der Codes überschreitet Paketdefinition",
+                      "value": "Z38"
+                    },
+                    {
+                      "name": "Code nicht aus erlaubtem Wertebereich",
+                      "value": "Z39"
+                    },
+                    {
+                      "name": "Segment-/Segmentgruppenwiederholbarkeit überschritten",
+                      "value": "Z40"
+                    },
+                    {
+                      "name": "Zeitangabe unplausibel",
+                      "value": "Z41"
+                    },
+                    {
+                      "name": "Konfigurations-ID nicht bekannt",
+                      "value": "Z42"
+                    },
+                    {
+                      "name": "Geschäftsvorfall für Objekt mit Eigenschaft nicht erlaubt",
+                      "value": "Z43"
+                    },
+                    {
+                      "name": "Eigenschaft des Objekts weicht ab",
+                      "value": "Z44"
+                    }
+                  ],
+                  "id": "9321",
+                  "name": "Anwendungsfehler, Code",
+                  "sub_index": 0,
+                  "type": "code"
+                }
+              ],
+              "composite": "C901",
+              "index": 0,
+              "name": "Anwendungsfehler"
+            }
+          ],
+          "id": "ERC",
+          "name": "Fehlercode"
+        },
+        {
+          "elements": [
+            {
+              "codes": [
+                {
+                  "name": "Information über Abweichung",
+                  "value": "ABO"
+                }
+              ],
+              "id": "4451",
+              "index": 0,
+              "name": "Textbezug, Qualifier",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "4440",
+                  "name": "Freier Text",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C108",
+              "index": 3,
+              "name": "Text"
+            }
+          ],
+          "id": "FTX",
+          "name": "Information über Abweichung"
+        }
+      ],
+      "source_group": "SG4"
+    },
     "sg3": {
       "discriminator": {
         "element": "3035",

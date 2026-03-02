@@ -1386,10 +1386,11 @@ impl MappingEngine {
             }
         }
 
+        let post_group_start = root_segments.len();
         AssembledTree {
             segments: root_segments,
             groups,
-            post_group_start: 0,
+            post_group_start,
         }
     }
 

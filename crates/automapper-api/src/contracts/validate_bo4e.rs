@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 use super::reverse_v2::{EnvelopeOverrides, InputLevel};
+use super::validate_v2::{GeneratedResponsePayload, ResponseGenerationOptions};
 
 /// Request body for `POST /api/v2/validate-bo4e`.
 #[derive(Debug, Clone, Deserialize, utoipa::ToSchema)]
@@ -32,6 +33,9 @@ pub struct ValidateBo4eRequest {
     /// Optional envelope overrides for missing levels.
     #[serde(default)]
     pub envelope: Option<EnvelopeOverrides>,
+
+    /// Optional: generate an APERAK/CONTRL response message.
+    pub generate_response: Option<ResponseGenerationOptions>,
 }
 
 /// Response body for `POST /api/v2/validate-bo4e`.
@@ -43,4 +47,7 @@ pub struct ValidateBo4eResponse {
     pub report: serde_json::Value,
     /// Validation duration in milliseconds.
     pub duration_ms: f64,
+    /// Generated response message (if requested).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub response_message: Option<GeneratedResponsePayload>,
 }

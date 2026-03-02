@@ -149,8 +149,41 @@ pub(crate) async fn validate_bo4e(
         message: format!("Failed to serialize validation report: {e}"),
     })?;
 
+    // Step 9: Generate response message if requested
+    let response_message = if let Some(ref gen_opts) = req.generate_response {
+        let opts = crate::response_generator::parse_response_options(
+            gen_opts.response_type.as_deref(),
+            gen_opts.format.as_deref(),
+        );
+        if let Some(opts) = opts {
+            let meta = crate::response_generator::extract_meta_from_edifact(
+                &chunks.envelope,
+                &msg_chunk.body,
+                &msg_chunk.unh,
+            );
+            let response = crate::response_generator::generate_response(
+                &state.mig_registry,
+                &req.format_version,
+                msg_variant,
+                &report,
+                &meta,
+                &opts,
+            )?;
+            Some(crate::contracts::validate_v2::GeneratedResponsePayload {
+                message_type: response.message_type,
+                bo4e: Some(response.bo4e),
+                edifact: response.edifact,
+            })
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+
     Ok(Json(ValidateBo4eResponse {
         report: report_json,
         duration_ms: start.elapsed().as_secs_f64() * 1000.0,
+        response_message,
     }))
 }

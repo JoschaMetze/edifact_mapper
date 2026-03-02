@@ -5,11 +5,13 @@ use std::sync::Arc;
 
 use automapper_generator::parsing::ahb_parser::parse_ahb;
 use automapper_generator::schema::ahb::AhbSchema;
+use mig_assembly::parsing::parse_mig;
 use mig_assembly::ConversionService;
 use mig_bo4e::code_lookup::CodeLookup;
 use mig_bo4e::path_resolver::PathResolver;
 use mig_bo4e::segment_structure::SegmentStructure;
 use mig_bo4e::MappingEngine;
+use mig_types::schema::mig::MigSchema;
 
 use crate::contracts::coordinators::CoordinatorInfo;
 
@@ -50,6 +52,12 @@ pub struct MigServiceRegistry {
     /// Key: "{fv}/{variant}/pid_{pid}" e.g. "FV2504/UTILMD_Strom/pid_55001"
     transaction_engines: HashMap<String, MappingEngine>,
     ahb_schemas: HashMap<String, AhbSchema>,
+    /// Flat mapping engines for response messages (APERAK, CONTRL).
+    /// Key: "{fv}/{msg_type}" e.g. "FV2504/APERAK"
+    response_engines: HashMap<String, MappingEngine>,
+    /// MIG schemas for response message types.
+    /// Key: "{fv}/{msg_type}" e.g. "FV2504/APERAK"
+    response_migs: HashMap<String, MigSchema>,
 }
 
 impl MigServiceRegistry {
@@ -279,12 +287,85 @@ impl MigServiceRegistry {
             }
         }
 
+        // Load response message MIGs and mapping engines (APERAK, CONTRL)
+        let mut response_engines = HashMap::new();
+        let mut response_migs = HashMap::new();
+        let response_configs: Vec<(&str, &str, &str)> = vec![
+            ("FV2504", "APERAK", "APERAK_MIG_2_1i_20240619.xml"),
+            (
+                "FV2504",
+                "CONTRL",
+                "CONTRL_MIG_2_0b_außerordentliche_20240726.xml",
+            ),
+        ];
+        for (fv, msg_type, mig_file) in &response_configs {
+            let mig_path = std::path::Path::new("xml-migs-and-ahbs")
+                .join(fv)
+                .join(mig_file);
+            if !mig_path.exists() {
+                tracing::info!(
+                    "Response MIG not found at {}, skipping {}/{}",
+                    mig_path.display(),
+                    fv,
+                    msg_type
+                );
+                continue;
+            }
+            match parse_mig(&mig_path, msg_type, None, fv) {
+                Ok(mig) => {
+                    let key = format!("{}/{}", fv, msg_type);
+                    tracing::info!("Loaded response MIG for {key}");
+                    response_migs.insert(key.clone(), mig);
+
+                    // Load mapping engine from mappings/{FV}/{MSG_TYPE}/
+                    let mapping_dir = std::path::Path::new("mappings").join(fv).join(msg_type);
+                    if mapping_dir.is_dir() {
+                        let msg_type_lower = msg_type.to_lowercase();
+                        let fv_lower = fv.to_lowercase();
+                        let schema_dir = format!(
+                            "crates/mig-types/src/generated/{}/{}/pids",
+                            fv_lower, msg_type_lower
+                        );
+                        let resolver = if std::path::Path::new(&schema_dir).is_dir() {
+                            PathResolver::from_schema_dir(std::path::Path::new(&schema_dir))
+                        } else {
+                            PathResolver::from_schema(&serde_json::json!({}))
+                        };
+                        match MappingEngine::load(&mapping_dir) {
+                            Ok(engine) => {
+                                let engine = engine.with_path_resolver(resolver);
+                                tracing::info!(
+                                    "Loaded {} response TOML mappings for {key}",
+                                    engine.definitions().len()
+                                );
+                                response_engines.insert(key, engine);
+                            }
+                            Err(e) => {
+                                tracing::warn!(
+                                    "Failed to load response mappings from {}: {e}",
+                                    mapping_dir.display()
+                                );
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    tracing::warn!(
+                        "Failed to parse response MIG from {}: {e}",
+                        mig_path.display()
+                    );
+                }
+            }
+        }
+
         Self {
             services,
             mapping_engines,
             message_engines,
             transaction_engines,
             ahb_schemas,
+            response_engines,
+            response_migs,
         }
     }
 
@@ -379,6 +460,20 @@ impl MigServiceRegistry {
             }
         }
         None
+    }
+
+    /// Get a response mapping engine for a message type (e.g., APERAK, CONTRL).
+    /// Key format: "FV2504/APERAK"
+    pub fn response_engine(&self, fv: &str, msg_type: &str) -> Option<&MappingEngine> {
+        let key = format!("{}/{}", fv, msg_type);
+        self.response_engines.get(&key)
+    }
+
+    /// Get a response MIG schema for a message type (e.g., APERAK, CONTRL).
+    /// Key format: "FV2504/APERAK"
+    pub fn response_mig(&self, fv: &str, msg_type: &str) -> Option<&MigSchema> {
+        let key = format!("{}/{}", fv, msg_type);
+        self.response_migs.get(&key)
     }
 
     /// Check if any MIG services are available.
@@ -638,6 +733,8 @@ mod tests {
             message_engines: HashMap::new(),
             transaction_engines: HashMap::new(),
             ahb_schemas,
+            response_engines: HashMap::new(),
+            response_migs: HashMap::new(),
         };
 
         assert_eq!(

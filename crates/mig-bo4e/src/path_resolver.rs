@@ -42,6 +42,12 @@ impl PathResolver {
             }
         }
 
+        // Also collect from root_segments (used by CONTRL, APERAK, etc.)
+        if let Some(root_segs) = schema.get("root_segments") {
+            let wrapper = serde_json::json!({ "segments": root_segs });
+            collect_from_group(&wrapper, &mut simple_elements, &mut composite_elements);
+        }
+
         Self {
             simple_elements,
             composite_elements,
@@ -94,6 +100,14 @@ impl PathResolver {
                     &mut self.composite_elements,
                 );
             }
+        }
+        if let Some(root_segs) = schema.get("root_segments") {
+            let wrapper = serde_json::json!({ "segments": root_segs });
+            collect_from_group(
+                &wrapper,
+                &mut self.simple_elements,
+                &mut self.composite_elements,
+            );
         }
     }
 
@@ -263,6 +277,16 @@ impl ReversePathResolver {
             }
         }
 
+        if let Some(root_segs) = schema.get("root_segments") {
+            let wrapper = serde_json::json!({ "segments": root_segs });
+            collect_reverse_from_group(
+                &wrapper,
+                &mut composite_reverse,
+                &mut simple_reverse,
+                &mut is_composite,
+            );
+        }
+
         Self {
             composite_reverse,
             simple_reverse,
@@ -315,6 +339,15 @@ impl ReversePathResolver {
                     &mut self.is_composite,
                 );
             }
+        }
+        if let Some(root_segs) = schema.get("root_segments") {
+            let wrapper = serde_json::json!({ "segments": root_segs });
+            collect_reverse_from_group(
+                &wrapper,
+                &mut self.composite_reverse,
+                &mut self.simple_reverse,
+                &mut self.is_composite,
+            );
         }
     }
 
@@ -450,7 +483,7 @@ impl ReversePathResolver {
 fn is_edifact_id(s: &str) -> bool {
     let mut chars = s.chars();
     match chars.next() {
-        Some('c' | 'd' | 'C' | 'D') => {
+        Some('c' | 'd' | 's' | 'C' | 'D' | 'S') => {
             let rest: String = chars.collect();
             if rest.is_empty() {
                 return false;
@@ -503,8 +536,7 @@ fn collect_from_group(
                         elem.get("index").and_then(|v| v.as_u64()).unwrap_or(0) as usize;
 
                     if let Some(composite_id) = elem.get("composite").and_then(|v| v.as_str()) {
-                        let base_composite =
-                            format!("c{}", &composite_id[1..]).to_ascii_lowercase();
+                        let base_composite = composite_id.to_ascii_lowercase();
 
                         // Track occurrence for ordinal suffix
                         let count = composite_id_count
@@ -591,7 +623,7 @@ fn collect_reverse_from_group(
                         elem.get("index").and_then(|v| v.as_u64()).unwrap_or(0) as usize;
 
                     if let Some(composite_id) = elem.get("composite").and_then(|v| v.as_str()) {
-                        let base = format!("c{}", &composite_id[1..]).to_ascii_lowercase();
+                        let base = composite_id.to_ascii_lowercase();
 
                         let count = composite_id_count.entry(base.clone()).or_insert(0);
                         *count += 1;
@@ -1016,6 +1048,9 @@ mod tests {
         assert!(is_edifact_id("d3036"));
         assert!(is_edifact_id("d3036_2"));
         assert!(is_edifact_id("D3036_5"));
+        assert!(is_edifact_id("s002"));
+        assert!(is_edifact_id("S009"));
+        assert!(is_edifact_id("s011"));
         assert!(!is_edifact_id("c"));
         assert!(!is_edifact_id("c_2"));
         assert!(!is_edifact_id("c556_"));
@@ -1119,6 +1154,71 @@ mod tests {
             resolver.reverse_discriminator("LOC.d3227=Z16"),
             "LOC.d3227=Z16"
         );
+    }
+
+    fn s_prefix_schema() -> serde_json::Value {
+        serde_json::json!({
+            "beschreibung": "CONTRL S-prefix test",
+            "fields": {},
+            "root_segments": [{
+                "id": "UCI",
+                "name": "Übertragungsprüfung",
+                "elements": [
+                    { "id": "0020", "index": 0, "type": "data" },
+                    {
+                        "composite": "S002",
+                        "index": 1,
+                        "name": "Absender",
+                        "components": [
+                            { "id": "0004", "sub_index": 0, "type": "data" },
+                            { "id": "0007", "sub_index": 1, "type": "code" }
+                        ]
+                    },
+                    {
+                        "composite": "S003",
+                        "index": 2,
+                        "name": "Empfänger",
+                        "components": [
+                            { "id": "0010", "sub_index": 0, "type": "data" },
+                            { "id": "0007", "sub_index": 1, "type": "code" }
+                        ]
+                    },
+                    { "id": "0083", "index": 3, "type": "code" },
+                    {
+                        "composite": "S011",
+                        "index": 6,
+                        "name": "Datenelement-Identifikation",
+                        "components": [
+                            { "id": "0098", "sub_index": 0, "type": "data" },
+                            { "id": "0104", "sub_index": 1, "type": "data" }
+                        ]
+                    }
+                ]
+            }]
+        })
+    }
+
+    #[test]
+    fn resolve_s_prefix_composites() {
+        let resolver = PathResolver::from_schema(&s_prefix_schema());
+        assert_eq!(resolver.resolve_path("uci.s002.d0004"), "uci.1.0");
+        assert_eq!(resolver.resolve_path("uci.s002.d0007"), "uci.1.1");
+        assert_eq!(resolver.resolve_path("uci.s003.d0010"), "uci.2.0");
+        assert_eq!(resolver.resolve_path("uci.s003.d0007"), "uci.2.1");
+        assert_eq!(resolver.resolve_path("uci.s011.d0098"), "uci.6.0");
+        assert_eq!(resolver.resolve_path("uci.s011.d0104"), "uci.6.1");
+        assert_eq!(resolver.resolve_path("uci.d0020"), "uci.0");
+        assert_eq!(resolver.resolve_path("uci.d0083"), "uci.3");
+    }
+
+    #[test]
+    fn reverse_s_prefix_composites() {
+        let resolver = ReversePathResolver::from_schema(&s_prefix_schema());
+        assert_eq!(resolver.reverse_path("uci.1.0"), "uci.s002.d0004");
+        assert_eq!(resolver.reverse_path("uci.1.1"), "uci.s002.d0007");
+        assert_eq!(resolver.reverse_path("uci.2.0"), "uci.s003.d0010");
+        assert_eq!(resolver.reverse_path("uci.6.0"), "uci.s011.d0098");
+        assert_eq!(resolver.reverse_path("uci.0"), "uci.d0020");
     }
 
     #[test]
