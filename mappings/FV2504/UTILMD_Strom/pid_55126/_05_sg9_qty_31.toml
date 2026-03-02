@@ -1,0 +1,19 @@
+# SG9 — QTY+31 Veranschlagte Jahresmenge Gesamt
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_z01.sg9"
+discriminator = "QTY.c186.d6063=31"
+
+[fields]
+
+[companion_fields]
+"qty.c186.d6060" = "jahresverbrauchsprognose"
+"qty.c186.d6411" = "jahresverbrauchsprognoseEinheit"
+
+[companion_fields."qty.c186.d6063"]
+target = ""
+default = "31"

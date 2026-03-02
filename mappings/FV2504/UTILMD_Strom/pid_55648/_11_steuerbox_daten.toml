@@ -1,0 +1,21 @@
+# SG8 -- Steuerbox Daten (SEQ+ZH3/ZH4)
+# RFF+Z14 reference to Smartmeter-Gateway
+
+[meta]
+entity = "Steuerbox"
+bo4e_type = "Steuerbox"
+companion_type = "SteuerboxEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zh3_zh4"
+discriminator = "SEQ.d1229=ZH3|ZH4"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZH3ZH4"
+"seq.c286.d1050" = "zeitscheibeRefZH3ZH4"
+"rff[Z14].c506.d1154" = "smartmeterGatewayNummer"
+
+[companion_fields."rff[Z14].c506.d1153"]
+target = ""
+default = "Z14"

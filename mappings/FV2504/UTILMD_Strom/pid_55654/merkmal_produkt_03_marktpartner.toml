@@ -1,0 +1,22 @@
+# SG10 under ZG8/ZG9 -- Zugeordneter Marktpartner (CCI with c240.d7037=ZB3)
+# CAV contains Marktrolle (Z88=NB, Z89=LF) and MP-ID in c889.d1131.
+
+[meta]
+entity = "ProduktDaten"
+bo4e_type = "ProduktDaten"
+companion_type = "ProduktDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zg8_zg9.sg10"
+discriminator = "CCI.c240.d7037=ZB3"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "marktpartnerKlassentyp"
+"cci.c502.d6313" = "marktpartnerDimension"
+"cav.c889.d7111" = "marktpartnerRolle"
+"cav.c889.d1131" = "marktpartnerId"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "ZB3"

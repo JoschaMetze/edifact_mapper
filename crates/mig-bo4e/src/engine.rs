@@ -2037,7 +2037,12 @@ fn parse_tag_qualifier(tag_part: &str) -> (String, Option<&str>, usize) {
         if let Some(comma_pos) = inner.find(',') {
             let qualifier = &inner[..comma_pos];
             let index = inner[comma_pos + 1..].parse::<usize>().unwrap_or(0);
-            (tag, Some(qualifier), index)
+            // "*" wildcard means no qualifier filter — positional access only
+            if qualifier == "*" {
+                (tag, None, index)
+            } else {
+                (tag, Some(qualifier), index)
+            }
         } else {
             (tag, Some(inner), 0)
         }

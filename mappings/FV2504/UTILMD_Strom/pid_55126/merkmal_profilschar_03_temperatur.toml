@@ -1,0 +1,17 @@
+# SG10 under SG8 Z08 — CCI+Z99/ZA0 Temperaturmessstelle / Klimazone
+
+[meta]
+entity = "Profil"
+bo4e_type = "Profil"
+companion_type = "ProfilEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z08.sg10"
+discriminator = "CCI.d7059=Z99|ZA0"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "temperaturMessstelleTyp"
+"cci.c240.d7037" = "temperaturMessstelleId"
+"cci.c240.d1131" = "temperaturMessstelleDienstanbieter"
+"cci.c240.d3055" = "temperaturMessstelleCodepflege"

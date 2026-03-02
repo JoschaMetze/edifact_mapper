@@ -1,0 +1,17 @@
+# SG10 under SG8_zb3_zb4 — CCI+Z52|Z53 Zugeordnete Definition
+# Z52=Code der Schaltzeitdefinition, Z53=Code der Leistungskurvendefinition
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zb3_zb4.sg10"
+discriminator = "CCI.d7059=Z52|Z53"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "definitionTyp"
+"cci.c502.d6313" = "definitionDimension"
+"cci.c240.d7037" = "definitionCode"

@@ -1,0 +1,19 @@
+# Produktpaket (SG8 Z79) — Bestandteil eines Produktpakets.
+#
+# Source: SG4.SG8 -> SEQ segment (qualifier Z79)
+# SEQ+Z79+1  -> produktpaketId
+# PIA+5+9991000002008:Z11  -> produktCode
+
+[meta]
+entity = "Produktpaket"
+bo4e_type = "Produktpaket"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z79"
+discriminator = "SEQ.d1229=Z79"
+
+[fields]
+"seq.d1229" = { target = "", default = "Z79" }
+"seq.c286.d1050" = "produktpaketId"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "produktCode"
+"pia.c212.d7143" = { target = "", default = "Z11" }

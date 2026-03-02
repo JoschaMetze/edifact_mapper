@@ -1,0 +1,20 @@
+# SG10 under SG8 ZA5/ZA6 -- CCI+++Z63 Lokale Kennzeichnung zu Kontrollzwecken
+
+[meta]
+entity = "ObisKennzahl"
+bo4e_type = "ObisKennzahl"
+companion_type = "ObisKennzahlEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_za5_za6.sg10"
+discriminator = "CCI.c240.d7037=Z63"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d1131" = "lokaleKennzeichnungCodelisteCode"
+"cci.c240.d3055" = "lokaleKennzeichnungCodepflegeCode"
+"cci.c240.d7036" = "lokaleKennzeichnung"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "Z63"

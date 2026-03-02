@@ -1,0 +1,29 @@
+# SG10 under SG8 ZC1/ZC2 -- CCI+++Z27 Technische Steuereinrichtung
+# CAV order: Z30 Geraenummer, Steuereinrichtungstyp (RSU/TSU)
+
+[meta]
+entity = "TechnischeSteuereinrichtung"
+bo4e_type = "TechnischeSteuereinrichtung"
+companion_type = "TechnischeSteuereinrichtungEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zc1_zc2.sg10"
+discriminator = "CCI.c240.d7037=Z27"
+
+[fields]
+
+[companion_fields]
+# CAV #0: Z30 Geraenummer
+"cav[Z30].c889.d7110" = "geraeteNummer"
+"cav[Z30].c889.d7110_2" = "geraeteNummer2"
+"cav[Z30].c889.d1131" = "geraeteNummerCodelisteCode"
+"cav[Z30].c889.d3055" = "geraeteNummerCodepflegeCode"
+# CAV #1: Steuereinrichtungstyp (variable code: RSU/TSU)
+"cav[*,1].c889.d7111" = "steuereinrichtungstyp"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "Z27"
+
+[companion_fields."cav[Z30].c889.d7111"]
+target = ""
+default = "Z30"

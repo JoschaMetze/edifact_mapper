@@ -1,0 +1,21 @@
+# SG8 -- Kommunikationseinrichtung Daten (SEQ+ZB7/ZB8)
+# RFF+MG Geraetereferenz
+
+[meta]
+entity = "Kommunikationseinrichtung"
+bo4e_type = "Kommunikationseinrichtung"
+companion_type = "KommunikationseinrichtungEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zb7_zb8"
+discriminator = "SEQ.d1229=ZB7|ZB8"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZB7ZB8"
+"seq.c286.d1050" = "zeitscheibeRefZB7ZB8"
+"rff[MG].c506.d1154" = "geraetereferenzNummer"
+
+[companion_fields."rff[MG].c506.d1153"]
+target = ""
+default = "MG"

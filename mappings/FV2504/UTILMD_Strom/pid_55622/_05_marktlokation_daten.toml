@@ -1,0 +1,18 @@
+# Marktlokation Daten (SG8 Z80/Z81) — erwartete/vorhandene Daten der MaLo.
+#
+# Source: SG4.SG8 -> SEQ segment (qualifier Z80/Z81)
+# SEQ+Z80+<zeitraumRef>  -> seqQualifier, zeitscheibeRef
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z80_z81"
+discriminator = "SEQ.d1229=Z80,Z81"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ80"
+"seq.c286.d1050" = "zeitscheibeRefZ80"

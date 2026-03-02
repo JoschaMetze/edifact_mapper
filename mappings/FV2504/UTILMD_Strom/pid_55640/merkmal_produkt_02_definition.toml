@@ -1,0 +1,18 @@
+# SG10 under Z59 -- Leistungskurvendefinition (CCI+Z53)
+
+[meta]
+entity = "ProduktDaten"
+bo4e_type = "ProduktDaten"
+companion_type = "ProduktDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z59.sg10"
+discriminator = "CCI.d7059=Z53"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "leistungskurvendefinition"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "Z53"

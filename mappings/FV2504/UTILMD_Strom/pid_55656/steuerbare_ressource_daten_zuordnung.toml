@@ -1,0 +1,22 @@
+# SG10 under SG8_zb1_zb2 — CCI+Z49 Steuerkanal
+# CAV codes: ZF2=Leistungsbeschreibung des Steuerkanals
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zb1_zb2.sg10"
+
+[fields]
+
+[companion_fields]
+"cav.c889.d1131" = "steuerkanal"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "Z49"
+
+[companion_fields."cav.c889.d7111"]
+target = ""
+default = "ZF2"

@@ -1,0 +1,18 @@
+# SG10 under SG8 ZA5/ZA6 -- CCI+Z38 Zaehlzeitregister
+
+[meta]
+entity = "ObisKennzahl"
+bo4e_type = "ObisKennzahl"
+companion_type = "ObisKennzahlEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_za5_za6.sg10"
+discriminator = "CCI.d7059=Z38"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "zaehlzeitregisterCode"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "Z38"

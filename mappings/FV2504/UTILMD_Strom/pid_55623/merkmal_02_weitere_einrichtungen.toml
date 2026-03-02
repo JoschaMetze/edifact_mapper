@@ -1,0 +1,19 @@
+# SG10 — CCI+Z63 Information zu weiteren technischen Einrichtungen
+# Optional: not present in all fixtures.
+
+[meta]
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+companion_type = "TechnischeRessourceEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zg4_zg5.sg10"
+discriminator = "CCI.d7059=Z63"
+
+[fields]
+
+[companion_fields]
+"cav.c889.d7111" = "weitereTechnischeEinrichtungen"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "Z63"

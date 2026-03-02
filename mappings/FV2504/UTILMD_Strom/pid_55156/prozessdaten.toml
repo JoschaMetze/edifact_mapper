@@ -1,0 +1,28 @@
+# Prozessdaten (SG4 root) for PID 55156 (Rückmeldung/Anfrage Abr.-Daten BK-Abr. verb. MaLo).
+#
+# IDE+24+<VorgangID>
+# STS+7++ZAN                     -> transaktionsgrund
+# STS+E01++A01:E_0611::1         -> Antwort-Status with EBD reference
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundErgaenzung"
+"sts[7].c556_3.d9013" = "transaktionsgrundErgaenzungBefristeteAnmeldung"
+
+# STS+E01 (Antwort-Status mit EBD-Referenz)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"
+"sts[E01].c556.d3055" = "ebdCodepflege"
+"sts[E01].c556.d9012" = "zeitraumIdRef"

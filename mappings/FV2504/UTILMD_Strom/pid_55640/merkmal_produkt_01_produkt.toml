@@ -1,0 +1,18 @@
+# SG10 under Z59 -- Produkt (CCI+11, c240.d7037 = ZF6 default)
+
+[meta]
+entity = "ProduktDaten"
+bo4e_type = "ProduktDaten"
+companion_type = "ProduktDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z59.sg10"
+discriminator = "CCI.d7059=11"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "produktMerkmal"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "11"

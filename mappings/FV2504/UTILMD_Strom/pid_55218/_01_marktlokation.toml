@@ -1,0 +1,18 @@
+# Marktlokation (LOC+Z16) mapping for PID 55218.
+#
+# Source: SG4.SG5 -> LOC segment (qualifier Z16 = Marktlokation)
+# LOC+Z16+12345678900  -> marktlokationsId
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+source_group = "SG4.SG5"
+source_path = "sg4.sg5_z16"
+discriminator = "LOC.d3227=Z16"
+
+[fields]
+"loc.d3227" = { target = "", default = "Z16" }
+"loc.c517.d3225" = "marktlokationsId"
+"loc.c517.d1131" = "codelisteCode"
+"loc.c517.d3055" = "codepflegeCode"
+"loc.c517.d3224" = "zeitraumId"

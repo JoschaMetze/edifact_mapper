@@ -1,0 +1,17 @@
+# SG10 under ZA7/ZA8 -- LF Verwendungszweck der Werte
+# CCI with c240.d7037=ZA7 + CAV (Z47/ZD1)
+
+[meta]
+entity = "ObisKennzahl"
+bo4e_type = "ObisKennzahl"
+companion_type = "ObisKennzahlEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_za7_za8.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "merkmalKlassentyp"
+"cci.c502.d6313" = "merkmalDimension"
+"cci.c240.d7037" = "merkmalCode"
+"cav.c889.d7111" = "verwendungszweck"

@@ -1,0 +1,18 @@
+# SG5 -- Messlokation (LOC+Z17)
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+source_group = "SG4.SG5"
+source_path = "sg4.sg5_z17"
+discriminator = "LOC.d3227=Z17"
+
+[fields]
+"loc.c517.d3225" = "messlokationsId"
+"loc.c517.d1131" = "codelisteCode"
+"loc.c517.d3055" = "codepflegeCode"
+"loc.c517.d3224" = "zeitraumId"
+
+[fields."loc.d3227"]
+target = ""
+default = "Z17"

@@ -1,0 +1,32 @@
+# SG10 under SG8 ZB9/ZC0 -- CCI+++Z25 Wandler
+# CAV order: Z30 Geraenummer, Wandlertyp (variable code: MIW/MPW/MBW/MUW)
+
+[meta]
+entity = "Wandlerdaten"
+bo4e_type = "Wandlerdaten"
+companion_type = "WandlerdatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zb9_zc0.sg10"
+discriminator = "CCI.c240.d7037=Z25"
+
+[fields]
+
+[companion_fields]
+# CAV #0: Z30 Geraenummer
+"cav[Z30].c889.d7110" = "geraeteNummer"
+"cav[Z30].c889.d7110_2" = "geraeteNummer2"
+"cav[Z30].c889.d1131" = "geraeteNummerCodelisteCode"
+"cav[Z30].c889.d3055" = "geraeteNummerCodepflegeCode"
+# CAV #1: Wandlertyp (variable code: MIW/MPW/MBW/MUW)
+"cav[*,1].c889.d7111" = "wandlertyp"
+"cav[*,1].c889.d1131" = "wandlertypCodelisteCode"
+"cav[*,1].c889.d3055" = "wandlertypCodepflegeCode"
+"cav[*,1].c889.d7110" = "wandlerkonstante"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "Z25"
+
+[companion_fields."cav[Z30].c889.d7111"]
+target = ""
+default = "Z30"

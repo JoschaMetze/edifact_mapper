@@ -1,0 +1,18 @@
+# Technische Ressource (LOC+Z20) mapping for PID 55600.
+#
+# Source: SG4.SG5 -> LOC segment (qualifier Z20 = Technische Ressource)
+# LOC+Z20+DQ6AWUM9DK4  -> technischeRessourceId
+
+[meta]
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+source_group = "SG4.SG5"
+source_path = "sg4.sg5_z20"
+discriminator = "LOC.d3227=Z20"
+
+[fields]
+"loc.d3227" = { target = "", default = "Z20" }
+"loc.c517.d3225" = "technischeRessourceId"
+"loc.c517.d1131" = "codelisteCode"
+"loc.c517.d3055" = "codepflegeCode"
+"loc.c517.d3224" = "zeitraumId"

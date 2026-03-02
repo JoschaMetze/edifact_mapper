@@ -1,0 +1,12 @@
+# Marktlokation (SG5, LOC+Z16) for PID 55156.
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+source_group = "SG4.SG5"
+source_path = "sg4.sg5_z16"
+discriminator = "LOC.d3227=Z16"
+
+[fields]
+"loc.d3227" = { target = "", default = "Z16" }
+"loc.c517.d3225" = "marktlokationsId"
