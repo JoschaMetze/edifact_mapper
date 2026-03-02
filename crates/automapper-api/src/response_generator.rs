@@ -281,11 +281,7 @@ fn build_aperak_bo4e(
 
         for issue in report.errors() {
             let error_code = map_validation_issue_to_aperak_code(issue);
-            let german_text = sanitize_edifact_text(&format!(
-                "{}: {}",
-                aperak_code_german_label(error_code),
-                issue.message,
-            ));
+            let german_text = sanitize_edifact_text(&format_german_error(issue));
             let mut referenzen = serde_json::json!({
                 "nachrichtenReferenz": &meta.message_ref,
             });
@@ -578,33 +574,53 @@ fn code_agency_for_mp_id(mp_id: &str) -> &'static str {
     }
 }
 
-/// Map a validation issue to an APERAK error code.
-fn map_validation_issue_to_aperak_code(
-    issue: &automapper_validation::ValidationIssue,
-) -> &'static str {
-    let code = &issue.code;
-    if code.contains("UNEXPECTED_SEGMENT") || code.contains("REPETITION") {
-        "Z40"
-    } else if code.contains("MISSING") {
-        "Z29"
-    } else if code.contains("FORMAT") {
-        "Z35"
-    } else if code.contains("CODE") || code.contains("INVALID") {
-        "Z39"
-    } else {
-        "Z31"
+/// Format a validation issue as a German error description for FTX+ABO.
+///
+/// Uses the structured fields (code, field_path, actual_value) to produce
+/// German text instead of passing through the English `message`.
+fn format_german_error(issue: &automapper_validation::ValidationIssue) -> String {
+    let path = issue.field_path.as_deref().unwrap_or("unbekanntes Feld");
+    let actual = issue.actual_value.as_deref().unwrap_or("");
+
+    match issue.code.as_str() {
+        "AHB001" => format!("Pflichtfeld \"{path}\" fehlt"),
+        "AHB002" => format!("Feld \"{path}\" ist fuer diese PID nicht erlaubt"),
+        "AHB003" => format!("Bedingungsregelverstoss bei \"{path}\""),
+        "AHB004" => "Unbekannte Pruefidentifikator".to_string(),
+        "COD001" => format!("Ungueltiger Code \"{actual}\" bei \"{path}\""),
+        "COD002" => format!("Code \"{actual}\" ist fuer diese PID nicht erlaubt bei \"{path}\""),
+        "STR001" => format!("Pflichtsegment fehlt bei \"{path}\""),
+        "STR002" => format!("Maximale Segmentwiederholung ueberschritten bei \"{path}\""),
+        "STR003" => format!("Unerwartetes Segment bei \"{path}\""),
+        "STR004" => format!("Falsche Segmentreihenfolge bei \"{path}\""),
+        "STR005" => format!("Pflichtgruppe fehlt bei \"{path}\""),
+        "STR006" => format!("Maximale Gruppenwiederholung ueberschritten bei \"{path}\""),
+        "FMT001" => format!("Wert zu lang bei \"{path}\""),
+        "FMT002" => format!("Ungueltiges numerisches Format bei \"{path}\""),
+        "FMT003" => format!("Ungueltiges alphanumerisches Format bei \"{path}\""),
+        "FMT004" => format!("Ungueltiges Datumsformat bei \"{path}\""),
+        "FMT005" => format!("Wert zu kurz bei \"{path}\""),
+        "FMT006" => format!("Pflichtfeld leer bei \"{path}\""),
+        _ => format!("Fehler bei \"{path}\""),
     }
 }
 
-/// German label for an APERAK Z-code (used in FTX+ABO error description).
-fn aperak_code_german_label(code: &str) -> &'static str {
-    match code {
-        "Z29" => "Pflichtfeld fehlt",
-        "Z31" => "Zurueckweisung",
-        "Z35" => "Formatfehler",
-        "Z39" => "Ungueltiger Code",
-        "Z40" => "Strukturfehler",
-        _ => "Fehler",
+/// Map a validation issue to an APERAK error code.
+///
+/// Maps the structured error code prefixes to APERAK Z-codes:
+/// - `AHB0xx` (missing/forbidden fields) → Z29 (Pflichtfeld fehlt)
+/// - `COD0xx` (invalid codes) → Z39 (Ungueltiger Code)
+/// - `FMT0xx` (format errors) → Z35 (Formatfehler)
+/// - `STR0xx` (structure errors) → Z40 (Strukturfehler)
+fn map_validation_issue_to_aperak_code(
+    issue: &automapper_validation::ValidationIssue,
+) -> &'static str {
+    match issue.code.get(..3) {
+        Some("AHB") => "Z29",
+        Some("COD") => "Z39",
+        Some("FMT") => "Z35",
+        Some("STR") => "Z40",
+        _ => "Z31",
     }
 }
 
@@ -799,12 +815,15 @@ mod tests {
             "UTILMD",
             automapper_validation::ValidationLevel::Full,
         );
-        report.add_issue(automapper_validation::ValidationIssue::new(
-            automapper_validation::Severity::Error,
-            automapper_validation::ValidationCategory::Ahb,
-            "MISSING_VALUE",
-            "Required field missing",
-        ));
+        report.add_issue(
+            automapper_validation::ValidationIssue::new(
+                automapper_validation::Severity::Error,
+                automapper_validation::ValidationCategory::Ahb,
+                "AHB001",
+                "Required field missing",
+            )
+            .with_field_path("SG2/NAD/3035"),
+        );
 
         let bo4e = build_aperak_bo4e(false, &meta, &report);
         assert_eq!(bo4e["nachricht"]["dokumentenCode"], "313");
@@ -812,17 +831,13 @@ mod tests {
         assert!(bo4e["fehler"].is_array());
         assert_eq!(bo4e["fehler"].as_array().unwrap().len(), 1);
         assert_eq!(bo4e["fehler"][0]["fehlerCode"], "Z29");
-        // FTX+ABO text should be German
+        // FTX+ABO text should be fully German
         let abo_text = bo4e["fehler"][0]["fehlerEdifact"]["abweichungsInfo"]
             .as_str()
             .unwrap();
-        assert!(
-            abo_text.starts_with("Pflichtfeld fehlt"),
-            "Error text should be German, got: {abo_text}"
-        );
-        assert!(
-            abo_text.contains("Required field missing"),
-            "Should include original detail"
+        assert_eq!(
+            abo_text, r#"Pflichtfeld "SG2/NAD/3035" fehlt"#,
+            "Error text should be German"
         );
         // SG5 references nested inside each fehler object as single "referenzen"
         let refs = &bo4e["fehler"][0]["referenzen"];
@@ -853,18 +868,25 @@ mod tests {
             "UTILMD",
             automapper_validation::ValidationLevel::Full,
         );
-        report.add_issue(automapper_validation::ValidationIssue::new(
-            automapper_validation::Severity::Error,
-            automapper_validation::ValidationCategory::Ahb,
-            "MISSING_VALUE",
-            "First error",
-        ));
-        report.add_issue(automapper_validation::ValidationIssue::new(
-            automapper_validation::Severity::Error,
-            automapper_validation::ValidationCategory::Ahb,
-            "INVALID_CODE",
-            "Second error",
-        ));
+        report.add_issue(
+            automapper_validation::ValidationIssue::new(
+                automapper_validation::Severity::Error,
+                automapper_validation::ValidationCategory::Ahb,
+                "AHB001",
+                "First error",
+            )
+            .with_field_path("SG2/NAD/3035"),
+        );
+        report.add_issue(
+            automapper_validation::ValidationIssue::new(
+                automapper_validation::Severity::Error,
+                automapper_validation::ValidationCategory::Code,
+                "COD002",
+                "Second error",
+            )
+            .with_field_path("SG2/NAD/3035")
+            .with_actual("MT"),
+        );
 
         let bo4e = build_aperak_bo4e(false, &meta, &report);
         let errors = bo4e["fehler"].as_array().unwrap();
