@@ -37,11 +37,42 @@ fn render_segment(seg: &DisassembledSegment, delimiters: &EdifactDelimiters, out
             if j > 0 {
                 out.push(comp_sep);
             }
-            out.push_str(component);
+            escape_component(component, delimiters, out);
         }
     }
 
     out.push(seg_term);
+}
+
+/// Write a component value, escaping any delimiter characters with the release character.
+///
+/// Characters that must be escaped: element separator (`+`), component separator (`:`),
+/// segment terminator (`'`), and the release character itself (`?`).
+///
+/// All values — whether parsed from EDIFACT or synthetically created — are stored
+/// without escape sequences. The tokenizer unescapes during `OwnedSegment` creation,
+/// and the renderer re-escapes here when writing EDIFACT output.
+fn escape_component(value: &str, delimiters: &EdifactDelimiters, out: &mut String) {
+    let release = delimiters.release;
+    let special = [
+        delimiters.element,
+        delimiters.component,
+        delimiters.segment,
+        delimiters.release,
+    ];
+
+    let needs_escape = value.bytes().any(|b| special.contains(&b));
+    if !needs_escape {
+        out.push_str(value);
+        return;
+    }
+
+    for b in value.bytes() {
+        if special.contains(&b) {
+            out.push(release as char);
+        }
+        out.push(b as char);
+    }
 }
 
 #[cfg(test)]
@@ -111,5 +142,55 @@ mod tests {
         let rendered = render_edifact(&segments, &delimiters);
 
         assert_eq!(rendered, "DTM+137:20250101:102'");
+    }
+
+    #[test]
+    fn test_render_escapes_delimiter_chars_in_values() {
+        // Timestamps with timezone offset contain '+' which must be escaped as '?+'
+        let segments = vec![DisassembledSegment {
+            tag: "DTM".to_string(),
+            elements: vec![vec![
+                "137".to_string(),
+                "202603021433+00".to_string(),
+                "303".to_string(),
+            ]],
+        }];
+
+        let delimiters = EdifactDelimiters::default();
+        let rendered = render_edifact(&segments, &delimiters);
+
+        assert_eq!(rendered, "DTM+137:202603021433?+00:303'");
+    }
+
+    #[test]
+    fn test_render_escapes_multiple_special_chars() {
+        // Value with ':', '+', and '?' all needing escape
+        let segments = vec![DisassembledSegment {
+            tag: "FTX".to_string(),
+            elements: vec![
+                vec!["ABO".to_string()],
+                vec![],
+                vec![],
+                vec!["hello?+world:test".to_string()],
+            ],
+        }];
+
+        let delimiters = EdifactDelimiters::default();
+        let rendered = render_edifact(&segments, &delimiters);
+
+        assert_eq!(rendered, "FTX+ABO+++hello???+world?:test'");
+    }
+
+    #[test]
+    fn test_render_no_escape_needed_for_plain_values() {
+        let segments = vec![DisassembledSegment {
+            tag: "BGM".to_string(),
+            elements: vec![vec!["312".to_string()], vec!["DOC001".to_string()]],
+        }];
+
+        let delimiters = EdifactDelimiters::default();
+        let rendered = render_edifact(&segments, &delimiters);
+
+        assert_eq!(rendered, "BGM+312+DOC001'");
     }
 }

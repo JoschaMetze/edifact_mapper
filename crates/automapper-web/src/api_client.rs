@@ -7,7 +7,8 @@ use gloo_net::http::Request;
 
 use crate::types::{
     ConvertV2Request, ConvertV2Response, CoordinatorInfo, FixtureListResponse, HealthResponse,
-    InspectRequest, InspectResponse, ValidateV2Request, ValidateV2Response,
+    InspectRequest, InspectResponse, ResponseGenerationOptions, ValidateV2Request,
+    ValidateV2Response,
 };
 
 /// Base URL for API calls. Empty string means same origin.
@@ -51,11 +52,16 @@ pub async fn convert_v2(
 }
 
 /// Validate EDIFACT content using AHB conditions via the v2 pipeline.
-pub async fn validate_v2(input: &str, format_version: &str) -> Result<ValidateV2Response, String> {
+pub async fn validate_v2(
+    input: &str,
+    format_version: &str,
+    generate_response: Option<ResponseGenerationOptions>,
+) -> Result<ValidateV2Response, String> {
     let request_body = ValidateV2Request {
         input: input.to_string(),
         format_version: format_version.to_string(),
         level: "full".to_string(),
+        generate_response,
     };
 
     let url = format!("{API_BASE}/api/v2/validate");

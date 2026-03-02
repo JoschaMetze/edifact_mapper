@@ -8,7 +8,10 @@ use crate::components::collapsible_panel::CollapsiblePanel;
 use crate::components::error_list::ErrorList;
 use crate::components::fixture_selector::FixtureSelector;
 use crate::components::segment_tree::SegmentTreeView;
-use crate::types::{extract_validation_issues, ApiErrorEntry, Direction, SegmentNode};
+use crate::types::{
+    extract_validation_issues, ApiErrorEntry, Direction, GeneratedResponsePayload,
+    ResponseGenerationOptions, SegmentNode,
+};
 
 /// Main converter page.
 #[component]
@@ -27,6 +30,12 @@ pub fn ConverterPage() -> impl IntoView {
     let (is_validating, set_is_validating) = signal(false);
     let (_validation_duration_ms, set_validation_duration_ms) = signal(0.0_f64);
 
+    // Response generation state
+    let (gen_response_enabled, set_gen_response_enabled) = signal(false);
+    let (response_type_sel, set_response_type_sel) = signal("auto".to_string());
+    let (response_format_sel, set_response_format_sel) = signal("bo4e".to_string());
+    let (response_message, set_response_message) = signal(None::<GeneratedResponsePayload>);
+
     // Convert action — uses v2 MIG-driven pipeline (EDIFACT -> BO4E only)
     let convert_action = Action::new_local(move |_: &()| {
         let input_val = input.get();
@@ -37,6 +46,7 @@ pub fn ConverterPage() -> impl IntoView {
             set_validation_issues.set(vec![]);
             set_segments.set(vec![]);
             set_output.set(String::new());
+            set_response_message.set(None);
 
             // Inspect EDIFACT input for segment tree visualization
             match api_client::inspect_edifact(&input_val).await {
@@ -80,15 +90,33 @@ pub fn ConverterPage() -> impl IntoView {
     // Standalone validate action — calls /api/v2/validate directly
     let validate_action = Action::new_local(move |_: &()| {
         let input_val = input.get();
+        let gen_enabled = gen_response_enabled.get();
+        let resp_type = response_type_sel.get();
+        let resp_format = response_format_sel.get();
 
         async move {
             set_is_validating.set(true);
             set_validation_issues.set(vec![]);
+            set_response_message.set(None);
 
-            match api_client::validate_v2(&input_val, "FV2504").await {
+            let gen_opts = if gen_enabled {
+                Some(ResponseGenerationOptions {
+                    response_type: if resp_type == "auto" {
+                        None
+                    } else {
+                        Some(resp_type)
+                    },
+                    format: Some(resp_format),
+                })
+            } else {
+                None
+            };
+
+            match api_client::validate_v2(&input_val, "FV2504", gen_opts).await {
                 Ok(resp) => {
                     set_validation_duration_ms.set(resp.duration_ms);
                     set_validation_issues.set(extract_validation_issues(&resp.report));
+                    set_response_message.set(resp.response_message);
                 }
                 Err(e) => {
                     set_validation_issues.set(vec![ApiErrorEntry {
@@ -146,6 +174,13 @@ pub fn ConverterPage() -> impl IntoView {
         }
     });
 
+    let response_badge = Signal::derive(move || match response_message.get() {
+        Some(ref msg) => msg.message_type.clone(),
+        None => String::new(),
+    });
+
+    let response_empty = Signal::derive(move || response_message.get().is_none());
+
     let segments_empty = Signal::derive(move || segments.get().is_empty());
 
     view! {
@@ -181,6 +216,39 @@ pub fn ConverterPage() -> impl IntoView {
                     >
                         {move || if is_validating.get() { "Validating..." } else { "Validate" }}
                     </button>
+                    <div class="response-controls">
+                        <label class="response-checkbox">
+                            <input
+                                type="checkbox"
+                                on:change=move |ev| {
+                                    let checked = event_target::<web_sys::HtmlInputElement>(&ev).checked();
+                                    set_gen_response_enabled.set(checked);
+                                }
+                            />
+                            " Response"
+                        </label>
+                        {move || gen_response_enabled.get().then(|| view! {
+                            <select
+                                class="fixture-select"
+                                on:change=move |ev| {
+                                    set_response_type_sel.set(event_target_value(&ev));
+                                }
+                            >
+                                <option value="auto" selected=true>"Auto"</option>
+                                <option value="aperak">"APERAK"</option>
+                                <option value="contrl">"CONTRL"</option>
+                            </select>
+                            <select
+                                class="fixture-select"
+                                on:change=move |ev| {
+                                    set_response_format_sel.set(event_target_value(&ev));
+                                }
+                            >
+                                <option value="bo4e" selected=true>"BO4E"</option>
+                                <option value="edifact">"EDIFACT"</option>
+                            </select>
+                        })}
+                    </div>
                 </div>
 
                 <CodeEditor
@@ -221,6 +289,47 @@ pub fn ConverterPage() -> impl IntoView {
                 initially_open=true
             >
                 <ErrorList errors=validation_issues.into() />
+            </CollapsiblePanel>
+
+            <CollapsiblePanel
+                title="Response Message"
+                badge=response_badge
+                disabled=response_empty
+            >
+                {move || {
+                    match response_message.get() {
+                        Some(msg) => {
+                            let has_bo4e = msg.bo4e.is_some();
+                            let content = if let Some(ref bo4e) = msg.bo4e {
+                                serde_json::to_string_pretty(bo4e)
+                                    .unwrap_or_else(|_| bo4e.to_string())
+                            } else if let Some(ref edi) = msg.edifact {
+                                edi.clone()
+                            } else {
+                                String::new()
+                            };
+                            let format_label = if has_bo4e { "BO4E JSON" } else { "EDIFACT" };
+                            view! {
+                                <div class="response-content">
+                                    <div class="response-meta">
+                                        <span class="badge">{msg.message_type.clone()}</span>
+                                        <span class="response-format-label">{format_label}</span>
+                                    </div>
+                                    <textarea
+                                        class="response-textarea"
+                                        readonly=true
+                                        prop:value=content
+                                    />
+                                </div>
+                            }.into_any()
+                        }
+                        None => {
+                            view! {
+                                <p class="no-errors">"No response message generated"</p>
+                            }.into_any()
+                        }
+                    }
+                }}
             </CollapsiblePanel>
         </div>
     }

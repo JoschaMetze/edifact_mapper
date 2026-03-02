@@ -151,6 +151,28 @@ pub struct CoordinatorInfo {
     pub supported_versions: Vec<String>,
 }
 
+/// Options for generating an APERAK/CONTRL response message.
+#[derive(Debug, Clone, Serialize)]
+pub struct ResponseGenerationOptions {
+    /// Response message type: "aperak" or "contrl". If omitted, auto-detected.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub response_type: Option<String>,
+    /// Output format: "bo4e" or "edifact".
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub format: Option<String>,
+}
+
+/// Generated response message payload.
+#[derive(Debug, Clone, Deserialize)]
+pub struct GeneratedResponsePayload {
+    /// "APERAK" or "CONTRL".
+    pub message_type: String,
+    /// BO4E JSON of the response message.
+    pub bo4e: Option<serde_json::Value>,
+    /// EDIFACT string of the response message.
+    pub edifact: Option<String>,
+}
+
 /// V2 validation request.
 #[derive(Debug, Clone, Serialize)]
 pub struct ValidateV2Request {
@@ -160,6 +182,9 @@ pub struct ValidateV2Request {
     pub format_version: String,
     /// Validation level: "structure", "conditions", or "full". Defaults to "full".
     pub level: String,
+    /// Optional: generate an APERAK/CONTRL response message.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub generate_response: Option<ResponseGenerationOptions>,
 }
 
 impl Default for ValidateV2Request {
@@ -168,6 +193,7 @@ impl Default for ValidateV2Request {
             input: String::new(),
             format_version: String::new(),
             level: "full".to_string(),
+            generate_response: None,
         }
     }
 }
@@ -179,6 +205,8 @@ pub struct ValidateV2Response {
     pub report: serde_json::Value,
     /// Validation duration in milliseconds.
     pub duration_ms: f64,
+    /// Generated response message (if requested).
+    pub response_message: Option<GeneratedResponsePayload>,
 }
 
 /// Extract validation issues from a `ValidationReport` JSON value into `ApiErrorEntry` entries.

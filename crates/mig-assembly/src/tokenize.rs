@@ -51,26 +51,57 @@ pub struct InterchangeChunks {
     pub unz: Option<OwnedSegment>,
 }
 
+/// Remove release character escaping from a component value.
+///
+/// The EDIFACT tokenizer preserves escape sequences in borrowed slices (e.g., `?+`
+/// stays as `?+`). When converting to owned `OwnedSegment` strings, we strip the
+/// release characters so values are stored clean (e.g., `+`). The renderer then
+/// re-escapes when writing EDIFACT output.
+fn unescape_edifact(value: &str, release: u8) -> String {
+    if !value.as_bytes().contains(&release) {
+        return value.to_string();
+    }
+    let bytes = value.as_bytes();
+    let mut result = String::with_capacity(value.len());
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == release && i + 1 < bytes.len() {
+            // Skip the release character, keep the next character
+            i += 1;
+            result.push(bytes[i] as char);
+        } else {
+            result.push(bytes[i] as char);
+        }
+        i += 1;
+    }
+    result
+}
+
 /// Handler that collects all segments into owned copies.
 struct SegmentCollector {
     segments: Vec<OwnedSegment>,
+    /// Release character for unescaping component values.
+    release: u8,
 }
 
 impl edifact_parser::EdifactHandler for SegmentCollector {
     fn on_segment(&mut self, segment: &RawSegment<'_>) -> Control {
+        let release = self.release;
         self.segments.push(OwnedSegment {
             id: segment.id.to_string(),
             elements: segment
                 .elements
                 .iter()
-                .map(|e| e.iter().map(|c| c.to_string()).collect())
+                .map(|e| e.iter().map(|c| unescape_edifact(c, release)).collect())
                 .collect(),
             segment_number: segment.position.segment_number,
         });
         Control::Continue
     }
 
-    fn on_delimiters(&mut self, _delimiters: &EdifactDelimiters, _explicit_una: bool) {}
+    fn on_delimiters(&mut self, delimiters: &EdifactDelimiters, _explicit_una: bool) {
+        self.release = delimiters.release;
+    }
 
     fn on_interchange_start(&mut self, _unb: &RawSegment<'_>) -> Control {
         Control::Continue
@@ -93,6 +124,7 @@ impl edifact_parser::EdifactHandler for SegmentCollector {
 pub fn parse_to_segments(input: &[u8]) -> Result<Vec<OwnedSegment>, crate::AssemblyError> {
     let mut collector = SegmentCollector {
         segments: Vec::new(),
+        release: EdifactDelimiters::default().release,
     };
     edifact_parser::EdifactStreamParser::parse(input, &mut collector)
         .map_err(|e| crate::AssemblyError::ParseError(e.to_string()))?;

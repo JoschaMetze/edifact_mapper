@@ -192,7 +192,11 @@ pub(crate) async fn validate_v2(
             )?;
             Some(crate::contracts::validate_v2::GeneratedResponsePayload {
                 message_type: response.message_type,
-                bo4e: Some(response.bo4e),
+                bo4e: if response.edifact.is_some() {
+                    None
+                } else {
+                    Some(response.bo4e)
+                },
                 edifact: response.edifact,
             })
         } else {

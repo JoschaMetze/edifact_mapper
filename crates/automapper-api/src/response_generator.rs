@@ -172,6 +172,13 @@ pub fn generate_response(
 }
 
 /// Build APERAK BO4E JSON from validation results.
+///
+/// The JSON structure must match what the MappingEngine's `map_all_forward` produces
+/// so that `map_all_reverse` can reconstruct the EDIFACT segments correctly.
+/// Key rules:
+/// - Companion fields are keyed by camelCase companion_type (e.g., `marktteilnehmerEdifact`), not `_edifact`
+/// - SG2 has 3 RFF qualifiers (ACE, AGO, TN) — each is a separate Referenz array element
+/// - `codelisteCode` is a regular field (not companion), `codepflegeCode` is a companion field
 fn build_aperak_bo4e(
     is_positive: bool,
     meta: &OriginalMessageMeta,
@@ -180,82 +187,94 @@ fn build_aperak_bo4e(
     let bgm_code = if is_positive { "312" } else { "313" };
     let now = chrono_now_edifact();
 
-    let mut result = serde_json::json!({
-        "Nachricht": {
-            "dokumentenCode": bgm_code,
-            "nachrichtennummer": format!("{}BGM", meta.message_ref),
-            "erstellungsdatum": now,
-            "_edifact": {
-                "_type": "NachrichtEdifact"
-            }
-        },
-        "Referenz": {
-            "datenaustauschreferenz": &meta.interchange_ref,
-            "_edifact": {
-                "_type": "ReferenzEdifact"
-            }
-        },
-        "Marktteilnehmer": [
-            {
-                "identifikation": &meta.receiver_id,
-                "_edifact": {
-                    "_type": "MarktteilnehmerEdifact",
-                    "marktrolle": "MS",
-                    "codepflegeCode": &meta.receiver_qualifier
-                }
-            },
-            {
-                "identifikation": &meta.sender_id,
-                "_edifact": {
-                    "_type": "MarktteilnehmerEdifact",
-                    "marktrolle": "MR",
-                    "codepflegeCode": &meta.sender_qualifier
-                }
-            }
-        ]
+    // Root: BGM + DTM[137] → entity "Nachricht"
+    // nachricht.toml has no companion_fields with real targets (only defaults),
+    // so no companion object is needed.
+    let nachricht = serde_json::json!({
+        "dokumentenCode": bgm_code,
+        "nachrichtennummer": format!("{}BGM", meta.message_ref),
+        "erstellungsdatum": &now,
     });
 
-    // Add RFF+AGO (document ref) and RFF+TN (transaction ref) to Referenz
+    // SG2: each RFF qualifier is a separate SG2 rep → array of Referenz objects
+    // referenz.toml maps: rff[ACE] → datenaustauschreferenz, rff[AGO] → dokumentennummer,
+    //   rff[TN] → vorgangsnummer, dtm[171] → referenzdatum
+    let mut referenz_array: Vec<serde_json::Value> = Vec::new();
+
+    // RFF+ACE (always present — datenaustauschreferenz) + DTM+171 (reference date)
+    referenz_array.push(serde_json::json!({
+        "datenaustauschreferenz": &meta.interchange_ref,
+        "referenzdatum": &now,
+    }));
+
+    // RFF+AGO and RFF+TN (present when we have a transaction reference)
     if let Some(ref tx_ref) = meta.transaction_ref {
-        result["Referenz"]["dokumentennummer"] = serde_json::json!(tx_ref);
-        result["Referenz"]["vorgangsnummer"] = serde_json::json!(tx_ref);
+        referenz_array.push(serde_json::json!({
+            "dokumentennummer": tx_ref,
+        }));
+        referenz_array.push(serde_json::json!({
+            "vorgangsnummer": tx_ref,
+        }));
     }
 
-    // For negative APERAK, add SG4 error entries
+    // SG3: NAD parties → entity "Marktteilnehmer" (array)
+    // marktteilnehmer.toml: fields={identifikation, codelisteCode},
+    //   companion_fields under "marktteilnehmerEdifact"={marktrolle, codepflegeCode, ...}
+    // Swap sender/receiver: responder (original receiver) becomes MS, original sender becomes MR
+    let marktteilnehmer = serde_json::json!([
+        {
+            "identifikation": &meta.receiver_id,
+            "marktteilnehmerEdifact": {
+                "marktrolle": "MS",
+                "codepflegeCode": &meta.receiver_qualifier,
+            }
+        },
+        {
+            "identifikation": &meta.sender_id,
+            "marktteilnehmerEdifact": {
+                "marktrolle": "MR",
+                "codepflegeCode": &meta.sender_qualifier,
+            }
+        }
+    ]);
+
+    let mut result = serde_json::json!({
+        "nachricht": nachricht,
+        "referenz": referenz_array,
+        "marktteilnehmer": marktteilnehmer,
+    });
+
+    // SG4: ERC + FTX error groups → entity "Fehler"
     if !is_positive {
         let mut errors: Vec<serde_json::Value> = Vec::new();
         for issue in report.errors() {
             let error_code = map_validation_issue_to_aperak_code(issue);
             errors.push(serde_json::json!({
                 "fehlerCode": error_code,
-                "_edifact": {
-                    "_type": "FehlerEdifact",
-                    "abweichungsInfo": &issue.message
+                "fehlerEdifact": {
+                    "abweichungsInfo": &issue.message,
                 }
             }));
         }
         if !errors.is_empty() {
-            result["Fehler"] = serde_json::Value::Array(errors);
+            result["fehler"] = serde_json::Value::Array(errors);
         }
 
-        // Add SG5 references for each error
-        let mut nachricht_refs: Vec<serde_json::Value> = Vec::new();
-        nachricht_refs.push(serde_json::json!({
+        // SG4.SG5: discriminated by RFF qualifier
+        // fehler_01_nachricht_ref.toml (RFF+ACW) → FehlerNachrichtRef
+        result["fehlerNachrichtRef"] = serde_json::json!({
             "nachrichtenReferenz": &meta.message_ref,
-            "_edifact": { "_type": "FehlerNachrichtRefEdifact" }
-        }));
-        if !nachricht_refs.is_empty() {
-            result["FehlerNachrichtRef"] = serde_json::Value::Array(nachricht_refs);
-        }
+        });
 
+        // fehler_02_nachricht_info.toml (RFF+AGO) → FehlerNachrichtInfo
         if let Some(ref tx_ref) = meta.transaction_ref {
-            result["FehlerNachrichtInfo"] = serde_json::json!({
+            result["fehlerNachrichtInfo"] = serde_json::json!({
                 "dokumentennummer": tx_ref,
-                "_edifact": { "_type": "FehlerNachrichtInfoEdifact" }
             });
-            result["FehlerVorgangInfo"] = serde_json::json!({
+
+            // fehler_03_vorgang_info.toml (RFF+TN) → FehlerVorgangInfo
+            result["fehlerVorgangInfo"] = serde_json::json!({
                 "vorgangsnummer": tx_ref,
-                "_edifact": { "_type": "FehlerVorgangInfoEdifact" }
             });
         }
     }
@@ -264,6 +283,9 @@ fn build_aperak_bo4e(
 }
 
 /// Build CONTRL BO4E JSON from validation results.
+///
+/// The JSON structure must match what the MappingEngine's `map_all_forward` produces.
+/// Companion fields are keyed by camelCase companion_type, not `_edifact`.
 fn build_contrl_bo4e(
     is_positive: bool,
     meta: &OriginalMessageMeta,
@@ -271,28 +293,28 @@ fn build_contrl_bo4e(
 ) -> serde_json::Value {
     let action = if is_positive { "7" } else { "4" };
 
+    // Root: UCI → entity "Uebertragungspruefung"
+    // uebertragungspruefung.toml: fields={datenaustauschreferenz, aktion},
+    //   companion_fields under "uebertragungspruefungEdifact"={absenderMpId, ...}
     let mut result = serde_json::json!({
-        "Uebertragungspruefung": {
+        "uebertragungspruefung": {
             "datenaustauschreferenz": &meta.interchange_ref,
             "aktion": action,
-            "_edifact": {
-                "_type": "UebertragungspruefungEdifact",
-                "absenderIdentifikation": &meta.sender_id,
+            "uebertragungspruefungEdifact": {
+                "absenderMpId": &meta.sender_id,
                 "absenderCodeQualifier": &meta.sender_qualifier,
-                "empfaengerIdentifikation": &meta.receiver_id,
-                "empfaengerCodeQualifier": &meta.receiver_qualifier
+                "empfaengerMpId": &meta.receiver_id,
+                "empfaengerCodeQualifier": &meta.receiver_qualifier,
             }
         }
     });
 
-    // For negative CONTRL, add SG1 message-level error
+    // SG1: UCM → entity "Nachrichtenpruefung"
+    // nachrichtenpruefung.toml: fields={nachrichtenReferenznummer, aktion}
     if !is_positive {
-        result["Nachrichtenpruefung"] = serde_json::json!({
+        result["nachrichtenpruefung"] = serde_json::json!({
             "nachrichtenReferenznummer": &meta.message_ref,
             "aktion": "4",
-            "_edifact": {
-                "_type": "NachrichtenpruefungEdifact"
-            }
         });
     }
 
@@ -507,8 +529,31 @@ mod tests {
         );
 
         let bo4e = build_aperak_bo4e(true, &meta, &report);
-        assert_eq!(bo4e["Nachricht"]["dokumentenCode"], "312");
-        assert!(bo4e.get("Fehler").is_none());
+        // Root entity: nachricht (camelCase)
+        assert_eq!(bo4e["nachricht"]["dokumentenCode"], "312");
+        assert_eq!(bo4e["nachricht"]["nachrichtennummer"], "MSG001BGM");
+        // SG2 referenz is an array (one per RFF qualifier)
+        assert!(bo4e["referenz"].is_array());
+        assert_eq!(bo4e["referenz"].as_array().unwrap().len(), 3);
+        assert_eq!(bo4e["referenz"][0]["datenaustauschreferenz"], "INTREF001");
+        assert_eq!(bo4e["referenz"][1]["dokumentennummer"], "TXN001");
+        assert_eq!(bo4e["referenz"][2]["vorgangsnummer"], "TXN001");
+        // SG3 marktteilnehmer with companion under marktteilnehmerEdifact
+        assert!(bo4e["marktteilnehmer"].is_array());
+        assert_eq!(
+            bo4e["marktteilnehmer"][0]["identifikation"],
+            "9900000000002"
+        );
+        assert_eq!(
+            bo4e["marktteilnehmer"][0]["marktteilnehmerEdifact"]["marktrolle"],
+            "MS"
+        );
+        assert_eq!(
+            bo4e["marktteilnehmer"][1]["marktteilnehmerEdifact"]["marktrolle"],
+            "MR"
+        );
+        // No errors
+        assert!(bo4e.get("fehler").is_none());
     }
 
     #[test]
@@ -535,10 +580,19 @@ mod tests {
         ));
 
         let bo4e = build_aperak_bo4e(false, &meta, &report);
-        assert_eq!(bo4e["Nachricht"]["dokumentenCode"], "313");
-        assert!(bo4e["Fehler"].is_array());
-        assert_eq!(bo4e["Fehler"].as_array().unwrap().len(), 1);
-        assert_eq!(bo4e["Fehler"][0]["fehlerCode"], "Z29");
+        assert_eq!(bo4e["nachricht"]["dokumentenCode"], "313");
+        // SG4 fehler with companion under fehlerEdifact
+        assert!(bo4e["fehler"].is_array());
+        assert_eq!(bo4e["fehler"].as_array().unwrap().len(), 1);
+        assert_eq!(bo4e["fehler"][0]["fehlerCode"], "Z29");
+        assert_eq!(
+            bo4e["fehler"][0]["fehlerEdifact"]["abweichungsInfo"],
+            "Required field missing"
+        );
+        // SG4.SG5 error references
+        assert_eq!(bo4e["fehlerNachrichtRef"]["nachrichtenReferenz"], "MSG001");
+        assert_eq!(bo4e["fehlerNachrichtInfo"]["dokumentennummer"], "TXN001");
+        assert_eq!(bo4e["fehlerVorgangInfo"]["vorgangsnummer"], "TXN001");
     }
 
     #[test]
@@ -559,8 +613,17 @@ mod tests {
         );
 
         let bo4e = build_contrl_bo4e(true, &meta, &report);
-        assert_eq!(bo4e["Uebertragungspruefung"]["aktion"], "7");
-        assert!(bo4e.get("Nachrichtenpruefung").is_none());
+        assert_eq!(bo4e["uebertragungspruefung"]["aktion"], "7");
+        assert_eq!(
+            bo4e["uebertragungspruefung"]["datenaustauschreferenz"],
+            "INTREF001"
+        );
+        // Companion fields under uebertragungspruefungEdifact
+        assert_eq!(
+            bo4e["uebertragungspruefung"]["uebertragungspruefungEdifact"]["absenderMpId"],
+            "9900000000001"
+        );
+        assert!(bo4e.get("nachrichtenpruefung").is_none());
     }
 
     #[test]
@@ -587,8 +650,12 @@ mod tests {
         ));
 
         let bo4e = build_contrl_bo4e(false, &meta, &report);
-        assert_eq!(bo4e["Uebertragungspruefung"]["aktion"], "4");
-        assert_eq!(bo4e["Nachrichtenpruefung"]["aktion"], "4");
+        assert_eq!(bo4e["uebertragungspruefung"]["aktion"], "4");
+        assert_eq!(bo4e["nachrichtenpruefung"]["aktion"], "4");
+        assert_eq!(
+            bo4e["nachrichtenpruefung"]["nachrichtenReferenznummer"],
+            "MSG001"
+        );
     }
 
     #[test]

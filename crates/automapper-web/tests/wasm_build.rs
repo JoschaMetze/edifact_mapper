@@ -218,6 +218,106 @@ fn test_extract_validation_issues_from_report() {
 }
 
 #[test]
+fn test_response_generation_options_with_explicit_type() {
+    let opts = ResponseGenerationOptions {
+        response_type: Some("aperak".to_string()),
+        format: Some("edifact".to_string()),
+    };
+
+    let json = serde_json::to_value(&opts).unwrap();
+    assert_eq!(json["response_type"], "aperak");
+    assert_eq!(json["format"], "edifact");
+}
+
+#[test]
+fn test_response_generation_options_auto_detect() {
+    let opts = ResponseGenerationOptions {
+        response_type: None,
+        format: Some("bo4e".to_string()),
+    };
+
+    let json = serde_json::to_value(&opts).unwrap();
+    assert!(json.get("response_type").is_none());
+    assert_eq!(json["format"], "bo4e");
+}
+
+#[test]
+fn test_validate_v2_request_with_generate_response() {
+    let req = ValidateV2Request {
+        input: "UNH+1+UTILMD'".to_string(),
+        format_version: "FV2504".to_string(),
+        level: "full".to_string(),
+        generate_response: Some(ResponseGenerationOptions {
+            response_type: Some("contrl".to_string()),
+            format: Some("bo4e".to_string()),
+        }),
+    };
+
+    let json = serde_json::to_value(&req).unwrap();
+    assert!(json.get("generate_response").is_some());
+    assert_eq!(json["generate_response"]["response_type"], "contrl");
+    assert_eq!(json["generate_response"]["format"], "bo4e");
+}
+
+#[test]
+fn test_validate_v2_request_without_generate_response() {
+    let req = ValidateV2Request {
+        input: "UNH+1+UTILMD'".to_string(),
+        format_version: "FV2504".to_string(),
+        ..Default::default()
+    };
+
+    let json = serde_json::to_value(&req).unwrap();
+    assert!(json.get("generate_response").is_none());
+}
+
+#[test]
+fn test_validate_v2_response_with_response_message() {
+    let json = r#"{
+        "report": {"valid": true, "issues": []},
+        "duration_ms": 5.0,
+        "response_message": {
+            "message_type": "APERAK",
+            "bo4e": {"typ": "Marktlokation"},
+            "edifact": null
+        }
+    }"#;
+
+    let resp: ValidateV2Response = serde_json::from_str(json).unwrap();
+    assert!(resp.response_message.is_some());
+    let msg = resp.response_message.unwrap();
+    assert_eq!(msg.message_type, "APERAK");
+    assert!(msg.bo4e.is_some());
+    assert!(msg.edifact.is_none());
+}
+
+#[test]
+fn test_validate_v2_response_without_response_message() {
+    let json = r#"{
+        "report": {"valid": true, "issues": []},
+        "duration_ms": 3.0
+    }"#;
+
+    let resp: ValidateV2Response = serde_json::from_str(json).unwrap();
+    assert!(resp.response_message.is_none());
+}
+
+#[test]
+fn test_generated_response_payload_with_edifact() {
+    let json = r#"{
+        "message_type": "CONTRL",
+        "bo4e": null,
+        "edifact": "UNA:+.? '\nUNB+UNOC:3+recv+send+260302:1200+resp1'\nUNH+1+CONTRL:D:3:UN'\nUNT+2+1'\nUNZ+1+resp1'"
+    }"#;
+
+    let payload: GeneratedResponsePayload = serde_json::from_str(json).unwrap();
+    assert_eq!(payload.message_type, "CONTRL");
+    assert!(payload.bo4e.is_none());
+    assert!(payload.edifact.is_some());
+    assert!(payload.edifact.unwrap().contains("CONTRL"));
+}
+
+#[test]
 fn test_extract_validation_issues_empty_report() {
     use automapper_web::types::extract_validation_issues;
 
