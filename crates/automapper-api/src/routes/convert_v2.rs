@@ -14,7 +14,7 @@ use mig_assembly::assembler::Assembler;
 use mig_assembly::navigator::AssembledTreeNavigator;
 use mig_assembly::pid_detect::detect_pid;
 use mig_assembly::pid_filter::filter_mig_for_pid;
-use mig_assembly::tokenize::parse_to_segments;
+use mig_assembly::tokenize::{parse_to_segments, InterchangeChunks};
 
 use crate::contracts::convert_v2::{
     ConvertMode, ConvertV2Query, ConvertV2Request, ConvertV2Response,
@@ -79,16 +79,6 @@ pub(crate) async fn convert_v2(
             }))
         }
         ConvertMode::Bo4e => {
-            let service = state
-                .mig_registry
-                .service(&req.format_version)
-                .ok_or_else(|| ApiError::BadRequest {
-                    message: format!(
-                        "No MIG service available for format version '{}'",
-                        req.format_version
-                    ),
-                })?;
-
             // Step 1: Tokenize
             let segments =
                 parse_to_segments(req.input.as_bytes()).map_err(|e| ApiError::ConversionError {
@@ -104,13 +94,41 @@ pub(crate) async fn convert_v2(
             // Step 3: Extract envelope nachrichtendaten
             let nachrichtendaten = mig_bo4e::model::extract_nachrichtendaten(&chunks.envelope);
 
-            // Step 4: Detect PID from the first message to resolve variant
+            // Step 4: Detect message type from UNH
             let first_chunk = chunks
                 .messages
                 .first()
                 .ok_or_else(|| ApiError::BadRequest {
                     message: "No messages found in EDIFACT content".to_string(),
                 })?;
+            let (_, msg_type) = mig_bo4e::model::extract_unh_fields(&first_chunk.unh);
+            let msg_type_upper = msg_type.split(':').next().unwrap_or("").to_uppercase();
+
+            // Step 5: For APERAK/CONTRL, use the response MIG + flat engine
+            if msg_type_upper == "APERAK" || msg_type_upper == "CONTRL" {
+                return convert_response_message(
+                    &state,
+                    &req.format_version,
+                    &chunks,
+                    &nachrichtendaten,
+                    &msg_type_upper,
+                    enrich_codes,
+                    start,
+                );
+            }
+
+            // Step 6: UTILMD path — look up ConversionService for PID pipeline
+            let service = state
+                .mig_registry
+                .service(&req.format_version)
+                .ok_or_else(|| ApiError::BadRequest {
+                    message: format!(
+                        "No MIG service available for format version '{}'",
+                        req.format_version
+                    ),
+                })?;
+
+            // Step 7: Detect PID from the first message to resolve variant
             let first_segments = first_chunk.all_segments();
             let first_pid = detect_pid(&first_segments).map_err(|e| ApiError::ConversionError {
                 message: format!("PID detection error: {e}"),
@@ -286,4 +304,78 @@ pub(crate) async fn convert_v2(
             }))
         }
     }
+}
+
+/// Convert an APERAK or CONTRL message using the response MIG + flat mapping engine.
+///
+/// Unlike UTILMD, these message types have no PID detection or AHB-based MIG filtering —
+/// the full response MIG is used directly and the flat engine maps all segments at once.
+fn convert_response_message(
+    state: &AppState,
+    format_version: &str,
+    chunks: &InterchangeChunks,
+    nachrichtendaten: &serde_json::Value,
+    msg_type: &str,
+    enrich_codes: bool,
+    start: std::time::Instant,
+) -> Result<Json<ConvertV2Response>, ApiError> {
+    let response_mig = state
+        .mig_registry
+        .response_mig(format_version, msg_type)
+        .ok_or_else(|| ApiError::BadRequest {
+            message: format!(
+                "No {} MIG available for format version '{}'",
+                msg_type, format_version
+            ),
+        })?;
+
+    let response_engine = state
+        .mig_registry
+        .response_engine(format_version, msg_type)
+        .ok_or_else(|| ApiError::BadRequest {
+            message: format!(
+                "No {} mapping engine available for format version '{}'",
+                msg_type, format_version
+            ),
+        })?;
+
+    let mut nachrichten = Vec::new();
+
+    for (msg_idx, msg_chunk) in chunks.messages.iter().enumerate() {
+        let all_segments = msg_chunk.all_segments();
+
+        // Assemble using the full response MIG (no PID filtering)
+        let assembler = Assembler::new(response_mig);
+        let tree =
+            assembler
+                .assemble_generic(&all_segments)
+                .map_err(|e| ApiError::ConversionError {
+                    message: format!("assembly error in {} message {msg_idx}: {e}", msg_type),
+                })?;
+
+        // Flat forward mapping (no message/transaction split)
+        let mapped = response_engine.map_all_forward_enriched(&tree, enrich_codes);
+
+        // Extract UNH fields
+        let (unh_referenz, nachrichten_typ) = mig_bo4e::model::extract_unh_fields(&msg_chunk.unh);
+
+        nachrichten.push(mig_bo4e::Nachricht {
+            unh_referenz,
+            nachrichten_typ,
+            stammdaten: mapped,
+            transaktionen: vec![],
+        });
+    }
+
+    let interchange = mig_bo4e::Interchange {
+        nachrichtendaten: nachrichtendaten.clone(),
+        nachrichten,
+    };
+
+    Ok(Json(ConvertV2Response {
+        mode: "bo4e".to_string(),
+        result: serde_json::to_value(&interchange).unwrap_or_default(),
+        duration_ms: start.elapsed().as_secs_f64() * 1000.0,
+        validation: None,
+    }))
 }

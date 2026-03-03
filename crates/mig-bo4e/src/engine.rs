@@ -1170,6 +1170,17 @@ impl MappingEngine {
         self.map_all_forward_inner(tree, true)
     }
 
+    /// Like [`map_all_forward`](Self::map_all_forward) but with explicit
+    /// `enrich_codes` control (when `false`, code fields are plain strings
+    /// instead of `{"code": …, "meaning": …}` objects).
+    pub fn map_all_forward_enriched(
+        &self,
+        tree: &AssembledTree,
+        enrich_codes: bool,
+    ) -> serde_json::Value {
+        self.map_all_forward_inner(tree, enrich_codes)
+    }
+
     /// Inner implementation with enrichment control.
     fn map_all_forward_inner(&self, tree: &AssembledTree, enrich_codes: bool) -> serde_json::Value {
         let mut result = serde_json::Map::new();
