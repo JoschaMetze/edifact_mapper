@@ -52,6 +52,10 @@ enum Commands {
         /// EDIFACT message type (e.g., "UTILMD")
         #[arg(long)]
         message_type: String,
+
+        /// Path to persistent enum index JSON (default: generated/code_enum_index.json)
+        #[arg(long, default_value = "generated/code_enum_index.json")]
+        enum_index: PathBuf,
     },
 
     /// Generate mapper code from MIG XML schemas
@@ -486,6 +490,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             output_dir,
             format_version,
             message_type,
+            enum_index,
         } => {
             let mig_variant =
                 infer_variant(mig_path.file_name().and_then(|n| n.to_str()).unwrap_or(""));
@@ -513,6 +518,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 &ahb,
                 &format_version,
                 &output_dir,
+                Some(&enum_index),
             )?;
             eprintln!(
                 "Generated {} PID types to {:?}",

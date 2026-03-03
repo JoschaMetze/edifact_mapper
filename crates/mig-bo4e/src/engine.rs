@@ -459,21 +459,25 @@ impl MappingEngine {
                                 element_idx,
                                 component_idx,
                             ) {
-                                let meaning = code_lookup
-                                    .meaning_for(
-                                        source_path,
-                                        &seg_tag,
-                                        element_idx,
-                                        component_idx,
-                                        &mapped_val,
-                                    )
-                                    .map(|m| serde_json::Value::String(m.to_string()))
+                                let enrichment = code_lookup.enrichment_for(
+                                    source_path,
+                                    &seg_tag,
+                                    element_idx,
+                                    component_idx,
+                                    &mapped_val,
+                                );
+                                let meaning = enrichment
+                                    .map(|e| serde_json::Value::String(e.meaning.clone()))
                                     .unwrap_or(serde_json::Value::Null);
 
-                                let enriched = serde_json::json!({
-                                    "code": mapped_val,
-                                    "meaning": meaning,
-                                });
+                                let mut obj = serde_json::Map::new();
+                                obj.insert("code".into(), serde_json::json!(mapped_val));
+                                obj.insert("meaning".into(), meaning);
+                                if let Some(enum_key) = enrichment.and_then(|e| e.enum_key.as_ref())
+                                {
+                                    obj.insert("enum".into(), serde_json::json!(enum_key));
+                                }
+                                let enriched = serde_json::Value::Object(obj);
                                 set_nested_value_json(&mut companion_result, target, enriched);
                                 continue;
                             }
@@ -536,21 +540,24 @@ impl MappingEngine {
                             element_idx,
                             component_idx,
                         ) {
-                            let meaning = code_lookup
-                                .meaning_for(
-                                    source_path,
-                                    &seg_tag,
-                                    element_idx,
-                                    component_idx,
-                                    &mapped_val,
-                                )
-                                .map(|m| serde_json::Value::String(m.to_string()))
+                            let enrichment = code_lookup.enrichment_for(
+                                source_path,
+                                &seg_tag,
+                                element_idx,
+                                component_idx,
+                                &mapped_val,
+                            );
+                            let meaning = enrichment
+                                .map(|e| serde_json::Value::String(e.meaning.clone()))
                                 .unwrap_or(serde_json::Value::Null);
 
-                            let enriched = serde_json::json!({
-                                "code": mapped_val,
-                                "meaning": meaning,
-                            });
+                            let mut obj = serde_json::Map::new();
+                            obj.insert("code".into(), serde_json::json!(mapped_val));
+                            obj.insert("meaning".into(), meaning);
+                            if let Some(enum_key) = enrichment.and_then(|e| e.enum_key.as_ref()) {
+                                obj.insert("enum".into(), serde_json::json!(enum_key));
+                            }
+                            let enriched = serde_json::Value::Object(obj);
                             set_nested_value_json(result, target, enriched);
                             continue;
                         }
@@ -2886,6 +2893,150 @@ mod tests {
         let hk = &bo4e_enriched["marktlokationEdifact"]["haushaltskunde"];
         assert_eq!(hk["code"].as_str(), Some("Z15"));
         assert_eq!(hk["meaning"].as_str(), Some("Haushaltskunde"));
+        // Without "enum" in schema codes, no "enum" in output
+        assert!(hk.get("enum").is_none());
+    }
+
+    #[test]
+    fn test_extract_companion_fields_with_enum_enrichment() {
+        use crate::code_lookup::CodeLookup;
+        use mig_assembly::assembler::*;
+
+        // Schema with "enum" field on codes
+        let schema = serde_json::json!({
+            "fields": {
+                "sg4": {
+                    "children": {
+                        "sg8_z01": {
+                            "children": {
+                                "sg10": {
+                                    "segments": [{
+                                        "id": "CCI",
+                                        "elements": [{
+                                            "index": 2,
+                                            "components": [{
+                                                "sub_index": 0,
+                                                "type": "code",
+                                                "codes": [
+                                                    {"value": "Z15", "name": "Haushaltskunde", "enum": "HAUSHALTSKUNDE"},
+                                                    {"value": "Z18", "name": "Kein Haushaltskunde", "enum": "KEIN_HAUSHALTSKUNDE"}
+                                                ]
+                                            }]
+                                        }]
+                                    }],
+                                    "source_group": "SG10"
+                                }
+                            },
+                            "segments": [],
+                            "source_group": "SG8"
+                        }
+                    },
+                    "segments": [],
+                    "source_group": "SG4"
+                }
+            }
+        });
+
+        let code_lookup = CodeLookup::from_schema_value(&schema);
+
+        let tree = AssembledTree {
+            segments: vec![],
+            groups: vec![AssembledGroup {
+                group_id: "SG4".to_string(),
+                repetitions: vec![AssembledGroupInstance {
+                    segments: vec![],
+                    child_groups: vec![AssembledGroup {
+                        group_id: "SG8".to_string(),
+                        repetitions: vec![AssembledGroupInstance {
+                            segments: vec![],
+                            child_groups: vec![AssembledGroup {
+                                group_id: "SG10".to_string(),
+                                repetitions: vec![AssembledGroupInstance {
+                                    segments: vec![AssembledSegment {
+                                        tag: "CCI".to_string(),
+                                        elements: vec![vec![], vec![], vec!["Z15".to_string()]],
+                                    }],
+                                    child_groups: vec![],
+                                    skipped_segments: vec![],
+                                }],
+                            }],
+                            skipped_segments: vec![],
+                        }],
+                    }],
+                    skipped_segments: vec![],
+                }],
+            }],
+            post_group_start: 0,
+        };
+
+        let mut companion_fields: IndexMap<String, FieldMapping> = IndexMap::new();
+        companion_fields.insert(
+            "cci.2".to_string(),
+            FieldMapping::Simple("haushaltskunde".to_string()),
+        );
+
+        let def = MappingDefinition {
+            meta: MappingMeta {
+                entity: "Marktlokation".to_string(),
+                bo4e_type: "Marktlokation".to_string(),
+                companion_type: Some("MarktlokationEdifact".to_string()),
+                source_group: "SG4.SG8.SG10".to_string(),
+                source_path: Some("sg4.sg8_z01.sg10".to_string()),
+                discriminator: None,
+            },
+            fields: IndexMap::new(),
+            companion_fields: Some(companion_fields),
+            complex_handlers: None,
+        };
+
+        let engine = MappingEngine::from_definitions(vec![]).with_code_lookup(code_lookup);
+        let bo4e = engine.map_forward(&tree, &def, 0);
+        let hk = &bo4e["marktlokationEdifact"]["haushaltskunde"];
+        assert_eq!(hk["code"].as_str(), Some("Z15"));
+        assert_eq!(hk["meaning"].as_str(), Some("Haushaltskunde"));
+        assert_eq!(
+            hk["enum"].as_str(),
+            Some("HAUSHALTSKUNDE"),
+            "enum field should be present"
+        );
+    }
+
+    #[test]
+    fn test_reverse_mapping_accepts_enriched_with_enum() {
+        // Reverse mapping should ignore "enum" field — only reads "code"
+        let mut companion_fields: IndexMap<String, FieldMapping> = IndexMap::new();
+        companion_fields.insert(
+            "cci.2".to_string(),
+            FieldMapping::Simple("haushaltskunde".to_string()),
+        );
+
+        let def = MappingDefinition {
+            meta: MappingMeta {
+                entity: "Test".to_string(),
+                bo4e_type: "Test".to_string(),
+                companion_type: Some("TestEdifact".to_string()),
+                source_group: "SG4".to_string(),
+                source_path: None,
+                discriminator: None,
+            },
+            fields: IndexMap::new(),
+            companion_fields: Some(companion_fields),
+            complex_handlers: None,
+        };
+
+        let engine = MappingEngine::from_definitions(vec![]);
+
+        let bo4e = serde_json::json!({
+            "testEdifact": {
+                "haushaltskunde": {
+                    "code": "Z15",
+                    "meaning": "Haushaltskunde",
+                    "enum": "HAUSHALTSKUNDE"
+                }
+            }
+        });
+        let instance = engine.map_reverse(&bo4e, &def);
+        assert_eq!(instance.segments[0].elements[2], vec!["Z15"]);
     }
 
     #[test]

@@ -136,7 +136,7 @@ fn test_generate_pid_types_writes_files() {
     let output_dir = tempfile::tempdir().unwrap();
     let (mig, ahb) = load_utilmd();
 
-    pid_type_gen::generate_pid_types(&mig, &ahb, "FV2504", output_dir.path()).unwrap();
+    pid_type_gen::generate_pid_types(&mig, &ahb, "FV2504", output_dir.path(), None).unwrap();
 
     let pids_dir = output_dir.path().join("fv2504").join("utilmd").join("pids");
     assert!(pids_dir.exists(), "pids/ directory should exist");
@@ -460,7 +460,7 @@ fn generate_real_pid_types() {
     let output_dir = Path::new("../../crates/mig-types/src/generated");
     let (mig, ahb) = load_utilmd();
 
-    pid_type_gen::generate_pid_types(&mig, &ahb, "FV2504", output_dir)
+    pid_type_gen::generate_pid_types(&mig, &ahb, "FV2504", output_dir, None)
         .expect("Failed to generate PID types");
 
     println!("Generated PID types to {:?}", output_dir);

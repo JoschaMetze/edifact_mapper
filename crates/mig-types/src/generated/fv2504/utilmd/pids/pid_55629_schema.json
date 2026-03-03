@@ -17,6 +17,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -62,22 +63,27 @@
                     {
                       "codes": [
                         {
+                          "enum": "ELEKTRONISCHE_POST",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
@@ -110,6 +116,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -136,10 +143,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -163,6 +172,7 @@
             {
               "codes": [
                 {
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -189,10 +199,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -232,6 +244,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "TECHNISCHE_RESSOURCE",
                       "name": "Technische Ressource",
                       "value": "Z20"
                     }
@@ -292,6 +305,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "PRUEFIDENTIFIKATOR",
                           "name": "Prüfidentifikator",
                           "value": "Z13"
                         }
@@ -304,6 +318,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "GPKE_AENDERUNG_DATEN_TR_NB_MSB",
                           "name": "GPKE / Änderung Daten der TR vom NB an MSB",
                           "value": "55629"
                         }
@@ -329,10 +344,12 @@
                     {
                       "codes": [
                         {
+                          "enum": "GUELTIGE_DATEN",
                           "name": "Gültige Daten",
                           "value": "Z49"
                         },
                         {
+                          "enum": "KEINE_DATEN",
                           "name": "Keine Daten",
                           "value": "Z53"
                         }
@@ -370,6 +387,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "VERWENDUNG_DATEN",
                           "name": "Verwendung der Daten ab",
                           "value": "Z25"
                         }
@@ -388,6 +406,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "CCYYMMDDHHMMZZZ",
                           "name": "CCYYMMDDHHMMZZZ",
                           "value": "303"
                         }
@@ -413,6 +432,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "VERWENDUNG_DATEN_BIS",
                           "name": "Verwendung der Daten bis",
                           "value": "Z26"
                         }
@@ -431,6 +451,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "CCYYMMDDHHMMZZZ",
                           "name": "CCYYMMDDHHMMZZZ",
                           "value": "303"
                         }
@@ -467,14 +488,17 @@
                     {
                       "codes": [
                         {
+                          "enum": "STROMVERBRAUCHSART",
                           "name": "Stromverbrauchsart",
                           "value": "Z17"
                         },
                         {
+                          "enum": "STROMERZEUGUNGSART",
                           "name": "Stromerzeugungsart",
                           "value": "Z50"
                         },
                         {
+                          "enum": "SPEICHER",
                           "name": "Speicher",
                           "value": "Z56"
                         }
@@ -495,18 +519,22 @@
                         {
                           "codes": [
                             {
+                              "enum": "HIERUNTER_STROM_VERSTEHEN_AUSSCHLIESSLICH_BETRIEB",
                               "name": "Hierunter ist Strom zu verstehen, der ausschließlich zum Betrieb von Endverbrauchsgeräten (z.B. Radio, Fernseher, Kühlschrank, Beleuchtung...) genutzt wird.",
                               "value": "Z64"
                             },
                             {
+                              "enum": "HIERUNTER_STROM_VERSTEHEN_WAERMEBEDARFSDECKUNG_Z_B",
                               "name": "Hierunter ist Strom zu verstehen, der zur Wärmebedarfsdeckung (z.B. Standspeicherheizung, Fußbodenspeicherheizungen, Wärmepumpe....) eingesetzt wird.",
                               "value": "Z65"
                             },
                             {
+                              "enum": "E_MOBILITAET",
                               "name": "E-Mobilität",
                               "value": "ZE5"
                             },
                             {
+                              "enum": "STRASSENBELEUCHTUNG",
                               "name": "Straßenbeleuchtung",
                               "value": "ZA8"
                             }
@@ -532,26 +560,32 @@
                         {
                           "codes": [
                             {
+                              "enum": "HIERUNTER_FALLEN_HEIZUNGSANLAGEN_DENEN_SPEICHERMEDIUM_Z_B",
                               "name": "Hierunter fallen Heizungsanlagen bei denen das Speichermedium (z.B. Standspeicherheizkörper, Estrich als Fußbodenspeicher) während lastschwacher Zeiten aufgeladen wird und während des Tages Wärme abgeben.",
                               "value": "Z56"
                             },
                             {
+                              "enum": "WAERMEPUMPEN_ENTZIEHEN_UMWELT_LUFT_WASSER_ERDREICH_WAERME",
                               "name": "Wärmepumpen entziehen der Umwelt (Luft, Wasser oder Erdreich) Wärme und heben mit technischem Verfahren die Temperatur auf ein Temperaturniveau an, um Gebäude zu heizen. Der Stromverbrauch steht somit immer in zeitlicher Verbindung zur Wärmeerzeugung.",
                               "value": "Z57"
                             },
                             {
+                              "enum": "HIERUNTER_FALLEN_HEIZUNGSANLAGEN_DIREKT_DAMIT_ZEITGLEICH",
                               "name": "Hierunter fallen Heizungsanlagen, die direkt und damit zeitgleich elektrische Energie in Wärme umwandeln (z.B. Konvektionsheizung, Infrarotheizung, Flächenheizung).",
                               "value": "Z61"
                             },
                             {
+                              "enum": "WAERMEPUMPE_WAERME_KAELTE",
                               "name": "Wärmepumpe (Wärme und Kälte)",
                               "value": "ZV5"
                             },
                             {
+                              "enum": "WAERMEPUMPE_KAELTE",
                               "name": "Wärmepumpe (Kälte)",
                               "value": "ZV6"
                             },
                             {
+                              "enum": "WAERMEPUMPE_WAERME",
                               "name": "Wärmepumpe (Wärme)",
                               "value": "ZV7"
                             }
@@ -577,14 +611,17 @@
                         {
                           "codes": [
                             {
+                              "enum": "MARKTLOKATION_OEFFENTLLICHE_LADEMOEGLICHKEIT_VORHANDEN",
                               "name": "An der Marktlokation ist eine nicht öffentlliche Lademöglichkeit vorhanden",
                               "value": "ZE6"
                             },
                             {
+                              "enum": "ES_HANDELT_SICH_UM_OEFFENTLICHE_LADESAEULE_MEHREREN",
                               "name": "Es handelt sich um eine öffentliche Ladesäule mit ggf. mehreren Ladeanschlüssen an der Marktlokation",
                               "value": "Z87"
                             },
                             {
+                              "enum": "ES_HANDELT_SICH_UM_MEHR_OEFFENTLICHE_LADESAEULE",
                               "name": "Es handelt sich um mehr als eine öffentliche Ladesäule an der Marktlokation",
                               "value": "ZE7"
                             }
@@ -610,22 +647,27 @@
                         {
                           "codes": [
                             {
+                              "enum": "SOLAR",
                               "name": "Solar",
                               "value": "ZF5"
                             },
                             {
+                              "enum": "WIND",
                               "name": "Wind",
                               "value": "ZF6"
                             },
                             {
+                              "enum": "GAS",
                               "name": "Gas",
                               "value": "ZG0"
                             },
                             {
+                              "enum": "WASSER",
                               "name": "Wasser",
                               "value": "ZG1"
                             },
                             {
+                              "enum": "SONSTIGE_ERZEUGUNGSART",
                               "name": "Sonstige Erzeugungsart",
                               "value": "ZG5"
                             }
@@ -651,18 +693,22 @@
                         {
                           "codes": [
                             {
+                              "enum": "WASSERSTOFFSPEICHER",
                               "name": "Wasserstoffspeicher",
                               "value": "ZF7"
                             },
                             {
+                              "enum": "PUMPSPEICHER",
                               "name": "Pumpspeicher",
                               "value": "ZF8"
                             },
                             {
+                              "enum": "BATTERIESPEICHER",
                               "name": "Batteriespeicher",
                               "value": "ZF9"
                             },
                             {
+                              "enum": "SONSTIGE_SPEICHERART",
                               "name": "Sonstige Speicherart",
                               "value": "ZG6"
                             }
@@ -688,10 +734,12 @@
                         {
                           "codes": [
                             {
+                              "enum": "TECHNISCHEN_RESSOURCE_FAELLT_PARAGRAPH_14A_ENWG",
                               "name": "Technischen Ressource fällt unter § 14a EnWG",
                               "value": "ZG8"
                             },
                             {
+                              "enum": "TECHNISCHEN_RESSOURCE_FAELLT_PARAGRAPH_14A_ENWG_2",
                               "name": "Technischen Ressource fällt nicht unter § 14a EnWG",
                               "value": "ZG9"
                             }
@@ -715,6 +763,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "INFORMATION_WEITEREN_TECHNISCHEN_EINRICHTUNGEN",
                           "name": "Information zu weiteren technischen Einrichtungen",
                           "value": "Z63"
                         }
@@ -735,10 +784,12 @@
                         {
                           "codes": [
                             {
+                              "enum": "DIESER_CODE_AUSZUWAEHLEN_NEBEN_GENANNTEN_TECHNISCHEN",
                               "name": "Dieser Code ist auszuwählen, wenn neben den genannten Technischen Ressourcen in der verbrauchenden Marktlokation weitere technische Einrichtungen (z. B. Kraft/ Licht) vorhanden sind",
                               "value": "ZH7"
                             },
                             {
+                              "enum": "DIESER_CODE_AUSZUWAEHLEN_NEBEN_GENANNTEN_TECHNISCHEN_2",
                               "name": "Dieser Code ist auszuwählen, wenn neben den genannten Technischen Ressourcen in der verbrauchenden Marktlokation keine weitere technische Einrichtung vorhanden ist.",
                               "value": "ZH8"
                             }
@@ -775,6 +826,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "NENNLEISTUNG_AUFNAHME",
                               "name": "Nennleistung (Aufnahme)",
                               "value": "Z43"
                             }
@@ -793,6 +845,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "KILOWATT",
                               "name": "Kilowatt",
                               "value": "KWT"
                             }
@@ -818,6 +871,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "NENNLEISTUNG_ABGABE",
                               "name": "Nennleistung (Abgabe)",
                               "value": "Z44"
                             }
@@ -836,6 +890,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "KILOWATT",
                               "name": "Kilowatt",
                               "value": "KWT"
                             }
@@ -861,6 +916,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "SPEICHERKAPAZITAET",
                               "name": "Speicherkapazität",
                               "value": "Z42"
                             }
@@ -879,6 +935,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "KILOWATTSTUNDE",
                               "name": "Kilowattstunde",
                               "value": "KWH"
                             }
@@ -916,6 +973,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "DATEN_TECHNISCHEN_RESSOURCE",
                       "name": "Daten der Technischen Ressource",
                       "value": "Z52"
                     }
@@ -949,6 +1007,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "STEUERBARE_RESSOURCE",
                           "name": "Steuerbare Ressource",
                           "value": "Z38"
                         }
@@ -980,6 +1039,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "NETZLOKATION",
                           "name": "Netzlokation",
                           "value": "Z32"
                         }
@@ -1018,6 +1078,7 @@
             {
               "codes": [
                 {
+                  "enum": "TRANSAKTION",
                   "name": "Transaktion",
                   "value": "24"
                 }
@@ -1051,6 +1112,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "TRANSAKTIONSGRUND",
                       "name": "Transaktionsgrund",
                       "value": "7"
                     }
@@ -1083,6 +1145,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "AENDERUNG_DATEN_TR",
                       "name": "Änderung Daten der TR",
                       "value": "ZY0"
                     }
@@ -1102,54 +1165,67 @@
                 {
                   "codes": [
                     {
+                      "enum": "LFN_MARKTLOKATION_VOLLSTAENDIG_ZUGEORDNET_VOLLSTAENDIGE_100",
                       "name": "Der LFN wird einer Marktlokation vollständig zugeordnet (vollständige (100%ige) Zuordnung).\r\nDieser Geschäftsvorfall ist auch für die Änderung von einer tranchierten Marktlokation in eine nicht tranchierte Marktlokation anzuwenden.",
                       "value": "ZW0"
                     },
                     {
+                      "enum": "LFN_BESTEHENDEN_TRANCHE_VOLLSTAENDIG_ZUGEORDNET",
                       "name": "Der LFN wird einer bestehenden Tranche vollständig zugeordnet (vollständige (100%ige) Zuordnung). \r\nDieser Geschäftsvorfall ist bei einem direkten Übergang, d. h. lückenlosem Zuordnungsende und -beginn und unter Beibehaltung der Tranche, anzuwenden.",
                       "value": "ZW1"
                     },
                     {
+                      "enum": "LFN_NEU_BILDENDEN_TRANCHE_ZUGEORDNET_ANTEILIGER",
                       "name": "Der LFN wird einer neu zu bildenden Tranche zugeordnet (anteiliger Zuordnungsvorgang unter Bildung neuer Tranchen",
                       "value": "ZW2"
                     },
                     {
+                      "enum": "ERZEUGENDE_MARKTLOKATION",
                       "name": "Erzeugende Marktlokation",
                       "value": "ZW3"
                     },
                     {
+                      "enum": "VERBRAUCHENDE_MARKTLOKATION",
                       "name": "Verbrauchende Marktlokation",
                       "value": "ZW4"
                     },
                     {
+                      "enum": "TRANCHE",
                       "name": "Tranche",
                       "value": "ZW5"
                     },
                     {
+                      "enum": "PAUSCHALE_MARKTLOKATION",
                       "name": "Pauschale Marktlokation",
                       "value": "ZW6"
                     },
                     {
+                      "enum": "GEMESSENE_MARKTLOKATION",
                       "name": "Gemessene Marktlokation",
                       "value": "ZW7"
                     },
                     {
+                      "enum": "FALL_1",
                       "name": "Fall 1",
                       "value": "ZW8"
                     },
                     {
+                      "enum": "FALL_2",
                       "name": "Fall 2",
                       "value": "ZW9"
                     },
                     {
+                      "enum": "FALL_3",
                       "name": "Fall 3",
                       "value": "ZX0"
                     },
                     {
+                      "enum": "FALL_4",
                       "name": "Fall 4",
                       "value": "ZX1"
                     },
                     {
+                      "enum": "RUHENDE_MARKTLOKATION",
                       "name": "ruhende Marktlokation",
                       "value": "ZAP"
                     }
@@ -1169,10 +1245,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "KUNDE_VERLAESST_BESTEHENDE_MARKTLOKATION",
                       "name": "Kunde verlässt eine schon bestehende Marktlokation",
                       "value": "E01"
                     },
                     {
+                      "enum": "KUNDE_BLEIBT_MARKTLOKATION_MARKTPARTNER_GEWECHSELT",
                       "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
                       "value": "E03"
                     }
@@ -1206,70 +1284,87 @@
             {
               "codes": [
                 {
+                  "enum": "DIENT_MITTEILUNG_AUFNAHME_NETZNUTZUNG_VERBRAUCHENDEN",
                   "name": "Dient der Mitteilung über die Aufnahme der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Einzug oder Lieferantenwechsel, Aufnahme einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Übernahme des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E01"
                 },
                 {
+                  "enum": "DIENT_MITTEILUNG_BEENDIGUNG_NETZNUTZUNG_VERBRAUCHENDEN",
                   "name": "Dient der Mitteilung über die Beendigung der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Auszug oder Lieferantenwechsel, Beendigung einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Abgabe des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E02"
                 },
                 {
+                  "enum": "DIENT_MITTEILUNG_AENDERUNGEN_STAMMDATEN_OHNE_DABEI",
                   "name": "Dient der Mitteilung über die Änderungen von Stammdaten ohne dabei das Verhältnis Kunde, Lieferant und Messstellenbetreiber zu verändern. Z. B. Anpassung der Jahresverbrauchsprognose oder Namensänderung.",
                   "value": "E03"
                 },
                 {
+                  "enum": "DIENT_UEBERMITTLUNG_STAMMDATEN_MARKTLOKATION_MESSLOKATION",
                   "name": "Dient der Übermittlung von Stammdaten zu einer Marktlokation oder Messlokation.",
                   "value": "Z14"
                 },
                 {
+                  "enum": "DIENT_MITTEILUNG_KUENDIGUNG_LIEFER",
                   "name": "Dient der Mitteilung über die Kündigung eines Liefer- oder Messstellenbetriebsvertrags zur Kommunikation zwischen zwei LF oder zwei MSB.",
                   "value": "E35"
                 },
                 {
+                  "enum": "DIESE_NACHRICHT_DIENT_UEBERMITTLUNG_HINWEISEN_BEENDIGUNG",
                   "name": "Diese Nachricht dient der Übermittlung von Hinweisen und zur Beendigung der Zuordnung eines LFA oder eines zukünftigen LF zu einer Marktlokation. Es erfordert keine Antwortnachricht.",
                   "value": "E44"
                 },
                 {
+                  "enum": "KATEGORIE_BILANZKREISZUORDNUNGSLISTE_MABIS_VERSENDET",
                   "name": "Mit der Kategorie wird die Bilanzkreiszuordnungsliste nach MaBiS versendet.",
                   "value": "E40"
                 },
                 {
+                  "enum": "KATEGORIE_CLEARINGLISTE_MABIS_VERSENDET",
                   "name": "Mit der Kategorie wird die Clearingliste nach MaBiS versendet.",
                   "value": "Z05"
                 },
                 {
+                  "enum": "DIESER_KATEGORIE_WERDEN_AKTIVIERUNGEN_DEAKTIVIERUNGEN",
                   "name": "Unter dieser Kategorie werden die Aktivierungen und Deaktivierungen der Bilanzierungszeitreihen mit ihrer entsprechenden Kennzeichnung des Zeitreihentypen versendet.",
                   "value": "Z07"
                 },
                 {
+                  "enum": "ZUORDNUNGSERMAECHTIGUNG",
                   "name": "Zuordnungsermächtigung",
                   "value": "Z17"
                 },
                 {
+                  "enum": "PROFILDEFINITION",
                   "name": "Profildefinition",
                   "value": "Z18"
                 },
                 {
+                  "enum": "DZUE_LISTE",
                   "name": "DZÜ-Liste",
                   "value": "Z37"
                 },
                 {
+                  "enum": "AUFFORDERUNG",
                   "name": "Aufforderung",
                   "value": "Z40"
                 },
                 {
+                  "enum": "ZUORDNUNG_ZP_NGZ_NZR",
                   "name": "Zuordnung ZP der NGZ zur NZR",
                   "value": "Z71"
                 },
                 {
+                  "enum": "ANFRAGE_DATENCLEARING",
                   "name": "Anfrage Datenclearing",
                   "value": "Z88"
                 },
                 {
+                  "enum": "ZUORDNUNG_LOKATION",
                   "name": "Zuordnung zur Lokation",
                   "value": "Z89"
                 },
                 {
+                  "enum": "BEENDIGUNG_ZUORDNUNG_LOKATION",
                   "name": "Beendigung der Zuordnung zur Lokation",
                   "value": "Z90"
                 }
@@ -1308,6 +1403,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -1326,6 +1422,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -1363,6 +1460,7 @@
             {
               "codes": [
                 {
+                  "enum": "NETZANSCHLUSS_STAMMDATEN",
                   "name": "Netzanschluss-Stammdaten",
                   "value": "UTILMD"
                 }
@@ -1375,6 +1473,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -1387,6 +1486,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2011_A",
                   "name": "Ausgabe 2011 - A",
                   "value": "11A"
                 }
@@ -1399,6 +1499,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -1411,6 +1512,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "S2.1"
                 }
@@ -1436,10 +1538,12 @@
             {
               "codes": [
                 {
+                  "enum": "BEGINN",
                   "name": "Beginn",
                   "value": "C"
                 },
                 {
+                  "enum": "ENDE",
                   "name": "Ende",
                   "value": "F"
                 }

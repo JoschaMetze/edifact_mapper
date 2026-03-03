@@ -17,6 +17,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -62,22 +63,27 @@
                     {
                       "codes": [
                         {
+                          "enum": "ELEKTRONISCHE_POST",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
@@ -110,6 +116,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -136,10 +143,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -163,6 +172,7 @@
             {
               "codes": [
                 {
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -189,10 +199,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -232,6 +244,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "MARKTLOKATION",
                       "name": "Marktlokation",
                       "value": "Z16"
                     }
@@ -292,6 +305,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "PRUEFIDENTIFIKATOR",
                           "name": "Prüfidentifikator",
                           "value": "Z13"
                         }
@@ -304,6 +318,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "GPKE_RUECKMELDUNG_ANFRAGE_DATEN_MALO_WMSB_MSB",
                           "name": "GPKE / Rückmeldung / Anfrage Daten der MaLo wMSB an MSB",
                           "value": "55665"
                         }
@@ -329,6 +344,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "TRANSAKTIONS_REFERENZNUMMER",
                           "name": "Transaktions-Referenznummer",
                           "value": "TN"
                         }
@@ -360,18 +376,22 @@
                     {
                       "codes": [
                         {
+                          "enum": "SYSTEM_VORHANDENE_DATEN",
                           "name": "Im System vorhandene Daten",
                           "value": "Z47"
                         },
                         {
+                          "enum": "ERWARTETE_DATEN",
                           "name": "Erwartete Daten",
                           "value": "Z48"
                         },
                         {
+                          "enum": "SYSTEM_KEINE_DATEN_VORHANDEN",
                           "name": "Im System keine Daten vorhanden",
                           "value": "Z54"
                         },
                         {
+                          "enum": "KEINE_DATEN_ERWARTET",
                           "name": "Keine Daten erwartet",
                           "value": "Z55"
                         }
@@ -409,6 +429,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "VERWENDUNG_DATEN",
                           "name": "Verwendung der Daten ab",
                           "value": "Z25"
                         }
@@ -427,6 +448,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "CCYYMMDDHHMMZZZ",
                           "name": "CCYYMMDDHHMMZZZ",
                           "value": "303"
                         }
@@ -452,6 +474,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "VERWENDUNG_DATEN_BIS",
                           "name": "Verwendung der Daten bis",
                           "value": "Z26"
                         }
@@ -470,6 +493,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "CCYYMMDDHHMMZZZ",
                           "name": "CCYYMMDDHHMMZZZ",
                           "value": "303"
                         }
@@ -495,10 +519,12 @@
                     {
                       "codes": [
                         {
+                          "enum": "ERWARTETE_TERMINDATEN_MARKTLOKATION",
                           "name": "Erwartete Termindaten der Marktlokation",
                           "value": "Z51"
                         },
                         {
+                          "enum": "SYSTEM_VORHANDENE_TERMINDATEN_MARKTLOKATION",
                           "name": "Im System vorhandene Termindaten der Marktlokation",
                           "value": "Z52"
                         }
@@ -530,6 +556,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "TURNUSABLESUNG",
                           "name": "Turnusablesung",
                           "value": "752"
                         }
@@ -548,10 +575,12 @@
                     {
                       "codes": [
                         {
+                          "enum": "MMWW_MMWW",
                           "name": "MMWW-MMWW",
                           "value": "104"
                         },
                         {
+                          "enum": "MMDD",
                           "name": "MMDD",
                           "value": "106"
                         }
@@ -609,6 +638,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "WERTEGRANULARITAET",
                               "name": "Wertegranularität",
                               "value": "ZE4"
                             }
@@ -634,18 +664,22 @@
                         {
                           "codes": [
                             {
+                              "enum": "JAEHRLICH",
                               "name": "Jährlich",
                               "value": "ZD9"
                             },
                             {
+                              "enum": "HALBJAEHRLICH",
                               "name": "Halbjährlich",
                               "value": "ZE8"
                             },
                             {
+                              "enum": "QUARTALSWEISE",
                               "name": "Quartalsweise",
                               "value": "ZE9"
                             },
                             {
+                              "enum": "MONATLICH",
                               "name": "Monatlich",
                               "value": "ZB7"
                             }
@@ -669,6 +703,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "CODE_ZAEHLZEITDEFINITION",
                           "name": "Code der Zählzeitdefinition",
                           "value": "Z39"
                         }
@@ -713,6 +748,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "CODE_ZAEHLZEITREGISTERS",
                           "name": "Code des Zählzeitregisters",
                           "value": "Z38"
                         }
@@ -778,6 +814,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "NB",
                               "name": "NB",
                               "value": "ZA8"
                             }
@@ -803,22 +840,27 @@
                         {
                           "codes": [
                             {
+                              "enum": "NETZNUTZUNGSABRECHNUNG",
                               "name": "Netznutzungsabrechnung",
                               "value": "Z84"
                             },
                             {
+                              "enum": "BILANZKREISABRECHNUNG",
                               "name": "Bilanzkreisabrechnung",
                               "value": "Z85"
                             },
                             {
+                              "enum": "MEHRMINDERMENGENABRECHNUNG",
                               "name": "Mehrmindermengenabrechnung",
                               "value": "Z86"
                             },
                             {
+                              "enum": "UEBERMITTLUNG_HKNR",
                               "name": "Übermittlung an das HKNR",
                               "value": "Z92"
                             },
                             {
+                              "enum": "ES_LIEGT_KEIN_VERWENDUNGSZWECK_VOR",
                               "name": "Es liegt kein Verwendungszweck vor",
                               "value": "ZE1"
                             }
@@ -863,6 +905,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "LF",
                               "name": "LF",
                               "value": "ZA7"
                             }
@@ -888,22 +931,27 @@
                         {
                           "codes": [
                             {
+                              "enum": "NETZNUTZUNGSABRECHNUNG",
                               "name": "Netznutzungsabrechnung",
                               "value": "Z84"
                             },
                             {
+                              "enum": "BILANZKREISABRECHNUNG",
                               "name": "Bilanzkreisabrechnung",
                               "value": "Z85"
                             },
                             {
+                              "enum": "MEHRMINDERMENGENABRECHNUNG",
                               "name": "Mehrmindermengenabrechnung",
                               "value": "Z86"
                             },
                             {
+                              "enum": "ENDKUNDENABRECHNUNG",
                               "name": "Endkundenabrechnung",
                               "value": "Z47"
                             },
                             {
+                              "enum": "ES_LIEGT_KEIN_VERWENDUNGSZWECK_VOR",
                               "name": "Es liegt kein Verwendungszweck vor",
                               "value": "ZE1"
                             }
@@ -948,6 +996,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "UENB",
                               "name": "ÜNB",
                               "value": "ZA9"
                             }
@@ -973,10 +1022,12 @@
                         {
                           "codes": [
                             {
+                              "enum": "BILANZKREISABRECHNUNG",
                               "name": "Bilanzkreisabrechnung",
                               "value": "Z85"
                             },
                             {
+                              "enum": "ERMITTLUNG_AUSGEGLICHENHEIT_BILANZKREISEN",
                               "name": "Zur Ermittlung der Ausgeglichenheit von Bilanzkreisen",
                               "value": "ZB5"
                             }
@@ -1015,10 +1066,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "ERWARTETE_OBIS_DATEN_MARKTLOKATION",
                       "name": "Erwartete OBIS-Daten der Marktlokation",
                       "value": "ZA1"
                     },
                     {
+                      "enum": "SYSTEM_VORHANDENE_OBIS_DATEN_MARKTLOKATION",
                       "name": "Im System vorhandene OBIS-Daten der Marktlokation",
                       "value": "ZA2"
                     }
@@ -1050,6 +1103,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "PRODUKTIDENTIFIKATION",
                       "name": "Produktidentifikation",
                       "value": "5"
                     }
@@ -1070,6 +1124,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "OBIS_KENNZAHL",
                           "name": "OBIS-Kennzahl",
                           "value": "SRW"
                         }
@@ -1106,6 +1161,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "PRODUKT",
                           "name": "Produkt",
                           "value": "11"
                         }
@@ -1133,6 +1189,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "KEIN_PRODUKT_ZUGEORDNET",
                               "name": "Kein Produkt zugeordnet",
                               "value": "ZF6"
                             }
@@ -1156,6 +1213,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "CODE_LEISTUNGSKURVENDEFINITION",
                           "name": "Code der Leistungskurvendefinition",
                           "value": "Z53"
                         }
@@ -1221,10 +1279,12 @@
                         {
                           "codes": [
                             {
+                              "enum": "NB",
                               "name": "NB",
                               "value": "ZA8"
                             },
                             {
+                              "enum": "LF",
                               "name": "LF",
                               "value": "ZA7"
                             }
@@ -1263,10 +1323,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "ERWARTETE_PRODUKT_DATEN_MARKTLOKATION",
                       "name": "Erwartete Produkt-Daten der Marktlokation",
                       "value": "ZB5"
                     },
                     {
+                      "enum": "SYSTEM_VORHANDENE_PRODUKT_DATEN_MARKTLOKATION",
                       "name": "Im System vorhandene Produkt-Daten der Marktlokation",
                       "value": "ZB6"
                     }
@@ -1298,6 +1360,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "PRODUKTIDENTIFIKATION",
                       "name": "Produktidentifikation",
                       "value": "5"
                     }
@@ -1318,6 +1381,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "KONFIGURATIONSPRODUKT",
                           "name": "Konfigurationsprodukt",
                           "value": "Z12"
                         }
@@ -1350,6 +1414,7 @@
             {
               "codes": [
                 {
+                  "enum": "TRANSAKTION",
                   "name": "Transaktion",
                   "value": "24"
                 }
@@ -1383,6 +1448,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "TRANSAKTIONSGRUND",
                       "name": "Transaktionsgrund",
                       "value": "7"
                     }
@@ -1415,6 +1481,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "AENDERUNG_DATEN_MALO",
                       "name": "Änderung Daten der MaLo",
                       "value": "ZX6"
                     }
@@ -1434,10 +1501,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "ERZEUGENDE_MARKTLOKATION",
                       "name": "Erzeugende Marktlokation",
                       "value": "ZW3"
                     },
                     {
+                      "enum": "VERBRAUCHENDE_MARKTLOKATION",
                       "name": "Verbrauchende Marktlokation",
                       "value": "ZW4"
                     }
@@ -1457,10 +1526,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "KUNDE_VERLAESST_BESTEHENDE_MARKTLOKATION",
                       "name": "Kunde verlässt eine schon bestehende Marktlokation",
                       "value": "E01"
                     },
                     {
+                      "enum": "KUNDE_BLEIBT_MARKTLOKATION_MARKTPARTNER_GEWECHSELT",
                       "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
                       "value": "E03"
                     }
@@ -1486,6 +1557,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "STATUS_ANTWORT",
                       "name": "Status der Antwort",
                       "value": "E01"
                     }
@@ -1524,6 +1596,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "EBD_NR_E_0583",
                       "name": "EBD Nr. E_0583",
                       "value": "E_0583"
                     }
@@ -1569,70 +1642,87 @@
             {
               "codes": [
                 {
+                  "enum": "DIENT_MITTEILUNG_AUFNAHME_NETZNUTZUNG_VERBRAUCHENDEN",
                   "name": "Dient der Mitteilung über die Aufnahme der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Einzug oder Lieferantenwechsel, Aufnahme einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Übernahme des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E01"
                 },
                 {
+                  "enum": "DIENT_MITTEILUNG_BEENDIGUNG_NETZNUTZUNG_VERBRAUCHENDEN",
                   "name": "Dient der Mitteilung über die Beendigung der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Auszug oder Lieferantenwechsel, Beendigung einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Abgabe des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E02"
                 },
                 {
+                  "enum": "DIENT_MITTEILUNG_AENDERUNGEN_STAMMDATEN_OHNE_DABEI",
                   "name": "Dient der Mitteilung über die Änderungen von Stammdaten ohne dabei das Verhältnis Kunde, Lieferant und Messstellenbetreiber zu verändern. Z. B. Anpassung der Jahresverbrauchsprognose oder Namensänderung.",
                   "value": "E03"
                 },
                 {
+                  "enum": "DIENT_UEBERMITTLUNG_STAMMDATEN_MARKTLOKATION_MESSLOKATION",
                   "name": "Dient der Übermittlung von Stammdaten zu einer Marktlokation oder Messlokation.",
                   "value": "Z14"
                 },
                 {
+                  "enum": "DIENT_MITTEILUNG_KUENDIGUNG_LIEFER",
                   "name": "Dient der Mitteilung über die Kündigung eines Liefer- oder Messstellenbetriebsvertrags zur Kommunikation zwischen zwei LF oder zwei MSB.",
                   "value": "E35"
                 },
                 {
+                  "enum": "DIESE_NACHRICHT_DIENT_UEBERMITTLUNG_HINWEISEN_BEENDIGUNG",
                   "name": "Diese Nachricht dient der Übermittlung von Hinweisen und zur Beendigung der Zuordnung eines LFA oder eines zukünftigen LF zu einer Marktlokation. Es erfordert keine Antwortnachricht.",
                   "value": "E44"
                 },
                 {
+                  "enum": "KATEGORIE_BILANZKREISZUORDNUNGSLISTE_MABIS_VERSENDET",
                   "name": "Mit der Kategorie wird die Bilanzkreiszuordnungsliste nach MaBiS versendet.",
                   "value": "E40"
                 },
                 {
+                  "enum": "KATEGORIE_CLEARINGLISTE_MABIS_VERSENDET",
                   "name": "Mit der Kategorie wird die Clearingliste nach MaBiS versendet.",
                   "value": "Z05"
                 },
                 {
+                  "enum": "DIESER_KATEGORIE_WERDEN_AKTIVIERUNGEN_DEAKTIVIERUNGEN",
                   "name": "Unter dieser Kategorie werden die Aktivierungen und Deaktivierungen der Bilanzierungszeitreihen mit ihrer entsprechenden Kennzeichnung des Zeitreihentypen versendet.",
                   "value": "Z07"
                 },
                 {
+                  "enum": "ZUORDNUNGSERMAECHTIGUNG",
                   "name": "Zuordnungsermächtigung",
                   "value": "Z17"
                 },
                 {
+                  "enum": "PROFILDEFINITION",
                   "name": "Profildefinition",
                   "value": "Z18"
                 },
                 {
+                  "enum": "DZUE_LISTE",
                   "name": "DZÜ-Liste",
                   "value": "Z37"
                 },
                 {
+                  "enum": "AUFFORDERUNG",
                   "name": "Aufforderung",
                   "value": "Z40"
                 },
                 {
+                  "enum": "ZUORDNUNG_ZP_NGZ_NZR",
                   "name": "Zuordnung ZP der NGZ zur NZR",
                   "value": "Z71"
                 },
                 {
+                  "enum": "ANFRAGE_DATENCLEARING",
                   "name": "Anfrage Datenclearing",
                   "value": "Z88"
                 },
                 {
+                  "enum": "ZUORDNUNG_LOKATION",
                   "name": "Zuordnung zur Lokation",
                   "value": "Z89"
                 },
                 {
+                  "enum": "BEENDIGUNG_ZUORDNUNG_LOKATION",
                   "name": "Beendigung der Zuordnung zur Lokation",
                   "value": "Z90"
                 }
@@ -1671,6 +1761,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -1689,6 +1780,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -1726,6 +1818,7 @@
             {
               "codes": [
                 {
+                  "enum": "NETZANSCHLUSS_STAMMDATEN",
                   "name": "Netzanschluss-Stammdaten",
                   "value": "UTILMD"
                 }
@@ -1738,6 +1831,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -1750,6 +1844,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2011_A",
                   "name": "Ausgabe 2011 - A",
                   "value": "11A"
                 }
@@ -1762,6 +1857,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -1774,6 +1870,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "S2.1"
                 }
@@ -1799,10 +1896,12 @@
             {
               "codes": [
                 {
+                  "enum": "BEGINN",
                   "name": "Beginn",
                   "value": "C"
                 },
                 {
+                  "enum": "ENDE",
                   "name": "Ende",
                   "value": "F"
                 }

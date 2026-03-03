@@ -13,9 +13,16 @@ use std::path::Path;
 /// `segment_tag` is uppercase (e.g., "CCI", "CAV").
 pub type CodeLookupKey = (String, String, usize, usize);
 
-/// Maps EDIFACT code values to their human-readable meanings.
-/// E.g., "Z15" → "Haushaltskunde gem. EnWG".
-pub type CodeMeanings = BTreeMap<String, String>;
+/// Enrichment data for a single EDIFACT code value.
+#[derive(Debug, Clone)]
+pub struct CodeEnrichment {
+    pub meaning: String,
+    pub enum_key: Option<String>,
+}
+
+/// Maps EDIFACT code values to their enrichment data (meaning + optional enum key).
+/// E.g., "Z15" → CodeEnrichment { meaning: "Haushaltskunde gem. EnWG", enum_key: Some("HAUSHALTSKUNDE_ENWG") }.
+pub type CodeMeanings = BTreeMap<String, CodeEnrichment>;
 
 /// Complete code lookup table built from a PID schema JSON.
 #[derive(Debug, Clone, Default)]
@@ -71,6 +78,27 @@ impl CodeLookup {
         self.entries.contains_key(&key)
     }
 
+    /// Get the full enrichment data for a code value at the given position.
+    /// Returns `None` if the position is not a code field or the value is unknown.
+    pub fn enrichment_for(
+        &self,
+        source_path: &str,
+        segment_tag: &str,
+        element_index: usize,
+        component_index: usize,
+        value: &str,
+    ) -> Option<&CodeEnrichment> {
+        let key = (
+            source_path.to_string(),
+            segment_tag.to_string(),
+            element_index,
+            component_index,
+        );
+        self.entries
+            .get(&key)
+            .and_then(|meanings| meanings.get(value))
+    }
+
     /// Get the human-readable meaning for a code value at the given position.
     /// Returns `None` if the position is not a code field or the value is unknown.
     pub fn meaning_for(
@@ -81,16 +109,14 @@ impl CodeLookup {
         component_index: usize,
         value: &str,
     ) -> Option<&str> {
-        let key = (
-            source_path.to_string(),
-            segment_tag.to_string(),
+        self.enrichment_for(
+            source_path,
+            segment_tag,
             element_index,
             component_index,
-        );
-        self.entries
-            .get(&key)
-            .and_then(|meanings| meanings.get(value))
-            .map(|s| s.as_str())
+            value,
+        )
+        .map(|e| e.meaning.as_str())
     }
 
     /// Walk a group node recursively, collecting code entries.
@@ -208,10 +234,10 @@ impl CodeLookup {
                 for (key, meanings) in entries.iter() {
                     if key.0 == variant_path {
                         let agg_key = (key.1.clone(), key.2, key.3);
-                        merged
-                            .entry(agg_key)
-                            .or_default()
-                            .extend(meanings.iter().map(|(k, v)| (k.clone(), v.clone())));
+                        let target = merged.entry(agg_key).or_default();
+                        for (k, v) in meanings {
+                            target.insert(k.clone(), v.clone());
+                        }
                     }
                 }
             }
@@ -222,7 +248,7 @@ impl CodeLookup {
         }
     }
 
-    /// Extract code value→name mappings from a JSON codes array.
+    /// Extract code value→enrichment mappings from a JSON codes array.
     fn extract_codes(codes: &[Value]) -> CodeMeanings {
         let mut meanings = BTreeMap::new();
         for code in codes {
@@ -230,7 +256,17 @@ impl CodeLookup {
                 code.get("value").and_then(|v| v.as_str()),
                 code.get("name").and_then(|v| v.as_str()),
             ) {
-                meanings.insert(value.to_string(), name.to_string());
+                let enum_key = code
+                    .get("enum")
+                    .and_then(|v| v.as_str())
+                    .map(|s| s.to_string());
+                meanings.insert(
+                    value.to_string(),
+                    CodeEnrichment {
+                        meaning: name.to_string(),
+                        enum_key,
+                    },
+                );
             }
         }
         meanings
@@ -528,5 +564,93 @@ mod tests {
             lookup.meaning_for("sg4.sg8_z98.sg10", "CAV", 0, 0, "E06"),
             Some("Niederspannung")
         );
+    }
+
+    #[test]
+    fn test_enrichment_for_with_enum() {
+        let schema = serde_json::json!({
+            "fields": {
+                "sg4": {
+                    "children": {
+                        "sg10": {
+                            "segments": [{
+                                "id": "CCI",
+                                "elements": [{
+                                    "index": 2,
+                                    "components": [{
+                                        "sub_index": 0,
+                                        "type": "code",
+                                        "codes": [
+                                            {"value": "Z15", "name": "Haushaltskunde", "enum": "HAUSHALTSKUNDE"},
+                                            {"value": "Z18", "name": "Kein Haushaltskunde", "enum": "KEIN_HAUSHALTSKUNDE"}
+                                        ]
+                                    }]
+                                }]
+                            }],
+                            "source_group": "SG10"
+                        }
+                    },
+                    "segments": [],
+                    "source_group": "SG4"
+                }
+            }
+        });
+
+        let lookup = CodeLookup::from_schema_value(&schema);
+
+        let enrichment = lookup.enrichment_for("sg4.sg10", "CCI", 2, 0, "Z15");
+        assert!(enrichment.is_some());
+        let e = enrichment.unwrap();
+        assert_eq!(e.meaning, "Haushaltskunde");
+        assert_eq!(e.enum_key.as_deref(), Some("HAUSHALTSKUNDE"));
+
+        let e2 = lookup
+            .enrichment_for("sg4.sg10", "CCI", 2, 0, "Z18")
+            .unwrap();
+        assert_eq!(e2.enum_key.as_deref(), Some("KEIN_HAUSHALTSKUNDE"));
+
+        // meaning_for still works
+        assert_eq!(
+            lookup.meaning_for("sg4.sg10", "CCI", 2, 0, "Z15"),
+            Some("Haushaltskunde")
+        );
+    }
+
+    #[test]
+    fn test_backward_compat_no_enum() {
+        // Old schema format without "enum" field — should still work, enum_key is None
+        let schema = serde_json::json!({
+            "fields": {
+                "sg4": {
+                    "children": {
+                        "sg10": {
+                            "segments": [{
+                                "id": "CCI",
+                                "elements": [{
+                                    "index": 2,
+                                    "components": [{
+                                        "sub_index": 0,
+                                        "type": "code",
+                                        "codes": [
+                                            {"value": "Z15", "name": "Haushaltskunde"}
+                                        ]
+                                    }]
+                                }]
+                            }],
+                            "source_group": "SG10"
+                        }
+                    },
+                    "segments": [],
+                    "source_group": "SG4"
+                }
+            }
+        });
+
+        let lookup = CodeLookup::from_schema_value(&schema);
+        let enrichment = lookup.enrichment_for("sg4.sg10", "CCI", 2, 0, "Z15");
+        assert!(enrichment.is_some());
+        let e = enrichment.unwrap();
+        assert_eq!(e.meaning, "Haushaltskunde");
+        assert_eq!(e.enum_key, None); // No enum in old schema
     }
 }

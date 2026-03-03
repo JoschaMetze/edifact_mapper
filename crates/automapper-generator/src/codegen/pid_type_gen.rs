@@ -1387,6 +1387,17 @@ fn parse_child_field_line(line: &str) -> Option<(String, String)> {
 
 /// Generate a JSON schema describing a PID's structure for runtime use.
 pub fn generate_pid_schema(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbSchema) -> String {
+    let mut index = crate::codegen::code_enum_index::CodeEnumIndex::new();
+    generate_pid_schema_with_index(pid, mig, ahb, &mut index)
+}
+
+/// Generate the PID schema JSON, recording enum keys in the given index.
+pub fn generate_pid_schema_with_index(
+    pid: &Pruefidentifikator,
+    mig: &MigSchema,
+    ahb: &AhbSchema,
+    enum_index: &mut crate::codegen::code_enum_index::CodeEnumIndex,
+) -> String {
     use crate::schema::ahb::AhbCodeValue;
 
     let structure = analyze_pid_structure_with_qualifiers(pid, mig, ahb);
@@ -1446,7 +1457,7 @@ pub fn generate_pid_schema(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbS
         let field_name = make_wrapper_field_name(group);
         fields.insert(
             field_name,
-            group_to_schema_value(group, &number_index, mig, &ahb_codes),
+            group_to_schema_value(group, &number_index, mig, &ahb_codes, enum_index),
         );
     }
     root.insert("fields".to_string(), serde_json::Value::Object(fields));
@@ -1461,7 +1472,7 @@ pub fn generate_pid_schema(pid: &Pruefidentifikator, mig: &MigSchema, ahb: &AhbS
                 .iter()
                 .find(|s| s.id.eq_ignore_ascii_case(seg_id))
         })
-        .map(|seg| segment_to_schema_value(seg, None, &ahb_codes))
+        .map(|seg| segment_to_schema_value(seg, None, &ahb_codes, enum_index))
         .collect();
     if !root_segments.is_empty() {
         root.insert(
@@ -1500,6 +1511,7 @@ fn group_to_schema_value(
     number_index: &HashMap<String, &MigSegment>,
     mig: &MigSchema,
     ahb_codes: &HashMap<(String, String, usize), Vec<crate::schema::ahb::AhbCodeValue>>,
+    enum_index: &mut crate::codegen::code_enum_index::CodeEnumIndex,
 ) -> serde_json::Value {
     let mut obj = serde_json::Map::new();
     obj.insert(
@@ -1547,29 +1559,28 @@ fn group_to_schema_value(
         obj.insert("discriminator".to_string(), serde_json::Value::Null);
     }
 
-    let segments: Vec<_> = group
-        .segments
-        .iter()
-        .map(|entry| {
-            let mig_number = entry.mig_number.as_ref();
+    let mut segments = Vec::new();
+    for entry in &group.segments {
+        let mig_number = entry.mig_number.as_ref();
 
-            // Direct Number-based lookup (precise), fall back to group search
-            let mig_seg = mig_number
-                .and_then(|num| number_index.get(num.as_str()).copied())
-                .or_else(|| find_segment_in_mig(&entry.tag, &group.group_id, mig));
+        // Direct Number-based lookup (precise), fall back to group search
+        let mig_seg = mig_number
+            .and_then(|num| number_index.get(num.as_str()).copied())
+            .or_else(|| find_segment_in_mig(&entry.tag, &group.group_id, mig));
 
-            if let Some(mig_seg) = mig_seg {
-                segment_to_schema_value(mig_seg, mig_number, ahb_codes)
-            } else {
-                let mut s = serde_json::Map::new();
-                s.insert(
-                    "id".to_string(),
-                    serde_json::Value::String(entry.tag.clone()),
-                );
-                serde_json::Value::Object(s)
-            }
-        })
-        .collect();
+        if let Some(mig_seg) = mig_seg {
+            segments.push(segment_to_schema_value(
+                mig_seg, mig_number, ahb_codes, enum_index,
+            ));
+        } else {
+            let mut s = serde_json::Map::new();
+            s.insert(
+                "id".to_string(),
+                serde_json::Value::String(entry.tag.clone()),
+            );
+            segments.push(serde_json::Value::Object(s));
+        }
+    }
     obj.insert("segments".to_string(), serde_json::Value::Array(segments));
 
     let non_empty_children: Vec<_> = group
@@ -1583,7 +1594,7 @@ fn group_to_schema_value(
             let name = make_wrapper_field_name(child);
             children.insert(
                 name,
-                group_to_schema_value(child, number_index, mig, ahb_codes),
+                group_to_schema_value(child, number_index, mig, ahb_codes, enum_index),
             );
         }
         obj.insert("children".to_string(), serde_json::Value::Object(children));
@@ -1600,6 +1611,7 @@ fn segment_to_schema_value(
     seg: &MigSegment,
     mig_number: Option<&String>,
     ahb_codes: &HashMap<(String, String, usize), Vec<crate::schema::ahb::AhbCodeValue>>,
+    enum_index: &mut crate::codegen::code_enum_index::CodeEnumIndex,
 ) -> serde_json::Value {
     let mut obj = serde_json::Map::new();
     obj.insert("id".to_string(), serde_json::Value::String(seg.id.clone()));
@@ -1638,7 +1650,9 @@ fn segment_to_schema_value(
         );
 
         let occ = de_occurrence.entry(de.id.clone()).or_insert(0);
-        emit_element_codes(&mut el, &de.codes, &de.id, mig_number, *occ, ahb_codes);
+        emit_element_codes(
+            &mut el, &de.codes, &de.id, mig_number, *occ, ahb_codes, enum_index,
+        );
         *occ += 1;
 
         elements.push(serde_json::Value::Object(el));
@@ -1685,7 +1699,9 @@ fn segment_to_schema_value(
             );
 
             let occ = de_occurrence.entry(de.id.clone()).or_insert(0);
-            emit_element_codes(&mut sub, &de.codes, &de.id, mig_number, *occ, ahb_codes);
+            emit_element_codes(
+                &mut sub, &de.codes, &de.id, mig_number, *occ, ahb_codes, enum_index,
+            );
             *occ += 1;
 
             components.push(serde_json::Value::Object(sub));
@@ -1710,6 +1726,7 @@ fn emit_element_codes(
     mig_number: Option<&String>,
     occurrence: usize,
     ahb_codes: &HashMap<(String, String, usize), Vec<crate::schema::ahb::AhbCodeValue>>,
+    enum_index: &mut crate::codegen::code_enum_index::CodeEnumIndex,
 ) {
     // Try AHB-filtered codes first (only codes this PID allows)
     let ahb_filtered =
@@ -1721,7 +1738,10 @@ fn emit_element_codes(
                 "type".to_string(),
                 serde_json::Value::String("code".to_string()),
             );
-            el.insert("codes".to_string(), ahb_codes_to_json(ahb));
+            el.insert(
+                "codes".to_string(),
+                ahb_codes_to_json(ahb, de_id, enum_index),
+            );
             return;
         }
     }
@@ -1732,7 +1752,10 @@ fn emit_element_codes(
             "type".to_string(),
             serde_json::Value::String("code".to_string()),
         );
-        el.insert("codes".to_string(), codes_to_json(mig_codes));
+        el.insert(
+            "codes".to_string(),
+            codes_to_json(mig_codes, de_id, enum_index),
+        );
     } else {
         el.insert(
             "type".to_string(),
@@ -1741,56 +1764,64 @@ fn emit_element_codes(
     }
 }
 
-/// Convert AHB code values to a JSON array of `{value, name}` objects.
-fn ahb_codes_to_json(codes: &[crate::schema::ahb::AhbCodeValue]) -> serde_json::Value {
-    serde_json::Value::Array(
-        codes
-            .iter()
-            .map(|c| {
-                let mut obj = serde_json::Map::new();
-                obj.insert(
-                    "value".to_string(),
-                    serde_json::Value::String(c.value.clone()),
-                );
-                let name = c
-                    .description
-                    .as_deref()
-                    .filter(|d| !d.is_empty())
-                    .unwrap_or(&c.name);
-                obj.insert(
-                    "name".to_string(),
-                    serde_json::Value::String(name.to_string()),
-                );
-                serde_json::Value::Object(obj)
-            })
-            .collect(),
-    )
+/// Convert AHB code values to a JSON array of `{value, name, enum}` objects.
+fn ahb_codes_to_json(
+    codes: &[crate::schema::ahb::AhbCodeValue],
+    de_id: &str,
+    enum_index: &mut crate::codegen::code_enum_index::CodeEnumIndex,
+) -> serde_json::Value {
+    let mut result = Vec::new();
+    for c in codes {
+        let mut obj = serde_json::Map::new();
+        obj.insert(
+            "value".to_string(),
+            serde_json::Value::String(c.value.clone()),
+        );
+        let name = c
+            .description
+            .as_deref()
+            .filter(|d| !d.is_empty())
+            .unwrap_or(&c.name);
+        obj.insert(
+            "name".to_string(),
+            serde_json::Value::String(name.to_string()),
+        );
+        let enum_key =
+            crate::codegen::code_enum_index::lookup_or_derive(enum_index, de_id, &c.value, name);
+        obj.insert("enum".to_string(), serde_json::Value::String(enum_key));
+        result.push(serde_json::Value::Object(obj));
+    }
+    serde_json::Value::Array(result)
 }
 
-/// Convert code definitions to a JSON array of `{value, name}` objects.
-fn codes_to_json(codes: &[crate::schema::common::CodeDefinition]) -> serde_json::Value {
-    serde_json::Value::Array(
-        codes
-            .iter()
-            .map(|c| {
-                let mut obj = serde_json::Map::new();
-                obj.insert(
-                    "value".to_string(),
-                    serde_json::Value::String(c.value.clone()),
-                );
-                let name = c
-                    .description
-                    .as_deref()
-                    .filter(|d| !d.is_empty())
-                    .unwrap_or(&c.name);
-                obj.insert(
-                    "name".to_string(),
-                    serde_json::Value::String(name.to_string()),
-                );
-                serde_json::Value::Object(obj)
-            })
-            .collect(),
-    )
+/// Convert code definitions to a JSON array of `{value, name, enum}` objects.
+fn codes_to_json(
+    codes: &[crate::schema::common::CodeDefinition],
+    de_id: &str,
+    enum_index: &mut crate::codegen::code_enum_index::CodeEnumIndex,
+) -> serde_json::Value {
+    let mut result = Vec::new();
+    for c in codes {
+        let mut obj = serde_json::Map::new();
+        obj.insert(
+            "value".to_string(),
+            serde_json::Value::String(c.value.clone()),
+        );
+        let name = c
+            .description
+            .as_deref()
+            .filter(|d| !d.is_empty())
+            .unwrap_or(&c.name);
+        obj.insert(
+            "name".to_string(),
+            serde_json::Value::String(name.to_string()),
+        );
+        let enum_key =
+            crate::codegen::code_enum_index::lookup_or_derive(enum_index, de_id, &c.value, name);
+        obj.insert("enum".to_string(), serde_json::Value::String(enum_key));
+        result.push(serde_json::Value::Object(obj));
+    }
+    serde_json::Value::Array(result)
 }
 
 /// Find a segment definition in the MIG tree, searching within the specified group.
@@ -1846,12 +1877,22 @@ use crate::error::GeneratorError;
 /// Generate all PID composition type files for a given AHB and write to disk.
 ///
 /// Creates: `{output_dir}/{fv_lower}/{msg_lower}/pids/pid_{id}.rs` + `mod.rs`
+///
+/// If `enum_index_path` is provided, loads the persistent enum index before
+/// generation and saves it afterward, ensuring stable enum keys across runs.
 pub fn generate_pid_types(
     mig: &MigSchema,
     ahb: &AhbSchema,
     format_version: &str,
     output_dir: &Path,
+    enum_index_path: Option<&Path>,
 ) -> Result<(), GeneratorError> {
+    let mut enum_index = if let Some(path) = enum_index_path {
+        crate::codegen::code_enum_index::load_index(path)?
+    } else {
+        crate::codegen::code_enum_index::CodeEnumIndex::new()
+    };
+
     let fv_lower = format_version.to_lowercase();
     let msg_lower = ahb.message_type.to_lowercase();
     let pids_dir = output_dir.join(&fv_lower).join(&msg_lower).join("pids");
@@ -1881,13 +1922,17 @@ pub fn generate_pid_types(
         std::fs::write(pids_dir.join(&filename), full_source)?;
 
         // Write companion JSON schema
-        let schema = generate_pid_schema(pid, mig, ahb);
+        let schema = generate_pid_schema_with_index(pid, mig, ahb, &mut enum_index);
         std::fs::write(
             pids_dir.join(format!("pid_{}_schema.json", pid.id.to_lowercase())),
             schema,
         )?;
 
         mod_entries.push(module_name);
+    }
+
+    if let Some(path) = enum_index_path {
+        crate::codegen::code_enum_index::save_index(&enum_index, path)?;
     }
 
     // Write mod.rs
