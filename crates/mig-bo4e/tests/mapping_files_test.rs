@@ -143,15 +143,11 @@ fn test_geschaeftspartner_mapping_fields() {
     let def = engine.definition_for_entity("Geschaeftspartner").unwrap();
 
     assert_eq!(def.meta.source_group, "SG4.SG12");
-    assert!(def.fields.contains_key("nad.3.0")); // name1 (was nachname)
-                                                 // Address fields are now in companion_fields
-    let cf = def
-        .companion_fields
-        .as_ref()
-        .expect("companion_fields should exist");
-    assert!(cf.contains_key("nad.5")); // ort
-    assert!(cf.contains_key("nad.7")); // postleitzahl
-    assert!(cf.contains_key("nad.8")); // land
+    assert!(def.fields.contains_key("nad.3.0")); // name1
+                                                 // Address fields are in [fields] with nested adresse.* targets
+    assert!(def.fields.contains_key("nad.5")); // adresse.ort
+    assert!(def.fields.contains_key("nad.7")); // adresse.postleitzahl
+    assert!(def.fields.contains_key("nad.8")); // adresse.landescode
 }
 
 #[test]

@@ -694,21 +694,19 @@ fn test_geschaeftspartner_roundtrip() {
 
     assert_eq!(bo4e.get("name1").and_then(|v| v.as_str()), Some("Muster"));
     assert_eq!(bo4e.get("name2").and_then(|v| v.as_str()), Some("Max"));
-    // Address fields are now in companion_fields (under geschaeftspartnerEdifact)
-    let companion = bo4e
-        .get("geschaeftspartnerEdifact")
-        .and_then(|v| v.as_object());
-    assert!(companion.is_some(), "companion should exist");
-    let companion = companion.unwrap();
+    // Address fields are nested under adresse (Geschaeftspartner.adresse: Option<Adresse>)
+    let adresse = bo4e.get("adresse").and_then(|v| v.as_object());
+    assert!(adresse.is_some(), "adresse should exist");
+    let adresse = adresse.unwrap();
+    assert_eq!(adresse.get("ort").and_then(|v| v.as_str()), Some("Berlin"));
     assert_eq!(
-        companion.get("ort").and_then(|v| v.as_str()),
-        Some("Berlin")
-    );
-    assert_eq!(
-        companion.get("postleitzahl").and_then(|v| v.as_str()),
+        adresse.get("postleitzahl").and_then(|v| v.as_str()),
         Some("10115")
     );
-    assert_eq!(companion.get("land").and_then(|v| v.as_str()), Some("DE"));
+    assert_eq!(
+        adresse.get("landescode").and_then(|v| v.as_str()),
+        Some("DE")
+    );
 
     let reconstructed = engine.map_reverse(&bo4e, def);
 
