@@ -1,0 +1,18 @@
+[meta]
+entity = "TechnischeRessourceDatenZF0"
+bo4e_type = "TechnischeRessourceDatenZF0"
+companion_type = "TechnischeRessourceDatenZF0Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zf0.sg10"
+discriminator = "CCI.d7059=Z17"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierZ17"
+"cav[*,0].c889.d7111" = "merkmalQualifierZ64"
+"cav[*,1].c889.d7111" = "merkmalQualifierZ56"
+"cav[*,2].c889.d7111" = "merkmalQualifierZE6"
+"cav[*,3].c889.d7111" = "merkmalQualifierZF5"
+"cav[*,4].c889.d7111" = "merkmalQualifierZF7"
+"cav[*,5].c889.d7111" = "merkmalQualifierZG8"

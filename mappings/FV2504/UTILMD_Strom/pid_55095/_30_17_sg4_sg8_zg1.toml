@@ -1,0 +1,13 @@
+[meta]
+entity = "TechnischeRessourceDatenZG1"
+bo4e_type = "TechnischeRessourceDatenZG1"
+companion_type = "TechnischeRessourceDatenZG1Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zg1"
+discriminator = "SEQ.d1229=ZG1"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefZG1"
+"seq.d1229" = "seqQualifierZG1"

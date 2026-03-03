@@ -1,0 +1,17 @@
+[meta]
+entity = "MabisZaehlpunktDaten"
+bo4e_type = "MabisZaehlpunktDaten"
+companion_type = "MabisZaehlpunktDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z15"
+discriminator = "SEQ.d1229=Z15"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ15"
+"seq.c286.d1050" = "zeitscheibeRefZ15"
+"rff[Z20].c506.d1153" = { target = "", default = "Z20" }
+"rff[Z20].c506.d1154" = "referenzZ20Z15"
+"rff[Z16].c506.d1153" = { target = "", default = "Z16" }
+"rff[Z16].c506.d1154" = "referenzZ16Z15"

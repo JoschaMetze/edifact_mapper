@@ -1,0 +1,15 @@
+[meta]
+entity = "AbrechnungsDatenErw"
+bo4e_type = "AbrechnungsDatenErw"
+companion_type = "AbrechnungsDatenErwEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_za3_za4"
+discriminator = "SEQ.d1229=ZA3"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZA3"
+"seq.c286.d1050" = "zeitscheibeRefZA3"
+"rff.c506.d1153" = { target = "", default = "Z14" }
+"rff.c506.d1154" = "referenzZA3_ZA4"

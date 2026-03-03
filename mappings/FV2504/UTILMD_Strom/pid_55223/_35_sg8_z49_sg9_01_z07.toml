@@ -1,0 +1,20 @@
+[meta]
+entity = "ZeitreihenDaten49"
+bo4e_type = "ZeitreihenDaten49"
+companion_type = "ZeitreihenDaten49Edifact"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_z49.sg9"
+discriminator = "QTY.c186.d6063=Z07"
+
+[fields]
+
+[companion_fields]
+"qty.c186.d6063" = { target = "", default = "Z07" }
+"qty.c186.d6060" = "mengeZ07"
+"qty.c186.d6411" = "mengeneinheitZ07"
+"dtm[158].c507.d2005" = { target = "", default = "158" }
+"dtm[158].c507.d2380" = "zeitpunktZ07Beginn"
+"dtm[158].c507.d2379" = { target = "", default = "303" }
+"dtm[159].c507.d2005" = { target = "", default = "159" }
+"dtm[159].c507.d2380" = "zeitpunktZ07Ende"
+"dtm[159].c507.d2379" = { target = "", default = "303" }

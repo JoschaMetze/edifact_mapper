@@ -1,0 +1,14 @@
+[meta]
+entity = "ProduktDatenErw2"
+bo4e_type = "ProduktDatenErw2"
+companion_type = "ProduktDatenErw2Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z61.sg10"
+discriminator = "CCI.d7059=Z52"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierZ52"
+"cci.c502.d6313" = "ccic502d6313Z52"
+"cci.c240.d7037" = "merkmalCodeZ52"

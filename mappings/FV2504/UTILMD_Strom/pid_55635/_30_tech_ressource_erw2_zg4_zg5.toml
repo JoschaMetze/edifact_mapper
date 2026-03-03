@@ -1,0 +1,17 @@
+[meta]
+entity = "TechRessourceErw2"
+bo4e_type = "TechRessourceErw2"
+companion_type = "TechRessourceErw2Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zg4_zg5"
+discriminator = "SEQ.d1229=ZG4"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZG4"
+"seq.c286.d1050" = "zeitscheibeRefZG4"
+"rff[Z38].c506.d1153" = { target = "", default = "Z38" }
+"rff[Z38].c506.d1154" = "referenzZ38ZG4_ZG5"
+"rff[Z32].c506.d1153" = { target = "", default = "Z32" }
+"rff[Z32].c506.d1154" = "referenzZ32ZG4_ZG5"

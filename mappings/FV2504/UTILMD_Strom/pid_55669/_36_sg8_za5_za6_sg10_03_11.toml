@@ -1,0 +1,19 @@
+[meta]
+entity = "AbrechnungsDatenErw2"
+bo4e_type = "AbrechnungsDatenErw2"
+companion_type = "AbrechnungsDatenErw2Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_za5_za6.sg10"
+discriminator = "CCI.d7059=11"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "11" }
+"cci.c502.d6313" = "ccic502d631311"
+"cci.c240.d7037" = "merkmalCodeZ33"
+"cav.c889.d7111" = "merkmalQualifier11"
+"cav.c889.d1131" = "zugeordneterMp11"
+"cav.c889.d3055" = "merkmalCodepflege11"
+"cav.c889.d7110" = "merkmalEigenschaft11"
+"cav.c889.d7110_2" = "merkmalEigenschaft_211"

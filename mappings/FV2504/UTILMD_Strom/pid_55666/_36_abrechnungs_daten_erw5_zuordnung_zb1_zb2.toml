@@ -1,0 +1,13 @@
+[meta]
+entity = "AbrechnungsDatenErw5"
+bo4e_type = "AbrechnungsDatenErw5"
+companion_type = "AbrechnungsDatenErw5Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zb1_zb2.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z49" }
+"cav.c889.d7111" = { target = "", default = "ZF2" }
+"cav.c889.d1131" = "zugeordneterMp"

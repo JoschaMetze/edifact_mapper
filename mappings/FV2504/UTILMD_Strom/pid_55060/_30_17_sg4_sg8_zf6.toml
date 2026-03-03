@@ -1,0 +1,22 @@
+[meta]
+entity = "Zaehler"
+bo4e_type = "Zaehler"
+companion_type = "ZaehlerEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf6"
+discriminator = "SEQ.d1229=ZF6"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefZF6"
+"seq.d1229" = "seqQualifierZF6"
+"rff[MG].c506.d1153" = { target = "", default = "MG" }
+"rff[MG].c506.d1154" = "referenzMGZF6"
+"rff[Z14].c506.d1153" = { target = "", default = "Z14" }
+"rff[Z14].c506.d1154" = "referenzZ14ZF6"
+"rff[AGK].c506.d1153" = { target = "", default = "AGK" }
+"rff[AGK].c506.d1154" = "referenzAGKZF6"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZF6"
+"pia.c212.d7143" = { target = "", default = "SRW" }

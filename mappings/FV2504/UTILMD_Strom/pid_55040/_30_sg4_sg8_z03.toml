@@ -1,0 +1,15 @@
+[meta]
+entity = "Zaehler"
+bo4e_type = "Zaehler"
+companion_type = "ZaehlerEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z03"
+discriminator = "SEQ.d1229=Z03"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefZ03"
+"seq.d1229" = "seqQualifierZ03"
+"rff.c506.d1153" = { target = "", default = "Z19" }
+"rff.c506.d1154" = "referenzZ03"

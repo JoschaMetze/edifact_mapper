@@ -1,0 +1,14 @@
+[meta]
+entity = "ObisKennzahl"
+bo4e_type = "ObisKennzahl"
+companion_type = "ObisKennzahlEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z02.sg10"
+discriminator = "CCI.d7059=Z38"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z38" }
+"cci.c502.d6313" = "ccic502d6313Z38"
+"cci.c240.d7037" = "merkmalCodeZ38"

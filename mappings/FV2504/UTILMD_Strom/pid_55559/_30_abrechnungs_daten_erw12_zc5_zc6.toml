@@ -1,0 +1,16 @@
+[meta]
+entity = "AbrechnungsDatenErw12"
+bo4e_type = "AbrechnungsDatenErw12"
+companion_type = "AbrechnungsDatenErw12Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zc5_zc6"
+discriminator = "SEQ.d1229=ZC5"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZC5"
+"seq.c286.d1050" = "zeitscheibeRefZC5"
+"pia.d4347" = "piaFunktionZC5_ZC6"
+"pia.c212.d7140" = "obisKennzahlZC5_ZC6"
+"pia.c212.d7143" = { target = "", default = "Z09" }

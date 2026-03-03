@@ -1,0 +1,16 @@
+[meta]
+entity = "GeraeteDaten76"
+bo4e_type = "GeraeteDaten76"
+companion_type = "GeraeteDaten76Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z76"
+discriminator = "SEQ.d1229=Z76"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ76"
+"seq.c286.d1050" = "zeitscheibeRefZ76"
+"pia.d4347" = "piaFunktionZ76"
+"pia.c212.d7140" = "obisKennzahlZ76"
+"pia.c212.d7143" = { target = "", default = "Z09" }

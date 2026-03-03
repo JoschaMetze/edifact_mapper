@@ -1,0 +1,22 @@
+[meta]
+entity = "AbrechnungsDatenErw9"
+bo4e_type = "AbrechnungsDatenErw9"
+companion_type = "AbrechnungsDatenErw9Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zb9_zc0.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifier"
+"cci.c502.d6313" = "ccic502_d6313"
+"cci.c240.d7037" = "merkmalCodeZ25"
+"cav[*,0].c889.d7111" = { target = "", default = "Z30" }
+"cav[*,0].c889.d1131" = "zugeordneterMpZ30"
+"cav[*,0].c889.d3055" = "merkmalCodepflegeZ30"
+"cav[*,0].c889.d7110" = "merkmalEigenschaftZ30"
+"cav[*,0].c889.d7110_2" = "merkmalEigenschaft_2Z30"
+"cav[*,1].c889.d7111" = "merkmalQualifierMUW"
+"cav[*,1].c889.d1131" = "zugeordneterMpMUW"
+"cav[*,1].c889.d3055" = "merkmalCodepflegeMUW"
+"cav[*,1].c889.d7110" = "merkmalEigenschaftMUW"

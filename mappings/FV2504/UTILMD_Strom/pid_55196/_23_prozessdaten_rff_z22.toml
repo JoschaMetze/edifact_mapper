@@ -1,0 +1,13 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "RFF.c506.d1153=Z22"
+
+[fields]
+"rff.c506.d1153" = { target = "", default = "Z22" }
+"rff.c506.d1154" = "referenzZ22"
+"dtm[Z15].c507.d2005" = { target = "", default = "Z15" }
+"dtm[Z15].c507.d2380" = "datumZ22"
+"dtm[Z15].c507.d2379" = { target = "", default = "303" }

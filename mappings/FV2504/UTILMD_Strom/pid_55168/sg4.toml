@@ -1,0 +1,17 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.d7495" = "ideQualifier"
+"ide.c206.d7402" = "vorgangId"
+"dtm[76].c507.d2005" = { target = "", default = "76" }
+"dtm[76].c507.d2380" = "geplanterLieferbeginn"
+"dtm[76].c507.d2379" = "geplanterLieferbeginnFormat"
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c555.d4405" = "bearbeitungsstand"
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+"sts[7].c556_3.d9013" = "transaktionsgrundErgaenzung"

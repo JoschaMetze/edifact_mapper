@@ -1,0 +1,14 @@
+[meta]
+entity = "ProduktDaten"
+bo4e_type = "ProduktDaten"
+companion_type = "ProduktDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z59.sg10"
+discriminator = "CCI.d7059=11"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "11" }
+"cci.c502.d6313" = "ccic502d631311"
+"cci.c240.d7037" = "merkmalCodeZF6"

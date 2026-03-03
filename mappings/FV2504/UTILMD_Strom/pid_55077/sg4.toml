@@ -1,0 +1,25 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.d7495" = "ideQualifier"
+"ide.c206.d7402" = "vorgangId"
+"dtm[92].c507.d2005" = { target = "", default = "92" }
+"dtm[92].c507.d2380" = "gueltigAb"
+"dtm[92].c507.d2379" = "gueltigAbFormat"
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c555.d4405" = "bearbeitungsstand"
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+"sts[7].c556_3.d9013" = "transaktionsgrundErgaenzung"
+"ftx[Z13].d4451" = { target = "", default = "Z13" }
+"ftx[Z13].d4453" = "freitextQualifier"
+"ftx[Z13].c107.d4441" = "freitextReferenz"
+"ftx[Z13].c108.d4440" = "freitext"
+"ftx[Z13].c108.d4440_2" = "freitextZeile2"
+"ftx[Z13].c108.d4440_3" = "freitextZeile3"
+"ftx[Z13].c108.d4440_4" = "freitextZeile4"
+"ftx[Z13].c108.d4440_5" = "freitextZeile5"

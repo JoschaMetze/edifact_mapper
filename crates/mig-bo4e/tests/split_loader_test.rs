@@ -181,8 +181,8 @@ fn test_load_split_55013() {
     assert!(
         malo_defs
             .iter()
-            .any(|d| d.meta.source_group == "SG4.SG8:1.SG9"),
-        "55013 should have SG9 definition for Marktlokation Jahresverbrauchsprognose"
+            .any(|d| d.meta.source_group == "SG4.SG8.SG9"),
+        "55013 should have SG9 definition for Marktlokation Jahresverbrauchsprognose (source_path-based resolution)"
     );
 
     // Verify total definition count (25 TOML files in pid_55013)

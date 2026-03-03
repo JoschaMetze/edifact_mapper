@@ -1,0 +1,15 @@
+[meta]
+entity = "MesslokationDatenZF3"
+bo4e_type = "MesslokationDatenZF3"
+companion_type = "MesslokationDatenZF3Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zf3.sg10"
+discriminator = "CCI.c240.d7037=E04"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierE04"
+"cci.c502.d6313" = "ccic502d6313E04"
+"cci.c240.d7037" = "merkmalCodeE04"
+"cav.c889.d7111" = "merkmalQualifierE04"

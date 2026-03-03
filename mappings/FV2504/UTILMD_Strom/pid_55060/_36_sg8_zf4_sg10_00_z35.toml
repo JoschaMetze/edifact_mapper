@@ -1,0 +1,20 @@
+[meta]
+entity = "MesslokationErwDaten"
+bo4e_type = "MesslokationErwDaten"
+companion_type = "MesslokationErwDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zf4.sg10"
+discriminator = "CCI.d7059=Z35"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z35" }
+"cav[ZC9].c889.d7111" = { target = "", default = "ZC9" }
+"cav[ZC9].c889.d1131" = "zugeordneterMpZC9"
+"cav[ZC9].c889.d3055" = "merkmalCodepflegeZC9"
+"cav[ZC9].c889.d7110" = "merkmalEigenschaftZC9"
+"cav[Z88].c889.d7111" = { target = "", default = "Z88" }
+"cav[Z88].c889.d1131" = "zugeordneterMpZ88"
+"cav[Z88].c889.d3055" = "merkmalCodepflegeZ88"
+"cav[Z88].c889.d7110" = "merkmalEigenschaftZ88"

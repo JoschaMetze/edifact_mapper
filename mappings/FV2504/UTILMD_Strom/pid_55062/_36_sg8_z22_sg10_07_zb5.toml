@@ -1,0 +1,16 @@
+[meta]
+entity = "MabisZaehlpunktZuordnung"
+bo4e_type = "MabisZaehlpunktZuordnung"
+companion_type = "MabisZaehlpunktZuordnungEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z22.sg10"
+discriminator = "CCI.c240.d7037=ZB5"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierZB5"
+"cci.c502.d6313" = "ccic502d6313ZB5"
+"cci.c240.d7037" = "merkmalCodeZB5"
+"cav[*,0].c889.d7111" = "merkmalQualifierE03"
+"cav[*,1].c889.d7111" = "merkmalQualifierE07"

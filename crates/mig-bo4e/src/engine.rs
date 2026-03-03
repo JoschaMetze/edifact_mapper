@@ -1138,8 +1138,11 @@ impl MappingEngine {
             }
         };
 
+        // Parse optional occurrence index from expected value: "TN#1" → ("TN", Some(1))
+        let (expected_raw, occurrence) = parse_discriminator_occurrence(expected);
+
         // Collect ALL matching rep indices
-        let expected_values: Vec<&str> = expected.split('|').collect();
+        let expected_values: Vec<&str> = expected_raw.split('|').collect();
         let mut result = Vec::new();
         for (rep_idx, instance) in leaf_group.repetitions.iter().enumerate() {
             let matches = instance.segments.iter().any(|s| {
@@ -1155,7 +1158,12 @@ impl MappingEngine {
             }
         }
 
-        result
+        // If occurrence index specified, return only that match
+        if let Some(occ) = occurrence {
+            result.into_iter().nth(occ).into_iter().collect()
+        } else {
+            result
+        }
     }
 
     /// Resolve a discriminated instance using source_path for parent navigation.
@@ -1215,13 +1223,10 @@ impl MappingEngine {
                     // Navigate via source_path, then filter by discriminator.
                     let sp = def.meta.source_path.as_deref().unwrap();
                     let all_instances = Self::resolve_all_by_source_path(tree, sp);
-                    // Apply discriminator filter to resolved instances
+                    // Apply discriminator filter to resolved instances (respects #N occurrence)
                     let instances: Vec<_> = if let Some(matcher) = DiscriminatorMatcher::parse(disc)
                     {
-                        all_instances
-                            .into_iter()
-                            .filter(|inst| matcher.matches(inst))
-                            .collect()
+                        matcher.filter_instances(all_instances)
                     } else {
                         all_instances
                     };
@@ -1499,6 +1504,7 @@ impl MappingEngine {
                             }],
                             post_group_start: 0,
                         };
+
                         let tx_result =
                             tx_engine.map_all_forward_inner(&wrapped_tree, enrich_codes);
 
@@ -2005,6 +2011,8 @@ struct DiscriminatorMatcher<'a> {
     element_idx: usize,
     component_idx: usize,
     expected_values: Vec<&'a str>,
+    /// Optional occurrence index: `#N` selects the Nth match among instances.
+    occurrence: Option<usize>,
 }
 
 impl<'a> DiscriminatorMatcher<'a> {
@@ -2014,11 +2022,13 @@ impl<'a> DiscriminatorMatcher<'a> {
         if parts.len() != 3 {
             return None;
         }
+        let (expected_raw, occurrence) = parse_discriminator_occurrence(expected);
         Some(Self {
             tag: parts[0],
             element_idx: parts[1].parse().ok()?,
             component_idx: parts[2].parse().ok()?,
-            expected_values: expected.split('|').collect(),
+            expected_values: expected_raw.split('|').collect(),
+            occurrence,
         })
     }
 
@@ -2032,6 +2042,36 @@ impl<'a> DiscriminatorMatcher<'a> {
                     .unwrap_or(false)
         })
     }
+
+    /// Filter instances, respecting the occurrence index if present.
+    fn filter_instances<'b>(
+        &self,
+        instances: Vec<&'b AssembledGroupInstance>,
+    ) -> Vec<&'b AssembledGroupInstance> {
+        let matching: Vec<_> = instances
+            .into_iter()
+            .filter(|inst| self.matches(inst))
+            .collect();
+        if let Some(occ) = self.occurrence {
+            matching.into_iter().nth(occ).into_iter().collect()
+        } else {
+            matching
+        }
+    }
+}
+
+/// Parse an optional occurrence index from a discriminator expected value.
+///
+/// `"TN#1"` → `("TN", Some(1))` — select the 2nd matching rep
+/// `"TN"`   → `("TN", None)` — select all matching reps
+/// `"Z13|Z14#0"` → `("Z13|Z14", Some(0))` — first match among Z13 or Z14
+fn parse_discriminator_occurrence(expected: &str) -> (&str, Option<usize>) {
+    if let Some(hash_pos) = expected.rfind('#') {
+        if let Ok(occ) = expected[hash_pos + 1..].parse::<usize>() {
+            return (&expected[..hash_pos], Some(occ));
+        }
+    }
+    (expected, None)
 }
 
 /// Strip explicit rep index from a relative path: "SG5:4" → "SG5", "SG8:3" → "SG8".

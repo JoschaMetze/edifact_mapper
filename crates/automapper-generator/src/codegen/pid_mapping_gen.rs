@@ -532,7 +532,8 @@ pub fn generate_pid_mappings(
     let index = ReferenceIndex::load(mappings_base, fv, variant)?;
     let schema_groups = load_pid_schema(schema_path)?;
 
-    let mut files = Vec::new();
+    // Collect (filename, content, source_path) triples — source_path used for dedup
+    let mut raw_files: Vec<(String, String, String)> = Vec::new();
     let mut report = GenerationReport {
         matched: Vec::new(),
         scaffolded: Vec::new(),
@@ -546,7 +547,7 @@ pub fn generate_pid_mappings(
         // Root mapping: source_group and source_path stay empty
         def.meta.source_path = Some(String::new());
         let content = serialize_mapping(&def);
-        files.push(("nachricht.toml".to_string(), content));
+        raw_files.push(("nachricht.toml".to_string(), content, String::new()));
         report
             .matched
             .push(("Nachricht".to_string(), rm.source_pid.clone()));
@@ -559,12 +560,40 @@ pub fn generate_pid_mappings(
             &group.field_name,
             None, // no parent qualifier
             &index,
-            &mut files,
+            &mut raw_files,
             &mut report,
         );
     }
 
+    // 3. Deduplicate filenames — when two groups produce the same entity-based
+    //    filename (e.g., SG4 and SG6 both → "prozessdaten.toml"), rename the
+    //    colliding entries to path-based names.
+    let files = dedup_filenames(raw_files);
+
     Ok((files, report))
+}
+
+/// Deduplicate filename collisions by falling back to path-derived filenames.
+fn dedup_filenames(raw_files: Vec<(String, String, String)>) -> Vec<(String, String)> {
+    let mut seen: HashMap<String, Vec<usize>> = HashMap::new();
+    for (i, (filename, _, _)) in raw_files.iter().enumerate() {
+        seen.entry(filename.clone()).or_default().push(i);
+    }
+
+    let mut result = Vec::with_capacity(raw_files.len());
+    for (i, (filename, content, source_path)) in raw_files.into_iter().enumerate() {
+        let indices = &seen[&filename];
+        if indices.len() > 1 {
+            // Collision — use path-derived filename instead
+            let deduped = derive_filename_from_path(&source_path);
+            // If path-derived name is also the same (shouldn't happen), add index
+            result.push((deduped, content));
+        } else {
+            let _ = i; // suppress unused warning
+            result.push((filename, content));
+        }
+    }
+    result
 }
 
 fn generate_group_mappings(
@@ -572,7 +601,7 @@ fn generate_group_mappings(
     source_path: &str,
     parent_qualifier: Option<&str>,
     index: &ReferenceIndex,
-    files: &mut Vec<(String, String)>,
+    files: &mut Vec<(String, String, String)>,
     report: &mut GenerationReport,
 ) {
     // Build the reference index key for this group
@@ -596,14 +625,14 @@ fn generate_group_mappings(
             report.warnings.extend(validation_warnings);
 
             let content = serialize_mapping(&def);
-            files.push((filename, content));
+            files.push((filename, content, source_path.to_string()));
             report.matched.push((entity_name, rm.source_pid.clone()));
         } else {
             // Use source_path-derived filename for unique scaffolds
             let filename = derive_filename_from_path(source_path);
             // Generate scaffold fallback
             let content = generate_scaffold_fallback(group, source_path, &entity_name);
-            files.push((filename, content));
+            files.push((filename, content, source_path.to_string()));
             report
                 .scaffolded
                 .push((entity_name, "no reference mapping found".to_string()));
@@ -1055,8 +1084,8 @@ mod tests {
             "Should have nachricht.toml"
         );
         assert!(
-            filenames.contains(&"prozessdaten.toml"),
-            "Should have prozessdaten.toml (from Prozessdaten entity), got: {:?}",
+            filenames.contains(&"sg4.toml"),
+            "Should have sg4.toml (SG4 root segments = Prozessdaten), got: {:?}",
             filenames
         );
 

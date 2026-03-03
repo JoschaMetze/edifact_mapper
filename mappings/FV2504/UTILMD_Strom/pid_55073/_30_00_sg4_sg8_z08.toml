@@ -1,0 +1,17 @@
+[meta]
+entity = "Profil"
+bo4e_type = "Profil"
+companion_type = "ProfilEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z08"
+discriminator = "SEQ.d1229=Z08"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "profilscharZeitscheibeRef"
+
+"seq.d1229" = { target = "", default = "Z08" }
+"pia.d4347" = { target = "", default = "Z01" }
+"pia.c212.d7140" = "obisKennzahlZ08"
+"pia.c212.d7143" = "piaC212d7143Z08"

@@ -1,0 +1,30 @@
+[meta]
+entity = "Lokationsbuendel"
+bo4e_type = "Lokationsbuendel"
+companion_type = "LokationsbuendelEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z58"
+discriminator = "SEQ.d1229=Z58"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefZuordnung"
+"seq.d1229" = "seqQualifierZuordnung"
+"rff[Z32].c506.d1153" = { target = "", default = "Z32" }
+"rff[Z32].c506.d1154" = "referenzZ32Z58"
+"rff[Z18].c506.d1153" = { target = "", default = "Z18" }
+"rff[Z18].c506.d1154" = "referenzZ18Z58"
+"rff[Z19].c506.d1153" = { target = "", default = "Z19" }
+"rff[Z19].c506.d1154" = "referenzZ19Z58"
+"rff[Z37].c506.d1153" = { target = "", default = "Z37" }
+"rff[Z37].c506.d1154" = "referenzZ37Z58"
+"rff[Z33].c506.d1153" = { target = "", default = "Z33" }
+"rff[Z33].c506.d1154" = "referenzZ33Z58"
+"rff[Z33].c506.d1156" = "referenzCodeListeZ33Z58"
+"rff[Z34].c506.d1153" = { target = "", default = "Z34" }
+"rff[Z34].c506.d1154" = "referenzZ34Z58"
+"rff[Z35].c506.d1153" = { target = "", default = "Z35" }
+"rff[Z35].c506.d1154" = "referenzZ35Z58"
+"rff[Z16].c506.d1153" = { target = "", default = "Z16" }
+"rff[Z16].c506.d1154" = "referenzZ16Z58"

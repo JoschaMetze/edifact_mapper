@@ -22,8 +22,8 @@ fn test_load_message_level_mapping_files() {
         .with_path_resolver(path_resolver());
     assert_eq!(
         engine.definitions().len(),
-        3,
-        "Message directory should have exactly 3 mapping files (marktteilnehmer, nachricht, kontakt)"
+        4,
+        "Message directory should have exactly 4 mapping files (marktteilnehmer, nachricht, sg1_nachricht, kontakt)"
     );
     assert!(engine.definition_for_entity("Marktteilnehmer").is_some());
     assert!(engine.definition_for_entity("Nachricht").is_some());
@@ -79,8 +79,8 @@ fn test_load_real_mapping_files() {
         .unwrap()
         .with_path_resolver(path_resolver());
     assert!(
-        combined.definitions().len() >= 17,
-        "Combined should have at least 17 mapping files, got {}",
+        combined.definitions().len() >= 18,
+        "Combined should have at least 18 mapping files, got {}",
         combined.definitions().len()
     );
     assert!(combined.definition_for_entity("Marktteilnehmer").is_some());

@@ -1,0 +1,42 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.d7495" = "ideQualifier"
+"ide.c206.d7402" = "vorgangId"
+"dtm[Z07].c507.d2005" = { target = "", default = "Z07" }
+"dtm[Z07].c507.d2380" = "gueltigAb"
+"dtm[Z07].c507.d2379" = "gueltigAbFormat"
+"dtm[Z08].c507.d2005" = { target = "", default = "Z08" }
+"dtm[Z08].c507.d2380" = "datumNaechsteBearbeitung"
+"dtm[Z08].c507.d2379" = "datumNaechsteBearbeitungFormat"
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c555.d4405" = "bearbeitungsstand"
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+"sts[7].c556_3.d9013" = "transaktionsgrundErgaenzung"
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c555.d4405" = "antwortBearbeitungsstand"
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"
+"sts[E01].c556.d3055" = "codepflegeStelle"
+"sts[E01].c556.d9012" = "zeitraumId"
+"sts[Z35].c601.d9015" = { target = "", default = "Z35" }
+"sts[Z35].c555.d4405" = "statusZ35Bearbeitungsstand"
+"sts[Z35].c556.d9013" = "statusZ35"
+"ftx[ACB].d4451" = { target = "", default = "ACB" }
+"ftx[ACB].d4453" = "freitextQualifier"
+"ftx[ACB].c107.d4441" = "freitextReferenz"
+"ftx[ACB].c108.d4440" = "freitext"
+"ftx[ACB].c108.d4440_2" = "freitextZeile2"
+"ftx[ACB].c108.d4440_3" = "freitextZeile3"
+"ftx[ACB].c108.d4440_4" = "freitextZeile4"
+"ftx[ACB].c108.d4440_5" = "freitextZeile5"
+"sts[Z35].c556.d1131" = { target = "", default = "E_0624" }
+"sts[Z35].c556_2.d1131" = "statusZ35Ebdnummer2"
+"sts[Z35].c556_2.d3055" = "statusZ35Codepflegestelle2"
+"sts[Z35].c556_2.d9012" = "statusZ35Zeitraumid2"
+"sts[Z35].c556_2.d9013" = "statusZ35Transaktionsgrund2"
