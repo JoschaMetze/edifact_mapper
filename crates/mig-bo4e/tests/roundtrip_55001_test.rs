@@ -692,16 +692,23 @@ fn test_geschaeftspartner_roundtrip() {
     let bo4e = engine.map_forward(&tree, def, 1);
     eprintln!("Geschaeftspartner BO4E: {}", bo4e);
 
+    assert_eq!(bo4e.get("name1").and_then(|v| v.as_str()), Some("Muster"));
+    assert_eq!(bo4e.get("name2").and_then(|v| v.as_str()), Some("Max"));
+    // Address fields are now in companion_fields (under geschaeftspartnerEdifact)
+    let companion = bo4e
+        .get("geschaeftspartnerEdifact")
+        .and_then(|v| v.as_object());
+    assert!(companion.is_some(), "companion should exist");
+    let companion = companion.unwrap();
     assert_eq!(
-        bo4e.get("nachname").and_then(|v| v.as_str()),
-        Some("Muster")
+        companion.get("ort").and_then(|v| v.as_str()),
+        Some("Berlin")
     );
-    assert_eq!(bo4e.get("ort").and_then(|v| v.as_str()), Some("Berlin"));
     assert_eq!(
-        bo4e.get("postleitzahl").and_then(|v| v.as_str()),
+        companion.get("postleitzahl").and_then(|v| v.as_str()),
         Some("10115")
     );
-    assert_eq!(bo4e.get("land").and_then(|v| v.as_str()), Some("DE"));
+    assert_eq!(companion.get("land").and_then(|v| v.as_str()), Some("DE"));
 
     let reconstructed = engine.map_reverse(&bo4e, def);
 

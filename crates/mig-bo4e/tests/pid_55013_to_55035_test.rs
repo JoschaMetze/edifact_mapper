@@ -19,6 +19,9 @@ use mig_types::schema::mig::MigSchema;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
+mod common;
+use common::bo4e_validation;
+
 const MIG_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml";
 const AHB_XML_PATH: &str =
@@ -174,6 +177,17 @@ fn run_full_roundtrip(pid: &str) {
         assert!(
             !mapped.transaktionen.is_empty(),
             "PID {pid} ({fixture_name}): forward mapping should produce at least one transaction"
+        );
+
+        // Step 3b: BO4E schema validation (non-fatal — warns about unknown field names)
+        let mapped_for_validation =
+            MappingEngine::map_interchange(&msg_engine, &tx_engine, &original_tree, "SG4", false);
+        bo4e_validation::validate_mapped_message(
+            pid,
+            fixture_name,
+            &msg_engine,
+            &tx_engine,
+            &mapped_for_validation,
         );
 
         // Step 4: Reverse mapping -> AssembledTree
