@@ -63,7 +63,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "ELEKTRONISCHE_POST",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
@@ -116,7 +116,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -148,7 +148,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -204,7 +204,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -242,7 +242,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "MABIS_ZAEHLPUNKT",
+                      "enum": "MABIS_ZP",
                       "name": "MaBiS-Zählpunkt",
                       "value": "Z15"
                     }
@@ -288,7 +288,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "MARKTLOKATION",
+                      "enum": "MALO",
                       "name": "Marktlokation",
                       "value": "Z16"
                     }
@@ -426,7 +426,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "MABIS_ANTWORT_BILANZIERUNGSGEBIETSCLEARINGLISTE",
+                          "enum": "ANTWORT_BG_CLEARINGLISTE",
                           "name": "MaBiS / Antwort auf die Bilanzierungsgebietsclearingliste",
                           "value": "55196"
                         }
@@ -452,7 +452,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "TRANSAKTIONS_REFERENZNUMMER",
+                          "enum": "TRANSAKTIONSREFERENZ",
                           "name": "Transaktions-Referenznummer",
                           "value": "TN"
                         }
@@ -484,7 +484,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "TRANSAKTIONS_REFERENZNUMMER",
+                          "enum": "TRANSAKTIONSREFERENZ",
                           "name": "Transaktions-Referenznummer",
                           "value": "TN"
                         }
@@ -542,7 +542,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZIERUNGSBEGINN_DATEN_BETEILIGTEN_MARKTROLLE",
+                          "enum": "BILANZIERUNGSBEGINN_BETEILIGTE_MARKTROLLE",
                           "name": "\"Bilanzierungsbeginn\" aus Daten der beteiligten Marktrolle",
                           "value": "Z15"
                         }
@@ -587,7 +587,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZIERUNGSENDE_DATEN_BETEILIGTEN_MARKTROLLE",
+                          "enum": "BILANZIERUNGSENDE_BETEILIGTE_MARKTROLLE",
                           "name": "\"Bilanzierungsende\" aus Daten der beteiligten Marktrolle",
                           "value": "Z16"
                         }
@@ -671,12 +671,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "MARKTLOKATION_LIEFERT_ENERGIE_INS_NETZ_ERZEUGENDE",
+                              "enum": "ERZEUGENDE_MALO",
                               "name": "Marktlokation liefert Energie ins Netz. --> Erzeugende Marktlokation",
                               "value": "Z06"
                             },
                             {
-                              "enum": "MARKTLOKATION_ENTNIMMT_ENERGIE_NETZ_VERBRAUCHENDE",
+                              "enum": "VERBRAUCHENDE_MALO",
                               "name": "Marktlokation entnimmt Energie aus dem Netz. --> Verbrauchende Marktlokation",
                               "value": "Z07"
                             }
@@ -854,7 +854,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZKREIS",
+                          "enum": "BK",
                           "name": "Bilanzkreis",
                           "value": "Z19"
                         }
@@ -899,7 +899,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZIERUNGSGEBIET",
+                          "enum": "BG",
                           "name": "Bilanzierungsgebiet",
                           "value": "Z20"
                         }
@@ -972,7 +972,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "SUMMENZEITREIHENTYP",
+                              "enum": "SZR_TYP",
                               "name": "Summenzeitreihentyp",
                               "value": "Z21"
                             }
@@ -998,7 +998,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "DIESER_CODE_ANWENDUNG_DURCH_ZULAESSIGEN_CODE_NB_GUELTIGEN",
+                              "enum": "NB_GUELTIGER_CODE",
                               "name": "Beispielcode",
                               "value": "XYZ"
                             }
@@ -1095,12 +1095,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "PROGNOSE_BASIS_WERTEN",
+                              "enum": "PROGNOSE_WERTE",
                               "name": "Prognose auf Basis von Werten",
                               "value": "ZC0"
                             },
                             {
-                              "enum": "PROGNOSE_BASIS_PROFILEN",
+                              "enum": "PROGNOSE_PROFIL",
                               "name": "Prognose auf Basis von Profilen",
                               "value": "ZA6"
                             }
@@ -1163,7 +1163,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "VERANSCHLAGTE_JAHRESMENGE_GESAMT",
+                              "enum": "VERANSCHLAGTE_JAHRESMENGE",
                               "name": "Veranschlagte Jahresmenge Gesamt",
                               "value": "31"
                             }
@@ -1208,7 +1208,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "TATSAECHLICH_BILANZIERTE_ENERGIEMENGE",
+                              "enum": "BILANZIERTE_ENERGIEMENGE",
                               "name": "Tatsächlich bilanzierte Energiemenge",
                               "value": "Z07"
                             }
@@ -1265,7 +1265,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "DATEN_MARKTLOKATION",
+                      "enum": "DATEN_MALO",
                       "name": "Daten der Marktlokation",
                       "value": "Z01"
                     }
@@ -1299,7 +1299,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "MARKTLOKATION",
+                          "enum": "MALO",
                           "name": "Marktlokation",
                           "value": "Z18"
                         }
@@ -1343,7 +1343,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "OBIS_DATEN_MARKTLOKATION",
+                      "enum": "OBIS_DATEN_MALO",
                       "name": "OBIS-Daten der Marktlokation",
                       "value": "Z02"
                     }
@@ -1377,7 +1377,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "MARKTLOKATION",
+                          "enum": "MALO",
                           "name": "Marktlokation",
                           "value": "Z18"
                         }
@@ -1542,7 +1542,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZKREIS",
+                          "enum": "BK",
                           "name": "Bilanzkreis",
                           "value": "Z19"
                         }
@@ -1855,7 +1855,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "DIESER_CODE_ANWENDUNG_DURCH_ZULAESSIGEN_CODE_NB_GUELTIGEN",
+                              "enum": "NB_GUELTIGER_CODE",
                               "name": "Dieser Code ist in der Anwendung durch einen zulässigen Code aus der vom NB gültigen Liste der Profildefinitionen zu ersetzen!",
                               "value": "XYZ"
                             }
@@ -1959,7 +1959,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "MARKTLOKATION",
+                          "enum": "MALO",
                           "name": "Marktlokation",
                           "value": "Z18"
                         }
@@ -2003,7 +2003,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "DATEN_SUMMENZEITREIHE",
+                      "enum": "DATEN_SZR",
                       "name": "Daten der Summenzeitreihe",
                       "value": "Z22"
                     }
@@ -2112,7 +2112,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZKREIS",
+                          "enum": "BK",
                           "name": "Bilanzkreis",
                           "value": "Z19"
                         }
@@ -2157,7 +2157,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZIERUNGSGEBIET",
+                          "enum": "BG",
                           "name": "Bilanzierungsgebiet",
                           "value": "Z20"
                         }
@@ -2230,7 +2230,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "SUMMENZEITREIHENTYP",
+                              "enum": "SZR_TYP",
                               "name": "Summenzeitreihentyp",
                               "value": "Z21"
                             }
@@ -2256,7 +2256,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "DIESER_CODE_ANWENDUNG_DURCH_ZULAESSIGEN_CODE_NB_GUELTIGEN",
+                              "enum": "NB_GUELTIGER_CODE",
                               "name": "Beispielcode",
                               "value": "XYZ"
                             }
@@ -2358,12 +2358,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "PROGNOSE_BASIS_WERTEN",
+                              "enum": "PROGNOSE_WERTE",
                               "name": "Prognose auf Basis von Werten",
                               "value": "ZC0"
                             },
                             {
-                              "enum": "PROGNOSE_BASIS_PROFILEN",
+                              "enum": "PROGNOSE_PROFIL",
                               "name": "Prognose auf Basis von Profilen",
                               "value": "ZA6"
                             }
@@ -2426,7 +2426,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "VERANSCHLAGTE_JAHRESMENGE_GESAMT",
+                              "enum": "VERANSCHLAGTE_JAHRESMENGE",
                               "name": "Veranschlagte Jahresmenge Gesamt",
                               "value": "31"
                             }
@@ -2471,7 +2471,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "TATSAECHLICH_BILANZIERTE_ENERGIEMENGE",
+                              "enum": "BILANZIERTE_ENERGIEMENGE",
                               "name": "Tatsächlich bilanzierte Energiemenge",
                               "value": "Z07"
                             }
@@ -2528,7 +2528,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "DATEN_MARKTLOKATION_BETEILIGTEN_MARKTROLLE",
+                      "enum": "DATEN_MALO_BET_MARKTROLLE",
                       "name": "Daten der Marktlokation der beteiligten Marktrolle",
                       "value": "Z29"
                     }
@@ -2549,7 +2549,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "MARKTLOKATION",
+                          "enum": "MALO",
                           "name": "Marktlokation",
                           "value": "Z18"
                         }
@@ -2593,7 +2593,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "OBIS_DATEN_MARKTLOKATION_BETEILIGTEN_MARKTROLLE",
+                      "enum": "OBIS_DATEN_MALO_BET_MARKTROLLE",
                       "name": "OBIS-Daten der Marktlokation der beteiligten Marktrolle",
                       "value": "Z30"
                     }
@@ -2670,7 +2670,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZKREIS",
+                          "enum": "BK",
                           "name": "Bilanzkreis",
                           "value": "Z19"
                         }
@@ -2729,7 +2729,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "DATEN_TRANCHE_BETEILIGTEN_MARKTROLLE",
+                      "enum": "DATEN_TRANCHE_BET_MARKTROLLE",
                       "name": "Daten der Tranche der beteiligten Marktrolle",
                       "value": "Z31"
                     }
@@ -2762,7 +2762,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "OBIS_DATEN_TRANCHE_BETEILIGTEN_MARKTROLLE",
+                      "enum": "OBIS_DATEN_TRANCHE_BET_MARKTROLLE",
                       "name": "OBIS-Daten der Tranche der beteiligten Marktrolle",
                       "value": "Z32"
                     }
@@ -2893,7 +2893,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "DIESER_CODE_ANWENDUNG_DURCH_ZULAESSIGEN_CODE_NB_GUELTIGEN",
+                              "enum": "NB_GUELTIGER_CODE",
                               "name": "Dieser Code ist in der Anwendung durch einen zulässigen Code zu ersetzen!",
                               "value": "XYZ"
                             }
@@ -2931,7 +2931,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "PROFILDATEN_BETEILIGTEN_MARKTROLLE",
+                      "enum": "PROFILDATEN_BET_MARKTROLLE",
                       "name": "Profildaten der beteiligten Marktrolle",
                       "value": "Z33"
                     }
@@ -3032,12 +3032,12 @@
                 {
                   "codes": [
                     {
-                      "enum": "EBD_NR_E_0017",
+                      "enum": "E_0017",
                       "name": "EBD Nr. E_0017",
                       "value": "E_0017"
                     },
                     {
-                      "enum": "EBD_NR_E_0052",
+                      "enum": "E_0052",
                       "name": "EBD Nr. E_0052",
                       "value": "E_0052"
                     }
@@ -3224,12 +3224,12 @@
                 {
                   "codes": [
                     {
-                      "enum": "EBD_NR_E_0017",
+                      "enum": "E_0017",
                       "name": "EBD Nr. E_0017",
                       "value": "E_0017"
                     },
                     {
-                      "enum": "EBD_NR_E_0052",
+                      "enum": "E_0052",
                       "name": "EBD Nr. E_0052",
                       "value": "E_0052"
                     }
@@ -3275,47 +3275,47 @@
             {
               "codes": [
                 {
-                  "enum": "DIENT_MITTEILUNG_AUFNAHME_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "ANMELDUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Aufnahme der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Einzug oder Lieferantenwechsel, Aufnahme einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Übernahme des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E01"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_BEENDIGUNG_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "BEENDIGUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Beendigung der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Auszug oder Lieferantenwechsel, Beendigung einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Abgabe des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E02"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_AENDERUNGEN_STAMMDATEN_OHNE_DABEI",
+                  "enum": "STAMMDATENAENDERUNG",
                   "name": "Dient der Mitteilung über die Änderungen von Stammdaten ohne dabei das Verhältnis Kunde, Lieferant und Messstellenbetreiber zu verändern. Z. B. Anpassung der Jahresverbrauchsprognose oder Namensänderung.",
                   "value": "E03"
                 },
                 {
-                  "enum": "DIENT_UEBERMITTLUNG_STAMMDATEN_MARKTLOKATION_MESSLOKATION",
+                  "enum": "STAMMDATEN_MALO_MELO",
                   "name": "Dient der Übermittlung von Stammdaten zu einer Marktlokation oder Messlokation.",
                   "value": "Z14"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_KUENDIGUNG_LIEFER",
+                  "enum": "KUENDIGUNG_LIEFERVERTRAG",
                   "name": "Dient der Mitteilung über die Kündigung eines Liefer- oder Messstellenbetriebsvertrags zur Kommunikation zwischen zwei LF oder zwei MSB.",
                   "value": "E35"
                 },
                 {
-                  "enum": "DIESE_NACHRICHT_DIENT_UEBERMITTLUNG_HINWEISEN_BEENDIGUNG",
+                  "enum": "HINWEIS_BEENDIGUNG",
                   "name": "Diese Nachricht dient der Übermittlung von Hinweisen und zur Beendigung der Zuordnung eines LFA oder eines zukünftigen LF zu einer Marktlokation. Es erfordert keine Antwortnachricht.",
                   "value": "E44"
                 },
                 {
-                  "enum": "KATEGORIE_BILANZKREISZUORDNUNGSLISTE_MABIS_VERSENDET",
+                  "enum": "BK_ZUORDNUNGSLISTE",
                   "name": "Mit der Kategorie wird die Bilanzkreiszuordnungsliste nach MaBiS versendet.",
                   "value": "E40"
                 },
                 {
-                  "enum": "KATEGORIE_CLEARINGLISTE_MABIS_VERSENDET",
+                  "enum": "CLEARINGLISTE",
                   "name": "Mit der Kategorie wird die Clearingliste nach MaBiS versendet.",
                   "value": "Z05"
                 },
                 {
-                  "enum": "DIESER_KATEGORIE_WERDEN_AKTIVIERUNGEN_DEAKTIVIERUNGEN",
+                  "enum": "AKTIVIERUNG_DEAKTIVIERUNG",
                   "name": "Unter dieser Kategorie werden die Aktivierungen und Deaktivierungen der Bilanzierungszeitreihen mit ihrer entsprechenden Kennzeichnung des Zeitreihentypen versendet.",
                   "value": "Z07"
                 },
@@ -3394,7 +3394,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -3451,7 +3451,7 @@
             {
               "codes": [
                 {
-                  "enum": "NETZANSCHLUSS_STAMMDATEN",
+                  "enum": "UTILMD",
                   "name": "Netzanschluss-Stammdaten",
                   "value": "UTILMD"
                 }
@@ -3503,7 +3503,7 @@
             {
               "codes": [
                 {
-                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
+                  "enum": "BDEW_VERSION",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "S2.1"
                 }

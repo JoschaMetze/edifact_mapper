@@ -63,7 +63,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "ELEKTRONISCHE_POST",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
@@ -116,7 +116,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -148,7 +148,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -204,7 +204,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -242,7 +242,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "MABIS_ZAEHLPUNKT",
+                      "enum": "MABIS_ZP",
                       "name": "MaBiS-Zählpunkt",
                       "value": "Z15"
                     }
@@ -298,7 +298,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "MABIS_AKTIVIERUNG_MABIS_ZP",
+                          "enum": "AKT_ZP",
                           "name": "MaBiS / Aktivierung von MaBiS-ZP",
                           "value": "55062"
                         }
@@ -356,7 +356,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "BEZEICHNUNG_SUMMENZEITREIHE",
+                              "enum": "BEZEICHNUNG_SZR",
                               "name": "Bezeichnung der Summenzeitreihe",
                               "value": "ZB4"
                             }
@@ -382,62 +382,62 @@
                         {
                           "codes": [
                             {
-                              "enum": "BG_SZR_KATEGORIE_B",
+                              "enum": "BG_SZR_KAT_B",
                               "name": "BG-SZR (Kategorie B)",
                               "value": "Z95"
                             },
                             {
-                              "enum": "BG_SZR_KATEGORIE_C",
+                              "enum": "BG_SZR_KAT_C",
                               "name": "BG-SZR (Kategorie C)",
                               "value": "Z96"
                             },
                             {
-                              "enum": "BK_SZR_KATEGORIE_A",
+                              "enum": "BK_SZR_KAT_A",
                               "name": "BK-SZR (Kategorie A)",
                               "value": "Z97"
                             },
                             {
-                              "enum": "BK_SZR_KATEGORIE_B_EBENE_REGELZONE",
+                              "enum": "BK_SZR_KAT_B_REGELZONE",
                               "name": "BK-SZR (Kategorie B) auf Ebene Regelzone",
                               "value": "Z98"
                             },
                             {
-                              "enum": "BK_SZR_KATEGORIE_B_EBENE_BILANZIERUNGSGEBIET",
+                              "enum": "BK_SZR_KAT_B_BG",
                               "name": "BK-SZR (Kategorie B) auf Ebene Bilanzierungsgebiet",
                               "value": "Z99"
                             },
                             {
-                              "enum": "BK_SZR_KATEGORIE_C",
+                              "enum": "BK_SZR_KAT_C",
                               "name": "BK-SZR (Kategorie C)",
                               "value": "ZA0"
                             },
                             {
-                              "enum": "LF_SZR_KATEGORIE_A",
+                              "enum": "LF_SZR_KAT_A",
                               "name": "LF-SZR (Kategorie A)",
                               "value": "ZA1"
                             },
                             {
-                              "enum": "LF_SZR_KATEGORIE_B_EBENE_REGELZONE",
+                              "enum": "LF_SZR_KAT_B_REGELZONE",
                               "name": "LF-SZR (Kategorie B) auf Ebene Regelzone",
                               "value": "ZA2"
                             },
                             {
-                              "enum": "LF_SZR_KATEGORIE_B_EBENE_BILANZIERUNGSGEBIET",
+                              "enum": "LF_SZR_KAT_B_BG",
                               "name": "LF-SZR (Kategorie B) auf Ebene Bilanzierungsgebiet",
                               "value": "ZA3"
                             },
                             {
-                              "enum": "DELTAZEITREIHENUEBERTRAG_DZUE",
+                              "enum": "DZUE",
                               "name": "Deltazeitreihenübertrag (DZÜ)",
                               "value": "ZA4"
                             },
                             {
-                              "enum": "NETZZEITREIHE_NZR",
+                              "enum": "NZR",
                               "name": "Netzzeitreihe (NZR)",
                               "value": "ZA5"
                             },
                             {
-                              "enum": "ABRECHNUNGSSUMMENZEITREIHE",
+                              "enum": "ABRECHNUNGS_SZR",
                               "name": "Abrechnungssummenzeitreihe",
                               "value": "ZA6"
                             },
@@ -573,7 +573,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZIERUNGSGEBIET",
+                          "enum": "BG",
                           "name": "Bilanzierungsgebiet",
                           "value": "Z20"
                         }
@@ -618,7 +618,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZKREIS",
+                          "enum": "BK",
                           "name": "Bilanzkreis",
                           "value": "Z19"
                         }
@@ -691,7 +691,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "SUMMENZEITREIHENTYP",
+                              "enum": "SZR_TYP",
                               "name": "Summenzeitreihentyp",
                               "value": "Z21"
                             }
@@ -717,7 +717,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "DIESER_CODE_ANWENDUNG_DURCH_ZULAESSIGEN_CODE_NB_GUELTIGEN",
+                              "enum": "NB_GUELTIGER_CODE",
                               "name": "Beispielcode",
                               "value": "XYZ"
                             }
@@ -762,7 +762,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "BEZUGSZEITRAUM_SUMMENZEITREIHE",
+                              "enum": "BEZUGSZEITRAUM_SZR",
                               "name": "Bezugszeitraum der Summenzeitreihe",
                               "value": "ZB6"
                             }
@@ -838,7 +838,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "SPANNUNGSEBENE_SUMMENZEITREIHE",
+                              "enum": "SPANNUNGSEBENE_SZR",
                               "name": "Spannungsebene der Summenzeitreihe",
                               "value": "ZB5"
                             }
@@ -953,7 +953,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "DATEN_SUMMENZEITREIHE",
+                      "enum": "DATEN_SZR",
                       "name": "Daten der Summenzeitreihe",
                       "value": "Z22"
                     }
@@ -986,7 +986,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "PRODUKT_DATEN_SUMMENZEITREIHE",
+                      "enum": "PRODUKT_SZR",
                       "name": "Produkt-Daten der Summenzeitreihe",
                       "value": "Z23"
                     }
@@ -1146,47 +1146,47 @@
             {
               "codes": [
                 {
-                  "enum": "DIENT_MITTEILUNG_AUFNAHME_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "ANMELDUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Aufnahme der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Einzug oder Lieferantenwechsel, Aufnahme einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Übernahme des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E01"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_BEENDIGUNG_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "BEENDIGUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Beendigung der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Auszug oder Lieferantenwechsel, Beendigung einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Abgabe des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E02"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_AENDERUNGEN_STAMMDATEN_OHNE_DABEI",
+                  "enum": "STAMMDATENAENDERUNG",
                   "name": "Dient der Mitteilung über die Änderungen von Stammdaten ohne dabei das Verhältnis Kunde, Lieferant und Messstellenbetreiber zu verändern. Z. B. Anpassung der Jahresverbrauchsprognose oder Namensänderung.",
                   "value": "E03"
                 },
                 {
-                  "enum": "DIENT_UEBERMITTLUNG_STAMMDATEN_MARKTLOKATION_MESSLOKATION",
+                  "enum": "STAMMDATEN_MALO_MELO",
                   "name": "Dient der Übermittlung von Stammdaten zu einer Marktlokation oder Messlokation.",
                   "value": "Z14"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_KUENDIGUNG_LIEFER",
+                  "enum": "KUENDIGUNG_LIEFERVERTRAG",
                   "name": "Dient der Mitteilung über die Kündigung eines Liefer- oder Messstellenbetriebsvertrags zur Kommunikation zwischen zwei LF oder zwei MSB.",
                   "value": "E35"
                 },
                 {
-                  "enum": "DIESE_NACHRICHT_DIENT_UEBERMITTLUNG_HINWEISEN_BEENDIGUNG",
+                  "enum": "HINWEIS_BEENDIGUNG",
                   "name": "Diese Nachricht dient der Übermittlung von Hinweisen und zur Beendigung der Zuordnung eines LFA oder eines zukünftigen LF zu einer Marktlokation. Es erfordert keine Antwortnachricht.",
                   "value": "E44"
                 },
                 {
-                  "enum": "KATEGORIE_BILANZKREISZUORDNUNGSLISTE_MABIS_VERSENDET",
+                  "enum": "BK_ZUORDNUNGSLISTE",
                   "name": "Mit der Kategorie wird die Bilanzkreiszuordnungsliste nach MaBiS versendet.",
                   "value": "E40"
                 },
                 {
-                  "enum": "KATEGORIE_CLEARINGLISTE_MABIS_VERSENDET",
+                  "enum": "CLEARINGLISTE",
                   "name": "Mit der Kategorie wird die Clearingliste nach MaBiS versendet.",
                   "value": "Z05"
                 },
                 {
-                  "enum": "DIESER_KATEGORIE_WERDEN_AKTIVIERUNGEN_DEAKTIVIERUNGEN",
+                  "enum": "AKTIVIERUNG_DEAKTIVIERUNG",
                   "name": "Unter dieser Kategorie werden die Aktivierungen und Deaktivierungen der Bilanzierungszeitreihen mit ihrer entsprechenden Kennzeichnung des Zeitreihentypen versendet.",
                   "value": "Z07"
                 },
@@ -1265,7 +1265,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -1322,7 +1322,7 @@
             {
               "codes": [
                 {
-                  "enum": "NETZANSCHLUSS_STAMMDATEN",
+                  "enum": "UTILMD",
                   "name": "Netzanschluss-Stammdaten",
                   "value": "UTILMD"
                 }
@@ -1374,7 +1374,7 @@
             {
               "codes": [
                 {
-                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
+                  "enum": "BDEW_VERSION",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "S2.1"
                 }

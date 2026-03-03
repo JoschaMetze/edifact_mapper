@@ -63,7 +63,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "ELEKTRONISCHE_POST",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
@@ -116,7 +116,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -148,7 +148,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -204,7 +204,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -254,7 +254,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "GPKE_ABLEHNUNG_EOG_ANMELDUNG",
+                          "enum": "ABL_EOG_ANM",
                           "name": "GPKE / Ablehnung EoG Anmeldung",
                           "value": "55015"
                         }
@@ -280,7 +280,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "TRANSAKTIONS_REFERENZNUMMER",
+                          "enum": "TRANSAKTIONSREFERENZ",
                           "name": "Transaktions-Referenznummer",
                           "value": "TN"
                         }
@@ -391,42 +391,42 @@
                       "value": "E06"
                     },
                     {
-                      "enum": "KUENDIGUNG_LIEFERANTENRAHMENVERTRAG",
+                      "enum": "KUEND_LF_RAHMENVERTRAG",
                       "name": "Kündigung Lieferantenrahmenvertrag",
                       "value": "Z02"
                     },
                     {
-                      "enum": "BEIM_NB_LIEGT_AUSZUGSMELDUNG_MARKTLOKATION_VOR_ES_ERFOLGT",
+                      "enum": "AUSZUG_NB_KEINE_ZUORDNUNG",
                       "name": "Beim NB liegt nur eine Auszugsmeldung für die Marktlokation vor. Es erfolgt seitens des NB anschließend eine Meldung der Marktlokation an den E/G.",
                       "value": "Z36"
                     },
                     {
-                      "enum": "BEIM_NB_LIEGT_NEUE_MARKTLOKATION_OHNE_LIEFERANTENZUORDNUNG",
+                      "enum": "NEUE_MALO_OHNE_LF",
                       "name": "Beim NB liegt eine neue Marktlokation ohne Lieferantenzuordnung vor. Daher erfolgt eine Meldung an den  zuständigen LF für die EoG.",
                       "value": "Z37"
                     },
                     {
-                      "enum": "ERSTELLTER_VORUEBERGEHENDER_ANSCHLUSS_AUFGRUND_FEHLENDEM_LF",
+                      "enum": "VORUEBERGEHENDER_ANSCHLUSS_OHNE_LF",
                       "name": "Ein erstellter vorübergehender Anschluss wird aufgrund von fehlendem LF dem  zuständigen LF für die EoG gemeldet.",
                       "value": "Z39"
                     },
                     {
-                      "enum": "EOG_BILANZKREISSCHLIESSUNG",
+                      "enum": "EOG_BK_SCHLIESSUNG",
                       "name": "EoG aus Bilanzkreisschließung",
                       "value": "ZC6"
                     },
                     {
-                      "enum": "EOG_AUFGRUND_ERLOESCHEN_ZUORDNUNGSERMAECHTIGUNG",
+                      "enum": "EOG_ERLOESCHEN_ZUORD_ERMO",
                       "name": "EoG aufgrund Erlöschen der Zuordnungsermächtigung",
                       "value": "ZC7"
                     },
                     {
-                      "enum": "EOG_WEGEN_KUENDIGUNG_DURCH_LF",
+                      "enum": "EOG_KUEND_LF",
                       "name": "EoG wegen Kündigung durch LF",
                       "value": "ZT6"
                     },
                     {
-                      "enum": "EOG_WEGEN_KUENDIGUNG_DURCH_KUNDE_LFN",
+                      "enum": "EOG_KUEND_KUNDE_LFN",
                       "name": "EoG wegen Kündigung durch Kunde/LFN",
                       "value": "ZT7"
                     }
@@ -446,7 +446,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "VERBRAUCHENDE_MARKTLOKATION",
+                      "enum": "VERB_MALO",
                       "name": "Verbrauchende Marktlokation",
                       "value": "ZW4"
                     }
@@ -466,12 +466,12 @@
                 {
                   "codes": [
                     {
-                      "enum": "KUNDE_VERLAESST_BESTEHENDE_MARKTLOKATION",
+                      "enum": "AUSZUG",
                       "name": "Kunde verlässt eine schon bestehende Marktlokation",
                       "value": "E01"
                     },
                     {
-                      "enum": "KUNDE_BLEIBT_MARKTLOKATION_MARKTPARTNER_GEWECHSELT",
+                      "enum": "LIEFERANTENWECHSEL",
                       "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
                       "value": "E03"
                     }
@@ -536,7 +536,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "EBD_NR_E_0615",
+                      "enum": "E_0615",
                       "name": "EBD Nr. E_0615",
                       "value": "E_0615"
                     }
@@ -572,7 +572,7 @@
             {
               "codes": [
                 {
-                  "enum": "ZUSAETZLICHE_INFORMATIONEN_ALLGEMEINE_HINWEISE",
+                  "enum": "ALLGEMEINE_HINWEISE",
                   "name": "Zusätzliche Informationen (für allgemeine Hinweise)",
                   "value": "ACB"
                 }
@@ -657,47 +657,47 @@
             {
               "codes": [
                 {
-                  "enum": "DIENT_MITTEILUNG_AUFNAHME_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "ANMELDUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Aufnahme der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Einzug oder Lieferantenwechsel, Aufnahme einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Übernahme des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E01"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_BEENDIGUNG_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "BEENDIGUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Beendigung der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Auszug oder Lieferantenwechsel, Beendigung einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Abgabe des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E02"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_AENDERUNGEN_STAMMDATEN_OHNE_DABEI",
+                  "enum": "STAMMDATENAENDERUNG",
                   "name": "Dient der Mitteilung über die Änderungen von Stammdaten ohne dabei das Verhältnis Kunde, Lieferant und Messstellenbetreiber zu verändern. Z. B. Anpassung der Jahresverbrauchsprognose oder Namensänderung.",
                   "value": "E03"
                 },
                 {
-                  "enum": "DIENT_UEBERMITTLUNG_STAMMDATEN_MARKTLOKATION_MESSLOKATION",
+                  "enum": "STAMMDATEN_MALO_MELO",
                   "name": "Dient der Übermittlung von Stammdaten zu einer Marktlokation oder Messlokation.",
                   "value": "Z14"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_KUENDIGUNG_LIEFER",
+                  "enum": "KUENDIGUNG_LIEFERVERTRAG",
                   "name": "Dient der Mitteilung über die Kündigung eines Liefer- oder Messstellenbetriebsvertrags zur Kommunikation zwischen zwei LF oder zwei MSB.",
                   "value": "E35"
                 },
                 {
-                  "enum": "DIESE_NACHRICHT_DIENT_UEBERMITTLUNG_HINWEISEN_BEENDIGUNG",
+                  "enum": "HINWEIS_BEENDIGUNG",
                   "name": "Diese Nachricht dient der Übermittlung von Hinweisen und zur Beendigung der Zuordnung eines LFA oder eines zukünftigen LF zu einer Marktlokation. Es erfordert keine Antwortnachricht.",
                   "value": "E44"
                 },
                 {
-                  "enum": "KATEGORIE_BILANZKREISZUORDNUNGSLISTE_MABIS_VERSENDET",
+                  "enum": "BK_ZUORDNUNGSLISTE",
                   "name": "Mit der Kategorie wird die Bilanzkreiszuordnungsliste nach MaBiS versendet.",
                   "value": "E40"
                 },
                 {
-                  "enum": "KATEGORIE_CLEARINGLISTE_MABIS_VERSENDET",
+                  "enum": "CLEARINGLISTE",
                   "name": "Mit der Kategorie wird die Clearingliste nach MaBiS versendet.",
                   "value": "Z05"
                 },
                 {
-                  "enum": "DIESER_KATEGORIE_WERDEN_AKTIVIERUNGEN_DEAKTIVIERUNGEN",
+                  "enum": "AKTIVIERUNG_DEAKTIVIERUNG",
                   "name": "Unter dieser Kategorie werden die Aktivierungen und Deaktivierungen der Bilanzierungszeitreihen mit ihrer entsprechenden Kennzeichnung des Zeitreihentypen versendet.",
                   "value": "Z07"
                 },
@@ -776,7 +776,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -833,7 +833,7 @@
             {
               "codes": [
                 {
-                  "enum": "NETZANSCHLUSS_STAMMDATEN",
+                  "enum": "UTILMD",
                   "name": "Netzanschluss-Stammdaten",
                   "value": "UTILMD"
                 }
@@ -885,7 +885,7 @@
             {
               "codes": [
                 {
-                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
+                  "enum": "BDEW_VERSION",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "S2.1"
                 }

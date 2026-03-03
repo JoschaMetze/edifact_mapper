@@ -63,7 +63,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "ELEKTRONISCHE_POST",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
@@ -116,7 +116,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -148,7 +148,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -204,7 +204,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -244,7 +244,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "MARKTLOKATION",
+                      "enum": "MALO",
                       "name": "Marktlokation",
                       "value": "Z16"
                     }
@@ -318,7 +318,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "GPKE_ABRECHNUNGSDATEN_NETZNUTZUNGSABRECHNUNG",
+                          "enum": "ABRECHNUNGSDATEN_NNA",
                           "name": "GPKE / Abrechnungsdaten Netznutzungsabrechnung",
                           "value": "55218"
                         }
@@ -387,7 +387,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "VERWENDUNG_DATEN",
+                          "enum": "VERWENDUNG_DATEN_AB",
                           "name": "Verwendung der Daten ab",
                           "value": "Z25"
                         }
@@ -477,7 +477,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "TERMINDATEN_MARKTLOKATION",
+                          "enum": "TERMINDATEN_MALO",
                           "name": "Termindaten der Marktlokation",
                           "value": "Z50"
                         }
@@ -509,7 +509,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "TERMIN_NETZNUTZUNGSABRECHNUNG",
+                          "enum": "TERMIN_NNA",
                           "name": "Termin der Netznutzungsabrechnung",
                           "value": "Z21"
                         }
@@ -559,7 +559,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "NAECHSTE_NETZNUTZUNGSABRECHNUNG",
+                          "enum": "NAECHSTE_NNA",
                           "name": "Nächste Netznutzungsabrechnung",
                           "value": "Z09"
                         }
@@ -604,7 +604,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "NETZNUTZUNGSABRECHNUNGS_EINSPEISEVERGUETUNGSINTERVALL_NB",
+                          "enum": "NNA_EINSPEISEVERGUETUNGSINTERVALL_NB",
                           "name": "Netznutzungsabrechnungs- bzw. Einspeisevergütungsintervall des NB",
                           "value": "Z22"
                         }
@@ -681,7 +681,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "VERBRAUCHSAUFTEILUNG_TEMPERATURABHAENGIGE_MARKTLOKATION",
+                              "enum": "VERBRAUCHSAUFTEILUNG_TEMPERATUR_MALO",
                               "name": "Verbrauchsaufteilung (in %) für temperaturabhängige Marktlokation",
                               "value": "E17"
                             }
@@ -821,12 +821,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "DIREKTER_VERTRAG_KUNDEN_NB",
+                              "enum": "DIREKTVERTRAG_KUNDE_NB",
                               "name": "Direkter Vertrag zwischen Kunden und NB",
                               "value": "Z08"
                             },
                             {
-                              "enum": "VERTRAG_LIEFERANTEN_NB",
+                              "enum": "VERTRAG_LF_NB",
                               "name": "Vertrag zwischen Lieferanten und NB",
                               "value": "Z09"
                             }
@@ -933,12 +933,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "MARKTKOMMUNIKATION_AUSGETAUSCHTE_DATEN",
+                              "enum": "MARKTKOMMUNIKATION_DATEN",
                               "name": "In der Marktkommunikation ausgetauschte Daten",
                               "value": "Z12"
                             },
                             {
-                              "enum": "ABWEICHEND_VERTRAGLICH_ANSCHLUSSNUTZER_VEREINBARTE_GRUNDLAGE",
+                              "enum": "ABWEICHENDE_GRUNDLAGE_ANSCHLUSSNUTZER",
                               "name": "Abweichend vertraglich mit Anschlussnutzer vereinbarte Grundlage",
                               "value": "Z13"
                             }
@@ -976,7 +976,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "DATEN_MARKTLOKATION",
+                      "enum": "DATEN_MALO",
                       "name": "Daten der Marktlokation",
                       "value": "Z01"
                     }
@@ -1136,7 +1136,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "CODE_ZAEHLZEITREGISTERS",
+                          "enum": "CODE_ZAEHLZEITREGISTER",
                           "name": "Code des Zählzeitregisters",
                           "value": "Z38"
                         }
@@ -1271,7 +1271,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "ANZAHL_ABZURECHENDEN_POSITIONEN_GRUPPENARTIKEL_ID_ARTIKEL_ID",
+                              "enum": "ANZAHL_POSITIONEN_GRUPPENARTIKEL",
                               "name": "Anzahl der abzurechenden Positionen der Gruppenartikel-ID / Artikel-ID",
                               "value": "Z38"
                             }
@@ -1416,7 +1416,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "SINGULAER_GENUTZTE_BETRIEBSMITTEL",
+                              "enum": "SINGULAERE_BETRIEBSMITTEL",
                               "name": "Singulär genutzte Betriebsmittel",
                               "value": "Z33"
                             }
@@ -1461,12 +1461,12 @@
                 {
                   "codes": [
                     {
-                      "enum": "NETZNUTZUNGSABRECHNUNGSDATEN_MARKTLOKATION",
+                      "enum": "NNA_DATEN_MALO",
                       "name": "Netznutzungsabrechnungsdaten der Marktlokation",
                       "value": "Z45"
                     },
                     {
-                      "enum": "DIFFERENZ_NETZNUTZUNGSABRECHNUNGSDATEN_MARKTLOKATION",
+                      "enum": "DIFFERENZ_NNA_DATEN_MALO",
                       "name": "Differenz-Netznutzungsabrechnungsdaten der Marktlokation",
                       "value": "Z84"
                     }
@@ -1498,7 +1498,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "GRUPPENARTIKEL_ID_ARTIKEL_ID",
+                      "enum": "GRUPPENARTIKEL_ARTIKEL_ID",
                       "name": "Gruppenartikel-ID / Artikel-ID",
                       "value": "Z02"
                     }
@@ -1624,7 +1624,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "ABRECHNUNGSDATEN_NNA",
+                      "enum": "NNA",
                       "name": "Abrechnungsdaten NNA",
                       "value": "ZX4"
                     }
@@ -1644,27 +1644,27 @@
                 {
                   "codes": [
                     {
-                      "enum": "LFN_MARKTLOKATION_VOLLSTAENDIG_ZUGEORDNET_VOLLSTAENDIGE_100",
+                      "enum": "LFN_MALO_VOLLSTAENDIG_100",
                       "name": "Der LFN wird einer Marktlokation vollständig zugeordnet (vollständige (100%ige) Zuordnung).\r\nDieser Geschäftsvorfall ist auch für die Änderung von einer tranchierten Marktlokation in eine nicht tranchierte Marktlokation anzuwenden.",
                       "value": "ZW0"
                     },
                     {
-                      "enum": "LFN_BESTEHENDEN_TRANCHE_VOLLSTAENDIG_ZUGEORDNET",
+                      "enum": "LFN_TRANCHE_VOLLSTAENDIG",
                       "name": "Der LFN wird einer bestehenden Tranche vollständig zugeordnet (vollständige (100%ige) Zuordnung). \r\nDieser Geschäftsvorfall ist bei einem direkten Übergang, d. h. lückenlosem Zuordnungsende und -beginn und unter Beibehaltung der Tranche, anzuwenden.",
                       "value": "ZW1"
                     },
                     {
-                      "enum": "LFN_NEU_BILDENDEN_TRANCHE_ZUGEORDNET_ANTEILIGER",
+                      "enum": "LFN_NEUE_TRANCHE_ANTEILIG",
                       "name": "Der LFN wird einer neu zu bildenden Tranche zugeordnet (anteiliger Zuordnungsvorgang unter Bildung neuer Tranchen",
                       "value": "ZW2"
                     },
                     {
-                      "enum": "ERZEUGENDE_MARKTLOKATION",
+                      "enum": "ERZEUGENDE_MALO",
                       "name": "Erzeugende Marktlokation",
                       "value": "ZW3"
                     },
                     {
-                      "enum": "VERBRAUCHENDE_MARKTLOKATION",
+                      "enum": "VERB_MALO",
                       "name": "Verbrauchende Marktlokation",
                       "value": "ZW4"
                     },
@@ -1674,12 +1674,12 @@
                       "value": "ZW5"
                     },
                     {
-                      "enum": "PAUSCHALE_MARKTLOKATION",
+                      "enum": "PAUSCHALE_MALO",
                       "name": "Pauschale Marktlokation",
                       "value": "ZW6"
                     },
                     {
-                      "enum": "GEMESSENE_MARKTLOKATION",
+                      "enum": "GEMESSENE_MALO",
                       "name": "Gemessene Marktlokation",
                       "value": "ZW7"
                     },
@@ -1704,7 +1704,7 @@
                       "value": "ZX1"
                     },
                     {
-                      "enum": "RUHENDE_MARKTLOKATION",
+                      "enum": "RUHENDE_MALO",
                       "name": "ruhende Marktlokation",
                       "value": "ZAP"
                     }
@@ -1724,12 +1724,12 @@
                 {
                   "codes": [
                     {
-                      "enum": "KUNDE_VERLAESST_BESTEHENDE_MARKTLOKATION",
+                      "enum": "AUSZUG",
                       "name": "Kunde verlässt eine schon bestehende Marktlokation",
                       "value": "E01"
                     },
                     {
-                      "enum": "KUNDE_BLEIBT_MARKTLOKATION_MARKTPARTNER_GEWECHSELT",
+                      "enum": "LIEFERANTENWECHSEL",
                       "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
                       "value": "E03"
                     }
@@ -1763,47 +1763,47 @@
             {
               "codes": [
                 {
-                  "enum": "DIENT_MITTEILUNG_AUFNAHME_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "ANMELDUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Aufnahme der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Einzug oder Lieferantenwechsel, Aufnahme einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Übernahme des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E01"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_BEENDIGUNG_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "BEENDIGUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Beendigung der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Auszug oder Lieferantenwechsel, Beendigung einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Abgabe des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E02"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_AENDERUNGEN_STAMMDATEN_OHNE_DABEI",
+                  "enum": "STAMMDATENAENDERUNG",
                   "name": "Dient der Mitteilung über die Änderungen von Stammdaten ohne dabei das Verhältnis Kunde, Lieferant und Messstellenbetreiber zu verändern. Z. B. Anpassung der Jahresverbrauchsprognose oder Namensänderung.",
                   "value": "E03"
                 },
                 {
-                  "enum": "DIENT_UEBERMITTLUNG_STAMMDATEN_MARKTLOKATION_MESSLOKATION",
+                  "enum": "STAMMDATEN_MALO_MELO",
                   "name": "Dient der Übermittlung von Stammdaten zu einer Marktlokation oder Messlokation.",
                   "value": "Z14"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_KUENDIGUNG_LIEFER",
+                  "enum": "KUENDIGUNG_LIEFERVERTRAG",
                   "name": "Dient der Mitteilung über die Kündigung eines Liefer- oder Messstellenbetriebsvertrags zur Kommunikation zwischen zwei LF oder zwei MSB.",
                   "value": "E35"
                 },
                 {
-                  "enum": "DIESE_NACHRICHT_DIENT_UEBERMITTLUNG_HINWEISEN_BEENDIGUNG",
+                  "enum": "HINWEIS_BEENDIGUNG",
                   "name": "Diese Nachricht dient der Übermittlung von Hinweisen und zur Beendigung der Zuordnung eines LFA oder eines zukünftigen LF zu einer Marktlokation. Es erfordert keine Antwortnachricht.",
                   "value": "E44"
                 },
                 {
-                  "enum": "KATEGORIE_BILANZKREISZUORDNUNGSLISTE_MABIS_VERSENDET",
+                  "enum": "BK_ZUORDNUNGSLISTE",
                   "name": "Mit der Kategorie wird die Bilanzkreiszuordnungsliste nach MaBiS versendet.",
                   "value": "E40"
                 },
                 {
-                  "enum": "KATEGORIE_CLEARINGLISTE_MABIS_VERSENDET",
+                  "enum": "CLEARINGLISTE",
                   "name": "Mit der Kategorie wird die Clearingliste nach MaBiS versendet.",
                   "value": "Z05"
                 },
                 {
-                  "enum": "DIESER_KATEGORIE_WERDEN_AKTIVIERUNGEN_DEAKTIVIERUNGEN",
+                  "enum": "AKTIVIERUNG_DEAKTIVIERUNG",
                   "name": "Unter dieser Kategorie werden die Aktivierungen und Deaktivierungen der Bilanzierungszeitreihen mit ihrer entsprechenden Kennzeichnung des Zeitreihentypen versendet.",
                   "value": "Z07"
                 },
@@ -1882,7 +1882,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -1939,7 +1939,7 @@
             {
               "codes": [
                 {
-                  "enum": "NETZANSCHLUSS_STAMMDATEN",
+                  "enum": "UTILMD",
                   "name": "Netzanschluss-Stammdaten",
                   "value": "UTILMD"
                 }
@@ -1991,7 +1991,7 @@
             {
               "codes": [
                 {
-                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
+                  "enum": "BDEW_VERSION",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "S2.1"
                 }

@@ -63,7 +63,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "ELEKTRONISCHE_POST",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
@@ -116,7 +116,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -148,7 +148,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -204,7 +204,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -254,7 +254,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "MABIS_UEBERMITTLUNG_PROFILDEFINITIONEN",
+                          "enum": "PROFILDEFINITIONEN",
                           "name": "MaBiS / Übermittlung der Profildefinitionen",
                           "value": "55073"
                         }
@@ -324,12 +324,12 @@
                               "value": "Z38"
                             },
                             {
-                              "enum": "GEWERBE_WERKTAGS_8_18_UHR",
+                              "enum": "GEWERBE_WERKTAGS_8_18",
                               "name": "Gewerbe werktags 8 - 18 Uhr",
                               "value": "Z39"
                             },
                             {
-                              "enum": "GEWERBE_STARKEM_BIS_UEBERWIEGENDEM_VERBRAUCH_ABENDSTUNDEN",
+                              "enum": "GEWERBE_UEBERWIEGEND_ABEND",
                               "name": "Gewerbe mit starkem bis überwiegendem Verbrauch in den Abendstunden",
                               "value": "Z40"
                             },
@@ -344,7 +344,7 @@
                               "value": "Z42"
                             },
                             {
-                              "enum": "GEWERBE_BAECKEREI_BACKSTUBE",
+                              "enum": "GEWERBE_BAECKEREI",
                               "name": "Gewerbe Bäckerei mit Backstube",
                               "value": "Z43"
                             },
@@ -354,12 +354,12 @@
                               "value": "Z44"
                             },
                             {
-                              "enum": "LANDWIRTSCHAFTSBETRIEBE_ALLGEMEIN",
+                              "enum": "LANDWIRTSCHAFT_ALLGEMEIN",
                               "name": "Landwirtschaftsbetriebe allgemein",
                               "value": "Z45"
                             },
                             {
-                              "enum": "LANDWIRTSCHAFTSBETRIEBE_MILCHWIRTSCHAFT_NEBENERWERBS",
+                              "enum": "LANDWIRTSCHAFT_MILCHWIRTSCHAFT",
                               "name": "Landwirtschaftsbetriebe mit Milchwirtschaft/Nebenerwerbs-Tierzucht",
                               "value": "Z46"
                             },
@@ -384,7 +384,7 @@
                               "value": "Z50"
                             },
                             {
-                              "enum": "HEIZWAERMESPEICHER",
+                              "enum": "SPEICHERHEIZUNG",
                               "name": "Heizwärmespeicher",
                               "value": "Z51"
                             },
@@ -394,7 +394,7 @@
                               "value": "Z52"
                             },
                             {
-                              "enum": "PHOTOVOLTAIK_MARKTLOKATION",
+                              "enum": "PHOTOVOLTAIK_MALO",
                               "name": "Photovoltaik-Marktlokation",
                               "value": "Z53"
                             },
@@ -404,12 +404,12 @@
                               "value": "Z54"
                             },
                             {
-                              "enum": "SONSTIGE_VERBRAUCHENDE_MARKTLOKATION",
+                              "enum": "SONSTIGE_VERBRAUCHENDE_MALO",
                               "name": "sonstige verbrauchende Marktlokation",
                               "value": "Z55"
                             },
                             {
-                              "enum": "SONSTIGE_ERZEUGENDE_MARKTLOKATION",
+                              "enum": "SONSTIGE_ERZEUGENDE_MALO",
                               "name": "sonstige erzeugende Marktlokation",
                               "value": "Z56"
                             }
@@ -480,7 +480,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "DIESER_CODE_ANWENDUNG_DURCH_ZULAESSIGEN_CODE_NB_GUELTIGEN",
+                              "enum": "NB_GUELTIGER_CODE",
                               "name": "Dieser Code ist in der Anwendung durch einen zulässigen Code aus der vom NB gültigen Liste der Profildefinitionen zu ersetzen!",
                               "value": "XYZ"
                             }
@@ -504,12 +504,12 @@
                     {
                       "codes": [
                         {
-                          "enum": "TAGESPARAMETERABHAENGIGES_LASTPROFIL",
+                          "enum": "TAGESPARAMETER_LASTPROFIL",
                           "name": "tagesparameterabhängiges Lastprofil",
                           "value": "Z03"
                         },
                         {
-                          "enum": "TAGESPARAMETERABHAENGIGES_EINSPEISEPROFIL",
+                          "enum": "TAGESPARAMETER_EINSPEISEPROFIL",
                           "name": "tagesparameterabhängiges Einspeiseprofil",
                           "value": "Z05"
                         }
@@ -568,7 +568,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "DIESER_CODE_ANWENDUNG_DURCH_ZULAESSIGEN_CODE_NB_GUELTIGEN",
+                              "enum": "NB_GUELTIGER_CODE",
                               "name": "Dieser Code ist in der Anwendung durch einen zulässigen Code zu ersetzen!",
                               "value": "XYZ"
                             }
@@ -620,17 +620,17 @@
                         {
                           "codes": [
                             {
-                              "enum": "1_000_000_KWH_A",
+                              "enum": "GRENZWERT_1_000_000_KWH_A",
                               "name": "1.000.000 kWh/a",
                               "value": "Z35"
                             },
                             {
-                              "enum": "300_KWH_K",
+                              "enum": "GRENZWERT_300_KWH_K",
                               "name": "300 kWh/K",
                               "value": "Z36"
                             },
                             {
-                              "enum": "1_000_000_KW",
+                              "enum": "GRENZWERT_1_000_000_KW",
                               "name": "1.000.000 kW",
                               "value": "Z37"
                             }
@@ -682,12 +682,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "0",
+                              "enum": "WERT_0",
                               "name": "0",
                               "value": "Z61"
                             },
                             {
-                              "enum": "1",
+                              "enum": "WERT_1",
                               "name": "1",
                               "value": "Z62"
                             }
@@ -711,12 +711,12 @@
                     {
                       "codes": [
                         {
-                          "enum": "MESSSTELLE_TAGESPARAMETERS_DERZEIT_TEMPERATUR_ERLAUBTER",
+                          "enum": "MESSSTELLE_TAGESPARAMETER_TEMPERATUR",
                           "name": "Messstelle des Tagesparameters (derzeit ist nur die Temperatur ein erlaubter Tagesparameter)",
                           "value": "Z99"
                         },
                         {
-                          "enum": "KLIMAZONE_TAGESPARAMETERS_DERZEIT_TAGESPARAMETER",
+                          "enum": "KLIMAZONE_TAGESPARAMETER",
                           "name": "Klimazone des Tagesparameters (derzeit ist Tagesparameter)",
                           "value": "ZA0"
                         }
@@ -756,12 +756,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "VERGEBEN_HAENDLER_HIER_NETZBETREIBER",
+                              "enum": "NETZBETREIBER",
                               "name": "Vergeben vom Händler (hier Netzbetreiber)",
                               "value": "89"
                             },
                             {
-                              "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                              "enum": "BDEW",
                               "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                               "value": "293"
                             }
@@ -785,7 +785,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZIERUNGSGEBIET",
+                          "enum": "BG",
                           "name": "Bilanzierungsgebiet",
                           "value": "Z20"
                         }
@@ -1047,7 +1047,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "BERECHNUNG_TAGESMITTELTEMPERATUR",
+                      "enum": "TAGESMITTELTEMPERATUR",
                       "name": "Berechnung Tagesmitteltemperatur",
                       "value": "Z01"
                     }
@@ -1068,12 +1068,12 @@
                     {
                       "codes": [
                         {
-                          "enum": "24H_MITTELWERT",
+                          "enum": "MITTELWERT_24H",
                           "name": "24h-Mittelwert",
                           "value": "Z03"
                         },
                         {
-                          "enum": "ANBIETER_VERFUEGUNG_GESTELLTE_AEQUIVALENTE",
+                          "enum": "AEQUIVALENTE_ANBIETER",
                           "name": "vom Anbieter zur Verfügung gestellte, äquivalente Tagesmitteltemperatur",
                           "value": "Z04"
                         },
@@ -1148,12 +1148,12 @@
                               "value": "Z38"
                             },
                             {
-                              "enum": "GEWERBE_WERKTAGS_8_18_UHR",
+                              "enum": "GEWERBE_WERKTAGS_8_18",
                               "name": "Gewerbe werktags 8 - 18 Uhr",
                               "value": "Z39"
                             },
                             {
-                              "enum": "GEWERBE_STARKEM_BIS_UEBERWIEGENDEM_VERBRAUCH_ABENDSTUNDEN",
+                              "enum": "GEWERBE_UEBERWIEGEND_ABEND",
                               "name": "Gewerbe mit starkem bis überwiegendem Verbrauch in den Abendstunden",
                               "value": "Z40"
                             },
@@ -1168,7 +1168,7 @@
                               "value": "Z42"
                             },
                             {
-                              "enum": "GEWERBE_BAECKEREI_BACKSTUBE",
+                              "enum": "GEWERBE_BAECKEREI",
                               "name": "Gewerbe Bäckerei mit Backstube",
                               "value": "Z43"
                             },
@@ -1178,12 +1178,12 @@
                               "value": "Z44"
                             },
                             {
-                              "enum": "LANDWIRTSCHAFTSBETRIEBE_ALLGEMEIN",
+                              "enum": "LANDWIRTSCHAFT_ALLGEMEIN",
                               "name": "Landwirtschaftsbetriebe allgemein",
                               "value": "Z45"
                             },
                             {
-                              "enum": "LANDWIRTSCHAFTSBETRIEBE_MILCHWIRTSCHAFT_NEBENERWERBS",
+                              "enum": "LANDWIRTSCHAFT_MILCHWIRTSCHAFT",
                               "name": "Landwirtschaftsbetriebe mit Milchwirtschaft/Nebenerwerbs-Tierzucht",
                               "value": "Z46"
                             },
@@ -1208,7 +1208,7 @@
                               "value": "Z50"
                             },
                             {
-                              "enum": "HEIZWAERMESPEICHER",
+                              "enum": "SPEICHERHEIZUNG",
                               "name": "Heizwärmespeicher",
                               "value": "Z51"
                             },
@@ -1218,7 +1218,7 @@
                               "value": "Z52"
                             },
                             {
-                              "enum": "PHOTOVOLTAIK_MARKTLOKATION",
+                              "enum": "PHOTOVOLTAIK_MALO",
                               "name": "Photovoltaik-Marktlokation",
                               "value": "Z53"
                             },
@@ -1228,27 +1228,27 @@
                               "value": "Z54"
                             },
                             {
-                              "enum": "SONSTIGE_VERBRAUCHENDE_MARKTLOKATION",
+                              "enum": "SONSTIGE_VERBRAUCHENDE_MALO",
                               "name": "sonstige verbrauchende Marktlokation",
                               "value": "Z55"
                             },
                             {
-                              "enum": "SONSTIGE_ERZEUGENDE_MARKTLOKATION",
+                              "enum": "SONSTIGE_ERZEUGENDE_MALO",
                               "name": "sonstige erzeugende Marktlokation",
                               "value": "Z56"
                             },
                             {
-                              "enum": "E_MOBILITAET_LADEPUNKT_OEFFENTLICHEN_BEREICH",
+                              "enum": "EMOB_LADEPUNKT_OEFFENTLICH",
                               "name": "E-Mobilität Ladepunkt im öffentlichen Bereich",
                               "value": "ZC6"
                             },
                             {
-                              "enum": "E_MOBILITAET_LADEPUNKT_HAUSHALTS",
+                              "enum": "EMOB_LADEPUNKT_HAUSHALT",
                               "name": "E-Mobilität Ladepunkt eines Haushalts",
                               "value": "ZC7"
                             },
                             {
-                              "enum": "E_MOBILITAET_LADEPUNKT_GEWERBES",
+                              "enum": "EMOB_LADEPUNKT_GEWERBE",
                               "name": "E-Mobilität Ladepunkt eines Gewerbes",
                               "value": "ZC8"
                             }
@@ -1336,7 +1336,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "DIESER_CODE_ANWENDUNG_DURCH_ZULAESSIGEN_CODE_NB_GUELTIGEN",
+                              "enum": "NB_GUELTIGER_CODE",
                               "name": "Dieser Code ist in der Anwendung durch einen zulässigen Code aus der vom NB gültigen Liste der Profildefinitionen zu ersetzen!",
                               "value": "XYZ"
                             }
@@ -1388,12 +1388,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "1_000_000_KWH_A",
+                              "enum": "GRENZWERT_1_000_000_KWH_A",
                               "name": "1.000.000 kWh/a",
                               "value": "Z35"
                             },
                             {
-                              "enum": "1_000_000_KW",
+                              "enum": "GRENZWERT_1_000_000_KW",
                               "name": "1.000.000 kW",
                               "value": "Z37"
                             }
@@ -1417,7 +1417,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZIERUNGSGEBIET",
+                          "enum": "BG",
                           "name": "Bilanzierungsgebiet",
                           "value": "Z20"
                         }
@@ -1549,12 +1549,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "PHOTOVOLTAIK_MARKTLOKATION",
+                              "enum": "PHOTOVOLTAIK_MALO",
                               "name": "Photovoltaik-Marktlokation",
                               "value": "Z53"
                             },
                             {
-                              "enum": "SONSTIGE_ERZEUGENDE_MARKTLOKATION",
+                              "enum": "SONSTIGE_ERZEUGENDE_MALO",
                               "name": "sonstige erzeugende Marktlokation",
                               "value": "Z56"
                             }
@@ -1578,7 +1578,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "TAGESPARAMETERABHAENGIGES_EINSPEISEPROFIL",
+                          "enum": "TAGESPARAMETER_EINSPEISEPROFIL",
                           "name": "tagesparameterabhängiges Einspeiseprofil",
                           "value": "Z05"
                         }
@@ -1599,7 +1599,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "DIESER_CODE_ANWENDUNG_DURCH_ZULAESSIGEN_CODE_NB_GUELTIGEN",
+                              "enum": "NB_GUELTIGER_CODE",
                               "name": "Dieser Code ist in der Anwendung durch einen zulässigen Code zu ersetzen!",
                               "value": "XYZ"
                             }
@@ -1651,12 +1651,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "1_000_000_KWH_A",
+                              "enum": "GRENZWERT_1_000_000_KWH_A",
                               "name": "1.000.000 kWh/a",
                               "value": "Z35"
                             },
                             {
-                              "enum": "1_000_000_KW",
+                              "enum": "GRENZWERT_1_000_000_KW",
                               "name": "1.000.000 kW",
                               "value": "Z37"
                             }
@@ -1680,7 +1680,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BILANZIERUNGSGEBIET",
+                          "enum": "BG",
                           "name": "Bilanzierungsgebiet",
                           "value": "Z20"
                         }
@@ -1929,47 +1929,47 @@
             {
               "codes": [
                 {
-                  "enum": "DIENT_MITTEILUNG_AUFNAHME_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "ANMELDUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Aufnahme der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Einzug oder Lieferantenwechsel, Aufnahme einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Übernahme des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E01"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_BEENDIGUNG_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "BEENDIGUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Beendigung der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Auszug oder Lieferantenwechsel, Beendigung einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Abgabe des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E02"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_AENDERUNGEN_STAMMDATEN_OHNE_DABEI",
+                  "enum": "STAMMDATENAENDERUNG",
                   "name": "Dient der Mitteilung über die Änderungen von Stammdaten ohne dabei das Verhältnis Kunde, Lieferant und Messstellenbetreiber zu verändern. Z. B. Anpassung der Jahresverbrauchsprognose oder Namensänderung.",
                   "value": "E03"
                 },
                 {
-                  "enum": "DIENT_UEBERMITTLUNG_STAMMDATEN_MARKTLOKATION_MESSLOKATION",
+                  "enum": "STAMMDATEN_MALO_MELO",
                   "name": "Dient der Übermittlung von Stammdaten zu einer Marktlokation oder Messlokation.",
                   "value": "Z14"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_KUENDIGUNG_LIEFER",
+                  "enum": "KUENDIGUNG_LIEFERVERTRAG",
                   "name": "Dient der Mitteilung über die Kündigung eines Liefer- oder Messstellenbetriebsvertrags zur Kommunikation zwischen zwei LF oder zwei MSB.",
                   "value": "E35"
                 },
                 {
-                  "enum": "DIESE_NACHRICHT_DIENT_UEBERMITTLUNG_HINWEISEN_BEENDIGUNG",
+                  "enum": "HINWEIS_BEENDIGUNG",
                   "name": "Diese Nachricht dient der Übermittlung von Hinweisen und zur Beendigung der Zuordnung eines LFA oder eines zukünftigen LF zu einer Marktlokation. Es erfordert keine Antwortnachricht.",
                   "value": "E44"
                 },
                 {
-                  "enum": "KATEGORIE_BILANZKREISZUORDNUNGSLISTE_MABIS_VERSENDET",
+                  "enum": "BK_ZUORDNUNGSLISTE",
                   "name": "Mit der Kategorie wird die Bilanzkreiszuordnungsliste nach MaBiS versendet.",
                   "value": "E40"
                 },
                 {
-                  "enum": "KATEGORIE_CLEARINGLISTE_MABIS_VERSENDET",
+                  "enum": "CLEARINGLISTE",
                   "name": "Mit der Kategorie wird die Clearingliste nach MaBiS versendet.",
                   "value": "Z05"
                 },
                 {
-                  "enum": "DIESER_KATEGORIE_WERDEN_AKTIVIERUNGEN_DEAKTIVIERUNGEN",
+                  "enum": "AKTIVIERUNG_DEAKTIVIERUNG",
                   "name": "Unter dieser Kategorie werden die Aktivierungen und Deaktivierungen der Bilanzierungszeitreihen mit ihrer entsprechenden Kennzeichnung des Zeitreihentypen versendet.",
                   "value": "Z07"
                 },
@@ -2048,7 +2048,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -2105,7 +2105,7 @@
             {
               "codes": [
                 {
-                  "enum": "NETZANSCHLUSS_STAMMDATEN",
+                  "enum": "UTILMD",
                   "name": "Netzanschluss-Stammdaten",
                   "value": "UTILMD"
                 }
@@ -2157,7 +2157,7 @@
             {
               "codes": [
                 {
-                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
+                  "enum": "BDEW_VERSION",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "S2.1"
                 }

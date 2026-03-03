@@ -63,7 +63,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "ELEKTRONISCHE_POST",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
@@ -116,7 +116,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -148,7 +148,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -204,7 +204,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -244,7 +244,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "NETZLOKATION",
+                      "enum": "NELO",
                       "name": "Netzlokation",
                       "value": "Z18"
                     }
@@ -318,7 +318,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "GPKE_RUECKMELDUNG_ANFRAGE_ABRECHNUNG_BLINDARBEIT_LF",
+                          "enum": "RUECKM_BLINDARBEIT_LF",
                           "name": "GPKE / Rückmeldung / Anfrage Abrechnung Blindarbeit an LF",
                           "value": "55232"
                         }
@@ -344,7 +344,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "TRANSAKTIONS_REFERENZNUMMER",
+                          "enum": "TRANSAKTIONSREFERENZ",
                           "name": "Transaktions-Referenznummer",
                           "value": "TN"
                         }
@@ -386,7 +386,7 @@
                           "value": "Z48"
                         },
                         {
-                          "enum": "SYSTEM_KEINE_DATEN_VORHANDEN",
+                          "enum": "SYSTEM_KEINE_DATEN",
                           "name": "Im System keine Daten vorhanden",
                           "value": "Z54"
                         },
@@ -429,7 +429,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "VERWENDUNG_DATEN",
+                          "enum": "VERWENDUNG_DATEN_AB",
                           "name": "Verwendung der Daten ab",
                           "value": "Z25"
                         }
@@ -530,7 +530,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "ZAHLUNG_BLINDARBEIT_DURCH_LIEFERANTEN",
+                          "enum": "ZAHLUNG_BLINDARBEIT_LF",
                           "name": "Zahlung der Blindarbeit durch Lieferanten",
                           "value": "Z46"
                         }
@@ -558,12 +558,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "LF_TEILT_HIERMIT_BEREITSCHAFT_ZAHLUNG_BLINDARBEIT",
+                              "enum": "LF_BEREITSCHAFT_BLINDARBEIT",
                               "name": "Der LF teilt hiermit die Bereitschaft zur Zahlung der Blindarbeit mit. \r\nVoraussetzung für eine tatsächliche Abrechnung gegenüber dem LF ist: Der NB hat über die Stammdatenprozessse dem LF mitgeteilt, dass er die Blindarbeit an der Netzlokation abrechnet und der NB hat die Abrechung der Blindarbeit auf den LF mit der entsprechenden SDÄ umstellt.",
                               "value": "ZE1"
                             },
                             {
-                              "enum": "LF_TEILT_HIERMIT_KEINE_BEREITSCHAFT_ZAHLUNG_BLINDARBEIT",
+                              "enum": "LF_KEINE_BEREITSCHAFT_BLINDARBEIT",
                               "name": "Der LF teilt hiermit keine Bereitschaft zur Zahlung der Blindarbeit mit.",
                               "value": "ZE2"
                             }
@@ -602,12 +602,12 @@
                 {
                   "codes": [
                     {
-                      "enum": "ERWARTETE_ABRECHNUNGSDATEN_NETZLOKATION",
+                      "enum": "ERWARTETE_ABRECHNUNGSDATEN_NELO",
                       "name": "Erwartete Abrechnungsdaten der Netzlokation",
                       "value": "ZH1"
                     },
                     {
-                      "enum": "SYSTEM_VORHANDENE_ABRECHNUNGSDATEN_NETZLOKATION",
+                      "enum": "SYSTEM_ABRECHNUNGSDATEN_NELO",
                       "name": "Im System vorhandene Abrechnungsdaten der Netzlokation",
                       "value": "ZH2"
                     }
@@ -715,7 +715,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "AENDERUNG_BLINDABRECHNUNGSDATEN_NELO",
+                      "enum": "BLINDABRECHNUNGSDATEN_NELO",
                       "name": "Änderung Blindabrechnungsdaten der NeLo",
                       "value": "ZX5"
                     }
@@ -735,27 +735,27 @@
                 {
                   "codes": [
                     {
-                      "enum": "LFN_MARKTLOKATION_VOLLSTAENDIG_ZUGEORDNET_VOLLSTAENDIGE_100",
+                      "enum": "LFN_MALO_VOLLSTAENDIG_100",
                       "name": "Der LFN wird einer Marktlokation vollständig zugeordnet (vollständige (100%ige) Zuordnung).\r\nDieser Geschäftsvorfall ist auch für die Änderung von einer tranchierten Marktlokation in eine nicht tranchierte Marktlokation anzuwenden.",
                       "value": "ZW0"
                     },
                     {
-                      "enum": "LFN_BESTEHENDEN_TRANCHE_VOLLSTAENDIG_ZUGEORDNET",
+                      "enum": "LFN_TRANCHE_VOLLSTAENDIG",
                       "name": "Der LFN wird einer bestehenden Tranche vollständig zugeordnet (vollständige (100%ige) Zuordnung). \r\nDieser Geschäftsvorfall ist bei einem direkten Übergang, d. h. lückenlosem Zuordnungsende und -beginn und unter Beibehaltung der Tranche, anzuwenden.",
                       "value": "ZW1"
                     },
                     {
-                      "enum": "LFN_NEU_BILDENDEN_TRANCHE_ZUGEORDNET_ANTEILIGER",
+                      "enum": "LFN_NEUE_TRANCHE_ANTEILIG",
                       "name": "Der LFN wird einer neu zu bildenden Tranche zugeordnet (anteiliger Zuordnungsvorgang unter Bildung neuer Tranchen",
                       "value": "ZW2"
                     },
                     {
-                      "enum": "ERZEUGENDE_MARKTLOKATION",
+                      "enum": "ERZEUGENDE_MALO",
                       "name": "Erzeugende Marktlokation",
                       "value": "ZW3"
                     },
                     {
-                      "enum": "VERBRAUCHENDE_MARKTLOKATION",
+                      "enum": "VERB_MALO",
                       "name": "Verbrauchende Marktlokation",
                       "value": "ZW4"
                     },
@@ -765,12 +765,12 @@
                       "value": "ZW5"
                     },
                     {
-                      "enum": "PAUSCHALE_MARKTLOKATION",
+                      "enum": "PAUSCHALE_MALO",
                       "name": "Pauschale Marktlokation",
                       "value": "ZW6"
                     },
                     {
-                      "enum": "GEMESSENE_MARKTLOKATION",
+                      "enum": "GEMESSENE_MALO",
                       "name": "Gemessene Marktlokation",
                       "value": "ZW7"
                     },
@@ -795,7 +795,7 @@
                       "value": "ZX1"
                     },
                     {
-                      "enum": "RUHENDE_MARKTLOKATION",
+                      "enum": "RUHENDE_MALO",
                       "name": "ruhende Marktlokation",
                       "value": "ZAP"
                     }
@@ -815,12 +815,12 @@
                 {
                   "codes": [
                     {
-                      "enum": "KUNDE_VERLAESST_BESTEHENDE_MARKTLOKATION",
+                      "enum": "AUSZUG",
                       "name": "Kunde verlässt eine schon bestehende Marktlokation",
                       "value": "E01"
                     },
                     {
-                      "enum": "KUNDE_BLEIBT_MARKTLOKATION_MARKTPARTNER_GEWECHSELT",
+                      "enum": "LIEFERANTENWECHSEL",
                       "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
                       "value": "E03"
                     }
@@ -885,7 +885,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "EBD_NR_E_0410",
+                      "enum": "E_0410",
                       "name": "EBD Nr. E_0410",
                       "value": "E_0410"
                     }
@@ -931,47 +931,47 @@
             {
               "codes": [
                 {
-                  "enum": "DIENT_MITTEILUNG_AUFNAHME_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "ANMELDUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Aufnahme der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Einzug oder Lieferantenwechsel, Aufnahme einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Übernahme des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E01"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_BEENDIGUNG_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "BEENDIGUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Beendigung der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Auszug oder Lieferantenwechsel, Beendigung einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Abgabe des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E02"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_AENDERUNGEN_STAMMDATEN_OHNE_DABEI",
+                  "enum": "STAMMDATENAENDERUNG",
                   "name": "Dient der Mitteilung über die Änderungen von Stammdaten ohne dabei das Verhältnis Kunde, Lieferant und Messstellenbetreiber zu verändern. Z. B. Anpassung der Jahresverbrauchsprognose oder Namensänderung.",
                   "value": "E03"
                 },
                 {
-                  "enum": "DIENT_UEBERMITTLUNG_STAMMDATEN_MARKTLOKATION_MESSLOKATION",
+                  "enum": "STAMMDATEN_MALO_MELO",
                   "name": "Dient der Übermittlung von Stammdaten zu einer Marktlokation oder Messlokation.",
                   "value": "Z14"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_KUENDIGUNG_LIEFER",
+                  "enum": "KUENDIGUNG_LIEFERVERTRAG",
                   "name": "Dient der Mitteilung über die Kündigung eines Liefer- oder Messstellenbetriebsvertrags zur Kommunikation zwischen zwei LF oder zwei MSB.",
                   "value": "E35"
                 },
                 {
-                  "enum": "DIESE_NACHRICHT_DIENT_UEBERMITTLUNG_HINWEISEN_BEENDIGUNG",
+                  "enum": "HINWEIS_BEENDIGUNG",
                   "name": "Diese Nachricht dient der Übermittlung von Hinweisen und zur Beendigung der Zuordnung eines LFA oder eines zukünftigen LF zu einer Marktlokation. Es erfordert keine Antwortnachricht.",
                   "value": "E44"
                 },
                 {
-                  "enum": "KATEGORIE_BILANZKREISZUORDNUNGSLISTE_MABIS_VERSENDET",
+                  "enum": "BK_ZUORDNUNGSLISTE",
                   "name": "Mit der Kategorie wird die Bilanzkreiszuordnungsliste nach MaBiS versendet.",
                   "value": "E40"
                 },
                 {
-                  "enum": "KATEGORIE_CLEARINGLISTE_MABIS_VERSENDET",
+                  "enum": "CLEARINGLISTE",
                   "name": "Mit der Kategorie wird die Clearingliste nach MaBiS versendet.",
                   "value": "Z05"
                 },
                 {
-                  "enum": "DIESER_KATEGORIE_WERDEN_AKTIVIERUNGEN_DEAKTIVIERUNGEN",
+                  "enum": "AKTIVIERUNG_DEAKTIVIERUNG",
                   "name": "Unter dieser Kategorie werden die Aktivierungen und Deaktivierungen der Bilanzierungszeitreihen mit ihrer entsprechenden Kennzeichnung des Zeitreihentypen versendet.",
                   "value": "Z07"
                 },
@@ -1050,7 +1050,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -1107,7 +1107,7 @@
             {
               "codes": [
                 {
-                  "enum": "NETZANSCHLUSS_STAMMDATEN",
+                  "enum": "UTILMD",
                   "name": "Netzanschluss-Stammdaten",
                   "value": "UTILMD"
                 }
@@ -1159,7 +1159,7 @@
             {
               "codes": [
                 {
-                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
+                  "enum": "BDEW_VERSION",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "S2.1"
                 }

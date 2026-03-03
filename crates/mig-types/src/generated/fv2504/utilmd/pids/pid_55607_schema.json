@@ -63,7 +63,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "ELEKTRONISCHE_POST",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
@@ -116,7 +116,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -148,7 +148,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -204,7 +204,7 @@
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -244,7 +244,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "MARKTLOKATION",
+                      "enum": "MALO",
                       "name": "Marktlokation",
                       "value": "Z16"
                     }
@@ -308,7 +308,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "MESSLOKATION",
+                      "enum": "MELO",
                       "name": "Messlokation",
                       "value": "Z17"
                     }
@@ -372,7 +372,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "NETZLOKATION",
+                      "enum": "NELO",
                       "name": "Netzlokation",
                       "value": "Z18"
                     }
@@ -436,7 +436,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "STEUERBARE_RESSOURCE",
+                      "enum": "SR",
                       "name": "Steuerbare Ressource",
                       "value": "Z19"
                     }
@@ -500,7 +500,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "TECHNISCHE_RESSOURCE",
+                      "enum": "TR",
                       "name": "Technische Ressource",
                       "value": "Z20"
                     }
@@ -638,7 +638,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "GPKE_ANKUENDIGUNG_ZUORDNUNG_ZUORDNUNG_LF_ERZ_MALO_TRANCHE",
+                          "enum": "ANKUEND_ZUORDNUNG_LF_ERZ_MALO_TRANCHE",
                           "name": "GPKE / Ankündigung Zuordnung / Zuordnung des LF zur erz. MaLo/ Tranche",
                           "value": "55607"
                         }
@@ -664,7 +664,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "TRANSAKTIONS_REFERENZNUMMER",
+                          "enum": "TRANSAKTIONSREFERENZ",
                           "name": "Transaktions-Referenznummer",
                           "value": "TN"
                         }
@@ -707,7 +707,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "BASIS_BILDUNG_TRANCHENGROESSE",
+                          "enum": "BASIS_TRANCHENGROESSE",
                           "name": "Basis zur Bildung der Tranchengröße",
                           "value": "Z37"
                         }
@@ -740,7 +740,7 @@
                               "value": "ZD1"
                             },
                             {
-                              "enum": "AUFTEILUNGSFAKTOR_BASIS_REFERENZENTRAEGER_INSTALLIERTER",
+                              "enum": "AUFTEILUNGSFAKTOR_REFERENZ_INSTALLIERT",
                               "name": "Aufteilungsfaktor auf Basis von Referenzenträger/installierter Leistung",
                               "value": "ZD2"
                             }
@@ -951,17 +951,17 @@
                         {
                           "codes": [
                             {
-                              "enum": "GRUNDZUSTAENDIGER_MESSSTELLENBETREIBER",
+                              "enum": "GMSB",
                               "name": "Grundzuständiger Messstellenbetreiber",
                               "value": "Z39"
                             },
                             {
-                              "enum": "WETTBEWERBLICHER_MESSSTELLENBETREIBER",
+                              "enum": "WMSB",
                               "name": "Wettbewerblicher Messstellenbetreiber",
                               "value": "Z40"
                             },
                             {
-                              "enum": "AUFFANGMESSSTELLENBETREIBER",
+                              "enum": "AUFFANG_MSB",
                               "name": "Auffangmessstellenbetreiber",
                               "value": "Z41"
                             }
@@ -974,12 +974,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "VERTRAGLICHER_GRUNDLAGE_GEGENUEBER_ANSCHLUSSNUTZER",
+                              "enum": "VERTRAGLICHE_GRUNDLAGE_ANSCHLUSSNUTZER",
                               "name": "Auf vertraglicher Grundlage gegenüber Anschlussnutzer / Anschlussnehmer",
                               "value": "Z19"
                             },
                             {
-                              "enum": "AUSUEBUNG_WEITERVERPFLICHTUNG_DURCH_GMSB",
+                              "enum": "WEITERVERPFLICHTUNG_GMSB",
                               "name": "In der Ausübung der Weiterverpflichtung durch den gMSB",
                               "value": "Z20"
                             }
@@ -1024,7 +1024,7 @@
                         {
                           "codes": [
                             {
-                              "enum": "ART_ERZEUGENDEN_MARKTLOKATION",
+                              "enum": "ART_ERZEUGENDE_MALO",
                               "name": "Art der erzeugenden Marktlokation",
                               "value": "Z34"
                             }
@@ -1050,27 +1050,27 @@
                         {
                           "codes": [
                             {
-                              "enum": "EEG_MARKTLOKATION_OHNE_DV_PFLICHT",
+                              "enum": "EEG_MALO_OHNE_DV_PFLICHT",
                               "name": "EEG-Marktlokation ohne DV-Pflicht",
                               "value": "Z33"
                             },
                             {
-                              "enum": "KWKG_MARKTLOKATION_OHNE_DV_PFLICHT",
+                              "enum": "KWKG_MALO_OHNE_DV_PFLICHT",
                               "name": "KWKG-Marktlokation ohne DV-Pflicht",
                               "value": "Z34"
                             },
                             {
-                              "enum": "SONSTIGE_MARKTLOKATION",
+                              "enum": "SONSTIGE_MALO",
                               "name": "sonstige Marktlokation",
                               "value": "Z35"
                             },
                             {
-                              "enum": "EEG_MARKTLOKATION_DV_PFLICHT",
+                              "enum": "EEG_MALO_DV_PFLICHT",
                               "name": "EEG-Marktlokation mit DV-Pflicht",
                               "value": "Z37"
                             },
                             {
-                              "enum": "KWKG_MARKTLOKATION_DV_PFLICHT",
+                              "enum": "KWKG_MALO_DV_PFLICHT",
                               "name": "KWKG-Marktlokation mit DV-Pflicht",
                               "value": "Z46"
                             }
@@ -1122,17 +1122,17 @@
                         {
                           "codes": [
                             {
-                              "enum": "VERAEUSSERUNGSFORM_PARAGRAPH_20_ABS_1_NR_3_EEG_2014",
+                              "enum": "VERAEUSSERUNGSFORM_EEG_NR3",
                               "name": "Veräußerungsform nach § 20 Abs. 1 Nr. 3 EEG 2014 („Einspeisevergütung nach § 37“) bzw. § 21 Abs. 2 EEG 2017 oder  § 20 Abs. 1 Nr. 4 EEG 2014 („Einspeisevergütung nach § 38“) bzw. § 21b Abs. 1 Nr. 2 EEG 2017 (Ausfallvergütung)",
                               "value": "Z90"
                             },
                             {
-                              "enum": "VERAEUSSERUNGSFORM_PARAGRAPH_20_ABS_1_NR_1_EEG_2014",
+                              "enum": "VERAEUSSERUNGSFORM_EEG_NR1",
                               "name": "Veräußerungsform nach § 20 Abs. 1 Nr. 1 EEG 2014 („Geförderte Direktvermarktung\") bzw. § 21 Abs. 1 Nr. 1 EEG 2017 (Marktprämie)",
                               "value": "Z91"
                             },
                             {
-                              "enum": "VERAEUSSERUNGSFORM_OHNE_GESETZLICHE_VERGUETUNG_Z_B_PARAGRAPH",
+                              "enum": "VERAEUSSERUNGSFORM_OHNE_VERGUETUNG",
                               "name": "Veräußerungsform ohne gesetzliche  Vergütung (z.B. nach § 20 Abs. 1 Nr. 2 EEG 2014 („Sonstige Direktvermarktung\") bzw. § 21b Abs. 1 Nr. 3 EEG 2017 ...)",
                               "value": "Z92"
                             },
@@ -1175,7 +1175,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "INFORMATIVE_DATEN_MARKTLOKATION",
+                      "enum": "INFO_DATEN_MALO",
                       "name": "Informative Daten der Marktlokation",
                       "value": "Z98"
                     }
@@ -1292,17 +1292,17 @@
                         {
                           "codes": [
                             {
-                              "enum": "GRUNDZUSTAENDIGER_MESSSTELLENBETREIBER",
+                              "enum": "GMSB",
                               "name": "Grundzuständiger Messstellenbetreiber",
                               "value": "Z39"
                             },
                             {
-                              "enum": "WETTBEWERBLICHER_MESSSTELLENBETREIBER",
+                              "enum": "WMSB",
                               "name": "Wettbewerblicher Messstellenbetreiber",
                               "value": "Z40"
                             },
                             {
-                              "enum": "AUFFANGMESSSTELLENBETREIBER",
+                              "enum": "AUFFANG_MSB",
                               "name": "Auffangmessstellenbetreiber",
                               "value": "Z41"
                             }
@@ -1340,7 +1340,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "INFORMATIVE_DATEN_NETZLOKATION",
+                      "enum": "INFO_DATEN_NELO",
                       "name": "Informative Daten der Netzlokation",
                       "value": "ZD7"
                     }
@@ -1374,7 +1374,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "NETZLOKATION",
+                          "enum": "NELO",
                           "name": "Netzlokation",
                           "value": "Z32"
                         }
@@ -1489,17 +1489,17 @@
                         {
                           "codes": [
                             {
-                              "enum": "GRUNDZUSTAENDIGER_MESSSTELLENBETREIBER",
+                              "enum": "GMSB",
                               "name": "Grundzuständiger Messstellenbetreiber",
                               "value": "Z39"
                             },
                             {
-                              "enum": "WETTBEWERBLICHER_MESSSTELLENBETREIBER",
+                              "enum": "WMSB",
                               "name": "Wettbewerblicher Messstellenbetreiber",
                               "value": "Z40"
                             },
                             {
-                              "enum": "AUFFANGMESSSTELLENBETREIBER",
+                              "enum": "AUFFANG_MSB",
                               "name": "Auffangmessstellenbetreiber",
                               "value": "Z41"
                             }
@@ -1537,7 +1537,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "INFORMATIVE_DATEN_STEUERBAREN_RESSOURCE",
+                      "enum": "INFO_DATEN_SR",
                       "name": "Informative Daten der Steuerbaren Ressource",
                       "value": "ZF1"
                     }
@@ -1571,7 +1571,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "STEUERBARE_RESSOURCE",
+                          "enum": "SR",
                           "name": "Steuerbare Ressource",
                           "value": "Z38"
                         }
@@ -1686,17 +1686,17 @@
                         {
                           "codes": [
                             {
-                              "enum": "GRUNDZUSTAENDIGER_MESSSTELLENBETREIBER",
+                              "enum": "GMSB",
                               "name": "Grundzuständiger Messstellenbetreiber",
                               "value": "Z39"
                             },
                             {
-                              "enum": "WETTBEWERBLICHER_MESSSTELLENBETREIBER",
+                              "enum": "WMSB",
                               "name": "Wettbewerblicher Messstellenbetreiber",
                               "value": "Z40"
                             },
                             {
-                              "enum": "AUFFANGMESSSTELLENBETREIBER",
+                              "enum": "AUFFANG_MSB",
                               "name": "Auffangmessstellenbetreiber",
                               "value": "Z41"
                             }
@@ -1709,12 +1709,12 @@
                         {
                           "codes": [
                             {
-                              "enum": "VERTRAGLICHER_GRUNDLAGE_GEGENUEBER_ANSCHLUSSNUTZER",
+                              "enum": "VERTRAGLICHE_GRUNDLAGE_ANSCHLUSSNUTZER",
                               "name": "Auf vertraglicher Grundlage gegenüber Anschlussnutzer / Anschlussnehmer",
                               "value": "Z19"
                             },
                             {
-                              "enum": "AUSUEBUNG_WEITERVERPFLICHTUNG_DURCH_GMSB",
+                              "enum": "WEITERVERPFLICHTUNG_GMSB",
                               "name": "In der Ausübung der Weiterverpflichtung durch den gMSB",
                               "value": "Z20"
                             }
@@ -1784,7 +1784,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "INFORMATIVE_DATEN_MESSLOKATION",
+                      "enum": "INFO_DATEN_MELO",
                       "name": "Informative Daten der Messlokation",
                       "value": "ZF3"
                     }
@@ -1818,7 +1818,7 @@
                     {
                       "codes": [
                         {
-                          "enum": "MESSLOKATION",
+                          "enum": "MELO",
                           "name": "Messlokation",
                           "value": "Z19"
                         }
@@ -1891,7 +1891,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "DATUM_VERTRAGSBEGINN",
+                      "enum": "VERTRAGSBEGINN",
                       "name": "Datum Vertragsbeginn",
                       "value": "92"
                     }
@@ -1936,7 +1936,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "DATUM_VERTRAGSENDE",
+                      "enum": "VERTRAGSENDE",
                       "name": "Datum Vertragsende",
                       "value": "93"
                     }
@@ -2014,7 +2014,7 @@
                 {
                   "codes": [
                     {
-                      "enum": "KUNDE_BLEIBT_MARKTLOKATION_MARKTPARTNER_GEWECHSELT",
+                      "enum": "LIEFERANTENWECHSEL",
                       "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
                       "value": "E03"
                     }
@@ -2069,12 +2069,12 @@
                 {
                   "codes": [
                     {
-                      "enum": "KUNDE_VERLAESST_BESTEHENDE_MARKTLOKATION",
+                      "enum": "AUSZUG",
                       "name": "Kunde verlässt eine schon bestehende Marktlokation",
                       "value": "E01"
                     },
                     {
-                      "enum": "KUNDE_BLEIBT_MARKTLOKATION_MARKTPARTNER_GEWECHSELT",
+                      "enum": "LIEFERANTENWECHSEL",
                       "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
                       "value": "E03"
                     }
@@ -2108,47 +2108,47 @@
             {
               "codes": [
                 {
-                  "enum": "DIENT_MITTEILUNG_AUFNAHME_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "ANMELDUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Aufnahme der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Einzug oder Lieferantenwechsel, Aufnahme einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Übernahme des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E01"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_BEENDIGUNG_NETZNUTZUNG_VERBRAUCHENDEN",
+                  "enum": "BEENDIGUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Beendigung der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Auszug oder Lieferantenwechsel, Beendigung einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Abgabe des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E02"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_AENDERUNGEN_STAMMDATEN_OHNE_DABEI",
+                  "enum": "STAMMDATENAENDERUNG",
                   "name": "Dient der Mitteilung über die Änderungen von Stammdaten ohne dabei das Verhältnis Kunde, Lieferant und Messstellenbetreiber zu verändern. Z. B. Anpassung der Jahresverbrauchsprognose oder Namensänderung.",
                   "value": "E03"
                 },
                 {
-                  "enum": "DIENT_UEBERMITTLUNG_STAMMDATEN_MARKTLOKATION_MESSLOKATION",
+                  "enum": "STAMMDATEN_MALO_MELO",
                   "name": "Dient der Übermittlung von Stammdaten zu einer Marktlokation oder Messlokation.",
                   "value": "Z14"
                 },
                 {
-                  "enum": "DIENT_MITTEILUNG_KUENDIGUNG_LIEFER",
+                  "enum": "KUENDIGUNG_LIEFERVERTRAG",
                   "name": "Dient der Mitteilung über die Kündigung eines Liefer- oder Messstellenbetriebsvertrags zur Kommunikation zwischen zwei LF oder zwei MSB.",
                   "value": "E35"
                 },
                 {
-                  "enum": "DIESE_NACHRICHT_DIENT_UEBERMITTLUNG_HINWEISEN_BEENDIGUNG",
+                  "enum": "HINWEIS_BEENDIGUNG",
                   "name": "Diese Nachricht dient der Übermittlung von Hinweisen und zur Beendigung der Zuordnung eines LFA oder eines zukünftigen LF zu einer Marktlokation. Es erfordert keine Antwortnachricht.",
                   "value": "E44"
                 },
                 {
-                  "enum": "KATEGORIE_BILANZKREISZUORDNUNGSLISTE_MABIS_VERSENDET",
+                  "enum": "BK_ZUORDNUNGSLISTE",
                   "name": "Mit der Kategorie wird die Bilanzkreiszuordnungsliste nach MaBiS versendet.",
                   "value": "E40"
                 },
                 {
-                  "enum": "KATEGORIE_CLEARINGLISTE_MABIS_VERSENDET",
+                  "enum": "CLEARINGLISTE",
                   "name": "Mit der Kategorie wird die Clearingliste nach MaBiS versendet.",
                   "value": "Z05"
                 },
                 {
-                  "enum": "DIESER_KATEGORIE_WERDEN_AKTIVIERUNGEN_DEAKTIVIERUNGEN",
+                  "enum": "AKTIVIERUNG_DEAKTIVIERUNG",
                   "name": "Unter dieser Kategorie werden die Aktivierungen und Deaktivierungen der Bilanzierungszeitreihen mit ihrer entsprechenden Kennzeichnung des Zeitreihentypen versendet.",
                   "value": "Z07"
                 },
@@ -2227,7 +2227,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -2284,7 +2284,7 @@
             {
               "codes": [
                 {
-                  "enum": "NETZANSCHLUSS_STAMMDATEN",
+                  "enum": "UTILMD",
                   "name": "Netzanschluss-Stammdaten",
                   "value": "UTILMD"
                 }
@@ -2336,7 +2336,7 @@
             {
               "codes": [
                 {
-                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
+                  "enum": "BDEW_VERSION",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "S2.1"
                 }
