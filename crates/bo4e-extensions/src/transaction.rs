@@ -152,7 +152,7 @@ mod tests {
         let tx = UtilmdTransaktion {
             transaktions_id: "TX001".to_string(),
             absender: Marktteilnehmer {
-                mp_id: Some("9900123".to_string()),
+                marktpartner_id: Some("9900123".to_string()),
                 ..Default::default()
             },
             ..Default::default()
@@ -161,7 +161,7 @@ mod tests {
         let json = serde_json::to_string_pretty(&tx).unwrap();
         let de: UtilmdTransaktion = serde_json::from_str(&json).unwrap();
         assert_eq!(de.transaktions_id, "TX001");
-        assert_eq!(de.absender.mp_id, Some("9900123".to_string()));
+        assert_eq!(de.absender.marktpartner_id, Some("9900123".to_string()));
     }
 
     #[test]

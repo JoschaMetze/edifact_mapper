@@ -446,13 +446,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "bo4e-core"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "16d9c6067d3f850ff115830aadb3702d27410996393f831d9f5721a95474282e"
+dependencies = [
+ "chrono",
+ "serde",
+]
+
+[[package]]
 name = "bo4e-extensions"
 version = "0.1.0"
 dependencies = [
+ "bo4e-german",
  "chrono",
  "insta",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "bo4e-german"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad8c7c7f3c432821ab2b0e83ea40e1791be5641e14bddd8cfbcb3c60fda69d27"
+dependencies = [
+ "bo4e-core",
+ "chrono",
+ "serde",
 ]
 
 [[package]]
