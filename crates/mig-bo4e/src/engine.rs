@@ -438,9 +438,9 @@ impl MappingEngine {
                 }
                 if let Some(val) = Self::extract_from_instance(instance, path) {
                     let mapped_val = if let Some(map) = enum_map {
-                        map.get(&val).cloned().unwrap_or(val)
+                        map.get(&val).cloned().unwrap_or_else(|| val.clone())
                     } else {
-                        val
+                        val.clone()
                     };
 
                     // Enrich code fields with meaning from PID schema
@@ -459,12 +459,15 @@ impl MappingEngine {
                                 element_idx,
                                 component_idx,
                             ) {
+                                // Look up the original EDIFACT value for enrichment,
+                                // since schema codes use raw values (e.g., "293")
+                                // not enum_map targets (e.g., "BDEW").
                                 let enrichment = code_lookup.enrichment_for(
                                     source_path,
                                     &seg_tag,
                                     element_idx,
                                     component_idx,
-                                    &mapped_val,
+                                    &val,
                                 );
                                 let meaning = enrichment
                                     .map(|e| serde_json::Value::String(e.meaning.clone()))
@@ -519,9 +522,9 @@ impl MappingEngine {
             }
             if let Some(val) = Self::extract_from_instance(instance, path) {
                 let mapped_val = if let Some(map) = enum_map {
-                    map.get(&val).cloned().unwrap_or(val)
+                    map.get(&val).cloned().unwrap_or_else(|| val.clone())
                 } else {
-                    val
+                    val.clone()
                 };
 
                 // Enrich code fields with meaning from PID schema
@@ -540,12 +543,15 @@ impl MappingEngine {
                             element_idx,
                             component_idx,
                         ) {
+                            // Look up the original EDIFACT value for enrichment,
+                            // since schema codes use raw values (e.g., "293")
+                            // not enum_map targets (e.g., "BDEW").
                             let enrichment = code_lookup.enrichment_for(
                                 source_path,
                                 &seg_tag,
                                 element_idx,
                                 component_idx,
-                                &mapped_val,
+                                &val,
                             );
                             let meaning = enrichment
                                 .map(|e| serde_json::Value::String(e.meaning.clone()))
