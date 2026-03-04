@@ -7,35 +7,17 @@
 //! Tests skip gracefully when required files (MIG/AHB XML, fixtures, mappings) are absent.
 
 use automapper_generator::parsing::ahb_parser::parse_ahb;
-use mig_assembly::assembler::{AssembledSegment, Assembler};
-use mig_assembly::disassembler::Disassembler;
+use mig_assembly::assembler::Assembler;
 use mig_assembly::parsing::parse_mig;
 use mig_assembly::pid_filter::filter_mig_for_pid;
-use mig_assembly::renderer::render_edifact;
 use mig_assembly::tokenize::parse_to_segments;
 use mig_bo4e::engine::MappingEngine;
-use mig_bo4e::path_resolver::PathResolver;
-use mig_bo4e::pid_schema_index::PidSchemaIndex;
-use mig_types::schema::mig::MigSchema;
 use std::collections::HashSet;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 mod common;
-use common::bo4e_validation;
-
-// ── Paths (relative to the crate root = crates/mig-bo4e) ──
-
-const MIG_XML_PATH: &str =
-    "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml";
-const AHB_XML_PATH: &str =
-    "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml";
-const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/UTILMD/FV2504";
-const MAPPINGS_BASE: &str = "../../mappings/FV2504/UTILMD_Strom";
-const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
-
-fn path_resolver() -> PathResolver {
-    PathResolver::from_schema_dir(std::path::Path::new(SCHEMA_DIR))
-}
+use common::test_utils;
+use test_utils::{AHB_XML_PATH, FIXTURE_DIR, MIG_XML_PATH};
 
 // ── PID definitions ──
 
@@ -471,76 +453,24 @@ const PID_SPECS: &[PidTestSpec] = &[
 
 // ── Helper functions ──
 
-fn message_dir() -> PathBuf {
-    Path::new(MAPPINGS_BASE).join("message")
-}
-
-fn common_dir() -> PathBuf {
-    Path::new(MAPPINGS_BASE).join("common")
-}
-
-fn pid_dir(pid: &str) -> PathBuf {
-    Path::new(MAPPINGS_BASE).join(format!("pid_{pid}"))
-}
-
-fn schema_index(pid: &str) -> PidSchemaIndex {
-    let schema_path = Path::new(SCHEMA_DIR).join(format!("pid_{pid}_schema.json"));
-    PidSchemaIndex::from_schema_file(&schema_path).unwrap()
-}
-
-/// Load split engines with common/ inheritance when available.
-fn load_split_engines(pid: &str) -> (MappingEngine, MappingEngine) {
-    let msg_dir = message_dir();
-    let cmn_dir = common_dir();
-    let tx_dir = pid_dir(pid);
-    let resolver = path_resolver();
-    if cmn_dir.exists() {
-        let idx = schema_index(pid);
-        let (m, t) =
-            MappingEngine::load_split_with_common(&msg_dir, &cmn_dir, &tx_dir, &idx).unwrap();
-        (
-            m.with_path_resolver(resolver.clone()),
-            t.with_path_resolver(resolver),
-        )
-    } else {
-        let (m, t) = MappingEngine::load_split(&msg_dir, &tx_dir).unwrap();
-        (
-            m.with_path_resolver(resolver.clone()),
-            t.with_path_resolver(resolver),
-        )
-    }
-}
-
 // ── TOML loading tests (no fixtures needed) ──
 
 macro_rules! toml_loading_test {
     ($name:ident, $pid:expr) => {
         #[test]
         fn $name() {
-            let msg_dir = message_dir();
-            let tx_dir = pid_dir($pid);
-            if !msg_dir.exists() {
-                eprintln!("Skipping {}: message mappings not found", stringify!($name));
+            let tx_dir = test_utils::pid_dir($pid);
+            if !test_utils::message_dir().exists() || !tx_dir.exists() {
+                eprintln!("Skipping {}: mapping dirs not found", stringify!($name));
                 return;
             }
-            if !tx_dir.exists() {
-                eprintln!(
-                    "Skipping {}: PID {} mappings not found",
-                    stringify!($name),
-                    $pid
-                );
-                return;
-            }
-
-            let (msg_engine, tx_engine) = load_split_engines($pid);
-
+            let (msg_engine, tx_engine) = test_utils::load_split_engines($pid);
             let total = msg_engine.definitions().len() + tx_engine.definitions().len();
             assert!(
                 total > 0,
                 "PID {} engines should have non-empty definitions",
                 $pid
             );
-
             eprintln!("PID {} TOML loading OK: {} definitions loaded", $pid, total);
         }
     };
@@ -627,7 +557,6 @@ fn run_forward_mapping_test(spec: &PidTestSpec) {
         return;
     }
 
-    // Skip fixtures with known assembly issues (e.g., non-AHB segments blocking assembly)
     if KNOWN_INCOMPLETE.contains(&spec.fixture) {
         eprintln!(
             "Skipping forward test for PID {}: fixture {} is KNOWN_INCOMPLETE",
@@ -636,9 +565,8 @@ fn run_forward_mapping_test(spec: &PidTestSpec) {
         return;
     }
 
-    let msg_dir = message_dir();
-    let tx_dir = pid_dir(spec.pid);
-    if !msg_dir.exists() || !tx_dir.exists() {
+    let tx_dir = test_utils::pid_dir(spec.pid);
+    if !test_utils::message_dir().exists() || !tx_dir.exists() {
         eprintln!(
             "Skipping forward test for PID {}: mappings not found",
             spec.pid
@@ -695,7 +623,7 @@ fn run_forward_mapping_test(spec: &PidTestSpec) {
         .unwrap_or_else(|e| panic!("Failed to assemble tree for PID {}: {e}", spec.pid));
 
     // Step 6: Load split engines (message + transaction with common inheritance)
-    let (msg_engine, tx_engine) = load_split_engines(spec.pid);
+    let (msg_engine, tx_engine) = test_utils::load_split_engines(spec.pid);
 
     // Step 7: Map with split engines (no code enrichment for basic test)
     let mapped = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", false);
@@ -877,8 +805,8 @@ macro_rules! interchange_test {
                 return;
             }
 
-            let msg_dir = message_dir();
-            let tx_dir = pid_dir(spec.pid);
+            let msg_dir = test_utils::message_dir();
+            let tx_dir = test_utils::pid_dir(spec.pid);
             if !msg_dir.exists() || !tx_dir.exists() {
                 eprintln!(
                     "Skipping interchange test for PID {}: mappings not found",
@@ -926,7 +854,7 @@ macro_rules! interchange_test {
                 .unwrap();
 
             // Map (with common inheritance)
-            let (msg_engine, tx_engine) = load_split_engines(spec.pid);
+            let (msg_engine, tx_engine) = test_utils::load_split_engines(spec.pid);
             let mapped =
                 MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", false);
 
@@ -1030,52 +958,6 @@ interchange_test!(test_interchange_55648, "55648");
 
 // ── Full EDIFACT roundtrip tests ──
 
-/// Discover all `.edi` fixture files for a given PID.
-fn discover_fixtures(pid: &str) -> Vec<PathBuf> {
-    let dir = Path::new(FIXTURE_DIR);
-    if !dir.exists() {
-        return vec![];
-    }
-    let prefix = format!("{pid}_");
-    let mut fixtures: Vec<PathBuf> = std::fs::read_dir(dir)
-        .unwrap()
-        .filter_map(|e| e.ok())
-        .map(|e| e.path())
-        .filter(|p| {
-            p.file_name()
-                .and_then(|n| n.to_str())
-                .map(|n| n.starts_with(&prefix) && n.ends_with(".edi"))
-                .unwrap_or(false)
-        })
-        .collect();
-    fixtures.sort();
-    fixtures
-}
-
-fn load_pid_filtered_mig(pid_id: &str) -> Option<MigSchema> {
-    let mig_path = Path::new(MIG_XML_PATH);
-    let ahb_path = Path::new(AHB_XML_PATH);
-    if !mig_path.exists() || !ahb_path.exists() {
-        return None;
-    }
-    let mig = parse_mig(mig_path, "UTILMD", Some("Strom"), "FV2504").ok()?;
-    let ahb = parse_ahb(ahb_path, "UTILMD", Some("Strom"), "FV2504").ok()?;
-    let pid = ahb.workflows.iter().find(|w| w.id == pid_id)?;
-    let numbers: HashSet<String> = pid.segment_numbers.iter().cloned().collect();
-    Some(filter_mig_for_pid(&mig, &numbers))
-}
-
-fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSegment {
-    AssembledSegment {
-        tag: seg.id.clone(),
-        elements: seg
-            .elements
-            .iter()
-            .map(|el| el.iter().map(|c| c.to_string()).collect())
-            .collect(),
-    }
-}
-
 /// Fixtures with known mapping gaps that prevent byte-identical roundtrip.
 /// These are legitimate issues to fix later, not test bugs.
 const KNOWN_INCOMPLETE: &[&str] = &[
@@ -1100,176 +982,11 @@ const KNOWN_INCOMPLETE: &[&str] = &[
     "55648_UTILMD_S2.1_FELLERM8037025.edi",
 ];
 
-/// Full pipeline roundtrip for ALL fixtures of a PID:
-/// EDIFACT -> tokenize -> split -> assemble -> map_interchange
-/// -> map_interchange_reverse -> disassemble -> render -> compare with original.
-fn run_full_roundtrip(pid: &str) {
-    let fixtures = discover_fixtures(pid);
-    if fixtures.is_empty() {
-        eprintln!("Skipping roundtrip for PID {pid}: no fixtures found");
-        return;
-    }
-
-    let Some(filtered_mig) = load_pid_filtered_mig(pid) else {
-        eprintln!("Skipping roundtrip for PID {pid}: MIG/AHB XML not available");
-        return;
-    };
-
-    let tx_dir = pid_dir(pid);
-    if !message_dir().exists() || !tx_dir.exists() {
-        eprintln!("Skipping roundtrip for PID {pid}: mapping directories not found");
-        return;
-    }
-    let (msg_engine, tx_engine) = load_split_engines(pid);
-
-    for fixture_path in &fixtures {
-        let fixture_name = fixture_path.file_name().unwrap().to_str().unwrap();
-
-        if KNOWN_INCOMPLETE.contains(&fixture_name) {
-            eprintln!("PID {pid}: {fixture_name} -- SKIPPED (known incomplete mapping)");
-            continue;
-        }
-
-        let edifact_input = std::fs::read_to_string(fixture_path).unwrap();
-
-        // Step 1: Tokenize and split
-        let segments = parse_to_segments(edifact_input.as_bytes()).unwrap();
-        let chunks = mig_assembly::split_messages(segments).unwrap();
-        assert!(
-            !chunks.messages.is_empty(),
-            "PID {pid} ({fixture_name}): should have at least one message"
-        );
-
-        let msg_chunk = &chunks.messages[0];
-
-        // Assemble with UNH + body + UNT (message content, no UNB envelope)
-        let mut msg_segs = vec![msg_chunk.unh.clone()];
-        msg_segs.extend(msg_chunk.body.iter().cloned());
-        msg_segs.push(msg_chunk.unt.clone());
-
-        // Step 2: Assemble with PID-filtered MIG
-        let assembler = Assembler::new(&filtered_mig);
-        let original_tree = assembler.assemble_generic(&msg_segs).unwrap();
-
-        // Step 3: Forward mapping -> MappedMessage
-        let mapped =
-            MappingEngine::map_interchange(&msg_engine, &tx_engine, &original_tree, "SG4", true);
-
-        assert!(
-            !mapped.transaktionen.is_empty(),
-            "PID {pid} ({fixture_name}): forward mapping should produce at least one transaction"
-        );
-
-        // Step 3b: BO4E schema validation (non-fatal — warns about unknown field names)
-        let mapped_for_validation =
-            MappingEngine::map_interchange(&msg_engine, &tx_engine, &original_tree, "SG4", false);
-        bo4e_validation::validate_mapped_message(
-            pid,
-            fixture_name,
-            &msg_engine,
-            &tx_engine,
-            &mapped_for_validation,
-        );
-
-        // Step 4: Reverse mapping -> AssembledTree
-        let mut reverse_tree =
-            MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4");
-
-        // Add UNH envelope (mapping engine handles content only)
-        let unh_assembled = owned_to_assembled(&msg_chunk.unh);
-        reverse_tree.segments.insert(0, unh_assembled);
-        reverse_tree.post_group_start += 1;
-
-        // Only add UNT if the assembler captured it in the original tree.
-        let original_has_unt = original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
-        if original_has_unt {
-            let unt_assembled = owned_to_assembled(&msg_chunk.unt);
-            reverse_tree.segments.push(unt_assembled);
-        }
-
-        // Step 5: Disassemble both trees and render to EDIFACT
-        let disassembler = Disassembler::new(&filtered_mig);
-        let delimiters = edifact_types::EdifactDelimiters::default();
-
-        let original_dis = disassembler.disassemble(&original_tree);
-        let original_rendered = render_edifact(&original_dis, &delimiters);
-
-        let reverse_dis = disassembler.disassemble(&reverse_tree);
-        let reverse_rendered = render_edifact(&reverse_dis, &delimiters);
-
-        // Step 6: Compare segment tags (structural check)
-        let original_tags: Vec<&str> = original_dis.iter().map(|s| s.tag.as_str()).collect();
-        let reverse_tags: Vec<&str> = reverse_dis.iter().map(|s| s.tag.as_str()).collect();
-
-        if original_tags != reverse_tags {
-            eprintln!("PID {pid} ({fixture_name}): segment tag mismatch!");
-            eprintln!(
-                "  original ({} segs): {:?}",
-                original_tags.len(),
-                original_tags
-            );
-            eprintln!(
-                "  reversed ({} segs): {:?}",
-                reverse_tags.len(),
-                reverse_tags
-            );
-            for (i, tag) in original_tags.iter().enumerate() {
-                if reverse_tags.get(i) != Some(tag) {
-                    eprintln!(
-                        "  first difference at position {i}: original={tag}, reversed={}",
-                        reverse_tags.get(i).unwrap_or(&"<missing>")
-                    );
-                    break;
-                }
-            }
-        }
-
-        assert_eq!(
-            original_tags, reverse_tags,
-            "PID {pid} ({fixture_name}): segment tags should match after forward->reverse roundtrip"
-        );
-
-        // Step 7: Compare full rendered EDIFACT (byte-identical check)
-        if original_rendered != reverse_rendered {
-            let orig_segs: Vec<&str> = original_rendered.split('\'').collect();
-            let rev_segs: Vec<&str> = reverse_rendered.split('\'').collect();
-            let max_len = orig_segs.len().max(rev_segs.len());
-            let mut diff_count = 0;
-            for i in 0..max_len {
-                let o = orig_segs.get(i).unwrap_or(&"<missing>");
-                let r = rev_segs.get(i).unwrap_or(&"<missing>");
-                if o != r {
-                    eprintln!("PID {pid} ({fixture_name}): segment {i} differs:");
-                    eprintln!("  original: {o}");
-                    eprintln!("  reversed: {r}");
-                    diff_count += 1;
-                }
-            }
-            eprintln!(
-                "PID {pid} ({fixture_name}): {diff_count} segment(s) differ out of {}",
-                orig_segs.len()
-            );
-        }
-
-        assert_eq!(
-            original_rendered, reverse_rendered,
-            "PID {pid} ({fixture_name}): full EDIFACT roundtrip should be byte-identical"
-        );
-
-        eprintln!(
-            "PID {pid}: {fixture_name} -- roundtrip OK, {} segments byte-identical",
-            original_tags.len()
-        );
-    }
-
-    eprintln!("PID {pid}: all {} fixtures passed", fixtures.len());
-}
-
 macro_rules! roundtrip_test {
     ($name:ident, $pid:expr) => {
         #[test]
         fn $name() {
-            run_full_roundtrip($pid);
+            test_utils::run_full_roundtrip_with_skip($pid, KNOWN_INCOMPLETE);
         }
     };
 }

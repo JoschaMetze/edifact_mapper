@@ -4,85 +4,15 @@
 //! Full pipeline: EDIFACT → tokenize → split → assemble → map_interchange
 //! → map_interchange_reverse → disassemble → render → compare with original.
 
-use automapper_generator::parsing::ahb_parser::parse_ahb;
-use mig_assembly::assembler::{AssembledSegment, Assembler};
+use mig_assembly::assembler::Assembler;
 use mig_assembly::disassembler::Disassembler;
-use mig_assembly::parsing::parse_mig;
-use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::renderer::render_edifact;
 use mig_assembly::tokenize::{parse_to_segments, split_messages};
 use mig_bo4e::engine::MappingEngine;
-use mig_bo4e::path_resolver::PathResolver;
-use mig_bo4e::pid_schema_index::PidSchemaIndex;
-use mig_types::schema::mig::MigSchema;
-use std::collections::HashSet;
-use std::path::{Path, PathBuf};
 
 mod common;
 use common::bo4e_validation;
-
-const MIG_XML_PATH: &str =
-    "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml";
-const AHB_XML_PATH: &str =
-    "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml";
-const GENERATED_FIXTURE_DIR: &str = "../../fixtures/generated/fv2504/utilmd";
-const MAPPINGS_BASE: &str = "../../mappings/FV2504/UTILMD_Strom";
-const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
-
-fn path_resolver() -> PathResolver {
-    PathResolver::from_schema_dir(Path::new(SCHEMA_DIR))
-}
-
-fn load_pid_filtered_mig(pid_id: &str) -> Option<MigSchema> {
-    let mig_path = Path::new(MIG_XML_PATH);
-    let ahb_path = Path::new(AHB_XML_PATH);
-    if !mig_path.exists() || !ahb_path.exists() {
-        return None;
-    }
-    let mig = parse_mig(mig_path, "UTILMD", Some("Strom"), "FV2504").ok()?;
-    let ahb = parse_ahb(ahb_path, "UTILMD", Some("Strom"), "FV2504").ok()?;
-    let pid = ahb.workflows.iter().find(|w| w.id == pid_id)?;
-    let numbers: HashSet<String> = pid.segment_numbers.iter().cloned().collect();
-    Some(filter_mig_for_pid(&mig, &numbers))
-}
-
-fn message_dir() -> PathBuf {
-    Path::new(MAPPINGS_BASE).join("message")
-}
-
-fn common_dir() -> PathBuf {
-    Path::new(MAPPINGS_BASE).join("common")
-}
-
-fn pid_dir(pid: &str) -> PathBuf {
-    Path::new(MAPPINGS_BASE).join(format!("pid_{pid}"))
-}
-
-fn schema_index(pid: &str) -> PidSchemaIndex {
-    let path = Path::new(SCHEMA_DIR).join(format!("pid_{pid}_schema.json"));
-    PidSchemaIndex::from_schema_file(&path).unwrap()
-}
-
-fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSegment {
-    AssembledSegment {
-        tag: seg.id.clone(),
-        elements: seg
-            .elements
-            .iter()
-            .map(|el| el.iter().map(|c| c.to_string()).collect())
-            .collect(),
-    }
-}
-
-/// Discover generated fixture file for a PID (single file: `{pid}.edi`).
-fn discover_generated_fixture(pid: &str) -> Option<PathBuf> {
-    let path = Path::new(GENERATED_FIXTURE_DIR).join(format!("{pid}.edi"));
-    if path.exists() {
-        Some(path)
-    } else {
-        None
-    }
-}
+use common::test_utils;
 
 /// Fixtures with known mapping gaps that prevent byte-identical roundtrip.
 const KNOWN_INCOMPLETE: &[&str] = &[];
@@ -137,39 +67,22 @@ fn normalize_sg2_sg3_ordering(rendered: &str) -> String {
 
 /// Full pipeline roundtrip for a PID using its generated fixture.
 fn run_generated_roundtrip(pid: &str) {
-    let Some(fixture_path) = discover_generated_fixture(pid) else {
+    let Some(fixture_path) = test_utils::discover_generated_fixture(pid) else {
         eprintln!("Skipping roundtrip for PID {pid}: no generated fixture found");
         return;
     };
 
-    let Some(filtered_mig) = load_pid_filtered_mig(pid) else {
+    let Some(filtered_mig) = test_utils::load_pid_filtered_mig(pid) else {
         eprintln!("Skipping roundtrip for PID {pid}: MIG/AHB XML not available");
         return;
     };
 
-    let msg_dir = message_dir();
-    let cmn_dir = common_dir();
-    let tx_dir = pid_dir(pid);
-    if !msg_dir.exists() || !tx_dir.exists() {
+    let tx_dir = test_utils::pid_dir(pid);
+    if !test_utils::message_dir().exists() || !tx_dir.exists() {
         eprintln!("Skipping roundtrip for PID {pid}: mapping directories not found");
         return;
     }
-    let resolver = path_resolver();
-    let (msg_engine, tx_engine) = if cmn_dir.exists() {
-        let idx = schema_index(pid);
-        let (m, t) =
-            MappingEngine::load_split_with_common(&msg_dir, &cmn_dir, &tx_dir, &idx).unwrap();
-        (
-            m.with_path_resolver(resolver.clone()),
-            t.with_path_resolver(resolver),
-        )
-    } else {
-        let (m, t) = MappingEngine::load_split(&msg_dir, &tx_dir).unwrap();
-        (
-            m.with_path_resolver(resolver.clone()),
-            t.with_path_resolver(resolver),
-        )
-    };
+    let (msg_engine, tx_engine) = test_utils::load_split_engines(pid);
 
     let fixture_name = fixture_path.file_name().unwrap().to_str().unwrap();
 
@@ -222,13 +135,13 @@ fn run_generated_roundtrip(pid: &str) {
     let mut reverse_tree =
         MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4");
 
-    let unh_assembled = owned_to_assembled(&msg_chunk.unh);
+    let unh_assembled = test_utils::owned_to_assembled(&msg_chunk.unh);
     reverse_tree.segments.insert(0, unh_assembled);
     reverse_tree.post_group_start += 1;
 
     let original_has_unt = original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
     if original_has_unt {
-        let unt_assembled = owned_to_assembled(&msg_chunk.unt);
+        let unt_assembled = test_utils::owned_to_assembled(&msg_chunk.unt);
         reverse_tree.segments.push(unt_assembled);
     }
 
@@ -323,18 +236,12 @@ macro_rules! toml_loading_test {
     ($name:ident, $pid:expr) => {
         #[test]
         fn $name() {
-            let msg_dir = message_dir();
-            let tx_dir = pid_dir($pid);
-            if !msg_dir.exists() || !tx_dir.exists() {
+            let tx_dir = test_utils::pid_dir($pid);
+            if !test_utils::message_dir().exists() || !tx_dir.exists() {
                 eprintln!("Skipping {}: mapping dirs not found", stringify!($name));
                 return;
             }
-            let msg_engine = MappingEngine::load(&msg_dir)
-                .map(|e| e.with_path_resolver(path_resolver()))
-                .unwrap_or_else(|e| panic!("Failed to load message engine: {e}"));
-            let tx_engine = MappingEngine::load(&tx_dir)
-                .map(|e| e.with_path_resolver(path_resolver()))
-                .unwrap_or_else(|e| panic!("Failed to load PID {} engine: {e}", $pid));
+            let (msg_engine, tx_engine) = test_utils::load_split_engines($pid);
             eprintln!(
                 "PID {} TOML loading OK: {} message + {} transaction definitions",
                 $pid,

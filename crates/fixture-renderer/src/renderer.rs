@@ -18,6 +18,7 @@ use mig_bo4e::model::{
 use mig_bo4e::path_resolver::PathResolver;
 use mig_bo4e::pid_schema_index::PidSchemaIndex;
 use mig_bo4e::MappingEngine;
+use mig_types::schema::mig::MigSchema;
 
 use crate::RendererError;
 
@@ -33,18 +34,8 @@ pub struct RenderInput {
     pub pid: String,
 }
 
-/// Render an EDIFACT fixture from a source .edi file through the full
-/// forward -> reverse roundtrip pipeline.
-///
-/// Pipeline: .edi -> tokenize -> assemble -> forward map -> reverse map
-///           -> disassemble -> render -> .edi
-///
-/// This validates that the TOML mappings can produce a complete EDIFACT message.
-pub fn render_fixture(
-    source_edi_path: &Path,
-    input: &RenderInput,
-) -> Result<String, RendererError> {
-    // 1. Parse MIG and AHB
+/// Parse MIG/AHB XMLs and return a PID-filtered MIG schema.
+fn load_filtered_mig(input: &RenderInput) -> Result<MigSchema, RendererError> {
     let mig = automapper_generator::parsing::mig_parser::parse_mig(
         &input.mig_xml_path,
         &input.message_type,
@@ -59,7 +50,6 @@ pub fn render_fixture(
         &input.format_version,
     )?;
 
-    // 2. Find PID in AHB and filter MIG
     let pid_def = ahb
         .workflows
         .iter()
@@ -69,14 +59,11 @@ pub fn render_fixture(
         })?;
 
     let ahb_numbers: HashSet<String> = pid_def.segment_numbers.iter().cloned().collect();
-    let filtered_mig = filter_mig_for_pid(&mig, &ahb_numbers);
+    Ok(filter_mig_for_pid(&mig, &ahb_numbers))
+}
 
-    // 3. Read and tokenize source EDIFACT
-    let edi_bytes = std::fs::read(source_edi_path)?;
-    let segments = parse_to_segments(&edi_bytes)?;
-    let chunks = split_messages(segments)?;
-
-    // 4. Load mapping engines (with common/ inheritance when available)
+/// Load split mapping engines with common/ inheritance and PathResolver.
+fn load_engines(input: &RenderInput) -> Result<(MappingEngine, MappingEngine), RendererError> {
     let fv_lower = input.format_version.to_lowercase();
     let msg_type_lower = input.message_type.to_lowercase();
     let schema_dir_path = format!(
@@ -101,7 +88,6 @@ pub fn render_fixture(
                 )
                 .map_err(|e| RendererError::Mapping(e.to_string()))?
             } else {
-                // Schema file not found — fall back without common
                 MappingEngine::load_split(
                     &input.message_mappings_dir,
                     &input.transaction_mappings_dir,
@@ -118,17 +104,38 @@ pub fn render_fixture(
     };
 
     // Apply PathResolver for EDIFACT ID path resolution
-    let (msg_engine, tx_engine) = if Path::new(&schema_dir_path).is_dir() {
+    if Path::new(&schema_dir_path).is_dir() {
         let resolver = PathResolver::from_schema_dir(Path::new(&schema_dir_path));
-        (
+        Ok((
             msg_engine.with_path_resolver(resolver.clone()),
             tx_engine.with_path_resolver(resolver),
-        )
+        ))
     } else {
-        (msg_engine, tx_engine)
-    };
+        Ok((msg_engine, tx_engine))
+    }
+}
 
-    // 5. Process each message through forward+reverse roundtrip
+/// Render an EDIFACT fixture from a source .edi file through the full
+/// forward -> reverse roundtrip pipeline.
+///
+/// Pipeline: .edi -> tokenize -> assemble -> forward map -> reverse map
+///           -> disassemble -> render -> .edi
+///
+/// This validates that the TOML mappings can produce a complete EDIFACT message.
+pub fn render_fixture(
+    source_edi_path: &Path,
+    input: &RenderInput,
+) -> Result<String, RendererError> {
+    let filtered_mig = load_filtered_mig(input)?;
+
+    // Read and tokenize source EDIFACT
+    let edi_bytes = std::fs::read(source_edi_path)?;
+    let segments = parse_to_segments(&edi_bytes)?;
+    let chunks = split_messages(segments)?;
+
+    let (msg_engine, tx_engine) = load_engines(input)?;
+
+    // Process each message through forward+reverse roundtrip
     let assembler = Assembler::new(&filtered_mig);
     let disassembler = Disassembler::new(&filtered_mig);
     let delimiters = edifact_types::EdifactDelimiters::default();
@@ -136,7 +143,6 @@ pub fn render_fixture(
     let mut all_edifact_parts: Vec<String> = Vec::new();
 
     for msg_chunk in &chunks.messages {
-        // Assemble message body (segments between UNH and UNT)
         let tree = assembler.assemble_generic(&msg_chunk.body)?;
 
         // Forward map to BO4E
@@ -149,7 +155,7 @@ pub fn render_fixture(
         // Disassemble tree -> ordered segments
         let dis_segments = disassembler.disassemble(&reverse_tree);
 
-        // Build UNH + body + UNT (following reverse_v2.rs pattern)
+        // Build UNH + body + UNT
         let (unh_ref, nachrichten_typ) = extract_unh_fields(&msg_chunk.unh);
         let unh = rebuild_unh(&unh_ref, &nachrichten_typ);
         let unh_dis = DisassembledSegment {
@@ -171,7 +177,7 @@ pub fn render_fixture(
         all_edifact_parts.push(render_edifact(&msg_segments, &delimiters));
     }
 
-    // 6. Build envelope (UNA + UNB + messages + UNZ)
+    // Build envelope (UNA + UNB + messages + UNZ)
     let nachrichtendaten = extract_nachrichtendaten(&chunks.envelope);
 
     let una_str = delimiters.to_una_string();
@@ -193,7 +199,6 @@ pub fn render_fixture(
     }];
     let unz_str = render_edifact(&unz_segments, &delimiters);
 
-    // 7. Concatenate all parts
     let mut result = una_str;
     result.push_str(&unb_str);
     for part in &all_edifact_parts {
@@ -213,105 +218,27 @@ pub fn generate_canonical_bo4e(
     source_edi_path: &Path,
     input: &RenderInput,
 ) -> Result<CanonicalBo4e, RendererError> {
-    // 1. Parse MIG and AHB
-    let mig = automapper_generator::parsing::mig_parser::parse_mig(
-        &input.mig_xml_path,
-        &input.message_type,
-        input.variant.as_deref(),
-        &input.format_version,
-    )?;
+    let filtered_mig = load_filtered_mig(input)?;
 
-    let ahb = automapper_generator::parsing::ahb_parser::parse_ahb(
-        &input.ahb_xml_path,
-        &input.message_type,
-        input.variant.as_deref(),
-        &input.format_version,
-    )?;
-
-    // 2. Find PID and filter MIG
-    let pid_def = ahb
-        .workflows
-        .iter()
-        .find(|w| w.id == input.pid)
-        .ok_or_else(|| RendererError::PidNotFound {
-            pid: input.pid.clone(),
-        })?;
-
-    let ahb_numbers: HashSet<String> = pid_def.segment_numbers.iter().cloned().collect();
-    let filtered_mig = filter_mig_for_pid(&mig, &ahb_numbers);
-
-    // 3. Tokenize and split
+    // Tokenize and split
     let edi_bytes = std::fs::read(source_edi_path)?;
     let segments = parse_to_segments(&edi_bytes)?;
     let chunks = split_messages(segments)?;
 
-    // 4. Extract envelope data
     let nachrichtendaten = extract_nachrichtendaten(&chunks.envelope);
 
-    // 5. Load mapping engines (with common/ inheritance when available)
-    let fv_lower = input.format_version.to_lowercase();
-    let msg_type_lower = input.message_type.to_lowercase();
-    let schema_dir_path = format!(
-        "crates/mig-types/src/generated/{}/{}/pids",
-        fv_lower, msg_type_lower
-    );
-    let common_dir = input
-        .transaction_mappings_dir
-        .parent()
-        .map(|p| p.join("common"));
+    let (msg_engine, tx_engine) = load_engines(input)?;
 
-    let (msg_engine, tx_engine) = if let Some(ref cmn) = common_dir {
-        if cmn.is_dir() {
-            let schema_file =
-                Path::new(&schema_dir_path).join(format!("pid_{}_schema.json", input.pid));
-            if let Ok(schema_index) = PidSchemaIndex::from_schema_file(&schema_file) {
-                MappingEngine::load_split_with_common(
-                    &input.message_mappings_dir,
-                    cmn,
-                    &input.transaction_mappings_dir,
-                    &schema_index,
-                )
-                .map_err(|e| RendererError::Mapping(e.to_string()))?
-            } else {
-                // Schema file not found — fall back without common
-                MappingEngine::load_split(
-                    &input.message_mappings_dir,
-                    &input.transaction_mappings_dir,
-                )
-                .map_err(|e| RendererError::Mapping(e.to_string()))?
-            }
-        } else {
-            MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
-                .map_err(|e| RendererError::Mapping(e.to_string()))?
-        }
-    } else {
-        MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
-            .map_err(|e| RendererError::Mapping(e.to_string()))?
-    };
-
-    // Apply PathResolver for EDIFACT ID path resolution
-    let (msg_engine, tx_engine) = if Path::new(&schema_dir_path).is_dir() {
-        let resolver = PathResolver::from_schema_dir(Path::new(&schema_dir_path));
-        (
-            msg_engine.with_path_resolver(resolver.clone()),
-            tx_engine.with_path_resolver(resolver),
-        )
-    } else {
-        (msg_engine, tx_engine)
-    };
-
-    // 6. Process first message
+    // Process first message
     let msg = chunks.messages.first().ok_or(RendererError::NoMessages)?;
     let (unh_ref, nachrichten_typ) = extract_unh_fields(&msg.unh);
 
     let assembler = Assembler::new(&filtered_mig);
     let tree = assembler.assemble_generic(&msg.body)?;
 
-    // 7. Forward map
     let mapped: MappedMessage =
         MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", true);
 
-    // 8. Build CanonicalBo4e
     let canonical = CanonicalBo4e {
         meta: CanonicalMeta {
             pid: input.pid.clone(),

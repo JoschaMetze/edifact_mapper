@@ -727,6 +727,7 @@ impl MappingEngine {
         // data are phantoms — their entries should be removed from field_values.
         let mut seg_has_data_field: HashSet<String> = HashSet::new();
         let mut seg_has_real_data: HashSet<String> = HashSet::new();
+        let mut injected_qualifiers: HashSet<String> = HashSet::new();
 
         for (path, field_mapping) in &def.fields {
             let (target, default, enum_map) = match field_mapping {
@@ -770,7 +771,7 @@ impl MappingEngine {
             } else {
                 has_data_fields = true;
                 seg_has_data_field.insert(seg_key.clone());
-                let bo4e_val = self.populate_field(bo4e_value, target, path);
+                let bo4e_val = self.populate_field(bo4e_value, target);
                 if bo4e_val.is_some() {
                     has_real_data = true;
                     seg_has_real_data.insert(seg_key.clone());
@@ -801,10 +802,7 @@ impl MappingEngine {
 
             // If there's a qualifier, also inject it at elements[0][0]
             if let Some(q) = qualifier {
-                let already_has = field_values
-                    .iter()
-                    .any(|(k, _, ei, ci, _)| *k == seg_key && *ei == 0 && *ci == 0);
-                if !already_has {
+                if injected_qualifiers.insert(seg_key.clone()) {
                     field_values.push((seg_key, seg_tag, 0, 0, q.to_string()));
                 }
             }
@@ -856,7 +854,7 @@ impl MappingEngine {
                 } else {
                     has_data_fields = true;
                     seg_has_data_field.insert(seg_key.clone());
-                    let bo4e_val = self.populate_field(companion_value, target, path);
+                    let bo4e_val = self.populate_field(companion_value, target);
                     if bo4e_val.is_some() {
                         has_real_data = true;
                         seg_has_real_data.insert(seg_key.clone());
@@ -883,10 +881,7 @@ impl MappingEngine {
                 }
 
                 if let Some(q) = qualifier {
-                    let already_has = field_values
-                        .iter()
-                        .any(|(k, _, ei, ci, _)| *k == seg_key && *ei == 0 && *ci == 0);
-                    if !already_has {
+                    if injected_qualifiers.insert(seg_key.clone()) {
                         field_values.push((seg_key, seg_tag, 0, 0, q.to_string()));
                     }
                 }
@@ -1048,7 +1043,6 @@ impl MappingEngine {
         &self,
         bo4e_value: &serde_json::Value,
         target_field: &str,
-        _source_path: &str,
     ) -> Option<String> {
         let mut current = bo4e_value;
         for part in target_field.split('.') {
@@ -1068,7 +1062,7 @@ impl MappingEngine {
         segment_tag: &str,
         target_field: &str,
     ) -> AssembledSegment {
-        let value = self.populate_field(bo4e_value, target_field, "");
+        let value = self.populate_field(bo4e_value, target_field);
         let elements = if let Some(val) = value {
             vec![vec![val]]
         } else {

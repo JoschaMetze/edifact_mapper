@@ -30,3 +30,5 @@ pub use error::MappingError;
 pub use error_mapping::Bo4eFieldIndex;
 pub use handlers::HandlerRegistry;
 pub use model::{Interchange, MappedMessage, Nachricht, Transaktion};
+pub use path_resolver::PathResolver;
+pub use pid_schema_index::PidSchemaIndex;

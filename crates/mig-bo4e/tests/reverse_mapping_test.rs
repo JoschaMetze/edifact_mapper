@@ -23,7 +23,7 @@ source_group = "SG8"
         "location_id": "DE0001234567890"
     });
 
-    let result = engine.populate_field(&bo4e_value, "location_id", "loc.c517.d3225");
+    let result = engine.populate_field(&bo4e_value, "location_id");
     assert!(result.is_some());
     assert_eq!(result.unwrap(), "DE0001234567890");
 }
@@ -53,7 +53,7 @@ source_group = "SG8"
         }
     });
 
-    let result = engine.populate_field(&bo4e_value, "address.city", "loc.c517.d3225");
+    let result = engine.populate_field(&bo4e_value, "address.city");
     assert!(result.is_some());
     assert_eq!(result.unwrap(), "Berlin");
 }
@@ -81,7 +81,7 @@ source_group = "SG8"
         "other_field": "value"
     });
 
-    let result = engine.populate_field(&bo4e_value, "location_id", "loc.c517.d3225");
+    let result = engine.populate_field(&bo4e_value, "location_id");
     assert!(result.is_none(), "Missing field should return None");
 }
 
