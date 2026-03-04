@@ -6,7 +6,7 @@ mod validate;
 
 use serde_json::Value;
 
-use mig_assembly::assembler::{AssembledSegment, Assembler};
+use mig_assembly::assembler::{owned_to_assembled, Assembler};
 use mig_assembly::disassembler::Disassembler;
 use mig_assembly::renderer::render_edifact;
 use mig_assembly::tokenize::{parse_to_segments, split_messages};
@@ -181,18 +181,6 @@ pub fn generate_enhanced_fixture(
     };
 
     Ok(envelope_edi)
-}
-
-/// Convert an OwnedSegment to an AssembledSegment.
-fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSegment {
-    AssembledSegment {
-        tag: seg.id.clone(),
-        elements: seg
-            .elements
-            .iter()
-            .map(|el| el.iter().map(|c| c.to_string()).collect())
-            .collect(),
-    }
 }
 
 /// Render an OwnedSegment to an EDIFACT string with segment terminator.

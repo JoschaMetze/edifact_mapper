@@ -23,6 +23,7 @@ pub mod pid_filter;
 pub mod renderer;
 pub mod roundtrip;
 pub mod service;
+pub mod test_support;
 pub mod tokenize;
 
 pub use diagnostic::{StructureDiagnostic, StructureDiagnosticKind};

@@ -16,49 +16,7 @@ use mig_types::schema::mig::MigSchema;
 /// Returns the rendered EDIFACT string. If the roundtrip is perfect,
 /// the output should be byte-identical to the input.
 pub fn roundtrip(input: &[u8], mig: &MigSchema) -> Result<String, AssemblyError> {
-    // Detect delimiters from input (UNA or defaults)
-    let (has_una, delimiters) = EdifactDelimiters::detect(input);
-
-    // Detect if the input uses newlines after segment terminators
-    let seg_term = delimiters.segment as char;
-    let input_str =
-        std::str::from_utf8(input).map_err(|e| AssemblyError::ParseError(e.to_string()))?;
-    let uses_newlines = detect_newline_style(input_str, seg_term);
-
-    // Pass 1: tokenize
-    let segments = parse_to_segments(input)?;
-
-    // Pass 2: assemble
-    let assembler = Assembler::new(mig);
-    let tree = assembler.assemble_generic(&segments)?;
-
-    // Disassemble
-    let disassembler = Disassembler::new(mig);
-    let dis_segments = disassembler.disassemble(&tree);
-
-    // Render
-    let mut output = String::new();
-    if has_una {
-        output.push_str(&delimiters.to_una_string());
-    }
-    let rendered = render_edifact(&dis_segments, &delimiters);
-
-    // Inject newlines if the original used them
-    if let Some(newline) = uses_newlines {
-        for (i, ch) in rendered.char_indices() {
-            output.push(ch);
-            if ch == seg_term {
-                // Check if this is not the last character
-                if i + ch.len_utf8() < rendered.len() {
-                    output.push_str(newline);
-                }
-            }
-        }
-    } else {
-        output.push_str(&rendered);
-    }
-
-    Ok(output)
+    roundtrip_with_config(input, mig, AssemblerConfig::default())
 }
 
 /// Like [`roundtrip`] but with a custom [`AssemblerConfig`].
@@ -119,45 +77,8 @@ fn detect_newline_style(input: &str, seg_term: char) -> Option<&'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use mig_types::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
-
-    fn make_mig_segment(id: &str) -> MigSegment {
-        MigSegment {
-            id: id.to_string(),
-            name: id.to_string(),
-            description: None,
-            counter: None,
-            level: 0,
-            number: None,
-            max_rep_std: 1,
-            max_rep_spec: 1,
-            status_std: Some("M".to_string()),
-            status_spec: Some("M".to_string()),
-            example: None,
-            data_elements: vec![],
-            composites: vec![],
-        }
-    }
-
-    fn make_mig_group(
-        id: &str,
-        segments: Vec<&str>,
-        nested: Vec<MigSegmentGroup>,
-    ) -> MigSegmentGroup {
-        MigSegmentGroup {
-            id: id.to_string(),
-            name: id.to_string(),
-            description: None,
-            counter: None,
-            level: 1,
-            max_rep_std: 99,
-            max_rep_spec: 99,
-            status_std: Some("M".to_string()),
-            status_spec: Some("M".to_string()),
-            segments: segments.into_iter().map(make_mig_segment).collect(),
-            nested_groups: nested,
-        }
-    }
+    use crate::test_support::{make_mig_group, make_mig_segment};
+    use mig_types::schema::mig::MigSchema;
 
     #[test]
     fn test_roundtrip_minimal_utilmd() {

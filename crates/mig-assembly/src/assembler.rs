@@ -402,7 +402,7 @@ fn count_group_segments(group: &AssembledGroup) -> usize {
     count
 }
 
-fn owned_to_assembled(seg: &OwnedSegment) -> AssembledSegment {
+pub fn owned_to_assembled(seg: &OwnedSegment) -> AssembledSegment {
     AssembledSegment {
         tag: seg.id.clone(),
         elements: seg.elements.clone(),
@@ -412,44 +412,7 @@ fn owned_to_assembled(seg: &OwnedSegment) -> AssembledSegment {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn make_mig_segment(id: &str) -> MigSegment {
-        MigSegment {
-            id: id.to_string(),
-            name: id.to_string(),
-            description: None,
-            counter: None,
-            level: 0,
-            number: None,
-            max_rep_std: 1,
-            max_rep_spec: 1,
-            status_std: Some("M".to_string()),
-            status_spec: Some("M".to_string()),
-            example: None,
-            data_elements: vec![],
-            composites: vec![],
-        }
-    }
-
-    fn make_mig_group(
-        id: &str,
-        segments: Vec<&str>,
-        nested: Vec<MigSegmentGroup>,
-    ) -> MigSegmentGroup {
-        MigSegmentGroup {
-            id: id.to_string(),
-            name: id.to_string(),
-            description: None,
-            counter: None,
-            level: 1,
-            max_rep_std: 99,
-            max_rep_spec: 99,
-            status_std: Some("M".to_string()),
-            status_spec: Some("M".to_string()),
-            segments: segments.into_iter().map(make_mig_segment).collect(),
-            nested_groups: nested,
-        }
-    }
+    use crate::test_support::{make_mig_group, make_mig_segment};
 
     fn make_owned_seg(id: &str, elements: Vec<Vec<&str>>) -> OwnedSegment {
         OwnedSegment {

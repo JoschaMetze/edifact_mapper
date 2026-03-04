@@ -5,47 +5,10 @@
 use mig_assembly::assembler::Assembler;
 use mig_assembly::parsing::parse_mig;
 use mig_assembly::pid_detect::detect_pid;
+use mig_assembly::test_support::{make_mig_group, make_mig_segment};
 use mig_assembly::tokenize::parse_to_segments;
-use mig_types::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
+use mig_types::schema::mig::{MigSchema, MigSegmentGroup};
 use std::path::Path;
-
-// ---------------------------------------------------------------------------
-// Helpers for synthetic MIG schemas (used in targeted tests)
-// ---------------------------------------------------------------------------
-
-fn make_mig_segment(id: &str) -> MigSegment {
-    MigSegment {
-        id: id.to_string(),
-        name: id.to_string(),
-        description: None,
-        counter: None,
-        level: 0,
-        number: None,
-        max_rep_std: 1,
-        max_rep_spec: 1,
-        status_std: Some("M".to_string()),
-        status_spec: Some("M".to_string()),
-        example: None,
-        data_elements: vec![],
-        composites: vec![],
-    }
-}
-
-fn make_mig_group(id: &str, segments: Vec<&str>, nested: Vec<MigSegmentGroup>) -> MigSegmentGroup {
-    MigSegmentGroup {
-        id: id.to_string(),
-        name: id.to_string(),
-        description: None,
-        counter: None,
-        level: 1,
-        max_rep_std: 99,
-        max_rep_spec: 99,
-        status_std: Some("M".to_string()),
-        status_spec: Some("M".to_string()),
-        segments: segments.into_iter().map(make_mig_segment).collect(),
-        nested_groups: nested,
-    }
-}
 
 fn make_utilmd_mig() -> MigSchema {
     let sg3 = make_mig_group("SG3", vec!["CTA", "COM"], vec![]);

@@ -4,7 +4,7 @@
 //! Uses the full MIG directly with `map_all_forward`/`map_all_reverse`
 //! (not `map_interchange` which splits message/transaction levels).
 
-use mig_assembly::assembler::{AssembledSegment, Assembler, AssemblerConfig};
+use mig_assembly::assembler::{owned_to_assembled, Assembler, AssemblerConfig};
 use mig_assembly::disassembler::Disassembler;
 use mig_assembly::parsing::parse_mig;
 use mig_assembly::renderer::render_edifact;
@@ -29,19 +29,6 @@ const APERAK_FIXTURE_DIR: &str =
     "../../example_market_communication_bo4e_transactions/APERAK/FV2504";
 const APERAK_MAPPINGS: &str = "../../mappings/FV2504/APERAK";
 const APERAK_SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/aperak/pids";
-
-// ── Helpers ──
-
-fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSegment {
-    AssembledSegment {
-        tag: seg.id.clone(),
-        elements: seg
-            .elements
-            .iter()
-            .map(|el| el.iter().map(|c| c.to_string()).collect())
-            .collect(),
-    }
-}
 
 /// Run a full roundtrip for a non-UTILMD message type.
 ///
