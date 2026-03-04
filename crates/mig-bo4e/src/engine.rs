@@ -1879,9 +1879,26 @@ impl MappingEngine {
                 });
             }
         } else if !uns_segments.is_empty() {
-            // No transaction groups (message-only PIDs) — place UNS as trailing
-            // inter_group_segment after all message-level groups.
-            inter_group.insert(all_groups.len(), uns_segments);
+            if transaction_group.is_empty() {
+                // Truly message-only (tx_group=""): UNS is a section separator
+                // placed before message-level groups.  E.g., ORDCHG UNS+S
+                // separates root segments (BGM, DTM) from the post-UNS groups
+                // (SG1, SG3).  Sort groups by SG number so tree order matches
+                // MIG order — the disassembler indexes inter_group by tree
+                // position.
+                all_groups.sort_by_key(|g| {
+                    g.group_id
+                        .strip_prefix("SG")
+                        .and_then(|n| n.parse::<usize>().ok())
+                        .unwrap_or(0)
+                });
+                inter_group.insert(0, uns_segments);
+            } else {
+                // Has a tx_group but no tx reps (e.g., ORDERS message-only
+                // PIDs without SG29 data).  UNS+S is still a trailing summary
+                // separator — place after all message-level groups.
+                inter_group.insert(all_groups.len(), uns_segments);
+            }
         }
 
         AssembledTree {
