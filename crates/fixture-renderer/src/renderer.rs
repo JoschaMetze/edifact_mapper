@@ -16,6 +16,7 @@ use mig_bo4e::model::{
     rebuild_unz, MappedMessage, Transaktion,
 };
 use mig_bo4e::path_resolver::PathResolver;
+use mig_bo4e::pid_schema_index::PidSchemaIndex;
 use mig_bo4e::MappingEngine;
 
 use crate::RendererError;
@@ -75,18 +76,48 @@ pub fn render_fixture(
     let segments = parse_to_segments(&edi_bytes)?;
     let chunks = split_messages(segments)?;
 
-    // 4. Load mapping engines
-    let (msg_engine, tx_engine) =
-        MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
-            .map_err(|e| RendererError::Mapping(e.to_string()))?;
-
-    // Apply PathResolver for EDIFACT ID path resolution
+    // 4. Load mapping engines (with common/ inheritance when available)
     let fv_lower = input.format_version.to_lowercase();
     let msg_type_lower = input.message_type.to_lowercase();
     let schema_dir_path = format!(
         "crates/mig-types/src/generated/{}/{}/pids",
         fv_lower, msg_type_lower
     );
+    let common_dir = input
+        .transaction_mappings_dir
+        .parent()
+        .map(|p| p.join("common"));
+
+    let (msg_engine, tx_engine) = if let Some(ref cmn) = common_dir {
+        if cmn.is_dir() {
+            let schema_file =
+                Path::new(&schema_dir_path).join(format!("pid_{}_schema.json", input.pid));
+            if let Ok(schema_index) = PidSchemaIndex::from_schema_file(&schema_file) {
+                MappingEngine::load_split_with_common(
+                    &input.message_mappings_dir,
+                    cmn,
+                    &input.transaction_mappings_dir,
+                    &schema_index,
+                )
+                .map_err(|e| RendererError::Mapping(e.to_string()))?
+            } else {
+                // Schema file not found — fall back without common
+                MappingEngine::load_split(
+                    &input.message_mappings_dir,
+                    &input.transaction_mappings_dir,
+                )
+                .map_err(|e| RendererError::Mapping(e.to_string()))?
+            }
+        } else {
+            MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
+                .map_err(|e| RendererError::Mapping(e.to_string()))?
+        }
+    } else {
+        MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
+            .map_err(|e| RendererError::Mapping(e.to_string()))?
+    };
+
+    // Apply PathResolver for EDIFACT ID path resolution
     let (msg_engine, tx_engine) = if Path::new(&schema_dir_path).is_dir() {
         let resolver = PathResolver::from_schema_dir(Path::new(&schema_dir_path));
         (
@@ -217,18 +248,48 @@ pub fn generate_canonical_bo4e(
     // 4. Extract envelope data
     let nachrichtendaten = extract_nachrichtendaten(&chunks.envelope);
 
-    // 5. Load mapping engines
-    let (msg_engine, tx_engine) =
-        MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
-            .map_err(|e| RendererError::Mapping(e.to_string()))?;
-
-    // Apply PathResolver for EDIFACT ID path resolution
+    // 5. Load mapping engines (with common/ inheritance when available)
     let fv_lower = input.format_version.to_lowercase();
     let msg_type_lower = input.message_type.to_lowercase();
     let schema_dir_path = format!(
         "crates/mig-types/src/generated/{}/{}/pids",
         fv_lower, msg_type_lower
     );
+    let common_dir = input
+        .transaction_mappings_dir
+        .parent()
+        .map(|p| p.join("common"));
+
+    let (msg_engine, tx_engine) = if let Some(ref cmn) = common_dir {
+        if cmn.is_dir() {
+            let schema_file =
+                Path::new(&schema_dir_path).join(format!("pid_{}_schema.json", input.pid));
+            if let Ok(schema_index) = PidSchemaIndex::from_schema_file(&schema_file) {
+                MappingEngine::load_split_with_common(
+                    &input.message_mappings_dir,
+                    cmn,
+                    &input.transaction_mappings_dir,
+                    &schema_index,
+                )
+                .map_err(|e| RendererError::Mapping(e.to_string()))?
+            } else {
+                // Schema file not found — fall back without common
+                MappingEngine::load_split(
+                    &input.message_mappings_dir,
+                    &input.transaction_mappings_dir,
+                )
+                .map_err(|e| RendererError::Mapping(e.to_string()))?
+            }
+        } else {
+            MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
+                .map_err(|e| RendererError::Mapping(e.to_string()))?
+        }
+    } else {
+        MappingEngine::load_split(&input.message_mappings_dir, &input.transaction_mappings_dir)
+            .map_err(|e| RendererError::Mapping(e.to_string()))?
+    };
+
+    // Apply PathResolver for EDIFACT ID path resolution
     let (msg_engine, tx_engine) = if Path::new(&schema_dir_path).is_dir() {
         let resolver = PathResolver::from_schema_dir(Path::new(&schema_dir_path));
         (

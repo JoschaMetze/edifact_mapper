@@ -15,6 +15,7 @@ use mig_assembly::renderer::render_edifact;
 use mig_assembly::tokenize::parse_to_segments;
 use mig_bo4e::engine::MappingEngine;
 use mig_bo4e::path_resolver::PathResolver;
+use mig_bo4e::pid_schema_index::PidSchemaIndex;
 use mig_types::schema::mig::MigSchema;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
@@ -474,8 +475,40 @@ fn message_dir() -> PathBuf {
     Path::new(MAPPINGS_BASE).join("message")
 }
 
+fn common_dir() -> PathBuf {
+    Path::new(MAPPINGS_BASE).join("common")
+}
+
 fn pid_dir(pid: &str) -> PathBuf {
     Path::new(MAPPINGS_BASE).join(format!("pid_{pid}"))
+}
+
+fn schema_index(pid: &str) -> PidSchemaIndex {
+    let schema_path = Path::new(SCHEMA_DIR).join(format!("pid_{pid}_schema.json"));
+    PidSchemaIndex::from_schema_file(&schema_path).unwrap()
+}
+
+/// Load split engines with common/ inheritance when available.
+fn load_split_engines(pid: &str) -> (MappingEngine, MappingEngine) {
+    let msg_dir = message_dir();
+    let cmn_dir = common_dir();
+    let tx_dir = pid_dir(pid);
+    let resolver = path_resolver();
+    if cmn_dir.exists() {
+        let idx = schema_index(pid);
+        let (m, t) =
+            MappingEngine::load_split_with_common(&msg_dir, &cmn_dir, &tx_dir, &idx).unwrap();
+        (
+            m.with_path_resolver(resolver.clone()),
+            t.with_path_resolver(resolver),
+        )
+    } else {
+        let (m, t) = MappingEngine::load_split(&msg_dir, &tx_dir).unwrap();
+        (
+            m.with_path_resolver(resolver.clone()),
+            t.with_path_resolver(resolver),
+        )
+    }
 }
 
 // ── TOML loading tests (no fixtures needed) ──
@@ -499,21 +532,16 @@ macro_rules! toml_loading_test {
                 return;
             }
 
-            let engine = MappingEngine::load_merged(&[&msg_dir, &tx_dir])
-                .map(|e| e.with_path_resolver(path_resolver()))
-                .unwrap_or_else(|e| panic!("Failed to load merged engine for PID {}: {e}", $pid));
+            let (msg_engine, tx_engine) = load_split_engines($pid);
 
+            let total = msg_engine.definitions().len() + tx_engine.definitions().len();
             assert!(
-                !engine.definitions().is_empty(),
-                "PID {} merged engine should have non-empty definitions",
+                total > 0,
+                "PID {} engines should have non-empty definitions",
                 $pid
             );
 
-            eprintln!(
-                "PID {} TOML loading OK: {} definitions loaded",
-                $pid,
-                engine.definitions().len()
-            );
+            eprintln!("PID {} TOML loading OK: {} definitions loaded", $pid, total);
         }
     };
 }
@@ -666,12 +694,8 @@ fn run_forward_mapping_test(spec: &PidTestSpec) {
         .assemble_generic(&all_segments)
         .unwrap_or_else(|e| panic!("Failed to assemble tree for PID {}: {e}", spec.pid));
 
-    // Step 6: Load split engines (message + transaction)
-    let (msg_engine, tx_engine) = MappingEngine::load_split(&msg_dir, &tx_dir)
-        .unwrap_or_else(|e| panic!("Failed to load split engines for PID {}: {e}", spec.pid));
-    let resolver = path_resolver();
-    let msg_engine = msg_engine.with_path_resolver(resolver.clone());
-    let tx_engine = tx_engine.with_path_resolver(resolver);
+    // Step 6: Load split engines (message + transaction with common inheritance)
+    let (msg_engine, tx_engine) = load_split_engines(spec.pid);
 
     // Step 7: Map with split engines (no code enrichment for basic test)
     let mapped = MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", false);
@@ -901,11 +925,8 @@ macro_rules! interchange_test {
                 .assemble_generic(&all_segments)
                 .unwrap();
 
-            // Map
-            let (msg_engine, tx_engine) = MappingEngine::load_split(&msg_dir, &tx_dir).unwrap();
-            let resolver = path_resolver();
-            let msg_engine = msg_engine.with_path_resolver(resolver.clone());
-            let tx_engine = tx_engine.with_path_resolver(resolver);
+            // Map (with common inheritance)
+            let (msg_engine, tx_engine) = load_split_engines(spec.pid);
             let mapped =
                 MappingEngine::map_interchange(&msg_engine, &tx_engine, &tree, "SG4", false);
 
@@ -1094,18 +1115,12 @@ fn run_full_roundtrip(pid: &str) {
         return;
     };
 
-    let msg_dir = message_dir();
     let tx_dir = pid_dir(pid);
-    if !msg_dir.exists() || !tx_dir.exists() {
+    if !message_dir().exists() || !tx_dir.exists() {
         eprintln!("Skipping roundtrip for PID {pid}: mapping directories not found");
         return;
     }
-    let msg_engine = MappingEngine::load(&msg_dir)
-        .unwrap()
-        .with_path_resolver(path_resolver());
-    let tx_engine = MappingEngine::load(&tx_dir)
-        .unwrap()
-        .with_path_resolver(path_resolver());
+    let (msg_engine, tx_engine) = load_split_engines(pid);
 
     for fixture_path in &fixtures {
         let fixture_name = fixture_path.file_name().unwrap().to_str().unwrap();

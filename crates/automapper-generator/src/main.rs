@@ -1431,11 +1431,37 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 let path_resolver =
                     mig_bo4e::path_resolver::PathResolver::from_schema_dir(&schema_dir);
 
-                // Load mapping engines
-                let msg_engine = mig_bo4e::engine::MappingEngine::load(&msg_dir)?
-                    .with_path_resolver(path_resolver.clone());
-                let tx_engine = mig_bo4e::engine::MappingEngine::load(&tx_dir)?
-                    .with_path_resolver(path_resolver);
+                // Load mapping engines (with common/ inheritance when available)
+                let common_dir = PathBuf::from(format!("{mappings_base}/common"));
+                let (msg_engine, tx_engine) = if common_dir.is_dir() {
+                    let schema_file = schema_dir.join(format!("pid_{pid}_schema.json"));
+                    if let Ok(idx) =
+                        mig_bo4e::pid_schema_index::PidSchemaIndex::from_schema_file(&schema_file)
+                    {
+                        let (m, t) = mig_bo4e::engine::MappingEngine::load_split_with_common(
+                            &msg_dir,
+                            &common_dir,
+                            &tx_dir,
+                            &idx,
+                        )?;
+                        (
+                            m.with_path_resolver(path_resolver.clone()),
+                            t.with_path_resolver(path_resolver),
+                        )
+                    } else {
+                        let m = mig_bo4e::engine::MappingEngine::load(&msg_dir)?
+                            .with_path_resolver(path_resolver.clone());
+                        let t = mig_bo4e::engine::MappingEngine::load(&tx_dir)?
+                            .with_path_resolver(path_resolver);
+                        (m, t)
+                    }
+                } else {
+                    let m = mig_bo4e::engine::MappingEngine::load(&msg_dir)?
+                        .with_path_resolver(path_resolver.clone());
+                    let t = mig_bo4e::engine::MappingEngine::load(&tx_dir)?
+                        .with_path_resolver(path_resolver);
+                    (m, t)
+                };
 
                 let variant_count = variants.unwrap_or(1);
                 let base_seed = seed.unwrap_or(42);

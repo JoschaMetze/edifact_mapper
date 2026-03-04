@@ -82,6 +82,95 @@ impl MappingEngine {
         })
     }
 
+    /// Load transaction-level mappings with common template inheritance.
+    ///
+    /// 1. Loads all `.toml` from `common_dir`
+    /// 2. Filters: keeps only definitions whose `source_path` exists in the PID schema
+    /// 3. Loads all `.toml` from `pid_dir`
+    /// 4. For each PID definition, if a common definition has matching
+    ///    `(source_group, discriminator)`, replaces the common one (file-level replacement)
+    /// 5. Merges both sets: common first, then PID additions
+    pub fn load_with_common(
+        common_dir: &Path,
+        pid_dir: &Path,
+        schema_index: &crate::pid_schema_index::PidSchemaIndex,
+    ) -> Result<Self, MappingError> {
+        let mut common_defs = Self::load(common_dir)?.definitions;
+
+        // Filter common defs by schema — keep only groups that exist in this PID
+        common_defs.retain(|d| {
+            d.meta
+                .source_path
+                .as_deref()
+                .map(|sp| schema_index.has_group(sp))
+                .unwrap_or(true)
+        });
+
+        let pid_defs = Self::load(pid_dir)?.definitions;
+
+        // Build set of PID override keys: (source_group_normalized, discriminator)
+        // Normalizations applied:
+        // 1. Strip positional indices from source_group: "SG4.SG5:1" → "SG4.SG5"
+        // 2. Strip occurrence indices from discriminator: "RFF.c506.d1153=TN#0" → "RFF.c506.d1153=TN"
+        let normalize_sg = |sg: &str| -> String {
+            sg.split('.')
+                .map(|part| part.split(':').next().unwrap_or(part))
+                .collect::<Vec<_>>()
+                .join(".")
+        };
+        let pid_keys: HashSet<(String, Option<String>)> = pid_defs
+            .iter()
+            .flat_map(|d| {
+                let sg = normalize_sg(&d.meta.source_group);
+                let disc = d.meta.discriminator.clone();
+                let mut keys = vec![(sg.clone(), disc.clone())];
+                // If discriminator has occurrence index (#N), also add base form
+                if let Some(ref disc_str) = disc {
+                    if let Some(base) = disc_str.rsplit_once('#') {
+                        if base.1.chars().all(|c| c.is_ascii_digit()) {
+                            keys.push((sg, Some(base.0.to_string())));
+                        }
+                    }
+                }
+                keys
+            })
+            .collect();
+
+        // Remove common defs that are overridden by PID defs
+        common_defs.retain(|d| {
+            let key = (
+                normalize_sg(&d.meta.source_group),
+                d.meta.discriminator.clone(),
+            );
+            !pid_keys.contains(&key)
+        });
+
+        // Combine: common first, then PID
+        let mut definitions = common_defs;
+        definitions.extend(pid_defs);
+
+        Ok(Self {
+            definitions,
+            segment_structure: None,
+            code_lookup: None,
+        })
+    }
+
+    /// Load message + transaction engines with common template inheritance.
+    ///
+    /// Returns `(message_engine, transaction_engine)` where the transaction engine
+    /// inherits shared templates from `common_dir`, filtered by the PID schema.
+    pub fn load_split_with_common(
+        message_dir: &Path,
+        common_dir: &Path,
+        transaction_dir: &Path,
+        schema_index: &crate::pid_schema_index::PidSchemaIndex,
+    ) -> Result<(Self, Self), MappingError> {
+        let msg_engine = Self::load(message_dir)?;
+        let tx_engine = Self::load_with_common(common_dir, transaction_dir, schema_index)?;
+        Ok((msg_engine, tx_engine))
+    }
+
     /// Create an engine from an already-parsed list of definitions.
     pub fn from_definitions(definitions: Vec<MappingDefinition>) -> Self {
         Self {

@@ -1,8 +1,10 @@
 use mig_bo4e::engine::MappingEngine;
 use mig_bo4e::path_resolver::PathResolver;
+use mig_bo4e::pid_schema_index::PidSchemaIndex;
 use std::path::Path;
 
 const MESSAGE_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/message";
+const COMMON_DIR: &str = "../../mappings/FV2504/UTILMD_Strom/common";
 const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/utilmd/pids";
 
 fn path_resolver() -> PathResolver {
@@ -153,14 +155,17 @@ fn test_geschaeftspartner_mapping_fields() {
 #[test]
 fn test_load_pid_55002_mapping_files() {
     let msg_dir = Path::new(MESSAGE_DIR);
+    let common_dir = Path::new(COMMON_DIR);
     let tx_dir = Path::new("../../mappings/FV2504/UTILMD_Strom/pid_55002");
-    if !msg_dir.exists() || !tx_dir.exists() {
+    if !msg_dir.exists() || !tx_dir.exists() || !common_dir.exists() {
         eprintln!("55002 mappings/ dir not found, skipping");
         return;
     }
 
-    // Transaction-level only
-    let tx_engine = MappingEngine::load(tx_dir)
+    // Transaction-level with common inheritance
+    let schema_path = Path::new(SCHEMA_DIR).join("pid_55002_schema.json");
+    let schema_index = PidSchemaIndex::from_schema_file(&schema_path).unwrap();
+    let tx_engine = MappingEngine::load_with_common(common_dir, tx_dir, &schema_index)
         .unwrap()
         .with_path_resolver(path_resolver());
     assert!(

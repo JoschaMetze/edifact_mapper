@@ -9,6 +9,7 @@ use mig_assembly::parsing::parse_mig;
 use mig_assembly::ConversionService;
 use mig_bo4e::code_lookup::CodeLookup;
 use mig_bo4e::path_resolver::PathResolver;
+use mig_bo4e::pid_schema_index::PidSchemaIndex;
 use mig_bo4e::segment_structure::SegmentStructure;
 use mig_bo4e::MappingEngine;
 use mig_types::schema::mig::MigSchema;
@@ -159,7 +160,8 @@ impl MigServiceRegistry {
                                 }
                             }
 
-                            // Iterate PID dirs (e.g., pid_55001), skip message/
+                            // Iterate PID dirs (e.g., pid_55001), skip message/ and common/
+                            let common_dir = variant_path.join("common");
                             if let Ok(pid_entries) = std::fs::read_dir(&variant_path) {
                                 for pid_entry in pid_entries.flatten() {
                                     let pid_path = pid_entry.path();
@@ -168,16 +170,49 @@ impl MigServiceRegistry {
                                     }
                                     let dirname =
                                         pid_entry.file_name().to_string_lossy().to_string();
-                                    // Skip message/ directory (already loaded above)
-                                    if dirname == "message" {
+                                    // Skip message/ and common/ directories
+                                    if dirname == "message" || dirname == "common" {
                                         continue;
                                     }
-                                    // Load combined engine (message + PID transaction defs)
+                                    // Load combined engine (message + common + PID transaction defs)
                                     let load_result = if message_dir.is_dir() {
-                                        MappingEngine::load_merged(&[
-                                            message_dir.as_path(),
-                                            pid_path.as_path(),
-                                        ])
+                                        if common_dir.is_dir() {
+                                            // Try schema-aware common loading
+                                            let pid_num =
+                                                dirname.strip_prefix("pid_").unwrap_or(&dirname);
+                                            let schema_file =
+                                                std::path::Path::new(&schema_dir_path)
+                                                    .join(format!("pid_{pid_num}_schema.json"));
+                                            if let Ok(idx) =
+                                                PidSchemaIndex::from_schema_file(&schema_file)
+                                            {
+                                                // Load message + common-aware tx, then merge
+                                                let tx = MappingEngine::load_with_common(
+                                                    &common_dir,
+                                                    &pid_path,
+                                                    &idx,
+                                                );
+                                                let msg = MappingEngine::load(&message_dir);
+                                                match (msg, tx) {
+                                                    (Ok(m), Ok(t)) => {
+                                                        let mut defs = m.definitions().to_vec();
+                                                        defs.extend(t.definitions().to_vec());
+                                                        Ok(MappingEngine::from_definitions(defs))
+                                                    }
+                                                    (Err(e), _) | (_, Err(e)) => Err(e),
+                                                }
+                                            } else {
+                                                MappingEngine::load_merged(&[
+                                                    message_dir.as_path(),
+                                                    pid_path.as_path(),
+                                                ])
+                                            }
+                                        } else {
+                                            MappingEngine::load_merged(&[
+                                                message_dir.as_path(),
+                                                pid_path.as_path(),
+                                            ])
+                                        }
                                     } else {
                                         MappingEngine::load(&pid_path)
                                     };
@@ -214,8 +249,27 @@ impl MigServiceRegistry {
                                         }
                                     }
 
-                                    // Also load transaction-only engine (PID dir only, no message defs)
-                                    match MappingEngine::load(&pid_path) {
+                                    // Also load transaction-only engine (with common inheritance)
+                                    let tx_load_result = if common_dir.is_dir() {
+                                        let pid_num =
+                                            dirname.strip_prefix("pid_").unwrap_or(&dirname);
+                                        let schema_file = std::path::Path::new(&schema_dir_path)
+                                            .join(format!("pid_{pid_num}_schema.json"));
+                                        if let Ok(idx) =
+                                            PidSchemaIndex::from_schema_file(&schema_file)
+                                        {
+                                            MappingEngine::load_with_common(
+                                                &common_dir,
+                                                &pid_path,
+                                                &idx,
+                                            )
+                                        } else {
+                                            MappingEngine::load(&pid_path)
+                                        }
+                                    } else {
+                                        MappingEngine::load(&pid_path)
+                                    };
+                                    match tx_load_result {
                                         Ok(tx_engine) => {
                                             let tx_engine = if let Some(ref r) = resolver {
                                                 tx_engine.with_path_resolver(r.clone())

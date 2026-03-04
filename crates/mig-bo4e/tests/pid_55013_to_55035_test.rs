@@ -15,6 +15,7 @@ use mig_assembly::renderer::render_edifact;
 use mig_assembly::tokenize::{parse_to_segments, split_messages};
 use mig_bo4e::engine::MappingEngine;
 use mig_bo4e::path_resolver::PathResolver;
+use mig_bo4e::pid_schema_index::PidSchemaIndex;
 use mig_types::schema::mig::MigSchema;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
@@ -73,8 +74,40 @@ fn message_dir() -> PathBuf {
     Path::new(MAPPINGS_BASE).join("message")
 }
 
+fn common_dir() -> PathBuf {
+    Path::new(MAPPINGS_BASE).join("common")
+}
+
 fn pid_dir(pid: &str) -> PathBuf {
     Path::new(MAPPINGS_BASE).join(format!("pid_{pid}"))
+}
+
+fn schema_index(pid: &str) -> PidSchemaIndex {
+    let schema_path = Path::new(SCHEMA_DIR).join(format!("pid_{pid}_schema.json"));
+    PidSchemaIndex::from_schema_file(&schema_path).unwrap()
+}
+
+/// Load split engines with common/ inheritance when available.
+fn load_split_engines(pid: &str) -> (MappingEngine, MappingEngine) {
+    let msg_dir = message_dir();
+    let cmn_dir = common_dir();
+    let tx_dir = pid_dir(pid);
+    let resolver = path_resolver();
+    if cmn_dir.exists() {
+        let idx = schema_index(pid);
+        let (m, t) =
+            MappingEngine::load_split_with_common(&msg_dir, &cmn_dir, &tx_dir, &idx).unwrap();
+        (
+            m.with_path_resolver(resolver.clone()),
+            t.with_path_resolver(resolver),
+        )
+    } else {
+        let (m, t) = MappingEngine::load_split(&msg_dir, &tx_dir).unwrap();
+        (
+            m.with_path_resolver(resolver.clone()),
+            t.with_path_resolver(resolver),
+        )
+    }
 }
 
 fn owned_to_assembled(seg: &mig_assembly::tokenize::OwnedSegment) -> AssembledSegment {
@@ -118,18 +151,12 @@ fn run_full_roundtrip(pid: &str) {
         return;
     };
 
-    let msg_dir = message_dir();
     let tx_dir = pid_dir(pid);
-    if !msg_dir.exists() || !tx_dir.exists() {
+    if !message_dir().exists() || !tx_dir.exists() {
         eprintln!("Skipping roundtrip for PID {pid}: mapping directories not found");
         return;
     }
-    let msg_engine = MappingEngine::load(&msg_dir)
-        .unwrap()
-        .with_path_resolver(path_resolver());
-    let tx_engine = MappingEngine::load(&tx_dir)
-        .unwrap()
-        .with_path_resolver(path_resolver());
+    let (msg_engine, tx_engine) = load_split_engines(pid);
 
     let mut tested = 0;
     let mut skipped = 0;
@@ -291,18 +318,12 @@ macro_rules! toml_loading_test {
     ($name:ident, $pid:expr) => {
         #[test]
         fn $name() {
-            let msg_dir = message_dir();
             let tx_dir = pid_dir($pid);
-            if !msg_dir.exists() || !tx_dir.exists() {
+            if !message_dir().exists() || !tx_dir.exists() {
                 eprintln!("Skipping {}: mapping dirs not found", stringify!($name));
                 return;
             }
-            let msg_engine = MappingEngine::load(&msg_dir)
-                .map(|e| e.with_path_resolver(path_resolver()))
-                .unwrap_or_else(|e| panic!("Failed to load message engine: {e}"));
-            let tx_engine = MappingEngine::load(&tx_dir)
-                .map(|e| e.with_path_resolver(path_resolver()))
-                .unwrap_or_else(|e| panic!("Failed to load PID {} engine: {e}", $pid));
+            let (msg_engine, tx_engine) = load_split_engines($pid);
             eprintln!(
                 "PID {} TOML loading OK: {} message + {} transaction definitions",
                 $pid,
