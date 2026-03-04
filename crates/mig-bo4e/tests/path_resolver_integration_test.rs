@@ -132,6 +132,7 @@ fn make_tree() -> AssembledTree {
             }],
         }],
         post_group_start: 0,
+        inter_group_segments: std::collections::BTreeMap::new(),
     }
 }
 

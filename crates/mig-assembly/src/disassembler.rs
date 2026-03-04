@@ -50,7 +50,8 @@ impl<'a> Disassembler<'a> {
             }
         }
 
-        // 2. Emit groups in MIG order (lookup by group ID with consumption tracking)
+        // 2. Emit groups in MIG order (lookup by group ID with consumption tracking).
+        //    Between groups, emit any inter-group root segments (e.g., UNS in MSCONS).
         let mut consumed_groups = vec![false; tree.groups.len()];
         for mig_group in &self.mig.segment_groups {
             if let Some(idx) = tree
@@ -59,6 +60,12 @@ impl<'a> Disassembler<'a> {
                 .enumerate()
                 .position(|(i, g)| !consumed_groups[i] && g.group_id == mig_group.id)
             {
+                // Emit any inter-group segments that precede this group
+                if let Some(inter_segs) = tree.inter_group_segments.get(&idx) {
+                    for seg in inter_segs {
+                        output.push(assembled_to_disassembled(seg));
+                    }
+                }
                 self.emit_group(&tree.groups[idx], mig_group, &mut output);
                 consumed_groups[idx] = true;
             }
@@ -229,6 +236,7 @@ mod tests {
             ],
             groups: vec![],
             post_group_start: 2,
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         let disassembler = Disassembler::new(&mig);
@@ -287,6 +295,7 @@ mod tests {
                     },
                 ],
             }],
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         let disassembler = Disassembler::new(&mig);
@@ -352,6 +361,7 @@ mod tests {
                     skipped_segments: vec![],
                 }],
             }],
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         let disassembler = Disassembler::new(&mig);
@@ -382,6 +392,7 @@ mod tests {
             segments: vec![],
             groups: vec![],
             post_group_start: 0,
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         let disassembler = Disassembler::new(&mig);

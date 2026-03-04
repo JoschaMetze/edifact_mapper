@@ -186,6 +186,25 @@ pub fn run_single_fixture_roundtrip(
     msg_engine: &MappingEngine,
     tx_engine: &MappingEngine,
 ) {
+    run_single_fixture_roundtrip_with_tx_group(
+        pid,
+        fixture_path,
+        filtered_mig,
+        msg_engine,
+        tx_engine,
+        "SG4",
+    );
+}
+
+/// Run the roundtrip pipeline for a single fixture file with a configurable transaction group.
+pub fn run_single_fixture_roundtrip_with_tx_group(
+    pid: &str,
+    fixture_path: &Path,
+    filtered_mig: &MigSchema,
+    msg_engine: &MappingEngine,
+    tx_engine: &MappingEngine,
+    tx_group: &str,
+) {
     let fixture_name = fixture_path.file_name().unwrap().to_str().unwrap();
 
     let edifact_input = std::fs::read_to_string(fixture_path).unwrap();
@@ -210,7 +229,8 @@ pub fn run_single_fixture_roundtrip(
     let original_tree = assembler.assemble_generic(&msg_segs).unwrap();
 
     // Step 3: Forward mapping → MappedMessage
-    let mapped = MappingEngine::map_interchange(msg_engine, tx_engine, &original_tree, "SG4", true);
+    let mapped =
+        MappingEngine::map_interchange(msg_engine, tx_engine, &original_tree, tx_group, true);
 
     assert!(
         !mapped.transaktionen.is_empty(),
@@ -219,7 +239,7 @@ pub fn run_single_fixture_roundtrip(
 
     // Step 3b: BO4E schema validation (non-fatal — warns about unknown field names)
     let mapped_for_validation =
-        MappingEngine::map_interchange(msg_engine, tx_engine, &original_tree, "SG4", false);
+        MappingEngine::map_interchange(msg_engine, tx_engine, &original_tree, tx_group, false);
     bo4e_validation::validate_mapped_message(
         pid,
         fixture_name,
@@ -230,7 +250,7 @@ pub fn run_single_fixture_roundtrip(
 
     // Step 4: Reverse mapping → AssembledTree (content only, no UNH/UNT)
     let mut reverse_tree =
-        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, "SG4");
+        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, tx_group);
 
     // Add UNH to the front of pre-group segments, UNT to post-group.
     let unh_assembled = owned_to_assembled(&msg_chunk.unh);

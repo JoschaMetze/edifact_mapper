@@ -14,6 +14,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "PRUEFIDENTIFIKATOR",
                       "name": "Prüfidentifikator",
                       "value": "Z13"
                     }
@@ -26,6 +27,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "SUMMENZEITREIHE",
                       "name": "Summenzeitreihe",
                       "value": "13003"
                     }
@@ -63,6 +65,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "INFORMATIONSSTELLE",
                       "name": "Informationsstelle",
                       "value": "IC"
                     }
@@ -108,22 +111,27 @@
                     {
                       "codes": [
                         {
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "enum": "E_MAIL",
                           "name": "E-Mail",
                           "value": "EM"
                         },
                         {
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         },
                         {
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         }
@@ -156,6 +164,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -182,10 +191,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -209,6 +220,7 @@
             {
               "codes": [
                 {
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -235,10 +247,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -265,6 +279,189 @@
         "sg6_172": {
           "children": {
             "sg9": {
+              "children": {
+                "sg10": {
+                  "data_quality_hint": "base",
+                  "discriminator": {
+                    "element": "6063",
+                    "segment": "QTY"
+                  },
+                  "entity_hint": "Meldepunkt",
+                  "segments": [
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "WAHRER_WERT",
+                                  "name": "Wahrer Wert",
+                                  "value": "220"
+                                },
+                                {
+                                  "enum": "ERSATZWERT",
+                                  "name": "Ersatzwert",
+                                  "value": "67"
+                                },
+                                {
+                                  "enum": "ENERGIEMENGE_SUMMIERT_SUMMENWERT_BILANZSUMME",
+                                  "name": "Energiemenge summiert (Summenwert, Bilanzsumme)",
+                                  "value": "79"
+                                },
+                                {
+                                  "enum": "VORLAEUFIGER_WERT",
+                                  "name": "Vorläufiger Wert",
+                                  "value": "Z18"
+                                },
+                                {
+                                  "enum": "FEHLENDER_WERT",
+                                  "name": "Fehlender Wert",
+                                  "value": "Z30"
+                                }
+                              ],
+                              "id": "6063",
+                              "name": "Menge, Qualifier",
+                              "sub_index": 0,
+                              "type": "code"
+                            },
+                            {
+                              "id": "6060",
+                              "name": "Menge",
+                              "sub_index": 1,
+                              "type": "data"
+                            },
+                            {
+                              "codes": [
+                                {
+                                  "enum": "WATT_PRO_QUADRATMETER",
+                                  "name": "Watt pro Quadratmeter",
+                                  "value": "D54"
+                                },
+                                {
+                                  "enum": "METER_PRO_SEKUNDE",
+                                  "name": "Meter pro Sekunde",
+                                  "value": "MTS"
+                                },
+                                {
+                                  "enum": "KILOWATTSTUNDE",
+                                  "name": "Kilowattstunde",
+                                  "value": "KWH"
+                                },
+                                {
+                                  "enum": "KILOWATT",
+                                  "name": "Kilowatt",
+                                  "value": "KWT"
+                                }
+                              ],
+                              "id": "6411",
+                              "name": "Maßeinheit, Code",
+                              "sub_index": 2,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C186",
+                          "index": 0,
+                          "name": "Mengenangaben"
+                        }
+                      ],
+                      "id": "QTY",
+                      "name": "Dieses Segment wird zur Angabe von Mengen zur aktuellen Position benutzt."
+                    },
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "VERARBEITUNG_BEGINNDATUM_ZEIT",
+                                  "name": "Verarbeitung, Beginndatum/-zeit",
+                                  "value": "163"
+                                }
+                              ],
+                              "id": "2005",
+                              "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                              "sub_index": 0,
+                              "type": "code"
+                            },
+                            {
+                              "id": "2380",
+                              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                              "sub_index": 1,
+                              "type": "data"
+                            },
+                            {
+                              "codes": [
+                                {
+                                  "enum": "CCYYMMDDHHMMZZZ",
+                                  "name": "CCYYMMDDHHMMZZZ",
+                                  "value": "303"
+                                }
+                              ],
+                              "id": "2379",
+                              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                              "sub_index": 2,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C507",
+                          "index": 0,
+                          "name": "Datum/Uhrzeit/Zeitspanne"
+                        }
+                      ],
+                      "id": "DTM",
+                      "name": "Dieses Segment wird benutzt, um den Beginn-Zeitpunkt zu den Daten im vorangegangenen QTY-Segment anzugeben. Im Gasbereich wird die Gültigkeitsperiode des Brennwertes/Zustandszahl gem. G685 angegeben."
+                    },
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "VERARBEITUNG_ENDEDATUM_ZEIT",
+                                  "name": "Verarbeitung, Endedatum/-zeit",
+                                  "value": "164"
+                                }
+                              ],
+                              "id": "2005",
+                              "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                              "sub_index": 0,
+                              "type": "code"
+                            },
+                            {
+                              "id": "2380",
+                              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                              "sub_index": 1,
+                              "type": "data"
+                            },
+                            {
+                              "codes": [
+                                {
+                                  "enum": "CCYYMMDDHHMMZZZ",
+                                  "name": "CCYYMMDDHHMMZZZ",
+                                  "value": "303"
+                                }
+                              ],
+                              "id": "2379",
+                              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                              "sub_index": 2,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C507",
+                          "index": 0,
+                          "name": "Datum/Uhrzeit/Zeitspanne"
+                        }
+                      ],
+                      "id": "DTM",
+                      "name": "Dieses Segment wird benutzt, um den Ende-Zeitpunkt zu den Daten im vorangegangenen QTY-Segment anzugeben. Im Gasbereich wird die Gültigkeitsperiode des Brennwertes/Zustandszahl gem. G685 angegeben."
+                    }
+                  ],
+                  "source_group": "SG10"
+                }
+              },
               "data_quality_hint": "base",
               "discriminator": null,
               "entity_hint": "Meldepunkt",
@@ -286,6 +483,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "PRODUKTIDENTIFIKATION",
                           "name": "Produktidentifikation",
                           "value": "5"
                         }
@@ -306,6 +504,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "OBIS_KENNZAHL",
                               "name": "OBIS-Kennzahl",
                               "value": "SRW"
                             }
@@ -343,6 +542,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "MELDEPUNKT",
                       "name": "Meldepunkt",
                       "value": "172"
                     }
@@ -376,6 +576,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "BILANZIERUNGSDATUM_ZEIT_PERIODE",
                           "name": "Bilanzierungsdatum, -zeit, -periode",
                           "value": "492"
                         }
@@ -394,6 +595,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "CCYYMM",
                           "name": "CCYYMM",
                           "value": "610"
                         }
@@ -419,6 +621,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "FERTIGSTELLUNGSDATUM_ZEIT",
                           "name": "Fertigstellungsdatum/-zeit",
                           "value": "293"
                         }
@@ -437,6 +640,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "CCYYMMDDHHMMSSZZZ",
                           "name": "CCYYMMDDHHMMSSZZZ",
                           "value": "304"
                         }
@@ -469,6 +673,7 @@
             {
               "codes": [
                 {
+                  "enum": "LIEFERANSCHRIFT",
                   "name": "Lieferanschrift",
                   "value": "DP"
                 }
@@ -495,10 +700,12 @@
         {
           "codes": [
             {
+              "enum": "ORIGINAL",
               "name": "Original",
               "value": "9"
             },
             {
+              "enum": "STORNO",
               "name": "Storno",
               "value": "1"
             }
@@ -513,98 +720,122 @@
             {
               "codes": [
                 {
+                  "enum": "PROZESSDATENBERICHT",
                   "name": "Prozessdatenbericht",
                   "value": "7"
                 },
                 {
+                  "enum": "LIEFERSCHEIN",
                   "name": "Lieferschein",
                   "value": "270"
                 },
                 {
+                  "enum": "ZEITREIHEN_RAHMEN_BILANZKREISABRECHNUNG",
                   "name": "Zeitreihen im Rahmen der Bilanzkreisabrechnung",
                   "value": "BK"
                 },
                 {
+                  "enum": "NORMIERTES_PROFIL",
                   "name": "normiertes Profil",
                   "value": "Z06"
                 },
                 {
+                  "enum": "EEG_UEBERFUEHRUNGSZEITREIHE",
                   "name": "EEG-Überführungszeitreihe",
                   "value": "Z15"
                 },
                 {
+                  "enum": "PROFILSCHAR",
                   "name": "Profilschar",
                   "value": "Z16"
                 },
                 {
+                  "enum": "VERGANGENHEITSWERTE_TEP_REFERENZMESSUNG",
                   "name": "Vergangenheitswerte für TEP mit Referenzmessung",
                   "value": "Z20"
                 },
                 {
+                  "enum": "GASBESCHAFFENHEITSDATEN",
                   "name": "Gasbeschaffenheitsdaten",
                   "value": "Z21"
                 },
                 {
+                  "enum": "BILANZIERTE_MENGE_MMMA",
                   "name": "Bilanzierte Menge (MMMA)",
                   "value": "Z23"
                 },
                 {
+                  "enum": "ALLOKATIONSLISTE_MMMA",
                   "name": "Allokationsliste (MMMA)",
                   "value": "Z24"
                 },
                 {
+                  "enum": "BEWEGUNGSDATEN_KALENDERJAHR_VOR_LIEFERBEGINN",
                   "name": "Bewegungsdaten im Kalenderjahr vor Lieferbeginn",
                   "value": "Z27"
                 },
                 {
+                  "enum": "ENERGIEMENGE_LEISTUNGSMAXIMUM",
                   "name": "Energiemenge und Leistungsmaximum",
                   "value": "Z28"
                 },
                 {
+                  "enum": "TAEGLICHE_SUMMENZEITREIHE",
                   "name": "Tägliche Summenzeitreihe",
                   "value": "Z39"
                 },
                 {
+                  "enum": "LIEFERSCHEIN_GRUND_ARBEITSPREIS",
                   "name": "Lieferschein Grund- / Arbeitspreis",
                   "value": "Z41"
                 },
                 {
+                  "enum": "LIEFERSCHEIN_ARBEITS_LEISTUNGSPREIS",
                   "name": "Lieferschein Arbeits- / Leistungspreis",
                   "value": "Z42"
                 },
                 {
+                  "enum": "REDISPATCH_AUSFALLARBEITSUEBERFUEHRUNGSZEITREIHE",
                   "name": "Redispatch Ausfallarbeitsüberführungszeitreihe",
                   "value": "Z43"
                 },
                 {
+                  "enum": "REDISPATCH_UEBERMITTLUNG_METEOROLOGISCHEN_DATEN",
                   "name": "Redispatch Übermittlung von meteorologischen Daten",
                   "value": "Z44"
                 },
                 {
+                  "enum": "REDISPATCH_EINZELZEITREIHE_AUSFALLARBEIT",
                   "name": "Redispatch Einzelzeitreihe Ausfallarbeit",
                   "value": "Z45"
                 },
                 {
+                  "enum": "REDISPATCH_AUSFALLARBEITSSUMMENZEITREIHE",
                   "name": "Redispatch Ausfallarbeitssummenzeitreihe",
                   "value": "Z46"
                 },
                 {
+                  "enum": "LASTGANG_MARKTLOKATION_TRANCHE",
                   "name": "Lastgang Marktlokation, Tranche",
                   "value": "Z48"
                 },
                 {
+                  "enum": "REDISPATCH_EEG_UEBERFUEHRUNGSZEITREIHE_AUFGRUND",
                   "name": "Redispatch EEG-Überführungszeitreihe aufgrund Ausfallarbeit",
                   "value": "Z50"
                 },
                 {
+                  "enum": "REDISPATCH_TAEGLICHE_AUSFALLARBEITSUEBERFUEHRUNGSZEITREIHE",
                   "name": "Redispatch tägliche Ausfallarbeitsüberführungszeitreihe",
                   "value": "Z69"
                 },
                 {
+                  "enum": "WERTE_TYP_2",
                   "name": "Werte nach Typ 2",
                   "value": "Z83"
                 },
                 {
+                  "enum": "GRUNDLAGE_POG_ERMITTLUNG",
                   "name": "Grundlage POG-Ermittlung",
                   "value": "Z85"
                 }
@@ -643,6 +874,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -661,6 +893,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -690,14 +923,17 @@
         {
           "codes": [
             {
+              "enum": "ENERGIEMENGE",
               "name": "Energiemenge",
               "value": "EM"
             },
             {
+              "enum": "LASTGANG_BELIEBIGER_ZEITRAUM",
               "name": "Lastgang, beliebiger Zeitraum",
               "value": "TL"
             },
             {
+              "enum": "VERRECHNUNGSLISTE_ZAEHLERSTAND",
               "name": "Verrechnungsliste, Zählerstand",
               "value": "VL"
             }
@@ -728,6 +964,7 @@
         {
           "codes": [
             {
+              "enum": "UEBERTRAGUNGSDATEI_TEST",
               "name": "Übertragungsdatei ist ein Test",
               "value": "1"
             }
@@ -742,6 +979,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_ECE_ZEICHENSATZ_C",
                   "name": "UN/ECE-Zeichensatz C",
                   "value": "UNOC"
                 }
@@ -754,6 +992,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSION_3",
                   "name": "Version 3",
                   "value": "3"
                 }
@@ -779,14 +1018,17 @@
             {
               "codes": [
                 {
+                  "enum": "GS1",
                   "name": "GS1",
                   "value": "14"
                 },
                 {
+                  "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                   "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                   "value": "500"
                 },
                 {
+                  "enum": "DE_DVGW_SERVICE_CONSULT_GMBH",
                   "name": "DE, DVGW Service & Consult GmbH",
                   "value": "502"
                 }
@@ -812,14 +1054,17 @@
             {
               "codes": [
                 {
+                  "enum": "GS1",
                   "name": "GS1",
                   "value": "14"
                 },
                 {
+                  "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                   "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                   "value": "500"
                 },
                 {
+                  "enum": "DE_DVGW_SERVICE_CONSULT_GMBH",
                   "name": "DE, DVGW Service & Consult GmbH",
                   "value": "502"
                 }
@@ -889,6 +1134,7 @@
             {
               "codes": [
                 {
+                  "enum": "BERICHT_VERBRAUCH_MESSBARER_DIENSTLEISTUNGEN",
                   "name": "Bericht über den Verbrauch messbarer Dienstleistungen",
                   "value": "MSCONS"
                 }
@@ -901,6 +1147,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -913,6 +1160,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2004_B",
                   "name": "Ausgabe 2004 - B",
                   "value": "04B"
                 }
@@ -925,6 +1173,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -937,6 +1186,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "2.4c"
                 }
@@ -962,10 +1212,12 @@
             {
               "codes": [
                 {
+                  "enum": "BEGINN",
                   "name": "Beginn",
                   "value": "C"
                 },
                 {
+                  "enum": "ENDE",
                   "name": "Ende",
                   "value": "F"
                 }
@@ -989,6 +1241,7 @@
         {
           "codes": [
             {
+              "enum": "TRENNUNG_KOPF_POSITIONSTEIL",
               "name": "Trennung von Kopf- und Positionsteil",
               "value": "D"
             }

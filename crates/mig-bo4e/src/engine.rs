@@ -1503,6 +1503,7 @@ impl MappingEngine {
             segments: root_segments,
             groups,
             post_group_start,
+            inter_group_segments: std::collections::BTreeMap::new(),
         }
     }
 
@@ -1586,6 +1587,7 @@ impl MappingEngine {
                                 repetitions: vec![instance.clone()],
                             }],
                             post_group_start: 0,
+                            inter_group_segments: std::collections::BTreeMap::new(),
                         };
 
                         let tx_result =
@@ -1816,10 +1818,29 @@ impl MappingEngine {
             });
         }
 
-        // Step 3: Combine message tree with transaction group
-        let pre_group_count = msg_tree.segments.len();
+        // Step 3: Combine message tree with transaction group.
+        // Move UNS section separator from root segments to inter_group_segments
+        // before the transaction group — UNS separates header from detail in
+        // EDIFACT and must appear between message-level groups and the tx group.
+        let mut root_segments = Vec::new();
+        let mut uns_segments = Vec::new();
+        for seg in msg_tree.segments {
+            if seg.tag == "UNS" {
+                uns_segments.push(seg);
+            } else {
+                root_segments.push(seg);
+            }
+        }
+
+        let pre_group_count = root_segments.len();
         let mut all_groups = msg_tree.groups;
+        let mut inter_group = msg_tree.inter_group_segments;
+
         if !sg4_reps.is_empty() {
+            // Place UNS before the transaction group
+            if !uns_segments.is_empty() {
+                inter_group.insert(all_groups.len(), uns_segments);
+            }
             all_groups.push(AssembledGroup {
                 group_id: transaction_group.to_string(),
                 repetitions: sg4_reps,
@@ -1827,9 +1848,10 @@ impl MappingEngine {
         }
 
         AssembledTree {
-            segments: msg_tree.segments,
+            segments: root_segments,
             groups: all_groups,
             post_group_start: pre_group_count,
+            inter_group_segments: inter_group,
         }
     }
 
@@ -2417,6 +2439,7 @@ mod tests {
                 },
             ],
             post_group_start: 2,
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         // Empty message engine (no message-level defs for this test)
@@ -2607,6 +2630,7 @@ mod tests {
                 },
             ],
             post_group_start: 2,
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         // Message-level definition maps SG2
@@ -2684,6 +2708,7 @@ mod tests {
                 }],
             }],
             post_group_start: 2,
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         // Transaction-level definitions: prozessdaten (root of SG4) + marktlokation (SG5)
@@ -2800,6 +2825,7 @@ mod tests {
                 },
             ],
             post_group_start: 2,
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         // Message-level definitions
@@ -2985,6 +3011,7 @@ mod tests {
                 }],
             }],
             post_group_start: 0,
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         let mut companion_fields: IndexMap<String, FieldMapping> = IndexMap::new();
@@ -3096,6 +3123,7 @@ mod tests {
                 }],
             }],
             post_group_start: 0,
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         let mut companion_fields: IndexMap<String, FieldMapping> = IndexMap::new();
@@ -3349,6 +3377,7 @@ mod tests {
                 }],
             }],
             post_group_start: 0,
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         // Resolve SG10 under Z98

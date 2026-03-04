@@ -21,6 +21,12 @@ pub struct AssembledTree {
     /// Segments before this index appear before groups in EDIFACT order.
     #[serde(default)]
     pub post_group_start: usize,
+    /// Root segments consumed between groups during assembly (e.g., UNS
+    /// section separator in MSCONS). Key = index into `groups` vec; value =
+    /// segments that appear immediately before that group in the EDIFACT
+    /// stream. Empty for messages without inter-group root segments.
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub inter_group_segments: std::collections::BTreeMap<usize, Vec<AssembledSegment>>,
 }
 
 /// An assembled segment with its data elements.
@@ -62,6 +68,7 @@ impl AssembledGroupInstance {
             segments: self.segments.clone(),
             groups: self.child_groups.clone(),
             post_group_start: self.segments.len(),
+            inter_group_segments: std::collections::BTreeMap::new(),
         }
     }
 }
@@ -109,6 +116,7 @@ impl<'a> Assembler<'a> {
             segments: Vec::new(),
             groups: Vec::new(),
             post_group_start: 0,
+            inter_group_segments: std::collections::BTreeMap::new(),
         };
 
         // Track which MIG segment indices were matched in the first pass
@@ -125,11 +133,33 @@ impl<'a> Assembler<'a> {
             }
         }
 
-        // Process segment groups
+        // Process segment groups, interleaving root segment consumption.
+        // Some message types (e.g., MSCONS) have root segments like UNS
+        // between groups (SG2 and SG5). Before trying each group, consume
+        // any unmatched root segments at the current cursor position.
         for mig_group in &self.mig.segment_groups {
             if cursor.is_exhausted() {
                 break;
             }
+
+            // Try consuming unmatched root segments before this group
+            let group_idx = tree.groups.len();
+            for (i, mig_seg) in self.mig.segments.iter().enumerate() {
+                if cursor.is_exhausted() {
+                    break;
+                }
+                if matched_seg_indices.contains(&i) {
+                    continue;
+                }
+                if let Some(assembled) = self.try_consume_segment(segments, &mut cursor, mig_seg)? {
+                    tree.inter_group_segments
+                        .entry(group_idx)
+                        .or_default()
+                        .push(assembled);
+                    matched_seg_indices.push(i);
+                }
+            }
+
             if let Some(assembled) = self.try_consume_group(segments, &mut cursor, mig_group)? {
                 tree.groups.push(assembled);
             }
@@ -325,6 +355,7 @@ impl<'a> Assembler<'a> {
                         segments: Vec::new(),
                         groups: Vec::new(),
                         post_group_start: 0,
+                        inter_group_segments: std::collections::BTreeMap::new(),
                     },
                     diagnostics,
                 );

@@ -14,6 +14,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "BEANTRAGUNGSNUMMER",
                       "name": "Beantragungsnummer",
                       "value": "AGI"
                     }
@@ -45,6 +46,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "PRUEFIDENTIFIKATOR",
                       "name": "Prüfidentifikator",
                       "value": "Z13"
                     }
@@ -57,6 +59,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "MESSW_ZAEHLERSTAND_STROM",
                       "name": "Messw. Zählerstand (Strom)",
                       "value": "13017"
                     }
@@ -94,6 +97,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "INFORMATIONSSTELLE",
                       "name": "Informationsstelle",
                       "value": "IC"
                     }
@@ -139,22 +143,27 @@
                     {
                       "codes": [
                         {
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "enum": "E_MAIL",
                           "name": "E-Mail",
                           "value": "EM"
                         },
                         {
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         },
                         {
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         }
@@ -187,6 +196,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -213,10 +223,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -240,6 +252,7 @@
             {
               "codes": [
                 {
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -266,10 +279,12 @@
                 {
                   "codes": [
                     {
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
@@ -310,6 +325,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "GERAETENUMMER",
                               "name": "Gerätenummer",
                               "value": "MG"
                             }
@@ -341,6 +357,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "ANWENDUNGSREFERENZNUMMER",
                               "name": "Anwendungsreferenznummer",
                               "value": "AGK"
                             }
@@ -369,6 +386,705 @@
               "source_group": "SG7"
             },
             "sg9": {
+              "children": {
+                "sg10": {
+                  "data_quality_hint": "base",
+                  "discriminator": {
+                    "element": "6063",
+                    "segment": "QTY"
+                  },
+                  "entity_hint": "Meldepunkt",
+                  "segments": [
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "WAHRER_WERT",
+                                  "name": "Wahrer Wert",
+                                  "value": "220"
+                                },
+                                {
+                                  "enum": "ERSATZWERT",
+                                  "name": "Ersatzwert",
+                                  "value": "67"
+                                },
+                                {
+                                  "enum": "VORLAEUFIGER_WERT",
+                                  "name": "Vorläufiger Wert",
+                                  "value": "Z18"
+                                }
+                              ],
+                              "id": "6063",
+                              "name": "Menge, Qualifier",
+                              "sub_index": 0,
+                              "type": "code"
+                            },
+                            {
+                              "id": "6060",
+                              "name": "Menge",
+                              "sub_index": 1,
+                              "type": "data"
+                            },
+                            {
+                              "codes": [
+                                {
+                                  "enum": "WATT_PRO_QUADRATMETER",
+                                  "name": "Watt pro Quadratmeter",
+                                  "value": "D54"
+                                },
+                                {
+                                  "enum": "METER_PRO_SEKUNDE",
+                                  "name": "Meter pro Sekunde",
+                                  "value": "MTS"
+                                },
+                                {
+                                  "enum": "KILOWATTSTUNDE",
+                                  "name": "Kilowattstunde",
+                                  "value": "KWH"
+                                },
+                                {
+                                  "enum": "KILOWATT",
+                                  "name": "Kilowatt",
+                                  "value": "KWT"
+                                }
+                              ],
+                              "id": "6411",
+                              "name": "Maßeinheit, Code",
+                              "sub_index": 2,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C186",
+                          "index": 0,
+                          "name": "Mengenangaben"
+                        }
+                      ],
+                      "id": "QTY",
+                      "name": "Dieses Segment wird zur Angabe von Mengen zur aktuellen Position benutzt."
+                    },
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "BEARBEITUNGS_VERARBEITUNGSDATUM_ZEIT",
+                                  "name": "Bearbeitungs-/Verarbeitungsdatum/-zeit",
+                                  "value": "9"
+                                }
+                              ],
+                              "id": "2005",
+                              "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                              "sub_index": 0,
+                              "type": "code"
+                            },
+                            {
+                              "id": "2380",
+                              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                              "sub_index": 1,
+                              "type": "data"
+                            },
+                            {
+                              "codes": [
+                                {
+                                  "enum": "CCYYMMDD",
+                                  "name": "CCYYMMDD",
+                                  "value": "102"
+                                },
+                                {
+                                  "enum": "CCYYMMDDHHMMZZZ",
+                                  "name": "CCYYMMDDHHMMZZZ",
+                                  "value": "303"
+                                }
+                              ],
+                              "id": "2379",
+                              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                              "sub_index": 2,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C507",
+                          "index": 0,
+                          "name": "Datum/Uhrzeit/Zeitspanne"
+                        }
+                      ],
+                      "id": "DTM",
+                      "name": "Dieses Segment wird benutzt, um das Ablesedatum zu den Daten im vorangegangenen QTY-Segment anzugeben. Hiermit wird angegeben, wann der Messwert tatsächlich abgelesen wurde. Liegt lediglich ein Datum ohne Uhrzeit vor, so ist in DE2379 der Code 102 zu verwenden. Liegt ein genauer Ablesezeitpunkt vor, so ist in DE2379 der Code 303 zu verwenden.  Für die weitere prozessuale Verarbeitung des Wertes ist ausschließlich der Nutzungszeitpunkt relevant."
+                    },
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "GUELTIGKEITSDATUM_ZEIT",
+                                  "name": "Gültigkeitsdatum/-zeit",
+                                  "value": "7"
+                                }
+                              ],
+                              "id": "2005",
+                              "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                              "sub_index": 0,
+                              "type": "code"
+                            },
+                            {
+                              "id": "2380",
+                              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                              "sub_index": 1,
+                              "type": "data"
+                            },
+                            {
+                              "codes": [
+                                {
+                                  "enum": "CCYYMMDDHHMMZZZ",
+                                  "name": "CCYYMMDDHHMMZZZ",
+                                  "value": "303"
+                                }
+                              ],
+                              "id": "2379",
+                              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                              "sub_index": 2,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C507",
+                          "index": 0,
+                          "name": "Datum/Uhrzeit/Zeitspanne"
+                        }
+                      ],
+                      "id": "DTM",
+                      "name": "Dieses Segment wird benutzt, um den Nutzungszeitpunkt zu den Daten im vorangegangenen QTY-Segment anzugeben. Dieser wird verwendet, um einen Zählerstand eindeutig einem Prozesszeitpunkt zuzuordnen. Der Nutzungszeitpunkt ist für den Zählerstand der Zeitpunkt der für die weitere Verarbeitung relevant ist."
+                    },
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "KONSTRUKTIONSAENDERUNGSDATUM",
+                                  "name": "Konstruktionsänderungsdatum",
+                                  "value": "60"
+                                }
+                              ],
+                              "id": "2005",
+                              "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                              "sub_index": 0,
+                              "type": "code"
+                            },
+                            {
+                              "id": "2380",
+                              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                              "sub_index": 1,
+                              "type": "data"
+                            },
+                            {
+                              "codes": [
+                                {
+                                  "enum": "CCYYMMDDHHMMZZZ",
+                                  "name": "CCYYMMDDHHMMZZZ",
+                                  "value": "303"
+                                }
+                              ],
+                              "id": "2379",
+                              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                              "sub_index": 2,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C507",
+                          "index": 0,
+                          "name": "Datum/Uhrzeit/Zeitspanne"
+                        }
+                      ],
+                      "id": "DTM",
+                      "name": "Dieses Segment wird benutzt, um den Ausführungs- Änderungszeitpunkt zu den Daten im vorangegangenen QTY-Segment anzugeben. Dieser wird verwendet, um einen Zählerstand eindeutig einer tatsächlichen Änderung zuzuordnen (z.B. bei einem Gerätewechsel der tatsächliche Einbau bzw. Ausbauzeitpunkt). Für die weitere prozessuale Verarbeitung des Wertes ist ausschließlich der Nutzungszeitpunkt relevant."
+                    },
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "PLAUSIBILISIERUNGSHINWEIS",
+                                  "name": "Plausibilisierungshinweis",
+                                  "value": "Z33"
+                                }
+                              ],
+                              "id": "9015",
+                              "name": "Statuskategorie, Code",
+                              "sub_index": 0,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C601",
+                          "index": 0,
+                          "name": "Statuskategorie"
+                        },
+                        {
+                          "components": [
+                            {
+                              "id": "4405",
+                              "name": "Status, Code",
+                              "sub_index": 0,
+                              "type": "data"
+                            }
+                          ],
+                          "composite": "C555",
+                          "index": 1,
+                          "name": "Status"
+                        },
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "MESSWERT_WURDE_DURCH_KUNDEN_ZAEHLER_ABGELESEN",
+                                  "name": "Messwert wurde durch den Kunden am Zähler abgelesen.",
+                                  "value": "Z83"
+                                },
+                                {
+                                  "enum": "LEERSTAND",
+                                  "name": "Leerstand",
+                                  "value": "Z84"
+                                },
+                                {
+                                  "enum": "REALER_ZAEHLERUEBERLAUF_GEPRUEFT",
+                                  "name": "Realer Zählerüberlauf geprüft",
+                                  "value": "Z85"
+                                },
+                                {
+                                  "enum": "PLAUSIBEL_WG_KONTROLLABLESUNG",
+                                  "name": "Plausibel wg. Kontrollablesung",
+                                  "value": "Z86"
+                                },
+                                {
+                                  "enum": "PLAUSIBEL_WG_KUNDENHINWEIS",
+                                  "name": "Plausibel wg. Kundenhinweis",
+                                  "value": "Z87"
+                                },
+                                {
+                                  "enum": "AUSTAUSCH_ERSATZWERTES",
+                                  "name": "Austausch des Ersatzwertes",
+                                  "value": "ZC3"
+                                },
+                                {
+                                  "enum": "WERT_BASIS_MODERNEN_MESSEINRICHTUNG",
+                                  "name": "Wert auf Basis der modernen Messeinrichtung",
+                                  "value": "ZS2"
+                                }
+                              ],
+                              "id": "9013",
+                              "name": "Statusanlaß, Code",
+                              "sub_index": 0,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C556",
+                          "index": 2,
+                          "name": "Statusanlaß"
+                        }
+                      ],
+                      "id": "STS",
+                      "name": "Dieses Segment enthält einen Plausibilisierungshinweis zu dem übermittelten Wert."
+                    },
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "ERSATZWERTBILDUNGSVERFAHREN",
+                                  "name": "Ersatzwertbildungsverfahren",
+                                  "value": "Z32"
+                                }
+                              ],
+                              "id": "9015",
+                              "name": "Statuskategorie, Code",
+                              "sub_index": 0,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C601",
+                          "index": 0,
+                          "name": "Statuskategorie"
+                        },
+                        {
+                          "components": [
+                            {
+                              "id": "4405",
+                              "name": "Status, Code",
+                              "sub_index": 0,
+                              "type": "data"
+                            }
+                          ],
+                          "composite": "C555",
+                          "index": 1,
+                          "name": "Status"
+                        },
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "STROM_MESSWERT_GEEICHTER_VERGLEICHSMESSUNG",
+                                  "name": "Strom: Messwert aus geeichter Vergleichsmessung.",
+                                  "value": "Z88"
+                                },
+                                {
+                                  "enum": "STROM_MESSWERT_VERFUEGBAREN_GEEICHTEN_GERAETEN_Z_B",
+                                  "name": "Strom: Messwert aus verfügbaren nicht geeichten Geräten (z. B. Analogmessung).\r\nGas: Messwert eines nicht geeichten Messgerätes in der gleichen Messstrecke.",
+                                  "value": "Z89"
+                                },
+                                {
+                                  "enum": "STROM_GAS_BERECHNUNG_NEUEN_WERTES_DURCH_INTERPOLATION",
+                                  "name": "Strom / Gas: Berechnung eines neuen Wertes durch Interpolation.",
+                                  "value": "Z92"
+                                },
+                                {
+                                  "enum": "STROM_VERGLEICHSWERTVERFAHREN_TEILSCHRITTEN_WERTEBESTIMMUNG",
+                                  "name": "Strom: Vergleichswertverfahren mit Teilschritten Wertebestimmung, Ersatzprofilbestimmung und Skalierung.",
+                                  "value": "ZJ2"
+                                }
+                              ],
+                              "id": "9013",
+                              "name": "Statusanlaß, Code",
+                              "sub_index": 0,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C556",
+                          "index": 2,
+                          "name": "Statusanlaß"
+                        }
+                      ],
+                      "id": "STS",
+                      "name": "Dieses Segment enthält das Ersatzwertbildungsverfahren zu dem übermittelten Wert."
+                    },
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "KORREKTURGRUND",
+                                  "name": "Korrekturgrund",
+                                  "value": "Z34"
+                                }
+                              ],
+                              "id": "9015",
+                              "name": "Statuskategorie, Code",
+                              "sub_index": 0,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C601",
+                          "index": 0,
+                          "name": "Statuskategorie"
+                        },
+                        {
+                          "components": [
+                            {
+                              "id": "4405",
+                              "name": "Status, Code",
+                              "sub_index": 0,
+                              "type": "data"
+                            }
+                          ],
+                          "composite": "C555",
+                          "index": 1,
+                          "name": "Status"
+                        },
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "STROM_GAS_ZUGANG_MESSEINRICHTUNG_MOEGLICH_VOR_ORT_ABLESUNG",
+                                  "name": "Strom / Gas: Zugang zur Messeinrichtung nicht möglich (Vor-Ort-Ablesung).",
+                                  "value": "Z74"
+                                },
+                                {
+                                  "enum": "STROM_GAS_FERNAUSLESUNG_KONNTE_FRISTGERECHT_DURCHGEFUEHRT",
+                                  "name": "Strom / Gas: Fernauslesung konnte nicht fristgerecht durchgeführt werden.",
+                                  "value": "Z75"
+                                },
+                                {
+                                  "enum": "STROM_GAS_NETZAUSFALL_AUSFALL_NETZGEBIETES_FEHLENDE",
+                                  "name": "Strom / Gas: Netzausfall = Ausfall eines Netzgebietes/fehlende Primärspannung.",
+                                  "value": "Z76"
+                                },
+                                {
+                                  "enum": "STROM_MESSSPANNUNGSAUSFALL_FEHLENDE_HILFSSPANNUNG",
+                                  "name": "Strom: Messspannungsausfall oder fehlende Hilfsspannung.",
+                                  "value": "Z77"
+                                },
+                                {
+                                  "enum": "STROM_GAS_MESSWERTE_UNVOLLSTAENDIG_WEGEN_GERAETEWECHSELS",
+                                  "name": "Strom / Gas: Messwerte unvollständig wegen Gerätewechsels.",
+                                  "value": "Z78"
+                                },
+                                {
+                                  "enum": "STROM_WAEHREND_WARTUNGS_REVISIONS_INSTANDSETZUNGSARBEITEN",
+                                  "name": "Strom: Während Wartungs-, Revisions- oder Instandsetzungsarbeiten am geeichten Messgeräten stehen keine Messwerte zur Verfügung.",
+                                  "value": "Z79"
+                                },
+                                {
+                                  "enum": "STROM_GAS_GERAET_ARBEITET_AUSSERHALB_ZUGELASSENEN",
+                                  "name": "Strom / Gas: Das Gerät arbeitet außerhalb der zugelassenen Betriebsbedingungen und liefert keine Messwerte.",
+                                  "value": "Z80"
+                                },
+                                {
+                                  "enum": "STROM_GAS_MESSWERTE_SIND_VERWENDBAR_VERFUEGBAR",
+                                  "name": "Strom / Gas: Messwerte sind nicht verwendbar / verfügbar, da bei der Messeinrichtung ein Defekt festgestellt wurde.",
+                                  "value": "Z81"
+                                },
+                                {
+                                  "enum": "STROM_GAS_MOEGLICHER_GERAETEDEFEKT_MESSEINRICHTUNG",
+                                  "name": "Strom / Gas: Möglicher Gerätedefekt/ Messeinrichtung in Überprüfung (z. B. Befundprüfung).",
+                                  "value": "Z82"
+                                },
+                                {
+                                  "enum": "STROM_GAS_UHRZEIT_WAR_AUSSERHALB_ZULAESSIGEN_GRENZWERTE",
+                                  "name": "Strom / Gas: Uhrzeit war außerhalb der zulässigen Grenzwerte.",
+                                  "value": "ZA0"
+                                },
+                                {
+                                  "enum": "STROM_GAS_ENERGIE_LEISTUNG_VOLUMEN_ETC_UNPLAUSIBEL",
+                                  "name": "Strom / Gas: Energie, Leistung, Volumen, etc. unplausibel.",
+                                  "value": "ZA1"
+                                },
+                                {
+                                  "enum": "FALSCHER_WANDLERFAKTOR",
+                                  "name": "Falscher Wandlerfaktor",
+                                  "value": "ZA3"
+                                },
+                                {
+                                  "enum": "STROM_GAS_FEHLERHAFTE_ABLESUNG_INCL_MESSSTELLENVERWECHSLUNG",
+                                  "name": "Strom / Gas: Fehlerhafte Ablesung incl. Messstellenverwechslung, Zahlendreher, ...",
+                                  "value": "ZA4"
+                                },
+                                {
+                                  "enum": "STROM_GAS_Z_B_AENDERUNG_BERECHNUNGSVORSCHRIFT_NACHTRAEGLICH",
+                                  "name": "Strom / Gas: z. B. Änderung der Berechnungsvorschrift, nachträglich berücksichtigte Zweit- bzw. Untermessung.",
+                                  "value": "ZA5"
+                                },
+                                {
+                                  "enum": "UMBAU_MESSLOKATION",
+                                  "name": "Umbau der Messlokation",
+                                  "value": "ZA6"
+                                },
+                                {
+                                  "enum": "DATENBEARBEITUNGSFEHLER",
+                                  "name": "Datenbearbeitungsfehler",
+                                  "value": "ZA7"
+                                },
+                                {
+                                  "enum": "STROM_GAS_TECHNISCHER_FEHLER_MESSEINRICHTUNG",
+                                  "name": "Strom / Gas: Technischer Fehler in der Messeinrichtung.",
+                                  "value": "ZB0"
+                                },
+                                {
+                                  "enum": "AENDERUNG_TARIFSCHALTZEITEN",
+                                  "name": "Änderung Tarifschaltzeiten",
+                                  "value": "ZB9"
+                                },
+                                {
+                                  "enum": "STROM_TARIFSCHALTGERAET_DEFEKT",
+                                  "name": "Strom: Tarifschaltgerät defekt.",
+                                  "value": "ZC2"
+                                },
+                                {
+                                  "enum": "STROM_GAS_WERT_BASIERT_UNZUREICHENDEN_ANZAHL_IMPULSEN",
+                                  "name": "Strom / Gas: Der Wert basiert auf einer unzureichenden Anzahl von Impulsen gemäß der Eichordnung.",
+                                  "value": "ZC4"
+                                }
+                              ],
+                              "id": "9013",
+                              "name": "Statusanlaß, Code",
+                              "sub_index": 0,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C556",
+                          "index": 2,
+                          "name": "Statusanlaß"
+                        }
+                      ],
+                      "id": "STS",
+                      "name": "Dieses Segment enthält den Korrekturgrund zu dem übermittelten Wert."
+                    },
+                    {
+                      "elements": [
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "GRUND_ERSATZWERTBILDUNG",
+                                  "name": "Grund der Ersatzwertbildung",
+                                  "value": "Z40"
+                                }
+                              ],
+                              "id": "9015",
+                              "name": "Statuskategorie, Code",
+                              "sub_index": 0,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C601",
+                          "index": 0,
+                          "name": "Statuskategorie"
+                        },
+                        {
+                          "components": [
+                            {
+                              "id": "4405",
+                              "name": "Status, Code",
+                              "sub_index": 0,
+                              "type": "data"
+                            }
+                          ],
+                          "composite": "C555",
+                          "index": 1,
+                          "name": "Status"
+                        },
+                        {
+                          "components": [
+                            {
+                              "codes": [
+                                {
+                                  "enum": "STROM_GAS_ZUGANG_MESSEINRICHTUNG_MOEGLICH_VOR_ORT_ABLESUNG",
+                                  "name": "Strom / Gas: Zugang zur Messeinrichtung nicht möglich (Vor-Ort-Ablesung).",
+                                  "value": "Z74"
+                                },
+                                {
+                                  "enum": "STROM_GAS_FERNAUSLESUNG_KONNTE_FRISTGERECHT_DURCHGEFUEHRT",
+                                  "name": "Strom / Gas: Fernauslesung konnte nicht fristgerecht durchgeführt werden.",
+                                  "value": "Z75"
+                                },
+                                {
+                                  "enum": "STROM_GAS_NETZAUSFALL_AUSFALL_NETZGEBIETES_FEHLENDE",
+                                  "name": "Strom / Gas: Netzausfall = Ausfall eines Netzgebietes/fehlende Primärspannung.",
+                                  "value": "Z76"
+                                },
+                                {
+                                  "enum": "STROM_MESSSPANNUNGSAUSFALL_FEHLENDE_HILFSSPANNUNG",
+                                  "name": "Strom: Messspannungsausfall oder fehlende Hilfsspannung.",
+                                  "value": "Z77"
+                                },
+                                {
+                                  "enum": "STROM_GAS_MESSWERTE_UNVOLLSTAENDIG_WEGEN_GERAETEWECHSELS",
+                                  "name": "Strom / Gas: Messwerte unvollständig wegen Gerätewechsels.",
+                                  "value": "Z78"
+                                },
+                                {
+                                  "enum": "STROM_WAEHREND_WARTUNGS_REVISIONS_INSTANDSETZUNGSARBEITEN",
+                                  "name": "Strom: Während Wartungs-, Revisions- oder Instandsetzungsarbeiten am geeichten Messgeräten stehen keine Messwerte zur Verfügung.",
+                                  "value": "Z79"
+                                },
+                                {
+                                  "enum": "STROM_GAS_GERAET_ARBEITET_AUSSERHALB_ZUGELASSENEN",
+                                  "name": "Strom / Gas: Das Gerät arbeitet außerhalb der zugelassenen Betriebsbedingungen und liefert keine Messwerte.",
+                                  "value": "Z80"
+                                },
+                                {
+                                  "enum": "STROM_GAS_MESSWERTE_SIND_VERWENDBAR_VERFUEGBAR",
+                                  "name": "Strom / Gas: Messwerte sind nicht verwendbar / verfügbar, da bei der Messeinrichtung ein Defekt festgestellt wurde.",
+                                  "value": "Z81"
+                                },
+                                {
+                                  "enum": "STROM_GAS_MOEGLICHER_GERAETEDEFEKT_MESSEINRICHTUNG",
+                                  "name": "Strom / Gas: Möglicher Gerätedefekt/ Messeinrichtung in Überprüfung (z. B. Befundprüfung).",
+                                  "value": "Z82"
+                                },
+                                {
+                                  "enum": "STROM_GAS_UHRZEIT_WAR_AUSSERHALB_ZULAESSIGEN_GRENZWERTE",
+                                  "name": "Strom / Gas: Uhrzeit war außerhalb der zulässigen Grenzwerte.",
+                                  "value": "ZA0"
+                                },
+                                {
+                                  "enum": "STROM_GAS_ENERGIE_LEISTUNG_VOLUMEN_ETC_UNPLAUSIBEL",
+                                  "name": "Strom / Gas: Energie, Leistung, Volumen, etc. unplausibel.",
+                                  "value": "ZA1"
+                                },
+                                {
+                                  "enum": "FALSCHER_WANDLERFAKTOR",
+                                  "name": "Falscher Wandlerfaktor",
+                                  "value": "ZA3"
+                                },
+                                {
+                                  "enum": "STROM_GAS_FEHLERHAFTE_ABLESUNG_INCL_MESSSTELLENVERWECHSLUNG",
+                                  "name": "Strom / Gas: Fehlerhafte Ablesung incl. Messstellenverwechslung, Zahlendreher, ...",
+                                  "value": "ZA4"
+                                },
+                                {
+                                  "enum": "STROM_GAS_Z_B_AENDERUNG_BERECHNUNGSVORSCHRIFT_NACHTRAEGLICH",
+                                  "name": "Strom / Gas: z. B. Änderung der Berechnungsvorschrift, nachträglich berücksichtigte Zweit- bzw. Untermessung.",
+                                  "value": "ZA5"
+                                },
+                                {
+                                  "enum": "UMBAU_MESSLOKATION",
+                                  "name": "Umbau der Messlokation",
+                                  "value": "ZA6"
+                                },
+                                {
+                                  "enum": "DATENBEARBEITUNGSFEHLER",
+                                  "name": "Datenbearbeitungsfehler",
+                                  "value": "ZA7"
+                                },
+                                {
+                                  "enum": "STROM_GAS_TECHNISCHER_FEHLER_MESSEINRICHTUNG",
+                                  "name": "Strom / Gas: Technischer Fehler in der Messeinrichtung.",
+                                  "value": "ZB0"
+                                },
+                                {
+                                  "enum": "AENDERUNG_TARIFSCHALTZEITEN",
+                                  "name": "Änderung Tarifschaltzeiten",
+                                  "value": "ZB9"
+                                },
+                                {
+                                  "enum": "STROM_TARIFSCHALTGERAET_DEFEKT",
+                                  "name": "Strom: Tarifschaltgerät defekt.",
+                                  "value": "ZC2"
+                                },
+                                {
+                                  "enum": "STROM_GAS_WERT_BASIERT_UNZUREICHENDEN_ANZAHL_IMPULSEN",
+                                  "name": "Strom / Gas: Der Wert basiert auf einer unzureichenden Anzahl von Impulsen gemäß der Eichordnung.",
+                                  "value": "ZC4"
+                                },
+                                {
+                                  "enum": "STROM_GAS_BESTELLUNGEN_WERTEN_NUTZUNGSZEITPUNKT",
+                                  "name": "Strom / Gas: Bei Bestellungen von Werten zu einem Nutzungszeitpunkt der in der Vergangenheit liegt, zu dem beim MSB kein realer Wert vorliegt, ist es notwendig für den angeforderten Zeitpunkt einen Ersatzwert zu bilden und zu übermitteln.",
+                                  "value": "ZT8"
+                                }
+                              ],
+                              "id": "9013",
+                              "name": "Statusanlaß, Code",
+                              "sub_index": 0,
+                              "type": "code"
+                            }
+                          ],
+                          "composite": "C556",
+                          "index": 2,
+                          "name": "Statusanlaß"
+                        }
+                      ],
+                      "id": "STS",
+                      "name": "Dieses Segment enthält den Grund der Ersatzwertbildung zu einem übermittelten Ersatzwert."
+                    }
+                  ],
+                  "source_group": "SG10"
+                }
+              },
               "data_quality_hint": "base",
               "discriminator": null,
               "entity_hint": "Meldepunkt",
@@ -390,6 +1106,7 @@
                     {
                       "codes": [
                         {
+                          "enum": "PRODUKTIDENTIFIKATION",
                           "name": "Produktidentifikation",
                           "value": "5"
                         }
@@ -410,6 +1127,7 @@
                         {
                           "codes": [
                             {
+                              "enum": "OBIS_KENNZAHL",
                               "name": "OBIS-Kennzahl",
                               "value": "SRW"
                             }
@@ -447,6 +1165,7 @@
                 {
                   "codes": [
                     {
+                      "enum": "MELDEPUNKT",
                       "name": "Meldepunkt",
                       "value": "172"
                     }
@@ -487,6 +1206,7 @@
             {
               "codes": [
                 {
+                  "enum": "LIEFERANSCHRIFT",
                   "name": "Lieferanschrift",
                   "value": "DP"
                 }
@@ -513,10 +1233,12 @@
         {
           "codes": [
             {
+              "enum": "ORIGINAL",
               "name": "Original",
               "value": "9"
             },
             {
+              "enum": "STORNO",
               "name": "Storno",
               "value": "1"
             }
@@ -531,98 +1253,122 @@
             {
               "codes": [
                 {
+                  "enum": "PROZESSDATENBERICHT",
                   "name": "Prozessdatenbericht",
                   "value": "7"
                 },
                 {
+                  "enum": "LIEFERSCHEIN",
                   "name": "Lieferschein",
                   "value": "270"
                 },
                 {
+                  "enum": "ZEITREIHEN_RAHMEN_BILANZKREISABRECHNUNG",
                   "name": "Zeitreihen im Rahmen der Bilanzkreisabrechnung",
                   "value": "BK"
                 },
                 {
+                  "enum": "NORMIERTES_PROFIL",
                   "name": "normiertes Profil",
                   "value": "Z06"
                 },
                 {
+                  "enum": "EEG_UEBERFUEHRUNGSZEITREIHE",
                   "name": "EEG-Überführungszeitreihe",
                   "value": "Z15"
                 },
                 {
+                  "enum": "PROFILSCHAR",
                   "name": "Profilschar",
                   "value": "Z16"
                 },
                 {
+                  "enum": "VERGANGENHEITSWERTE_TEP_REFERENZMESSUNG",
                   "name": "Vergangenheitswerte für TEP mit Referenzmessung",
                   "value": "Z20"
                 },
                 {
+                  "enum": "GASBESCHAFFENHEITSDATEN",
                   "name": "Gasbeschaffenheitsdaten",
                   "value": "Z21"
                 },
                 {
+                  "enum": "BILANZIERTE_MENGE_MMMA",
                   "name": "Bilanzierte Menge (MMMA)",
                   "value": "Z23"
                 },
                 {
+                  "enum": "ALLOKATIONSLISTE_MMMA",
                   "name": "Allokationsliste (MMMA)",
                   "value": "Z24"
                 },
                 {
+                  "enum": "BEWEGUNGSDATEN_KALENDERJAHR_VOR_LIEFERBEGINN",
                   "name": "Bewegungsdaten im Kalenderjahr vor Lieferbeginn",
                   "value": "Z27"
                 },
                 {
+                  "enum": "ENERGIEMENGE_LEISTUNGSMAXIMUM",
                   "name": "Energiemenge und Leistungsmaximum",
                   "value": "Z28"
                 },
                 {
+                  "enum": "TAEGLICHE_SUMMENZEITREIHE",
                   "name": "Tägliche Summenzeitreihe",
                   "value": "Z39"
                 },
                 {
+                  "enum": "LIEFERSCHEIN_GRUND_ARBEITSPREIS",
                   "name": "Lieferschein Grund- / Arbeitspreis",
                   "value": "Z41"
                 },
                 {
+                  "enum": "LIEFERSCHEIN_ARBEITS_LEISTUNGSPREIS",
                   "name": "Lieferschein Arbeits- / Leistungspreis",
                   "value": "Z42"
                 },
                 {
+                  "enum": "REDISPATCH_AUSFALLARBEITSUEBERFUEHRUNGSZEITREIHE",
                   "name": "Redispatch Ausfallarbeitsüberführungszeitreihe",
                   "value": "Z43"
                 },
                 {
+                  "enum": "REDISPATCH_UEBERMITTLUNG_METEOROLOGISCHEN_DATEN",
                   "name": "Redispatch Übermittlung von meteorologischen Daten",
                   "value": "Z44"
                 },
                 {
+                  "enum": "REDISPATCH_EINZELZEITREIHE_AUSFALLARBEIT",
                   "name": "Redispatch Einzelzeitreihe Ausfallarbeit",
                   "value": "Z45"
                 },
                 {
+                  "enum": "REDISPATCH_AUSFALLARBEITSSUMMENZEITREIHE",
                   "name": "Redispatch Ausfallarbeitssummenzeitreihe",
                   "value": "Z46"
                 },
                 {
+                  "enum": "LASTGANG_MARKTLOKATION_TRANCHE",
                   "name": "Lastgang Marktlokation, Tranche",
                   "value": "Z48"
                 },
                 {
+                  "enum": "REDISPATCH_EEG_UEBERFUEHRUNGSZEITREIHE_AUFGRUND",
                   "name": "Redispatch EEG-Überführungszeitreihe aufgrund Ausfallarbeit",
                   "value": "Z50"
                 },
                 {
+                  "enum": "REDISPATCH_TAEGLICHE_AUSFALLARBEITSUEBERFUEHRUNGSZEITREIHE",
                   "name": "Redispatch tägliche Ausfallarbeitsüberführungszeitreihe",
                   "value": "Z69"
                 },
                 {
+                  "enum": "WERTE_TYP_2",
                   "name": "Werte nach Typ 2",
                   "value": "Z83"
                 },
                 {
+                  "enum": "GRUNDLAGE_POG_ERMITTLUNG",
                   "name": "Grundlage POG-Ermittlung",
                   "value": "Z85"
                 }
@@ -661,6 +1407,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -679,6 +1426,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -708,14 +1456,17 @@
         {
           "codes": [
             {
+              "enum": "ENERGIEMENGE",
               "name": "Energiemenge",
               "value": "EM"
             },
             {
+              "enum": "LASTGANG_BELIEBIGER_ZEITRAUM",
               "name": "Lastgang, beliebiger Zeitraum",
               "value": "TL"
             },
             {
+              "enum": "VERRECHNUNGSLISTE_ZAEHLERSTAND",
               "name": "Verrechnungsliste, Zählerstand",
               "value": "VL"
             }
@@ -746,6 +1497,7 @@
         {
           "codes": [
             {
+              "enum": "UEBERTRAGUNGSDATEI_TEST",
               "name": "Übertragungsdatei ist ein Test",
               "value": "1"
             }
@@ -760,6 +1512,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_ECE_ZEICHENSATZ_C",
                   "name": "UN/ECE-Zeichensatz C",
                   "value": "UNOC"
                 }
@@ -772,6 +1525,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSION_3",
                   "name": "Version 3",
                   "value": "3"
                 }
@@ -797,14 +1551,17 @@
             {
               "codes": [
                 {
+                  "enum": "GS1",
                   "name": "GS1",
                   "value": "14"
                 },
                 {
+                  "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                   "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                   "value": "500"
                 },
                 {
+                  "enum": "DE_DVGW_SERVICE_CONSULT_GMBH",
                   "name": "DE, DVGW Service & Consult GmbH",
                   "value": "502"
                 }
@@ -830,14 +1587,17 @@
             {
               "codes": [
                 {
+                  "enum": "GS1",
                   "name": "GS1",
                   "value": "14"
                 },
                 {
+                  "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                   "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                   "value": "500"
                 },
                 {
+                  "enum": "DE_DVGW_SERVICE_CONSULT_GMBH",
                   "name": "DE, DVGW Service & Consult GmbH",
                   "value": "502"
                 }
@@ -907,6 +1667,7 @@
             {
               "codes": [
                 {
+                  "enum": "BERICHT_VERBRAUCH_MESSBARER_DIENSTLEISTUNGEN",
                   "name": "Bericht über den Verbrauch messbarer Dienstleistungen",
                   "value": "MSCONS"
                 }
@@ -919,6 +1680,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -931,6 +1693,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2004_B",
                   "name": "Ausgabe 2004 - B",
                   "value": "04B"
                 }
@@ -943,6 +1706,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -955,6 +1719,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "2.4c"
                 }
@@ -980,10 +1745,12 @@
             {
               "codes": [
                 {
+                  "enum": "BEGINN",
                   "name": "Beginn",
                   "value": "C"
                 },
                 {
+                  "enum": "ENDE",
                   "name": "Ende",
                   "value": "F"
                 }
@@ -1007,6 +1774,7 @@
         {
           "codes": [
             {
+              "enum": "TRENNUNG_KOPF_POSITIONSTEIL",
               "name": "Trennung von Kopf- und Positionsteil",
               "value": "D"
             }

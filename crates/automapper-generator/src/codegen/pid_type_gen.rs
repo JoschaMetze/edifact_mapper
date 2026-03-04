@@ -753,14 +753,22 @@ pub fn analyze_pid_structure_with_qualifiers(
                     tracker.add_child_segment(&child_id, parts[2], field.mig_number.as_deref());
                 }
 
-                // Handle deeply nested groups (SG4/SG8/SG10/...)
+                // Handle deeply nested groups (SG4/SG8/SG10/SG11/...)
+                // Walk remaining parts[2..] recursively: each SG part opens a deeper
+                // nesting level, and the first non-SG part is a segment tag.
                 if parts.len() > 2 && parts[2].starts_with("SG") {
-                    tracker.add_child_nested_group(&child_id, parts[2]);
-                    if parts.len() > 3 && !parts[3].starts_with("SG") {
-                        tracker.add_child_nested_segment(
+                    let nested_path: Vec<&str> = parts[2..]
+                        .iter()
+                        .take_while(|p| p.starts_with("SG"))
+                        .copied()
+                        .collect();
+                    let seg_idx = 2 + nested_path.len();
+                    tracker.ensure_nested_path(&child_id, &nested_path);
+                    if seg_idx < parts.len() && !parts[seg_idx].starts_with("SG") {
+                        tracker.add_nested_segment_at_path(
                             &child_id,
-                            parts[2],
-                            parts[3],
+                            &nested_path,
+                            parts[seg_idx],
                             field.mig_number.as_deref(),
                         );
                     }
@@ -807,7 +815,14 @@ struct ChildOccurrence {
     qualifier_values: Vec<String>,
     ahb_status: String,
     segments: Vec<SegmentEntry>,
-    nested_groups: BTreeMap<String, Vec<SegmentEntry>>,
+    nested_groups: BTreeMap<String, NestedGroupInfo>,
+}
+
+/// Recursive nested group info — supports arbitrary nesting depth.
+#[derive(Default)]
+struct NestedGroupInfo {
+    segments: Vec<SegmentEntry>,
+    child_groups: BTreeMap<String, NestedGroupInfo>,
 }
 
 impl GroupOccurrenceTracker {
@@ -898,30 +913,46 @@ impl GroupOccurrenceTracker {
         }
     }
 
-    fn add_child_nested_group(&mut self, child_id: &str, nested_id: &str) {
+    /// Ensure a nested group path exists under the current child occurrence.
+    /// `path` is e.g. `["SG10"]` or `["SG9", "SG10"]` for deeper nesting.
+    fn ensure_nested_path(&mut self, child_id: &str, path: &[&str]) {
         let tracker = self.ensure_child(child_id);
         if let Some(occ) = tracker.occurrences.last_mut() {
-            occ.nested_groups.entry(nested_id.to_string()).or_default();
+            let mut current = &mut occ.nested_groups;
+            for &sg_id in path {
+                current = &mut current.entry(sg_id.to_string()).or_default().child_groups;
+            }
         }
     }
 
-    fn add_child_nested_segment(
+    /// Add a segment at a specific nested group path depth.
+    /// `path` is e.g. `["SG10"]` or `["SG9", "SG10"]`.
+    fn add_nested_segment_at_path(
         &mut self,
         child_id: &str,
-        nested_id: &str,
+        path: &[&str],
         seg_id: &str,
         mig_number: Option<&str>,
     ) {
         let tracker = self.ensure_child(child_id);
         if let Some(occ) = tracker.occurrences.last_mut() {
-            let nested = occ.nested_groups.entry(nested_id.to_string()).or_default();
-            push_segment_deduped(
-                nested,
-                SegmentEntry {
-                    tag: seg_id.to_string(),
-                    mig_number: mig_number.map(|s| s.to_string()),
-                },
-            );
+            // Navigate to the leaf NestedGroupInfo (stop AT the leaf, not past it)
+            let mut current = &mut occ.nested_groups;
+            for (i, &sg_id) in path.iter().enumerate() {
+                if i == path.len() - 1 {
+                    // At the leaf — add the segment
+                    let leaf = current.entry(sg_id.to_string()).or_default();
+                    push_segment_deduped(
+                        &mut leaf.segments,
+                        SegmentEntry {
+                            tag: seg_id.to_string(),
+                            mig_number: mig_number.map(|s| s.to_string()),
+                        },
+                    );
+                    return;
+                }
+                current = &mut current.entry(sg_id.to_string()).or_default().child_groups;
+            }
         }
     }
 
@@ -952,17 +983,7 @@ impl GroupOccurrenceTracker {
                     data_quality_hint: None,
                     child_groups: nested
                         .into_iter()
-                        .map(|(nid, segs)| PidGroupInfo {
-                            group_id: nid,
-                            qualifier_values: Vec::new(),
-                            ahb_status: String::new(),
-                            ahb_name: None,
-                            discriminator: None,
-                            entity_hint: None,
-                            data_quality_hint: None,
-                            child_groups: Vec::new(),
-                            segments: segs,
-                        })
+                        .map(|(nid, info)| nested_group_info_to_pid_group(nid, info))
                         .collect(),
                     segments,
                 });
@@ -980,17 +1001,7 @@ impl GroupOccurrenceTracker {
                         child_groups: occ
                             .nested_groups
                             .into_iter()
-                            .map(|(nid, segs)| PidGroupInfo {
-                                group_id: nid,
-                                qualifier_values: Vec::new(),
-                                ahb_status: String::new(),
-                                ahb_name: None,
-                                discriminator: None,
-                                entity_hint: None,
-                                data_quality_hint: None,
-                                child_groups: Vec::new(),
-                                segments: segs,
-                            })
+                            .map(|(nid, info)| nested_group_info_to_pid_group(nid, info))
                             .collect(),
                         segments: occ.segments,
                     });
@@ -1009,6 +1020,26 @@ impl GroupOccurrenceTracker {
             child_groups,
             segments: self.segments,
         }
+    }
+}
+
+/// Recursively convert a `NestedGroupInfo` into a `PidGroupInfo`, preserving
+/// child groups at all depths.
+fn nested_group_info_to_pid_group(group_id: String, info: NestedGroupInfo) -> PidGroupInfo {
+    PidGroupInfo {
+        group_id,
+        qualifier_values: Vec::new(),
+        ahb_status: String::new(),
+        ahb_name: None,
+        discriminator: None,
+        entity_hint: None,
+        data_quality_hint: None,
+        child_groups: info
+            .child_groups
+            .into_iter()
+            .map(|(nid, child_info)| nested_group_info_to_pid_group(nid, child_info))
+            .collect(),
+        segments: info.segments,
     }
 }
 

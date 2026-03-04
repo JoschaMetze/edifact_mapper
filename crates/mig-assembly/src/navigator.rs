@@ -148,6 +148,7 @@ mod tests {
                 }],
             }],
             post_group_start: 1,
+            inter_group_segments: std::collections::BTreeMap::new(),
         }
     }
 

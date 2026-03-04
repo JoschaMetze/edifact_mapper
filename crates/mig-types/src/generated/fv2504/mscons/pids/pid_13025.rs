@@ -12,6 +12,14 @@ pub struct Pid13025Sg1 {
     pub rff: Option<OwnedSegment>,
 }
 
+/// SG10 — Menge, Qualifier
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Pid13025Sg10 {
+    pub dtm: Option<OwnedSegment>,
+    pub qty: Option<OwnedSegment>,
+    pub sts: Option<OwnedSegment>,
+}
+
 /// SG2 — Beteiligter, Qualifier
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid13025Sg2 {
@@ -48,6 +56,7 @@ pub struct Pid13025Sg6172 {
 pub struct Pid13025Sg9 {
     pub lin: Option<OwnedSegment>,
     pub pia: Option<OwnedSegment>,
+    pub sg10: Vec<Pid13025Sg10>,
 }
 
 /// PID 13025: Lastgang Marktlokation, Tranche
@@ -84,6 +93,40 @@ impl Pid13025Sg1 {
         }
         Some(Self {
             rff,
+        })
+    }
+}
+
+impl Pid13025Sg10 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let dtm = if peek_is(segments, cursor, "DTM") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        let qty = if peek_is(segments, cursor, "QTY") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        let sts = if peek_is(segments, cursor, "STS") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if dtm.is_none() && qty.is_none() && sts.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            dtm,
+            qty,
+            sts,
         })
     }
 }
@@ -224,9 +267,14 @@ impl Pid13025Sg9 {
             cursor.restore(saved);
             return None;
         }
+        let mut sg10 = Vec::new();
+        while let Some(item) = Pid13025Sg10::from_segments(segments, cursor) {
+            sg10.push(item);
+        }
         Some(Self {
             lin,
             pia,
+            sg10,
         })
     }
 }
