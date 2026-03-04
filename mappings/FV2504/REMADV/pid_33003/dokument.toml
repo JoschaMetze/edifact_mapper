@@ -1,0 +1,24 @@
+# Dokument (document reference) mapping for REMADV PID 33003 — Abweisung Kopf und Summe.
+#
+# Source: SG5 → DOC + MOA (×2) + DTM
+# DOC+380+84635                → dokumenttyp, dokumentennummer
+# MOA+9:1.37                   → faelligerBetrag
+# MOA+12:0                     → ueberweisungsbetrag
+# DTM+137:202504242200?+00:303 → dokumentdatum
+
+[meta]
+entity = "Dokument"
+bo4e_type = "Dokument"
+source_group = "SG5"
+source_path = "sg5"
+
+[fields]
+"doc.c002.d1001" = "dokumenttyp"
+"doc.c503.d1004" = "dokumentennummer"
+"moa[9].c516.d5025" = { target = "", default = "9" }
+"moa[9].c516.d5004" = "faelligerBetrag"
+"moa[12].c516.d5025" = { target = "", default = "12" }
+"moa[12].c516.d5004" = "ueberweisungsbetrag"
+"dtm[137].c507.d2005" = { target = "", default = "137" }
+"dtm[137].c507.d2380" = "dokumentdatum"
+"dtm[137].c507.d2379" = { target = "", default = "303" }

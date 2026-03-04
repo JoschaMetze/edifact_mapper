@@ -463,10 +463,17 @@ impl MappingEngine {
     ) -> serde_json::Value {
         let mut result = serde_json::Map::new();
 
-        // Root-level mapping: source_group is empty → use tree's own segments
+        // Root-level mapping: source_group is empty → use tree's own segments.
+        // Include all root segments (both pre-group and post-group, e.g., summary
+        // MOA after UNS+S in REMADV) plus any inter_group_segments (e.g., UNS+S
+        // consumed between groups by the assembler).
         if def.meta.source_group.is_empty() {
+            let mut all_root_segs = tree.segments.clone();
+            for segs in tree.inter_group_segments.values() {
+                all_root_segs.extend(segs.iter().cloned());
+            }
             let root_instance = AssembledGroupInstance {
-                segments: tree.segments[..tree.post_group_start].to_vec(),
+                segments: all_root_segs,
                 child_groups: vec![],
                 skipped_segments: Vec::new(),
             };
@@ -1822,9 +1829,12 @@ impl MappingEngine {
         // Move UNS section separator from root segments to inter_group_segments.
         // UNS+D (detail) goes BEFORE the tx group (MSCONS: header/detail boundary).
         // UNS+S (summary) goes AFTER the tx group (ORDERS: detail/summary boundary).
+        // Any segments that follow UNS in the sequence (e.g., summary MOA in REMADV)
+        // are also placed in inter_group_segments alongside UNS.
         let mut root_segments = Vec::new();
         let mut uns_segments = Vec::new();
         let mut uns_is_summary = false;
+        let mut found_uns = false;
         for seg in msg_tree.segments {
             if seg.tag == "UNS" {
                 // Check if this is UNS+S (summary separator) vs UNS+D (detail separator)
@@ -1834,6 +1844,10 @@ impl MappingEngine {
                     .and_then(|el| el.first())
                     .map(|v| v == "S")
                     .unwrap_or(false);
+                uns_segments.push(seg);
+                found_uns = true;
+            } else if found_uns {
+                // Segments after UNS belong in the same inter_group position
                 uns_segments.push(seg);
             } else {
                 root_segments.push(seg);

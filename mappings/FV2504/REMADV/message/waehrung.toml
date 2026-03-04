@@ -1,0 +1,15 @@
+# Waehrung (currency) mapping for REMADV.
+#
+# Source: SG4 → CUX segment
+# CUX+2:EUR:11
+
+[meta]
+entity = "Waehrung"
+bo4e_type = "Waehrung"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"cux.c504.d6347" = "waehrungsverwendung"
+"cux.c504.d6345" = "waehrungCode"
+"cux.c504.d6343" = "waehrungQualifier"
