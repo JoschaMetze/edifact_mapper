@@ -1819,13 +1819,21 @@ impl MappingEngine {
         }
 
         // Step 3: Combine message tree with transaction group.
-        // Move UNS section separator from root segments to inter_group_segments
-        // before the transaction group — UNS separates header from detail in
-        // EDIFACT and must appear between message-level groups and the tx group.
+        // Move UNS section separator from root segments to inter_group_segments.
+        // UNS+D (detail) goes BEFORE the tx group (MSCONS: header/detail boundary).
+        // UNS+S (summary) goes AFTER the tx group (ORDERS: detail/summary boundary).
         let mut root_segments = Vec::new();
         let mut uns_segments = Vec::new();
+        let mut uns_is_summary = false;
         for seg in msg_tree.segments {
             if seg.tag == "UNS" {
+                // Check if this is UNS+S (summary separator) vs UNS+D (detail separator)
+                uns_is_summary = seg
+                    .elements
+                    .first()
+                    .and_then(|el| el.first())
+                    .map(|v| v == "S")
+                    .unwrap_or(false);
                 uns_segments.push(seg);
             } else {
                 root_segments.push(seg);
@@ -1837,14 +1845,29 @@ impl MappingEngine {
         let mut inter_group = msg_tree.inter_group_segments;
 
         if !sg4_reps.is_empty() {
-            // Place UNS before the transaction group
-            if !uns_segments.is_empty() {
-                inter_group.insert(all_groups.len(), uns_segments);
+            if uns_is_summary {
+                // UNS+S: place AFTER the transaction group (detail/summary boundary)
+                all_groups.push(AssembledGroup {
+                    group_id: transaction_group.to_string(),
+                    repetitions: sg4_reps,
+                });
+                if !uns_segments.is_empty() {
+                    inter_group.insert(all_groups.len(), uns_segments);
+                }
+            } else {
+                // UNS+D: place BEFORE the transaction group (header/detail boundary)
+                if !uns_segments.is_empty() {
+                    inter_group.insert(all_groups.len(), uns_segments);
+                }
+                all_groups.push(AssembledGroup {
+                    group_id: transaction_group.to_string(),
+                    repetitions: sg4_reps,
+                });
             }
-            all_groups.push(AssembledGroup {
-                group_id: transaction_group.to_string(),
-                repetitions: sg4_reps,
-            });
+        } else if !uns_segments.is_empty() {
+            // No transaction groups (message-only PIDs) — place UNS as trailing
+            // inter_group_segment after all message-level groups.
+            inter_group.insert(all_groups.len(), uns_segments);
         }
 
         AssembledTree {

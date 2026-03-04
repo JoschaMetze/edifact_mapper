@@ -226,16 +226,20 @@ pub fn run_single_fixture_roundtrip_with_tx_group(
 
     // Step 2: Assemble with PID-filtered MIG
     let assembler = Assembler::new(filtered_mig);
-    let original_tree = assembler.assemble_generic(&msg_segs).unwrap();
+    let mut original_tree = assembler.assemble_generic(&msg_segs).unwrap();
 
     // Step 3: Forward mapping → MappedMessage
     let mapped =
         MappingEngine::map_interchange(msg_engine, tx_engine, &original_tree, tx_group, true);
 
-    assert!(
-        !mapped.transaktionen.is_empty(),
-        "PID {pid} ({fixture_name}): forward mapping should produce at least one transaction"
-    );
+    // Only assert non-empty transactions if the tree has the tx group
+    let tree_has_tx_group = original_tree.groups.iter().any(|g| g.group_id == tx_group);
+    if tree_has_tx_group {
+        assert!(
+            !mapped.transaktionen.is_empty(),
+            "PID {pid} ({fixture_name}): forward mapping should produce at least one transaction"
+        );
+    }
 
     // Step 3b: BO4E schema validation (non-fatal — warns about unknown field names)
     let mapped_for_validation =
@@ -257,11 +261,24 @@ pub fn run_single_fixture_roundtrip_with_tx_group(
     reverse_tree.segments.insert(0, unh_assembled);
     reverse_tree.post_group_start += 1;
 
-    let original_has_unt = original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
-    if original_has_unt {
-        let unt_assembled = owned_to_assembled(&msg_chunk.unt);
-        reverse_tree.segments.push(unt_assembled);
+    // UNT may end up in inter_group_segments (when trailing after the last group).
+    // Strip UNT from inter_group_segments in both trees to avoid duplication,
+    // and always add it as a root segment.
+    for segs in original_tree.inter_group_segments.values_mut() {
+        segs.retain(|s| s.tag != "UNT");
     }
+    let original_has_unt_in_root =
+        original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
+    if !original_has_unt_in_root {
+        let unt_assembled_orig = owned_to_assembled(&msg_chunk.unt);
+        original_tree.segments.push(unt_assembled_orig);
+    }
+
+    for segs in reverse_tree.inter_group_segments.values_mut() {
+        segs.retain(|s| s.tag != "UNT");
+    }
+    let unt_assembled = owned_to_assembled(&msg_chunk.unt);
+    reverse_tree.segments.push(unt_assembled);
 
     // Step 5: Disassemble both trees and render
     let disassembler = Disassembler::new(filtered_mig);

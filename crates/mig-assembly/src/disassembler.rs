@@ -71,6 +71,15 @@ impl<'a> Disassembler<'a> {
             }
         }
 
+        // 2b. Emit trailing inter-group segments (after the last group).
+        //     For ORDERS, UNS+S comes after SG29 (detail/summary boundary).
+        let trailing_idx = tree.groups.len();
+        if let Some(inter_segs) = tree.inter_group_segments.get(&trailing_idx) {
+            for seg in inter_segs {
+                output.push(assembled_to_disassembled(seg));
+            }
+        }
+
         // 3. Emit post-group segments (e.g., UNT, UNZ)
         for seg in &tree.segments[tree.post_group_start..] {
             output.push(assembled_to_disassembled(seg));

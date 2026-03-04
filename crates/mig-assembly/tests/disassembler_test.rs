@@ -119,6 +119,10 @@ fn count_tree_segments(tree: &mig_assembly::assembler::AssembledTree) -> usize {
     for group in &tree.groups {
         count += count_group_segments(group);
     }
+    // Also count inter-group segments (e.g., UNS section separators, trailing segments)
+    for segs in tree.inter_group_segments.values() {
+        count += segs.len();
+    }
     count
 }
 

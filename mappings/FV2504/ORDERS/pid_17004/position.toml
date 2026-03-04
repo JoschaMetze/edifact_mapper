@@ -1,0 +1,15 @@
+# Position (SG29) mapping for PID 17004 — Anforderung.
+
+[meta]
+entity = "Position"
+bo4e_type = "Position"
+source_group = "SG29"
+source_path = "sg29"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+"lin.d1229" = "handlungCode"
+"dtm[7].c507.d2005" = { target = "", default = "7" }
+"dtm[7].c507.d2380" = "gueltigkeitsdatum"
+"dtm[7].c507.d2379" = { target = "", default = "303" }
+"imd.c272.d7081" = "beschreibung"

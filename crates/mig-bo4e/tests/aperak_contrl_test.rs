@@ -115,7 +115,7 @@ fn run_roundtrip(
             skip_unknown_segments: skip_unknown,
         },
     );
-    let original_tree = assembler.assemble_generic(&msg_segs).unwrap();
+    let mut original_tree = assembler.assemble_generic(&msg_segs).unwrap();
 
     eprintln!(
         "{message_type} ({fixture_name}): assembled {} root segments, {} groups",
@@ -138,12 +138,23 @@ fn run_roundtrip(
     reverse_tree.segments.insert(0, unh_assembled);
     reverse_tree.post_group_start += 1;
 
-    // Re-insert UNT if the original tree had it
-    let original_has_unt = original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
-    if original_has_unt {
-        let unt_assembled = owned_to_assembled(&msg_chunk.unt);
-        reverse_tree.segments.push(unt_assembled);
+    // UNT may end up in inter_group_segments (trailing after last group).
+    // Strip from inter_group in both trees and always add from msg_chunk.unt.
+    for segs in original_tree.inter_group_segments.values_mut() {
+        segs.retain(|s| s.tag != "UNT");
     }
+    let original_has_unt_in_root =
+        original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
+    if !original_has_unt_in_root {
+        let unt_orig = owned_to_assembled(&msg_chunk.unt);
+        original_tree.segments.push(unt_orig);
+    }
+
+    for segs in reverse_tree.inter_group_segments.values_mut() {
+        segs.retain(|s| s.tag != "UNT");
+    }
+    let unt_assembled = owned_to_assembled(&msg_chunk.unt);
+    reverse_tree.segments.push(unt_assembled);
 
     // Step 7: Disassemble and render
     let disassembler = Disassembler::new(&mig);
