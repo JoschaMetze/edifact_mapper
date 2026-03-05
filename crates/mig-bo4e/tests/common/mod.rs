@@ -6,6 +6,7 @@ pub mod ordchg;
 pub mod orders;
 pub mod ordrsp;
 pub mod pricat;
+pub mod quotes;
 pub mod remadv;
 pub mod test_utils;
 pub mod utilts;
