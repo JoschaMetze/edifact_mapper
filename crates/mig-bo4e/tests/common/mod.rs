@@ -4,5 +4,6 @@ pub mod mscons;
 pub mod ordchg;
 pub mod orders;
 pub mod ordrsp;
+pub mod pricat;
 pub mod remadv;
 pub mod test_utils;
