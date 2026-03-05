@@ -1,0 +1,16 @@
+# PID 25009 — Leistungskurvenveränderung: SG5.SG8_Z74.
+#
+# SEQ+Z74, DTM+Z45 (load profile change point).
+
+[meta]
+entity = "Leistungskurvenveraenderung"
+bo4e_type = "Leistungskurvenveraenderung"
+source_group = "SG5.SG8"
+source_path = "sg5.sg8_z74"
+discriminator = "SEQ.d1229=Z74"
+
+[fields]
+"seq.d1229" = { target = "", default = "Z74" }
+"dtm[Z45].c507.d2005" = { target = "", default = "Z45" }
+"dtm[Z45].c507.d2380" = "aenderungsZeitpunkt"
+"dtm[Z45].c507.d2379" = { target = "", default = "303" }

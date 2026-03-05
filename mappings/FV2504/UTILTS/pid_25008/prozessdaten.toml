@@ -1,0 +1,25 @@
+# PID 25008 — Ausgerollte Schaltzeitdefinition: SG5 root segments.
+#
+# IDE+24 (transaction), LOC+Z09 (definition code),
+# DTM+Z34 (validity start), DTM+Z35 (validity end), DTM+293 (completion).
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG5"
+source_path = "sg5"
+
+[fields]
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangsnummer"
+"loc.d3227" = { target = "", default = "Z09" }
+"loc.c517.d3225" = "definitionCode"
+"dtm[Z34].c507.d2005" = { target = "", default = "Z34" }
+"dtm[Z34].c507.d2380" = "gueltigkeitsBeginn"
+"dtm[Z34].c507.d2379" = { target = "", default = "303" }
+"dtm[Z35].c507.d2005" = { target = "", default = "Z35" }
+"dtm[Z35].c507.d2380" = "gueltigkeitsEnde"
+"dtm[Z35].c507.d2379" = { target = "", default = "303" }
+"dtm[293].c507.d2005" = { target = "", default = "293" }
+"dtm[293].c507.d2380" = "fertigstellungsDatum"
+"dtm[293].c507.d2379" = { target = "", default = "304" }

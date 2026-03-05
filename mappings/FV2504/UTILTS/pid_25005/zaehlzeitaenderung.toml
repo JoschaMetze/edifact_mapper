@@ -1,0 +1,18 @@
+# PID 25005 — Zählzeitänderung: SG5.SG8_Z43.
+#
+# SEQ+Z43, DTM+Z33 (change time), RFF+Z28 (register code).
+
+[meta]
+entity = "Zaehlzeitaenderung"
+bo4e_type = "Zaehlzeitaenderung"
+source_group = "SG5.SG8"
+source_path = "sg5.sg8_z43"
+discriminator = "SEQ.d1229=Z43"
+
+[fields]
+"seq.d1229" = { target = "", default = "Z43" }
+"dtm[Z33].c507.d2005" = { target = "", default = "Z33" }
+"dtm[Z33].c507.d2380" = "aenderungsZeitpunkt"
+"dtm[Z33].c507.d2379" = "aenderungsZeitpunktFormat"
+"rff[Z28].c506.d1153" = { target = "", default = "Z28" }
+"rff[Z28].c506.d1154" = "registerCode"

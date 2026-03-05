@@ -1,0 +1,21 @@
+# PID 25006 — Übersicht Schaltzeitdefinitionen: SG5 root segments.
+#
+# IDE+24 (transaction), DTM+157 (validity), DTM+293 (completion), STS+Z36 (status).
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG5"
+source_path = "sg5"
+
+[fields]
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangsnummer"
+"dtm[157].c507.d2005" = { target = "", default = "157" }
+"dtm[157].c507.d2380" = "gueltigkeitsBeginn"
+"dtm[157].c507.d2379" = { target = "", default = "303" }
+"dtm[293].c507.d2005" = { target = "", default = "293" }
+"dtm[293].c507.d2380" = "fertigstellungsDatum"
+"dtm[293].c507.d2379" = { target = "", default = "304" }
+"sts.c601.d9015" = { target = "", default = "Z36" }
+"sts.c555.d4405" = "statusCode"

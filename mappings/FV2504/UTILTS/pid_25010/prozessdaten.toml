@@ -1,0 +1,28 @@
+# PID 25010 — Antwort auf Berechnungsformel: SG5 root segments.
+#
+# IDE+24 (transaction), STS+E01 (response status), FTX+ACB (free text).
+# No LOC, no DTM at SG5 level.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG5"
+source_path = "sg5"
+
+[fields]
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangsnummer"
+"sts.c601.d9015" = { target = "", default = "E01" }
+"sts.c555.d4405" = "statusCode"
+"sts.c556.d9013" = "pruefschrittCode"
+"sts.c556.d1131" = { target = "", default = "E_0218" }
+"sts.c556.d3055" = "codepflegeCode"
+"sts.c556.d9012" = "zeitraumId"
+"ftx.d4451" = { target = "", default = "ACB" }
+"ftx.d4453" = "textFunktion"
+"ftx.c107.d4441" = "textReferenz"
+"ftx.c108.d4440" = "freitext1"
+"ftx.c108.d4440_2" = "freitext2"
+"ftx.c108.d4440_3" = "freitext3"
+"ftx.c108.d4440_4" = "freitext4"
+"ftx.c108.d4440_5" = "freitext5"

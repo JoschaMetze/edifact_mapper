@@ -1,0 +1,20 @@
+# PID 25007 — Leistungskurve SG9: CCI+Z53, CAV+ZE0, CAV+ZD5.
+
+[meta]
+entity = "Leistungskurve"
+bo4e_type = "Leistungskurve"
+source_group = "SG5.SG8.SG9"
+source_path = "sg5.sg8_z70.sg9"
+
+[fields]
+"cci.d7059" = "klassentyp"
+"cci.c502.d6313" = "dimension"
+"cci.c240.d7037" = "merkmalCode"
+"cav[ZE0].c889.d7111" = { target = "", default = "ZE0" }
+"cav[ZE0].c889.d1131" = { target = "", default = "293" }
+"cav[ZE0].c889.d3055" = { target = "", default = "9" }
+"cav[ZE0].c889.d7110" = "haeufigkeit"
+"cav[ZD5].c889.d7111" = { target = "", default = "ZD5" }
+"cav[ZD5].c889.d1131" = { target = "", default = "293" }
+"cav[ZD5].c889.d3055" = { target = "", default = "9" }
+"cav[ZD5].c889.d7110" = "uebermittelbarkeit"

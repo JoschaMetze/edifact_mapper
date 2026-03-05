@@ -1,0 +1,18 @@
+# Nachricht (message header) mapping for UTILTS.
+#
+# Source: Root-level segments (outside any SG group)
+# BGM+Z36+GENERATED00001 → dokumenttyp, dokumentennummer
+# DTM+137:20250401...    → erstellungsdatum
+
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+source_group = ""
+source_path = ""
+
+[fields]
+"bgm.c002.d1001" = "dokumenttyp"
+"bgm.c106.d1004" = "dokumentennummer"
+"dtm[137].c507.d2005" = { target = "", default = "137" }
+"dtm[137].c507.d2380" = "erstellungsdatum"
+"dtm[137].c507.d2379" = { target = "", default = "303" }

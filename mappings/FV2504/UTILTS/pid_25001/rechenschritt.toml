@@ -1,0 +1,21 @@
+# PID 25001 — Rechenschritt: SG5.SG8_Z37.
+#
+# SEQ+Z37 (with step number), RFF+Z46 (time period ref),
+# RFF+Z19 (measurement location ref), RFF+Z23 (calculation step ref).
+
+[meta]
+entity = "Rechenschritt"
+bo4e_type = "Rechenschritt"
+source_group = "SG5.SG8"
+source_path = "sg5.sg8_z37"
+discriminator = "SEQ.d1229=Z37"
+
+[fields]
+"seq.d1229" = { target = "", default = "Z37" }
+"seq.c286.d1050" = "rechenschrittNummer"
+"rff[Z46].c506.d1153" = { target = "", default = "Z46" }
+"rff[Z46].c506.d1154" = "zeitraumRef"
+"rff[Z19].c506.d1153" = { target = "", default = "Z19" }
+"rff[Z19].c506.d1154" = "bestandteilReferenz"
+"rff[Z23].c506.d1153" = { target = "", default = "Z23" }
+"rff[Z23].c506.d1154" = "rechenschrittIdentifikator"

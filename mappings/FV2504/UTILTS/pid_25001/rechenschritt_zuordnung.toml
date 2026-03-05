@@ -1,0 +1,20 @@
+# PID 25001 — Rechenschritt SG9: 5 CCI/CAV pairs (array output).
+#
+# Each CCI creates a separate SG9 rep with 1 CCI + 1 CAV.
+# CCI.c240.d7037 = Z86 (MathOp), Z87 (EnergyFlow), Z16 (TrafoLoss),
+#                   ZB2 (LineLoss), ZG6 (DistributionFactor).
+
+[meta]
+entity = "RechenschrittZuordnung"
+bo4e_type = "RechenschrittZuordnung"
+source_group = "SG5.SG8.SG9"
+source_path = "sg5.sg8_z37.sg9"
+
+[fields]
+"cci.d7059" = "klassentyp"
+"cci.c502.d6313" = "dimension"
+"cci.c240.d7037" = "merkmalCode"
+"cav.c889.d7111" = "merkmalWert"
+"cav.c889.d1131" = "merkmalCodelisteCode"
+"cav.c889.d3055" = "merkmalCodepflegeCode"
+"cav.c889.d7110" = "merkmalDatenWert"
