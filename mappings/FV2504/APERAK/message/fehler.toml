@@ -1,0 +1,15 @@
+# SG4 — ERC (error code) + optional FTX+ABO (deviation info).
+#
+# ERC+Z35           → fehlerCode
+# FTX+ABO+++text    → optional deviation description
+
+[meta]
+entity = "Fehler"
+bo4e_type = "Fehler"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"erc.c901.d9321" = "fehlerCode"
+"ftx[ABO].c108.d4440" = "abweichungText"
+"ftx[ABO].c108.d4440_2" = "abweichungText2"

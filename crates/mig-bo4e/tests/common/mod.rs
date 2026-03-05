@@ -1,3 +1,4 @@
+pub mod aperak;
 pub mod bo4e_validation;
 pub mod comdis;
 pub mod iftsta;

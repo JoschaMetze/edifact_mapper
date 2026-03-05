@@ -1,0 +1,20 @@
+# SG4.SG5 — error detail references (RFF entry + optional FTX).
+#
+# Each SG5 rep: RFF (ACW/AGO/TN/Z08) + 0-2 FTX (AAO/Z02).
+# RFF+ACW:2345          → Vorgangsnummer
+# FTX+AAO+++freitext    → Fehlerbeschreibung
+# FTX+Z02+++ortsangabe  → Ortsangabe des AHB-Fehlers
+
+[meta]
+entity = "FehlerReferenz"
+bo4e_type = "FehlerReferenz"
+source_group = "SG4.SG5"
+source_path = "sg4.sg5"
+
+[fields]
+"rff.c506.d1153" = "referenzQualifier"
+"rff.c506.d1154" = "referenzNummer"
+"ftx[AAO].c108.d4440" = "freitext"
+"ftx[AAO].c108.d4440_2" = "freitext2"
+"ftx[Z02].c108.d4440" = "ortsangabe"
+"ftx[Z02].c108.d4440_2" = "ortsangabe2"
