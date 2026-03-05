@@ -1,5 +1,6 @@
 pub mod bo4e_validation;
 pub mod comdis;
+pub mod iftsta;
 pub mod mscons;
 pub mod ordchg;
 pub mod orders;

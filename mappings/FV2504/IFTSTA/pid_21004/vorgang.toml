@@ -1,0 +1,17 @@
+# Vorgang mapping for IFTSTA Family A (MaBiS) PID 21004.
+#
+# SG4: EQD+Z01 (entry) + RFF+Z13 + RFF+AUU
+
+[meta]
+entity = "Vorgang"
+bo4e_type = "Vorgang"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"eqd.d8053" = { target = "", default = "Z01" }
+"eqd.c237.d8260" = "vorgangsnummer"
+"rff[Z13].c506.d1153" = { target = "", default = "Z13" }
+"rff[Z13].c506.d1154" = "pruefidentifikator"
+"rff[AUU].c506.d1153" = { target = "", default = "AUU" }
+"rff[AUU].c506.d1154" = "zeitreihenVersion"

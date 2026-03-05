@@ -1,0 +1,20 @@
+# Freitext (free text) mapping for IFTSTA — SG14.SG15.SG25 (GID + FTX+ACB).
+#
+# Auto-filtered by schema_index for PIDs without SG25.
+
+[meta]
+entity = "Freitext"
+bo4e_type = "Freitext"
+source_group = "SG14.SG15.SG25"
+source_path = "sg14.sg15.sg25"
+
+[fields]
+"gid.d1496" = "sendungsposition"
+"ftx[ACB].d4451" = { target = "", default = "ACB" }
+"ftx[ACB].d4453" = "textFunktion"
+"ftx[ACB].c107.d4441" = "freitextCode"
+"ftx[ACB].c108.d4440" = "freitext1"
+"ftx[ACB].c108.d4440_2" = "freitext2"
+"ftx[ACB].c108.d4440_3" = "freitext3"
+"ftx[ACB].c108.d4440_4" = "freitext4"
+"ftx[ACB].c108.d4440_5" = "freitext5"
