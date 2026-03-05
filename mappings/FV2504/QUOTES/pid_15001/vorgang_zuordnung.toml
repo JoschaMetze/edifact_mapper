@@ -8,7 +8,17 @@ source_path = "sg27.sg28"
 "cci.d7059" = "klassentyp"
 "cci.c502.d6313" = "dimension"
 "cci.c240.d7037" = "merkmalCode"
-"cav.c889.d7111" = "merkmalWert"
-"cav.c889.d1131" = "merkmalCodelisteCode"
-"cav.c889.d3055" = "merkmalCodepflegeCode"
-"cav.c889.d7110" = "merkmalDatenWert"
+# 1st CAV (present in most CCI groups: E13/Z25/Z64/Z26/Z27/Z28/E12)
+"cav[*,0].c889.d7111" = "merkmalWert"
+"cav[*,0].c889.d1131" = "merkmalCodelisteCode"
+"cav[*,0].c889.d3055" = "merkmalCodepflegeCode"
+"cav[*,0].c889.d7110" = "merkmalDatenWert"
+# 2nd CAV (E13 only — Größe)
+"cav[*,1].c889.d7111" = "merkmalWert2"
+"cav[*,1].c889.d1131" = "merkmalCodelisteCode2"
+"cav[*,1].c889.d3055" = "merkmalCodepflegeCode2"
+"cav[*,1].c889.d7110" = "merkmalDatenWert2"
+# 3rd CAV (E13 only — Tarifierung)
+"cav[*,2].c889.d7111" = "merkmalWert3"
+# 4th CAV (E13 only — Erzeugungsrichtung)
+"cav[*,3].c889.d7111" = "merkmalWert4"

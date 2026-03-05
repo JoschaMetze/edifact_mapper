@@ -16,7 +16,7 @@ fn test_quotes_pid_15004_roundtrip() {
 
 #[test]
 fn test_quotes_pid_15001_generated_roundtrip() {
-    run_generated_roundtrip_known_incomplete("15001");
+    run_generated_roundtrip("15001");
 }
 
 #[test]
@@ -108,47 +108,3 @@ fn run_generated_roundtrip(pid: &str) {
     );
 }
 
-fn run_generated_roundtrip_known_incomplete(pid: &str) {
-    let fixture = common::quotes::discover_generated_fixture(pid);
-    let Some(fixture) = fixture else {
-        eprintln!("PID {pid}: no generated fixture found -- skipping");
-        return;
-    };
-    assert!(fixture.exists(), "Generated fixture not found: {fixture:?}");
-
-    let Some(mig) = common::quotes::load_pid_filtered_mig(pid) else {
-        eprintln!("PID {pid}: MIG/AHB XML not available -- skipping");
-        return;
-    };
-
-    let tx_dir = common::quotes::pid_dir(pid);
-    let (msg_engine, tx_engine) = if tx_dir.exists() {
-        common::quotes::load_split_engines(pid)
-    } else {
-        let msg = common::quotes::load_message_engine();
-        let tx = mig_bo4e::engine::MappingEngine::from_definitions(vec![]);
-        (msg, tx)
-    };
-
-    // E13 CCI has 4 CAVs — generic mapping only captures 1st → KNOWN_INCOMPLETE
-    let fixture_name = fixture.file_name().unwrap().to_str().unwrap();
-    eprintln!("PID {pid}: {fixture_name} -- KNOWN_INCOMPLETE (multi-CAV E13)");
-
-    // We still run it to verify it doesn't panic, but use catch_unwind
-    // to handle the expected assertion failure
-    let result = std::panic::catch_unwind(|| {
-        common::test_utils::run_single_fixture_roundtrip_with_tx_group(
-            pid,
-            &fixture,
-            &mig,
-            &msg_engine,
-            &tx_engine,
-            common::quotes::TX_GROUP,
-        );
-    });
-
-    match result {
-        Ok(()) => eprintln!("PID {pid}: unexpectedly passed — promote to full roundtrip"),
-        Err(_) => eprintln!("PID {pid}: expected failure (multi-CAV) — KNOWN_INCOMPLETE"),
-    }
-}
