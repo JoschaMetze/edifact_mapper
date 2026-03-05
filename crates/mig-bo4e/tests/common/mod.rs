@@ -6,6 +6,7 @@ pub mod mscons;
 pub mod ordchg;
 pub mod orders;
 pub mod ordrsp;
+pub mod partin;
 pub mod pricat;
 pub mod quotes;
 pub mod remadv;

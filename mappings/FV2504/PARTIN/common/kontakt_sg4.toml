@@ -1,0 +1,14 @@
+# SG4.SG7 — CTA+IC party contact information
+
+[meta]
+entity = "ParteiAnsprechpartner"
+bo4e_type = "ParteiAnsprechpartner"
+source_group = "SG4.SG7"
+source_path = "sg4.sg7_ic"
+
+[fields]
+"cta.d3139" = { target = "", default = "IC" }
+"cta.c056.d3413" = "kontaktNummer"
+"cta.c056.d3412" = "kontaktName"
+"com.c076.d3148" = "kommunikationsadresse"
+"com.c076.d3155" = "kommunikationstyp"

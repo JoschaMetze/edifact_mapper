@@ -1,0 +1,62 @@
+# SG4 — Party data: NAD (entry) + FII + FTX[Z13] + FTX[Z15]
+#
+# NAD is the entry segment — each NAD creates a new SG4 rep.
+# FII/FTX are consumed by the first rep only (after entry NAD, before next NAD).
+# All qualifiers/codes are DATA fields to prevent phantom segments in non-first reps.
+
+[meta]
+entity = "Geschaeftspartner"
+bo4e_type = "Geschaeftspartner"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# NAD (present in all reps)
+"nad.d3035" = "qualifier"
+"nad.c082.d3039" = "identifikation"
+"nad.c058.d3124" = "zusatzinfo"
+"nad.c080.d3036" = "nachname"
+"nad.c080.d3036_2" = "nachname2"
+"nad.c080.d3036_3" = "nachname3"
+"nad.c080.d3036_4" = "nachname4"
+"nad.c080.d3036_5" = "nachname5"
+"nad.c080.d3045" = "namensformatCode"
+"nad.c059.d3042" = "strasse"
+"nad.c059.d3042_2" = "strasse2"
+"nad.c059.d3042_3" = "strasse3"
+"nad.c059.d3042_4" = "strasse4"
+"nad.d3164" = "ort"
+"nad.c819.d3229" = "region"
+"nad.d3251" = "postleitzahl"
+"nad.d3207" = "land"
+# FII+BK (first rep only — data fields prevent phantoms in other reps)
+"fii.d3035" = "bankQualifier"
+"fii.c078.d3194" = "iban"
+"fii.c078.d3192" = "kontoinhaber"
+"fii.c078.d3192_2" = "kontoinhaber2"
+"fii.c088.d3433" = "bic"
+"fii.c088.d1131" = "bankCodelisteCode"
+"fii.c088.d3055" = "bankCodepflegeCode"
+"fii.c088.d3434" = "bankFiliale"
+"fii.c088.d1131_2" = "bankCodelisteCode2"
+"fii.c088.d3055_2" = "bankCodepflegeCode2"
+"fii.c088.d3432" = "bankName"
+"fii.d3207" = "bankLand"
+# FTX+Z13 (first rep only — data fields prevent phantoms)
+"ftx[Z13].d4451" = "websiteQualifier"
+"ftx[Z13].d4453" = "websiteFunktion"
+"ftx[Z13].c107.d4441" = "websiteCode"
+"ftx[Z13].c108.d4440" = "website"
+"ftx[Z13].c108.d4440_2" = "websiteFreitext2"
+"ftx[Z13].c108.d4440_3" = "websiteFreitext3"
+"ftx[Z13].c108.d4440_4" = "websiteFreitext4"
+"ftx[Z13].c108.d4440_5" = "websiteFreitext5"
+# FTX+Z15 (first rep only — data fields prevent phantoms)
+"ftx[Z15].d4451" = "registerQualifier"
+"ftx[Z15].d4453" = "registerFunktion"
+"ftx[Z15].c107.d4441" = "registerCode"
+"ftx[Z15].c108.d4440" = "amtsgericht"
+"ftx[Z15].c108.d4440_2" = "handelsregisternummer"
+"ftx[Z15].c108.d4440_3" = "registerFreitext3"
+"ftx[Z15].c108.d4440_4" = "registerFreitext4"
+"ftx[Z15].c108.d4440_5" = "registerFreitext5"
