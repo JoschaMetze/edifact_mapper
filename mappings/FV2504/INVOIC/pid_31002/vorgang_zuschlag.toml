@@ -1,0 +1,14 @@
+# SG26.SG39 (ALC+C) — surcharge for INVOIC PID 31002.
+#
+# ALC+C (Zuschlag) with surcharge code (Z02-Z05).
+
+[meta]
+entity = "VorgangZuschlag"
+bo4e_type = "VorgangZuschlag"
+source_group = "SG26.SG39"
+source_path = "sg26.sg39_c"
+
+[fields]
+"alc.d5463" = "zuAbschlagCode"
+"alc.c552.d1230" = "zuAbschlagBetrag"
+"alc.c552.d5189" = "zuAbschlagTyp"

@@ -1,0 +1,20 @@
+# SG26.SG34 (TAX) — position tax for INVOIC.
+#
+# TAX+7+VAT with tax rate and category.
+
+[meta]
+entity = "VorgangSteuersatz"
+bo4e_type = "VorgangSteuersatz"
+source_group = "SG26.SG34"
+source_path = "sg26.sg34_7"
+
+[fields]
+"tax.d5283" = "steuerFunktionCode"
+"tax.c241.d5153" = "steuerTypCode"
+"tax.c533.d5289" = "veranlagungsbasis"
+"tax.d5286" = "veranlagungsbasisWert"
+"tax.c243.d5279" = "steuerCode"
+"tax.c243.d1131" = "steuerCodelisteCode"
+"tax.c243.d3055" = "steuerCodepflegeCode"
+"tax.c243.d5278" = "steuersatz"
+"tax.d5305" = "steuerKategorie"

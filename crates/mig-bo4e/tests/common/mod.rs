@@ -2,6 +2,7 @@ pub mod aperak;
 pub mod bo4e_validation;
 pub mod comdis;
 pub mod iftsta;
+pub mod invoic;
 pub mod mscons;
 pub mod ordchg;
 pub mod orders;

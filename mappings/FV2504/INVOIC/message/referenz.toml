@@ -1,0 +1,18 @@
+# SG1 (RFF) — message-level references for INVOIC.
+#
+# Array of RFF references with optional DTM.
+# Qualifiers: Z13 (PID), OI (Ursprungsrechnung), ACE (Dokument), Z56 (NB-Preise).
+# DTM+171 only present after RFF+OI (Referenzdatum).
+
+[meta]
+entity = "Referenz"
+bo4e_type = "Referenz"
+source_group = "SG1"
+source_path = "sg1"
+
+[fields]
+"rff.c506.d1153" = "qualifier"
+"rff.c506.d1154" = "referenz"
+"dtm.c507.d2005" = "datumQualifier"
+"dtm.c507.d2380" = "datumWert"
+"dtm.c507.d2379" = "datumFormat"

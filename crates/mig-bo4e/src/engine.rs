@@ -1854,6 +1854,13 @@ impl MappingEngine {
         let mut all_groups = msg_tree.groups;
         let mut inter_group = msg_tree.inter_group_segments;
 
+        // Helper: parse SG number from group_id (e.g., "SG26" → 26).
+        let sg_num = |id: &str| -> usize {
+            id.strip_prefix("SG")
+                .and_then(|n| n.parse::<usize>().ok())
+                .unwrap_or(0)
+        };
+
         if !sg4_reps.is_empty() {
             if uns_is_summary {
                 // UNS+S: place AFTER the transaction group (detail/summary boundary)
@@ -1862,7 +1869,18 @@ impl MappingEngine {
                     repetitions: sg4_reps,
                 });
                 if !uns_segments.is_empty() {
-                    inter_group.insert(all_groups.len(), uns_segments);
+                    // Sort groups by SG number so the disassembler emits them
+                    // in MIG order.  Insert UNS right after the tx_group —
+                    // any groups with higher SG numbers (e.g., SG50/SG52 in
+                    // INVOIC) are post-UNS summary groups.
+                    all_groups.sort_by_key(|g| sg_num(&g.group_id));
+                    let tx_num = sg_num(transaction_group);
+                    let uns_pos = all_groups
+                        .iter()
+                        .rposition(|g| sg_num(&g.group_id) <= tx_num)
+                        .map(|i| i + 1)
+                        .unwrap_or(all_groups.len());
+                    inter_group.insert(uns_pos, uns_segments);
                 }
             } else {
                 // UNS+D: place BEFORE the transaction group (header/detail boundary)
@@ -1882,18 +1900,20 @@ impl MappingEngine {
                 // (SG1, SG3).  Sort groups by SG number so tree order matches
                 // MIG order — the disassembler indexes inter_group by tree
                 // position.
-                all_groups.sort_by_key(|g| {
-                    g.group_id
-                        .strip_prefix("SG")
-                        .and_then(|n| n.parse::<usize>().ok())
-                        .unwrap_or(0)
-                });
+                all_groups.sort_by_key(|g| sg_num(&g.group_id));
                 inter_group.insert(0, uns_segments);
             } else {
-                // Has a tx_group but no tx reps (e.g., ORDERS message-only
-                // PIDs without SG29 data).  UNS+S is still a trailing summary
-                // separator — place after all message-level groups.
-                inter_group.insert(all_groups.len(), uns_segments);
+                // Has a tx_group but no tx reps (e.g., INVOIC PID 31004
+                // Storno — no SG26 data).  Sort groups and insert UNS after
+                // the last group with SG number ≤ tx_group number.
+                all_groups.sort_by_key(|g| sg_num(&g.group_id));
+                let tx_num = sg_num(transaction_group);
+                let uns_pos = all_groups
+                    .iter()
+                    .rposition(|g| sg_num(&g.group_id) <= tx_num)
+                    .map(|i| i + 1)
+                    .unwrap_or(all_groups.len());
+                inter_group.insert(uns_pos, uns_segments);
             }
         }
 

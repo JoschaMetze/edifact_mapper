@@ -1,0 +1,13 @@
+# SG26.SG39.SG42 (MOA) — allowance amount for INVOIC PID 31002.
+#
+# MOA+25 (Zu-/Abschlagsbasis), MOA+Z01 (Gemeinderabatt) under ALC+A.
+
+[meta]
+entity = "VorgangAbschlagBetrag"
+bo4e_type = "VorgangAbschlagBetrag"
+source_group = "SG26.SG39.SG42"
+source_path = "sg26.sg39_a.sg42"
+
+[fields]
+"moa.c516.d5025" = "betragQualifier"
+"moa.c516.d5004" = "betrag"

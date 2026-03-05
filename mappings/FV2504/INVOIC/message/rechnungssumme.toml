@@ -1,0 +1,16 @@
+# SG50 (MOA) — invoice summary amounts for INVOIC.
+#
+# Array of MOA segments: 77 (Rechnungsbetrag), 113 (Vorauszahlung),
+# Z01 (Sicherheitsleistung), 9 (Zahlungsbetrag).
+# Qualifiers vary by PID — all as data fields.
+# No discriminator — produces array of amounts.
+
+[meta]
+entity = "Rechnungssumme"
+bo4e_type = "Rechnungssumme"
+source_group = "SG50"
+source_path = "sg50"
+
+[fields]
+"moa.c516.d5025" = "betragQualifier"
+"moa.c516.d5004" = "betrag"

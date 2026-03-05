@@ -11,8 +11,7 @@ use std::path::{Path, PathBuf};
 
 // ── Paths (relative to crate root = crates/mig-bo4e) ──
 
-pub const MIG_XML_PATH: &str =
-    "../../xml-migs-and-ahbs/FV2504/REQOTE_MIG_1_3b_20241001.xml";
+pub const MIG_XML_PATH: &str = "../../xml-migs-and-ahbs/FV2504/REQOTE_MIG_1_3b_20241001.xml";
 pub const AHB_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/REQOTE_AHB_1_0a_Fehlerkorrektur_20250225.xml";
 pub const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/REQOTE/FV2504";

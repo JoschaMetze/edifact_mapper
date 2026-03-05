@@ -12,12 +12,10 @@ use std::path::{Path, PathBuf};
 
 // ── Paths (relative to crate root = crates/mig-bo4e) ──
 
-pub const MIG_XML_PATH: &str =
-    "../../xml-migs-and-ahbs/FV2504/APERAK_MIG_2_1i_20240619.xml";
+pub const MIG_XML_PATH: &str = "../../xml-migs-and-ahbs/FV2504/APERAK_MIG_2_1i_20240619.xml";
 pub const AHB_XML_PATH: &str =
     "../../xml-migs-and-ahbs/FV2504/APERAK_AHB_2_4a_Fehlerkorrektur_20250331.xml";
-pub const FIXTURE_DIR: &str =
-    "../../example_market_communication_bo4e_transactions/APERAK/FV2504";
+pub const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/APERAK/FV2504";
 pub const MAPPINGS_BASE: &str = "../../mappings/FV2504/APERAK";
 pub const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/aperak/pids";
 
