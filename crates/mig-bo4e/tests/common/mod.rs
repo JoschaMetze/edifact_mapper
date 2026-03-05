@@ -9,5 +9,6 @@ pub mod ordrsp;
 pub mod pricat;
 pub mod quotes;
 pub mod remadv;
+pub mod reqote;
 pub mod test_utils;
 pub mod utilts;
