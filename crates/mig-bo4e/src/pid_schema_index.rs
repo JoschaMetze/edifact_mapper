@@ -42,8 +42,17 @@ impl PidSchemaIndex {
     }
 
     /// Check if a `source_path` corresponds to an existing group in this PID schema.
+    ///
+    /// Supports exact matches and generic group matches where the TOML uses
+    /// an unqualified path (e.g., `sg4.sg12`) that should match any variant
+    /// in the schema (e.g., `sg4.sg12_vy`, `sg4.sg12_dp`).
     pub fn has_group(&self, source_path: &str) -> bool {
-        self.paths.contains(source_path)
+        if self.paths.contains(source_path) {
+            return true;
+        }
+        // Check for variant suffix match: "sg4.sg12" should match "sg4.sg12_vy"
+        let prefix = format!("{source_path}_");
+        self.paths.iter().any(|p| p.starts_with(&prefix))
     }
 
     /// Recursively collect all paths from the schema's children tree.
@@ -98,6 +107,35 @@ mod tests {
         assert!(!index.has_group("sg4.sg5_z17"));
         assert!(!index.has_group("sg4.sg8_zd7"));
         assert!(!index.has_group("sg3"));
+
+        // Generic group match — unqualified path matches qualified variant
+        assert!(index.has_group("sg4.sg5")); // matches sg4.sg5_z16
+        assert!(index.has_group("sg4.sg8")); // matches sg4.sg8_z98
+    }
+
+    #[test]
+    fn test_variant_suffix_match() {
+        let schema = serde_json::json!({
+            "fields": {
+                "sg4": {
+                    "children": {
+                        "sg12_vy": { "segments": {} },
+                        "sg12_dp": { "segments": {} }
+                    }
+                }
+            }
+        });
+        let index = PidSchemaIndex::from_json(&schema);
+
+        // Exact match
+        assert!(index.has_group("sg4.sg12_vy"));
+        assert!(index.has_group("sg4.sg12_dp"));
+
+        // Generic match — unqualified path matches any variant
+        assert!(index.has_group("sg4.sg12"));
+
+        // Non-existent group — no variant matches
+        assert!(!index.has_group("sg4.sg11"));
     }
 
     #[test]

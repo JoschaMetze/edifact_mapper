@@ -31,3 +31,9 @@ source_path = "sg4.sg8_z09.sg10"
 "cav[DMU].c889.d7111" = "mengenumwerterTypDMU"
 "cav[TMU].c889.d7111" = "mengenumwerterTypTMU"
 "cav[ZMU].c889.d7111" = "mengenumwerterTypZMU"
+
+# CAV+ZC0 (Art der Volumenerfassung) — auto-omitted for PIDs without
+"cav[ZC0].c889.d7111" = { target = "", default = "ZC0" }
+"cav[ZC0].c889.d1131" = "volumenerfassungCodelisteCode"
+"cav[ZC0].c889.d3055" = "volumenerfassungCodepflegeCode"
+"cav[ZC0].c889.d7110" = "volumenerfassung"

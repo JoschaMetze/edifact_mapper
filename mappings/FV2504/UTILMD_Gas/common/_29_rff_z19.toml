@@ -1,0 +1,15 @@
+# RFF+Z19 (Messlokation reference) — SG6 discriminated mapping.
+#
+# Source: SG4.SG6 with RFF+Z19 qualifier
+# Used by PIDs 44113, 44140 for Messlokation reference in SG6.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "RFF.c506.d1153=Z19"
+
+[fields]
+"rff.c506.d1153" = { target = "", default = "Z19" }
+"rff.c506.d1154" = "messlokationRef"

@@ -1,0 +1,17 @@
+# DTM+752 (Turnusablesung) — SG6 discriminated mapping.
+#
+# Source: SG4.SG6 with DTM+752 qualifier
+# Used by PIDs 44113, 44140 for Turnusablesung date.
+# Format code varies (104=MMWW-MMWW, 106=MMDD) — mapped as data.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "DTM.c507.d2005=752"
+
+[fields]
+"dtm.c507.d2005" = { target = "", default = "752" }
+"dtm.c507.d2380" = "turnusablesung"
+"dtm.c507.d2379" = "turnusablesungFormat"

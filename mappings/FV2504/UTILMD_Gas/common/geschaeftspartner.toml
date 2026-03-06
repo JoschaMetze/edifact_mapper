@@ -5,7 +5,8 @@
 # The nad_qualifier companion field distinguishes variants on roundtrip.
 #
 # C# reference: GeschaeftspartnerMapper handles ALL NAD qualifiers with ONE type.
-# Note: Z05/Z09 have child RFF segments — those need per-PID overrides.
+# Includes all possible child RFF segments (Z19 from Z05, AVC/Z01 from Z09).
+# Auto-omit handles PIDs/NAD variants that don't have specific RFF children.
 
 [meta]
 entity = "Geschaeftspartner"
@@ -40,3 +41,11 @@ source_path = "sg4.sg12"
 "nad.c080.d3036_4" = "nameZeile4"
 "nad.c080.d3036_5" = "anrede"
 "nad.c080.d3045" = "anredeCode"
+
+# Child RFF fields — auto-omitted for NAD variants without these segments
+"rff[Z19].c506.d1153" = { target = "", default = "Z19" }
+"rff[Z19].c506.d1154" = "messlokationRef"
+"rff[AVC].c506.d1153" = { target = "", default = "AVC" }
+"rff[AVC].c506.d1154" = "kundennummerLf"
+"rff[Z01].c506.d1153" = { target = "", default = "Z01" }
+"rff[Z01].c506.d1154" = "kundennummerAltLf"

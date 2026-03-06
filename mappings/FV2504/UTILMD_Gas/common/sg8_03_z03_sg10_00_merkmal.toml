@@ -40,3 +40,9 @@ discriminator = "CCI.c240.d7037=E13"
 "cav[Z30].c889.d3055" = "geraetCodepflegeCode"
 "cav[Z30].c889.d7110" = "geraetnummer"
 "cav[Z30].c889.d7110_2" = "geraetnummerTeil2"
+
+# CAV+ZC0 (Art der Volumenerfassung) — auto-omitted for PIDs without
+"cav[ZC0].c889.d7111" = { target = "", default = "ZC0" }
+"cav[ZC0].c889.d1131" = "volumenerfassungCodelisteCode"
+"cav[ZC0].c889.d3055" = "volumenerfassungCodepflegeCode"
+"cav[ZC0].c889.d7110" = "volumenerfassung"

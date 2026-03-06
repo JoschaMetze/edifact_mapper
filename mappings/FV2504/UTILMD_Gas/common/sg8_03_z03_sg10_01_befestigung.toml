@@ -1,0 +1,23 @@
+# SG10 CCI+Z28 (Befestigungsart Zaehleinrichtung) + CAV — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z03
+# CCI+X+X+Z28     -> Befestigungsart Zaehleinrichtung marker
+# CAV+Z31/Z32      -> Einstutzen/Zweistutzen
+# Merges into "ZaehlerDaten" entity.
+# Auto-omitted for PIDs without this SG10 rep.
+
+[meta]
+entity = "ZaehlerDaten"
+bo4e_type = "ZaehlerDaten"
+companion_type = "ZaehlerDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z03.sg10"
+discriminator = "CCI.c240.d7037=Z28"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "befestigungKlasse"
+"cci.c502.d6313" = "befestigungDimension"
+"cci.c240.d7037" = { target = "", default = "Z28" }
+"cav.c889.d7111" = "befestigungsart"
