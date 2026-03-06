@@ -37,6 +37,7 @@ pub struct MessageTypeConfig {
     pub message_type: &'static str,
     pub variant: Option<&'static str>,
     pub tx_group: &'static str,
+    pub format_version: &'static str,
 }
 
 impl MessageTypeConfig {
@@ -68,8 +69,20 @@ impl MessageTypeConfig {
         if !mig_path.exists() || !ahb_path.exists() {
             return None;
         }
-        let mig = parse_mig(mig_path, self.message_type, self.variant, "FV2504").ok()?;
-        let ahb = parse_ahb(ahb_path, self.message_type, self.variant, "FV2504").ok()?;
+        let mig = parse_mig(
+            mig_path,
+            self.message_type,
+            self.variant,
+            self.format_version,
+        )
+        .ok()?;
+        let ahb = parse_ahb(
+            ahb_path,
+            self.message_type,
+            self.variant,
+            self.format_version,
+        )
+        .ok()?;
         let pid = ahb.workflows.iter().find(|w| w.id == pid_id)?;
         let numbers: HashSet<String> = pid.segment_numbers.iter().cloned().collect();
         Some(filter_mig_for_pid(&mig, &numbers))
@@ -209,6 +222,7 @@ const UTILMD_CONFIG: MessageTypeConfig = MessageTypeConfig {
     message_type: "UTILMD",
     variant: Some("Strom"),
     tx_group: "SG4",
+    format_version: "FV2504",
 };
 
 pub fn path_resolver() -> PathResolver {

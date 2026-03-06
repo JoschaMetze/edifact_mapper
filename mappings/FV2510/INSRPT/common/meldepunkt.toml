@@ -1,0 +1,17 @@
+[meta]
+entity = "Meldepunkt"
+bo4e_type = "Meldepunkt"
+companion_type = "MeldepunktEdifact"
+source_group = "SG3.SG7.SG8"
+source_path = "sg3.sg7.sg8"
+
+[fields]
+"nad.d3035" = { target = "", default = "DP" }
+"loc.d3227" = { target = "", default = "172" }
+"loc.c517.d3225" = "meldepunktId"
+
+# RFF+Z21 — zugeordnete Messlokation (23011, 23012 only; auto-omits for others)
+"rff.c506.d1153" = "messlokationRefQualifier"
+"rff.c506.d1154" = "messlokationRefId"
+
+[companion_fields]

@@ -1,0 +1,61 @@
+[meta]
+entity = "Position"
+bo4e_type = "Position"
+companion_type = "PositionEdifact"
+source_group = "SG3.SG7"
+source_path = "sg3.sg7"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+
+# DTM+9 — Bearbeitungsdatum (23008, 23009, 23012)
+"dtm[9].c507.d2005" = { target = "", default = "9" }
+"dtm[9].c507.d2380" = "bearbeitungsDatum"
+"dtm[9].c507.d2379" = "bearbeitungsDatumFormat"
+
+# DTM+163 — Verarbeitung Beginndatum (all PIDs)
+"dtm[163].c507.d2005" = { target = "", default = "163" }
+"dtm[163].c507.d2380" = "beginnDatum"
+"dtm[163].c507.d2379" = "beginnDatumFormat"
+
+# DTM+164 — Verarbeitung Enddatum (23008, 23009, 23012)
+"dtm[164].c507.d2005" = { target = "", default = "164" }
+"dtm[164].c507.d2380" = "endeDatum"
+"dtm[164].c507.d2379" = "endeDatumFormat"
+
+# DTM+292 — geplante Fertigstellung (23004, 23005, 23011)
+"dtm[292].c507.d2005" = { target = "", default = "292" }
+"dtm[292].c507.d2380" = "geplanteFertigstellung"
+"dtm[292].c507.d2379" = "geplanteFertigstellungFormat"
+
+# STS+Z06 — Gerätestatus (all except 23003)
+"sts[Z06].c601.d9015" = { target = "", default = "Z06" }
+"sts[Z06].c555.d4405" = "geraeteStatusCode"
+"sts[Z06].c556.d9013" = "geraeteStatusAnlass"
+
+# STS+E01 — Antwort-Status (23003, 23004)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c555.d4405" = "antwortStatusCode"
+"sts[E01].c556.d9013" = "antwortStatusAnlass"
+
+# FTX+ACD — Begründung (23001 only)
+"ftx[ACD].d4451" = { target = "", default = "ACD" }
+"ftx[ACD].d4453" = "begruendungFunktionCode"
+"ftx[ACD].c107.d4441" = "begruendungReferenzCode"
+"ftx[ACD].c108.d4440" = "begruendungText1"
+"ftx[ACD].c108.d4440_2" = "begruendungText2"
+"ftx[ACD].c108.d4440_3" = "begruendungText3"
+"ftx[ACD].c108.d4440_4" = "begruendungText4"
+"ftx[ACD].c108.d4440_5" = "begruendungText5"
+
+# FTX+AAO — Fehlerbeschreibung (all except 23001, 23003)
+"ftx[AAO].d4451" = { target = "", default = "AAO" }
+"ftx[AAO].d4453" = "fehlerFunktionCode"
+"ftx[AAO].c107.d4441" = "fehlerReferenzCode"
+"ftx[AAO].c108.d4440" = "fehlerText1"
+"ftx[AAO].c108.d4440_2" = "fehlerText2"
+"ftx[AAO].c108.d4440_3" = "fehlerText3"
+"ftx[AAO].c108.d4440_4" = "fehlerText4"
+"ftx[AAO].c108.d4440_5" = "fehlerText5"
+
+[companion_fields]

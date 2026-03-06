@@ -30,6 +30,7 @@ const CONFIG: MessageTypeConfig = MessageTypeConfig {
     message_type: "REQOTE",
     variant: None,
     tx_group: TX_GROUP,
+    format_version: "FV2504",
 };
 
 pub fn path_resolver() -> PathResolver {

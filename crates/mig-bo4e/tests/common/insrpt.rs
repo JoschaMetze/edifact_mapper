@@ -1,8 +1,7 @@
-//! PARTIN-specific test utilities for mig-bo4e integration tests.
+//! INSRPT-specific test utilities for mig-bo4e integration tests.
 //!
-//! 7 PIDs (37000–37006) for market participant master data.
-//! TX_GROUP = "SG4" (NAD-initiated party data, after UNS+D).
-//! Only PID 37000 has SG12_Z19 (Bilanzkreis) — all other groups shared.
+//! 8 PIDs (23001–23012) for German energy market fault/inspection reporting (WiM).
+//! TX_GROUP = "SG3" (DOC-initiated document groups, no UNS).
 
 use super::test_utils::MessageTypeConfig;
 use mig_bo4e::engine::MappingEngine;
@@ -13,14 +12,16 @@ use std::path::{Path, PathBuf};
 
 // ── Paths (relative to crate root = crates/mig-bo4e) ──
 
-pub const MIG_XML_PATH: &str = "../../xml-migs-and-ahbs/FV2504/PARTIN_MIG_1_0e_20241001.xml";
-pub const AHB_XML_PATH: &str = "../../xml-migs-and-ahbs/FV2504/PARTIN_AHB_1_0e_20241001.xml";
-pub const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/PARTIN/FV2504";
-pub const MAPPINGS_BASE: &str = "../../mappings/FV2504/PARTIN";
-pub const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2504/partin/pids";
+pub const MIG_XML_PATH: &str =
+    "../../xml-migs-and-ahbs/FV2510/INSRPT_MIG_1_1a_außerordentliche_20240726.xml";
+pub const AHB_XML_PATH: &str =
+    "../../xml-migs-and-ahbs/FV2510/INSRPT_AHB_1_1g_außerordentliche_20251211.xml";
+pub const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/INSRPT/FV2510";
+pub const MAPPINGS_BASE: &str = "../../mappings/FV2510/INSRPT";
+pub const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2510/insrpt/pids";
 
-/// PARTIN transaction group — SG4 (NAD-initiated party data).
-pub const TX_GROUP: &str = "SG4";
+/// INSRPT transaction group — SG3 (DOC-initiated document groups).
+pub const TX_GROUP: &str = "SG3";
 
 const CONFIG: MessageTypeConfig = MessageTypeConfig {
     mig_xml_path: MIG_XML_PATH,
@@ -28,10 +29,10 @@ const CONFIG: MessageTypeConfig = MessageTypeConfig {
     fixture_dir: FIXTURE_DIR,
     mappings_base: MAPPINGS_BASE,
     schema_dir: SCHEMA_DIR,
-    message_type: "PARTIN",
+    message_type: "INSRPT",
     variant: None,
     tx_group: TX_GROUP,
-    format_version: "FV2504",
+    format_version: "FV2510",
 };
 
 pub fn path_resolver() -> PathResolver {
@@ -105,7 +106,7 @@ pub fn load_engines_for_pid(pid: &str) -> (MappingEngine, MappingEngine) {
     }
 }
 
-/// Discover generated fixture file for a PID (single file in `generated/` subdir).
+/// Discover generated fixture file for an INSRPT PID.
 pub fn discover_generated_fixture(pid: &str) -> Option<PathBuf> {
     let dir = Path::new(FIXTURE_DIR).join("generated");
     let prefix = format!("{pid}_");
@@ -122,4 +123,53 @@ pub fn discover_generated_fixture(pid: &str) -> Option<PathBuf> {
                 .map(|n| n.starts_with(&prefix) && n.ends_with(".edi"))
                 .unwrap_or(false)
         })
+}
+
+pub fn run_full_roundtrip(pid: &str) {
+    run_full_roundtrip_with_skip(pid, &[]);
+}
+
+pub fn run_full_roundtrip_with_skip(pid: &str, known_incomplete: &[&str]) {
+    let fixtures = CONFIG.discover_fixtures(pid);
+    if fixtures.is_empty() {
+        eprintln!("Skipping roundtrip for PID {pid}: no fixtures found");
+        return;
+    }
+
+    let Some(filtered_mig) = CONFIG.load_pid_filtered_mig(pid) else {
+        eprintln!("Skipping roundtrip for PID {pid}: MIG/AHB XML not available");
+        return;
+    };
+
+    let (msg_engine, tx_engine) = load_engines_for_pid(pid);
+
+    let mut tested = 0;
+    let mut skipped = 0;
+
+    for fixture_path in &fixtures {
+        let fixture_name = fixture_path.file_name().unwrap().to_str().unwrap();
+        if known_incomplete.contains(&fixture_name) {
+            eprintln!("PID {pid}: {fixture_name} -- SKIPPED (known incomplete mapping)");
+            skipped += 1;
+            continue;
+        }
+
+        super::test_utils::run_single_fixture_roundtrip_with_tx_group(
+            pid,
+            fixture_path,
+            &filtered_mig,
+            &msg_engine,
+            &tx_engine,
+            TX_GROUP,
+        );
+        tested += 1;
+    }
+
+    assert!(
+        tested > 0 || skipped > 0,
+        "PID {pid}: expected at least one fixture"
+    );
+    if skipped > 0 {
+        eprintln!("PID {pid}: {tested} tested, {skipped} skipped (known incomplete)");
+    }
 }

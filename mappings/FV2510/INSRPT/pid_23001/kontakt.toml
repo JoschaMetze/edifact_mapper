@@ -1,0 +1,15 @@
+[meta]
+entity = "Ansprechpartner"
+bo4e_type = "Ansprechpartner"
+companion_type = "AnsprechpartnerEdifact"
+source_group = "SG3.SG5.SG6"
+source_path = "sg3.sg5.sg6"
+
+[fields]
+"cta.d3139" = { target = "", default = "IC" }
+"cta.c056.d3413" = "kontaktNummer"
+"cta.c056.d3412" = "kontaktName"
+"com.c076.d3148" = "kommunikationsAdresse"
+"com.c076.d3155" = "kommunikationsArt"
+
+[companion_fields]

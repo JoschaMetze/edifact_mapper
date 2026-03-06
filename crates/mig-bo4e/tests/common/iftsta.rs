@@ -32,6 +32,7 @@ const MABIS_CONFIG: MessageTypeConfig = MessageTypeConfig {
     message_type: "IFTSTA",
     variant: None,
     tx_group: "SG4",
+    format_version: "FV2504",
 };
 
 // ── Family B: GPKE/WiM (PIDs 21007–21047), tx_group = SG14 ──
@@ -45,6 +46,7 @@ const GPKE_CONFIG: MessageTypeConfig = MessageTypeConfig {
     message_type: "IFTSTA",
     variant: None,
     tx_group: "SG14",
+    format_version: "FV2504",
 };
 
 /// Family A PIDs (MaBiS): 21000–21005
