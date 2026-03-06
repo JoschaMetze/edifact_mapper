@@ -1,0 +1,25 @@
+# SG10 CCI ZC0/ZA6 (Prognosegrundlage) — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10, CCI entry with c240.d7037 in {ZC0, ZA6}
+# CCI+X+X+ZC0    -> Prognose auf Basis von Werten
+# CCI+X+X+ZA6    -> Prognose auf Basis von Profilen
+# No CAV segment for this rep.
+# Merges into "MarktlokationDaten" entity.
+#
+# Note: The d7037 value IS the data (ZC0/ZA6). Discriminator matches one code
+# but the value is captured as data for roundtrip fidelity.
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.c240.d7037=ZC0"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "prognosegrundlageKlasse"
+"cci.c502.d6313" = "prognosegrundlageDimension"
+"cci.c240.d7037" = "prognosegrundlage"

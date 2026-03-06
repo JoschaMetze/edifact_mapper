@@ -2,6 +2,7 @@
 #
 # Source: SG4.SG8 -> SEQ+Z03
 # Entity "ZaehlerDaten" — separate from MarktlokationDaten.
+# RFF+Z19 (Messlokation ref) auto-omits for PIDs without it.
 
 [meta]
 entity = "ZaehlerDaten"
@@ -15,3 +16,7 @@ discriminator = "SEQ.d1229=Z03"
 
 [companion_fields]
 "seq.d1229" = "seqQualifier"
+
+# RFF+Z19 (Messlokation reference) — auto-omitted for PIDs without this segment
+"rff[Z19].c506.d1153" = { target = "", default = "Z19" }
+"rff[Z19].c506.d1154" = "messlokationRef"

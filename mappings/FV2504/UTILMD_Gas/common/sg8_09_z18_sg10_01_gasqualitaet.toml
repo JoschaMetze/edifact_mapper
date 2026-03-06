@@ -1,0 +1,22 @@
+# SG10 CCI+Y02 (Gasqualitaet) + CAV — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z18
+# CCI+X+X+Y02               -> Gasqualitaet marker
+# CAV+Y04/Y05                -> Gasqualitaet code (Y04=H-Gas, Y05=L-Gas)
+# Merges into "MesslokationDaten" entity.
+
+[meta]
+entity = "MesslokationDaten"
+bo4e_type = "MesslokationDaten"
+companion_type = "MesslokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z18.sg10"
+discriminator = "CCI.c240.d7037=Y02"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "gasqualitaetKlasse"
+"cci.c502.d6313" = "gasqualitaetDimension"
+"cci.c240.d7037" = { target = "", default = "Y02" }
+"cav.c889.d7111" = "gasqualitaet"

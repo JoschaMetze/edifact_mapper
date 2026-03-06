@@ -1,0 +1,16 @@
+# DTM+Z21 (Termin der Netznutzungsabrechnung) in SG6 — shared across Gas PIDs.
+#
+# Source: SG4.SG6 -> DTM+Z21:value:106
+# Merges into "Prozessdaten" entity.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "DTM.c507.d2005=Z21"
+
+[fields]
+"dtm[Z21].c507.d2005" = { target = "", default = "Z21" }
+"dtm[Z21].c507.d2380" = "terminNetznutzungsabrechnung"
+"dtm[Z21].c507.d2379" = "terminNetznutzungsabrechnungFormat"

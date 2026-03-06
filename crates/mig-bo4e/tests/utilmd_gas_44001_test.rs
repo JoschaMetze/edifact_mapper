@@ -21,6 +21,11 @@ fn test_pid_44001_generated_roundtrip() {
     run_generated_roundtrip("44001");
 }
 
+#[test]
+fn test_pid_44002_generated_roundtrip() {
+    run_generated_roundtrip("44002");
+}
+
 // ── SG2/SG3 normalization ──
 
 /// Normalize SG2/SG3 block ordering in rendered EDIFACT.

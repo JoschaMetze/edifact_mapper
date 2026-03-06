@@ -1,0 +1,21 @@
+# SG8 Z05 — Kommunikationseinrichtungsdaten (SEQ+Z05, RFF+MG) — shared across Gas PIDs.
+#
+# Source: SG4.SG8 -> SEQ+Z05 + RFF+MG
+# SEQ+Z05              -> Kommunikationseinrichtung marker
+# RFF+MG:number        -> Referenz Geraetnummer des Zaehlers
+# Entity "KommunikationseinrichtungDaten" — separate entity.
+
+[meta]
+entity = "KommunikationseinrichtungDaten"
+bo4e_type = "KommunikationseinrichtungDaten"
+companion_type = "KommunikationseinrichtungDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z05"
+discriminator = "SEQ.d1229=Z05"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"
+"rff[MG].c506.d1153" = { target = "", default = "MG" }
+"rff[MG].c506.d1154" = "geraetnummerRef"

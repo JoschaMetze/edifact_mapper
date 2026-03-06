@@ -1,0 +1,22 @@
+# SG8 Z02 — OBIS-Daten der Marktlokation (SEQ+Z02, PIA) — shared across Gas PIDs.
+#
+# Source: SG4.SG8 -> SEQ+Z02 + PIA+5
+# SEQ+Z02          -> OBIS-Daten marker
+# PIA+5+TESTPRODUCT:SRW -> OBIS-Kennzahl
+# Entity "ObisDatenMarktlokation" — avoids collision with other entities.
+
+[meta]
+entity = "ObisDatenMarktlokation"
+bo4e_type = "ObisDatenMarktlokation"
+companion_type = "ObisDatenMarktlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z02"
+discriminator = "SEQ.d1229=Z02"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahl"
+"pia.c212.d7143" = { target = "", default = "SRW" }

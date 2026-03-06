@@ -11,6 +11,6 @@ source_path = "sg4.sg6"
 discriminator = "DTM.c507.d2005=Z20"
 
 [fields]
-"dtm.c507.d2005" = { target = "", default = "Z20" }
-"dtm.c507.d2380" = "abrechnungsintervall"
-"dtm.c507.d2379" = { target = "", default = "802" }
+"dtm[Z20].c507.d2005" = { target = "", default = "Z20" }
+"dtm[Z20].c507.d2380" = "abrechnungsintervall"
+"dtm[Z20].c507.d2379" = { target = "", default = "802" }

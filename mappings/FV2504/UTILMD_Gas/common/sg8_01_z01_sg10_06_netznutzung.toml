@@ -32,3 +32,9 @@ discriminator = "CCI.c240.d7037=Z88"
 "cav[Z73].c889.d1131" = "zahlungNetznutzungCodelisteCode"
 "cav[Z73].c889.d3055" = "zahlungNetznutzungCodepflegeCode"
 "cav[Z73].c889.d7110" = "zahlungNetznutzung"
+
+# CAV+ZB1 (Netznutzungsabrechnungsvariante) — auto-omitted for PIDs without this segment
+"cav[ZB1].c889.d7111" = { target = "", default = "ZB1" }
+"cav[ZB1].c889.d1131" = "netznutzungsabrechnungCodelisteCode"
+"cav[ZB1].c889.d3055" = "netznutzungsabrechnungCodepflegeCode"
+"cav[ZB1].c889.d7110" = "netznutzungsabrechnungsvariante"

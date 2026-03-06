@@ -1,0 +1,24 @@
+# SG10 CCI+Z75 (Smartmeter-Gateway) + CAV+Z30 — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z13
+# CCI+X+X+Z75              -> Smartmeter-Gateway marker
+# CAV+Z30:293:9:X           -> Gateway-Nummer
+# Merges into "SmartmeterGatewayDaten" entity.
+
+[meta]
+entity = "SmartmeterGatewayDaten"
+bo4e_type = "SmartmeterGatewayDaten"
+companion_type = "SmartmeterGatewayDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z13.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "smgwKlasse"
+"cci.c502.d6313" = "smgwDimension"
+"cci.c240.d7037" = { target = "", default = "Z75" }
+"cav[Z30].c889.d7111" = { target = "", default = "Z30" }
+"cav[Z30].c889.d1131" = "geraetCodelisteCode"
+"cav[Z30].c889.d3055" = "geraetCodepflegeCode"
+"cav[Z30].c889.d7110" = "gatewayNummer"

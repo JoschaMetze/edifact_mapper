@@ -2,6 +2,7 @@
 #
 # Source: SG4.SG8 -> SEQ+Z07
 # Entity "KonzessionDaten" — separate entity for konzession data.
+# RFF+Z10 (OBIS-Kennzahl ref) auto-omits for PIDs without it.
 
 [meta]
 entity = "KonzessionDaten"
@@ -15,3 +16,7 @@ discriminator = "SEQ.d1229=Z07"
 
 [companion_fields]
 "seq.d1229" = "seqQualifier"
+
+# RFF+Z10 (OBIS-Kennzahl reference) — auto-omitted for PIDs without this segment
+"rff[Z10].c506.d1153" = { target = "", default = "Z10" }
+"rff[Z10].c506.d1154" = "obisKennzahlRef"
