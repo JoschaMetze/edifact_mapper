@@ -1,0 +1,18 @@
+# Nachricht (message header) mapping for UTILMD Gas.
+#
+# Source: Root-level segments (outside any SG group)
+# BGM+E01+ALEXANDE951842BGM  → nachrichtentyp, nachrichtennummer
+# DTM+137:202503311329+00:303 → erstellungsdatum
+
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+source_group = ""
+source_path = ""
+
+[fields]
+"bgm.0" = "nachrichtentyp"
+"bgm.1" = "nachrichtennummer"
+"dtm[137].c507.d2005" = { target = "", default = "137" }
+"dtm[137].c507.d2380" = "erstellungsdatum"
+"dtm[137].c507.d2379" = { target = "", default = "303" }

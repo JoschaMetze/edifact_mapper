@@ -1,0 +1,22 @@
+# Marktteilnehmer (market participant) mapping for UTILMD Gas.
+#
+# Source: SG2 → NAD segment (qualifiers MS = sender, MR = recipient)
+# NAD+MS+9978842000002::293  →  rollencodenummer, rollencodetyp
+#
+# Uses EDIFACT ID paths for composite access.
+# D3055 code mapping includes GS1 (9) and DVGW (332) for Gas market.
+
+[meta]
+entity = "Marktteilnehmer"
+bo4e_type = "Marktteilnehmer"
+source_group = "SG2"
+source_path = "sg2"
+
+[fields]
+"nad.d3035" = "marktrolle"
+"nad.c082.d3039" = "rollencodenummer"
+"nad.c082.d1131" = "codelisteCode"
+
+[fields."nad.c082.d3055"]
+target = "rollencodetyp"
+enum_map = { "9" = "GS1", "293" = "BDEW", "332" = "DVGW", "500" = "GLN" }
