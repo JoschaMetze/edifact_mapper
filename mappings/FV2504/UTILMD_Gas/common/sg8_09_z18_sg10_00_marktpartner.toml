@@ -1,9 +1,10 @@
-# SG10 CCI+ZB3 (Zugeordneter Marktpartner) + CAV+Z91/ZF0 — shared across Gas PIDs.
+# SG10 CCI+ZB3 (Zugeordneter Marktpartner) + CAV+Z91/ZF0/ZB4 — shared across Gas PIDs.
 #
 # Source: SG4.SG8.SG10 under SEQ+Z18
 # CCI+X+X+ZB3                -> Zugeordneter Marktpartner marker
 # CAV+Z91:293:9:Z19           -> MSB (Art der Leistungserbringung)
 # CAV+ZF0:293                 -> gMSB (MP-ID)
+# CAV+ZB4:293                 -> MSBA (alter MSB, MP-ID)
 # Merges into "MesslokationDaten" entity.
 
 [meta]
@@ -30,3 +31,7 @@ discriminator = "CCI.c240.d7037=ZB3"
 # CAV+ZF0 (gMSB)
 "cav[ZF0].c889.d7111" = { target = "", default = "ZF0" }
 "cav[ZF0].c889.d1131" = "gmsbMpId"
+
+# CAV+ZB4 (MSBA — alter Messstellenbetreiber)
+"cav[ZB4].c889.d7111" = { target = "", default = "ZB4" }
+"cav[ZB4].c889.d1131" = "msbaMpId"

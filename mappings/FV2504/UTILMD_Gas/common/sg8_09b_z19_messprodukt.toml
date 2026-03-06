@@ -1,0 +1,22 @@
+# SG8 Z19 — Erforderliches Messprodukt (SEQ+Z19, PIA+5) — shared across Gas PIDs.
+#
+# Source: SG4.SG8 -> SEQ+Z19 + PIA+5
+# SEQ+Z19              -> Erforderliches Messprodukt marker
+# PIA+5:Z11:code       -> Messprodukt-Code
+# Entity "MessproduktDaten" — separate entity (no SG10 children).
+
+[meta]
+entity = "MessproduktDaten"
+bo4e_type = "MessproduktDaten"
+companion_type = "MessproduktDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z19"
+discriminator = "SEQ.d1229=Z19"
+
+[fields]
+"pia.c212.d7140" = "messproduktCode"
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7143" = { target = "", default = "Z11" }

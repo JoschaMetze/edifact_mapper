@@ -1,0 +1,30 @@
+# Prozessdaten mapping for PID 44035.
+#
+# Source: SG4 top-level segments (IDE, STS, FTX)
+# IDE+24, STS+7, FTX+ACB
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c555.d4405" = "statusCode"
+"sts[7].c556.d9013" = "transaktionsgrund"
+
+# FTX+ACB (Freitext)
+"ftx[ACB].d4451" = { target = "", default = "ACB" }
+"ftx[ACB].d4453" = "freitextFunktionCode"
+"ftx[ACB].c107.d4441" = "freitextReferenzCode"
+"ftx[ACB].c108.d4440" = "freitext1"
+"ftx[ACB].c108.d4440_2" = "freitext2"
+"ftx[ACB].c108.d4440_3" = "freitext3"
+"ftx[ACB].c108.d4440_4" = "freitext4"
+"ftx[ACB].c108.d4440_5" = "freitext5"

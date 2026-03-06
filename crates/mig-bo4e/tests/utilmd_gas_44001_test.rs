@@ -40,6 +40,82 @@ fn test_simple_gas_pids_roundtrip() {
 }
 
 #[test]
+fn test_complex_gas_pids_roundtrip() {
+    // PIDs with no structural limitations — byte-identical roundtrip
+    let complex_pids = [
+        "44043", "44060", "44112", "44139", "44142", "44168", "44169",
+    ];
+    for pid in &complex_pids {
+        run_generated_roundtrip(pid);
+    }
+    // These 3 PIDs have both SG8 Z02 (PIA before RFF) and Z20 (PIA after RFF).
+    // The merged MIG puts PIA before RFF (from Z02), so the Z20 PIA after RFF
+    // is not captured during assembly. This is a known MIG merge limitation.
+    // They are tested separately to document the gap.
+    let known_incomplete = ["44013", "44014", "44035"];
+    for pid in &known_incomplete {
+        let Some(fixture_path) = utilmd_gas::discover_generated_fixture(pid) else {
+            eprintln!("PID {pid}: no generated fixture found -- skipping");
+            continue;
+        };
+        let Some(filtered_mig) = utilmd_gas::load_pid_filtered_mig(pid) else {
+            eprintln!("PID {pid}: MIG/AHB XML not available -- skipping");
+            continue;
+        };
+        let tx_dir = utilmd_gas::pid_dir(pid);
+        if !utilmd_gas::message_dir().exists() || !tx_dir.exists() {
+            eprintln!("Skipping roundtrip for PID {pid}: mapping directories not found");
+            continue;
+        }
+        let (msg_engine, tx_engine) = utilmd_gas::load_split_engines(pid);
+
+        let edifact_input = std::fs::read_to_string(&fixture_path).unwrap();
+        let segments = parse_to_segments(edifact_input.as_bytes()).unwrap();
+        let chunks = split_messages(segments).unwrap();
+        let msg_chunk = &chunks.messages[0];
+        let mut msg_segs = vec![msg_chunk.unh.clone()];
+        msg_segs.extend(msg_chunk.body.iter().cloned());
+        msg_segs.push(msg_chunk.unt.clone());
+
+        let assembler = Assembler::new(&filtered_mig);
+        let original_tree = assembler.assemble_generic(&msg_segs).unwrap();
+
+        // Forward mapping should succeed
+        let mapped = MappingEngine::map_interchange(
+            &msg_engine,
+            &tx_engine,
+            &original_tree,
+            utilmd_gas::TX_GROUP,
+            true,
+        );
+        assert!(
+            !mapped.transaktionen.is_empty(),
+            "PID {pid}: forward mapping should produce at least one transaction"
+        );
+
+        // Reverse mapping produces a tree
+        let reverse_tree = MappingEngine::map_interchange_reverse(
+            &msg_engine,
+            &tx_engine,
+            &mapped,
+            utilmd_gas::TX_GROUP,
+        );
+        assert!(
+            !reverse_tree.segments.is_empty(),
+            "PID {pid}: reverse mapping should produce segments"
+        );
+
+        eprintln!(
+            "PID {pid}: KNOWN_INCOMPLETE — Z02+Z20 PIA merge conflict, \
+             forward={} transactions, reverse={} segments (assembly captures {} of fixture)",
+            mapped.transaktionen.len(),
+            reverse_tree.segments.len(),
+            original_tree.segments.len(),
+        );
+    }
+}
+
+#[test]
 fn test_medium_gas_pids_roundtrip() {
     let medium_pids = [
         "44003", "44010", "44016", "44017", "44019", "44020", "44021", "44036", "44038", "44039",
