@@ -1,0 +1,17 @@
+# SG8 Z03 — Zaehleinrichtungsdaten (SEQ entry segment) — shared across Gas PIDs.
+#
+# Source: SG4.SG8 -> SEQ+Z03
+# Entity "ZaehlerDaten" — separate from MarktlokationDaten.
+
+[meta]
+entity = "ZaehlerDaten"
+bo4e_type = "ZaehlerDaten"
+companion_type = "ZaehlerDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z03"
+discriminator = "SEQ.d1229=Z03"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"

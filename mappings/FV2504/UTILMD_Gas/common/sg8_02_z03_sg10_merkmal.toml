@@ -1,0 +1,25 @@
+# SG10 CCI+E13 (Zaehlertyp) + CAV+Z30 (Geraetnummer) — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z03
+# CCI+X+X+E13          -> Zaehlertyp marker
+# CAV+Z30:293:9:X:X    -> Geraetnummer (+ optional 2nd part)
+# Merges into "ZaehlerDaten" entity.
+
+[meta]
+entity = "ZaehlerDaten"
+bo4e_type = "ZaehlerDaten"
+companion_type = "ZaehlerDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z03.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "zaehlerKlasse"
+"cci.c502.d6313" = "zaehlerDimension"
+"cci.c240.d7037" = "zaehlertyp"
+"cav.c889.d7111" = { target = "", default = "Z30" }
+"cav.c889.d1131" = "geraetCodelisteCode"
+"cav.c889.d3055" = "geraetCodepflegeCode"
+"cav.c889.d7110" = "geraetnummer"
+"cav.c889.d7110_2" = "geraetnummerTeil2"

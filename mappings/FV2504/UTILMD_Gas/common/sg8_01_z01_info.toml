@@ -1,0 +1,18 @@
+# SG8 Z01 — Daten der Marktlokation (SEQ entry segment) — shared across Gas PIDs.
+#
+# Source: SG4.SG8 -> SEQ+Z01
+# The SEQ segment has only the qualifier code.
+# Entity "MarktlokationDaten" avoids collision with "Meldepunkt" (SG5_172).
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z01"
+discriminator = "SEQ.d1229=Z01"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"

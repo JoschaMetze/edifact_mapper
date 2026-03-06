@@ -1,0 +1,23 @@
+# SG10 CCI+Z12 (Lastprofil) + CAV (Profilbezeichnung) — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z35
+# CCI+Z12+X+E01               -> Lastprofil (d7059=Z12, c240.d7037=Verfahren E01/Z10)
+# CAV+XYZ:293:89               -> Profilbezeichnung (d7111=Code, d1131=Codeliste, d3055=Codepflege)
+# Merges into "LastprofilDaten" entity.
+
+[meta]
+entity = "LastprofilDaten"
+bo4e_type = "LastprofilDaten"
+companion_type = "LastprofilDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z35.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z12" }
+"cci.c502.d6313" = "lastprofilDimension"
+"cci.c240.d7037" = "lastprofilVerfahren"
+"cav.c889.d7111" = "lastprofilCode"
+"cav.c889.d1131" = "lastprofilCodelisteCode"
+"cav.c889.d3055" = "lastprofilCodepflegeCode"
