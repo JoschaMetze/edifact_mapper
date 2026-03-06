@@ -14,4 +14,5 @@ pub mod quotes;
 pub mod remadv;
 pub mod reqote;
 pub mod test_utils;
+pub mod utilmd_gas;
 pub mod utilts;
