@@ -26,6 +26,19 @@ fn test_pid_44002_generated_roundtrip() {
     run_generated_roundtrip("44002");
 }
 
+#[test]
+fn test_simple_gas_pids_roundtrip() {
+    let simple_pids = [
+        "44004", "44005", "44006", "44007", "44008", "44009", "44011", "44012", "44015", "44018",
+        "44022", "44023", "44024", "44037", "44041", "44044", "44051", "44052", "44053", "44105",
+        "44110", "44111", "44115", "44119", "44121", "44124", "44129", "44130", "44132", "44146",
+        "44152", "44161", "44164", "44170", "44175", "44176", "44180", "44181", "44182",
+    ];
+    for pid in &simple_pids {
+        run_generated_roundtrip(pid);
+    }
+}
+
 // ── SG2/SG3 normalization ──
 
 /// Normalize SG2/SG3 block ordering in rendered EDIFACT.
