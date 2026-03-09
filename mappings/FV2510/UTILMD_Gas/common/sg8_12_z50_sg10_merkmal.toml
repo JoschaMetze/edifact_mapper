@@ -1,0 +1,31 @@
+# SG10 CCI+E13 (Zaehlertyp) + CAV+Z30 — under SEQ+Z50.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z50
+# CCI+X+X+E13               -> Zaehlertyp marker
+# CAV+Z30:293:9:X:X          -> Geraetnummer
+# Merges into "MessdatenregistriergeraetDaten" entity.
+
+[meta]
+entity = "MessdatenregistriergeraetDaten"
+bo4e_type = "MessdatenregistriergeraetDaten"
+companion_type = "MessdatenregistriergeraetDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z50.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "zaehlerKlasse"
+"cci.c502.d6313" = "zaehlerDimension"
+"cci.c240.d7037" = { target = "", default = "E13" }
+"cav[Z30].c889.d7111" = { target = "", default = "Z30" }
+"cav[Z30].c889.d1131" = "geraetCodelisteCode"
+"cav[Z30].c889.d3055" = "geraetCodepflegeCode"
+"cav[Z30].c889.d7110" = "geraetnummer"
+"cav[Z30].c889.d7110_2" = "geraetnummerTeil2"
+
+# CAV+ZC0 (Art der Volumenerfassung) — auto-omitted for PIDs without
+"cav[ZC0].c889.d7111" = { target = "", default = "ZC0" }
+"cav[ZC0].c889.d1131" = "volumenerfassungCodelisteCode"
+"cav[ZC0].c889.d3055" = "volumenerfassungCodepflegeCode"
+"cav[ZC0].c889.d7110" = "volumenerfassung"

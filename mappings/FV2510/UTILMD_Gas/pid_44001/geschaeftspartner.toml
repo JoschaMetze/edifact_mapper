@@ -1,0 +1,52 @@
+# Geschaeftspartner (all SG12/NAD segments) for PID 44001.
+#
+# Overrides common geschaeftspartner.toml to include child RFF fields.
+# NAD+DP  (Lieferanschrift)         — C058 with 5 d3124 components
+# NAD+Z04 (Korrespondenzanschrift)  — full address + C080 with d3045
+# NAD+Z05 (Ablesekarte)             — full address + RFF+Z19 (Messlokation ref)
+# NAD+Z09 (Kunde des LF)            — name only + RFF+AVC + RFF+Z01
+#
+# All variants use entity "Geschaeftspartner", no discriminator = auto-array.
+# RFF fields auto-omit for NAD variants without child RFFs.
+
+[meta]
+entity = "Geschaeftspartner"
+bo4e_type = "Geschaeftspartner"
+companion_type = "GeschaeftspartnerEdifact"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12"
+
+[fields]
+"nad.c082.d3039" = "geschaeftspartnerId"
+"nad.c080.d3036" = "name1"
+"nad.c080.d3036_2" = "name2"
+"nad.c080.d3036_3" = "namenszusatz1"
+"nad.c058.d3124" = "zusatzinfo"
+"nad.c058.d3124_2" = "zusatzinfoZeile2"
+"nad.c058.d3124_3" = "zusatzinfoZeile3"
+"nad.c058.d3124_4" = "zusatzinfoZeile4"
+"nad.c058.d3124_5" = "zusatzinfoZeile5"
+"nad.c059.d3042" = "strasse"
+"nad.c059.d3042_2" = "strasseZusatz"
+"nad.c059.d3042_3" = "hausnummer"
+"nad.c059.d3042_4" = "adresszusatz"
+"nad.d3164" = "ort"
+"nad.d3251" = "postleitzahl"
+"nad.d3207" = "land"
+"nad.c819.d3229" = "region"
+
+[companion_fields]
+"nad.d3035" = "nadQualifier"
+"nad.c082.d1131" = "codelistCode"
+"nad.c082.d3055" = "codepflegeCode"
+"nad.c080.d3036_4" = "nameZeile4"
+"nad.c080.d3036_5" = "anrede"
+"nad.c080.d3045" = "anredeCode"
+
+# Child RFF fields — auto-omitted for NAD variants without these segments
+"rff[Z19].c506.d1153" = { target = "", default = "Z19" }
+"rff[Z19].c506.d1154" = "messlokationRef"
+"rff[AVC].c506.d1153" = { target = "", default = "AVC" }
+"rff[AVC].c506.d1154" = "kundennummerLf"
+"rff[Z01].c506.d1153" = { target = "", default = "Z01" }
+"rff[Z01].c506.d1154" = "kundennummerAltLf"

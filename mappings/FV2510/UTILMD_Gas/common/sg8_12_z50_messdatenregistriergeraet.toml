@@ -1,0 +1,21 @@
+# SG8 Z50 — Messdatenregistriergeraet (SEQ+Z50, RFF+Z19) — shared across Gas PIDs.
+#
+# Source: SG4.SG8 -> SEQ+Z50 + RFF+Z19
+# SEQ+Z50              -> Messdatenregistriergeraet marker
+# RFF+Z19:id           -> Referenz Messlokation
+# Entity "MessdatenregistriergeraetDaten" — separate entity.
+
+[meta]
+entity = "MessdatenregistriergeraetDaten"
+bo4e_type = "MessdatenregistriergeraetDaten"
+companion_type = "MessdatenregistriergeraetDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z50"
+discriminator = "SEQ.d1229=Z50"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"
+"rff[Z19].c506.d1153" = { target = "", default = "Z19" }
+"rff[Z19].c506.d1154" = "messlokationRef"

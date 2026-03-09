@@ -1,0 +1,16 @@
+# SG9 QTY+31 — Veranschlagte Jahresmenge Gesamt — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG9 -> QTY+31:value:KWH
+# Merges into "MarktlokationDaten" entity.
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_z01.sg9"
+discriminator = "QTY.c186.d6063=31"
+
+[fields]
+"qty.c186.d6063" = { target = "", default = "31" }
+"qty.c186.d6060" = "jahresmengeGesamt"
+"qty.c186.d6411" = { target = "", default = "KWH" }

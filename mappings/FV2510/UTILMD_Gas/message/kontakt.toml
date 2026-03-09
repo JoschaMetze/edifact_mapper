@@ -1,0 +1,19 @@
+# Kontakt (contact person) mapping for UTILMD Gas.
+#
+# Source: SG2 -> SG3 (CTA + COM segments, qualifier IC = Informationskontakt)
+# CTA+IC+:Max Muster       -> kontaktfunktion, kontakt_name
+# COM+max@example.com:EM   -> kommunikationsnummer, kommunikationsart
+
+[meta]
+entity = "Kontakt"
+bo4e_type = "Kontakt"
+source_group = "SG2.SG3"
+source_path = "sg2.sg3_ic"
+discriminator = "CTA.d3139=IC"
+
+[fields]
+"cta.d3139" = { target = "", default = "IC" }
+"cta.c056.d3413" = "kontaktNummer"
+"cta.c056.d3412" = "kontaktName"
+"com.c076.d3148" = "kommunikationsnummer"
+"com.c076.d3155" = "kommunikationsart"

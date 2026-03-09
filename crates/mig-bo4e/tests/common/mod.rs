@@ -15,5 +15,6 @@ pub mod remadv;
 pub mod reqote;
 pub mod test_utils;
 pub mod utilmd_gas;
+pub mod utilmd_gas_fv2510;
 pub mod utilmd_strom_fv2510;
 pub mod utilts;

@@ -1,0 +1,26 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# DTM+157 (Gueltigkeitsbeginn)
+"dtm[157].c507.d2005" = { target = "", default = "157" }
+"dtm[157].c507.d2380" = "gueltigkeitsbeginn"
+"dtm[157].c507.d2379" = { target = "", default = "303" }
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c555.d4405" = "statusCode"
+"sts[7].c556.d9013" = "transaktionsgrund"
+
+# STS+E01 (Antwort-Status with EBD reference)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c555.d4405" = "antwortStatusCode"
+"sts[E01].c556.d9013" = "antwortPruefschritt"
+"sts[E01].c556.d1131" = "antwortEbdCodeliste"

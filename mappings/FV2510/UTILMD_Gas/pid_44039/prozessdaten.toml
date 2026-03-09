@@ -1,0 +1,25 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# DTM+93 (Datum Vertragsende)
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
+
+# DTM+471 (Ende zum nächstmöglichem Termin)
+"dtm[471].c507.d2005" = { target = "", default = "471" }
+"dtm[471].c507.d2380" = "endeZum"
+"dtm[471].c507.d2379" = { target = "", default = "303" }
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c555.d4405" = "statusCode"
+"sts[7].c556.d9013" = "transaktionsgrund"

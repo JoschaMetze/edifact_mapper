@@ -1,0 +1,16 @@
+# DTM+Z20 (Abrechnungsintervall des LF) in SG6 — shared across Gas PIDs.
+#
+# Source: SG4.SG6 -> DTM+Z20:value:802
+# Merges into "Prozessdaten" entity.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "DTM.c507.d2005=Z20"
+
+[fields]
+"dtm[Z20].c507.d2005" = { target = "", default = "Z20" }
+"dtm[Z20].c507.d2380" = "abrechnungsintervall"
+"dtm[Z20].c507.d2379" = { target = "", default = "802" }

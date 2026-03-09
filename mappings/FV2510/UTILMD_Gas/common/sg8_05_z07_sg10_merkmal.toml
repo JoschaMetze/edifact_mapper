@@ -1,0 +1,25 @@
+# SG10 CCI+Z08 (Konzessionsabgabe) + CAV (KAV-Gruppe) — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z07
+# CCI+X+X+Z08               -> Konzessionsabgabe marker
+# CAV+KAS:293:9:X:X          -> KAV-Gruppe + Betrag + Zusatzinfo
+# Merges into "KonzessionDaten" entity.
+
+[meta]
+entity = "KonzessionDaten"
+bo4e_type = "KonzessionDaten"
+companion_type = "KonzessionDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z07.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "konzessionKlasse"
+"cci.c502.d6313" = "konzessionDimension"
+"cci.c240.d7037" = "konzessionMerkmal"
+"cav.c889.d7111" = "kavGruppe"
+"cav.c889.d1131" = "kavCodelisteCode"
+"cav.c889.d3055" = "kavCodepflegeCode"
+"cav.c889.d7110" = "kavBetrag"
+"cav.c889.d7110_2" = "kavZusatzinfo"

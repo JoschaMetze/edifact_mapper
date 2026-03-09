@@ -1,0 +1,22 @@
+# SG10 CCI+ZE4 (Wertegranularitaet) + CAV — under SEQ+Z20.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z20
+# CCI+X+X+ZE4       -> Wertegranularitaet marker
+# CAV+ZD9            -> Wertegranularitaet code
+# Merges into "ObisDatenZaehler" entity.
+
+[meta]
+entity = "ObisDatenZaehler"
+bo4e_type = "ObisDatenZaehler"
+companion_type = "ObisDatenZaehlerEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z20.sg10"
+discriminator = "CCI.c240.d7037=ZE4"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "wertegranularitaetKlasse"
+"cci.c502.d6313" = "wertegranularitaetDimension"
+"cci.c240.d7037" = { target = "", default = "ZE4" }
+"cav.c889.d7111" = "wertegranularitaet"

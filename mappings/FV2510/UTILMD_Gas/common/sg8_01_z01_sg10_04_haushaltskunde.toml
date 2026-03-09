@@ -1,0 +1,21 @@
+# SG10 CCI (Haushaltskunde) — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10, CCI entry with c240.d7037=Z15 or Z18
+# CCI+X+X+Z15  -> Haushaltskunde/Kein Haushaltskunde
+# No CAV segment for this rep.
+# Merges into "MarktlokationDaten" entity.
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.c240.d7037=Z15"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "haushaltkundeKlasse"
+"cci.c502.d6313" = "haushaltkundeDimension"
+"cci.c240.d7037" = "haushaltkundeKennzeichen"

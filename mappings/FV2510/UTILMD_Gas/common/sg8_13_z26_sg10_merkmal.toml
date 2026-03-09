@@ -1,0 +1,23 @@
+# SG10 CCI (Fallgruppenzuordnung) under SG8 Z26 — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z26, CCI entry with empty d7059
+# CCI+X+X+Z17:GABi  -> Fallgruppenzuordnung GABi Gas
+# Merges into "DeklarationslisteDaten" entity.
+#
+# Discriminator CCI.c240.d7037=Z17 selects this SG10 rep (vs CCI+Z19 bilanzkreis).
+
+[meta]
+entity = "DeklarationslisteDaten"
+bo4e_type = "DeklarationslisteDaten"
+companion_type = "DeklarationslisteDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z26.sg10"
+discriminator = "CCI.c240.d7037=Z17"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "merkmalKlasse"
+"cci.c502.d6313" = "merkmalDimension"
+"cci.c240.d7037" = { target = "", default = "Z17" }
+"cci.c240.d1131" = "fallgruppenzuordnung"

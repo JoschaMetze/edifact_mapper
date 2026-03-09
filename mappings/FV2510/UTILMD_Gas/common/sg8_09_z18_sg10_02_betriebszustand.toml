@@ -1,0 +1,21 @@
+# SG10 CCI+Z32 (Betriebszustand der Messlokation) — under SEQ+Z18.
+#
+# Source: SG4.SG8.SG10, CCI entry with d7059=Z32
+# CCI+Z32+X+ZC1/ZC2/ZC3        -> Betriebszustand der Messlokation
+# No CAV segment — just the CCI with code.
+# Merges into "MesslokationDaten" entity.
+
+[meta]
+entity = "MesslokationDaten"
+bo4e_type = "MesslokationDaten"
+companion_type = "MesslokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z18.sg10"
+discriminator = "CCI.d7059=Z32"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z32" }
+"cci.c502.d6313" = "betriebszustandDimension"
+"cci.c240.d7037" = "betriebszustand"

@@ -1,0 +1,17 @@
+# SG8 Z12 — Gemeinderabatt (SEQ entry segment) — shared across Gas PIDs.
+#
+# Source: SG4.SG8 -> SEQ+Z12
+# Entity "GemeindeDaten" — separate entity for Gemeinderabatt.
+
+[meta]
+entity = "GemeindeDaten"
+bo4e_type = "GemeindeDaten"
+companion_type = "GemeindeDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z12"
+discriminator = "SEQ.d1229=Z12"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"
