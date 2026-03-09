@@ -1,0 +1,20 @@
+# SG10 under SG8_zb3_zb4 — CCI with c240.d7037=ZB3 (Auftraggebender Marktpartner)
+# CAV+Z88=NB, Z89=LF with MP-ID in d1131
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zb3_zb4.sg10"
+discriminator = "CCI.c240.d7037=ZB3"
+
+[fields]
+
+[companion_fields]
+"cav.c889.d7111" = "auftraggebenderMpRolle"
+"cav.c889.d1131" = "auftraggebenderMpId"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "ZB3"

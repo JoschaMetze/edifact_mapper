@@ -1,0 +1,23 @@
+# Netznutzungsabrechnungsdaten (SG8 variant Z45/Z84)
+# SEQ+Z45 or SEQ+Z84 — multiple reps, each with PIA (Artikel-ID) + QTY + SG10.
+# Uses unique entity name to avoid deep_merge collision with Marktlokation.
+
+[meta]
+entity = "Netznutzungsabrechnungsdaten"
+bo4e_type = "Netznutzungsabrechnungsdaten"
+companion_type = "NetznutzungsabrechnungsdatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z45_z84"
+discriminator = "SEQ.d1229=Z45|Z84"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"
+"seq.c286.d1050" = "zeitscheibeRef"
+"pia.c212.d7140" = "artikelId"
+"pia.c212.d7143" = "artikelIdTyp"
+
+[companion_fields."pia.d4347"]
+target = ""
+default = "Z02"

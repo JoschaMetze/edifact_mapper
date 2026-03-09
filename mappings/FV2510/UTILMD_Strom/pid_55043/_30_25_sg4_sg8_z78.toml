@@ -1,0 +1,19 @@
+[meta]
+entity = "Lokationsbuendel"
+bo4e_type = "Lokationsbuendel"
+companion_type = "LokationsbuendelEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z78"
+discriminator = "SEQ.d1229=Z78"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefBuendel"
+"seq.d1229" = "seqQualifierRef"
+"rff[Z31].c506.d1153" = { target = "", default = "Z31" }
+"rff[Z31].c506.d1154" = "referenzZ31Z78"
+"rff[Z31].c506.d1156" = "referenzCodeListeZ31Z78"
+"rff[Z39].c506.d1153" = { target = "", default = "Z39" }
+"rff[Z39].c506.d1154" = "referenzZ39Z78"
+"rff[Z39].c506.d1156" = "referenzCodeListeZ39Z78"

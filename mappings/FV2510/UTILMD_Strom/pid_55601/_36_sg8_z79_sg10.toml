@@ -1,0 +1,19 @@
+[meta]
+entity = "Produktpaket"
+bo4e_type = "Produktpaket"
+companion_type = "ProduktpaketEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z79.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z66" }
+"cav[ZH9].c889.d7111" = { target = "", default = "ZH9" }
+"cav[ZH9].c889.d1131" = "zugeordneterMpZH9"
+"cav[ZH9].c889.d3055" = "merkmalCodepflegeZH9"
+"cav[ZH9].c889.d7110" = "merkmalEigenschaftZH9"
+"cav[ZV4].c889.d7111" = { target = "", default = "ZV4" }
+"cav[ZV4].c889.d1131" = "zugeordneterMpZV4"
+"cav[ZV4].c889.d3055" = "merkmalCodepflegeZV4"
+"cav[ZV4].c889.d7110" = "merkmalEigenschaftZV4"

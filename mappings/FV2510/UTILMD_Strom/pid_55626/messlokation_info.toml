@@ -1,0 +1,16 @@
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zg6_zg7"
+
+[fields]
+"seq.c286.d1050" = "zeitraumReferenz"
+
+[companion_fields]
+"rff.c506.d1154" = "abrechnungMsbUeberNne"
+
+[companion_fields."rff.c506.d1153"]
+target = ""
+default = "Z05"

@@ -1,0 +1,15 @@
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.c240.d7037=Z34"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierZ34"
+"cci.c502.d6313" = "ccic502d6313Z34"
+"cci.c240.d7037" = "merkmalCodeZ34"
+"cav.c889.d7111" = "merkmalQualifierZ34"

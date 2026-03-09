@@ -1,0 +1,14 @@
+[meta]
+entity = "AbrechnungsDatenErw6"
+bo4e_type = "AbrechnungsDatenErw6"
+companion_type = "AbrechnungsDatenErw6Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zb3_zb4.sg10"
+discriminator = "CCI.c240.d7037=ZA8|ZA7"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierZA8"
+"cci.c502.d6313" = "ccic502d6313ZA8"
+"cci.c240.d7037" = "merkmalCodeZA8"

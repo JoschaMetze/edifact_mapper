@@ -1,0 +1,35 @@
+# Zeitscheiben-Definition (RFF+Z49/Z53 with DTM+Z25/Z26)
+# Defines time slice boundaries for this transaction.
+# Separate entity from Prozessdaten to support multi-Zeitscheibe fixtures.
+
+[meta]
+entity = "Zeitscheibe"
+bo4e_type = "Zeitscheibe"
+companion_type = "ZeitscheibeEdifact"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "RFF.c506.d1153=Z49|Z53"
+
+[fields]
+
+[companion_fields]
+"rff.c506.d1153" = "zeitscheibeQualitaet"
+"rff.c506.d1156" = "zeitscheibeId"
+"dtm[Z25].c507.d2380" = "verwendungDerDatenAb"
+"dtm[Z26].c507.d2380" = "verwendungDerDatenBis"
+
+[companion_fields."dtm[Z25].c507.d2005"]
+target = ""
+default = "Z25"
+
+[companion_fields."dtm[Z25].c507.d2379"]
+target = ""
+default = "303"
+
+[companion_fields."dtm[Z26].c507.d2005"]
+target = ""
+default = "Z26"
+
+[companion_fields."dtm[Z26].c507.d2379"]
+target = ""
+default = "303"

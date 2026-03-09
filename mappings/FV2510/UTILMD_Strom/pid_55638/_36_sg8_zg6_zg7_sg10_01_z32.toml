@@ -1,0 +1,14 @@
+[meta]
+entity = "TechRessourceErw3"
+bo4e_type = "TechRessourceErw3"
+companion_type = "TechRessourceErw3Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zg6_zg7.sg10"
+discriminator = "CCI.d7059=Z32"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z32" }
+"cci.c502.d6313" = "ccic502d6313Z32"
+"cci.c240.d7037" = "merkmalCodeZ32"

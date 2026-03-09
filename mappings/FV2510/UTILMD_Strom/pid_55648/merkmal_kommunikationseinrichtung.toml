@@ -1,0 +1,29 @@
+# SG10 under SG8 ZB7/ZB8 -- CCI+++Z26 Kommunikationseinrichtung
+# CAV order: Z30 Geraenummer, Kommunikationseinrichtungstyp (GSM/ETH/PLC/PST/DSL/LTE)
+
+[meta]
+entity = "Kommunikationseinrichtung"
+bo4e_type = "Kommunikationseinrichtung"
+companion_type = "KommunikationseinrichtungEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zb7_zb8.sg10"
+discriminator = "CCI.c240.d7037=Z26"
+
+[fields]
+
+[companion_fields]
+# CAV #0: Z30 Geraenummer
+"cav[Z30].c889.d7110" = "geraeteNummer"
+"cav[Z30].c889.d7110_2" = "geraeteNummer2"
+"cav[Z30].c889.d1131" = "geraeteNummerCodelisteCode"
+"cav[Z30].c889.d3055" = "geraeteNummerCodepflegeCode"
+# CAV #1: Kommunikationseinrichtungstyp (variable code: GSM/ETH/PLC/PST/DSL/LTE)
+"cav[*,1].c889.d7111" = "kommunikationseinrichtungstyp"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "Z26"
+
+[companion_fields."cav[Z30].c889.d7111"]
+target = ""
+default = "Z30"

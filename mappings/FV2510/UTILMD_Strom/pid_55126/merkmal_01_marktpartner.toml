@@ -1,0 +1,19 @@
+# SG10 — CCI+++ZB3 / CAV+Z90 Zugeordneter Marktpartner (ÜNB)
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.c240.d7037=ZB3"
+
+[fields]
+
+[companion_fields]
+"cav.c889.d7111" = "marktpartnerMerkmalCode"
+"cav.c889.d1131" = "marktpartnerMpId"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "ZB3"

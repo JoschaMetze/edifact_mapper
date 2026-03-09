@@ -1,0 +1,17 @@
+[meta]
+entity = "MesslokationErwDaten"
+bo4e_type = "MesslokationErwDaten"
+companion_type = "MesslokationErwDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf4"
+discriminator = "SEQ.d1229=ZF4"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZF4"
+"rff.c506.d1153" = { target = "", default = "Z19" }
+"rff.c506.d1154" = "referenzZF4"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZF4"
+"pia.c212.d7143" = { target = "", default = "Z11" }

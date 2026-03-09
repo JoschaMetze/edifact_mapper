@@ -1,0 +1,21 @@
+# Produktpaket Zuordnung (SG10 within SEQ+Z79) for PID 55014.
+# CCI+Z66 Produkteigenschaft with CAV+ZH9 (MP ID) and CAV+ZV4 (Produktwert).
+
+[meta]
+entity = "Produktpaket"
+bo4e_type = "Produktpaket"
+source_group = "SG4.SG8:0.SG10"
+source_path = "sg4.sg8_z79.sg10"
+
+[fields]
+"cci.d7059" = { target = "", default = "Z66" }
+"cav[ZH9].c889.d7110" = "produktMpId"
+"cav[ZV4].c889.d7110" = "merkmalswert"
+
+[fields."cav[ZH9].c889.d7111"]
+target = ""
+default = "ZH9"
+
+[fields."cav[ZV4].c889.d7111"]
+target = ""
+default = "ZV4"

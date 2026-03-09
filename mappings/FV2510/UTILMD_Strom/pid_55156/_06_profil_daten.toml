@@ -1,0 +1,16 @@
+# Profil Profildaten (SG8 variant Z85/Z86) for PID 55156.
+# SEQ+Z85 (erwartete) or SEQ+Z86 (vorhandene) Profildaten.
+
+[meta]
+entity = "Profil"
+bo4e_type = "Profil"
+companion_type = "ProfilEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z85_z86"
+discriminator = "SEQ.d1229=Z85|Z86"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"
+"seq.c286.d1050" = "zeitscheibeRef"

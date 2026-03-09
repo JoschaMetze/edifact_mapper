@@ -1,0 +1,32 @@
+# SG8 -- OBIS Daten (SEQ+ZA5/ZA6 = OBIS-Daten der Zaehleinrichtung erwartet/vorhanden)
+# RFF+MG/Z14 Geraetereferenz, RFF+AGK Konfigurations-ID, PIA+5+SRW OBIS-Kennzahl
+
+[meta]
+entity = "ObisKennzahl"
+bo4e_type = "ObisKennzahl"
+companion_type = "ObisKennzahlEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_za5_za6"
+discriminator = "SEQ.d1229=ZA5|ZA6"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZA5ZA6"
+"seq.c286.d1050" = "zeitscheibeRefZA5ZA6"
+"rff.c506.d1153" = "geraetereferenzQualifier"
+"rff.c506.d1154" = "geraetereferenzNummer"
+"rff[AGK].c506.d1154" = "konfigurationsId"
+"pia.c212.d7140" = "obisKennzahl"
+
+[companion_fields."rff[AGK].c506.d1153"]
+target = ""
+default = "AGK"
+
+[companion_fields."pia.d4347"]
+target = ""
+default = "5"
+
+[companion_fields."pia.c212.d7143"]
+target = ""
+default = "SRW"

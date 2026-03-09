@@ -1,0 +1,13 @@
+[meta]
+entity = "ZaehlwerkDatenErw2"
+bo4e_type = "ZaehlwerkDatenErw2"
+companion_type = "ZaehlwerkDatenErw2Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z87_z88"
+discriminator = "SEQ.d1229=Z87"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ87"
+"seq.c286.d1050" = "zeitscheibeRefZ87"

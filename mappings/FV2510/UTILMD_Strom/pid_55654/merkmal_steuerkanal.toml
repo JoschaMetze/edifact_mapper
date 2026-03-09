@@ -1,0 +1,19 @@
+# SG10 under ZA9/ZB0 -- Steuerkanal
+# CCI+Z49 with c240.d7037 (ZF2=kein Steuerkanal, ZF3=Steuerkanal vorhanden)
+
+[meta]
+entity = "NetzlokationDaten"
+bo4e_type = "NetzlokationDaten"
+companion_type = "NetzlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_za9_zb0.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.c502.d6313" = "steuerkanaldimension"
+"cci.c240.d7037" = "steuerkanalCode"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "Z49"

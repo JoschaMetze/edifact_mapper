@@ -1,0 +1,19 @@
+[meta]
+entity = "TechnischeRessourceDatenZF0"
+bo4e_type = "TechnischeRessourceDatenZF0"
+companion_type = "TechnischeRessourceDatenZF0Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf0"
+discriminator = "SEQ.d1229=ZF0"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefZF0"
+"seq.d1229" = "seqQualifierZF0"
+"rff[Z37].c506.d1153" = { target = "", default = "Z37" }
+"rff[Z37].c506.d1154" = "referenzZ37ZF0"
+"rff[Z38].c506.d1153" = { target = "", default = "Z38" }
+"rff[Z38].c506.d1154" = "referenzZ38ZF0"
+"rff[Z32].c506.d1153" = { target = "", default = "Z32" }
+"rff[Z32].c506.d1154" = "referenzZ32ZF0"

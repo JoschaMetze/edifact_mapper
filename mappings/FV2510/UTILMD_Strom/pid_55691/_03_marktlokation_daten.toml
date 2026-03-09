@@ -1,0 +1,16 @@
+# Marktlokation Daten (SG8 variant Z01)
+# SEQ+Z01 enriches the Marktlokation entity.
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z01"
+discriminator = "SEQ.d1229=Z01"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ01"
+"seq.c286.d1050" = "zeitscheibeRef"

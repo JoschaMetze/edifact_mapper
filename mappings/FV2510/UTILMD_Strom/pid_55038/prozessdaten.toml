@@ -1,0 +1,27 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.c206.d7402" = "vorgangId"
+"dtm[92].c507.d2380" = "gueltigAb"
+"sts.c556.d9013" = "transaktionsgrund"
+"sts.c556_2.d9013" = "transaktionsgrundErgaenzung"
+
+[fields."ide.d7495"]
+target = ""
+default = "24"
+
+[fields."dtm[92].c507.d2005"]
+target = ""
+default = "92"
+
+[fields."dtm[92].c507.d2379"]
+target = ""
+default = "303"
+
+[fields."sts.c601.d9015"]
+target = ""
+default = "7"

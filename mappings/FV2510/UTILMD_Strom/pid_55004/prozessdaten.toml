@@ -1,0 +1,30 @@
+# Prozessdaten (process data) mapping for PID 55004 (Abmeldung).
+#
+# Source: SG4 top-level segments (IDE, DTM, STS)
+# IDE+24+<vorgangsnummer>             -> vorgangId (Transaktion)
+# DTM+93:<datum>:303                  -> gueltigBis (Datum Vertragsende)
+# STS+7++<transaktionsgrund>+<ergaenzung>+<ergaenzungBefristet>
+#
+# Only DTM+93 exists (no DTM+92). STS has full Transaktionsgrund structure (indices 0..4).
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# DTM+93 (Datum Vertragsende)
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
+
+# STS segment — Transaktionsgrund
+"sts.c601.d9015" = { target = "", default = "7" }
+"sts.c556.d9013" = "transaktionsgrund"
+"sts.c556_2.d9013" = "transaktionsgrundErgaenzung"
+"sts.c556_3.d9013" = "transaktionsgrundErgaenzungBefristeteAnmeldung"

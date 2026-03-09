@@ -1,0 +1,18 @@
+# Marktlokation Merkmal: Paket-ID (SG10 within SEQ+Z01)
+# CCI+Z67 carries the Paket-ID value in c240.d7037.
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "paketId"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "Z67"

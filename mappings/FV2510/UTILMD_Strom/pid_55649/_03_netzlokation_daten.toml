@@ -1,0 +1,21 @@
+# SG8 — SEQ+Z51 Daten der Netzlokation
+# Enriches the parent Netzlokation entity with Zeitscheibe reference.
+# NOTE: RFF+Z32 exists in MIG but AHB Numbers 00090/00100/00107 are NOT
+# included for PID 55649, so RFF is not consumed by the assembler.
+
+[meta]
+entity = "Netzlokation"
+bo4e_type = "Netzlokation"
+companion_type = "NetzlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z51"
+discriminator = "SEQ.d1229=Z51"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefZ51"
+
+[companion_fields."seq.d1229"]
+target = ""
+default = "Z51"

@@ -1,0 +1,15 @@
+# SG10 under SG8 Z85/Z86 — CCI+Z02 Standardlastprofil / CAV
+
+[meta]
+entity = "Profil"
+bo4e_type = "Profil"
+companion_type = "ProfilEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z85_z86.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "profilVerfahrenCode"
+"cci.c240.d7037" = "profilVerfahren"
+"cav.c889.d7111" = "profilCode"

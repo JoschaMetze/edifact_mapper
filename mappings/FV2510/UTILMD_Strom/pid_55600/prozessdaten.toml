@@ -1,0 +1,36 @@
+# Prozessdaten (process data) mapping for PID 55600 (Anmeldung neue verb. MaLo).
+#
+# Source: SG4 top-level segments (IDE, DTM, STS)
+# IDE+24+<Vorgangsnummer>           -> vorgangId
+# DTM+92:<Datum>:303                -> gueltigAb
+# DTM+93:<Datum>:303                -> gueltigBis
+# STS+7++E02+ZW4+E03                -> Transaktionsgrund
+#
+# No FTX segments in this fixture.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# DTM+92 (Beginn der Lieferung)
+"dtm[92].c507.d2005" = { target = "", default = "92" }
+"dtm[92].c507.d2380" = "gueltigAb"
+"dtm[92].c507.d2379" = { target = "", default = "303" }
+
+# DTM+93 (Datum Vertragsende)
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+"sts[7].c556_3.d9013" = "transaktionsgrundErgaenzung"

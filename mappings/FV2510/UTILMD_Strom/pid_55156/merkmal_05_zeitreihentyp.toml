@@ -1,0 +1,22 @@
+# SG10 — CCI+15++Z21 / CAV Summenzeitreihentyp
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z80_z81.sg10"
+discriminator = "CCI.d7059=15"
+
+[fields]
+
+[companion_fields]
+"cav.c889.d7111" = "summenzeitreihentyp"
+
+[companion_fields."cci[15].d7059"]
+target = ""
+default = "15"
+
+[companion_fields."cci[15].c240.d7037"]
+target = ""
+default = "Z21"

@@ -1,0 +1,17 @@
+[meta]
+entity = "NetzlokationDatenZD7"
+bo4e_type = "NetzlokationDatenZD7"
+companion_type = "NetzlokationDatenZD7Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zd7.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifier"
+"cci.c502.d6313" = "ccic502_d6313"
+"cci.c240.d7037" = "merkmalCodeZB3"
+"cav.c889.d7111" = { target = "", default = "Z91" }
+"cav.c889.d1131" = "zugeordneterMp"
+"cav.c889.d3055" = "merkmalCodepflege"
+"cav.c889.d7110" = "merkmalEigenschaft"

@@ -1,0 +1,19 @@
+[meta]
+entity = "MengenDatenErw"
+bo4e_type = "MengenDatenErw"
+companion_type = "MengenDatenErwEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z19"
+discriminator = "SEQ.d1229=Z19"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ19"
+"rff[Z19].c506.d1153" = { target = "", default = "Z19" }
+"rff[Z19].c506.d1154" = "referenzZ19Z19"
+"rff[Z18].c506.d1153" = { target = "", default = "Z18" }
+"rff[Z18].c506.d1154" = "referenzZ18Z19"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZ19"
+"pia.c212.d7143" = { target = "", default = "Z11" }

@@ -1,0 +1,18 @@
+# SG10 under ZA1/ZA2 — Zählzeitregister (CCI+Z38)
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_za1_za2.sg10"
+discriminator = "CCI.d7059=Z38"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "zaehlzeitregister"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "Z38"

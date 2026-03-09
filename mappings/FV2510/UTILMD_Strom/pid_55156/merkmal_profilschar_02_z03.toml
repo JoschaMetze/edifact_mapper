@@ -1,0 +1,19 @@
+# SG10 under SG8 Z87/Z88 — CCI+Z03 tagesparameterabhängiges Lastprofil / CAV
+
+[meta]
+entity = "Profil"
+bo4e_type = "Profil"
+companion_type = "ProfilEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z87_z88.sg10"
+discriminator = "CCI.d7059=Z03"
+
+[fields]
+
+[companion_fields]
+"cci[Z03].c240.d7037" = "tagesparameterVerfahren"
+"cav.c889.d7111" = "tagesparameterProfil"
+
+[companion_fields."cci[Z03].d7059"]
+target = ""
+default = "Z03"

@@ -1,0 +1,15 @@
+[meta]
+entity = "MarktlokationErwDaten2"
+bo4e_type = "MarktlokationErwDaten2"
+companion_type = "MarktlokationErwDaten2Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_ze7"
+discriminator = "SEQ.d1229=ZE7"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZE7"
+"seq.c286.d1050" = "zeitscheibeRefZE7"
+"rff.c506.d1153" = { target = "", default = "Z20" }
+"rff.c506.d1154" = "referenzZE7"

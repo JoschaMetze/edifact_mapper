@@ -1,0 +1,16 @@
+[meta]
+entity = "MarktlokationDatenZE3"
+bo4e_type = "MarktlokationDatenZE3"
+companion_type = "MarktlokationDatenZE3Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_ze3"
+discriminator = "SEQ.d1229=ZE3"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefZE3"
+"seq.d1229" = "seqQualifierZE3"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZE3"
+"pia.c212.d7143" = { target = "", default = "SRW" }

@@ -1,0 +1,22 @@
+# Produkt-Daten (SG8 ZD3/ZD4) — erwartete/vorhandene Produkt-Daten der Marktlokation.
+#
+# Source: SG4.SG8 -> SEQ segment (qualifier ZD3/ZD4)
+# SEQ+ZD3+<zeitraumRef>
+# PIA+5+AUA:Z08  -> Produktidentifikation
+
+[meta]
+entity = "ProduktDaten"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zd3_zd4"
+discriminator = "SEQ.d1229=ZD3,ZD4"
+
+[fields]
+"pia.c212.d7140" = "produktLeistung"
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZD3"
+"seq.c286.d1050" = "zeitscheibeRefZD3"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7143" = { target = "", default = "Z08" }

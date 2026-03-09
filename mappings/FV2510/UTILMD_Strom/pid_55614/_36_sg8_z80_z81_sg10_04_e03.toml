@@ -1,0 +1,16 @@
+[meta]
+entity = "ZaehlwerkDaten"
+bo4e_type = "ZaehlwerkDaten"
+companion_type = "ZaehlwerkDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z80_z81.sg10"
+discriminator = "CCI.c240.d7037=E03"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierE03"
+"cci.c502.d6313" = "ccic502d6313E03"
+"cci.c240.d7037" = "merkmalCodeE03"
+"cav[*,0].c889.d7111" = "merkmalQualifierE03"
+"cav[*,1].c889.d7111" = "merkmalQualifierE07"

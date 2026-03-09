@@ -1,0 +1,17 @@
+# SG8 -- SEQ+ZA9/ZB0 Daten der Netzlokation
+# Properties of the Netzlokation (Steuerkanal etc.)
+# Multi-rep: separate entity "NetzlokationDaten" to avoid deep_merge collision.
+
+[meta]
+entity = "NetzlokationDaten"
+bo4e_type = "NetzlokationDaten"
+companion_type = "NetzlokationDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_za9_zb0"
+discriminator = "SEQ.d1229=ZA9|ZB0"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierDaten"
+"seq.c286.d1050" = "zeitscheibeRefDaten"

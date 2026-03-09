@@ -1,0 +1,16 @@
+# SG10 within SG8 ZA3/ZA4 — Zaehleinrichtung Zählertyp
+# CCI+++E13 with CAV+Z30 (Gerätenummer)
+
+[meta]
+entity = "Zaehleinrichtung"
+bo4e_type = "Zaehleinrichtung"
+companion_type = "ZaehleinrichtungEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_za3_za4.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "zaehlertypMerkmal"
+"cav[Z30].c889.d7111" = "geraeteCode"
+"cav[Z30].c889.d7110" = "geraeteNummer"

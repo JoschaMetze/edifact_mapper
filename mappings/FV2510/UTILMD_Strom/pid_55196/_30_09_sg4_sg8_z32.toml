@@ -1,0 +1,15 @@
+[meta]
+entity = "SeqDatenZ32"
+bo4e_type = "SeqDatenZ32"
+companion_type = "SeqDatenZ32Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z32"
+discriminator = "SEQ.d1229=Z32"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ32"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZ32"
+"pia.c212.d7143" = { target = "", default = "SRW" }

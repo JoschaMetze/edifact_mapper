@@ -1,0 +1,18 @@
+[meta]
+entity = "Geschaeftspartner"
+bo4e_type = "Geschaeftspartner"
+companion_type = "GeschaeftspartnerEdifact"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12_vy"
+discriminator = "NAD.d3035=VY"
+
+[fields]
+"nad.c082.d3039" = "marktpartnerId"
+
+[fields."nad.d3035"]
+target = ""
+default = "VY"
+
+[companion_fields]
+"nad.c082.d1131" = "codelisteCode"
+"nad.c082.d3055" = "codepflegeCode"

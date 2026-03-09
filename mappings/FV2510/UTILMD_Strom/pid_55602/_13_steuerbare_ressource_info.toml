@@ -1,0 +1,21 @@
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf1"
+discriminator = "SEQ.d1229=ZF1"
+
+[fields]
+"seq.c286.d1050" = "zeitraumReferenz"
+
+[fields."seq.d1229"]
+target = ""
+default = "ZF1"
+
+[companion_fields]
+"rff.c506.d1154" = "referenzSteuerbareRessource"
+
+[companion_fields."rff.c506.d1153"]
+target = ""
+default = "Z38"

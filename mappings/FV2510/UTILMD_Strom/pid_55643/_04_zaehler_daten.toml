@@ -1,0 +1,21 @@
+# SG8 -- Zaehler Daten (SEQ+Z03 = Zaehleinrichtungsdaten)
+# Entry for Zaehler entity with RFF+Z14 reference to Smartmeter-Gateway
+
+[meta]
+entity = "Zaehler"
+bo4e_type = "Zaehler"
+companion_type = "ZaehlerEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z03"
+discriminator = "SEQ.d1229=Z03"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ03"
+"seq.c286.d1050" = "zeitscheibeRefZ03"
+"rff[Z14].c506.d1154" = "smartmeterGatewayNummer"
+
+[companion_fields."rff[Z14].c506.d1153"]
+target = ""
+default = "Z14"

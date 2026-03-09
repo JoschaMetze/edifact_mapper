@@ -1,0 +1,36 @@
+# SteuerbareRessource Konfiguration info (SEQ+ZF2) for PID 55035.
+# Merges into entity "SteuerbareRessource" via deep-merge.
+#
+# SEQ+ZF2+<Zeitraum-Ref>  (Informative Produkt-Daten der Steuerbaren Ressource)
+# PIA+5+<Konfigurationsprodukt-Code>:Z12
+# RFF+Z38:<Steuerbare-Ressource-ID>
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf2"
+discriminator = "SEQ.d1229=ZF2"
+
+[fields]
+
+[fields."seq.d1229"]
+target = ""
+default = "ZF2"
+
+[fields."pia.d4347"]
+target = ""
+default = "5"
+
+[companion_fields]
+"pia.c212.d7140" = "konfigurationsproduktCode"
+"rff.c506.d1154" = "steuerbareRessourceId"
+
+[companion_fields."pia.c212.d7143"]
+target = ""
+default = "Z12"
+
+[companion_fields."rff.c506.d1153"]
+target = ""
+default = "Z38"

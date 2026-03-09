@@ -1,0 +1,25 @@
+# SG10 under SEQ+ZF3 — CCI/CAV Merkmal
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zf3.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "merkmalCodeZf3"
+"cav[Z91].c889.d1131" = "zugeordneterMpZf3"
+"cav[Z91].c889.d7110" = "msbEigenschaftZf3"
+"cav[Z91].c889.d7110_2" = "artLeistungserbringungZf3"
+"cav[ZF0].c889.d1131" = "gmsbMpIdZf3"
+
+[companion_fields."cav[Z91].c889.d7111"]
+target = ""
+default = "Z91"
+
+[companion_fields."cav[ZF0].c889.d7111"]
+target = ""
+default = "ZF0"

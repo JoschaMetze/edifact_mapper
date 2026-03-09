@@ -1,0 +1,22 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+"dtm[92].c507.d2005" = { target = "", default = "92" }
+"dtm[92].c507.d2380" = "gueltigAb"
+"dtm[92].c507.d2379" = { target = "", default = "303" }
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+"sts[7].c556_3.d9013" = "transaktionsgrundErgaenzung"
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"

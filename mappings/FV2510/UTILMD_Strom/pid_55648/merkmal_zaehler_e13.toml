@@ -1,0 +1,31 @@
+# SG10 under SG8 ZA3/ZA4 -- CCI+++E13 Zaehlertyp
+# CAV #0: zaehlertyp (variable code: AHZ/WSZ/LAZ/MAZ/MME/EHZ/IVA) + detail (Z01-Z05)
+# CAV #1: Z30 Geraenummer
+
+[meta]
+entity = "Zaehler"
+bo4e_type = "Zaehler"
+companion_type = "ZaehlerEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_za3_za4.sg10"
+discriminator = "CCI.c240.d7037=E13"
+
+[fields]
+
+[companion_fields]
+# CAV #0: zaehlertyp (variable code: AHZ/WSZ/LAZ/MAZ/MME/EHZ/IVA)
+"cav.c889.d7111" = "zaehlertyp"
+"cav.c889.d1131" = "zaehlertypCodelisteCode"
+"cav.c889.d3055" = "zaehlertypCodepflegeCode"
+"cav.c889.d7110" = "zaehlertypDetail"
+# CAV #1: Z30 Geraenummer
+"cav[Z30].c889.d7110" = "geraeteNummer"
+"cav[Z30].c889.d1131" = "geraeteNummerCodelisteCode"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "E13"
+
+[companion_fields."cav[Z30].c889.d7111"]
+target = ""
+default = "Z30"

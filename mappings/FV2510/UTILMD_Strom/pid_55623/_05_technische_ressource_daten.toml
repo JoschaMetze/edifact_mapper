@@ -1,0 +1,27 @@
+# SG8 — SEQ+ZG4/ZG5 Daten der Technischen Ressource
+# Contains RFF+Z38 (Steuerbare Ressource ref) and RFF+Z32 (Netzlokation ref).
+# Optional: not present in all fixtures.
+
+[meta]
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+companion_type = "TechnischeRessourceEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zg4_zg5"
+discriminator = "SEQ.d1229=ZG4|ZG5"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierDaten"
+"seq.c286.d1050" = "zeitscheibeRefDaten"
+"rff[Z38].c506.d1154" = "steuerbareRessourceRef"
+"rff[Z32].c506.d1154" = "netzlokationRef"
+
+[companion_fields."rff[Z38].c506.d1153"]
+target = ""
+default = "Z38"
+
+[companion_fields."rff[Z32].c506.d1153"]
+target = ""
+default = "Z32"

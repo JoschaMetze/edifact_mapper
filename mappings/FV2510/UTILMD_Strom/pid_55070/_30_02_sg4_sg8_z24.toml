@@ -1,0 +1,14 @@
+[meta]
+entity = "RedispatchDaten"
+bo4e_type = "RedispatchDaten"
+companion_type = "RedispatchDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z24"
+discriminator = "SEQ.d1229=Z24"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ24"
+"rff.c506.d1153" = { target = "", default = "AUU" }
+"rff.c506.d1154" = "referenzZ24"

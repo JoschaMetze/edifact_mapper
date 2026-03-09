@@ -1,0 +1,24 @@
+# SG6 -- RFF+Z50 Termindaten der Marktlokation + DTM+752 Turnusablesung
+
+[meta]
+entity = "Termindaten"
+bo4e_type = "Termindaten"
+companion_type = "TermindatenEdifact"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "RFF.c506.d1153=Z50"
+
+[fields]
+
+[companion_fields]
+"rff.c506.d1154" = "termindatenReferenz"
+"dtm[752].c507.d2380" = "turnusablesung"
+"dtm[752].c507.d2379" = "turnusablesungFormat"
+
+[companion_fields."rff.c506.d1153"]
+target = ""
+default = "Z50"
+
+[companion_fields."dtm[752].c507.d2005"]
+target = ""
+default = "752"

@@ -1,0 +1,16 @@
+[meta]
+entity = "AbrechnungsDatenErw3"
+bo4e_type = "AbrechnungsDatenErw3"
+companion_type = "AbrechnungsDatenErw3Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_za7_za8"
+discriminator = "SEQ.d1229=ZA7"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZA7"
+"seq.c286.d1050" = "zeitscheibeRefZA7"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZA7_ZA8"
+"pia.c212.d7143" = { target = "", default = "SRW" }

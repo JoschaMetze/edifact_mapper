@@ -1,0 +1,18 @@
+[meta]
+entity = "NetzlokationDatenZE0"
+bo4e_type = "NetzlokationDatenZE0"
+companion_type = "NetzlokationDatenZE0Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_ze0"
+discriminator = "SEQ.d1229=ZE0"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefZE0"
+"seq.d1229" = "seqQualifierZE0"
+"rff.c506.d1153" = { target = "", default = "Z32" }
+"rff.c506.d1154" = "referenzZE0"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZE0"
+"pia.c212.d7143" = { target = "", default = "Z12" }

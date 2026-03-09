@@ -1,0 +1,42 @@
+# Geschaeftspartner (SG12/NAD segments) for PID 55658.
+#
+# Source: SG4.SG12 -- NAD+Z45/Z46
+# Z45=Erwarteter Name und Adresse fuer die Abrechnung
+# Z46=Im System vorhandener Name und Adresse fuer die Abrechnung
+# Maps the superset of all NAD fields. Empty fields are auto-omitted per instance.
+# The nadQualifier companion field distinguishes variants on roundtrip.
+# No discriminator -> engine auto-creates array of Geschaeftspartner objects.
+
+[meta]
+entity = "Geschaeftspartner"
+bo4e_type = "Geschaeftspartner"
+companion_type = "GeschaeftspartnerEdifact"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12_z45_z46"
+
+[fields]
+"nad.c082.d3039" = "identifikation"
+"nad.c082.d1131" = "codelisteCode"
+"nad.c080.d3036" = "nachname"
+"nad.c080.d3036_2" = "vorname"
+"nad.c080.d3036_3" = "nameZeile3Feld"
+"nad.c080.d3036_4" = "nameZeile4Feld"
+"nad.c080.d3036_5" = "anrede"
+"nad.c059.d3042" = "strasse"
+"nad.c059.d3042_2" = "strasseZeile2"
+"nad.c059.d3042_3" = "hausnummer"
+"nad.c059.d3042_4" = "strasseZeile4"
+"nad.d3164" = "ort"
+"nad.d3251" = "postleitzahl"
+"nad.d3207" = "land"
+
+[companion_fields]
+"nad.d3035" = "nadQualifier"
+"nad.c058.d3124" = "zusatzinfo"
+"nad.c080.d3045" = "anredeCode"
+"nad.c819.d3229" = "region"
+"rff[Z46].c506.d1154" = "zeitscheibeRef"
+
+[companion_fields."rff[Z46].c506.d1153"]
+target = ""
+default = "Z46"

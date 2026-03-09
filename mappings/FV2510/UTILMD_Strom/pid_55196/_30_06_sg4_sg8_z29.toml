@@ -1,0 +1,14 @@
+[meta]
+entity = "SeqDatenZ29"
+bo4e_type = "SeqDatenZ29"
+companion_type = "SeqDatenZ29Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z29"
+discriminator = "SEQ.d1229=Z29"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ29"
+"rff.c506.d1153" = { target = "", default = "Z18" }
+"rff.c506.d1154" = "referenzZ29"

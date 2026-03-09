@@ -1,0 +1,30 @@
+# SG8 — SEQ+ZB3/ZB4 Produkt-Daten der Steuerbaren Ressource
+# ZB3=Erwartete Produkt-Daten, ZB4=Im System vorhandene Produkt-Daten
+# Contains PIA (Konfigurationsprodukt) and RFF+Z38 (SR reference, greedy consumed)
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zb3_zb4"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierProdukt"
+"seq.c286.d1050" = "zeitscheibeRefProdukt"
+"pia.c212.d7140" = "konfigurationsproduktCode"
+"rff[Z38].c506.d1154" = "steuerbareRessourceRef"
+
+[companion_fields."pia.d4347"]
+target = ""
+default = "5"
+
+[companion_fields."pia.c212.d7143"]
+target = ""
+default = "Z12"
+
+[companion_fields."rff[Z38].c506.d1153"]
+target = ""
+default = "Z38"

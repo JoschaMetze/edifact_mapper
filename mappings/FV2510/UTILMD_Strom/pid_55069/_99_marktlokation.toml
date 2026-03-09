@@ -1,0 +1,20 @@
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_z23.sg9"
+
+[fields]
+
+[companion_fields]
+"qty.c186.d6060" = "jahresverbrauchsprognose"
+"qty.c186.d6411" = "mengeneinheit"
+
+"qty.c186.d6063" = { target = "", default = "79" }
+"dtm[163].c507.d2005" = { target = "", default = "163" }
+"dtm[163].c507.d2380" = "zeitpunkt163"
+"dtm[163].c507.d2379" = { target = "", default = "303" }
+"dtm[164].c507.d2005" = { target = "", default = "164" }
+"dtm[164].c507.d2380" = "zeitpunkt164"
+"dtm[164].c507.d2379" = { target = "", default = "303" }

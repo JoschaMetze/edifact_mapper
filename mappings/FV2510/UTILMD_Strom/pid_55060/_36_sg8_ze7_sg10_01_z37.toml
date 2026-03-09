@@ -1,0 +1,14 @@
+[meta]
+entity = "MarktlokationErwDaten2"
+bo4e_type = "MarktlokationErwDaten2"
+companion_type = "MarktlokationErwDaten2Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_ze7.sg10"
+discriminator = "CCI.d7059=Z37"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z37" }
+"cci.c502.d6313" = "ccic502d6313Z37"
+"cci.c240.d7037" = "merkmalCodeZ37"

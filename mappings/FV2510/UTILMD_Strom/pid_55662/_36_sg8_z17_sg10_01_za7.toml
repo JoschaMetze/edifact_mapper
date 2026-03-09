@@ -1,0 +1,15 @@
+[meta]
+entity = "ObisKennzahlDaten"
+bo4e_type = "ObisKennzahlDaten"
+companion_type = "ObisKennzahlDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z17.sg10"
+discriminator = "CCI.c240.d7037=ZA7"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierZA7"
+"cci.c502.d6313" = "ccic502d6313ZA7"
+"cci.c240.d7037" = "merkmalCodeZA7"
+"cav.c889.d7111" = "merkmalQualifierZA7"

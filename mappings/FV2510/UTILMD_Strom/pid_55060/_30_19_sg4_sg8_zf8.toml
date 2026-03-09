@@ -1,0 +1,15 @@
+[meta]
+entity = "ZaehlerErwDaten2"
+bo4e_type = "ZaehlerErwDaten2"
+companion_type = "ZaehlerErwDaten2Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf8"
+discriminator = "SEQ.d1229=ZF8"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZF8"
+"seq.c286.d1050" = "zeitscheibeRefZF8"
+"rff.c506.d1153" = { target = "", default = "MG" }
+"rff.c506.d1154" = "referenzZF8"

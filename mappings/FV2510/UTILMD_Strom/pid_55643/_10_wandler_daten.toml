@@ -1,0 +1,21 @@
+# SG8 -- SEQ+Z04 Wandlerdaten
+# RFF+MG references the Zaehler Geraenummer
+
+[meta]
+entity = "Wandlerdaten"
+bo4e_type = "Wandlerdaten"
+companion_type = "WandlerdatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z04"
+discriminator = "SEQ.d1229=Z04"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ04"
+"seq.c286.d1050" = "zeitscheibeRefZ04"
+"rff[MG].c506.d1154" = "rffGeraetNummerZ04"
+
+[companion_fields."rff[MG].c506.d1153"]
+target = ""
+default = "MG"

@@ -1,0 +1,20 @@
+# SG9 — QTY+Z33 Menge der Singulaer genutzten Betriebsmittel
+# Each SG9 instance has exactly 1 QTY. Discriminated by QTY qualifier.
+# Optional: not present in all fixtures.
+
+[meta]
+entity = "Netznutzungsabrechnungsdaten"
+bo4e_type = "Netznutzungsabrechnungsdaten"
+companion_type = "NetznutzungsabrechnungsdatenEdifact"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_z45_z84.sg9"
+discriminator = "QTY.c186.d6063=Z33"
+
+[fields]
+
+[companion_fields]
+"qty.c186.d6060" = "singulaerBetriebsmittelMenge"
+
+[companion_fields."qty.c186.d6063"]
+target = ""
+default = "Z33"

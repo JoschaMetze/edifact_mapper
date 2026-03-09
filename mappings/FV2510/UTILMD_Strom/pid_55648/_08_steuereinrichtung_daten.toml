@@ -1,0 +1,21 @@
+# SG8 -- Technische Steuereinrichtung Daten (SEQ+ZC1/ZC2)
+# RFF+MG Geraetereferenz
+
+[meta]
+entity = "TechnischeSteuereinrichtung"
+bo4e_type = "TechnischeSteuereinrichtung"
+companion_type = "TechnischeSteuereinrichtungEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zc1_zc2"
+discriminator = "SEQ.d1229=ZC1|ZC2"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZC1ZC2"
+"seq.c286.d1050" = "zeitscheibeRefZC1ZC2"
+"rff[MG].c506.d1154" = "geraetereferenzNummer"
+
+[companion_fields."rff[MG].c506.d1153"]
+target = ""
+default = "MG"

@@ -1,0 +1,18 @@
+# Steuerbare Ressource (LOC+Z19) mapping for PID 55600.
+#
+# Source: SG4.SG5 -> LOC segment (qualifier Z19 = Steuerbare Ressource)
+# LOC+Z19+CBCKZFX2YY5  -> steuerbareRessourceId
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+source_group = "SG4.SG5"
+source_path = "sg4.sg5_z19"
+discriminator = "LOC.d3227=Z19"
+
+[fields]
+"loc.d3227" = { target = "", default = "Z19" }
+"loc.c517.d3225" = "steuerbareRessourceId"
+"loc.c517.d1131" = "codelisteCode"
+"loc.c517.d3055" = "codepflegeCode"
+"loc.c517.d3224" = "zeitraumId"

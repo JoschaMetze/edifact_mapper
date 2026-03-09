@@ -1,0 +1,18 @@
+# Merkmal OBIS-Kennzahl Nutzung (SG10 under SG8 ZD1/ZD2) — CCI/CAV attributes.
+#
+# Source: SG4.SG8.SG10 -> CCI/CAV segments
+# Maps Stromverbrauchsart (Z17), Unterbrechbarkeit, Waermenutzung, Art der E-Mobilitaet.
+
+[meta]
+entity = "ObisKennzahlNutzung"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zd1_zd2.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "nutzungKlassentyp"
+"cci.c240.d7037" = "nutzungMerkmalCode"
+"cav.c889.d7111" = "nutzungMerkmalWert"

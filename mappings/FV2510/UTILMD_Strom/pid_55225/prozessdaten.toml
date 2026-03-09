@@ -1,0 +1,17 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.c206.d7402" = "vorgangId"
+"sts.c556.d9013" = "transaktionsgrund"
+
+[fields."ide.d7495"]
+target = ""
+default = "24"
+
+[fields."sts.c601.d9015"]
+target = ""
+default = "7"

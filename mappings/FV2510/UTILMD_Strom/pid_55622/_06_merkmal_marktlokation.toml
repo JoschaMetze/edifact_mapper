@@ -1,0 +1,24 @@
+# Merkmal Marktlokation (SG10 under SG8 Z80/Z81) — CCI/CAV attributes.
+#
+# Source: SG4.SG8.SG10 -> CCI/CAV segments
+# Maps Marktpartner (ZB3), Spannungsebene (E03), messtechnische Einordnung (Z83),
+# Art der erzeugenden MaLo (Z34), Empfaenger der Verguetung (Z89),
+# Veraeusserungsform (Z22/Z90-Z94), Status der Fernsteuerbarkeit (Z24/Z96-Z98).
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z80_z81.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "merkmalKlassentyp"
+"cci.c502.d6313" = "merkmalDimension"
+"cci.c240.d7037" = "merkmalCode"
+"cav.c889.d7111" = "merkmalWert"
+"cav.c889.d1131" = "merkmalCodeliste"
+"cav.c889.d3055" = "merkmalCodepflege"
+"cav.c889.d7110" = "merkmalEigenschaft"

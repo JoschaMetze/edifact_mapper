@@ -1,0 +1,14 @@
+[meta]
+entity = "MabisZaehlpunktDaten"
+bo4e_type = "MabisZaehlpunktDaten"
+companion_type = "MabisZaehlpunktDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z15.sg10"
+discriminator = "CCI.d7059=Z37"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z37" }
+"cci.c502.d6313" = "ccic502d6313Z37"
+"cci.c240.d7037" = "merkmalCodeZ37"

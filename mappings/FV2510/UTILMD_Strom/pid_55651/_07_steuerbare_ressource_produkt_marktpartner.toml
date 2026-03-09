@@ -1,0 +1,20 @@
+# SG10 under SG8 Z61 — CCI with ZB3 (Zugeordneter Marktpartner)
+# CAV carries Merkmalswert (Z88=NB, Z89=LF) and MP-ID
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z61.sg10"
+discriminator = "CCI.c240.d7037=ZB3"
+
+[fields]
+
+[companion_fields]
+"cav.c889.d7111" = "zugeordneterMarktpartnerRolle"
+"cav.c889.d1131" = "zugeordneterMarktpartnerId"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "ZB3"

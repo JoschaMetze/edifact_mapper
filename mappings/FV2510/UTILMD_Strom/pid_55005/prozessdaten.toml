@@ -1,0 +1,33 @@
+# Prozessdaten (process data) mapping for PID 55005 (Bestätigung Abmeldung).
+#
+# Source: SG4 top-level segments (IDE, DTM, STS)
+# IDE+24+<vorgangsnummer>             -> vorgangId (Transaktion)
+# DTM+93:<datum>:303                  -> gueltigBis (Datum Vertragsende)
+# STS+7++<grund>                      -> Transaktionsgrund
+# STS+E01++<pruefschritt>:<ebd>       -> Antwort-Status mit EBD-Referenz
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# DTM+93 (Datum Vertragsende)
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+
+# STS+E01 (Antwort-Status mit EBD-Referenz)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"

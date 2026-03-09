@@ -1,0 +1,31 @@
+# Zaehler info (SEQ+ZF5) for PID 55035.
+# Merges into entity "Zaehler" via deep-merge.
+#
+# SEQ+ZF5+<Zeitraum-Ref>  (Informative Zaehleinrichtungsdaten)
+# RFF+Z14:<Smartmeter-Gateway-ID>
+
+[meta]
+entity = "Zaehler"
+bo4e_type = "Zaehler"
+companion_type = "ZaehlerEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf5"
+discriminator = "SEQ.d1229=ZF5"
+
+[fields]
+
+[fields."seq.d1229"]
+target = ""
+default = "ZF5"
+
+[companion_fields]
+"rff[Z19].c506.d1154" = "messlokationsId"
+"rff[Z14].c506.d1154" = "smartmeterGatewayId"
+
+[companion_fields."rff[Z19].c506.d1153"]
+target = ""
+default = "Z19"
+
+[companion_fields."rff[Z14].c506.d1153"]
+target = ""
+default = "Z14"

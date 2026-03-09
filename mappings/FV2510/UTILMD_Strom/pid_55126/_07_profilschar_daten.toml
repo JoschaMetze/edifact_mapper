@@ -1,0 +1,19 @@
+# Profil Profilschardaten (SG8 variant Z08) for PID 55126.
+# SEQ+Z08 — merges into entity "Profil".
+
+[meta]
+entity = "Profil"
+bo4e_type = "Profil"
+companion_type = "ProfilEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z08"
+discriminator = "SEQ.d1229=Z08"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "profilscharZeitscheibeRef"
+
+[companion_fields."seq.d1229"]
+target = ""
+default = "Z08"

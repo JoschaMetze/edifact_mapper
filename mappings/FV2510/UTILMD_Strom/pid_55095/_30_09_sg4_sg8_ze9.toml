@@ -1,0 +1,18 @@
+[meta]
+entity = "MarktlokationErwDaten4"
+bo4e_type = "MarktlokationErwDaten4"
+companion_type = "MarktlokationErwDaten4Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_ze9"
+discriminator = "SEQ.d1229=ZE9"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZE9"
+"seq.c286.d1050" = "zeitscheibeRefZE9"
+"rff.c506.d1153" = { target = "", default = "Z20" }
+"rff.c506.d1154" = "referenzZE9"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZE9"
+"pia.c212.d7143" = { target = "", default = "SRW" }

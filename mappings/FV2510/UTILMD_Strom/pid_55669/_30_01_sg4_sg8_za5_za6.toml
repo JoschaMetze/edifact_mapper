@@ -1,0 +1,22 @@
+[meta]
+entity = "AbrechnungsDatenErw2"
+bo4e_type = "AbrechnungsDatenErw2"
+companion_type = "AbrechnungsDatenErw2Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_za5_za6"
+discriminator = "SEQ.d1229=ZA5"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZA5"
+"seq.c286.d1050" = "zeitscheibeRefZA5"
+"rff[MG].c506.d1153" = { target = "", default = "MG" }
+"rff[MG].c506.d1154" = "referenzMGZA5_ZA6"
+"rff[Z14].c506.d1153" = { target = "", default = "Z14" }
+"rff[Z14].c506.d1154" = "referenzZ14ZA5_ZA6"
+"rff[AGK].c506.d1153" = { target = "", default = "AGK" }
+"rff[AGK].c506.d1154" = "referenzAGKZA5_ZA6"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZA5_ZA6"
+"pia.c212.d7143" = { target = "", default = "SRW" }

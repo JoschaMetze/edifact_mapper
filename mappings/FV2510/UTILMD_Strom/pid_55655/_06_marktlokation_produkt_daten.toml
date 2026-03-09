@@ -1,0 +1,21 @@
+# SG8 ZB5/ZB6 — Produkt-Daten der Marktlokation
+# SEQ+ZB5/ZB6 with PIA (Konfigurationsprodukt)
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zb5_zb6"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierProdukt"
+"seq.c286.d1050" = "zeitscheibeRefProdukt"
+"pia.c212.d7140" = "produktKennzahl"
+"pia.c212.d7143" = "produktKennzahlTyp"
+
+[companion_fields."pia.d4347"]
+target = ""
+default = "5"

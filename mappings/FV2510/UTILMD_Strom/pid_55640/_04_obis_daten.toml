@@ -1,0 +1,23 @@
+# SG8 -- SEQ+Z02 OBIS-Daten der Marktlokation
+# Multi-rep: up to 2 instances per fixture. Uses separate entity "ObisKennzahl"
+# to avoid deep_merge collision with SG5 Marktlokation (Object vs Array).
+#
+# NOTE: PIA segment is optional in Z02 and NOT present in 55640 fixtures.
+# All PIA fields are data (not defaults) so no phantom PIA is generated.
+
+[meta]
+entity = "ObisKennzahl"
+bo4e_type = "ObisKennzahl"
+companion_type = "ObisKennzahlEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z02"
+discriminator = "SEQ.d1229=Z02"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierObis"
+"seq.c286.d1050" = "zeitscheibeRefObis"
+"pia.d4347" = "piaQualifierObis"
+"pia.c212.d7140" = "obisKennzahl"
+"pia.c212.d7143" = "obisKennzahlTyp"

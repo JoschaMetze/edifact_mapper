@@ -1,0 +1,17 @@
+# Zaehler Daten (SG8 ZA4) — Im System vorhandene Zaehleinrichtungsdaten.
+#
+# Source: SG4.SG8 -> SEQ segment (qualifier ZA4)
+# SEQ+ZA4  -> seqQualifierZA4
+
+[meta]
+entity = "Zaehler"
+bo4e_type = "Zaehler"
+companion_type = "ZaehlerEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_za4"
+discriminator = "SEQ.d1229=ZA4"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZA4"

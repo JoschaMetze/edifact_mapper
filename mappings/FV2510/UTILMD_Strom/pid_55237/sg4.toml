@@ -1,0 +1,29 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.d7495" = "ideQualifier"
+"ide.c206.d7402" = "vorgangId"
+"dtm[92].c507.d2005" = { target = "", default = "92" }
+"dtm[92].c507.d2380" = "gueltigAb"
+"dtm[92].c507.d2379" = "gueltigAbFormat"
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = "gueltigBisFormat"
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c555.d4405" = "antwortBearbeitungsstand"
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"
+"sts[E01].c556.d3055" = "codepflegeStelle"
+"sts[E01].c556.d9012" = "zeitraumId"
+"ftx[ACB].d4451" = { target = "", default = "ACB" }
+"ftx[ACB].d4453" = "freitextQualifier"
+"ftx[ACB].c107.d4441" = "freitextReferenz"
+"ftx[ACB].c108.d4440" = "freitext"
+"ftx[ACB].c108.d4440_2" = "freitextZeile2"
+"ftx[ACB].c108.d4440_3" = "freitextZeile3"
+"ftx[ACB].c108.d4440_4" = "freitextZeile4"
+"ftx[ACB].c108.d4440_5" = "freitextZeile5"

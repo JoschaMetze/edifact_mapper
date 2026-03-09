@@ -1,0 +1,14 @@
+# SG10 under SG8_zb3_zb4 — CCI with c240.d7037=ZA8 (NB Marktrolle)
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zb3_zb4.sg10"
+discriminator = "CCI.c240.d7037=ZA8"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "nbMarktrolle"
