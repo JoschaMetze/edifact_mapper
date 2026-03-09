@@ -145,9 +145,30 @@ fn merge_same_id_groups(groups: Vec<MigSegmentGroup>) -> Vec<MigSegmentGroup> {
 fn merge_group_variants(variants: Vec<MigSegmentGroup>) -> MigSegmentGroup {
     let first = &variants[0];
 
-    // Merge segments: for each tag, keep max count across variants
-    let mut merged_segments: Vec<MigSegment> = Vec::new();
-    for variant in &variants {
+    // Merge segments: use the longest variant as base ordering, then add
+    // any additional tags from shorter variants. This ensures the merged
+    // order respects the most complete variant's segment positions.
+    //
+    // Example: Z02 has [SEQ, PIA], Z20 has [SEQ, RFF, RFF, PIA].
+    // Using Z20 as base gives [SEQ, RFF, RFF, PIA] — the assembler can
+    // then handle both Z02 reps (skipping RFF slots) and Z20 reps correctly.
+    // Without this, Z02-first ordering produces [SEQ, PIA, RFF, RFF],
+    // which breaks Z20 assembly (PIA expected where RFF appears).
+    let longest_idx = variants
+        .iter()
+        .enumerate()
+        .max_by_key(|(_, v)| v.segments.len())
+        .map(|(i, _)| i)
+        .unwrap_or(0);
+
+    // Start with the longest variant's segments as base
+    let mut merged_segments: Vec<MigSegment> = variants[longest_idx].segments.clone();
+
+    // Add segments from other variants that aren't sufficiently represented
+    for (i, variant) in variants.iter().enumerate() {
+        if i == longest_idx {
+            continue;
+        }
         for seg in &variant.segments {
             let count_in_merged = merged_segments.iter().filter(|s| s.id == seg.id).count();
             let count_in_variant = variant.segments.iter().filter(|s| s.id == seg.id).count();

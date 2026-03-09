@@ -14,8 +14,8 @@ use mig_assembly::renderer::render_edifact;
 use mig_assembly::tokenize::{parse_to_segments, split_messages};
 use mig_bo4e::engine::MappingEngine;
 
-/// PIDs with known structural limitations (Z02+Z20 PIA merge conflict).
-const KNOWN_INCOMPLETE: &[&str] = &["44013", "44014", "44035"];
+/// PIDs with known structural limitations preventing byte-identical roundtrip.
+const KNOWN_INCOMPLETE: &[&str] = &[];
 
 #[test]
 fn test_all_gas_pids_roundtrip() {

@@ -10,6 +10,15 @@ source_path = "sg4.sg8_za5_za6"
 discriminator = "SEQ.d1229=ZA5|ZA6"
 
 [fields]
+"pia.c212.d7140" = "obisKennzahl"
+
+[fields."pia.d4347"]
+target = ""
+default = "5"
+
+[fields."pia.c212.d7143"]
+target = ""
+default = "SRW"
 
 [companion_fields]
 "seq.d1229" = "seqQualifier"

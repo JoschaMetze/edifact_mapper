@@ -17,11 +17,8 @@ use mig_assembly::renderer::render_edifact;
 use mig_assembly::tokenize::{parse_to_segments, split_messages};
 use mig_bo4e::engine::MappingEngine;
 
-/// PIDs with known structural limitations.
-/// - 44002: FV2510 fixture has PIA after RFF in Z20 block, but MIG defines
-///   PIA before RFF. Assembler drops PIA (out-of-order). FV2504 fixture OK.
-/// - 44013, 44014, 44035: Z02+Z20 PIA merge conflict (same as FV2504).
-const KNOWN_INCOMPLETE: &[&str] = &["44002", "44013", "44014", "44035"];
+/// PIDs with known structural limitations preventing byte-identical roundtrip.
+const KNOWN_INCOMPLETE: &[&str] = &[];
 
 #[test]
 fn test_all_gas_fv2510_pids_roundtrip() {
