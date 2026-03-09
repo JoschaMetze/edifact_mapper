@@ -9,6 +9,7 @@ use std::path::Path;
 use mig_assembly::assembler::{
     AssembledGroup, AssembledGroupInstance, AssembledSegment, AssembledTree,
 };
+use mig_types::schema::mig::MigSchema;
 use mig_types::segment::OwnedSegment;
 
 use crate::definition::{FieldMapping, MappingDefinition};
@@ -1654,6 +1655,7 @@ impl MappingEngine {
         tx_engine: &MappingEngine,
         mapped: &crate::model::MappedMessage,
         transaction_group: &str,
+        filtered_mig: Option<&MigSchema>,
     ) -> AssembledTree {
         // Step 1: Reverse message-level stammdaten
         let msg_tree = msg_engine.map_all_reverse(&mapped.stammdaten);
@@ -1727,8 +1729,22 @@ impl MappingEngine {
         }
 
         // Sort: shallower depth first, so SG8 defs create reps before SG8:N.SG10 defs.
-        // Within same depth, sort by relative path for deterministic ordering.
-        sorted_defs.sort_by(|a, b| a.depth.cmp(&b.depth).then(a.relative.cmp(&b.relative)));
+        // Within same depth, sort by MIG group position (if available) for correct emission order,
+        // falling back to alphabetical relative path for deterministic ordering.
+        if let Some(mig) = filtered_mig {
+            let mig_order = build_reverse_mig_group_order(mig, transaction_group);
+            sorted_defs.sort_by(|a, b| {
+                a.depth.cmp(&b.depth).then_with(|| {
+                    let a_id = a.relative.split(':').next().unwrap_or(&a.relative);
+                    let b_id = b.relative.split(':').next().unwrap_or(&b.relative);
+                    let a_pos = mig_order.get(a_id).copied().unwrap_or(usize::MAX);
+                    let b_pos = mig_order.get(b_id).copied().unwrap_or(usize::MAX);
+                    a_pos.cmp(&b_pos).then(a.relative.cmp(&b.relative))
+                })
+            });
+        } else {
+            sorted_defs.sort_by(|a, b| a.depth.cmp(&b.depth).then(a.relative.cmp(&b.relative)));
+        }
 
         for tx in &mapped.transaktionen {
             let mut root_segs: Vec<AssembledSegment> = Vec::new();
@@ -1964,6 +1980,19 @@ fn parse_source_path_part(part: &str) -> (&str, Option<&str>) {
         }
     }
     (part, None)
+}
+
+/// Build a map from group ID (e.g., "SG5", "SG8") to its position index
+/// within the transaction group's nested_groups Vec.
+/// Used by `map_interchange_reverse` to sort definitions in MIG order.
+fn build_reverse_mig_group_order(mig: &MigSchema, tx_group_id: &str) -> HashMap<String, usize> {
+    let mut order = HashMap::new();
+    if let Some(tg) = mig.segment_groups.iter().find(|g| g.id == tx_group_id) {
+        for (i, nested) in tg.nested_groups.iter().enumerate() {
+            order.insert(nested.id.clone(), i);
+        }
+    }
+    order
 }
 
 /// Find a group repetition whose entry segment has a matching qualifier.

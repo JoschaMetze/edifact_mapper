@@ -94,7 +94,7 @@ pub(crate) fn reverse_map_nachricht(
         stammdaten: nachricht.stammdaten.clone(),
         transaktionen: nachricht.transaktionen.clone(),
     };
-    MappingEngine::map_interchange_reverse(ctx.msg_engine, ctx.tx_engine, &mapped, "SG4")
+    MappingEngine::map_interchange_reverse(ctx.msg_engine, ctx.tx_engine, &mapped, "SG4", None)
 }
 
 /// Disassemble an AssembledTree and render as EDIFACT message segments (UNH + body + UNT).

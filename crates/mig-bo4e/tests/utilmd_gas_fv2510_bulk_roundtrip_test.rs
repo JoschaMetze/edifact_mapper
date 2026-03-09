@@ -177,6 +177,7 @@ fn run_generated_roundtrip(pid: &str) {
         &tx_engine,
         &mapped,
         utilmd_gas_fv2510::TX_GROUP,
+        Some(&filtered_mig),
     );
 
     let unh_assembled = test_utils::owned_to_assembled(&msg_chunk.unh);

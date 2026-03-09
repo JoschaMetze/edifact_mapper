@@ -356,7 +356,7 @@ pub fn run_single_fixture_roundtrip_with_tx_group(
 
     // Step 4: Reverse mapping → AssembledTree (content only, no UNH/UNT)
     let mut reverse_tree =
-        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, tx_group);
+        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, tx_group, Some(filtered_mig));
 
     // Add UNH to the front of pre-group segments, UNT to post-group.
     let unh_assembled = owned_to_assembled(&msg_chunk.unh);

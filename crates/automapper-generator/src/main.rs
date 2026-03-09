@@ -1412,7 +1412,8 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                     );
                     eprintln!("  Falling back to unenhanced fixture generation");
 
-                    let edi = automapper_generator::fixture_generator::generate_fixture(&schema);
+                    let mig_order = automapper_generator::fixture_generator::build_mig_group_order(&filtered_mig, "SG4");
+                    let edi = automapper_generator::fixture_generator::generate_fixture(&schema, Some(&mig_order));
                     let seg_count = edi.matches('\'').count();
                     eprintln!("  Generated {} segments (unenhanced)", seg_count);
 
@@ -1519,7 +1520,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 }
             } else {
                 // Unenhanced mode: generate basic fixture with placeholders
-                let edi = automapper_generator::fixture_generator::generate_fixture(&schema);
+                let edi = automapper_generator::fixture_generator::generate_fixture(&schema, None);
 
                 let seg_count = edi.matches('\'').count();
                 eprintln!("  Generated {} segments", seg_count);

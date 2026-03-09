@@ -4,8 +4,10 @@ bo4e_type = "SteuerbareRessource"
 companion_type = "SteuerbareRessourceEdifact"
 source_group = "SG4.SG8"
 source_path = "sg4.sg8_zb1_zb2"
+discriminator = "SEQ.d1229=ZB1"
 
 [fields]
-"seq.c286.d1050" = "zeitraumReferenz"
 
 [companion_fields]
+"seq.d1229" = "seqQualifier"
+"seq.c286.d1050" = "zeitraumReferenz"

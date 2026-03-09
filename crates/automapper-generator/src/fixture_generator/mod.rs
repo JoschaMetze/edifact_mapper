@@ -5,6 +5,7 @@ pub mod seed_data;
 mod validate;
 
 use serde_json::Value;
+use std::collections::HashMap;
 
 use mig_assembly::assembler::{owned_to_assembled, Assembler};
 use mig_assembly::disassembler::Disassembler;
@@ -17,6 +18,48 @@ pub use enhancer::{build_code_map, enhance_mapped_message, EnhancerConfig};
 use placeholders::{placeholder_datetime, placeholder_for_data_element};
 pub use validate::validate_fixture;
 
+/// Build a group order map from a PID-filtered MIG, mapping schema JSON keys
+/// (e.g., `"sg5_z16"`, `"sg8_z98"`) to their MIG-defined position index.
+///
+/// The schema JSON splits groups by qualifier (e.g., `sg8_z01`, `sg8_z79` as separate keys),
+/// while the filtered MIG merges same-ID groups (one `SG8` with all qualifiers combined).
+/// This function maps each schema key to its base group's MIG position, using a large stride
+/// so that groups with the same base ID are ordered by MIG position first, then alphabetically
+/// by qualifier suffix within the same base group.
+///
+/// This ensures generated fixtures emit groups in MIG order (XML document order)
+/// instead of alphabetical order, matching the disassembler's output ordering.
+pub fn build_mig_group_order(mig: &MigSchema, tx_group_id: &str) -> HashMap<String, usize> {
+    // Step 1: Build base group ID → MIG position map from the transaction group's nested groups.
+    // E.g., SG4's nested groups in MIG order: SG5(0), SG6(1), SG8(2), SG12(3)
+    let mut base_order: HashMap<String, usize> = HashMap::new();
+
+    if let Some(tg) = mig.segment_groups.iter().find(|g| g.id == tx_group_id) {
+        for (i, nested) in tg.nested_groups.iter().enumerate() {
+            base_order.entry(nested.id.clone()).or_insert(i);
+            // Also index child groups for nested ordering (SG8→SG9/SG10)
+            for (j, child) in nested.nested_groups.iter().enumerate() {
+                base_order.entry(child.id.clone()).or_insert(j);
+            }
+        }
+    }
+
+    // Also index top-level groups (SG1, SG2) for message-level fields
+    for (i, sg) in mig.segment_groups.iter().enumerate() {
+        base_order.entry(sg.id.clone()).or_insert(i + 1000);
+    }
+
+    // Step 2: For each possible schema key, compute a sort key based on:
+    //   (base_group_mig_position * 1000 + alphabetical_qualifier_rank)
+    // This preserves MIG order for different group IDs while keeping qualifier
+    // ordering alphabetical within the same group (which matches the assembler's
+    // rep ordering within a group).
+    //
+    // We don't have the full schema key list here, so we return the base_order
+    // keyed by group ID. The caller maps schema keys to base group IDs.
+    base_order
+}
+
 /// Generate a complete EDIFACT fixture from a PID schema JSON.
 ///
 /// Produces a structurally valid .edi file with:
@@ -25,7 +68,11 @@ pub use validate::validate_fixture;
 /// - All root segments (BGM, DTM) and group content
 /// - Type-aware placeholder data values
 /// - Valid code values (first AHB-filtered code from schema)
-pub fn generate_fixture(schema: &Value) -> String {
+///
+/// When `mig_order` is provided, groups are emitted in MIG-defined order
+/// (XML document order) instead of alphabetical order. This ensures generated
+/// fixtures match the disassembler's output ordering for byte-identical roundtrip.
+pub fn generate_fixture(schema: &Value, mig_order: Option<&HashMap<String, usize>>) -> String {
     let mut segments: Vec<String> = Vec::new();
 
     let root_segments = schema["root_segments"]
@@ -49,13 +96,19 @@ pub fn generate_fixture(schema: &Value) -> String {
         }
     }
 
-    // 4. Walk the fields tree depth-first
+    // 4. Walk the fields tree depth-first, sorted by MIG order (if available)
+    // or by SG number + qualifier suffix (alphabetical fallback).
+    // MIG order matches the disassembler's output ordering for byte-identical roundtrip.
     if let Some(fields) = schema["fields"].as_object() {
         let mut keys: Vec<&String> = fields.keys().collect();
-        keys.sort_by_key(|k| group_sort_key(k));
+        if let Some(order) = mig_order {
+            keys.sort_by_key(|k| mig_aware_sort_key(k, order));
+        } else {
+            keys.sort_by_key(|k| group_sort_key(k));
+        }
 
         for key in keys {
-            emit_group(&fields[key], &mut segments);
+            emit_group(&fields[key], &mut segments, mig_order);
         }
     }
 
@@ -95,8 +148,9 @@ pub fn generate_enhanced_fixture(
     seed: u64,
     variant: usize,
 ) -> Result<String, crate::error::GeneratorError> {
-    // Step 1: Generate basic fixture with placeholder values
-    let edi = generate_fixture(schema);
+    // Step 1: Generate basic fixture with placeholder values (MIG-ordered)
+    let mig_order = build_mig_group_order(filtered_mig, "SG4");
+    let edi = generate_fixture(schema, Some(&mig_order));
 
     // Step 2: Tokenize
     let segments = parse_to_segments(edi.as_bytes()).map_err(|e| {
@@ -142,19 +196,19 @@ pub fn generate_enhanced_fixture(
 
     // Step 8: Reverse map back to AssembledTree
     let mut reverse_tree =
-        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, "SG4");
+        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, "SG4", Some(filtered_mig));
 
     // Add UNH envelope (mapping engine handles content only)
     let unh_assembled = owned_to_assembled(&msg_chunk.unh);
     reverse_tree.segments.insert(0, unh_assembled);
     reverse_tree.post_group_start += 1;
 
-    // Add UNT if the original tree had it
-    let original_has_unt = original_tree.segments.last().map(|s| s.tag.as_str()) == Some("UNT");
-    if original_has_unt {
-        let unt_assembled = owned_to_assembled(&msg_chunk.unt);
-        reverse_tree.segments.push(unt_assembled);
-    }
+    // Always add UNT — EDIFACT messages always have UNT.
+    // The assembler may not include UNT in the tree for some PIDs
+    // (e.g., when it gets consumed into a trailing group), but the
+    // message chunk always has it from tokenization.
+    let unt_assembled = owned_to_assembled(&msg_chunk.unt);
+    reverse_tree.segments.push(unt_assembled);
 
     // Step 9: Disassemble and render to EDIFACT
     let disassembler = Disassembler::new(filtered_mig);
@@ -202,7 +256,11 @@ fn render_owned_segment(
 }
 
 /// Recursively emit segments for a group and its children.
-fn emit_group(group: &Value, segments: &mut Vec<String>) {
+fn emit_group(
+    group: &Value,
+    segments: &mut Vec<String>,
+    mig_order: Option<&HashMap<String, usize>>,
+) {
     // Emit this group's own segments
     if let Some(segs) = group["segments"].as_array() {
         for seg in segs {
@@ -210,13 +268,17 @@ fn emit_group(group: &Value, segments: &mut Vec<String>) {
         }
     }
 
-    // Recurse into children, sorted by source_group number then key name
+    // Recurse into children, sorted by MIG order or SG number + qualifier suffix
     if let Some(children) = group["children"].as_object() {
         let mut keys: Vec<&String> = children.keys().collect();
-        keys.sort_by_key(|k| group_sort_key(k));
+        if let Some(order) = mig_order {
+            keys.sort_by_key(|k| mig_aware_sort_key(k, order));
+        } else {
+            keys.sort_by_key(|k| group_sort_key(k));
+        }
 
         for key in keys {
-            emit_group(&children[key], segments);
+            emit_group(&children[key], segments, mig_order);
         }
     }
 }
@@ -359,7 +421,32 @@ fn first_code_value(element: &Value) -> Option<String> {
         .map(String::from)
 }
 
+/// Sort key for schema JSON group keys using MIG base group ordering.
+///
+/// Maps schema keys like `"sg8_z79"` to `(MIG_position_of_SG8, "z79")`,
+/// ensuring groups are ordered by MIG position first, then alphabetically
+/// by qualifier within the same base group.
+fn mig_aware_sort_key(key: &str, base_order: &HashMap<String, usize>) -> (usize, String) {
+    let base_id = schema_key_to_group_id(key);
+    let mig_pos = base_order.get(&base_id).copied().unwrap_or(usize::MAX);
+    // Use qualifier suffix for secondary sort (alphabetical within same base group)
+    let qualifier = key.split_once('_').map(|(_, q)| q.to_string()).unwrap_or_default();
+    (mig_pos, qualifier)
+}
+
+/// Extract the MIG group ID from a schema JSON key.
+///
+/// `"sg5_z16"` → `"SG5"`, `"sg12_z04"` → `"SG12"`, `"sg6"` → `"SG6"`.
+fn schema_key_to_group_id(key: &str) -> String {
+    let rest = key.strip_prefix("sg").unwrap_or(key);
+    let num_str = rest.split('_').next().unwrap_or(rest);
+    format!("SG{}", num_str)
+}
+
 /// Sort key for group names: (source_group_number, qualifier_suffix).
+///
+/// Matches TOML mapping file naming order to ensure generated fixtures
+/// have segment ordering compatible with the reverse mapper.
 ///
 /// Examples: "sg5_z16" → (5, "z16"), "sg12_z04" → (12, "z04"), "sg10" → (10, "")
 fn group_sort_key(key: &str) -> (u32, String) {

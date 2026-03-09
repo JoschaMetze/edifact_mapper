@@ -150,7 +150,7 @@ pub fn render_fixture(
 
         // Reverse map back to tree
         let reverse_tree =
-            MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4");
+            MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4", Some(&filtered_mig));
 
         // Disassemble tree -> ordered segments
         let dis_segments = disassembler.disassemble(&reverse_tree);

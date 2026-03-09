@@ -205,12 +205,12 @@ fn test_load_split_55013() {
         "55013 should have SG9 definition for Marktlokation Jahresverbrauchsprognose (source_path-based resolution)"
     );
 
-    // Verify total definition count: 20 PID files + 2 common RFF (z13, tn)
+    // Verify total definition count: 21 PID files + 2 common RFF (z13, tn)
     // Common SG5 files are overridden by PID's own z16-z20 definitions
     assert_eq!(
         tx_defs.len(),
-        22,
-        "55013 transaction engine should have exactly 22 definitions (20 PID + 2 common RFF)"
+        23,
+        "55013 transaction engine should have exactly 23 definitions (21 PID + 2 common RFF)"
     );
 }
 

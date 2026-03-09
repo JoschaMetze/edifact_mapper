@@ -45,7 +45,7 @@ fn test_generate_fixture_55001_tokenizes() {
     let schema: serde_json::Value =
         serde_json::from_str(&std::fs::read_to_string(schema_path).unwrap()).unwrap();
 
-    let edi = generate_fixture(&schema);
+    let edi = generate_fixture(&schema, None);
 
     // Must tokenize without errors
     let segments = parse_to_segments(edi.as_bytes()).expect("Generated fixture must tokenize");
@@ -88,7 +88,7 @@ fn test_generate_fixture_55001_assembles() {
     let schema: serde_json::Value =
         serde_json::from_str(&std::fs::read_to_string(schema_path).unwrap()).unwrap();
 
-    let edi = generate_fixture(&schema);
+    let edi = generate_fixture(&schema, None);
     let segments = parse_to_segments(edi.as_bytes()).expect("Must tokenize");
     let tree = assembler
         .assemble_generic(&segments)
@@ -119,7 +119,7 @@ fn test_generate_fixture_uncovered_pid_55043() {
     let schema: serde_json::Value =
         serde_json::from_str(&std::fs::read_to_string(schema_path).unwrap()).unwrap();
 
-    let edi = generate_fixture(&schema);
+    let edi = generate_fixture(&schema, None);
     let segments = parse_to_segments(edi.as_bytes()).expect("Must tokenize");
     assert!(segments.len() > 50, "PID 55043 should be a large fixture");
 

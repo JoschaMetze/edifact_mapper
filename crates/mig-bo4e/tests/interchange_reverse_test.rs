@@ -50,7 +50,7 @@ fn test_map_interchange_reverse_single_transaction() {
         }],
     };
 
-    let tree = MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4");
+    let tree = MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4", None);
 
     // Should have message-level groups (SG2) and transaction group (SG4)
     let sg2 = tree.groups.iter().find(|g| g.group_id == "SG2");

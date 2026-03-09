@@ -99,6 +99,7 @@ fn test_complex_gas_pids_roundtrip() {
             &tx_engine,
             &mapped,
             utilmd_gas::TX_GROUP,
+            Some(&filtered_mig),
         );
         assert!(
             !reverse_tree.segments.is_empty(),
@@ -260,6 +261,7 @@ fn run_generated_roundtrip(pid: &str) {
         &tx_engine,
         &mapped,
         utilmd_gas::TX_GROUP,
+        Some(&filtered_mig),
     );
 
     let unh_assembled = test_utils::owned_to_assembled(&msg_chunk.unh);
