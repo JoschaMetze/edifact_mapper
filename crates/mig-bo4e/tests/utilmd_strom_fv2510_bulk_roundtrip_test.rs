@@ -24,9 +24,7 @@ use mig_assembly::tokenize::{parse_to_segments, split_messages};
 use mig_bo4e::engine::MappingEngine;
 
 /// PIDs with known structural limitations.
-/// 55060: FV2510 MIG has different SG10 CCI ordering than FV2504, causing reverse
-///        segment order mismatch with generated fixtures. Passes with real fixtures.
-const KNOWN_INCOMPLETE: &[&str] = &["55060"];
+const KNOWN_INCOMPLETE: &[&str] = &[];
 
 /// 119 PIDs whose TOMLs were created for generated fixture roundtrip (FV2504 bulk test set).
 /// These pass byte-identical roundtrip with generated fixtures.

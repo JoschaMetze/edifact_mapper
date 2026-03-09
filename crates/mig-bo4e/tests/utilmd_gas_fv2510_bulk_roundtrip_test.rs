@@ -18,10 +18,9 @@ use mig_assembly::tokenize::{parse_to_segments, split_messages};
 use mig_bo4e::engine::MappingEngine;
 
 /// PIDs with known structural limitations.
+/// - 44002: FV2510 fixture has PIA after RFF in Z20 block, but MIG defines
+///   PIA before RFF. Assembler drops PIA (out-of-order). FV2504 fixture OK.
 /// - 44013, 44014, 44035: Z02+Z20 PIA merge conflict (same as FV2504).
-/// - 44002: FV2510 generated fixture has PIA in different SG8 position than
-///   FV2504 fixture. TOML reverse ordering tuned for FV2504 order. Passes with
-///   FV2504 fixtures.
 const KNOWN_INCOMPLETE: &[&str] = &["44002", "44013", "44014", "44035"];
 
 #[test]
