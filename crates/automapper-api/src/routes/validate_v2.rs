@@ -142,7 +142,7 @@ pub(crate) async fn validate_v2(
         };
 
     // Step 9: Create condition evaluator and validator
-    let evaluator = automapper_validation::UtilmdConditionEvaluatorFV2504::default();
+    let evaluator = automapper_validation::UtilmdStromConditionEvaluatorFV2504::default();
     let validator = automapper_validation::EdifactValidator::new(evaluator);
 
     // Step 10: Run validation with group navigator
@@ -217,7 +217,7 @@ pub(crate) async fn validate_v2(
 mod tests {
     #[test]
     fn generated_evaluator_returns_unknown_for_unimplemented_conditions() {
-        let evaluator = automapper_validation::UtilmdConditionEvaluatorFV2504::default();
+        let evaluator = automapper_validation::UtilmdStromConditionEvaluatorFV2504::default();
 
         let segments = vec![];
         let external = automapper_validation::eval::NoOpExternalProvider;
@@ -229,7 +229,7 @@ mod tests {
             evaluator.evaluate(999, &ctx),
             automapper_validation::ConditionResult::Unknown
         );
-        assert_eq!(evaluator.message_type(), "UTILMD");
+        assert_eq!(evaluator.message_type(), "UTILMD_Strom");
         assert_eq!(evaluator.format_version(), "FV2504");
     }
 

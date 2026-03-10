@@ -243,7 +243,7 @@ pub(crate) async fn convert_v2(
 
                     let external = automapper_validation::eval::NoOpExternalProvider;
                     let evaluator =
-                        automapper_validation::UtilmdConditionEvaluatorFV2504::default();
+                        automapper_validation::UtilmdStromConditionEvaluatorFV2504::default();
                     let validator = automapper_validation::EdifactValidator::new(evaluator);
 
                     // Assemble tree for navigator + structure diagnostics

@@ -1,6 +1,6 @@
 //! Evaluation context for condition evaluation.
 
-use super::evaluator::ExternalConditionProvider;
+use super::evaluator::{ConditionResult, ExternalConditionProvider};
 use mig_types::navigator::GroupNavigator;
 use mig_types::segment::OwnedSegment;
 
@@ -171,6 +171,221 @@ impl<'a> EvaluationContext<'a> {
             Some(nav) => nav.group_instance_count(group_path),
             None => 0,
         }
+    }
+
+    // --- High-level condition helpers ---
+    // These reduce generated condition evaluator boilerplate by ~50%.
+
+    /// Check if any segment with the given tag + qualifier exists (message-wide).
+    /// Returns `True` if found, `False` if not.
+    pub fn has_qualifier(&self, tag: &str, element_index: usize, qualifier: &str) -> ConditionResult {
+        ConditionResult::from(
+            !self.find_segments_with_qualifier(tag, element_index, qualifier).is_empty(),
+        )
+    }
+
+    /// Check if a segment with given tag + qualifier does NOT exist (message-wide).
+    /// Returns `True` if absent, `False` if present.
+    pub fn lacks_qualifier(&self, tag: &str, element_index: usize, qualifier: &str) -> ConditionResult {
+        ConditionResult::from(
+            self.find_segments_with_qualifier(tag, element_index, qualifier).is_empty(),
+        )
+    }
+
+    /// Check if any segment with the given tag + qualifier has a specific sub-element value.
+    ///
+    /// Finds segments matching `tag` with `elements[qual_elem][0] == qualifier`,
+    /// then checks if `elements[value_elem][value_comp]` matches any of `values`.
+    pub fn has_qualified_value(
+        &self,
+        tag: &str,
+        qual_elem: usize,
+        qualifier: &str,
+        value_elem: usize,
+        value_comp: usize,
+        values: &[&str],
+    ) -> ConditionResult {
+        let segments = self.find_segments_with_qualifier(tag, qual_elem, qualifier);
+        if segments.is_empty() {
+            return ConditionResult::Unknown;
+        }
+        for seg in &segments {
+            if let Some(v) = seg.elements.get(value_elem).and_then(|e| e.get(value_comp)).map(|s| s.as_str()) {
+                if values.contains(&v) {
+                    return ConditionResult::True;
+                }
+            }
+        }
+        ConditionResult::False
+    }
+
+    /// Group-scoped qualifier existence check with message-wide fallback.
+    ///
+    /// Checks if any group instance at `group_path` contains a segment matching
+    /// `tag` with `elements[element_index][0] == qualifier`. Falls back to
+    /// message-wide search if no group navigator is available.
+    pub fn any_group_has_qualifier(
+        &self,
+        tag: &str,
+        element_index: usize,
+        qualifier: &str,
+        group_path: &[&str],
+    ) -> ConditionResult {
+        let instance_count = self.group_instance_count(group_path);
+        if instance_count > 0 {
+            for i in 0..instance_count {
+                if !self
+                    .find_segments_with_qualifier_in_group(tag, element_index, qualifier, group_path, i)
+                    .is_empty()
+                {
+                    return ConditionResult::True;
+                }
+            }
+            return ConditionResult::False;
+        }
+        // Fallback: message-wide search
+        self.has_qualifier(tag, element_index, qualifier)
+    }
+
+    /// Group-scoped segment existence check (any tag match, no qualifier).
+    ///
+    /// Checks if any group instance at `group_path` contains a segment with
+    /// `elements[element_index][0]` matching any of `qualifiers`. Falls back
+    /// to message-wide search if no group navigator is available.
+    pub fn any_group_has_any_qualifier(
+        &self,
+        tag: &str,
+        element_index: usize,
+        qualifiers: &[&str],
+        group_path: &[&str],
+    ) -> ConditionResult {
+        let instance_count = self.group_instance_count(group_path);
+        if instance_count > 0 {
+            for i in 0..instance_count {
+                let segs = self.find_segments_in_group(tag, group_path, i);
+                if segs.iter().any(|seg| {
+                    seg.elements
+                        .get(element_index)
+                        .and_then(|e| e.first())
+                        .map(|s| s.as_str())
+                        .is_some_and(|v| qualifiers.contains(&v))
+                }) {
+                    return ConditionResult::True;
+                }
+            }
+            return ConditionResult::False;
+        }
+        // Fallback: message-wide search
+        let found = self.find_segments(tag).iter().any(|seg| {
+            seg.elements
+                .get(element_index)
+                .and_then(|e| e.first())
+                .map(|s| s.as_str())
+                .is_some_and(|v| qualifiers.contains(&v))
+        });
+        ConditionResult::from(found)
+    }
+
+    /// Group-scoped check for sub-element value within qualified segments.
+    ///
+    /// For each group instance at `group_path`, checks if a segment matching
+    /// `tag` with `elements[qual_elem][0] == qualifier` has
+    /// `elements[value_elem][value_comp]` in `values`. Falls back to message-wide.
+    pub fn any_group_has_qualified_value(
+        &self,
+        tag: &str,
+        qual_elem: usize,
+        qualifier: &str,
+        value_elem: usize,
+        value_comp: usize,
+        values: &[&str],
+        group_path: &[&str],
+    ) -> ConditionResult {
+        let instance_count = self.group_instance_count(group_path);
+        if instance_count > 0 {
+            for i in 0..instance_count {
+                let segs = self
+                    .find_segments_with_qualifier_in_group(tag, qual_elem, qualifier, group_path, i);
+                for seg in &segs {
+                    if seg
+                        .elements
+                        .get(value_elem)
+                        .and_then(|e| e.get(value_comp))
+                        .map(|s| s.as_str())
+                        .is_some_and(|v| values.contains(&v))
+                    {
+                        return ConditionResult::True;
+                    }
+                }
+            }
+            return ConditionResult::False;
+        }
+        // Fallback: message-wide search
+        self.has_qualified_value(tag, qual_elem, qualifier, value_elem, value_comp, values)
+    }
+
+    /// Group-scoped co-occurrence check: two segment conditions must both be true
+    /// in the same group instance.
+    ///
+    /// For each group instance, checks that:
+    /// 1. A segment with `tag_a` has `elements[elem_a][0]` in `quals_a`
+    /// 2. A segment with `tag_b` has `elements[elem_b][comp_b]` in `vals_b`
+    ///
+    /// Falls back to message-wide search.
+    #[allow(clippy::too_many_arguments)]
+    pub fn any_group_has_co_occurrence(
+        &self,
+        tag_a: &str,
+        elem_a: usize,
+        quals_a: &[&str],
+        tag_b: &str,
+        elem_b: usize,
+        comp_b: usize,
+        vals_b: &[&str],
+        group_path: &[&str],
+    ) -> ConditionResult {
+        let instance_count = self.group_instance_count(group_path);
+        if instance_count > 0 {
+            for i in 0..instance_count {
+                let a_present = self.find_segments_in_group(tag_a, group_path, i).iter().any(|seg| {
+                    seg.elements
+                        .get(elem_a)
+                        .and_then(|e| e.first())
+                        .map(|s| s.as_str())
+                        .is_some_and(|v| quals_a.contains(&v))
+                });
+                let b_present = self.find_segments_in_group(tag_b, group_path, i).iter().any(|seg| {
+                    seg.elements
+                        .get(elem_b)
+                        .and_then(|e| e.get(comp_b))
+                        .map(|s| s.as_str())
+                        .is_some_and(|v| vals_b.contains(&v))
+                });
+                if a_present && b_present {
+                    return ConditionResult::True;
+                }
+            }
+            return ConditionResult::False;
+        }
+        // Fallback: message-wide
+        let a_found = self.find_segments(tag_a).iter().any(|seg| {
+            seg.elements
+                .get(elem_a)
+                .and_then(|e| e.first())
+                .map(|s| s.as_str())
+                .is_some_and(|v| quals_a.contains(&v))
+        });
+        if !a_found {
+            return ConditionResult::False;
+        }
+        let b_found = self.find_segments(tag_b).iter().any(|seg| {
+            seg.elements
+                .get(elem_b)
+                .and_then(|e| e.get(comp_b))
+                .map(|s| s.as_str())
+                .is_some_and(|v| vals_b.contains(&v))
+        });
+        ConditionResult::from(b_found)
     }
 }
 
@@ -380,5 +595,144 @@ mod tests {
         assert!(ctx.has_segment_in_group("SEQ", &["SG4", "SG8"], 0));
         assert!(!ctx.has_segment_in_group("CCI", &["SG4", "SG8"], 0));
         assert!(!ctx.has_segment_in_group("SEQ", &["SG4", "SG5"], 0));
+    }
+
+    // --- High-level helper tests ---
+
+    #[test]
+    fn test_has_qualifier() {
+        let segments = vec![
+            make_segment("NAD", vec![vec!["MS"], vec!["111"]]),
+            make_segment("NAD", vec![vec!["MR"], vec!["222"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("11001", &external, &segments);
+
+        assert_eq!(ctx.has_qualifier("NAD", 0, "MS"), ConditionResult::True);
+        assert_eq!(ctx.has_qualifier("NAD", 0, "DP"), ConditionResult::False);
+    }
+
+    #[test]
+    fn test_lacks_qualifier() {
+        let segments = vec![make_segment("DTM", vec![vec!["92", "2025"]])];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("11001", &external, &segments);
+
+        assert_eq!(ctx.lacks_qualifier("DTM", 0, "93"), ConditionResult::True);
+        assert_eq!(ctx.lacks_qualifier("DTM", 0, "92"), ConditionResult::False);
+    }
+
+    #[test]
+    fn test_has_qualified_value() {
+        let segments = vec![
+            make_segment("STS", vec![vec!["7"], vec![], vec!["ZG9"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        assert_eq!(
+            ctx.has_qualified_value("STS", 0, "7", 2, 0, &["ZG9", "ZH1", "ZH2"]),
+            ConditionResult::True,
+        );
+        assert_eq!(
+            ctx.has_qualified_value("STS", 0, "7", 2, 0, &["E01"]),
+            ConditionResult::False,
+        );
+        // No STS+E01 → Unknown
+        assert_eq!(
+            ctx.has_qualified_value("STS", 0, "E01", 2, 0, &["Z01"]),
+            ConditionResult::Unknown,
+        );
+    }
+
+    #[test]
+    fn test_any_group_has_qualifier() {
+        let external = NoOpExternalProvider;
+        let nav = MockGroupNavigator::new()
+            .with_group(
+                &["SG4", "SG8"],
+                0,
+                vec![make_segment("SEQ", vec![vec!["Z01"]])],
+            )
+            .with_group(
+                &["SG4", "SG8"],
+                1,
+                vec![make_segment("SEQ", vec![vec!["Z98"]])],
+            );
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+
+        assert_eq!(
+            ctx.any_group_has_qualifier("SEQ", 0, "Z98", &["SG4", "SG8"]),
+            ConditionResult::True,
+        );
+        assert_eq!(
+            ctx.any_group_has_qualifier("SEQ", 0, "Z99", &["SG4", "SG8"]),
+            ConditionResult::False,
+        );
+    }
+
+    #[test]
+    fn test_any_group_has_qualifier_fallback() {
+        // No navigator — falls back to message-wide search
+        let segments = vec![make_segment("SEQ", vec![vec!["Z98"]])];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        assert_eq!(
+            ctx.any_group_has_qualifier("SEQ", 0, "Z98", &["SG4", "SG8"]),
+            ConditionResult::True,
+        );
+    }
+
+    #[test]
+    fn test_any_group_has_any_qualifier() {
+        let external = NoOpExternalProvider;
+        let nav = MockGroupNavigator::new().with_group(
+            &["SG4", "SG8"],
+            0,
+            vec![make_segment("SEQ", vec![vec!["Z80"]])],
+        );
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+
+        assert_eq!(
+            ctx.any_group_has_any_qualifier("SEQ", 0, &["Z01", "Z80", "Z81"], &["SG4", "SG8"]),
+            ConditionResult::True,
+        );
+        assert_eq!(
+            ctx.any_group_has_any_qualifier("SEQ", 0, &["Z98"], &["SG4", "SG8"]),
+            ConditionResult::False,
+        );
+    }
+
+    #[test]
+    fn test_any_group_has_co_occurrence() {
+        let external = NoOpExternalProvider;
+        let nav = MockGroupNavigator::new().with_group(
+            &["SG4", "SG8"],
+            0,
+            vec![
+                make_segment("SEQ", vec![vec!["Z01"]]),
+                make_segment("CCI", vec![vec!["Z30"], vec![], vec!["Z07"]]),
+            ],
+        );
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+
+        assert_eq!(
+            ctx.any_group_has_co_occurrence(
+                "SEQ", 0, &["Z01"],
+                "CCI", 2, 0, &["Z07"],
+                &["SG4", "SG8"],
+            ),
+            ConditionResult::True,
+        );
+        // Wrong CCI value
+        assert_eq!(
+            ctx.any_group_has_co_occurrence(
+                "SEQ", 0, &["Z01"],
+                "CCI", 2, 0, &["ZC0"],
+                &["SG4", "SG8"],
+            ),
+            ConditionResult::False,
+        );
     }
 }

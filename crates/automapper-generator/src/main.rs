@@ -129,6 +129,13 @@ enum Commands {
         limit: Option<usize>,
     },
 
+    /// Generate stub condition evaluators from AHB XML (no AI, just parses conditions)
+    GenerateConditionStubs {
+        /// Output base directory (e.g., "crates/automapper-validation/src/generated")
+        #[arg(long)]
+        output_dir: PathBuf,
+    },
+
     /// Generate TOML mapping scaffolds from PID schema
     GenerateTomlScaffolds {
         /// Path to MIG XML file
@@ -454,6 +461,376 @@ fn infer_variant(filename: &str) -> Option<&'static str> {
     } else {
         None
     }
+}
+
+/// Configuration for one message type's condition generation across format versions.
+struct ConditionStubConfig {
+    /// Message type key (e.g., "UTILMD_Strom", "INVOIC")
+    key: &'static str,
+    /// Message type for parsing (e.g., "UTILMD")
+    msg_type: &'static str,
+    /// Variant (e.g., "Strom", "Gas", or "")
+    variant: &'static str,
+    /// Which format versions to generate (others are aliased)
+    generate_fvs: &'static [&'static str],
+    /// Alias map: (alias_fv, source_fv) — type alias in alias_fv points to source_fv
+    aliases: &'static [(&'static str, &'static str)],
+}
+
+/// All message type configurations for stub generation.
+const CONDITION_STUB_CONFIGS: &[ConditionStubConfig] = &[
+    // Identical across all 3 FVs — generate FV2504 only
+    ConditionStubConfig { key: "UTILMD_Strom", msg_type: "UTILMD", variant: "Strom", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
+    ConditionStubConfig { key: "UTILMD_Gas", msg_type: "UTILMD", variant: "Gas", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
+    ConditionStubConfig { key: "APERAK", msg_type: "APERAK", variant: "", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
+    ConditionStubConfig { key: "CONTRL", msg_type: "CONTRL", variant: "", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
+    ConditionStubConfig { key: "ORDCHG", msg_type: "ORDCHG", variant: "", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
+    ConditionStubConfig { key: "UTILTS", msg_type: "UTILTS", variant: "", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
+    // FV2504 differs from FV2510, but FV2510=FV2604
+    ConditionStubConfig { key: "IFTSTA", msg_type: "IFTSTA", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
+    ConditionStubConfig { key: "INVOIC", msg_type: "INVOIC", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
+    ConditionStubConfig { key: "ORDRSP", msg_type: "ORDRSP", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
+    ConditionStubConfig { key: "PRICAT", msg_type: "PRICAT", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
+    ConditionStubConfig { key: "QUOTES", msg_type: "QUOTES", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
+    ConditionStubConfig { key: "REQOTE", msg_type: "REQOTE", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
+    // All differ or FV2510≠FV2604
+    ConditionStubConfig { key: "COMDIS", msg_type: "COMDIS", variant: "", generate_fvs: &["FV2504", "FV2510", "FV2604"], aliases: &[] },
+    ConditionStubConfig { key: "MSCONS", msg_type: "MSCONS", variant: "", generate_fvs: &["FV2504", "FV2510", "FV2604"], aliases: &[] },
+    ConditionStubConfig { key: "ORDERS", msg_type: "ORDERS", variant: "", generate_fvs: &["FV2504", "FV2510", "FV2604"], aliases: &[] },
+    ConditionStubConfig { key: "PARTIN", msg_type: "PARTIN", variant: "", generate_fvs: &["FV2504", "FV2510", "FV2604"], aliases: &[] },
+    ConditionStubConfig { key: "REMADV", msg_type: "REMADV", variant: "", generate_fvs: &["FV2504", "FV2510", "FV2604"], aliases: &[] },
+    // INSRPT: only FV2510+ (no FV2504 AHB)
+    ConditionStubConfig { key: "INSRPT", msg_type: "INSRPT", variant: "", generate_fvs: &["FV2510"], aliases: &[("FV2604", "FV2510")] },
+];
+
+/// Generate stub condition evaluator files for all message types.
+fn generate_condition_stubs(
+    output_dir: &std::path::Path,
+) -> Result<(), automapper_generator::GeneratorError> {
+    use automapper_generator::parsing::ahb_parser;
+    use std::collections::{HashMap, HashSet};
+
+    let xml_base = std::path::Path::new("xml-migs-and-ahbs");
+
+    // Track which files belong in each fv directory for mod.rs generation
+    // fv -> Vec<(module_name, struct_name)>
+    let mut fv_modules: HashMap<String, Vec<(String, String)>> = HashMap::new();
+    // fv -> Vec<(alias_module_name, alias_struct_name, source_fv, source_module_name, source_struct_name)>
+    let mut fv_aliases: HashMap<String, Vec<(String, String, String, String, String)>> = HashMap::new();
+
+    for config in CONDITION_STUB_CONFIGS {
+        let key_lower = config.key.to_lowercase();
+
+        for &fv in config.generate_fvs {
+            let fv_lower = fv.to_lowercase();
+            let fv_dir = output_dir.join(&fv_lower);
+            std::fs::create_dir_all(&fv_dir)?;
+
+            // Find AHB XML
+            let ahb_pattern = if config.variant.is_empty() {
+                format!("{}_AHB", config.msg_type)
+            } else {
+                format!("{}_AHB_{}", config.msg_type, config.variant)
+            };
+
+            let ahb_dir = xml_base.join(fv);
+            let ahb_path = std::fs::read_dir(&ahb_dir)
+                .ok()
+                .and_then(|entries| {
+                    entries
+                        .filter_map(|e| e.ok())
+                        .find(|e| {
+                            e.file_name()
+                                .to_string_lossy()
+                                .starts_with(&ahb_pattern)
+                        })
+                        .map(|e| e.path())
+                });
+
+            let ahb_path = match ahb_path {
+                Some(p) => p,
+                None => {
+                    eprintln!("SKIP: No AHB for {} {}", config.key, fv);
+                    continue;
+                }
+            };
+
+            let variant = if config.variant.is_empty() {
+                None
+            } else {
+                Some(config.variant)
+            };
+            let ahb = ahb_parser::parse_ahb(&ahb_path, config.msg_type, variant, fv)?;
+
+            // Extract and sort conditions
+            let mut conditions: Vec<(u32, String)> = ahb
+                .bedingungen
+                .iter()
+                .filter_map(|b| {
+                    b.id.parse::<u32>().ok().map(|id| (id, b.description.clone()))
+                })
+                .collect();
+            conditions.sort_by_key(|(id, _)| *id);
+
+            // Determine external conditions (heuristics)
+            let external_ids: HashSet<u32> = conditions
+                .iter()
+                .filter(|(_, desc)| {
+                    let d = desc.to_lowercase();
+                    d.contains("in der rolle")
+                        || d.contains("aufteilung vorhanden")
+                        || d.contains("datenclearing")
+                        || d.contains("datum bekannt")
+                        || d.contains("korrektur erfolgt")
+                        || d.contains("befristet")
+                        || d.contains("kapitel 6")
+                        || d.contains("codeliste der konfigurationen")
+                })
+                .map(|(id, _)| *id)
+                .collect();
+
+            let struct_name = format!(
+                "{}ConditionEvaluator{}",
+                to_pascal_case(config.key),
+                fv
+            );
+            let module_name = format!("{}_conditions_{}", key_lower, fv_lower);
+            let output_file = fv_dir.join(format!("{}.rs", module_name));
+
+            // Generate the stub file
+            let mut code = String::new();
+            code.push_str(&format!(
+                "// <auto-generated>\n// Stub condition evaluator for {} {}.\n// Source AHB: {}\n// {} conditions extracted. Implementations pending — all return Unknown.\n// </auto-generated>\n\n",
+                config.key, fv,
+                ahb_path.file_name().unwrap_or_default().to_string_lossy(),
+                conditions.len()
+            ));
+            code.push_str("use crate::eval::{ConditionEvaluator, ConditionResult, EvaluationContext};\n\n");
+
+            let mut sorted_ext: Vec<u32> = external_ids.iter().copied().collect();
+            sorted_ext.sort();
+
+            // Struct definition (with derive(Default) when no external conditions)
+            if sorted_ext.is_empty() {
+                code.push_str(&format!("/// Condition evaluator for {} {}.\n#[derive(Default)]\npub struct {} {{\n    external_conditions: std::collections::HashSet<u32>,\n}}\n\n", config.key, fv, struct_name));
+            } else {
+                code.push_str(&format!("/// Condition evaluator for {} {}.\npub struct {} {{\n    external_conditions: std::collections::HashSet<u32>,\n}}\n\n", config.key, fv, struct_name));
+                // Manual Default impl with pre-populated externals
+                code.push_str(&format!("impl Default for {} {{\n    fn default() -> Self {{\n        let mut external_conditions = std::collections::HashSet::new();\n", struct_name));
+                for id in &sorted_ext {
+                    code.push_str(&format!("        external_conditions.insert({});\n", id));
+                }
+                code.push_str("        Self { external_conditions }\n    }\n}\n\n");
+            }
+
+            // ConditionEvaluator impl
+            code.push_str(&format!(
+                "impl ConditionEvaluator for {} {{\n    fn message_type(&self) -> &str {{ \"{}\" }}\n    fn format_version(&self) -> &str {{ \"{}\" }}\n\n",
+                struct_name, config.key, fv
+            ));
+            code.push_str("    fn evaluate(&self, condition: u32, ctx: &EvaluationContext) -> ConditionResult {\n        match condition {\n");
+            for (id, _) in &conditions {
+                code.push_str(&format!("            {} => self.evaluate_{}(ctx),\n", id, id));
+            }
+            code.push_str("            _ => ConditionResult::Unknown,\n        }\n    }\n\n");
+            code.push_str("    fn is_external(&self, condition: u32) -> bool {\n        self.external_conditions.contains(&condition)\n    }\n}\n\n");
+
+            // Individual methods
+            code.push_str(&format!("impl {} {{\n", struct_name));
+            for (id, desc) in &conditions {
+                // Sanitize description for doc comment: single line, no special chars
+                let safe_desc = desc
+                    .replace('\n', " ")
+                    .replace('\r', "")
+                    .replace("\\", "\\\\")
+                    .replace("\"", "\\\"");
+                // Truncate very long descriptions
+                let truncated = if safe_desc.len() > 200 {
+                    format!("{}...", &safe_desc[..197])
+                } else {
+                    safe_desc
+                };
+                code.push_str(&format!("    /// [{}] {}\n", id, truncated.trim()));
+                if external_ids.contains(id) {
+                    let ext_name = derive_external_name(desc);
+                    code.push_str(&format!(
+                        "    fn evaluate_{}(&self, ctx: &EvaluationContext) -> ConditionResult {{\n        ctx.external.evaluate(\"{}\")\n    }}\n\n",
+                        id, ext_name
+                    ));
+                } else {
+                    code.push_str(&format!(
+                        "    fn evaluate_{}(&self, _ctx: &EvaluationContext) -> ConditionResult {{\n        // TODO: implement\n        ConditionResult::Unknown\n    }}\n\n",
+                        id
+                    ));
+                }
+            }
+            code.push_str("}\n");
+
+            std::fs::write(&output_file, &code)?;
+
+            // Run rustfmt
+            let _ = std::process::Command::new("rustfmt")
+                .arg(&output_file)
+                .status();
+
+            eprintln!(
+                "Generated {} ({} conditions, {} external) → {}",
+                struct_name,
+                conditions.len(),
+                external_ids.len(),
+                output_file.display()
+            );
+
+            fv_modules
+                .entry(fv_lower.clone())
+                .or_default()
+                .push((module_name, struct_name));
+        }
+
+        // Record aliases
+        for &(alias_fv, source_fv) in config.aliases {
+            let alias_fv_lower = alias_fv.to_lowercase();
+            let source_fv_lower = source_fv.to_lowercase();
+            let struct_name_alias = format!(
+                "{}ConditionEvaluator{}",
+                to_pascal_case(config.key),
+                alias_fv
+            );
+            let struct_name_source = format!(
+                "{}ConditionEvaluator{}",
+                to_pascal_case(config.key),
+                source_fv
+            );
+            let source_module = format!("{}_conditions_{}", key_lower, source_fv_lower);
+
+            fv_aliases
+                .entry(alias_fv_lower)
+                .or_default()
+                .push((
+                    format!("{}_conditions_{}", key_lower, alias_fv.to_lowercase()),
+                    struct_name_alias,
+                    source_fv_lower,
+                    source_module,
+                    struct_name_source,
+                ));
+        }
+    }
+
+    // Generate mod.rs for each FV directory
+    let mut all_fvs: Vec<String> = fv_modules.keys().chain(fv_aliases.keys()).cloned().collect::<HashSet<_>>().into_iter().collect();
+    all_fvs.sort();
+
+    for fv_lower in &all_fvs {
+        let fv_dir = output_dir.join(fv_lower);
+        std::fs::create_dir_all(&fv_dir)?;
+
+        let mut mod_code = String::new();
+
+        // Real modules
+        if let Some(modules) = fv_modules.get(fv_lower) {
+            for (module_name, struct_name) in modules {
+                mod_code.push_str(&format!("mod {};\npub use {}::{};\n\n", module_name, module_name, struct_name));
+            }
+        }
+
+        // Aliases from other FV directories
+        if let Some(aliases) = fv_aliases.get(fv_lower) {
+            for (_, alias_struct, source_fv, _source_mod, source_struct) in aliases {
+                mod_code.push_str(&format!(
+                    "/// Alias: {} conditions are identical to {}.\npub type {} = super::{}::{};\n\n",
+                    fv_lower.to_uppercase(),
+                    source_fv.to_uppercase(),
+                    alias_struct, source_fv, source_struct
+                ));
+            }
+        }
+
+        let mod_path = fv_dir.join("mod.rs");
+        std::fs::write(&mod_path, &mod_code)?;
+        eprintln!("Wrote {}", mod_path.display());
+    }
+
+    // Generate top-level mod.rs
+    let mut top_mod = String::new();
+    for fv_lower in &all_fvs {
+        top_mod.push_str(&format!("pub mod {};\n", fv_lower));
+    }
+    top_mod.push('\n');
+
+    // Re-export all structs
+    for fv_lower in &all_fvs {
+        if let Some(modules) = fv_modules.get(fv_lower) {
+            for (_, struct_name) in modules {
+                top_mod.push_str(&format!("pub use {}::{};\n", fv_lower, struct_name));
+            }
+        }
+        if let Some(aliases) = fv_aliases.get(fv_lower) {
+            for (_, alias_struct, _, _, _) in aliases {
+                top_mod.push_str(&format!("pub use {}::{};\n", fv_lower, alias_struct));
+            }
+        }
+    }
+
+    let top_mod_path = output_dir.join("mod.rs");
+    std::fs::write(&top_mod_path, &top_mod)?;
+    eprintln!("Wrote {}", top_mod_path.display());
+
+    eprintln!("\nDone! Run `cargo clippy -p automapper-validation -- -D warnings` to verify.");
+    Ok(())
+}
+
+/// Derive a snake_case external condition name from a German description.
+fn derive_external_name(description: &str) -> String {
+    let d = description.to_lowercase();
+    if d.contains("aufteilung vorhanden") {
+        "message_splitting".to_string()
+    } else if d.contains("datenclearing") {
+        "data_clearing_required".to_string()
+    } else if d.contains("datum bekannt") {
+        "date_known".to_string()
+    } else if d.contains("korrektur erfolgt") || d.contains("korrektur/storno") {
+        "correction_in_progress".to_string()
+    } else if d.contains("befristet") {
+        "registration_is_time_limited".to_string()
+    } else if d.contains("nad+mr") && d.contains("rolle lf") {
+        "recipient_is_lf".to_string()
+    } else if d.contains("nad+ms") && d.contains("rolle lf") {
+        "sender_is_lf".to_string()
+    } else if d.contains("nad+mr") && d.contains("rolle") {
+        "recipient_role_check".to_string()
+    } else if d.contains("nad+ms") && d.contains("rolle") {
+        "sender_role_check".to_string()
+    } else if d.contains("in der rolle") {
+        "market_participant_role_check".to_string()
+    } else if d.contains("kapitel 6") || d.contains("codeliste der konfigurationen") {
+        "code_list_membership_check".to_string()
+    } else {
+        // Generate from first few words
+        let words: Vec<&str> = description
+            .split_whitespace()
+            .take(5)
+            .collect();
+        words
+            .join("_")
+            .to_lowercase()
+            .replace(|c: char| !c.is_alphanumeric() && c != '_', "")
+    }
+}
+
+/// Convert a key like "UTILMD_Strom" to PascalCase "UtilmdStrom".
+fn to_pascal_case(s: &str) -> String {
+    s.split('_')
+        .map(|part| {
+            let mut chars = part.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(c) => {
+                    let upper = c.to_uppercase().to_string();
+                    upper + &chars.as_str().to_lowercase()
+                }
+            }
+        })
+        .collect()
 }
 
 fn main() {
@@ -890,6 +1267,10 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             eprintln!("Metadata: {:?}", metadata_path);
             eprintln!("Generation complete!");
 
+            Ok(())
+        }
+        Commands::GenerateConditionStubs { output_dir } => {
+            generate_condition_stubs(&output_dir)?;
             Ok(())
         }
         Commands::GenerateTomlScaffolds {

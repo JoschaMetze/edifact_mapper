@@ -116,7 +116,7 @@ pub(crate) async fn validate_bo4e(
             Box::new(automapper_validation::eval::NoOpExternalProvider)
         };
 
-    let evaluator = automapper_validation::UtilmdConditionEvaluatorFV2504::default();
+    let evaluator = automapper_validation::UtilmdStromConditionEvaluatorFV2504::default();
     let validator = automapper_validation::EdifactValidator::new(evaluator);
 
     let navigator = AssembledTreeNavigator::new(&assembled_tree);

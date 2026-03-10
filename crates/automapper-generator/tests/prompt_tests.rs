@@ -334,15 +334,15 @@ fn test_user_prompt_detects_group_scope() {
 fn test_system_prompt_documents_group_scoped_api() {
     let prompt = build_system_prompt();
     assert!(
-        prompt.contains("find_segments_in_group"),
-        "should document group-scoped find"
+        prompt.contains("any_group_has_qualifier"),
+        "should document group-scoped qualifier helper"
     );
     assert!(
-        prompt.contains("find_segments_with_qualifier_in_group"),
-        "should document group-scoped qualifier find"
+        prompt.contains("any_group_has_any_qualifier"),
+        "should document group-scoped multi-qualifier helper"
     );
     assert!(
-        prompt.contains("group_instance_count"),
-        "should document group instance count"
+        prompt.contains("any_group_has_co_occurrence"),
+        "should document group-scoped co-occurrence helper"
     );
 }

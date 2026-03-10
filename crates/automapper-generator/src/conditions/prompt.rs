@@ -42,11 +42,35 @@ pub struct EvaluationContext<'a> {
 }
 ```
 
-**Helper methods on EvaluationContext:**
+### Low-level segment access methods:
 - `ctx.find_segment("NAD")` → `Option<&OwnedSegment>` — first segment with that ID
 - `ctx.find_segments("NAD")` → `Vec<&OwnedSegment>` — all segments with that ID
 - `ctx.find_segments_with_qualifier("NAD", 0, "MS")` → `Vec<&OwnedSegment>` — segments where `elements[0][0] == "MS"`
 - `ctx.has_segment("LOC")` → `bool` — whether any segment with that ID exists
+
+### High-level condition helpers (PREFERRED — use these for concise code):
+
+**Simple existence/absence checks:**
+- `ctx.has_qualifier(tag, elem, qual)` → `ConditionResult` — True if segment with qualifier exists, False otherwise
+- `ctx.lacks_qualifier(tag, elem, qual)` → `ConditionResult` — True if NO segment with qualifier exists, False otherwise
+
+**Element value checks (with qualifier filter):**
+- `ctx.has_qualified_value(tag, qual_elem, qualifier, value_elem, value_comp, &["V1", "V2"])` → `ConditionResult`
+  - Finds segments matching tag+qualifier, then checks if `elements[value_elem][value_comp]` is in the values list
+  - Returns Unknown if no segment matches the qualifier, False if segment found but value doesn't match, True if matched
+
+**Group-scoped checks (with automatic message-wide fallback):**
+- `ctx.any_group_has_qualifier(tag, elem, qual, group_path)` → `ConditionResult`
+  - Checks if ANY group instance contains segment with qualifier. Falls back to message-wide if no navigator.
+- `ctx.any_group_has_any_qualifier(tag, elem, &["Q1", "Q2"], group_path)` → `ConditionResult`
+  - Same but matches any of several qualifiers.
+- `ctx.any_group_has_qualified_value(tag, qual_elem, qual, val_elem, val_comp, &["V1"], group_path)` → `ConditionResult`
+  - Group-scoped version of has_qualified_value.
+- `ctx.any_group_has_co_occurrence(tag_a, elem_a, &["QA"], tag_b, elem_b, comp_b, &["VB"], group_path)` → `ConditionResult`
+  - Both conditions must be true in the SAME group instance.
+
+**All group-scoped helpers** take `group_path: &[&str]` (e.g., `&["SG4", "SG8"]`) and automatically
+fall back to message-wide search when no group navigator is available.
 
 ## OwnedSegment structure
 
@@ -73,32 +97,21 @@ Example: `STS+7++E01+ZW4+E03`
 → `elements[3] = ["ZW4"]`  (Transaktionsgrund)
 → `elements[4] = ["E03"]`  (Antwortcode)
 
-Example: `LOC+Z16+12345678900`
-→ `elements[0] = ["Z16"]`           (qualifier: Z16=Marktlokation)
-→ `elements[1] = ["12345678900"]`   (location ID)
-
 Example: `DTM+92:202505312200?+00:303`
 → `elements[0] = ["92", "202505312200+00", "303"]`  (qualifier, value, format code)
 
 Example: `RFF+Z13:55001`
 → `elements[0] = ["Z13", "55001"]`  (qualifier, reference value)
 
-**Accessing element values safely:**
-```rust
-// Get element i, component j:
-segment.elements.get(i).and_then(|e| e.get(j)).map(|s| s.as_str())
-
-// Check qualifier (element 0, component 0):
-segment.elements.get(0).and_then(|e| e.first()).is_some_and(|v| v == "MS")
-```
-
 ## ConditionResult
 
 ```rust
 pub enum ConditionResult { True, False, Unknown }
+impl From<bool> for ConditionResult { ... } // true→True, false→False
 ```
 
 Return `Unknown` when the condition cannot be determined from the available segments.
+Use `ConditionResult::from(bool_expr)` to convert bool expressions.
 
 ## ExternalConditionProvider
 
@@ -107,50 +120,6 @@ pub trait ExternalConditionProvider: Send + Sync {
     fn evaluate(&self, condition_name: &str) -> ConditionResult;
 }
 ```
-
-## Group-Scoped Queries (for "in derselben SG8" / "in dieser SG4" conditions)
-
-Some conditions require checking segments within a specific group instance rather than
-searching the entire message. The EvaluationContext provides group-scoped methods:
-
-```rust
-// Find all segments with tag in a specific group instance
-ctx.find_segments_in_group(segment_id, group_path, instance_index) -> Vec<OwnedSegment>
-
-// Find segments with qualifier in a specific group instance
-ctx.find_segments_with_qualifier_in_group(segment_id, element_index, qualifier, group_path, instance_index) -> Vec<OwnedSegment>
-
-// Count how many repetitions of a group exist at the given path
-ctx.group_instance_count(group_path) -> usize
-```
-
-- `group_path` is a slice of group IDs from root, e.g., `&["SG4", "SG8"]`
-- `instance_index` selects which repetition of the innermost group (0-based)
-- These return owned `OwnedSegment` values (not references)
-
-**Fallback pattern:** When the condition says "in derselben SG8", use group-scoped first,
-then fall back to message-wide if the group navigator is not available (returns empty):
-
-```rust
-// Try group-scoped query first
-let group_segs = ctx.find_segments_with_qualifier_in_group("SEQ", 0, "Z98", &["SG4", "SG8"], 0);
-if !group_segs.is_empty() {
-    return ConditionResult::True;
-}
-// Fallback to message-wide search
-let all_segs = ctx.find_segments_with_qualifier("SEQ", 0, "Z98");
-if !all_segs.is_empty() {
-    return ConditionResult::True;
-}
-ConditionResult::False
-```
-
-**Deriving group_path from AHB descriptions:**
-- "in derselben SG8" → group_path = `&["SG4", "SG8"]` (SG8 is nested under SG4 in UTILMD)
-- "in dieser SG4" → group_path = `&["SG4"]`
-
-When a condition is marked GROUP-SCOPED in the user prompt, iterate over all group instances
-using `ctx.group_instance_count(group_path)` and check each instance.
 
 ## Confidence levels
 - **high**: Simple segment existence checks, qualifier comparisons, value matches
@@ -164,10 +133,15 @@ runtime business context (market participant roles, clearing status, product con
 Mark such conditions with `"is_external": true` and provide `"external_name"` with a
 meaningful snake_case identifier.
 
-Common external conditions in UTILMD:
+Common external condition patterns across ALL message types:
 - "Wenn Aufteilung vorhanden" → message_splitting
 - "Datenclearing erforderlich" → data_clearing_required
-- "Wenn MP-ID in ... in der Rolle LF/NB/ÜNB/MSB" → these check market participant roles which are NOT in the EDIFACT data. Mark as external with name like `recipient_is_lf`, `sender_is_nb`, etc.
+- "Wenn MP-ID in ... in der Rolle LF/NB/ÜNB/MSB" → recipient_is_lf, sender_is_nb, etc.
+- "Wenn Datum bekannt" → date_known
+- "Wenn Korrektur/Storno" → correction_in_progress
+- "Wenn befristet" → registration_is_time_limited
+- Product code list membership checks (Kapitel 6 references) → always external
+- Market participant role checks (cannot determine from EDIFACT) → always external
 
 ## CRITICAL: AHB notation vs actual element indices
 AHB condition descriptions use shorthand EDIFACT notation that OMITS intermediate elements.
@@ -180,14 +154,13 @@ the exact `elements[N]` index for every data element and composite. Never guess 
 from the AHB shorthand notation alone.
 
 ## IMPORTANT rules for generated code
-1. Only use the `EvaluationContext` API described above. Do NOT invent fields like `ctx.transaktion`, `ctx.prozessdaten`, etc.
-2. Access segment data through `ctx.find_segment()`, `ctx.find_segments_with_qualifier()`, and element indexing.
-3. Use `.get()` and `.and_then()` for safe element access — never panic on missing data.
-4. When a condition references a specific segment qualifier (e.g., "STS+7", "NAD+MR", "LOC+Z16"), use `ctx.find_segments_with_qualifier()`.
-5. For **low confidence** conditions, set implementation to null.
-6. **Always consult the Segment Structure Reference for element indices.** Do not derive indices from EDIFACT shorthand notation in condition descriptions.
-7. Use `.first()` instead of `.get(0)` — clippy enforces this (`clippy::get_first`).
-8. Prefix unused function parameters with `_` (e.g., `_ctx`) to avoid `unused_variable` warnings.
+1. **PREFER high-level helpers** (`has_qualifier`, `lacks_qualifier`, `has_qualified_value`, `any_group_has_*`) for concise, readable code. Only use low-level segment access when helpers don't cover the pattern.
+2. Only use the `EvaluationContext` API described above. Do NOT invent fields like `ctx.transaktion`, `ctx.prozessdaten`, etc.
+3. Use `.get()` and `.and_then()` for safe element access when using low-level API — never panic on missing data.
+4. For **low confidence** conditions, set implementation to null.
+5. **Always consult the Segment Structure Reference for element indices.** Do not derive indices from EDIFACT shorthand notation in condition descriptions.
+6. Use `.first()` instead of `.get(0)` — clippy enforces this (`clippy::get_first`).
+7. Prefix unused function parameters with `_` (e.g., `_ctx`) to avoid `unused_variable` warnings.
 
 Respond ONLY with a JSON object in this exact format (no markdown, no code blocks):
 {
@@ -520,79 +493,63 @@ fn detect_group_scope(description: &str) -> Option<String> {
 /// Default example implementations for few-shot prompting.
 pub fn default_example_implementations() -> Vec<String> {
     vec![
-        r#"// Example 1: Check if a LOC+Z16 (Marktlokation) segment exists
+        r#"// Example 1: Simple qualifier existence — "Wenn LOC+Z16 vorhanden"
 fn evaluate_494(&self, ctx: &EvaluationContext) -> ConditionResult {
-    if ctx.find_segments_with_qualifier("LOC", 0, "Z16").is_empty() {
-        ConditionResult::False
-    } else {
-        ConditionResult::True
-    }
+    ctx.has_qualifier("LOC", 0, "Z16")
 }"#
         .to_string(),
-        r#"// Example 2: Check STS Transaktionsgrund value (element 3)
-// EDIFACT: STS+7++E01+ZW4+E03 → elements[3][0] = "ZW4"
-fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
-    let sts_segments = ctx.find_segments_with_qualifier("STS", 0, "7");
-    match sts_segments.first() {
-        Some(sts) => {
-            match sts.elements.get(3).and_then(|e| e.first()).map(|s| s.as_str()) {
-                Some("E01") | Some("E02") => ConditionResult::True,
-                Some(_) => ConditionResult::False,
+        r#"// Example 2: Simple qualifier absence — "Wenn DTM+471 nicht vorhanden"
+fn evaluate_12(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.lacks_qualifier("DTM", 0, "471")
+}"#
+        .to_string(),
+        r#"// Example 3: Qualified sub-element value check — "Wenn STS+7 Transaktionsgrund ZG9/ZH1/ZH2"
+// Uses has_qualified_value: find STS with elements[0][0]=="7", check elements[2][0] for values
+fn evaluate_7(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.has_qualified_value("STS", 0, "7", 2, 0, &["ZG9", "ZH1", "ZH2"])
+}"#
+        .to_string(),
+        r#"// Example 4: External condition — cannot determine from message alone
+fn evaluate_1(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.external.evaluate("message_splitting")
+}"#
+        .to_string(),
+        r#"// Example 5: Group-scoped qualifier — "Wenn in derselben SG8 das SEQ+Z98 vorhanden"
+// Automatically iterates group instances and falls back to message-wide.
+fn evaluate_15(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.any_group_has_qualifier("SEQ", 0, "Z98", &["SG4", "SG8"])
+}"#
+        .to_string(),
+        r#"// Example 6: Group-scoped multi-qualifier — "Wenn SEQ+Z01/Z80/Z81 vorhanden"
+fn evaluate_17(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.any_group_has_any_qualifier("SEQ", 0, &["Z01", "Z80", "Z81"], &["SG4", "SG8"])
+}"#
+        .to_string(),
+        r#"// Example 7: Group-scoped co-occurrence — "SEQ+Z01 AND CCI+Z30++Z07 in same SG8"
+fn evaluate_20(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.any_group_has_co_occurrence(
+        "SEQ", 0, &["Z01"],
+        "CCI", 2, 0, &["Z07"],
+        &["SG4", "SG8"],
+    )
+}"#
+        .to_string(),
+        r#"// Example 8: Low-level element value check (when helpers don't fit)
+// Check DTM+Z01 4th character for 'T' or 'R'
+fn evaluate_27(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let dtm_segments = ctx.find_segments_with_qualifier("DTM", 0, "Z01");
+    match dtm_segments.first() {
+        Some(dtm) => {
+            match dtm.elements.first().and_then(|e| e.get(1)).map(|s| s.as_str()) {
+                Some(value) => match value.chars().nth(3) {
+                    Some('T') | Some('R') => ConditionResult::True,
+                    Some(_) => ConditionResult::False,
+                    None => ConditionResult::Unknown,
+                },
                 None => ConditionResult::Unknown,
             }
         }
         None => ConditionResult::Unknown,
-    }
-}"#
-        .to_string(),
-        r#"// Example 3: External condition — cannot determine from message alone
-fn evaluate_1(&self, ctx: &EvaluationContext) -> ConditionResult {
-    // "Wenn Aufteilung vorhanden" — requires external business context
-    ctx.external.evaluate("message_splitting")
-}"#
-        .to_string(),
-        r#"// Example 4: Check RFF reference value
-// EDIFACT: RFF+Z13:55001 → elements[0] = ["Z13", "55001"]
-fn evaluate_17(&self, ctx: &EvaluationContext) -> ConditionResult {
-    let rff_segments = ctx.find_segments_with_qualifier("RFF", 0, "Z13");
-    if rff_segments.is_empty() {
-        ConditionResult::False
-    } else {
-        ConditionResult::True
-    }
-}"#
-        .to_string(),
-        r#"// Example 5: Check DTM date qualifier exists
-// EDIFACT: DTM+92:202505312200+00:303 → elements[0] = ["92", "202505312200+00", "303"]
-fn evaluate_42(&self, ctx: &EvaluationContext) -> ConditionResult {
-    let dtm_segments = ctx.find_segments_with_qualifier("DTM", 0, "92");
-    if dtm_segments.is_empty() {
-        ConditionResult::False
-    } else {
-        ConditionResult::True
-    }
-}"#
-        .to_string(),
-        r#"// Example 6: Group-scoped check — "Wenn in derselben SG8 das SEQ+Z98 vorhanden"
-// Uses group-scoped query with fallback to message-wide search.
-fn evaluate_15(&self, ctx: &EvaluationContext) -> ConditionResult {
-    let group_path = &["SG4", "SG8"];
-    let instance_count = ctx.group_instance_count(group_path);
-    if instance_count > 0 {
-        // Group navigator available — check each SG8 instance
-        for i in 0..instance_count {
-            let segs = ctx.find_segments_with_qualifier_in_group("SEQ", 0, "Z98", group_path, i);
-            if !segs.is_empty() {
-                return ConditionResult::True;
-            }
-        }
-        return ConditionResult::False;
-    }
-    // Fallback: no group navigator, search message-wide
-    if ctx.find_segments_with_qualifier("SEQ", 0, "Z98").is_empty() {
-        ConditionResult::False
-    } else {
-        ConditionResult::True
     }
 }"#
         .to_string(),
