@@ -181,10 +181,7 @@ fn test_fv2510_orders_all_pids_roundtrip() {
         "17203", "17204", "17205", "17206", "17207", "17208", "17209", "17210",
         "17211", "17301",
     ];
-    // KNOWN_INCOMPLETE: PIDs with multiple CCI/CAV TOML definitions in SG29 —
-    // reverse mapper generates phantom CCI segments from empty default values.
-    // Same issue exists in FV2504 (these PIDs weren't individually tested there).
-    let known = ["17118", "17121", "17122", "17128", "17130", "17134"];
+    let known: [&str; 0] = [];
     run_all_generated_roundtrips("ORDERS", &pids, &known, |pid| {
         let fixture = common::orders_fv2510::discover_generated_fixture(pid)?;
         let mig = common::orders_fv2510::load_pid_filtered_mig(pid)?;
