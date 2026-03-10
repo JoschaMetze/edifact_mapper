@@ -254,14 +254,31 @@ fn indent_body(body: &str, spaces: usize) -> String {
 }
 
 fn escape_doc_comment(text: &str) -> String {
-    text.replace('<', "&lt;").replace('>', "&gt;")
+    let sanitized = text
+        .replace('\n', " ")
+        .replace('\r', "")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;");
+    // Truncate very long descriptions
+    if sanitized.len() > 200 {
+        format!("{}...", &sanitized[..197])
+    } else {
+        sanitized
+    }
 }
 
 fn to_pascal_case(input: &str) -> String {
-    if input.is_empty() {
-        return input.to_string();
-    }
-    let mut chars = input.chars();
-    let first = chars.next().unwrap().to_uppercase().to_string();
-    first + &chars.as_str().to_lowercase()
+    input
+        .split('_')
+        .map(|part| {
+            let mut chars = part.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(c) => {
+                    let upper = c.to_uppercase().to_string();
+                    upper + &chars.as_str().to_lowercase()
+                }
+            }
+        })
+        .collect()
 }
