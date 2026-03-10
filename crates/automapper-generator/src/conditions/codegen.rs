@@ -202,7 +202,7 @@ fn generate_condition_method(code: &mut String, condition: &GeneratedCondition) 
         || condition.confidence == ConfidenceLevel::Medium
     {
         if let Some(ref rust_code) = condition.rust_code {
-            code.push_str(&indent_body(rust_code, 8));
+            code.push_str(&indent_body(&strip_duplicate_fn_wrapper(rust_code, num), 8));
         } else {
             code.push_str(&format!("        // TODO: Implement condition [{}]\n", num));
             code.push_str("        ConditionResult::Unknown\n");
@@ -251,6 +251,32 @@ fn indent_body(body: &str, spaces: usize) -> String {
         }
     }
     result
+}
+
+/// Strip duplicate fn wrapper that Claude sometimes generates.
+///
+/// The LLM may return code like:
+/// ```text
+/// fn evaluate_42(&self, ctx: &EvaluationContext) -> ConditionResult {
+///     ctx.has_qualifier("LOC", 0, "Z16")
+/// }
+/// ```
+/// when only the body is expected. This strips the outer fn + closing brace.
+fn strip_duplicate_fn_wrapper(code: &str, condition_num: u32) -> String {
+    let trimmed = code.trim();
+    let fn_prefix = format!("fn evaluate_{}", condition_num);
+
+    if trimmed.starts_with(&fn_prefix) {
+        // Find the opening brace of the fn
+        if let Some(brace_pos) = trimmed.find('{') {
+            let after_brace = &trimmed[brace_pos + 1..];
+            // Strip the trailing closing brace
+            if let Some(last_brace) = after_brace.rfind('}') {
+                return after_brace[..last_brace].to_string();
+            }
+        }
+    }
+    code.to_string()
 }
 
 fn escape_doc_comment(text: &str) -> String {
