@@ -1,0 +1,32 @@
+# Nachricht (message header) mapping for ORDERS.
+#
+# Source: Root-level segments (outside any SG group)
+# BGM+Z34+FELLERM4168127BGM  → dokumenttyp, dokumentennummer
+# DTM+137:20250324...         → erstellungsdatum
+# DTM+203:...                 → auftragsdatum (optional)
+# DTM+469:...                 → sperrdatum (optional)
+# IMD++Z12                    → abonnement (optional)
+# UNS+S                       → section separator
+
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+source_group = ""
+source_path = ""
+
+[fields]
+"bgm.c002.d1001" = "dokumenttyp"
+"bgm.c106.d1004" = "dokumentennummer"
+"dtm[137].c507.d2005" = { target = "", default = "137" }
+"dtm[137].c507.d2380" = "erstellungsdatum"
+"dtm[137].c507.d2379" = { target = "", default = "303" }
+"dtm[203].c507.d2005" = { target = "", default = "203" }
+"dtm[203].c507.d2380" = "auftragsdatum"
+"dtm[203].c507.d2379" = { target = "", default = "303" }
+"dtm[469].c507.d2005" = { target = "", default = "469" }
+"dtm[469].c507.d2380" = "sperrdatum"
+"dtm[469].c507.d2379" = { target = "", default = "303" }
+"imd.c272.d7081" = "abonnement"
+
+# UNS section separator — always "S" for ORDERS summary section
+"uns.d0081" = { target = "", default = "S" }

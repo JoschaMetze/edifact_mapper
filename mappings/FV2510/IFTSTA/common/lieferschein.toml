@@ -1,0 +1,26 @@
+# Lieferschein — SG14.SG15.SG16 EFI+DTM+QTY for IFTSTA Family B.
+#
+# EFI group nested under SG15. Auto-filtered by PidSchemaIndex
+# for PIDs without SG16.
+
+[meta]
+entity = "Lieferschein"
+bo4e_type = "Lieferschein"
+source_group = "SG14.SG15.SG16"
+source_path = "sg14.sg15.sg16"
+
+[fields]
+"efi.c077.d1508" = "dateiname"
+"efi.c077.d7008" = "produktbeschreibung"
+"dtm[163].c507.d2005" = { target = "", default = "163" }
+"dtm[163].c507.d2380" = "lieferscheinDatumVon"
+"dtm[163].c507.d2379" = { target = "", default = "303" }
+"dtm[164].c507.d2005" = { target = "", default = "164" }
+"dtm[164].c507.d2380" = "lieferscheinDatumBis"
+"dtm[164].c507.d2379" = { target = "", default = "303" }
+"dtm[306].c507.d2005" = { target = "", default = "306" }
+"dtm[306].c507.d2380" = "lieferscheinPeriode"
+"dtm[306].c507.d2379" = { target = "", default = "610" }
+"qty.c186.d6063" = "mengeQualifier"
+"qty.c186.d6060" = "menge"
+"qty.c186.d6411" = "masseinheit"

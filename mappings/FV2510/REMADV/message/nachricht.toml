@@ -1,0 +1,30 @@
+# Nachricht (message header) mapping for REMADV.
+#
+# Source: Root-level segments (outside any SG group)
+# BGM+481+ALEXANDE822199BGM  → dokumenttyp, dokumentennummer
+# DTM+137:20241126...         → erstellungsdatum
+# RFF+Z13:33001               → pruefidentifikator
+# UNS+S                       → section separator
+# MOA+12:56                   → ueberweisungsbetrag (summary, after UNS+S)
+
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+source_group = ""
+source_path = ""
+
+[fields]
+"bgm.c002.d1001" = "dokumenttyp"
+"bgm.c106.d1004" = "dokumentennummer"
+"dtm[137].c507.d2005" = { target = "", default = "137" }
+"dtm[137].c507.d2380" = "erstellungsdatum"
+"dtm[137].c507.d2379" = { target = "", default = "303" }
+"rff[Z13].c506.d1153" = { target = "", default = "Z13" }
+"rff[Z13].c506.d1154" = "pruefidentifikator"
+
+# UNS section separator — always "S" for REMADV summary section
+# IMPORTANT: UNS must come BEFORE summary MOA — reverse mapper uses field order,
+# and the engine moves UNS + all subsequent segments to inter_group_segments.
+"uns.d0081" = { target = "", default = "S" }
+"moa[12].c516.d5025" = { target = "", default = "12" }
+"moa[12].c516.d5004" = "ueberweisungsbetrag"

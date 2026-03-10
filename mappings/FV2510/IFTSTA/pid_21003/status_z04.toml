@@ -1,0 +1,15 @@
+# Status mapping for IFTSTA Family A PID 21003 — STS variant Z04.
+#
+# SG4.SG7: STS with C601+C555 only (d4405+d1131 in C555, no C556).
+
+[meta]
+entity = "StatusZ04"
+bo4e_type = "StatusZ04"
+source_group = "SG4.SG7"
+source_path = "sg4.sg7"
+discriminator = "STS.c601.d9015=Z04"
+
+[fields]
+"sts.c601.d9015" = "statusKategorie"
+"sts.c555.d4405" = "pruefschrittCode"
+"sts.c555.d1131" = "ebdNummer"

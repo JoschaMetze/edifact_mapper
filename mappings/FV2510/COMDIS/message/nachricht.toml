@@ -1,0 +1,27 @@
+# Nachricht (message header) mapping for COMDIS.
+#
+# Source: Root-level segments (outside any SG group) — MIG order: BGM, RFF, DTM, CUX
+# BGM+456+ALEXANDE361352BGM    → dokumenttyp, dokumentennummer
+# RFF+Z13:29001                → pruefidentifikator
+# DTM+137:202504270524?+00:303 → erstellungsdatum
+# CUX+2:EUR:4                  → waehrungsverwendung, waehrungCode, waehrungQualifier
+#
+# CUX is only present in PID 29001 — mapped as data fields to prevent phantom for 29002.
+
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+source_group = ""
+source_path = ""
+
+[fields]
+"bgm.c002.d1001" = "dokumenttyp"
+"bgm.c106.d1004" = "dokumentennummer"
+"rff[Z13].c506.d1153" = { target = "", default = "Z13" }
+"rff[Z13].c506.d1154" = "pruefidentifikator"
+"dtm[137].c507.d2005" = { target = "", default = "137" }
+"dtm[137].c507.d2380" = "erstellungsdatum"
+"dtm[137].c507.d2379" = { target = "", default = "303" }
+"cux.c504.d6347" = "waehrungsverwendung"
+"cux.c504.d6345" = "waehrungCode"
+"cux.c504.d6343" = "waehrungQualifier"

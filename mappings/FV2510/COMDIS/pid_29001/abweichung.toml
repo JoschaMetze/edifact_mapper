@@ -1,0 +1,29 @@
+# Abweichung (rejection reason) mapping for COMDIS PID 29001.
+#
+# Source: SG2.SG3 → AJT + FTX[ACD] + FTX[ACB]
+# AJT+A99+S_0109                → pruefschrittCode, ebdReferenz
+# FTX+ACD+X+Z07+X:X:X:X        → referenz fields (optional, 29001 only)
+# FTX+ACB+++fehlerhafte Ablehung! → freitext (optional)
+#
+# Both FTX variants as data fields to prevent phantom when absent.
+
+[meta]
+entity = "Abweichung"
+bo4e_type = "Abweichung"
+source_group = "SG2.SG3"
+source_path = "sg2.sg3"
+
+[fields]
+"ajt.d4465" = "pruefschrittCode"
+"ajt.d1082" = "ebdReferenz"
+"ftx[ACD].d4451" = "referenzQualifier"
+"ftx[ACD].d4453" = "referenzTextFunktion"
+"ftx[ACD].c107.d4441" = "referenzNachrichtentyp"
+"ftx[ACD].c108.d4440" = "datenaustauschreferenz"
+"ftx[ACD].c108.d4440_2" = "nachrichtennummer"
+"ftx[ACD].c108.d4440_3" = "empfangsbestaetigungRef"
+"ftx[ACD].c108.d4440_4" = "aperakNachrichtennummer"
+"ftx[ACB].d4451" = "freitextQualifier"
+"ftx[ACB].d4453" = "freitextFunktion"
+"ftx[ACB].c107.d4441" = "freitextReferenz"
+"ftx[ACB].c108.d4440" = "freitext"

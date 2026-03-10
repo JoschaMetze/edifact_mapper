@@ -1,0 +1,13 @@
+# SG26.SG39.SG41 (PCD) — surcharge percentage for INVOIC PID 31002.
+#
+# PCD+3 (Zu-/Abschlag Prozentsatz) under ALC+C (Zuschlag).
+
+[meta]
+entity = "VorgangZuschlagProzent"
+bo4e_type = "VorgangZuschlagProzent"
+source_group = "SG26.SG39.SG41"
+source_path = "sg26.sg39_c.sg41"
+
+[fields]
+"pcd.c501.d5245" = "prozentQualifier"
+"pcd.c501.d5482" = "prozentsatz"

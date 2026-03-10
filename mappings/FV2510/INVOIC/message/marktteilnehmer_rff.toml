@@ -1,0 +1,14 @@
+# SG2.SG3 (RFF) — party references for INVOIC.
+#
+# RFF+VA (Umsatzsteuernummer) and RFF+FC (Steuernummer).
+# No discriminator — produces array of references per SG2 rep.
+
+[meta]
+entity = "MarktteilnehmerReferenz"
+bo4e_type = "MarktteilnehmerReferenz"
+source_group = "SG2.SG3"
+source_path = "sg2.sg3"
+
+[fields]
+"rff.c506.d1153" = "qualifier"
+"rff.c506.d1154" = "referenz"

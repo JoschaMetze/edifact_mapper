@@ -49,14 +49,13 @@ pub fn build_mig_group_order(mig: &MigSchema, tx_group_id: &str) -> HashMap<Stri
         base_order.entry(sg.id.clone()).or_insert(i + 1000);
     }
 
-    // Step 2: For each possible schema key, compute a sort key based on:
-    //   (base_group_mig_position * 1000 + alphabetical_qualifier_rank)
-    // This preserves MIG order for different group IDs while keeping qualifier
-    // ordering alphabetical within the same group (which matches the assembler's
-    // rep ordering within a group).
-    //
-    // We don't have the full schema key list here, so we return the base_order
-    // keyed by group ID. The caller maps schema keys to base group IDs.
+    // Step 2: Index root segment ordering by segment ID (e.g., "BGM" → 1, "RFF" → 2).
+    // This allows generate_fixture() to emit root segments in MIG order.
+    // Use a "_root_" prefix to avoid collision with group IDs.
+    for (i, seg) in mig.segments.iter().enumerate() {
+        base_order.insert(format!("_root_{}", seg.id), i);
+    }
+
     base_order
 }
 
@@ -89,11 +88,22 @@ pub fn generate_fixture(schema: &Value, mig_order: Option<&HashMap<String, usize
     }
 
     // 3. Non-envelope root segments (BGM, DTM — skip UNH/UNT)
-    for seg in root_segments {
-        let id = seg["id"].as_str().unwrap_or("");
-        if id != "UNH" && id != "UNT" {
-            segments.push(generate_segment_with_placeholders(seg));
-        }
+    //    Sort by MIG order when available, to match the assembler's expectations.
+    let mut non_envelope: Vec<&Value> = root_segments
+        .iter()
+        .filter(|s| {
+            let id = s["id"].as_str().unwrap_or("");
+            id != "UNH" && id != "UNT"
+        })
+        .collect();
+    if let Some(order) = mig_order {
+        non_envelope.sort_by_key(|s| {
+            let id = s["id"].as_str().unwrap_or("");
+            order.get(&format!("_root_{id}")).copied().unwrap_or(usize::MAX)
+        });
+    }
+    for seg in non_envelope {
+        segments.push(generate_segment_with_placeholders(seg));
     }
 
     // 4. Walk the fields tree depth-first, sorted by MIG order (if available)
@@ -147,9 +157,10 @@ pub fn generate_enhanced_fixture(
     tx_engine: &MappingEngine,
     seed: u64,
     variant: usize,
+    tx_group: &str,
 ) -> Result<String, crate::error::GeneratorError> {
     // Step 1: Generate basic fixture with placeholder values (MIG-ordered)
-    let mig_order = build_mig_group_order(filtered_mig, "SG4");
+    let mig_order = build_mig_group_order(filtered_mig, tx_group);
     let edi = generate_fixture(schema, Some(&mig_order));
 
     // Step 2: Tokenize
@@ -184,7 +195,7 @@ pub fn generate_enhanced_fixture(
 
     // Step 6: Forward map to MappedMessage
     let mut mapped =
-        MappingEngine::map_interchange(msg_engine, tx_engine, &original_tree, "SG4", true);
+        MappingEngine::map_interchange(msg_engine, tx_engine, &original_tree, tx_group, true);
 
     // Step 7: Enhance with realistic values
     // Collect all definitions from both engines for code map building
@@ -196,7 +207,7 @@ pub fn generate_enhanced_fixture(
 
     // Step 8: Reverse map back to AssembledTree
     let mut reverse_tree =
-        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, "SG4", Some(filtered_mig));
+        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, tx_group, Some(filtered_mig));
 
     // Add UNH envelope (mapping engine handles content only)
     let unh_assembled = owned_to_assembled(&msg_chunk.unh);

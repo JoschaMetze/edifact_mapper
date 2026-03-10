@@ -1,0 +1,17 @@
+# SG2.SG3 (RFF) — market participant references within SG2.
+#
+# Some ORDERS PIDs have RFF segments within SG2 (after NAD):
+#   RFF+Z18:50708125048    → external reference
+#   RFF+AGK:config-id      → Konfigurations-ID
+#
+# No discriminator — each SG3 produces one array element.
+
+[meta]
+entity = "TeilnehmerReferenz"
+bo4e_type = "TeilnehmerReferenz"
+source_group = "SG2.SG3"
+source_path = "sg2.sg3"
+
+[fields]
+"rff.c506.d1153" = "qualifier"
+"rff.c506.d1154" = "referenz"

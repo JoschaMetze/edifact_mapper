@@ -1,0 +1,19 @@
+# Abweichung (rejection reason) mapping for COMDIS PID 29002.
+#
+# Source: SG2.SG3 → AJT + FTX[ACB] only (no ACD variant for delivery note rejection)
+# AJT+X+S_0108     → pruefschrittCode, ebdReferenz
+# FTX+ACB+X+X+X    → freitext (optional)
+
+[meta]
+entity = "Abweichung"
+bo4e_type = "Abweichung"
+source_group = "SG2.SG3"
+source_path = "sg2.sg3"
+
+[fields]
+"ajt.d4465" = "pruefschrittCode"
+"ajt.d1082" = "ebdReferenz"
+"ftx[ACB].d4451" = "freitextQualifier"
+"ftx[ACB].d4453" = "freitextFunktion"
+"ftx[ACB].c107.d4441" = "freitextReferenz"
+"ftx[ACB].c108.d4440" = "freitext"

@@ -1,0 +1,18 @@
+# Status mapping for IFTSTA Family B — SG14.SG15 (STS + RFF+Z13).
+#
+# Base status mapping used by PIDs with only STS + RFF+Z13 in SG15.
+# PIDs with extra RFF/DTM segments override this file in their pid_XXXXX dir.
+
+[meta]
+entity = "Status"
+bo4e_type = "Status"
+source_group = "SG14.SG15"
+source_path = "sg14.sg15"
+
+[fields]
+"sts.c601.d9015" = "statusKategorie"
+"sts.c555.d4405" = "statusCode"
+"sts.c556.d9013" = "pruefschrittCode"
+"sts.c556.d1131" = "ebdNummer"
+"rff[Z13].c506.d1153" = { target = "", default = "Z13" }
+"rff[Z13].c506.d1154" = "pruefidentifikator"

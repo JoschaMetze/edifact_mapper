@@ -1,0 +1,24 @@
+# Status mapping override for IFTSTA PID 21045.
+#
+# STS + RFF[Z13] + DTM[273]
+# STS has 5 repeated C556 composites (ordinal suffixes c556_2..c556_5).
+
+[meta]
+entity = "Status"
+bo4e_type = "Status"
+source_group = "SG14.SG15"
+source_path = "sg14.sg15"
+
+[fields]
+"sts.c601.d9015" = "statusKategorie"
+"sts.c555.d4405" = "statusCode"
+"sts.c556.d9013" = "pruefschrittCode1"
+"sts.c556_2.d9013" = "pruefschrittCode2"
+"sts.c556_3.d9013" = "pruefschrittCode3"
+"sts.c556_4.d9013" = "pruefschrittCode4"
+"sts.c556_5.d9013" = "pruefschrittCode5"
+"rff[Z13].c506.d1153" = { target = "", default = "Z13" }
+"rff[Z13].c506.d1154" = "pruefidentifikator"
+"dtm[273].c507.d2005" = { target = "", default = "273" }
+"dtm[273].c507.d2380" = "lieferdatum"
+"dtm[273].c507.d2379" = { target = "", default = "602" }

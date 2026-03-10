@@ -1,0 +1,15 @@
+# Vorgang (transaction) mapping for IFTSTA Family B — SG14 (CNI + optional LOC).
+#
+# CNI+1             → vorgangsnummer
+# LOC+172+10018140350 → meldepunktId (auto-omitted when absent)
+
+[meta]
+entity = "Vorgang"
+bo4e_type = "Vorgang"
+source_group = "SG14"
+source_path = "sg14"
+
+[fields]
+"cni.d1490" = "vorgangsnummer"
+"loc.d3227" = "locQualifier"
+"loc.c517.d3225" = "meldepunktId"

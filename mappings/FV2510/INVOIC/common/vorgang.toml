@@ -1,0 +1,37 @@
+# SG26 (LIN + QTY + DTM) — line item for INVOIC.
+#
+# LIN entry segment with article ID.
+# QTY+47 (fakturierte Menge), QTY+136 (Zeitintervall) — both optional per PID.
+# QTY+Z17 (MMM quantity) for PID 31005 only.
+# DTM+155 (Beginn), DTM+156 (Ende), DTM+203 (Auftrag) — optional.
+# All as data fields to handle PID variation.
+
+[meta]
+entity = "Vorgang"
+bo4e_type = "Vorgang"
+source_group = "SG26"
+source_path = "sg26"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+"lin.d1229" = "handlungCode"
+"lin.c212.d7140" = "artikelNummer"
+"lin.c212.d7143" = "artikelNummerTyp"
+"qty[47].c186.d6063" = { target = "", default = "47" }
+"qty[47].c186.d6060" = "menge"
+"qty[47].c186.d6411" = "mengeEinheit"
+"qty[136].c186.d6063" = { target = "", default = "136" }
+"qty[136].c186.d6060" = "zeitMenge"
+"qty[136].c186.d6411" = "zeitEinheit"
+"qty[Z17].c186.d6063" = { target = "", default = "Z17" }
+"qty[Z17].c186.d6060" = "mmmMenge"
+"qty[Z17].c186.d6411" = "mmmEinheit"
+"dtm[155].c507.d2005" = { target = "", default = "155" }
+"dtm[155].c507.d2380" = "beginndatum"
+"dtm[155].c507.d2379" = { target = "", default = "303" }
+"dtm[156].c507.d2005" = { target = "", default = "156" }
+"dtm[156].c507.d2380" = "endedatum"
+"dtm[156].c507.d2379" = { target = "", default = "303" }
+"dtm[203].c507.d2005" = { target = "", default = "203" }
+"dtm[203].c507.d2380" = "auftragsdatum"
+"dtm[203].c507.d2379" = "auftragsdatumFormat"

@@ -1,0 +1,16 @@
+# SG4 — ERC error code + FTX+ABO deviation info
+
+[meta]
+entity = "Fehler"
+bo4e_type = "Fehler"
+companion_type = "FehlerEdifact"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"erc.c901.d9321" = "fehlerCode"
+
+[companion_fields]
+"ftx[ABO].c108.d4440" = "abweichungsInfo"
+"ftx[ABO].c108.d4440_2" = "abweichungsInfoZusatz"
+"ftx[ABO].d4451" = { target = "", default = "ABO" }

@@ -1,0 +1,17 @@
+# SG26.SG29 (PRI) — price for INVOIC.
+#
+# PRI+CAL with price, type, specification, basis, unit.
+
+[meta]
+entity = "VorgangPreis"
+bo4e_type = "VorgangPreis"
+source_group = "SG26.SG29"
+source_path = "sg26.sg29"
+
+[fields]
+"pri.c509.d5125" = "preisQualifier"
+"pri.c509.d5118" = "preis"
+"pri.c509.d5375" = "preisTyp"
+"pri.c509.d5387" = "preisSpezifikation"
+"pri.c509.d5284" = "einzelpreisbasis"
+"pri.c509.d6411" = "preisEinheit"

@@ -1,0 +1,17 @@
+# Messwert — SG10 QTY/DTM/STS.
+
+[meta]
+entity = "Messwert"
+bo4e_type = "Messwert"
+source_group = "SG5.SG6.SG9.SG10"
+source_path = "sg5.sg6_107.sg9.sg10"
+
+[fields]
+"qty.c186.d6063" = "messwertQualifier"
+"qty.c186.d6060" = "wert"
+"dtm[163].c507.d2005" = { target = "", default = "163" }
+"dtm[163].c507.d2380" = "beginn"
+"dtm[163].c507.d2379" = { target = "", default = "303" }
+"dtm[164].c507.d2005" = { target = "", default = "164" }
+"dtm[164].c507.d2380" = "ende"
+"dtm[164].c507.d2379" = { target = "", default = "303" }

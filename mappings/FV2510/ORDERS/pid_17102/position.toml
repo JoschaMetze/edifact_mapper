@@ -1,0 +1,17 @@
+# Position (SG29) mapping for PID 17102 — Anfrage.
+
+[meta]
+entity = "Position"
+bo4e_type = "Position"
+source_group = "SG29"
+source_path = "sg29"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+"lin.d1229" = "handlungCode"
+"dtm[163].c507.d2005" = { target = "", default = "163" }
+"dtm[163].c507.d2380" = "beginnZeitraum"
+"dtm[163].c507.d2379" = { target = "", default = "303" }
+"dtm[164].c507.d2005" = { target = "", default = "164" }
+"dtm[164].c507.d2380" = "endeZeitraum"
+"dtm[164].c507.d2379" = { target = "", default = "303" }

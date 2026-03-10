@@ -1,0 +1,14 @@
+# SG7 (CUX) — currency for INVOIC.
+#
+# CUX+2:EUR:4 — all data fields prevent phantom generation.
+
+[meta]
+entity = "Waehrung"
+bo4e_type = "Waehrung"
+source_group = "SG7"
+source_path = "sg7"
+
+[fields]
+"cux.c504.d6347" = "waehrungsverwendung"
+"cux.c504.d6345" = "waehrungCode"
+"cux.c504.d6343" = "waehrungQualifier"

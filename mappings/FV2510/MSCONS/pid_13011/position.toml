@@ -1,0 +1,13 @@
+# Position — SG9 LIN/PIA.
+
+[meta]
+entity = "Position"
+bo4e_type = "Position"
+source_group = "SG5.SG6.SG9"
+source_path = "sg5.sg6_z06.sg9"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahl"
+"pia.c212.d7143" = { target = "", default = "SRW" }

@@ -1,0 +1,21 @@
+# SG2 — message-level references (RFF+ACE entry, DTM+171, RFF+AGO, RFF+TN).
+#
+# For acceptance (312): all 4 segments present in SG2.
+# For error (313): only RFF+ACE + DTM+171 in SG2; AGO/TN move to SG5 under SG4.
+
+[meta]
+entity = "Referenz"
+bo4e_type = "Referenz"
+source_group = "SG2"
+source_path = "sg2"
+
+[fields]
+"rff[ACE].c506.d1153" = { target = "", default = "ACE" }
+"rff[ACE].c506.d1154" = "dokumentReferenz"
+"dtm[171].c507.d2005" = { target = "", default = "171" }
+"dtm[171].c507.d2380" = "referenzDatum"
+"dtm[171].c507.d2379" = { target = "", default = "303" }
+"rff[AGO].c506.d1153" = { target = "", default = "AGO" }
+"rff[AGO].c506.d1154" = "nachrichtReferenz"
+"rff[TN].c506.d1153" = { target = "", default = "TN" }
+"rff[TN].c506.d1154" = "vorgangsnummer"

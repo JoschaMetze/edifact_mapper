@@ -1,0 +1,16 @@
+# PID 25008 — Schaltzeitänderung: SG5.SG8_Z73.
+#
+# SEQ+Z73, DTM+Z44 (switch time change point).
+
+[meta]
+entity = "Schaltzeitaenderung"
+bo4e_type = "Schaltzeitaenderung"
+source_group = "SG5.SG8"
+source_path = "sg5.sg8_z73"
+discriminator = "SEQ.d1229=Z73"
+
+[fields]
+"seq.d1229" = { target = "", default = "Z73" }
+"dtm[Z44].c507.d2005" = { target = "", default = "Z44" }
+"dtm[Z44].c507.d2380" = "aenderungsZeitpunkt"
+"dtm[Z44].c507.d2379" = { target = "", default = "303" }

@@ -1,0 +1,45 @@
+# Nachricht (message header) mapping for INVOIC.
+#
+# Root-level segments: BGM, DTM, FTX, GEI, IMD, UNS+S.
+# Extra root DTMs (9, 155, 156, Z42, Z43) present in some real fixtures.
+# GEI only in PID 31002 — data fields prevent phantom generation.
+
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+source_group = ""
+source_path = ""
+
+[fields]
+"bgm.c002.d1001" = "dokumenttyp"
+"bgm.c106.d1004" = "dokumentennummer"
+"bgm.d1225" = "nachrichtenfunktion"
+"dtm[137].c507.d2005" = { target = "", default = "137" }
+"dtm[137].c507.d2380" = "erstellungsdatum"
+"dtm[137].c507.d2379" = { target = "", default = "303" }
+"dtm[9].c507.d2005" = { target = "", default = "9" }
+"dtm[9].c507.d2380" = "zahlungszieldatum"
+"dtm[9].c507.d2379" = { target = "", default = "303" }
+"dtm[155].c507.d2005" = { target = "", default = "155" }
+"dtm[155].c507.d2380" = "beginndatum"
+"dtm[155].c507.d2379" = { target = "", default = "303" }
+"dtm[156].c507.d2005" = { target = "", default = "156" }
+"dtm[156].c507.d2380" = "endedatum"
+"dtm[156].c507.d2379" = { target = "", default = "303" }
+"dtm[Z42].c507.d2005" = { target = "", default = "Z42" }
+"dtm[Z42].c507.d2380" = "abschlagBeginn"
+"dtm[Z42].c507.d2379" = { target = "", default = "303" }
+"dtm[Z43].c507.d2005" = { target = "", default = "Z43" }
+"dtm[Z43].c507.d2380" = "abschlagEnde"
+"dtm[Z43].c507.d2379" = { target = "", default = "303" }
+"ftx.d4451" = "freitextQualifier"
+"ftx.d4453" = "freitextFunktion"
+"ftx.c107.d4441" = "freitextCode"
+"gei.d9649" = "verarbeitungsindikatorQualifier"
+"gei.c012.d7365" = "verarbeitungsindikatorCode"
+"imd.d7077" = "beschreibungsformat"
+"imd.c272.d7081" = "rechnungstyp"
+"imd.c273.d7009" = "einspeisungCode"
+
+# UNS section separator — always "S" for INVOIC summary section
+"uns.d0081" = { target = "", default = "S" }

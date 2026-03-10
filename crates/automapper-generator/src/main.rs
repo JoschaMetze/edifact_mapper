@@ -372,6 +372,11 @@ enum Commands {
         /// Seed for deterministic generation (default: 42)
         #[arg(long, default_value = "42")]
         seed: Option<u64>,
+
+        /// Transaction group ID for enhanced fixture generation (e.g., SG4, SG29, SG5).
+        /// Required for --enhance mode to correctly route through the mapping pipeline.
+        #[arg(long, default_value = "SG4")]
+        tx_group: Option<String>,
     },
 }
 
@@ -1360,6 +1365,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             enhance,
             variants,
             seed,
+            tx_group,
         } => {
             eprintln!("Generating fixture from schema: {:?}", pid_schema);
 
@@ -1400,19 +1406,24 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
 
                 // Resolve mapping directories
                 let fv_lower = fv.to_lowercase();
-                let variant_suffix = var.unwrap_or("Strom");
-                let mappings_base = format!("mappings/{fv}/{msg_type}_{variant_suffix}");
+                let msg_type_lower = msg_type.to_lowercase();
+                let mappings_base = if let Some(v) = var.filter(|v| !v.is_empty()) {
+                    format!("mappings/{fv}/{msg_type}_{v}")
+                } else {
+                    format!("mappings/{fv}/{msg_type}")
+                };
                 let msg_dir = PathBuf::from(format!("{mappings_base}/message"));
                 let tx_dir = PathBuf::from(format!("{mappings_base}/pid_{pid}"));
 
-                if !msg_dir.exists() || !tx_dir.exists() {
+                if !msg_dir.exists() {
                     eprintln!(
-                        "  WARNING: mapping directories not found ({:?} or {:?})",
-                        msg_dir, tx_dir
+                        "  WARNING: message mapping directory not found ({:?})",
+                        msg_dir
                     );
                     eprintln!("  Falling back to unenhanced fixture generation");
 
-                    let mig_order = automapper_generator::fixture_generator::build_mig_group_order(&filtered_mig, "SG4");
+                    let tg = tx_group.as_deref().unwrap_or("SG4");
+                    let mig_order = automapper_generator::fixture_generator::build_mig_group_order(&filtered_mig, tg);
                     let edi = automapper_generator::fixture_generator::generate_fixture(&schema, Some(&mig_order));
                     let seg_count = edi.matches('\'').count();
                     eprintln!("  Generated {} segments (unenhanced)", seg_count);
@@ -1427,14 +1438,14 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
 
                 // Load PathResolver from schema directory
                 let schema_dir = PathBuf::from(format!(
-                    "crates/mig-types/src/generated/{fv_lower}/utilmd/pids"
+                    "crates/mig-types/src/generated/{fv_lower}/{msg_type_lower}/pids"
                 ));
                 let path_resolver =
                     mig_bo4e::path_resolver::PathResolver::from_schema_dir(&schema_dir);
 
                 // Load mapping engines (with common/ inheritance when available)
                 let common_dir = PathBuf::from(format!("{mappings_base}/common"));
-                let (msg_engine, tx_engine) = if common_dir.is_dir() {
+                let (msg_engine, tx_engine) = if common_dir.is_dir() && tx_dir.exists() {
                     let schema_file = schema_dir.join(format!("pid_{pid}_schema.json"));
                     if let Ok(idx) =
                         mig_bo4e::pid_schema_index::PidSchemaIndex::from_schema_file(&schema_file)
@@ -1456,16 +1467,48 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                             .with_path_resolver(path_resolver);
                         (m, t)
                     }
-                } else {
+                } else if common_dir.is_dir() {
+                    // common/ exists but no per-PID dir: load common filtered by schema
+                    let m = mig_bo4e::engine::MappingEngine::load(&msg_dir)?
+                        .with_path_resolver(path_resolver.clone());
+                    let schema_file = schema_dir.join(format!("pid_{pid}_schema.json"));
+                    let t = if let Ok(idx) =
+                        mig_bo4e::pid_schema_index::PidSchemaIndex::from_schema_file(&schema_file)
+                    {
+                        let common_engine = mig_bo4e::engine::MappingEngine::load(&common_dir)?;
+                        let mut common_defs = common_engine.definitions().to_vec();
+                        common_defs.retain(|d| {
+                            d.meta
+                                .source_path
+                                .as_deref()
+                                .map(|sp| idx.has_group(sp))
+                                .unwrap_or(true)
+                        });
+                        mig_bo4e::engine::MappingEngine::from_definitions(common_defs)
+                            .with_path_resolver(path_resolver)
+                    } else {
+                        mig_bo4e::engine::MappingEngine::load(&common_dir)?
+                            .with_path_resolver(path_resolver)
+                    };
+                    (m, t)
+                } else if tx_dir.exists() {
                     let m = mig_bo4e::engine::MappingEngine::load(&msg_dir)?
                         .with_path_resolver(path_resolver.clone());
                     let t = mig_bo4e::engine::MappingEngine::load(&tx_dir)?
+                        .with_path_resolver(path_resolver);
+                    (m, t)
+                } else {
+                    // Message-only: no common/ and no per-PID dir
+                    let m = mig_bo4e::engine::MappingEngine::load(&msg_dir)?
+                        .with_path_resolver(path_resolver.clone());
+                    let t = mig_bo4e::engine::MappingEngine::from_definitions(vec![])
                         .with_path_resolver(path_resolver);
                     (m, t)
                 };
 
                 let variant_count = variants.unwrap_or(1);
                 let base_seed = seed.unwrap_or(42);
+                let tg = tx_group.as_deref().unwrap_or("SG4");
 
                 if variant_count <= 1 {
                     // Single variant: output directly to the specified path
@@ -1476,6 +1519,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                         &tx_engine,
                         base_seed,
                         0,
+                        tg,
                     )?;
 
                     let seg_count = edi.matches('\'').count();
@@ -1507,6 +1551,7 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                                 &tx_engine,
                                 variant_seed,
                                 i,
+                                tg,
                             )?;
 
                         let seg_count = edi.matches('\'').count();

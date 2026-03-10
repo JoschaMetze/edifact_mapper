@@ -1,0 +1,41 @@
+# SG27 — LIN positions with PIA and FTX (URI/Issuer/Subject).
+#
+# Each LIN creates a separate SG27 rep (5 reps for Z64-Z68).
+# FTX and SG28 children are consumed by the last rep only.
+
+[meta]
+entity = "Vorgang"
+bo4e_type = "Vorgang"
+source_group = "SG27"
+source_path = "sg27"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+"lin.d1229" = "handlungCode"
+"pia[5].d4347" = { target = "", default = "5" }
+"pia[5].c212.d7140" = "artikelNummer"
+"pia[5].c212.d7143" = { target = "", default = "Z11" }
+# FTX+Z17 (Zieladresse URI — last rep only)
+"ftx[Z17].d4451" = { target = "", default = "Z17" }
+"ftx[Z17].d4453" = "uriTextfunktion"
+"ftx[Z17].c107.d4441" = "uriFreitextCode"
+"ftx[Z17].c108.d4440" = "zieladresseIpv4"
+"ftx[Z17].c108.d4440_2" = "zieladresseIpv6"
+# FTX+Z24 (Aussteller / Issuer — last rep only)
+"ftx[Z24].d4451" = { target = "", default = "Z24" }
+"ftx[Z24].d4453" = "issuerTextfunktion"
+"ftx[Z24].c107.d4441" = "issuerFreitextCode"
+"ftx[Z24].c108.d4440" = "zertifikatsaussteller"
+"ftx[Z24].c108.d4440_2" = "issuerFreitext2"
+"ftx[Z24].c108.d4440_3" = "issuerFreitext3"
+"ftx[Z24].c108.d4440_4" = "issuerFreitext4"
+"ftx[Z24].c108.d4440_5" = "issuerFreitext5"
+# FTX+Z23 (Zertifikatsnutzer / Subject — last rep only)
+"ftx[Z23].d4451" = { target = "", default = "Z23" }
+"ftx[Z23].d4453" = "subjectTextfunktion"
+"ftx[Z23].c107.d4441" = "subjectFreitextCode"
+"ftx[Z23].c108.d4440" = "zertifikatsnutzer"
+"ftx[Z23].c108.d4440_2" = "subjectFreitext2"
+"ftx[Z23].c108.d4440_3" = "subjectFreitext3"
+"ftx[Z23].c108.d4440_4" = "subjectFreitext4"
+"ftx[Z23].c108.d4440_5" = "subjectFreitext5"

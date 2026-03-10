@@ -83,7 +83,7 @@ fn test_enhanced_fixture_55001() {
     };
 
     // Generate enhanced fixture
-    let result = generate_enhanced_fixture(&schema, &filtered_mig, &msg_engine, &tx_engine, 42, 0);
+    let result = generate_enhanced_fixture(&schema, &filtered_mig, &msg_engine, &tx_engine, 42, 0, "SG4");
 
     let edi = result.expect("generate_enhanced_fixture should succeed for PID 55001");
 
@@ -172,10 +172,10 @@ fn test_enhanced_fixture_deterministic() {
 
     // Generate twice with the same seed — must produce identical output
     let result_a =
-        generate_enhanced_fixture(&schema, &filtered_mig, &msg_engine, &tx_engine, 42, 0)
+        generate_enhanced_fixture(&schema, &filtered_mig, &msg_engine, &tx_engine, 42, 0, "SG4")
             .expect("first generation with seed=42 should succeed");
     let result_b =
-        generate_enhanced_fixture(&schema, &filtered_mig, &msg_engine, &tx_engine, 42, 0)
+        generate_enhanced_fixture(&schema, &filtered_mig, &msg_engine, &tx_engine, 42, 0, "SG4")
             .expect("second generation with seed=42 should succeed");
 
     assert_eq!(
@@ -185,7 +185,7 @@ fn test_enhanced_fixture_deterministic() {
 
     // Generate with a different seed — should produce different output
     let result_c =
-        generate_enhanced_fixture(&schema, &filtered_mig, &msg_engine, &tx_engine, 99, 0)
+        generate_enhanced_fixture(&schema, &filtered_mig, &msg_engine, &tx_engine, 99, 0, "SG4")
             .expect("generation with seed=99 should succeed");
 
     assert_ne!(
