@@ -47,7 +47,9 @@ fn test_map_interchange_reverse_single_transaction() {
                 "kategorie": "E01",
                 "pruefidentifikator": "55001"
             }),
+            nesting_info: Default::default(),
         }],
+        nesting_info: Default::default(),
     };
 
     let tree = MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4", None);

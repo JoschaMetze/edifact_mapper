@@ -1,0 +1,19 @@
+# SG31 — PRI+RNG pricing groups within SG27 transactions.
+
+[meta]
+entity = "Preis"
+bo4e_type = "Preis"
+source_group = "SG27.SG31"
+source_path = "sg27.sg31"
+
+[fields]
+"pri.c509.d5125" = "preisQualifier"
+"pri.c509.d5118" = "preisBetrag"
+"pri.c509.d5375" = "preisTyp"
+"pri.c509.d5387" = "preisSpezifikation"
+"pri.c509.d5284" = "einzelpreisbasisMenge"
+"pri.c509.d6411" = "massEinheit"
+"rng.d6167" = "wertebereichQualifier"
+"rng.c280.d6411" = "wertebereichMasseinheit"
+"rng.c280.d6162" = "untereGrenze"
+"rng.c280.d6152" = "obereGrenze"

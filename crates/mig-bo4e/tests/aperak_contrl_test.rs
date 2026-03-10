@@ -118,7 +118,7 @@ fn run_roundtrip(
     );
 
     // Step 6: Reverse map
-    let mut reverse_tree = engine.map_all_reverse(&json);
+    let mut reverse_tree = engine.map_all_reverse(&json, None);
 
     // Re-insert UNH at position 0 (mapping engine doesn't handle service segments)
     let unh_assembled = owned_to_assembled(&msg_chunk.unh);

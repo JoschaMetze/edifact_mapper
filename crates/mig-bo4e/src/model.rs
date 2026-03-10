@@ -5,6 +5,7 @@
 
 use mig_types::segment::OwnedSegment;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// A complete EDIFACT interchange (UNB...UNZ) containing one or more messages.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -52,6 +53,15 @@ pub struct Transaktion {
     /// Process metadata from the transaction group's root segments
     /// (IDE, STS, DTM in UTILMD). Not mapped to BO4E types.
     pub transaktionsdaten: serde_json::Value,
+
+    /// Nesting distribution info for transaction-level entities.
+    ///
+    /// Maps entity key (camelCase) → parent rep index for each child element.
+    /// Used by the reverse mapper to distribute children among parent group reps
+    /// within a transaction (e.g., SG36→SG40 in PRICAT).
+    /// Derived from the tree structure during forward mapping; never serialized.
+    #[serde(skip)]
+    pub nesting_info: HashMap<String, Vec<usize>>,
 }
 
 /// Intermediate result from mapping a single message's assembled tree.
@@ -66,6 +76,14 @@ pub struct MappedMessage {
 
     /// Per-transaction results (one per SG4 instance).
     pub transaktionen: Vec<Transaktion>,
+
+    /// Nesting distribution info for message-level entities.
+    ///
+    /// Maps entity key (camelCase) → parent rep index for each child element.
+    /// Used by the reverse mapper to distribute children among parent group reps.
+    /// Derived from the tree structure during forward mapping; never serialized.
+    #[serde(skip)]
+    pub nesting_info: HashMap<String, Vec<usize>>,
 }
 
 /// Extract message reference and message type from a UNH segment.
@@ -227,6 +245,7 @@ mod tests {
                 "vorgangId": "TX001",
                 "transaktionsgrund": "E01"
             }),
+            nesting_info: Default::default(),
         };
 
         let json = serde_json::to_string(&tx).unwrap();
@@ -248,6 +267,7 @@ mod tests {
             transaktionen: vec![Transaktion {
                 stammdaten: serde_json::json!({}),
                 transaktionsdaten: serde_json::json!({}),
+                nesting_info: Default::default(),
             }],
         };
 

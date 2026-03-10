@@ -70,18 +70,12 @@ fn test_pricat_pid_27003_generated_roundtrip() {
 
 #[test]
 fn test_pricat_pid_27002_roundtrip() {
-    common::pricat::run_full_roundtrip_with_skip("27002", &["27002_PRICAT_2.0d_DEV-80749.edi"]);
+    common::pricat::run_full_roundtrip("27002");
 }
 
 #[test]
 fn test_pricat_pid_27003_roundtrip() {
-    common::pricat::run_full_roundtrip_with_skip(
-        "27003",
-        &[
-            "27003_PRICAT_2.0d_DEV-80749.edi",
-            "27003_PRICAT_2.0d_DEV-90070.edi",
-        ],
-    );
+    common::pricat::run_full_roundtrip("27003");
 }
 
 // ── TOML loading verification ──

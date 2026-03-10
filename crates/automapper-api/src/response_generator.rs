@@ -378,7 +378,7 @@ fn render_response_edifact(
     let header_bo4e = strip_error_entities(bo4e);
 
     // Reverse map header BO4E → AssembledTree
-    let tree = engine.map_all_reverse(&header_bo4e);
+    let tree = engine.map_all_reverse(&header_bo4e, None);
 
     // Disassemble and render header
     let disassembler = Disassembler::new(mig);

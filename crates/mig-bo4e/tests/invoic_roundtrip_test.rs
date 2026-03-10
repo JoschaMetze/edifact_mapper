@@ -82,22 +82,12 @@ fn test_invoic_pid_31001_real_roundtrip() {
 
 #[test]
 fn test_invoic_pid_31002_real_roundtrip() {
-    // KNOWN_INCOMPLETE: Same SG3 nesting limitation as 31001, plus
-    // NAD C080 d3045 name format code (Z02) not mapped.
-    common::invoic::run_full_roundtrip_with_skip(
-        "31002",
-        &["31002_INVOIC_2.8d_ALEXANDE223647BGM.edi"],
-    );
+    common::invoic::run_full_roundtrip("31002");
 }
 
 #[test]
 fn test_invoic_pid_31004_real_roundtrip() {
-    // KNOWN_INCOMPLETE: NAD C080 d3045 name format code (Z02) not mapped —
-    // `:::::Z02` suffix in real fixture is not roundtripped.
-    common::invoic::run_full_roundtrip_with_skip(
-        "31004",
-        &["31004_INVOIC_2.8b_ALEXANDE689033.edi"],
-    );
+    common::invoic::run_full_roundtrip("31004");
 }
 
 /// Verify all INVOIC PID TOML mappings load successfully.

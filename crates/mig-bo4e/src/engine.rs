@@ -398,6 +398,119 @@ impl MappingEngine {
         current_instances
     }
 
+    /// Like `resolve_all_by_source_path` but also returns the direct parent
+    /// rep index that each leaf instance came from. The "direct parent" is the
+    /// group one level above the leaf in the path.
+    ///
+    /// For `"sg2.sg3"`: parent is the SG2 rep index.
+    /// For `"sg17.sg36.sg40"`: parent is the SG36 rep index (not SG17).
+    ///
+    /// For single-level paths, all indices are 0.
+    ///
+    /// Returns `Vec<(parent_rep_index, &AssembledGroupInstance)>`.
+    pub fn resolve_all_with_parent_indices<'a>(
+        tree: &'a AssembledTree,
+        source_path: &str,
+    ) -> Vec<(usize, &'a AssembledGroupInstance)> {
+        let parts: Vec<&str> = source_path.split('.').collect();
+        if parts.is_empty() {
+            return vec![];
+        }
+
+        // First part: match against top-level groups
+        let (first_id, first_qualifier) = parse_source_path_part(parts[0]);
+        let first_group = match tree
+            .groups
+            .iter()
+            .find(|g| g.group_id.eq_ignore_ascii_case(first_id))
+        {
+            Some(g) => g,
+            None => return vec![],
+        };
+
+        // If single-level path, just return instances with index 0
+        if parts.len() == 1 {
+            let instances: Vec<&AssembledGroupInstance> = if let Some(q) = first_qualifier {
+                find_all_reps_by_entry_qualifier(&first_group.repetitions, q)
+            } else {
+                first_group.repetitions.iter().collect()
+            };
+            return instances.into_iter().map(|i| (0, i)).collect();
+        }
+
+        // Multi-level: navigate tracking (parent_rep_idx, instance) at each level.
+        // At intermediate levels, parent_rep_idx is updated to the current rep's
+        // position within its group. At the leaf level, the parent_rep_idx from
+        // the previous level is preserved — giving us the DIRECT parent index.
+        let first_reps: Vec<(usize, &AssembledGroupInstance)> =
+            if let Some(q) = first_qualifier {
+                let matching =
+                    find_all_reps_by_entry_qualifier(&first_group.repetitions, q);
+                let mut result = Vec::new();
+                for m in matching {
+                    let idx = first_group
+                        .repetitions
+                        .iter()
+                        .position(|r| std::ptr::eq(r, m))
+                        .unwrap_or(0);
+                    result.push((idx, m));
+                }
+                result
+            } else {
+                first_group.repetitions.iter().enumerate().collect()
+            };
+
+        let mut current: Vec<(usize, &AssembledGroupInstance)> = first_reps;
+        let remaining = &parts[1..];
+
+        for (level, part) in remaining.iter().enumerate() {
+            let is_leaf = level == remaining.len() - 1;
+            let (group_id, qualifier) = parse_source_path_part(part);
+            let mut next: Vec<(usize, &AssembledGroupInstance)> = Vec::new();
+
+            for (prev_parent_idx, instance) in &current {
+                if let Some(child_group) = instance
+                    .child_groups
+                    .iter()
+                    .find(|g| g.group_id.eq_ignore_ascii_case(group_id))
+                {
+                    let matching: Vec<(usize, &AssembledGroupInstance)> =
+                        if let Some(q) = qualifier {
+                            let filtered =
+                                find_all_reps_by_entry_qualifier(&child_group.repetitions, q);
+                            filtered
+                                .into_iter()
+                                .map(|m| {
+                                    let idx = child_group
+                                        .repetitions
+                                        .iter()
+                                        .position(|r| std::ptr::eq(r, m))
+                                        .unwrap_or(0);
+                                    (idx, m)
+                                })
+                                .collect()
+                        } else {
+                            child_group.repetitions.iter().enumerate().collect()
+                        };
+
+                    for (rep_idx, child_rep) in matching {
+                        if is_leaf {
+                            // At the leaf: keep the parent index from the previous level
+                            next.push((*prev_parent_idx, child_rep));
+                        } else {
+                            // At intermediate: pass down the current rep index
+                            next.push((rep_idx, child_rep));
+                        }
+                    }
+                }
+            }
+
+            current = next;
+        }
+
+        current
+    }
+
     /// Extract a field from a group instance by path.
     ///
     /// Supports qualifier-based segment selection with `tag[qualifier]` syntax:
@@ -1279,7 +1392,7 @@ impl MappingEngine {
     /// (e.g., LOC location + SEQ info + SG10 characteristics) to contribute
     /// fields to the same BO4E entity.
     pub fn map_all_forward(&self, tree: &AssembledTree) -> serde_json::Value {
-        self.map_all_forward_inner(tree, true)
+        self.map_all_forward_inner(tree, true).0
     }
 
     /// Like [`map_all_forward`](Self::map_all_forward) but with explicit
@@ -1290,12 +1403,23 @@ impl MappingEngine {
         tree: &AssembledTree,
         enrich_codes: bool,
     ) -> serde_json::Value {
-        self.map_all_forward_inner(tree, enrich_codes)
+        self.map_all_forward_inner(tree, enrich_codes).0
     }
 
     /// Inner implementation with enrichment control.
-    fn map_all_forward_inner(&self, tree: &AssembledTree, enrich_codes: bool) -> serde_json::Value {
+    ///
+    /// Returns `(json_value, nesting_info)` where `nesting_info` maps
+    /// entity keys to the parent rep index for each child element.
+    /// This is used by the reverse mapper to correctly distribute nested
+    /// group children among their parent reps.
+    fn map_all_forward_inner(
+        &self,
+        tree: &AssembledTree,
+        enrich_codes: bool,
+    ) -> (serde_json::Value, std::collections::HashMap<String, Vec<usize>>) {
         let mut result = serde_json::Map::new();
+        let mut nesting_info: std::collections::HashMap<String, Vec<usize>> =
+            std::collections::HashMap::new();
 
         for def in &self.definitions {
             let entity = &def.meta.entity;
@@ -1357,18 +1481,29 @@ impl MappingEngine {
                 // paths (e.g., "sg4.sg8_zd7.sg10") and unqualified paths (e.g.,
                 // "sg17.sg36.sg40") where multiple parent reps each have children.
                 let sp = def.meta.source_path.as_deref().unwrap();
-                let instances = Self::resolve_all_by_source_path(tree, sp);
+                let indexed = Self::resolve_all_with_parent_indices(tree, sp);
                 let extract = |instance: &AssembledGroupInstance| {
                     let mut r = serde_json::Map::new();
                     self.extract_fields_from_instance(instance, def, &mut r, enrich_codes);
                     self.extract_companion_fields(instance, def, &mut r, enrich_codes);
                     serde_json::Value::Object(r)
                 };
-                match instances.len() {
+                // Track parent rep indices for nesting reconstruction.
+                // Key by source_path (not entity or source_group) so that definitions
+                // at different depths or with different qualifiers don't collide.
+                // e.g., "sg5.sg8_z41.sg9" vs "sg5.sg8_z42.sg9" are distinct keys.
+                if def.meta.source_group.contains('.') && !indexed.is_empty() {
+                    if let Some(sp) = &def.meta.source_path {
+                        let parent_indices: Vec<usize> =
+                            indexed.iter().map(|(idx, _)| *idx).collect();
+                        nesting_info.entry(sp.clone()).or_insert(parent_indices);
+                    }
+                }
+                match indexed.len() {
                     0 => None,
-                    1 => Some(extract(instances[0])),
+                    1 => Some(extract(indexed[0].1)),
                     _ => Some(serde_json::Value::Array(
-                        instances.iter().map(|i| extract(i)).collect(),
+                        indexed.iter().map(|(_, i)| extract(i)).collect(),
                     )),
                 }
             } else {
@@ -1392,7 +1527,7 @@ impl MappingEngine {
             }
         }
 
-        serde_json::Value::Object(result)
+        (serde_json::Value::Object(result), nesting_info)
     }
 
     /// Reverse-map a BO4E entity map back to an AssembledTree.
@@ -1403,7 +1538,11 @@ impl MappingEngine {
     /// 3. Place results by `source_group`: `""` → root segments, `"SGn"` → groups
     ///
     /// This is the inverse of `map_all_forward()`.
-    pub fn map_all_reverse(&self, entities: &serde_json::Value) -> AssembledTree {
+    pub fn map_all_reverse(
+        &self,
+        entities: &serde_json::Value,
+        nesting_info: Option<&std::collections::HashMap<String, Vec<usize>>>,
+    ) -> AssembledTree {
         let mut root_segments: Vec<AssembledSegment> = Vec::new();
         let mut groups: Vec<AssembledGroup> = Vec::new();
 
@@ -1433,10 +1572,7 @@ impl MappingEngine {
             } else if entity_value.is_array() {
                 // Array entity: each element becomes a group repetition
                 let arr = entity_value.as_array().unwrap();
-                let mut reps = Vec::new();
-                for item in arr {
-                    reps.push(self.map_reverse(item, def));
-                }
+                let reps: Vec<_> = arr.iter().map(|item| self.map_reverse(item, def)).collect();
 
                 // Merge into existing group or create new one
                 if let Some(existing) = groups.iter_mut().find(|g| g.group_id == leaf_group) {
@@ -1464,7 +1600,9 @@ impl MappingEngine {
 
         // Post-process: move nested groups under their parent repetitions.
         // Definitions with multi-level source_group (e.g., "SG2.SG3") produce
-        // top-level groups that must be nested inside their parent's first repetition.
+        // top-level groups that must be nested inside their parent group.
+        // Children are distributed sequentially among parent reps (child[i] → parent[i])
+        // matching the forward mapper's extraction order.
         let nested_specs: Vec<(String, String)> = self
             .definitions
             .iter()
@@ -1488,15 +1626,38 @@ impl MappingEngine {
                     .iter_mut()
                     .find(|g| g.group_id == *parent_id)
                     .unwrap();
-                if let Some(first_rep) = parent.repetitions.first_mut() {
-                    if let Some(existing) = first_rep
-                        .child_groups
-                        .iter_mut()
-                        .find(|g| g.group_id == *child_id)
-                    {
-                        existing.repetitions.extend(child_group.repetitions);
-                    } else {
-                        first_rep.child_groups.push(child_group);
+                // Distribute child reps among parent reps using nesting info
+                // if available, falling back to all-under-first when not.
+                // Nesting info is keyed by source_path (e.g., "sg2.sg3").
+                let child_source_path = self
+                    .definitions
+                    .iter()
+                    .find(|d| {
+                        let parts: Vec<&str> = d.meta.source_group.split('.').collect();
+                        parts.len() > 1 && parts[parts.len() - 1] == *child_id
+                    })
+                    .and_then(|d| d.meta.source_path.as_deref());
+                let distribution = child_source_path
+                    .and_then(|key| nesting_info.and_then(|ni| ni.get(key)));
+                for (i, child_rep) in child_group.repetitions.into_iter().enumerate() {
+                    let target_idx = distribution
+                        .and_then(|dist| dist.get(i))
+                        .copied()
+                        .unwrap_or(0);
+
+                    if let Some(target_rep) = parent.repetitions.get_mut(target_idx) {
+                        if let Some(existing) = target_rep
+                            .child_groups
+                            .iter_mut()
+                            .find(|g| g.group_id == *child_id)
+                        {
+                            existing.repetitions.push(child_rep);
+                        } else {
+                            target_rep.child_groups.push(AssembledGroup {
+                                group_id: child_id.clone(),
+                                repetitions: vec![child_rep],
+                            });
+                        }
                     }
                 }
             }
@@ -1570,8 +1731,8 @@ impl MappingEngine {
         transaction_group: &str,
         enrich_codes: bool,
     ) -> crate::model::MappedMessage {
-        // Map message-level entities
-        let stammdaten = msg_engine.map_all_forward_inner(tree, enrich_codes);
+        // Map message-level entities (also captures nesting distribution info)
+        let (stammdaten, nesting_info) = msg_engine.map_all_forward_inner(tree, enrich_codes);
 
         // Find the transaction group and map each repetition
         let transaktionen = tree
@@ -1594,7 +1755,7 @@ impl MappingEngine {
                             inter_group_segments: std::collections::BTreeMap::new(),
                         };
 
-                        let tx_result =
+                        let (tx_result, tx_nesting) =
                             tx_engine.map_all_forward_inner(&wrapped_tree, enrich_codes);
 
                         // Split: "Prozessdaten" entity goes into transaktionsdaten,
@@ -1624,6 +1785,7 @@ impl MappingEngine {
                         crate::model::Transaktion {
                             stammdaten: serde_json::Value::Object(tx_stammdaten),
                             transaktionsdaten,
+                            nesting_info: tx_nesting,
                         }
                     })
                     .collect()
@@ -1633,6 +1795,7 @@ impl MappingEngine {
         crate::model::MappedMessage {
             stammdaten,
             transaktionen,
+            nesting_info,
         }
     }
 
@@ -1657,8 +1820,15 @@ impl MappingEngine {
         transaction_group: &str,
         filtered_mig: Option<&MigSchema>,
     ) -> AssembledTree {
-        // Step 1: Reverse message-level stammdaten
-        let msg_tree = msg_engine.map_all_reverse(&mapped.stammdaten);
+        // Step 1: Reverse message-level stammdaten (pass nesting info for child distribution)
+        let msg_tree = msg_engine.map_all_reverse(
+            &mapped.stammdaten,
+            if mapped.nesting_info.is_empty() {
+                None
+            } else {
+                Some(&mapped.nesting_info)
+            },
+        );
 
         // Step 2: Build transaction instances from each Transaktion
         let mut sg4_reps: Vec<AssembledGroupInstance> = Vec::new();
@@ -1800,12 +1970,33 @@ impl MappingEngine {
                             } else {
                                 dm.relative.clone()
                             };
-                            resolve_child_relative(
-                                &rel,
-                                dm.def.meta.source_path.as_deref(),
-                                &source_path_to_rep,
-                                item_idx,
-                            )
+                            // Use tx nesting info ONLY for multi-rep arrays where
+                            // round-robin distribution would be incorrect (uneven
+                            // child distribution like 3 SG40 under SG36[0], 1 under
+                            // SG36[1]). Single items and items with explicit :N
+                            // indices use the existing resolve_child_relative path.
+                            let nesting_idx = if items.len() > 1 {
+                                dm.def.meta.source_path.as_ref()
+                                    .and_then(|sp| tx.nesting_info.get(sp))
+                                    .and_then(|dist| dist.get(item_idx))
+                                    .copied()
+                            } else {
+                                None
+                            };
+                            if let Some(parent_rep) = nesting_idx {
+                                // Direct placement using known nesting distribution
+                                let parts: Vec<&str> = rel.split('.').collect();
+                                let parent_id = parts[0].split(':').next().unwrap_or(parts[0]);
+                                let rest = parts[1..].join(".");
+                                format!("{}:{}.{}", parent_id, parent_rep, rest)
+                            } else {
+                                resolve_child_relative(
+                                    &rel,
+                                    dm.def.meta.source_path.as_deref(),
+                                    &source_path_to_rep,
+                                    item_idx,
+                                )
+                            }
                         } else if items.len() > 1 && item_idx > 0 {
                             // Multi-rep entity with hardcoded :N index: first item uses
                             // the original index, subsequent items append (strip :N).

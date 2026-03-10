@@ -404,11 +404,8 @@ fn test_fv2510_ordrsp_real_fixture_roundtrip() {
         "19118", "19119", "19120", "19121", "19123", "19124", "19127", "19128",
         "19129", "19130", "19131", "19132", "19133", "19204", "19301", "19302",
     ];
-    // KNOWN_INCOMPLETE: message-only fixtures with missing DTM/phantom UNS
-    let skip = &[
-        "19005_ORDRSP_1.4a_ALEXANDE108027.edi",
-        "19006_ORDRSP_1.4a_ALEXANDE987528.edi",
-    ];
+    // KNOWN_INCOMPLETE: fixture has DTM+469/472 and RFF+ON not in PID 19005 AHB — stalls assembler
+    let skip = &["19005_ORDRSP_1.4a_ALEXANDE108027.edi"];
     run_all_real_fixture_roundtrips("ORDRSP", &pids, skip, |pid, skip| {
         common::ordrsp_fv2510::run_full_roundtrip_with_skip(pid, skip);
     });
@@ -417,13 +414,7 @@ fn test_fv2510_ordrsp_real_fixture_roundtrip() {
 #[test]
 fn test_fv2510_pricat_real_fixture_roundtrip() {
     let pids = ["27001", "27002", "27003"];
-    // KNOWN_INCOMPLETE: DTM+NAD schema mismatch — DTM segments not roundtripped
-    let skip = &[
-        "27002_PRICAT_2.0e_DEV-96034-2.edi",
-        "27002_PRICAT_2.0e_DEV-96034-3.edi",
-        "27002_PRICAT_2.0e_DEV-96034.edi",
-        "27003_PRICAT_2.0e_DEV-96034.edi",
-    ];
+    let skip: &[&str] = &[];
     run_all_real_fixture_roundtrips("PRICAT", &pids, skip, |pid, skip| {
         common::pricat_fv2510::run_full_roundtrip_with_skip(pid, skip);
     });
@@ -432,7 +423,7 @@ fn test_fv2510_pricat_real_fixture_roundtrip() {
 #[test]
 fn test_fv2510_quotes_real_fixture_roundtrip() {
     let pids = ["15001", "15002", "15003", "15004", "15005"];
-    // KNOWN_INCOMPLETE: message-only fixture with missing DTM/phantom UNS
+    // KNOWN_INCOMPLETE: fixture has IMD segment not in PID 15005 AHB — stalls assembler
     let skip = &["15005_QUOTES_1.3b_DEV-96035.edi"];
     run_all_real_fixture_roundtrips("QUOTES", &pids, skip, |pid, skip| {
         common::quotes_fv2510::run_full_roundtrip_with_skip(pid, skip);
@@ -479,8 +470,7 @@ fn test_fv2510_remadv_real_fixture_roundtrip() {
 #[test]
 fn test_fv2510_reqote_real_fixture_roundtrip() {
     let pids = ["35001", "35002", "35003", "35004", "35005"];
-    // KNOWN_INCOMPLETE: multi-LIN transaction structure not fully roundtripped
-    let skip = &["35005_REQOTE_1.3c_ALEXANDE142263.edi"];
+    let skip: &[&str] = &[];
     run_all_real_fixture_roundtrips("REQOTE", &pids, skip, |pid, skip| {
         common::reqote_fv2510::run_full_roundtrip_with_skip(pid, skip);
     });

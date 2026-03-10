@@ -1,0 +1,17 @@
+# SG27 — LIN positions with PIA product identification.
+#
+# Each LIN creates a separate SG27 rep (3 reps for Z19, Z55, Z56).
+# No FTX or SG28 children for this PID.
+
+[meta]
+entity = "Vorgang"
+bo4e_type = "Vorgang"
+source_group = "SG27"
+source_path = "sg27"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+"lin.d1229" = "handlungCode"
+"pia[5].d4347" = { target = "", default = "5" }
+"pia[5].c212.d7140" = "artikelNummer"
+"pia[5].c212.d7143" = { target = "", default = "Z11" }

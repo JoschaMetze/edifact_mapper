@@ -745,6 +745,7 @@ mod tests {
     #[test]
     fn test_enhance_mapped_message() {
         let mut msg = MappedMessage {
+            nesting_info: Default::default(),
             stammdaten: json!({
                 "marktteilnehmer": [{
                     "identifikation": "1234567890128",
@@ -772,6 +773,7 @@ mod tests {
                     "vorgangId": "GENERATED00001",
                     "gueltigAb": "20250401120000+00"
                 }),
+                nesting_info: Default::default(),
             }],
         };
 

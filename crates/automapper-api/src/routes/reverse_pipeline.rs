@@ -93,6 +93,7 @@ pub(crate) fn reverse_map_nachricht(
     let mapped = mig_bo4e::model::MappedMessage {
         stammdaten: nachricht.stammdaten.clone(),
         transaktionen: nachricht.transaktionen.clone(),
+        nesting_info: Default::default(),
     };
     MappingEngine::map_interchange_reverse(ctx.msg_engine, ctx.tx_engine, &mapped, "SG4", None)
 }

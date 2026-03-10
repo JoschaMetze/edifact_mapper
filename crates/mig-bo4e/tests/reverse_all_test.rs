@@ -40,7 +40,7 @@ fn test_map_all_reverse_message_level() {
         ]
     });
 
-    let tree = msg_engine.map_all_reverse(&bo4e);
+    let tree = msg_engine.map_all_reverse(&bo4e, None);
 
     // Should produce an AssembledTree with SG2 group containing 2 repetitions
     let sg2 = tree.groups.iter().find(|g| g.group_id == "SG2");
@@ -72,7 +72,7 @@ fn test_map_all_reverse_transaction_level() {
         }
     });
 
-    let tree = tx_engine.map_all_reverse(&bo4e);
+    let tree = tx_engine.map_all_reverse(&bo4e, None);
 
     // Should produce groups including SG5
     let has_groups = !tree.groups.is_empty();
