@@ -1,0 +1,18 @@
+# Merkmal (SG30) mapping for PID 17121 — CCI/CAV characteristics.
+
+[meta]
+entity = "MerkmalZ35"
+bo4e_type = "Merkmal"
+source_group = "SG29.SG30"
+source_path = "sg29.sg30_z35"
+
+[fields]
+"cci.d7059" = "merkmalQualifier"
+"cav.c889.d7111" = "merkmalWert"
+"cav.c889.d1131" = "codelisteCode"
+"cav.c889.d3055" = "codepflegeCode"
+"cav.c889.d7110" = "merkmalText"
+"cav[*,1].c889.d7111" = "merkmalWert2"
+"cav[*,1].c889.d1131" = "codelisteCode2"
+"cav[*,1].c889.d3055" = "codepflegeCode2"
+"cav[*,1].c889.d7110" = "merkmalText2"

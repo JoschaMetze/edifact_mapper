@@ -1,0 +1,17 @@
+# Dokument (document reference) mapping for COMDIS PID 29001.
+#
+# Source: SG2 → DOC + MOA
+# DOC+380+90018559620           → dokumenttyp, dokumentennummer
+# MOA+9:104.00                  → faelligerBetrag
+
+[meta]
+entity = "Dokument"
+bo4e_type = "Dokument"
+source_group = "SG2"
+source_path = "sg2"
+
+[fields]
+"doc.c002.d1001" = "dokumenttyp"
+"doc.c503.d1004" = "dokumentennummer"
+"moa[9].c516.d5025" = { target = "", default = "9" }
+"moa[9].c516.d5004" = "faelligerBetrag"

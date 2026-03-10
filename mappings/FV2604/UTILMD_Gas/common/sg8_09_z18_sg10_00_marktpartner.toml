@@ -1,0 +1,37 @@
+# SG10 CCI+ZB3 (Zugeordneter Marktpartner) + CAV+Z91/ZF0/ZB4 — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z18
+# CCI+X+X+ZB3                -> Zugeordneter Marktpartner marker
+# CAV+Z91:293:9:Z19           -> MSB (Art der Leistungserbringung)
+# CAV+ZF0:293                 -> gMSB (MP-ID)
+# CAV+ZB4:293                 -> MSBA (alter MSB, MP-ID)
+# Merges into "MesslokationDaten" entity.
+
+[meta]
+entity = "MesslokationDaten"
+bo4e_type = "MesslokationDaten"
+companion_type = "MesslokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z18.sg10"
+discriminator = "CCI.c240.d7037=ZB3"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "marktpartnerKlasse"
+"cci.c502.d6313" = "marktpartnerDimension"
+"cci.c240.d7037" = { target = "", default = "ZB3" }
+
+# CAV+Z91 (MSB)
+"cav[Z91].c889.d7111" = { target = "", default = "Z91" }
+"cav[Z91].c889.d1131" = "msbMpId"
+"cav[Z91].c889.d3055" = "msbCodepflegeCode"
+"cav[Z91].c889.d7110" = "msbLeistungserbringung"
+
+# CAV+ZF0 (gMSB)
+"cav[ZF0].c889.d7111" = { target = "", default = "ZF0" }
+"cav[ZF0].c889.d1131" = "gmsbMpId"
+
+# CAV+ZB4 (MSBA — alter Messstellenbetreiber)
+"cav[ZB4].c889.d7111" = { target = "", default = "ZB4" }
+"cav[ZB4].c889.d1131" = "msbaMpId"

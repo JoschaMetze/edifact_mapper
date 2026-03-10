@@ -1,0 +1,23 @@
+# SG1 (RFF) — message-level references for ORDERS.
+#
+# SG1 contains RFF segments for references:
+#   RFF+ACW:FELLERM1261000BGM  → Vorgängernachricht
+#   RFF+Z13:17113              → Prüfidentifikator
+#   RFF+Z42:Referenz1          → Konfigurationsreferenz
+#   RFF+Z43:12345              → Konfigurationsversion
+#   RFF+AAG:...                → Angebotsnummer
+#   RFF+TN:...                 → Transaktionsnummer
+#   RFF+Z41:...                → Geräteübernahmereferenz
+#   RFF+AGK:...                → Konfigurations-ID
+#
+# No discriminator — each SG1 instance produces one array element.
+
+[meta]
+entity = "Referenz"
+bo4e_type = "Referenz"
+source_group = "SG1"
+source_path = "sg1"
+
+[fields]
+"rff.c506.d1153" = "qualifier"
+"rff.c506.d1154" = "referenz"

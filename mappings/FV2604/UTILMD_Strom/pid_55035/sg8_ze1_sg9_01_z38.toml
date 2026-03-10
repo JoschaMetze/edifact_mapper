@@ -1,0 +1,20 @@
+# Netznutzungsabrechnungsdaten QTY+Z38 (Anzahl) — SG9 within SEQ+ZE1 for PID 55035.
+# Each SG9 instance has exactly 1 QTY. Discriminated by QTY qualifier.
+
+[meta]
+entity = "Netznutzungsabrechnungsdaten"
+bo4e_type = "Netznutzungsabrechnungsdaten"
+companion_type = "NetznutzungsabrechnungsdatenEdifact"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_ze1.sg9"
+discriminator = "QTY.c186.d6063=Z38"
+
+[fields]
+
+[companion_fields]
+"qty.c186.d6060" = "anzahl"
+"qty.c186.d6411" = "anzahlEinheit"
+
+[companion_fields."qty.c186.d6063"]
+target = ""
+default = "Z38"

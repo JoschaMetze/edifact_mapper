@@ -1,0 +1,17 @@
+# EnFG Daten des Kunden (SG8 z92/z93) for PID 55137.
+# SEQ+Z92=Erwartete Daten des Kunden des LF / Z93=Im System vorhandene Daten
+# Distinct entity to avoid collision with SG12 Geschaeftspartner.
+
+[meta]
+entity = "EnfgDaten"
+bo4e_type = "EnfgDaten"
+companion_type = "EnfgDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z92_z93"
+discriminator = "SEQ.d1229=Z92|Z93"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierEnfg"
+"seq.c286.d1050" = "zeitscheibeRef"

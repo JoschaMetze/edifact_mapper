@@ -1,0 +1,19 @@
+# Meldepunkt mapping for IFTSTA Family A (MaBiS) PID 21000.
+#
+# SG4.SG6_172: LOC+172 + DTM+492 + DTM+334
+
+[meta]
+entity = "Meldepunkt"
+bo4e_type = "Meldepunkt"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6_172"
+
+[fields]
+"loc.d3227" = { target = "", default = "172" }
+"loc.c517.d3225" = "meldepunktId"
+"dtm[492].c507.d2005" = { target = "", default = "492" }
+"dtm[492].c507.d2380" = "bilanzierungsperiode"
+"dtm[492].c507.d2379" = { target = "", default = "610" }
+"dtm[334].c507.d2005" = { target = "", default = "334" }
+"dtm[334].c507.d2380" = "statusaenderungZeitstempel"
+"dtm[334].c507.d2379" = { target = "", default = "304" }

@@ -1,0 +1,21 @@
+# SG10 CCI+Z21 (Marktgebiet) — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10, CCI entry with d7059=Z21
+# CCI+Z21+X+X    -> Marktgebiet
+# No CAV segment for this rep.
+# Merges into "MarktlokationDaten" entity.
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.d7059=Z21"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z21" }
+"cci.c502.d6313" = "marktgebietDimension"
+"cci.c240.d7037" = "marktgebiet"

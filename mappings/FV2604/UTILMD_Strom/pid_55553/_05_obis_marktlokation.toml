@@ -1,0 +1,28 @@
+# SG8 — SEQ+Z02 OBIS-Daten der Marktlokation
+# Multi-rep: each rep has SEQ+Z02, PIA+5 (OBIS-Kennzahl)
+
+[meta]
+entity = "ObisMarktlokation"
+bo4e_type = "ObisMarktlokation"
+companion_type = "ObisMarktlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z02"
+discriminator = "SEQ.d1229=Z02"
+
+[fields]
+"pia.c212.d7140" = "obisKennzahl"
+
+[fields."pia.d4347"]
+target = ""
+default = "5"
+
+[fields."pia.c212.d7143"]
+target = ""
+default = "SRW"
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRef"
+
+[companion_fields."seq.d1229"]
+target = ""
+default = "Z02"

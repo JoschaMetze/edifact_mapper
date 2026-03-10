@@ -1,0 +1,25 @@
+# Messwert — SG10 QTY/DTM (actual measurement data).
+#
+# QTY+220:0                       → messwertQualifier, wert
+# DTM+7:202207140000+00:303       → ausfuehrungszeitpunkt
+# DTM+60:202207140000+00:303      → nutzungszeitpunkt
+
+[meta]
+entity = "Messwert"
+bo4e_type = "Messwert"
+source_group = "SG5.SG6.SG9.SG10"
+source_path = "sg5.sg6_172.sg9.sg10"
+
+[fields]
+"qty.c186.d6063" = "messwertQualifier"
+"qty.c186.d6060" = "wert"
+
+# DTM+7 (Ausführungszeitpunkt)
+"dtm[7].c507.d2005" = { target = "", default = "7" }
+"dtm[7].c507.d2380" = "ausfuehrungszeitpunkt"
+"dtm[7].c507.d2379" = { target = "", default = "303" }
+
+# DTM+60 (Nutzungszeitpunkt)
+"dtm[60].c507.d2005" = { target = "", default = "60" }
+"dtm[60].c507.d2380" = "nutzungszeitpunkt"
+"dtm[60].c507.d2379" = { target = "", default = "303" }

@@ -1,0 +1,39 @@
+# Geschaeftspartner (all SG12/NAD segments) for PID 55042.
+#
+# Source: SG4.SG12 → NAD+Z03/Z05/Z07/Z08
+# Maps the superset of all NAD fields. Empty fields are auto-omitted per instance.
+# The nadQualifier companion field distinguishes variants on roundtrip.
+#
+# C# reference: GeschaeftspartnerMapper handles ALL NAD qualifiers with ONE type.
+
+[meta]
+entity = "Geschaeftspartner"
+bo4e_type = "Geschaeftspartner"
+companion_type = "GeschaeftspartnerEdifact"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12"
+
+[fields]
+"nad.c082.d3039" = "geschaeftspartnerId"
+"nad.c080.d3036" = "name1"
+"nad.c080.d3036_2" = "name2"
+"nad.c059.d3042" = "adresse.strasse"
+"nad.c059.d3042_3" = "adresse.hausnummer"
+"nad.d3164" = "adresse.ort"
+"nad.d3251" = "adresse.postleitzahl"
+"nad.d3207" = "adresse.landescode"
+
+[companion_fields]
+"nad.d3035" = "nadQualifier"
+"nad.c080.d3036_5" = "anrede"
+"nad.c058.d3124" = "zusatzinfo"
+"nad.c058.d3124_2" = "zusatzinfoZeile2"
+"nad.c058.d3124_3" = "zusatzinfoZeile3"
+"nad.c058.d3124_4" = "zusatzinfoZeile4"
+"nad.c058.d3124_5" = "zusatzinfoZeile5"
+"nad.c080.d3036_3" = "nameZeile3"
+"nad.c080.d3036_4" = "nameZeile4"
+"nad.c080.d3045" = "anredeCode"
+"nad.c059.d3042_2" = "strasseZusatz"
+"nad.c059.d3042_4" = "strasseZeile4"
+"nad.c819.d3229" = "region"

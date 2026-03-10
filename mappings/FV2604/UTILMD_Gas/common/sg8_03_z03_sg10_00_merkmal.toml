@@ -1,0 +1,48 @@
+# SG10 CCI+E13 (Zaehlertyp) + CAV — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z03
+# CCI+X+X+E13               -> Zaehlertyp marker
+# CAV+NMG:293                -> Zaehlertyp code (auto-omit for PIDs without)
+# CAV+1:293:9:G10            -> Zaehlergrösse (auto-omit for PIDs without)
+# CAV+Z30:293:9:X:X          -> Geraetnummer (+ optional 2nd part)
+# Merges into "ZaehlerDaten" entity.
+#
+# Discriminator CCI.c240.d7037=E13 selects this SG10 rep (vs CCI+E12 rep).
+
+[meta]
+entity = "ZaehlerDaten"
+bo4e_type = "ZaehlerDaten"
+companion_type = "ZaehlerDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z03.sg10"
+discriminator = "CCI.c240.d7037=E13"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "zaehlerKlasse"
+"cci.c502.d6313" = "zaehlerDimension"
+"cci.c240.d7037" = { target = "", default = "E13" }
+
+# CAV+NMG (Zaehlertyp code) — auto-omitted for PIDs without this segment
+"cav[NMG].c889.d7111" = "zaehlerTypCode"
+"cav[NMG].c889.d1131" = "zaehlerTypCodelisteCode"
+
+# CAV with Zaehlergrösse (d7110=G10 etc.) — auto-omitted for PIDs without
+"cav[1].c889.d7111" = "zaehlerGroesseCode"
+"cav[1].c889.d1131" = "zaehlerGroesseCodelisteCode"
+"cav[1].c889.d3055" = "zaehlerGroesseCodepflegeCode"
+"cav[1].c889.d7110" = "zaehlerGroesse"
+
+# CAV+Z30 (Geraetnummer)
+"cav[Z30].c889.d7111" = { target = "", default = "Z30" }
+"cav[Z30].c889.d1131" = "geraetCodelisteCode"
+"cav[Z30].c889.d3055" = "geraetCodepflegeCode"
+"cav[Z30].c889.d7110" = "geraetnummer"
+"cav[Z30].c889.d7110_2" = "geraetnummerTeil2"
+
+# CAV+ZC0 (Art der Volumenerfassung) — auto-omitted for PIDs without
+"cav[ZC0].c889.d7111" = { target = "", default = "ZC0" }
+"cav[ZC0].c889.d1131" = "volumenerfassungCodelisteCode"
+"cav[ZC0].c889.d3055" = "volumenerfassungCodepflegeCode"
+"cav[ZC0].c889.d7110" = "volumenerfassung"

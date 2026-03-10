@@ -1,0 +1,15 @@
+# SG8 (PYT + DTM) — payment terms for INVOIC.
+#
+# PYT+3 (Fixdatum) + DTM+265 (Fälligkeitsdatum).
+
+[meta]
+entity = "Zahlungsbedingungen"
+bo4e_type = "Zahlungsbedingungen"
+source_group = "SG8"
+source_path = "sg8"
+
+[fields]
+"pyt.d4279" = "zahlungsbedingungCode"
+"dtm.c507.d2005" = "datumQualifier"
+"dtm.c507.d2380" = "faelligkeitsdatum"
+"dtm.c507.d2379" = "datumFormat"

@@ -1,0 +1,14 @@
+[meta]
+entity = "GeraeteDaten76"
+bo4e_type = "GeraeteDaten76"
+companion_type = "GeraeteDaten76Edifact"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_z76.sg9"
+discriminator = "QTY.c186.d6063=Z35"
+
+[fields]
+
+[companion_fields]
+"qty.c186.d6063" = { target = "", default = "Z35" }
+"qty.c186.d6060" = "mengeZ35"
+"qty.c186.d6411" = "mengeneinheitZ35"

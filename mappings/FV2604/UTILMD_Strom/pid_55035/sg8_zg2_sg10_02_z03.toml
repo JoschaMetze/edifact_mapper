@@ -1,0 +1,20 @@
+# TechnischeRessource Lastprofil Zuordnung (SG10 within SEQ+ZG2) for PID 55035.
+# CCI/CAV rep 1: CCI+Z03++E01, Profilverfahren.
+
+[meta]
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+companion_type = "TechnischeRessourceEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zg2.sg10"
+discriminator = "CCI.d7059=Z03"
+
+[fields]
+
+[companion_fields]
+"cav.c889.d7111" = "profilverfahrenCode"
+"cci.c240.d7037" = "verfahrenCode"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "Z03"

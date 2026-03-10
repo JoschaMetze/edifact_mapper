@@ -1,0 +1,14 @@
+# Meldepunkt — SG6 LOC+172 (Meldepunkt/Messlokation).
+#
+# LOC+172+DE84937927735I3T4VS5I09K438W1A5CC
+#   d3227=172 (Meldepunkt qualifier), c517.d3225=lokationsId
+
+[meta]
+entity = "Meldepunkt"
+bo4e_type = "Meldepunkt"
+source_group = "SG5.SG6"
+source_path = "sg5.sg6_172"
+
+[fields]
+"loc.d3227" = { target = "", default = "172" }
+"loc.c517.d3225" = "lokationsId"

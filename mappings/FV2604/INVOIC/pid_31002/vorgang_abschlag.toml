@@ -1,0 +1,14 @@
+# SG26.SG39 (ALC+A) — allowance/discount for INVOIC PID 31002.
+#
+# ALC+A (Abschlag) with allowance code (Z01=Gemeinderabatt, Z04=Anpassung StromNEV).
+
+[meta]
+entity = "VorgangAbschlag"
+bo4e_type = "VorgangAbschlag"
+source_group = "SG26.SG39"
+source_path = "sg26.sg39_a"
+
+[fields]
+"alc.d5463" = "zuAbschlagCode"
+"alc.c552.d1230" = "zuAbschlagBetrag"
+"alc.c552.d5189" = "zuAbschlagTyp"

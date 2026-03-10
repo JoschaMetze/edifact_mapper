@@ -1,0 +1,24 @@
+# SG10 — CCI+++E17 Verbrauchsaufteilung (in %) within SEQ+Z01
+# Optional: not present in all fixtures.
+# CCI+++E17 / CAV+Z22:::0  -> Verbrauchsaufteilung in %
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.c240.d7037=E17"
+
+[fields]
+
+[companion_fields]
+"cav.c889.d7110" = "verbrauchsaufteilungProzent"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "E17"
+
+[companion_fields."cav.c889.d7111"]
+target = ""
+default = "Z22"

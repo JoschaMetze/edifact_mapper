@@ -1,0 +1,21 @@
+# SG8 — SEQ+ZA3/ZA4 Zaehleinrichtungsdaten (erwartet/vorhanden)
+# Contains RFF+Z14 (Smartmeter-Gateway reference)
+
+[meta]
+entity = "Zaehleinrichtung"
+bo4e_type = "Zaehleinrichtung"
+companion_type = "ZaehleinrichtungEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_za3_za4"
+discriminator = "SEQ.d1229=ZA3|ZA4"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"
+"seq.c286.d1050" = "zeitscheibeRef"
+"rff[Z14].c506.d1154" = "smartmeterGatewayId"
+
+[companion_fields."rff[Z14].c506.d1153"]
+target = ""
+default = "Z14"

@@ -1,0 +1,23 @@
+# Positionsabweichung (position-level rejection) mapping for REMADV PID 33004.
+#
+# Source: SG5.SG10.SG12 → AJT + FTX
+# AJT+A84+E_0406   → pruefschrittCode, ebdReferenz
+# FTX+ABO+++text    → textQualifier, freitext1..5
+
+[meta]
+entity = "Positionsabweichung"
+bo4e_type = "Positionsabweichung"
+source_group = "SG5.SG10.SG12"
+source_path = "sg5.sg10_1.sg12"
+
+[fields]
+"ajt.d4465" = "pruefschrittCode"
+"ajt.d1082" = "ebdReferenz"
+"ftx.d4451" = "textQualifier"
+"ftx.d4453" = "textFunktion"
+"ftx.c107.d4441" = "textReferenz"
+"ftx.c108.d4440" = "freitext1"
+"ftx.c108.d4440_2" = "freitext2"
+"ftx.c108.d4440_3" = "freitext3"
+"ftx.c108.d4440_4" = "freitext4"
+"ftx.c108.d4440_5" = "freitext5"

@@ -1,0 +1,39 @@
+# SG10 CCI+Z64 (Mengenumwerter) + CAV — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z09
+# CCI+X+X+Z64              -> Mengenumwerter marker
+# CAV+Z30:293:9:X:X         -> Geraetnummer
+# CAV+DMU/TMU/ZMU           -> Mengenumwertertyp
+# Merges into "MengenumwerterDaten" entity.
+
+[meta]
+entity = "MengenumwerterDaten"
+bo4e_type = "MengenumwerterDaten"
+companion_type = "MengenumwerterDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z09.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "mengenumwerterKlasse"
+"cci.c502.d6313" = "mengenumwerterDimension"
+"cci.c240.d7037" = { target = "", default = "Z64" }
+
+# CAV+Z30 (Geraetnummer)
+"cav[Z30].c889.d7111" = { target = "", default = "Z30" }
+"cav[Z30].c889.d1131" = "geraetCodelisteCode"
+"cav[Z30].c889.d3055" = "geraetCodepflegeCode"
+"cav[Z30].c889.d7110" = "geraetnummer"
+"cav[Z30].c889.d7110_2" = "geraetnummerTeil2"
+
+# CAV type (DMU, TMU, ZMU) — variable qualifier
+"cav[DMU].c889.d7111" = "mengenumwerterTypDMU"
+"cav[TMU].c889.d7111" = "mengenumwerterTypTMU"
+"cav[ZMU].c889.d7111" = "mengenumwerterTypZMU"
+
+# CAV+ZC0 (Art der Volumenerfassung) — auto-omitted for PIDs without
+"cav[ZC0].c889.d7111" = { target = "", default = "ZC0" }
+"cav[ZC0].c889.d1131" = "volumenerfassungCodelisteCode"
+"cav[ZC0].c889.d3055" = "volumenerfassungCodepflegeCode"
+"cav[ZC0].c889.d7110" = "volumenerfassung"

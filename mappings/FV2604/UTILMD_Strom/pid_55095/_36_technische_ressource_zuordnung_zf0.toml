@@ -1,0 +1,13 @@
+[meta]
+entity = "TechnischeRessourceDatenZF0"
+bo4e_type = "TechnischeRessourceDatenZF0"
+companion_type = "TechnischeRessourceDatenZF0Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zf0.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifier"
+"cav[*,0].c889.d7111" = "merkmalQualifierZG1"
+"cav[*,1].c889.d7111" = "merkmalQualifierZG6"

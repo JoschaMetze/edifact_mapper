@@ -1,0 +1,20 @@
+# SG10 under Z02 -- LF Verwendungszweck (CCI with c240.d7037=ZA7)
+# Multiple CAVs per instance, each self-identifying by code.
+
+[meta]
+entity = "ObisKennzahl"
+bo4e_type = "ObisKennzahl"
+companion_type = "ObisKennzahlEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z02.sg10"
+discriminator = "CCI.c240.d7037=ZA7"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "merkmalCodeObisZA7"
+"cav[Z47].c889.d7111" = "cavEndkundeZ47"
+"cav[Z84].c889.d7111" = "cavNetznutzungZ84"
+"cav[Z85].c889.d7111" = "cavBilanzkreisZ85"
+"cav[Z86].c889.d7111" = "cavMehrmindermengenZ86"
+"cav[ZE1].c889.d7111" = "cavKeinVerwendungszweckZE1"

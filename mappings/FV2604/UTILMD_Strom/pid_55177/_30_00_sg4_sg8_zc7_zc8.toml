@@ -1,0 +1,19 @@
+[meta]
+entity = "AbrechnungsDatenErw13"
+bo4e_type = "AbrechnungsDatenErw13"
+companion_type = "AbrechnungsDatenErw13Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zc7_zc8"
+discriminator = "SEQ.d1229=ZC7"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZC7"
+"seq.c286.d1050" = "zeitscheibeRefZC7"
+"rff[Z31].c506.d1153" = { target = "", default = "Z31" }
+"rff[Z31].c506.d1154" = "referenzZ31ZC7_ZC8"
+"rff[Z31].c506.d1156" = "referenzCodeListeZ31ZC7_ZC8"
+"rff[Z39].c506.d1153" = { target = "", default = "Z39" }
+"rff[Z39].c506.d1154" = "referenzZ39ZC7_ZC8"
+"rff[Z39].c506.d1156" = "referenzCodeListeZ39ZC7_ZC8"

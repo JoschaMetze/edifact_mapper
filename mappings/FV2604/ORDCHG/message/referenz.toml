@@ -1,0 +1,18 @@
+# Referenz (reference) mapping for ORDCHG.
+#
+# Source: SG1 → RFF segments (ON, TN, Z13)
+#   RFF+ON:GENERATED00001  → Auftragsnummer
+#   RFF+TN:GENERATED00001  → Vorgangsnummer (only PID 39001)
+#   RFF+Z13:39000          → Pruefidentifikator
+#
+# No discriminator — produces array of Referenz (one per SG1 RFF rep).
+
+[meta]
+entity = "Referenz"
+bo4e_type = "Referenz"
+source_group = "SG1"
+source_path = "sg1"
+
+[fields]
+"rff.c506.d1153" = "referenzQualifier"
+"rff.c506.d1154" = "referenzWert"

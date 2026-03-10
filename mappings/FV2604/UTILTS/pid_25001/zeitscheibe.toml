@@ -1,0 +1,21 @@
+# PID 25001 — Zeitscheibe: SG5.SG6 (RFF+Z49|Z53 time period + DTM+Z25/Z26).
+#
+# RFF qualifier d1153 is DATA (Z49="Gültige Daten" or Z53="Keine Daten").
+
+[meta]
+entity = "Zeitscheibe"
+bo4e_type = "Zeitscheibe"
+source_group = "SG5.SG6"
+source_path = "sg5.sg6"
+discriminator = "RFF.c506.d1153=Z49|Z53"
+
+[fields]
+"rff.c506.d1153" = "zeitraumQualitaet"
+"rff.c506.d1154" = "zeitraumReferenz"
+"rff.c506.d1156" = "zeitraumId"
+"dtm[Z25].c507.d2005" = { target = "", default = "Z25" }
+"dtm[Z25].c507.d2380" = "verwendungDerDatenAb"
+"dtm[Z25].c507.d2379" = { target = "", default = "303" }
+"dtm[Z26].c507.d2005" = { target = "", default = "Z26" }
+"dtm[Z26].c507.d2380" = "verwendungDerDatenBis"
+"dtm[Z26].c507.d2379" = { target = "", default = "303" }

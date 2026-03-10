@@ -1,0 +1,15 @@
+# SG8 -- Smartmeter-Gateway (SEQ+ZC3/ZC4)
+
+[meta]
+entity = "SmartmeterGateway"
+bo4e_type = "SmartmeterGateway"
+companion_type = "SmartmeterGatewayEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zc3_zc4"
+discriminator = "SEQ.d1229=ZC3|ZC4"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZC3ZC4"
+"seq.c286.d1050" = "zeitscheibeRefZC3ZC4"

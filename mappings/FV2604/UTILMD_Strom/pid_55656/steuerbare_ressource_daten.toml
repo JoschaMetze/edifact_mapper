@@ -1,0 +1,15 @@
+# SG8 — SEQ+ZB1/ZB2 Daten der Steuerbaren Ressource
+# ZB1=Erwartete Daten, ZB2=Im System vorhandene Daten
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zb1_zb2"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierDaten"
+"seq.c286.d1050" = "zeitscheibeRefDaten"

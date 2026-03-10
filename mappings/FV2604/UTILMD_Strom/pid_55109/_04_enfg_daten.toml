@@ -1,0 +1,16 @@
+[meta]
+entity = "EnfgDaten"
+bo4e_type = "EnfgDaten"
+companion_type = "EnfgDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z75"
+discriminator = "SEQ.d1229=Z75"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRef"
+
+[companion_fields."seq.d1229"]
+target = ""
+default = "Z75"

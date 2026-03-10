@@ -1,0 +1,17 @@
+# Ansprechpartner — SG3.SG6_IC CTA+IC/COM for ORDCHG.
+#
+# CTA+IC+0800123456:Herr Muster
+# COM+test@example.com:EM
+
+[meta]
+entity = "Ansprechpartner"
+bo4e_type = "Ansprechpartner"
+source_group = "SG3.SG6"
+source_path = "sg3.sg6_ic"
+
+[fields]
+"cta.d3139" = { target = "", default = "IC" }
+"cta.c056.d3413" = "kontaktNummer"
+"cta.c056.d3412" = "kontaktName"
+"com.c076.d3148" = "kommunikationsadresse"
+"com.c076.d3155" = "kommunikationstyp"

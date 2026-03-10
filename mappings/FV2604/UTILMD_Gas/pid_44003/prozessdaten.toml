@@ -1,0 +1,52 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# DTM+Z07 (Lieferbeginndatum in Bearbeitung)
+"dtm[Z07].c507.d2005" = { target = "", default = "Z07" }
+"dtm[Z07].c507.d2380" = "lieferbeginnInBearbeitung"
+"dtm[Z07].c507.d2379" = { target = "", default = "303" }
+
+# DTM+Z08 (Datum für nächste Bearbeitung)
+"dtm[Z08].c507.d2005" = { target = "", default = "Z08" }
+"dtm[Z08].c507.d2380" = "datumNaechsteBearbeitung"
+"dtm[Z08].c507.d2379" = { target = "", default = "303" }
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c555.d4405" = "statusCode"
+"sts[7].c556.d9013" = "transaktionsgrund"
+
+# STS+Z17 (Transaktionsgrundergänzung für befristete Anmeldung)
+"sts[Z17].c601.d9015" = { target = "", default = "Z17" }
+"sts[Z17].c555.d4405" = "befristungStatusCode"
+"sts[Z17].c556.d9013" = "befristungGrund"
+
+# STS+E01 (Status der Antwort)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c555.d4405" = "antwortStatusCode"
+"sts[E01].c556.d9013" = "antwortPruefschritt"
+"sts[E01].c556.d1131" = "antwortCodelisteCode"
+
+# STS+Z35 (Status der Antwort des dritten Marktbeteiligten)
+"sts[Z35].c601.d9015" = { target = "", default = "Z35" }
+"sts[Z35].c555.d4405" = "antwortDritterStatusCode"
+"sts[Z35].c556.d9013" = "antwortDritterPruefschritt"
+"sts[Z35].c556.d1131" = "antwortDritterCodelisteCode"
+
+# FTX+ACB (Freitext)
+"ftx[ACB].d4451" = { target = "", default = "ACB" }
+"ftx[ACB].d4453" = "freitextFunktionCode"
+"ftx[ACB].c107.d4441" = "freitextReferenzCode"
+"ftx[ACB].c108.d4440" = "freitext1"
+"ftx[ACB].c108.d4440_2" = "freitext2"
+"ftx[ACB].c108.d4440_3" = "freitext3"
+"ftx[ACB].c108.d4440_4" = "freitext4"
+"ftx[ACB].c108.d4440_5" = "freitext5"

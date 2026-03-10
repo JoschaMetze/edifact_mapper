@@ -1,0 +1,108 @@
+//! PARTIN FV2604 test utilities.
+//!
+//! Mirrors FV2510 PARTIN config with FV2604 paths.
+
+use super::test_utils::MessageTypeConfig;
+use mig_bo4e::engine::MappingEngine;
+use mig_bo4e::path_resolver::PathResolver;
+use mig_bo4e::pid_schema_index::PidSchemaIndex;
+use mig_types::schema::mig::MigSchema;
+use std::path::{Path, PathBuf};
+
+pub const MIG_XML_PATH: &str = "../../xml-migs-and-ahbs/FV2604/PARTIN_MIG_1_0f_20251001.xml";
+pub const AHB_XML_PATH: &str =
+    "../../xml-migs-and-ahbs/FV2604/PARTIN_AHB_1_0f_Fehlerkorrektur_20251211.xml";
+pub const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/PARTIN/FV2604";
+pub const MAPPINGS_BASE: &str = "../../mappings/FV2604/PARTIN";
+pub const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2604/partin/pids";
+
+pub const TX_GROUP: &str = "SG4";
+
+const CONFIG: MessageTypeConfig = MessageTypeConfig {
+    mig_xml_path: MIG_XML_PATH,
+    ahb_xml_path: AHB_XML_PATH,
+    fixture_dir: FIXTURE_DIR,
+    mappings_base: MAPPINGS_BASE,
+    schema_dir: SCHEMA_DIR,
+    message_type: "PARTIN",
+    variant: None,
+    tx_group: TX_GROUP,
+    format_version: "FV2604",
+};
+
+pub fn path_resolver() -> PathResolver {
+    CONFIG.path_resolver()
+}
+
+pub fn message_dir() -> PathBuf {
+    CONFIG.message_dir()
+}
+
+pub fn common_dir() -> PathBuf {
+    CONFIG.common_dir()
+}
+
+pub fn pid_dir(pid: &str) -> PathBuf {
+    CONFIG.pid_dir(pid)
+}
+
+pub fn schema_index(pid: &str) -> PidSchemaIndex {
+    CONFIG.schema_index(pid)
+}
+
+pub fn load_pid_filtered_mig(pid_id: &str) -> Option<MigSchema> {
+    CONFIG.load_pid_filtered_mig(pid_id)
+}
+
+pub fn discover_fixtures(pid: &str) -> Vec<PathBuf> {
+    CONFIG.discover_fixtures(pid)
+}
+
+pub fn load_message_engine() -> MappingEngine {
+    CONFIG.load_message_engine()
+}
+
+pub fn load_split_engines(pid: &str) -> (MappingEngine, MappingEngine) {
+    CONFIG.load_split_engines(pid)
+}
+
+/// Load engines for a PID, handling the case where no per-PID dir exists.
+pub fn load_engines_for_pid(pid: &str) -> (MappingEngine, MappingEngine) {
+    let tx_dir = CONFIG.pid_dir(pid);
+    if tx_dir.exists() {
+        CONFIG.load_split_engines(pid)
+    } else {
+        let cmn_dir = CONFIG.common_dir();
+        let resolver = CONFIG.path_resolver();
+        let msg = CONFIG.load_message_engine();
+        if cmn_dir.exists() {
+            let idx = CONFIG.schema_index(pid);
+            let mut defs = MappingEngine::load(&cmn_dir)
+                .unwrap()
+                .with_path_resolver(resolver.clone())
+                .definitions()
+                .to_vec();
+            defs.retain(|d| {
+                d.meta
+                    .source_path
+                    .as_deref()
+                    .map(|sp| idx.has_group(sp))
+                    .unwrap_or(true)
+            });
+            let tx = MappingEngine::from_definitions(defs).with_path_resolver(resolver);
+            (msg, tx)
+        } else {
+            let tx = MappingEngine::from_definitions(vec![]);
+            (msg, tx)
+        }
+    }
+}
+
+pub fn discover_generated_fixture(pid: &str) -> Option<PathBuf> {
+    let path = Path::new(FIXTURE_DIR).join(format!("generated/{pid}.edi"));
+    if path.exists() {
+        Some(path)
+    } else {
+        None
+    }
+}

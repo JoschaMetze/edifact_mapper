@@ -1,0 +1,28 @@
+[meta]
+entity = "Geschaeftspartner"
+bo4e_type = "Geschaeftspartner"
+companion_type = "GeschaeftspartnerEdifact"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12"
+
+[fields]
+"nad.c082.d3039" = "geschaeftspartnerId"
+"nad.c080.d3036" = "name1"
+"nad.c080.d3036_2" = "name2"
+"nad.c059.d3042" = "adresse.strasse"
+"nad.c059.d3042_3" = "adresse.hausnummer"
+"nad.d3164" = "adresse.ort"
+"nad.d3251" = "adresse.postleitzahl"
+"nad.d3207" = "adresse.landescode"
+
+[companion_fields]
+"nad.d3035" = "nadQualifier"
+"nad.c082.d1131" = "codelisteCode"
+"nad.c082.d3055" = "codepflegeCode"
+"nad.c080.d3036_3" = "nameZeile3Feld"
+"nad.c080.d3036_4" = "nameZeile4Feld"
+"nad.c080.d3036_5" = "anrede"
+"nad.c058.d3124" = "zusatzinfo"
+"nad.c059.d3042_2" = "strasseZeile2"
+"nad.c059.d3042_4" = "strasseZeile4"
+"nad.c819.d3229" = "region"

@@ -1,0 +1,23 @@
+# Betreiber — SG14.SG15.SG17 NAD for IFTSTA Family B.
+#
+# NAD segment nested under SG15 (status group). Auto-filtered by
+# PidSchemaIndex for PIDs without SG17.
+
+[meta]
+entity = "Betreiber"
+bo4e_type = "Betreiber"
+source_group = "SG14.SG15.SG17"
+source_path = "sg14.sg15.sg17"
+
+[fields]
+"nad.d3035" = "nadQualifier"
+"nad.c082.d3039" = "identifikation"
+"nad.c082.d1131" = "codelisteCode"
+"nad.c082.d3055" = "codepflegeCode"
+"nad.c058.d3124" = "zusatzinfo"
+"nad.c080.d3036" = "nachname"
+"nad.c080.d3036_2" = "vorname"
+"nad.c080.d3036_3" = "titel"
+"nad.c080.d3036_4" = "anrede"
+"nad.c080.d3036_5" = "beteiligter"
+"nad.c080.d3045" = "nameFormatCode"

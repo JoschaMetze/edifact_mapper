@@ -1,0 +1,16 @@
+# SG10 under Z01 — CCI+Z22 Veräußerungsform (no CAV)
+# CCI+Z22++Z90/Z91/Z92/Z94
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.d7059=Z22"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "veraeusserungsformQualifier"
+"cci.c240.d7037" = "veraeusserungsformCode"

@@ -1,0 +1,31 @@
+# Prozessdaten (process data) mapping for PID 55654 (Rueckmeldung/Anfrage Daten der NeLo).
+#
+# Source: SG4 top-level segments (IDE, STS)
+# IDE+24+<Vorgangsnummer>
+# STS+7++ZX8+<detail>+<ergaenzung>   -> Transaktionsgrund
+# STS+E01++<status>:<ebd>::<ref>     -> Antwort-Status mit EBD-Referenz
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c555.d4405" = "statusCode"
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+"sts[7].c556_3.d9013" = "transaktionsgrundErgaenzung"
+
+# STS+E01 (Antwort-Status mit EBD-Referenz)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c555.d4405" = "antwortStatusCode"
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"
+"sts[E01].c556.d3055" = "codepflegeStelle"
+"sts[E01].c556.d9012" = "zeitraumIdRef"

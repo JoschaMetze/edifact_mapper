@@ -1,0 +1,23 @@
+# SG8 -- SEQ+ZA7/ZA8 OBIS-Daten der Netzlokation
+# Multi-rep: multiple instances possible per fixture. Uses separate entity "ObisKennzahl"
+# to avoid deep_merge collision with SG5 Netzlokation (Object vs Array).
+
+[meta]
+entity = "ObisKennzahl"
+bo4e_type = "ObisKennzahl"
+companion_type = "ObisKennzahlEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_za7_za8"
+discriminator = "SEQ.d1229=ZA7|ZA8"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierObis"
+"seq.c286.d1050" = "zeitscheibeRefObis"
+"pia.c212.d7140" = "obisKennzahl"
+"pia.c212.d7143" = "obisKennzahlTyp"
+
+[companion_fields."pia.d4347"]
+target = ""
+default = "5"

@@ -1,0 +1,14 @@
+# SG26.SG27 (MOA) — position amount for INVOIC.
+#
+# MOA+203 (Positionsbetrag ohne USt.), MOA+131 (Zu-/Abschlagsbetrag).
+# All as data fields to handle PID variation.
+
+[meta]
+entity = "VorgangBetrag"
+bo4e_type = "VorgangBetrag"
+source_group = "SG26.SG27"
+source_path = "sg26.sg27"
+
+[fields]
+"moa.c516.d5025" = "betragQualifier"
+"moa.c516.d5004" = "betrag"

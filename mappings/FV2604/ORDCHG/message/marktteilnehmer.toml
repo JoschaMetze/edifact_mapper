@@ -1,0 +1,19 @@
+# Marktteilnehmer (market participant) mapping for ORDCHG.
+#
+# Source: SG3 → NAD segments
+#   NAD+MS+1234567890128:293:9  → Absender
+#   NAD+MR+1234567890128:293:9  → Empfaenger
+#
+# No discriminator — produces array of Marktteilnehmer (one per SG3 rep).
+
+[meta]
+entity = "Marktteilnehmer"
+bo4e_type = "Marktteilnehmer"
+source_group = "SG3"
+source_path = "sg3"
+
+[fields]
+"nad.d3035" = "marktrolle"
+"nad.c082.d3039" = "rollencodenummer"
+"nad.c082.d1131" = "codelisteCode"
+"nad.c082.d3055" = "rollencodetyp"

@@ -1,0 +1,33 @@
+# SG10 — CCI+++Z88 Netznutzung within SEQ+Z01
+# CCI+++Z88 / CAV+Z74 (Netznutzungsvertrag) / CAV+Z73 (Zahlung) / CAV+ZA7 (Grundlage)
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.c240.d7037=Z88"
+
+[fields]
+
+[companion_fields]
+"cav[Z74].c889.d7110" = "netznutzungsvertrag"
+"cav[Z73].c889.d7110" = "zahlungNetznutzung"
+"cav[ZA7].c889.d7110" = "grundlageLieferscheinpruefung"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "Z88"
+
+[companion_fields."cav[Z74].c889.d7111"]
+target = ""
+default = "Z74"
+
+[companion_fields."cav[Z73].c889.d7111"]
+target = ""
+default = "Z73"
+
+[companion_fields."cav[ZA7].c889.d7111"]
+target = ""
+default = "ZA7"

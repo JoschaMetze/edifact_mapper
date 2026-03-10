@@ -1,0 +1,13 @@
+[meta]
+entity = "MarktlokationDatenZE4"
+bo4e_type = "MarktlokationDatenZE4"
+companion_type = "MarktlokationDatenZE4Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_ze4.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z53" }
+"cci.c502.d6313" = "ccic502_d6313"
+"cci.c240.d7037" = "merkmalCodeZ53"

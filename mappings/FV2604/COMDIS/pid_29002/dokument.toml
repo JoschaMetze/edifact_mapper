@@ -1,0 +1,14 @@
+# Dokument (document reference) mapping for COMDIS PID 29002.
+#
+# Source: SG2 → DOC only (no MOA for delivery note rejection)
+# DOC+Z41+GENERATED00001  → dokumenttyp, dokumentennummer
+
+[meta]
+entity = "Dokument"
+bo4e_type = "Dokument"
+source_group = "SG2"
+source_path = "sg2"
+
+[fields]
+"doc.c002.d1001" = "dokumenttyp"
+"doc.c503.d1004" = "dokumentennummer"

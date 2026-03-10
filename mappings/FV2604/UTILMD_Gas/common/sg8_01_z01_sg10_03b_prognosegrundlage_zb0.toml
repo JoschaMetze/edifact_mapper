@@ -1,0 +1,27 @@
+# SG10 CCI ZB0/ZB1 (Prognosegrundlage gültig) — for PIDs using ZB0 instead of ZC0.
+#
+# Source: SG4.SG8.SG10, CCI entry with c240.d7037 in {ZB0, ZB1}
+# CCI+X+X+ZB0    -> Prognose auf Basis von Werten gültig
+# CCI+X+X+ZB1    -> Prognose auf Basis von Profilen gültig
+# No CAV segment for this rep.
+# Merges into "MarktlokationDaten" entity.
+#
+# NOTE: Uses UNIQUE companion field names (prognosegrundlageGueltig*) to avoid
+# phantom generation. PIDs with ZC0 use prognosegrundlage* fields — if we shared
+# the same names, the ZB0 definition would see ZC0 data and create a phantom CCI.
+# Some PIDs (44139, 44142) use ZB0/ZB1 codes instead of ZC0/ZA6 for prognosegrundlage.
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.c240.d7037=ZB0"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "prognosegrundlageGueltigKlasse"
+"cci.c502.d6313" = "prognosegrundlageGueltigDimension"
+"cci.c240.d7037" = "prognosegrundlageGueltig"

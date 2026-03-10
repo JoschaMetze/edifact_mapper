@@ -1,0 +1,17 @@
+# Ansprechpartner — SG2.SG4 CTA+IC/COM (contact, shared across all MSCONS PIDs).
+#
+# CTA+IC+0800123456:Herr Muster
+# COM+test@example.com:TE
+
+[meta]
+entity = "Ansprechpartner"
+bo4e_type = "Ansprechpartner"
+source_group = "SG2.SG4"
+source_path = "sg2.sg4_ic"
+
+[fields]
+"cta.d3139" = { target = "", default = "IC" }
+"cta.c056.d3412" = "telefonnummer"
+"cta.c056.d3413" = "name"
+"com.c076.d3148" = "kommunikationsadresse"
+"com.c076.d3155" = "kommunikationstyp"

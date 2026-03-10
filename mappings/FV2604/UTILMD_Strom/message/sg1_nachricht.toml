@@ -1,0 +1,15 @@
+# SG1 (RFF+AAV) — message-level reference version.
+#
+# Only present in PIDs with SG1 in their schema (55065, 55067, 55069, 55070,
+# 55074, 55195, 55201). Merges into the "Nachricht" entity produced by
+# nachricht.toml (root-level BGM/DTM mapping).
+
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+source_group = "SG1"
+source_path = "sg1"
+
+[fields]
+"rff.c506.d1153" = { target = "", default = "AAV" }
+"rff.c506.d1154" = "referenzVersion"

@@ -1,0 +1,31 @@
+# Prozessdaten (process data) mapping for PID 55024 (Ablehnung Anfrage Stornierung).
+#
+# Source: SG4 top-level segments (IDE, STS, FTX)
+# IDE+24+<Vorgangsnummer>                         -> vorgangId
+# STS+E01+<status>+<code>:<ebd>::<zeitraumRef>    -> Antwort-Status
+# FTX+ACB+<funktion>+<code>+<text>                -> freitext
+#
+# No DTM segment in SG4 for this PID.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# STS segment — Status der Antwort (E01)
+"sts.c601.d9015" = "antwortKategorie"
+"sts.c555.d4405" = "antwortStatus"
+"sts.c556.d9013" = "pruefschrittCode"
+"sts.c556.d1131" = "ebdNummer"
+"sts.c556.d9012" = "zeitraumReferenz"
+
+# FTX segment — Zusaetzliche Informationen (ACB)
+"ftx.d4451" = { target = "", default = "ACB" }
+"ftx.c107.d4441" = "freitextReferenz"
+"ftx.c108.d4440" = "freitext"

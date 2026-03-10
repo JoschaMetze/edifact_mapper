@@ -1,0 +1,16 @@
+[meta]
+entity = "ZeitreihenDaten49"
+bo4e_type = "ZeitreihenDaten49"
+companion_type = "ZeitreihenDaten49Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z49"
+discriminator = "SEQ.d1229=Z49"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ49"
+"rff[AVE].c506.d1153" = { target = "", default = "AVE" }
+"rff[AVE].c506.d1154" = "referenzAVEZ49"
+"rff[AUU].c506.d1153" = { target = "", default = "AUU" }
+"rff[AUU].c506.d1154" = "referenzAUUZ49"

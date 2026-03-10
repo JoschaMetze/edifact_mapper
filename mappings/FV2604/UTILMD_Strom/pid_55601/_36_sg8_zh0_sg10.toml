@@ -1,0 +1,15 @@
+[meta]
+entity = "ProduktpaketPriorisierung"
+bo4e_type = "ProduktpaketPriorisierung"
+companion_type = "ProduktpaketPriorisierungEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zh0.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z65" }
+"cci.d4051" = "ccid4051"
+"cci.c502.d6313" = "ccic502_d6313"
+"cci.c240.d7037" = "merkmalCodeZ65"
+"cav.c889.d7111" = "merkmalQualifier"

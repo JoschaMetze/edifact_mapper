@@ -1,0 +1,23 @@
+[meta]
+entity = "TechnischeRessourceDatenZ52"
+bo4e_type = "TechnischeRessourceDatenZ52"
+companion_type = "TechnischeRessourceDatenZ52Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z52"
+discriminator = "SEQ.d1229=Z52"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefDaten"
+"seq.d1229" = "seqQualifierDaten"
+"rff[Z37].c506.d1153" = { target = "", default = "Z37" }
+"rff[Z37].c506.d1154" = "referenzZ37Z52"
+"rff[Z34].c506.d1153" = { target = "", default = "Z34" }
+"rff[Z34].c506.d1154" = "referenzZ34Z52"
+"rff[Z16].c506.d1153" = { target = "", default = "Z16" }
+"rff[Z16].c506.d1154" = "referenzZ16Z52"
+"rff[Z38].c506.d1153" = { target = "", default = "Z38" }
+"rff[Z38].c506.d1154" = "referenzZ38Z52"
+"rff[Z32].c506.d1153" = { target = "", default = "Z32" }
+"rff[Z32].c506.d1154" = "referenzZ32Z52"

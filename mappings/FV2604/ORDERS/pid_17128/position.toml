@@ -1,0 +1,22 @@
+# Position (SG29) mapping for PID 17128 — Reklamation.
+
+[meta]
+entity = "Position"
+bo4e_type = "Position"
+source_group = "SG29"
+source_path = "sg29"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+"lin.d1229" = "handlungCode"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "artikelnummer"
+"pia.c212.d7143" = { target = "", default = "Z11" }
+"ftx.d4451" = "textbezug"
+"ftx.d4453" = "textfunktion"
+"ftx.c107.d4441" = "textReferenzCode"
+"ftx.c108.d4440" = "freitext"
+"ftx.c108.d4440_2" = "freitext2"
+"ftx.c108.d4440_3" = "freitext3"
+"ftx.c108.d4440_4" = "freitext4"
+"ftx.c108.d4440_5" = "freitext5"

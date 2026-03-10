@@ -1,0 +1,15 @@
+# PID 25007 — Beantragungsnummer (RFF+AGI) — merges into Prozessdaten.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG5.SG6"
+source_path = "sg5.sg6"
+discriminator = "RFF.c506.d1153=AGI"
+
+[fields]
+"rff.c506.d1154" = "beantragungsnummer"
+
+[fields."rff.c506.d1153"]
+target = ""
+default = "AGI"

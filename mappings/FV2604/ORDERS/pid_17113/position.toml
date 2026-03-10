@@ -1,0 +1,30 @@
+# Position (SG29 line item) mapping for PID 17113 — Reklamation von Werten.
+#
+# LIN+1                              → positionsnummer
+# PIA+5+8-0:1.0.0*255:SRW            → OBIS-Kennzahl
+# DTM+7:202503102300+00:303           → gueltigkeitsdatum
+# DTM+163:202503112200+00:303         → beginnZeitraum
+# DTM+164:202503112300+00:303         → endeZeitraum
+# FTX+Z05                             → reklamationsgrund
+
+[meta]
+entity = "Position"
+bo4e_type = "Position"
+source_group = "SG29"
+source_path = "sg29"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahl"
+"pia.c212.d7143" = { target = "", default = "SRW" }
+"dtm[7].c507.d2005" = { target = "", default = "7" }
+"dtm[7].c507.d2380" = "gueltigkeitsdatum"
+"dtm[7].c507.d2379" = { target = "", default = "303" }
+"dtm[163].c507.d2005" = { target = "", default = "163" }
+"dtm[163].c507.d2380" = "beginnZeitraum"
+"dtm[163].c507.d2379" = { target = "", default = "303" }
+"dtm[164].c507.d2005" = { target = "", default = "164" }
+"dtm[164].c507.d2380" = "endeZeitraum"
+"dtm[164].c507.d2379" = { target = "", default = "303" }
+"ftx.d4451" = "reklamationsgrund"

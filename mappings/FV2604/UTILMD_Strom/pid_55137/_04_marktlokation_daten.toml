@@ -1,0 +1,17 @@
+# Marktlokation Daten (SG8 z80/z81) for PID 55137.
+# SEQ+Z80=Erwartete Daten der Marktlokation / Z81=Im System vorhandene Daten
+# Enriches entity Marktlokation with Zeitscheibe reference.
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z80_z81"
+discriminator = "SEQ.d1229=Z80|Z81"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierMalo"
+"seq.c286.d1050" = "zeitscheibeRef"

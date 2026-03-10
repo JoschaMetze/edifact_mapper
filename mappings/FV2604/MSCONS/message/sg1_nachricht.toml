@@ -1,0 +1,18 @@
+# SG1 (RFF) — message-level references.
+#
+# SG1 contains RFF segments for references:
+#   RFF+Z30:ALEXANDE1428972216  → Beantragungsnummer
+#   RFF+Z13:13017               → Prüfidentifikator
+#
+# No discriminator — each SG1 instance produces one array element.
+# On reverse, each element reconstructs one SG1 rep.
+
+[meta]
+entity = "Referenz"
+bo4e_type = "Referenz"
+source_group = "SG1"
+source_path = "sg1"
+
+[fields]
+"rff.c506.d1153" = "qualifier"
+"rff.c506.d1154" = "referenz"

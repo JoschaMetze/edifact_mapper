@@ -1,0 +1,17 @@
+# SG50.SG51 (RFF + DTM) — prior invoice references for INVOIC.
+#
+# RFF+AFL (Vorgängerrechnungsnummer) + DTM+3 (Rechnungsdatum).
+# Only present in PIDs 31002 and 31010.
+
+[meta]
+entity = "RechnungssummeReferenz"
+bo4e_type = "RechnungssummeReferenz"
+source_group = "SG50.SG51"
+source_path = "sg50.sg51"
+
+[fields]
+"rff.c506.d1153" = "qualifier"
+"rff.c506.d1154" = "referenz"
+"dtm.c507.d2005" = "datumQualifier"
+"dtm.c507.d2380" = "datumWert"
+"dtm.c507.d2379" = "datumFormat"

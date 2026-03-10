@@ -1,0 +1,15 @@
+# SG4.SG5 — RFF+ACW: reference number of the faulty message
+
+[meta]
+entity = "FehlerNachrichtRef"
+bo4e_type = "FehlerNachrichtRef"
+companion_type = "FehlerNachrichtRefEdifact"
+source_group = "SG4.SG5"
+source_path = "sg4.sg5"
+discriminator = "RFF.c506.d1153=ACW"
+
+[fields]
+"rff.c506.d1154" = "nachrichtenReferenz"
+
+[companion_fields]
+"rff.c506.d1153" = { target = "", default = "ACW" }

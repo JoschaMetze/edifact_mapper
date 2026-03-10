@@ -1,0 +1,18 @@
+[meta]
+entity = "MarktlokationDatenZE4"
+bo4e_type = "MarktlokationDatenZE4"
+companion_type = "MarktlokationDatenZE4Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_ze4"
+discriminator = "SEQ.d1229=ZE4"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRefZE4"
+"seq.d1229" = "seqQualifierZE4"
+"rff.c506.d1153" = { target = "", default = "Z18" }
+"rff.c506.d1154" = "referenzZE4"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZE4"
+"pia.c212.d7143" = { target = "", default = "Z12" }

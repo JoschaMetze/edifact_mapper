@@ -1,0 +1,28 @@
+# Marktlokation Zuordnung: Land der Foerderung (SG10 within SEQ+Z01)
+# CCI+Z23 — separate SG10 rep for "Land der Foerderung" characteristic.
+# Only present in some fixtures; phantom prevention skips this when absent.
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.d7059=Z23"
+
+[fields]
+
+[companion_fields]
+"cci[Z23].c240.d7037" = "landDerFoerderung"
+
+[companion_fields."cci[Z23].d7059"]
+target = ""
+default = "Z23"
+
+[companion_fields."cci[Z23].c240.d1131"]
+target = ""
+default = "LAND"
+
+[companion_fields."cci[Z23].c240.d3055"]
+target = ""
+default = "293"

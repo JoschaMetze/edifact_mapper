@@ -1,0 +1,15 @@
+# Status mapping for IFTSTA Family A (MaBiS) PID 21005.
+#
+# SG4.SG7: STS (no discriminator → array for multi-STS PIDs)
+
+[meta]
+entity = "Status"
+bo4e_type = "Status"
+source_group = "SG4.SG7"
+source_path = "sg4.sg7"
+
+[fields]
+"sts.c601.d9015" = "statusKategorie"
+"sts.c555.d4405" = "statusCode"
+"sts.c556.d9013" = "pruefschrittCode"
+"sts.c556.d1131" = "ebdNummer"

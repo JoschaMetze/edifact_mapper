@@ -1,0 +1,15 @@
+# SG10 within SG8 ZA5/ZA6 — Wertegranularitaet (CCI+++ZE4 with CAV)
+
+[meta]
+entity = "ObisZaehleinrichtung"
+bo4e_type = "ObisZaehleinrichtung"
+companion_type = "ObisZaehleinrichtungEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_za5_za6.sg10"
+discriminator = "CCI.c240.d7037=ZE4"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "wertegranularitaetMerkmal"
+"cav.c889.d7111" = "wertegranularitaetWert"

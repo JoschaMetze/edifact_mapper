@@ -1,0 +1,14 @@
+# Position (document line item) mapping for REMADV PID 33004.
+#
+# Source: SG5.SG10 → DLI
+# DLI+1+7   → aktionCode, positionsnummer
+
+[meta]
+entity = "Position"
+bo4e_type = "Position"
+source_group = "SG5.SG10"
+source_path = "sg5.sg10_1"
+
+[fields]
+"dli.d1073" = "aktionCode"
+"dli.d1082" = "positionsnummer"

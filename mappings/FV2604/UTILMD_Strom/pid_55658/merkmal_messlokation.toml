@@ -1,0 +1,18 @@
+# SG10 under SG8 ZG6/ZG7 -- CCI+++E04 Spannungsebene der Messlokation
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zg6_zg7.sg10"
+discriminator = "CCI.c240.d7037=E04"
+
+[fields]
+
+[companion_fields]
+"cav.c889.d7111" = "spannungsebene"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "E04"

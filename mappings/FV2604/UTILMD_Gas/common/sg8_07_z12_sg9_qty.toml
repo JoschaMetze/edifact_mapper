@@ -1,0 +1,16 @@
+# SG9 QTY+Z16 — Gemeinderabatt (percentage) — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG9 under SEQ+Z12
+# QTY+Z16:1:P1 -> Gemeinderabatt in %
+# Merges into "GemeindeDaten" entity.
+
+[meta]
+entity = "GemeindeDaten"
+bo4e_type = "GemeindeDaten"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_z12.sg9"
+
+[fields]
+"qty.c186.d6063" = { target = "", default = "Z16" }
+"qty.c186.d6060" = "gemeinderabattProzent"
+"qty.c186.d6411" = { target = "", default = "P1" }

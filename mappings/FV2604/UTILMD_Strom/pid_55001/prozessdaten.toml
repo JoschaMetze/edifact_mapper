@@ -1,0 +1,37 @@
+# Prozessdaten (process data) mapping for PID 55001 (Anmeldung verb. MaLo).
+#
+# Source: SG4 top-level segments (IDE, DTM, STS)
+# IDE+24+ALEXANDE542328517       -> vorgang_id (Transaktion)
+# DTM+92:20250531...:303         -> gueltig_ab (Beginn der Lieferung)
+# DTM+93:20251231...:303         -> gueltig_bis (Datum Vertragsende)
+# STS+7++E01+ZW4+E03             -> transaktionsgrund (Verbrauchende MaLo / ruhende MaLo)
+#
+# Uses qualifier-based segment selection: dtm[92] selects the DTM
+# where elements[0][0] == "92".
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# DTM+92 (Beginn der Lieferung) — composite C507: qualifier, value, format
+"dtm[92].c507.d2005" = { target = "", default = "92" }
+"dtm[92].c507.d2380" = "gueltigAb"
+"dtm[92].c507.d2379" = { target = "", default = "303" }
+
+# DTM+93 (Datum Vertragsende)
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
+
+# STS segment — Transaktionsgrund (ZW4=Verbrauchende MaLo, ZAP=ruhende MaLo)
+"sts.c601.d9015" = { target = "", default = "7" }
+"sts.c556.d9013" = "transaktionsgrund"
+"sts.c556_2.d9013" = "transaktionsgrundErgaenzung"
+"sts.c556_3.d9013" = "transaktionsgrundErgaenzungBefristeteAnmeldung"

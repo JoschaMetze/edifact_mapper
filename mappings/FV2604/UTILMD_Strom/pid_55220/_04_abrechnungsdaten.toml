@@ -1,0 +1,31 @@
+[meta]
+entity = "Abrechnungsdaten"
+bo4e_type = "Abrechnungsdaten"
+companion_type = "AbrechnungsdatenEdifact"
+source_group = "SG4.SG6"
+source_path = "sg4.sg6"
+discriminator = "RFF.c506.d1153=Z51|Z52"
+
+[fields]
+
+[companion_fields]
+"rff.c506.d1153" = "termindatenQualitaet"
+"rff.c506.d1154" = "termindatenReferenz"
+"dtm[Z21].c507.d2380" = "terminNetznutzungsabrechnung"
+"dtm[Z21].c507.d2379" = "terminNnaFormat"
+"dtm[Z09].c507.d2380" = "naechsteNetznutzungsabrechnung"
+"dtm[Z09].c507.d2379" = "naechsteNnaFormat"
+"dtm[Z22].c507.d2380" = "nnaZeitraum"
+"dtm[Z22].c507.d2379" = "nnaZeitraumFormat"
+
+[companion_fields."dtm[Z21].c507.d2005"]
+target = ""
+default = "Z21"
+
+[companion_fields."dtm[Z09].c507.d2005"]
+target = ""
+default = "Z09"
+
+[companion_fields."dtm[Z22].c507.d2005"]
+target = ""
+default = "Z22"

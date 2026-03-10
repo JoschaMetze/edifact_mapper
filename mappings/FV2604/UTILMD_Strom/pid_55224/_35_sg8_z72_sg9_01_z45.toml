@@ -1,0 +1,20 @@
+[meta]
+entity = "GeraeteDaten72"
+bo4e_type = "GeraeteDaten72"
+companion_type = "GeraeteDaten72Edifact"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_z72.sg9"
+discriminator = "QTY.c186.d6063=Z45"
+
+[fields]
+
+[companion_fields]
+"qty.c186.d6063" = { target = "", default = "Z45" }
+"qty.c186.d6060" = "mengeZ45"
+"qty.c186.d6411" = "mengeneinheitZ45"
+"dtm[158].c507.d2005" = { target = "", default = "158" }
+"dtm[158].c507.d2380" = "zeitpunktZ45Beginn"
+"dtm[158].c507.d2379" = { target = "", default = "303" }
+"dtm[159].c507.d2005" = { target = "", default = "159" }
+"dtm[159].c507.d2380" = "zeitpunktZ45Ende"
+"dtm[159].c507.d2379" = { target = "", default = "303" }

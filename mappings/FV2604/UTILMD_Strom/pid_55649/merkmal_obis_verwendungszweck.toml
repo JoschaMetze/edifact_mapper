@@ -1,0 +1,15 @@
+# SG10 under Z57 — LF Verwendungszweck (CCI with c240.d7037=ZA7, CAV)
+# Maps to parent ObisKennzahl entity via companion_fields.
+
+[meta]
+entity = "ObisKennzahl"
+bo4e_type = "ObisKennzahl"
+companion_type = "ObisKennzahlEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z57.sg10"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "merkmalCodeObisZA7"
+"cav.c889.d7111" = "verwendungszweckObis"

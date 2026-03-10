@@ -1,0 +1,19 @@
+# SG9 — QTY+Z44 Nennleistung (Abgabe)
+
+[meta]
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+companion_type = "TechnischeRessourceEdifact"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_z52.sg9"
+discriminator = "QTY.c186.d6063=Z44"
+
+[fields]
+
+[companion_fields]
+"qty.c186.d6060" = "nennleistungAbgabe"
+"qty.c186.d6411" = "nennleistungAbgabeEinheit"
+
+[companion_fields."qty.c186.d6063"]
+target = ""
+default = "Z44"

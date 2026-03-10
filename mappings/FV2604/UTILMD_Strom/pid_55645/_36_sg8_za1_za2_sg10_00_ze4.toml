@@ -1,0 +1,15 @@
+[meta]
+entity = "AbrechnungsDaten"
+bo4e_type = "AbrechnungsDaten"
+companion_type = "AbrechnungsDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_za1_za2.sg10"
+discriminator = "CCI.c240.d7037=ZE4"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierZE4"
+"cci.c502.d6313" = "ccic502d6313ZE4"
+"cci.c240.d7037" = "merkmalCodeZE4"
+"cav.c889.d7111" = "merkmalQualifierZE4"

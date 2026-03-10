@@ -1,0 +1,20 @@
+# SG10 within SG8 Z20 — Vor-/Nachkommastellen (CCI+11++Z33 with CAV)
+
+[meta]
+entity = "ObisZaehleinrichtung"
+bo4e_type = "ObisZaehleinrichtung"
+companion_type = "ObisZaehleinrichtungEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z20.sg10"
+discriminator = "CCI.d7059=11"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "stellenMerkmal"
+"cav.c889.d7110" = "vorkommastellen"
+"cav.c889.d7110_2" = "nachkommastellen"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "11"

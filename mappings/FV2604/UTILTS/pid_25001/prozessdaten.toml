@@ -1,0 +1,18 @@
+# PID 25001 — Berechnungsformel: SG5 root segments.
+#
+# IDE+24 (transaction), LOC+172 (Meldepunkt), STS+Z23 (formula status).
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG5"
+source_path = "sg5"
+
+[fields]
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangsnummer"
+"loc.d3227" = { target = "", default = "172" }
+"loc.c517.d3225" = "meldepunktId"
+"sts.c601.d9015" = { target = "", default = "Z23" }
+"sts.c555.d4405" = "statusCode"
+"sts.c556.d9013" = "zeitraumReferenz"

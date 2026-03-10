@@ -1,0 +1,14 @@
+# Geraet — SG7 RFF+MG (Gerätenummer/device number).
+#
+# RFF+MG:1DZG0062041367
+#   c506.d1153=MG, c506.d1154=Gerätenummer
+
+[meta]
+entity = "Geraet"
+bo4e_type = "Geraet"
+source_group = "SG5.SG6.SG7"
+source_path = "sg5.sg6_172.sg7"
+
+[fields]
+"rff.c506.d1153" = "rffQualifier"
+"rff.c506.d1154" = "geraeteNummer"

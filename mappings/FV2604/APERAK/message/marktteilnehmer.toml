@@ -1,0 +1,20 @@
+# SG3 — NAD (MS/MR) with optional CTA+IC/COM (flat within SG3, not child group).
+#
+# SG3 rep 1: NAD+MS [+ CTA+IC + COM]
+# SG3 rep 2: NAD+MR
+
+[meta]
+entity = "Marktteilnehmer"
+bo4e_type = "Marktteilnehmer"
+source_group = "SG3"
+source_path = "sg3"
+
+[fields]
+"nad.d3035" = "marktrolle"
+"nad.c082.d3039" = "rollencodenummer"
+"nad.c082.d1131" = "codelisteCode"
+"nad.c082.d3055" = "rollencodetyp"
+"cta[IC].c056.d3413" = "kontaktNummer"
+"cta[IC].c056.d3412" = "kontaktName"
+"com.c076.d3148" = "kommunikationsadresse"
+"com.c076.d3155" = "kommunikationstyp"

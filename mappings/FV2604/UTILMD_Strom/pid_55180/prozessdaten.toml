@@ -1,0 +1,36 @@
+# SG4 — Prozessdaten (Rückmeldung/Anfrage Lokationsbündelstruktur)
+# IDE+24, STS+7 (Transaktionsgrund ZY2), STS+E01 (Antwort-Status with EBD ref)
+#
+# This PID has two STS+E01 segments with different Zeitraum-IDs.
+# Use indexed qualifier sts[E01] for first and sts[E01,1] for second.
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+"sts[7].c556_3.d9013" = "transaktionsgrundLieferende"
+
+# STS+E01 (Antwort-Status — first occurrence)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"
+"sts[E01].c556.d3055" = "ebdVerantwortlicheStelle"
+"sts[E01].c556.d9012" = "zeitraumId"
+
+# STS+E01 (Antwort-Status — second occurrence)
+"sts[E01,1].c601.d9015" = { target = "", default = "E01" }
+"sts[E01,1].c556.d9013" = "pruefschrittCode2"
+"sts[E01,1].c556.d1131" = "ebdNummer2"
+"sts[E01,1].c556.d3055" = "ebdVerantwortlicheStelle2"
+"sts[E01,1].c556.d9012" = "zeitraumId2"

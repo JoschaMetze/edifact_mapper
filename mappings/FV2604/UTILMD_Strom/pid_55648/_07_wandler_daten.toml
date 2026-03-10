@@ -1,0 +1,21 @@
+# SG8 -- Wandler Daten (SEQ+ZB9/ZC0)
+# RFF+MG Geraetereferenz
+
+[meta]
+entity = "Wandler"
+bo4e_type = "Wandler"
+companion_type = "WandlerEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zb9_zc0"
+discriminator = "SEQ.d1229=ZB9|ZC0"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZB9ZC0"
+"seq.c286.d1050" = "zeitscheibeRefZB9ZC0"
+"rff[MG].c506.d1154" = "geraetereferenzNummer"
+
+[companion_fields."rff[MG].c506.d1153"]
+target = ""
+default = "MG"

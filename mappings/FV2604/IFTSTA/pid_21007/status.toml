@@ -1,0 +1,22 @@
+# Status mapping override for IFTSTA PID 21007.
+#
+# STS + RFF[Z13] + RFF[TN] + DTM[76]
+
+[meta]
+entity = "Status"
+bo4e_type = "Status"
+source_group = "SG14.SG15"
+source_path = "sg14.sg15"
+
+[fields]
+"sts.c601.d9015" = "statusKategorie"
+"sts.c555.d4405" = "statusCode"
+"sts.c556.d9013" = "pruefschrittCode"
+"sts.c556.d1131" = "ebdNummer"
+"rff[Z13].c506.d1153" = { target = "", default = "Z13" }
+"rff[Z13].c506.d1154" = "pruefidentifikator"
+"rff[TN].c506.d1153" = "tnQualifier"
+"rff[TN].c506.d1154" = "transaktionsnummer"
+"dtm[76].c507.d2005" = { target = "", default = "76" }
+"dtm[76].c507.d2380" = "geplantesLieferdatum"
+"dtm[76].c507.d2379" = { target = "", default = "303" }

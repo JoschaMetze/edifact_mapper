@@ -1,0 +1,16 @@
+[meta]
+entity = "ZaehlwerkDaten"
+bo4e_type = "ZaehlwerkDaten"
+companion_type = "ZaehlwerkDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z80.sg10"
+discriminator = "CCI.c240.d7037=ZB3"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierZB3"
+"cci.c502.d6313" = "ccic502d6313ZB3"
+"cci.c240.d7037" = "merkmalCodeZB3"
+"cav.c889.d7111" = { target = "", default = "Z89" }
+"cav.c889.d1131" = "zugeordneterMpZB3"

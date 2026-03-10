@@ -1,0 +1,23 @@
+# Abweichung (rejection reason) mapping for REMADV PID 33003.
+#
+# Source: SG5.SG7 → AJT + FTX
+# AJT+A05+E_0210   → pruefschrittCode, ebdReferenz
+# FTX+ABO+++text    → textQualifier, freitext1..5
+
+[meta]
+entity = "Abweichung"
+bo4e_type = "Abweichung"
+source_group = "SG5.SG7"
+source_path = "sg5.sg7"
+
+[fields]
+"ajt.d4465" = "pruefschrittCode"
+"ajt.d1082" = "ebdReferenz"
+"ftx.d4451" = "textQualifier"
+"ftx.d4453" = "textFunktion"
+"ftx.c107.d4441" = "textReferenz"
+"ftx.c108.d4440" = "freitext1"
+"ftx.c108.d4440_2" = "freitext2"
+"ftx.c108.d4440_3" = "freitext3"
+"ftx.c108.d4440_4" = "freitext4"
+"ftx.c108.d4440_5" = "freitext5"

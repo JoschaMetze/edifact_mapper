@@ -1,0 +1,12 @@
+# PID 25009 — Leistungskurvenveränderung SG11: QTY+Z40 (upper threshold).
+
+[meta]
+entity = "Leistungskurvenveraenderung"
+bo4e_type = "Leistungskurvenveraenderung"
+source_group = "SG5.SG8.SG11"
+source_path = "sg5.sg8_z74.sg11"
+
+[fields]
+"qty.c186.d6063" = { target = "", default = "Z40" }
+"qty.c186.d6060" = "menge"
+"qty.c186.d6411" = { target = "", default = "P1" }

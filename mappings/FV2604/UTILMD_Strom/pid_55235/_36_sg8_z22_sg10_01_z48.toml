@@ -1,0 +1,14 @@
+[meta]
+entity = "MabisZaehlpunktZuordnung"
+bo4e_type = "MabisZaehlpunktZuordnung"
+companion_type = "MabisZaehlpunktZuordnungEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z22.sg10"
+discriminator = "CCI.d7059=Z48"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z48" }
+"cci.c502.d6313" = "ccic502d6313Z48"
+"cci.c240.d7037" = "merkmalCodeZ48"

@@ -1,0 +1,13 @@
+[meta]
+entity = "GeraeteDaten72"
+bo4e_type = "GeraeteDaten72"
+companion_type = "GeraeteDaten72Edifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z72.sg10"
+discriminator = "CCI.d7059=Z02"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "cciFunktionsqualifierZ02"
+"cav.c889.d7111" = { target = "", default = "XYZ" }

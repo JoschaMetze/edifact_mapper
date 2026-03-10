@@ -1,0 +1,18 @@
+[meta]
+entity = "Profil"
+bo4e_type = "Profil"
+companion_type = "ProfilEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z21"
+discriminator = "SEQ.d1229=Z21"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRef"
+
+"seq.d1229" = { target = "", default = "Z21" }
+"rff[Z12].c506.d1153" = { target = "", default = "Z12" }
+"rff[Z12].c506.d1154" = "referenzZ12Z21"
+"rff[Z18].c506.d1153" = { target = "", default = "Z18" }
+"rff[Z18].c506.d1154" = "referenzZ18Z21"

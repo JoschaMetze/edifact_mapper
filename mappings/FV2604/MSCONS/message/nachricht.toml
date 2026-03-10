@@ -1,0 +1,23 @@
+# Nachricht (message header) mapping for MSCONS.
+#
+# Source: Root-level segments (outside any SG group)
+# BGM+7+010427134157+9  → dokumenttyp, dokumentennummer, nachrichtenfunktion
+# DTM+137:20220830...    → erstellungsdatum
+# UNS+D                  → section separator (header/detail boundary)
+
+[meta]
+entity = "Nachricht"
+bo4e_type = "Nachricht"
+source_group = ""
+source_path = ""
+
+[fields]
+"bgm.c002.d1001" = "dokumenttyp"
+"bgm.c106.d1004" = "dokumentennummer"
+"bgm.d1225" = "nachrichtenfunktion"
+"dtm[137].c507.d2005" = { target = "", default = "137" }
+"dtm[137].c507.d2380" = "erstellungsdatum"
+"dtm[137].c507.d2379" = { target = "", default = "303" }
+
+# UNS section separator — always "D" for MSCONS detail section
+"uns.d0081" = { target = "", default = "D" }

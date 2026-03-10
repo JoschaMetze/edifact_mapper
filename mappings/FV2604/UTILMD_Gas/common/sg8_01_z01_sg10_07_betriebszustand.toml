@@ -1,0 +1,21 @@
+# SG10 CCI+Z42 (Betriebszustand der Marktlokation) — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10, CCI entry with d7059=Z42
+# CCI+Z42+X+ZB9/ZD3            -> Betriebszustand (gesperrt / Regelbetrieb)
+# No CAV segment — just the CCI with code.
+# Merges into "MarktlokationDaten" entity.
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.d7059=Z42"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z42" }
+"cci.c502.d6313" = "betriebszustandDimension"
+"cci.c240.d7037" = "betriebszustand"

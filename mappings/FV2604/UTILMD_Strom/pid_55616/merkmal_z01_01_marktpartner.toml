@@ -1,0 +1,20 @@
+# SG10 under Z01 — CCI+ZB3 Zugeordneter Marktpartner (MSB)
+# CAV+Z91:MP-ID::Eigenschaft:Leistungserbringung
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.c240.d7037=ZB3"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "merkmalCodeZB3"
+"cav.c889.d7111" = "msbRollenCode"
+"cav.c889.d1131" = "marktpartnerMpId"
+"cav.c889.d3055" = "marktpartnerCodepflege"
+"cav.c889.d7110" = "eigenschaftMsb"
+"cav.c889.d7110_2" = "artLeistungserbringung"

@@ -1,0 +1,16 @@
+# Ansprechpartner — SG1.SG2_IC CTA+COM for IFTSTA.
+#
+# CTA+IC contact info, nested child of SG1 NAD.
+
+[meta]
+entity = "Ansprechpartner"
+bo4e_type = "Ansprechpartner"
+source_group = "SG1.SG2"
+source_path = "sg1.sg2_ic"
+
+[fields]
+"cta.d3139" = { target = "", default = "IC" }
+"cta.c056.d3413" = "kontaktNummer"
+"cta.c056.d3412" = "kontaktName"
+"com.c076.d3148" = "kommunikationsadresse"
+"com.c076.d3155" = "kommunikationstyp"

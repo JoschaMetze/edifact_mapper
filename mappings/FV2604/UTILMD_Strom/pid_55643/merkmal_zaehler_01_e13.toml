@@ -1,0 +1,47 @@
+# SG10 under SG8 Z03 -- CCI+++E13 Zaehlertyp
+# CAV order: zaehlertyp (variable), Z30 Geraenummer, tarifart (variable),
+# energierichtung (variable), Z58 fernschaltung
+#
+# Uses cav[*,N] wildcard syntax for positional access to variable-code CAVs.
+
+[meta]
+entity = "Zaehler"
+bo4e_type = "Zaehler"
+companion_type = "ZaehlerEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z03.sg10"
+discriminator = "CCI.c240.d7037=E13"
+
+[fields]
+
+[companion_fields]
+# CAV #0: zaehlertyp (variable code: AHZ/WSZ/LAZ/MAZ/MME/EHZ/IVA)
+"cav.c889.d7111" = "zaehlertyp"
+"cav.c889.d1131" = "zaehlertypCodelisteCode"
+"cav.c889.d3055" = "zaehlertypCodepflegeCode"
+"cav.c889.d7110" = "zaehlertypDetail"
+# CAV #1: Z30 Geraenummer (fixed qualifier)
+"cav[Z30].c889.d7110" = "geraeteNummer"
+"cav[Z30].c889.d7110_2" = "geraeteNummer2"
+"cav[Z30].c889.d1131" = "geraeteNummerCodelisteCode"
+"cav[Z30].c889.d3055" = "geraeteNummerCodepflegeCode"
+# CAV #2: tarifart (variable code: ETZ/ZTZ/NTZ)
+"cav[*,2].c889.d7111" = "tarifart"
+# CAV #3: energierichtung (variable code: ERZ/ZRZ)
+"cav[*,3].c889.d7111" = "energierichtung"
+# CAV #4: Z58 fernschaltung (fixed qualifier)
+"cav[Z58].c889.d7110" = "fernschaltung"
+"cav[Z58].c889.d1131" = "fernschaltungCodelisteCode"
+"cav[Z58].c889.d3055" = "fernschaltungCodepflegeCode"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "E13"
+
+[companion_fields."cav[Z30].c889.d7111"]
+target = ""
+default = "Z30"
+
+[companion_fields."cav[Z58].c889.d7111"]
+target = ""
+default = "Z58"

@@ -1,0 +1,25 @@
+# SG10 under SG8 Z06 -- CCI+++Z27 Technische Steuereinrichtung
+
+[meta]
+entity = "TechnischeSteuereinrichtung"
+bo4e_type = "TechnischeSteuereinrichtung"
+companion_type = "TechnischeSteuereinrichtungEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z06.sg10"
+
+[fields]
+
+[companion_fields]
+"cav[Z30].c889.d7110" = "steuerGeraeteNummer"
+"cav[Z30].c889.d7110_2" = "steuerGeraeteNummer2"
+"cav[Z30].c889.d1131" = "steuerCodelisteCode"
+"cav[Z30].c889.d3055" = "steuerCodepflegeCode"
+"cav[*,1].c889.d7111" = "steuereinrichtungTyp"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "Z27"
+
+[companion_fields."cav[Z30].c889.d7111"]
+target = ""
+default = "Z30"

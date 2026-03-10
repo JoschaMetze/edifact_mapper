@@ -1,0 +1,17 @@
+# SG8 Z13 — Smartmeter-Gateway (SEQ+Z13) — shared across Gas PIDs.
+#
+# Source: SG4.SG8 -> SEQ+Z13
+# Entity "SmartmeterGatewayDaten" — separate entity.
+
+[meta]
+entity = "SmartmeterGatewayDaten"
+bo4e_type = "SmartmeterGatewayDaten"
+companion_type = "SmartmeterGatewayDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z13"
+discriminator = "SEQ.d1229=Z13"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"

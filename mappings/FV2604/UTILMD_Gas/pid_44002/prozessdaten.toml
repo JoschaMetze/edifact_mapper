@@ -1,0 +1,69 @@
+# Prozessdaten (process data) mapping for PID 44002 (Bestaetigung Anmeldung Gas).
+#
+# Source: SG4 top-level segments (IDE, DTM, STS, FTX)
+# IDE+24+TESTID                       -> vorgangId
+# DTM+92:2025...:303                  -> gueltigAb
+# DTM+93:2025...:303                  -> gueltigBis
+# DTM+158:2025...:303                 -> bilanzierungsbeginn
+# DTM+159:2025...:303                 -> bilanzierungsende
+# STS+7+Z01+E01                       -> transaktionsgrund
+# STS+Z17+Z01+E01                     -> befristete Anmeldung Ergaenzung
+# STS+E01+Z01+X:G_0012               -> antwort-status with EBD reference
+# FTX+ACB+X+X+X:X:X:X:X              -> freitext
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# DTM+92 (Datum Vertragsbeginn)
+"dtm[92].c507.d2005" = { target = "", default = "92" }
+"dtm[92].c507.d2380" = "gueltigAb"
+"dtm[92].c507.d2379" = { target = "", default = "303" }
+
+# DTM+93 (Datum Vertragsende)
+"dtm[93].c507.d2005" = { target = "", default = "93" }
+"dtm[93].c507.d2380" = "gueltigBis"
+"dtm[93].c507.d2379" = { target = "", default = "303" }
+
+# DTM+158 (Bilanzierungsbeginn)
+"dtm[158].c507.d2005" = { target = "", default = "158" }
+"dtm[158].c507.d2380" = "bilanzierungsbeginn"
+"dtm[158].c507.d2379" = { target = "", default = "303" }
+
+# DTM+159 (Bilanzierungsende)
+"dtm[159].c507.d2005" = { target = "", default = "159" }
+"dtm[159].c507.d2380" = "bilanzierungsende"
+"dtm[159].c507.d2379" = { target = "", default = "303" }
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c555.d4405" = "statusCode"
+"sts[7].c556.d9013" = "transaktionsgrund"
+
+# STS+Z17 (Transaktionsgrundergaenzung fuer befristete Anmeldung)
+"sts[Z17].c601.d9015" = { target = "", default = "Z17" }
+"sts[Z17].c555.d4405" = "befristungStatusCode"
+"sts[Z17].c556.d9013" = "befristungGrund"
+
+# STS+E01 (Antwort-Status with EBD reference)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c555.d4405" = "antwortStatusCode"
+"sts[E01].c556.d9013" = "antwortPruefschritt"
+"sts[E01].c556.d1131" = "antwortEbdCodeliste"
+
+# FTX+ACB (Freitext)
+"ftx[ACB].d4451" = { target = "", default = "ACB" }
+"ftx[ACB].d4453" = "freitextFunktionCode"
+"ftx[ACB].c107.d4441" = "freitextReferenzCode"
+"ftx[ACB].c108.d4440" = "freitext1"
+"ftx[ACB].c108.d4440_2" = "freitext2"
+"ftx[ACB].c108.d4440_3" = "freitext3"
+"ftx[ACB].c108.d4440_4" = "freitext4"
+"ftx[ACB].c108.d4440_5" = "freitext5"

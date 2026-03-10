@@ -1,0 +1,23 @@
+# SG1 — UCM Nachrichtenprüfung (message response)
+
+[meta]
+entity = "Nachrichtenpruefung"
+bo4e_type = "Nachrichtenpruefung"
+companion_type = "NachrichtenpruefungEdifact"
+source_group = "SG1"
+source_path = "sg1"
+
+[fields]
+"ucm.d0062" = "nachrichtenReferenznummer"
+"ucm.d0083" = "aktion"
+
+[companion_fields]
+"ucm.s009.d0065" = "nachrichtentyp"
+"ucm.s009.d0052" = "versionsnummer"
+"ucm.s009.d0054" = "freigabenummer"
+"ucm.s009.d0051" = "verwaltungsOrganisation"
+"ucm.s009.d0057" = "anwendungscode"
+"ucm.d0085" = "syntaxFehlerCode"
+"ucm.d0013" = "serviceSegmentBezeichner"
+"ucm.s011.d0098" = "fehlerSegmentPosition"
+"ucm.s011.d0104" = "fehlerGruppendatenelementPosition"

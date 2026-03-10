@@ -1,0 +1,23 @@
+# SG8 — Messlokation Zuordnungsdaten (SEQ+ZF3)
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf3"
+discriminator = "SEQ.d1229=ZF3"
+
+[fields]
+
+[fields."seq.d1229"]
+target = ""
+default = "ZF3"
+
+[companion_fields]
+"seq.c286.d1050" = "zeitraumReferenzZf3"
+"rff.c506.d1154" = "abrechnungMsbUeberNneZf3"
+
+[companion_fields."rff.c506.d1153"]
+target = ""
+default = "Z05"

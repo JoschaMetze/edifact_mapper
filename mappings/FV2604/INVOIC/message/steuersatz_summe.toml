@@ -1,0 +1,29 @@
+# SG52 (TAX + MOA) — tax summary for INVOIC.
+#
+# TAX+7+VAT with multiple MOA children (125, 161, and optionally 113, 115).
+# Per-qualifier MOA fields — data fields prevent phantoms for absent qualifiers.
+
+[meta]
+entity = "SteuersatzSumme"
+bo4e_type = "SteuersatzSumme"
+source_group = "SG52"
+source_path = "sg52"
+
+[fields]
+"tax.d5283" = "steuerFunktionCode"
+"tax.c241.d5153" = "steuerTypCode"
+"tax.c533.d5289" = "veranlagungsbasis"
+"tax.d5286" = "veranlagungsbasisWert"
+"tax.c243.d5279" = "steuerCode"
+"tax.c243.d1131" = "steuerCodelisteCode"
+"tax.c243.d3055" = "steuerCodepflegeCode"
+"tax.c243.d5278" = "steuersatz"
+"tax.d5305" = "steuerKategorie"
+"moa[113].c516.d5025" = "vorausbezahltQualifier"
+"moa[113].c516.d5004" = "vorausbezahltInklUst"
+"moa[115].c516.d5025" = "vorausbezahlteSteuernQualifier"
+"moa[115].c516.d5004" = "vorausbezahlteSteuern"
+"moa[125].c516.d5025" = "besteuerungsgrundlageQualifier"
+"moa[125].c516.d5004" = "besteuerungsgrundlage"
+"moa[161].c516.d5025" = "steuerbetragQualifier"
+"moa[161].c516.d5004" = "steuerbetrag"

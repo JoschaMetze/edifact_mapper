@@ -1,0 +1,29 @@
+[meta]
+entity = "Vorgang"
+bo4e_type = "Vorgang"
+source_group = "SG27"
+source_path = "sg27"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+"lin.d1229" = "handlungCode"
+"lin.c212.d7140" = "artikelNummer"
+"lin.c212.d7143" = "artikelNummerTyp"
+"imd.d7077" = "beschreibungsformat"
+"imd.c272.d7081" = "produktLeistungCode"
+"dtm.c507.d2005" = "datumQualifier"
+"dtm.c507.d2380" = "datumWert"
+"dtm.c507.d2379" = "datumFormat"
+"dtm[Z04].c507.d2005" = { target = "", default = "Z04" }
+"dtm[Z04].c507.d2380" = "datumBisWert"
+"dtm[Z04].c507.d2379" = { target = "", default = "602" }
+"gin.d7405" = "identQualifier"
+"gin.c208.d7402" = "identNummer"
+"ftx.d4451" = "freitextQualifier"
+"ftx.d4453" = "freitextFunktion"
+"ftx.c107.d4441" = "freitextCode"
+"ftx.c108.d4440" = "freitext1"
+"ftx.c108.d4440_2" = "freitext2"
+"ftx.c108.d4440_3" = "freitext3"
+"ftx.c108.d4440_4" = "freitext4"
+"ftx.c108.d4440_5" = "freitext5"

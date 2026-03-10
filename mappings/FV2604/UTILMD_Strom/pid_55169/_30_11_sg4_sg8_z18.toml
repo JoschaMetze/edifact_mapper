@@ -1,0 +1,17 @@
+[meta]
+entity = "MesslokationDatenZ18"
+bo4e_type = "MesslokationDatenZ18"
+companion_type = "MesslokationDatenZ18Edifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z18"
+discriminator = "SEQ.d1229=Z18"
+
+[fields]
+"seq.c286.d1050" = "zeitraumReferenz"
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ18"
+"rff[Z19].c506.d1153" = { target = "", default = "Z19" }
+"rff[Z19].c506.d1154" = "referenzZ19Z18"
+"rff[Z16].c506.d1153" = { target = "", default = "Z16" }
+"rff[Z16].c506.d1154" = "referenzZ16Z18"

@@ -1,0 +1,20 @@
+# SteuerbareRessource Zuordnung (SG10 within SEQ+ZF1) for PID 55035.
+# CCI/CAV rep 0: CCI+Z49, Steuerbarkeit.
+
+[meta]
+entity = "SteuerbareRessource"
+bo4e_type = "SteuerbareRessource"
+companion_type = "SteuerbareRessourceEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_zf1.sg10"
+discriminator = "CCI.d7059=Z49"
+
+[fields]
+
+[companion_fields]
+"cav.c889.d7111" = "steuerbarkeitCode"
+"cav.c889.d1131" = "steuerbarkeitWert"
+
+[companion_fields."cci.d7059"]
+target = ""
+default = "Z49"

@@ -1,0 +1,17 @@
+# Ansprechpartner — SG1.SG3 CTA+IC/COM for REMADV.
+#
+# CTA+IC+:Rechnungsklärung
+# COM+netzentgeltrechnungen@enercity.de:EM
+
+[meta]
+entity = "Ansprechpartner"
+bo4e_type = "Ansprechpartner"
+source_group = "SG1.SG3"
+source_path = "sg1.sg3_ic"
+
+[fields]
+"cta.d3139" = { target = "", default = "IC" }
+"cta.c056.d3412" = "telefonnummer"
+"cta.c056.d3413" = "name"
+"com.c076.d3148" = "kommunikationsadresse"
+"com.c076.d3155" = "kommunikationstyp"

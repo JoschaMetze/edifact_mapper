@@ -1,0 +1,24 @@
+# SG10 under Z01 — CCI+E03 Spannungsebene der Marktlokation
+# CAV with E03-E06 (Spannungsebene) + optional E07-E09 (Umspannung)
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.c240.d7037=E03"
+
+[fields]
+
+[companion_fields]
+"cci.c240.d7037" = "merkmalCodeE03"
+# Spannungsebene (one of E03-E06)
+"cav[E03].c889.d7111" = "cavSpannungE03"
+"cav[E04].c889.d7111" = "cavSpannungE04"
+"cav[E05].c889.d7111" = "cavSpannungE05"
+"cav[E06].c889.d7111" = "cavSpannungE06"
+# Umspannung (optional, one of E07-E09)
+"cav[E07].c889.d7111" = "cavUmspannungE07"
+"cav[E08].c889.d7111" = "cavUmspannungE08"
+"cav[E09].c889.d7111" = "cavUmspannungE09"

@@ -1,0 +1,40 @@
+# SG10 CCI+Z88 (Netznutzung) + CAV+Z74/Z73 — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10, CCI entry with c240.d7037=Z88
+# CCI+X+X+Z88                 -> Netznutzung marker
+# CAV+Z74:293:9:Z08            -> Netznutzungsvertrag (Z08=Direktvertrag, Z09=LF-Vertrag)
+# CAV+Z73:293:9:Z10            -> Zahlung Netznutzung (Z10=Kunde, Z11=Lieferant)
+# Merges into "MarktlokationDaten" entity.
+
+[meta]
+entity = "MarktlokationDaten"
+bo4e_type = "MarktlokationDaten"
+companion_type = "MarktlokationDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z01.sg10"
+discriminator = "CCI.c240.d7037=Z88"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "netznutzungKlasse"
+"cci.c502.d6313" = "netznutzungDimension"
+"cci.c240.d7037" = { target = "", default = "Z88" }
+
+# CAV+Z74 (Netznutzungsvertrag)
+"cav[Z74].c889.d7111" = { target = "", default = "Z74" }
+"cav[Z74].c889.d1131" = "netznutzungVertragCodelisteCode"
+"cav[Z74].c889.d3055" = "netznutzungVertragCodepflegeCode"
+"cav[Z74].c889.d7110" = "netznutzungVertrag"
+
+# CAV+Z73 (Zahlung Netznutzung)
+"cav[Z73].c889.d7111" = { target = "", default = "Z73" }
+"cav[Z73].c889.d1131" = "zahlungNetznutzungCodelisteCode"
+"cav[Z73].c889.d3055" = "zahlungNetznutzungCodepflegeCode"
+"cav[Z73].c889.d7110" = "zahlungNetznutzung"
+
+# CAV+ZB1 (Netznutzungsabrechnungsvariante) — auto-omitted for PIDs without this segment
+"cav[ZB1].c889.d7111" = { target = "", default = "ZB1" }
+"cav[ZB1].c889.d1131" = "netznutzungsabrechnungCodelisteCode"
+"cav[ZB1].c889.d3055" = "netznutzungsabrechnungCodepflegeCode"
+"cav[ZB1].c889.d7110" = "netznutzungsabrechnungsvariante"

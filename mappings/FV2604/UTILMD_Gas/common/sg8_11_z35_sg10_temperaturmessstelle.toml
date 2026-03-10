@@ -1,0 +1,24 @@
+# SG10 CCI+Z99/ZA0 (Temperaturmessstelle/Klimazone) — shared across Gas PIDs.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z35
+# CCI+Z99+X+X:293:89    -> Messstelle des Tagesparameters
+# CCI+ZA0+X+X:293:89    -> Klimazone des Tagesparameters
+# Merges into "LastprofilDaten" entity.
+# Auto-omitted for PIDs without this SG10 rep.
+
+[meta]
+entity = "LastprofilDaten"
+bo4e_type = "LastprofilDaten"
+companion_type = "LastprofilDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z35.sg10"
+discriminator = "CCI.d7059=Z99"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "tagesparameterKlasse"
+"cci.c502.d6313" = "tagesparameterDimension"
+"cci.c240.d7037" = "tagesparameterKennzeichen"
+"cci.c240.d1131" = "tagesparameterCodelisteCode"
+"cci.c240.d3055" = "tagesparameterCodepflegeCode"

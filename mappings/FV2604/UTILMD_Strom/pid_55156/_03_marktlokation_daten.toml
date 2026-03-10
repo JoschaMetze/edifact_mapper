@@ -1,0 +1,16 @@
+# Marktlokation Daten (SG8 variant Z80/Z81) for PID 55156.
+# SEQ+Z80 (erwartete) or SEQ+Z81 (vorhandene) Daten der Marktlokation.
+
+[meta]
+entity = "Marktlokation"
+bo4e_type = "Marktlokation"
+companion_type = "MarktlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z80_z81"
+discriminator = "SEQ.d1229=Z80|Z81"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"
+"seq.c286.d1050" = "zeitscheibeRef"

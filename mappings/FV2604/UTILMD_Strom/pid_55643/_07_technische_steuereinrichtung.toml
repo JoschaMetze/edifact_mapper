@@ -1,0 +1,21 @@
+# SG8 -- SEQ+Z06 Daten der technischen Steuereinrichtung
+# RFF+MG references the Zaehler Geraenummer
+
+[meta]
+entity = "TechnischeSteuereinrichtung"
+bo4e_type = "TechnischeSteuereinrichtung"
+companion_type = "TechnischeSteuereinrichtungEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z06"
+discriminator = "SEQ.d1229=Z06"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ06"
+"seq.c286.d1050" = "zeitscheibeRefZ06"
+"rff[MG].c506.d1154" = "rffGeraetNummerZ06"
+
+[companion_fields."rff[MG].c506.d1153"]
+target = ""
+default = "MG"

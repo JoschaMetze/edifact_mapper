@@ -1,0 +1,42 @@
+# TechnischeRessource info (SEQ+ZF0) for PID 55035.
+# Merges into entity "TechnischeRessource" via deep-merge.
+#
+# SEQ+ZF0+<Zeitraum-Ref>  (Informative Daten der Technischen Ressource)
+# RFF+Z32:<Netzlokations-ID>
+
+[meta]
+entity = "TechnischeRessource"
+bo4e_type = "TechnischeRessource"
+companion_type = "TechnischeRessourceEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zf0"
+discriminator = "SEQ.d1229=ZF0"
+
+[fields]
+
+[fields."seq.d1229"]
+target = ""
+default = "ZF0"
+
+[companion_fields]
+"rff[Z37].c506.d1154" = "technischeRessourceId"
+"rff[Z34].c506.d1154" = "messlokationsIdRef"
+"rff[Z34,1].c506.d1154" = "messlokationsIdRef2"
+"rff[Z38].c506.d1154" = "steuerbareRessourceId"
+"rff[Z32].c506.d1154" = "netzlokationsId"
+
+[companion_fields."rff[Z37].c506.d1153"]
+target = ""
+default = "Z37"
+
+[companion_fields."rff[Z34].c506.d1153"]
+target = ""
+default = "Z34"
+
+[companion_fields."rff[Z38].c506.d1153"]
+target = ""
+default = "Z38"
+
+[companion_fields."rff[Z32].c506.d1153"]
+target = ""
+default = "Z32"

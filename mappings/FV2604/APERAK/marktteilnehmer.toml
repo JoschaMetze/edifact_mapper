@@ -1,0 +1,21 @@
+# SG3 — NAD parties with optional CTA+COM contact
+
+[meta]
+entity = "Marktteilnehmer"
+bo4e_type = "Marktteilnehmer"
+companion_type = "MarktteilnehmerEdifact"
+source_group = "SG3"
+source_path = "sg3"
+
+[fields]
+"nad.c082.d3039" = "identifikation"
+"nad.c082.d1131" = "codelisteCode"
+
+[companion_fields]
+"nad.d3035" = "marktrolle"
+"nad.c082.d3055" = "codepflegeCode"
+"cta.d3139" = "kontaktFunktionCode"
+"cta.c056.d3413" = "kontaktNummer"
+"cta.c056.d3412" = "kontaktName"
+"com.c076.d3148" = "kommunikationsNummer"
+"com.c076.d3155" = "kommunikationsArt"

@@ -1,0 +1,81 @@
+# SG4 — Prozessdaten (Rückmeldung/Anfrage Daten der individuellen Bestellung)
+# IDE+24, STS+7 (Transaktionsgrund), STS+E01 (Antwort-Status), 6x FTX
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+companion_type = "ProzessdatenEdifact"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+# IDE segment (Transaktion)
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+
+# STS+7 (Transaktionsgrund)
+"sts[7].c601.d9015" = { target = "", default = "7" }
+"sts[7].c556.d9013" = "transaktionsgrund"
+"sts[7].c556_2.d9013" = "transaktionsgrundDetail"
+"sts[7].c556_3.d9013" = "transaktionsgrundLieferende"
+
+# STS+E01 (Antwort-Status)
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c555.d4405" = "antwortStatus"
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"
+"sts[E01].c556.d3055" = "ebdCodepflege"
+"sts[E01].c556.d9012" = "zeitraumReferenz"
+
+[companion_fields]
+# STS+7 c555
+"sts[7].c555.d4405" = "transaktionsgrundStatus"
+
+# FTX+Z17 (Freitext Befund)
+"ftx[Z17].d4451" = "ftxZ17Qualifier"
+"ftx[Z17].d4453" = "ftxZ17Funktion"
+"ftx[Z17].c107.d4441" = "ftxZ17Code"
+"ftx[Z17].c108.d4440" = "ftxZ17Text"
+
+# FTX+Z27 (Freitext Hinweis MSB/MDL)
+"ftx[Z27].d4451" = "ftxZ27Qualifier"
+"ftx[Z27].d4453" = "ftxZ27Funktion"
+"ftx[Z27].c107.d4441" = "ftxZ27Code"
+"ftx[Z27].c108.d4440" = "ftxZ27Text"
+
+# FTX+Z28 (Freitext Erläuterung Befund)
+"ftx[Z28].d4451" = "ftxZ28Qualifier"
+"ftx[Z28].d4453" = "ftxZ28Funktion"
+"ftx[Z28].c107.d4441" = "ftxZ28Code"
+"ftx[Z28].c108.d4440" = "ftxZ28Text"
+"ftx[Z28].c108.d4440_2" = "ftxZ28Text2"
+
+# FTX+Z24 (Freitext Hinweis LF)
+"ftx[Z24].d4451" = "ftxZ24Qualifier"
+"ftx[Z24].d4453" = "ftxZ24Funktion"
+"ftx[Z24].c107.d4441" = "ftxZ24Code"
+"ftx[Z24].c108.d4440" = "ftxZ24Text"
+"ftx[Z24].c108.d4440_2" = "ftxZ24Text2"
+"ftx[Z24].c108.d4440_3" = "ftxZ24Text3"
+"ftx[Z24].c108.d4440_4" = "ftxZ24Text4"
+"ftx[Z24].c108.d4440_5" = "ftxZ24Text5"
+
+# FTX+Z23 (Freitext Hinweis NB)
+"ftx[Z23].d4451" = "ftxZ23Qualifier"
+"ftx[Z23].d4453" = "ftxZ23Funktion"
+"ftx[Z23].c107.d4441" = "ftxZ23Code"
+"ftx[Z23].c108.d4440" = "ftxZ23Text"
+"ftx[Z23].c108.d4440_2" = "ftxZ23Text2"
+"ftx[Z23].c108.d4440_3" = "ftxZ23Text3"
+"ftx[Z23].c108.d4440_4" = "ftxZ23Text4"
+"ftx[Z23].c108.d4440_5" = "ftxZ23Text5"
+
+# FTX+Z18 (Freitext Hinweis Eigentuemer)
+"ftx[Z18].d4451" = "ftxZ18Qualifier"
+"ftx[Z18].d4453" = "ftxZ18Funktion"
+"ftx[Z18].c107.d4441" = "ftxZ18Code"
+"ftx[Z18].c108.d4440" = "ftxZ18Text"
+"ftx[Z18].c108.d4440_2" = "ftxZ18Text2"
+"ftx[Z18].c108.d4440_3" = "ftxZ18Text3"
+"ftx[Z18].c108.d4440_4" = "ftxZ18Text4"
+"ftx[Z18].c108.d4440_5" = "ftxZ18Text5"

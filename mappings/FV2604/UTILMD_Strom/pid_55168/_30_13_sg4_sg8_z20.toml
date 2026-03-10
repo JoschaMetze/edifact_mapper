@@ -1,0 +1,27 @@
+[meta]
+entity = "ObisZaehleinrichtung"
+bo4e_type = "ObisZaehleinrichtung"
+companion_type = "ObisZaehleinrichtungEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z20"
+discriminator = "SEQ.d1229=Z20"
+
+[fields]
+
+[companion_fields]
+"seq.c286.d1050" = "zeitscheibeRef"
+
+"seq.d1229" = { target = "", default = "Z20" }
+"rff[MG].c506.d1153" = { target = "", default = "MG" }
+"rff[MG].c506.d1154" = "referenzMGZ20"
+"rff[Z14].c506.d1153" = { target = "", default = "Z14" }
+"rff[Z14].c506.d1154" = "referenzZ14Z20"
+"rff[Z19].c506.d1153" = { target = "", default = "Z19" }
+"rff[Z19].c506.d1154" = "referenzZ19Z20"
+"rff[Z18].c506.d1153" = { target = "", default = "Z18" }
+"rff[Z18].c506.d1154" = "referenzZ18Z20"
+"rff[AGK].c506.d1153" = { target = "", default = "AGK" }
+"rff[AGK].c506.d1154" = "referenzAGKZ20"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZ20"
+"pia.c212.d7143" = { target = "", default = "SRW" }

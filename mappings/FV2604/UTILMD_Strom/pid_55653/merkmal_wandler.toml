@@ -1,0 +1,54 @@
+# SG10 under SG8 Z04 -- CCI+++Z25 Wandler
+# CAV order: Z30 Geraenummer (repeatable), Wandlertyp (variable code: MIW/MPW/MBW/MUW)
+#
+# Z30 CAVs can repeat (one per device in a Wandlersatz).
+# Fixture 1 has 3 Z30 CAVs (W001, W002, W003) + 1 MBW.
+# cav[Z30,N] selects the Nth Z30-qualified CAV occurrence.
+
+[meta]
+entity = "Wandlerdaten"
+bo4e_type = "Wandlerdaten"
+companion_type = "WandlerdatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z04.sg10"
+discriminator = "CCI.c240.d7037=Z25"
+
+[fields]
+
+[companion_fields]
+# CAV #0: Z30 Geraenummer (1st device)
+"cav[Z30,0].c889.d7110" = "geraeteNummer1"
+"cav[Z30,0].c889.d7110_2" = "geraeteNummer1Teil2"
+"cav[Z30,0].c889.d1131" = "geraeteNummer1CodelisteCode"
+"cav[Z30,0].c889.d3055" = "geraeteNummer1CodepflegeCode"
+# CAV #1: Z30 Geraenummer (2nd device)
+"cav[Z30,1].c889.d7110" = "geraeteNummer2"
+"cav[Z30,1].c889.d7110_2" = "geraeteNummer2Teil2"
+"cav[Z30,1].c889.d1131" = "geraeteNummer2CodelisteCode"
+"cav[Z30,1].c889.d3055" = "geraeteNummer2CodepflegeCode"
+# CAV #2: Z30 Geraenummer (3rd device)
+"cav[Z30,2].c889.d7110" = "geraeteNummer3"
+"cav[Z30,2].c889.d7110_2" = "geraeteNummer3Teil2"
+"cav[Z30,2].c889.d1131" = "geraeteNummer3CodelisteCode"
+"cav[Z30,2].c889.d3055" = "geraeteNummer3CodepflegeCode"
+# CAV #3: Wandlertyp (variable code: MIW/MPW/MBW/MUW)
+"cav[*,3].c889.d7111" = "wandlertyp"
+"cav[*,3].c889.d1131" = "wandlertypCodelisteCode"
+"cav[*,3].c889.d3055" = "wandlertypCodepflegeCode"
+"cav[*,3].c889.d7110" = "wandlerkonstante"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "Z25"
+
+[companion_fields."cav[Z30,0].c889.d7111"]
+target = ""
+default = "Z30"
+
+[companion_fields."cav[Z30,1].c889.d7111"]
+target = ""
+default = "Z30"
+
+[companion_fields."cav[Z30,2].c889.d7111"]
+target = ""
+default = "Z30"

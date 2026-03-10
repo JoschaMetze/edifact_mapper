@@ -1,0 +1,21 @@
+# Position (SG29) mapping for PID 17134 — Einrichtung Konfiguration.
+#
+# Schema has 3 LIN variants (Z54, Z16, Z19). Only LIN and PIA are always present;
+# IMD and QTY only appear in Z16 reps. Map without defaults to avoid phantoms.
+
+[meta]
+entity = "Position"
+bo4e_type = "Position"
+source_group = "SG29"
+source_path = "sg29"
+
+[fields]
+"lin.d1082" = "positionsnummer"
+"lin.d1229" = "handlungCode"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "artikelnummer"
+"pia.c212.d7143" = "artikeltyp"
+"imd.c272.d7081" = "beschreibung"
+"qty.c186.d6063" = "mengenQualifier"
+"qty.c186.d6060" = "menge"
+"qty.c186.d6411" = "einheit"

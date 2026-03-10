@@ -1,0 +1,24 @@
+# SG10 under SG8 Z13 -- CCI+++Z75 Smartmeter-Gateway
+
+[meta]
+entity = "SmartmeterGateway"
+bo4e_type = "SmartmeterGateway"
+companion_type = "SmartmeterGatewayEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z13.sg10"
+discriminator = "CCI.c240.d7037=Z75"
+
+[fields]
+
+[companion_fields]
+"cav[Z30].c889.d7110" = "geraeteNummer"
+"cav[Z30].c889.d1131" = "geraeteNummerCodelisteCode"
+"cav[Z30].c889.d3055" = "geraeteNummerCodepflegeCode"
+
+[companion_fields."cci.c240.d7037"]
+target = ""
+default = "Z75"
+
+[companion_fields."cav[Z30].c889.d7111"]
+target = ""
+default = "Z30"

@@ -1,0 +1,15 @@
+# SG8 -- Messlokation Daten (SEQ+ZG6/ZG7 = Daten der Messlokation erwartet/vorhanden)
+
+[meta]
+entity = "Messlokation"
+bo4e_type = "Messlokation"
+companion_type = "MesslokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zg6_zg7"
+discriminator = "SEQ.d1229=ZG6|ZG7"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZG6ZG7"
+"seq.c286.d1050" = "zeitscheibeRefZG6ZG7"

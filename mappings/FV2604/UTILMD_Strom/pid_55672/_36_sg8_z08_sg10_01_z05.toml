@@ -1,0 +1,15 @@
+[meta]
+entity = "TrancheDaten"
+bo4e_type = "TrancheDaten"
+companion_type = "TrancheDatenEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z08.sg10"
+discriminator = "CCI.d7059=Z05"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = { target = "", default = "Z05" }
+"cci.c502.d6313" = "ccic502d6313Z05"
+"cci.c240.d7037" = "merkmalCodeE01"
+"cav.c889.d7111" = { target = "", default = "XYZ" }

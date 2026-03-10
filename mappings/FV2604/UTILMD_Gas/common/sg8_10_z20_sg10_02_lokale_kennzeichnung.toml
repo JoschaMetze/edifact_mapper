@@ -1,0 +1,24 @@
+# SG10 CCI+Z63 (Lokale Kennzeichnung zu Kontrollzwecken) — under SEQ+Z20.
+#
+# Source: SG4.SG8.SG10 under SEQ+Z20
+# CCI+X+X+Z63:293:9:X       -> Lokale Kennzeichnung
+# No CAV segment for this rep.
+# Merges into "ObisDatenZaehler" entity.
+
+[meta]
+entity = "ObisDatenZaehler"
+bo4e_type = "ObisDatenZaehler"
+companion_type = "ObisDatenZaehlerEdifact"
+source_group = "SG4.SG8.SG10"
+source_path = "sg4.sg8_z20.sg10"
+discriminator = "CCI.c240.d7037=Z63"
+
+[fields]
+
+[companion_fields]
+"cci.d7059" = "lokaleKennzeichnungKlasse"
+"cci.c502.d6313" = "lokaleKennzeichnungDimension"
+"cci.c240.d7037" = { target = "", default = "Z63" }
+"cci.c240.d1131" = "lokaleKennzeichnungCodelisteCode"
+"cci.c240.d3055" = "lokaleKennzeichnungCodepflegeCode"
+"cci.c240.d7036" = "lokaleKennzeichnungBezeichnung"

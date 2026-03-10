@@ -1,0 +1,18 @@
+# Prozessdaten (SG4 root) for PID 55126 (Abr.-Daten BK-Abr. verb. Malo).
+#
+# IDE+24+<VorgangID> -> vorgangId
+# STS+7++ZX3       -> transaktionsgrund (no further STS details)
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.d7495" = { target = "", default = "24" }
+"ide.c206.d7402" = "vorgangId"
+"sts.c601.d9015" = { target = "", default = "7" }
+"sts.c556.d9013" = "transaktionsgrund"
+"sts.c556_2.d9013" = "transaktionsgrundErgaenzung"
+"sts.c556_3.d9013" = "transaktionsgrundErgaenzungBefristeteAnmeldung"

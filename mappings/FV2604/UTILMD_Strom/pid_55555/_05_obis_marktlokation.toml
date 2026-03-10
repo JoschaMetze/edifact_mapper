@@ -1,0 +1,25 @@
+# SG8 — SEQ+ZA1/ZA2 OBIS-Daten der Marktlokation (erwartet/vorhanden)
+# Multi-rep: each rep has SEQ+ZA2, PIA+5 (OBIS-Kennzahl)
+
+[meta]
+entity = "ObisMarktlokation"
+bo4e_type = "ObisMarktlokation"
+companion_type = "ObisMarktlokationEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_za1_za2"
+discriminator = "SEQ.d1229=ZA1|ZA2"
+
+[fields]
+"pia.c212.d7140" = "obisKennzahl"
+
+[fields."pia.d4347"]
+target = ""
+default = "5"
+
+[fields."pia.c212.d7143"]
+target = ""
+default = "SRW"
+
+[companion_fields]
+"seq.d1229" = "seqQualifier"
+"seq.c286.d1050" = "zeitscheibeRef"

@@ -1,0 +1,13 @@
+# SG4.SG12_Z40 — Business hours (CCI+Z40 + DTM weekday times)
+
+[meta]
+entity = "Erreichbarkeit"
+bo4e_type = "Erreichbarkeit"
+source_group = "SG4.SG12"
+source_path = "sg4.sg12_z40"
+
+[fields]
+"cci.d7059" = { target = "", default = "Z40" }
+"dtm.c507.d2005" = "wochentagCode"
+"dtm.c507.d2380" = "zeitraum"
+"dtm.c507.d2379" = "zeitFormat"

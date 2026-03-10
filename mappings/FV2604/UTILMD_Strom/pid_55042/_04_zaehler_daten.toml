@@ -1,0 +1,14 @@
+# SG8 — SEQ+Z03 Zähleinrichtungsdaten
+
+[meta]
+entity = "Zaehler"
+bo4e_type = "Zaehler"
+companion_type = "ZaehlerEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_z03"
+discriminator = "SEQ.d1229=Z03"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZ03"

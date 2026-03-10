@@ -1,0 +1,10 @@
+# Prozessdaten — SG5 NAD+DP (delivery point, shared across all MSCONS PIDs).
+
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG5"
+source_path = "sg5"
+
+[fields]
+"nad.d3035" = { target = "", default = "DP" }

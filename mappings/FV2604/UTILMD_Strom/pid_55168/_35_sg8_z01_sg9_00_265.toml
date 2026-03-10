@@ -1,0 +1,14 @@
+[meta]
+entity = "MarktlokationDatenZ01"
+bo4e_type = "MarktlokationDatenZ01"
+companion_type = "MarktlokationDatenZ01Edifact"
+source_group = "SG4.SG8.SG9"
+source_path = "sg4.sg8_z01.sg9"
+discriminator = "QTY.c186.d6063=265"
+
+[fields]
+
+[companion_fields]
+"qty.c186.d6063" = { target = "", default = "265" }
+"qty.c186.d6060" = "menge265"
+"qty.c186.d6411" = "mengeneinheit265"

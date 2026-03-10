@@ -1,0 +1,21 @@
+[meta]
+entity = "Prozessdaten"
+bo4e_type = "Prozessdaten"
+source_group = "SG4"
+source_path = "sg4"
+
+[fields]
+"ide.d7495" = "ideQualifier"
+"ide.c206.d7402" = "vorgangId"
+"sts[E01].c601.d9015" = { target = "", default = "E01" }
+"sts[E01].c555.d4405" = "antwortBearbeitungsstand"
+"sts[E01].c556.d9013" = "pruefschrittCode"
+"sts[E01].c556.d1131" = "ebdNummer"
+"sts[E01].c556.d3055" = "codepflegeStelle"
+"sts[E01].c556.d9012" = "zeitraumId"
+"sts[E01,1].c601.d9015" = { target = "", default = "E01" }
+"sts[E01,1].c555.d4405" = "antwortBearbeitungsstand2"
+"sts[E01,1].c556.d9013" = "pruefschrittCode2"
+"sts[E01,1].c556.d1131" = "ebdNummer2"
+"sts[E01,1].c556.d3055" = "codepflegeStelle2"
+"sts[E01,1].c556.d9012" = "zeitraumId2"

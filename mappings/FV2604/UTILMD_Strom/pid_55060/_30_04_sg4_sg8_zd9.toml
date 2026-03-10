@@ -1,0 +1,18 @@
+[meta]
+entity = "NetzlokationErwDaten"
+bo4e_type = "NetzlokationErwDaten"
+companion_type = "NetzlokationErwDatenEdifact"
+source_group = "SG4.SG8"
+source_path = "sg4.sg8_zd9"
+discriminator = "SEQ.d1229=ZD9"
+
+[fields]
+
+[companion_fields]
+"seq.d1229" = "seqQualifierZD9"
+"seq.c286.d1050" = "zeitscheibeRefZD9"
+"rff.c506.d1153" = { target = "", default = "Z32" }
+"rff.c506.d1154" = "referenzZD9"
+"pia.d4347" = { target = "", default = "5" }
+"pia.c212.d7140" = "obisKennzahlZD9"
+"pia.c212.d7143" = { target = "", default = "SRW" }
