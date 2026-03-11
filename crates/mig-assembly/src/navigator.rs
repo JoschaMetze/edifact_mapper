@@ -58,6 +58,72 @@ impl GroupNavigator for AssembledTreeNavigator<'_> {
             .map(|g| g.repetitions.len())
             .unwrap_or(0)
     }
+
+    fn child_group_instance_count(
+        &self,
+        parent_path: &[&str],
+        parent_instance: usize,
+        child_group_id: &str,
+    ) -> usize {
+        let Some(parent) = resolve_instance(&self.tree.groups, parent_path, parent_instance) else {
+            return 0;
+        };
+        parent
+            .child_groups
+            .iter()
+            .find(|g| g.group_id == child_group_id)
+            .map(|g| g.repetitions.len())
+            .unwrap_or(0)
+    }
+
+    fn find_segments_in_child_group(
+        &self,
+        segment_id: &str,
+        parent_path: &[&str],
+        parent_instance: usize,
+        child_group_id: &str,
+        child_instance: usize,
+    ) -> Vec<OwnedSegment> {
+        let Some(parent) = resolve_instance(&self.tree.groups, parent_path, parent_instance) else {
+            return Vec::new();
+        };
+        let Some(child_group) = parent
+            .child_groups
+            .iter()
+            .find(|g| g.group_id == child_group_id)
+        else {
+            return Vec::new();
+        };
+        let Some(instance) = child_group.repetitions.get(child_instance) else {
+            return Vec::new();
+        };
+        instance
+            .segments
+            .iter()
+            .enumerate()
+            .filter(|(_, s)| s.tag.eq_ignore_ascii_case(segment_id))
+            .map(|(i, s)| to_owned(s, i as u32))
+            .collect()
+    }
+
+    fn extract_value_in_group(
+        &self,
+        segment_id: &str,
+        element_index: usize,
+        component_index: usize,
+        group_path: &[&str],
+        instance_index: usize,
+    ) -> Option<String> {
+        let instance = resolve_instance(&self.tree.groups, group_path, instance_index)?;
+        let seg = instance
+            .segments
+            .iter()
+            .find(|s| s.tag.eq_ignore_ascii_case(segment_id))?;
+        seg.elements
+            .get(element_index)?
+            .get(component_index)
+            .cloned()
+    }
 }
 
 /// Navigate group hierarchy to find an AssembledGroup at the given path.
@@ -113,7 +179,10 @@ mod tests {
     fn tree_with_sg4_sg8() -> AssembledTree {
         // SG4[0] -> segments: [IDE, STS]
         //        -> SG8[0]: [SEQ+Z98, CCI+Z30++Z07]
+        //             -> SG10[0]: [CCI+Z23, CAV+Z91:value1]
+        //             -> SG10[1]: [CCI, CAV+:value2]
         //        -> SG8[1]: [SEQ+Z01, CCI+++ZC0]
+        //             (no SG10)
         AssembledTree {
             segments: vec![make_seg("UNH", vec![vec!["001"]])],
             groups: vec![AssembledGroup {
@@ -131,7 +200,27 @@ mod tests {
                                     make_seg("SEQ", vec![vec!["Z98"]]),
                                     make_seg("CCI", vec![vec!["Z30"], vec![], vec!["Z07"]]),
                                 ],
-                                child_groups: vec![],
+                                child_groups: vec![AssembledGroup {
+                                    group_id: "SG10".to_string(),
+                                    repetitions: vec![
+                                        AssembledGroupInstance {
+                                            segments: vec![
+                                                make_seg("CCI", vec![vec!["Z23"]]),
+                                                make_seg("CAV", vec![vec!["Z91", "value1"]]),
+                                            ],
+                                            child_groups: vec![],
+                                            skipped_segments: vec![],
+                                        },
+                                        AssembledGroupInstance {
+                                            segments: vec![
+                                                make_seg("CCI", vec![vec![""]]),
+                                                make_seg("CAV", vec![vec!["", "value2"]]),
+                                            ],
+                                            child_groups: vec![],
+                                            skipped_segments: vec![],
+                                        },
+                                    ],
+                                }],
                                 skipped_segments: vec![],
                             },
                             AssembledGroupInstance {
@@ -208,5 +297,76 @@ mod tests {
             .find_segments_in_group("SEQ", &["SG4", "SG8"], 99)
             .is_empty());
         assert!(nav.find_segments_in_group("SEQ", &[], 0).is_empty());
+    }
+
+    #[test]
+    fn test_child_group_instance_count() {
+        let tree = tree_with_sg4_sg8();
+        let nav = AssembledTreeNavigator::new(&tree);
+        // SG8[0] has 2 SG10 children
+        assert_eq!(nav.child_group_instance_count(&["SG4", "SG8"], 0, "SG10"), 2);
+        // SG8[1] has no SG10 children
+        assert_eq!(nav.child_group_instance_count(&["SG4", "SG8"], 1, "SG10"), 0);
+        // Non-existent child group
+        assert_eq!(nav.child_group_instance_count(&["SG4", "SG8"], 0, "SG12"), 0);
+    }
+
+    #[test]
+    fn test_find_segments_in_child_group() {
+        let tree = tree_with_sg4_sg8();
+        let nav = AssembledTreeNavigator::new(&tree);
+        // SG8[0] -> SG10[0] has CCI+Z23
+        let segs = nav.find_segments_in_child_group("CCI", &["SG4", "SG8"], 0, "SG10", 0);
+        assert_eq!(segs.len(), 1);
+        assert_eq!(segs[0].get_element(0), "Z23");
+        // SG8[0] -> SG10[1] has CCI with empty qualifier
+        let segs = nav.find_segments_in_child_group("CCI", &["SG4", "SG8"], 0, "SG10", 1);
+        assert_eq!(segs.len(), 1);
+        assert_eq!(segs[0].get_element(0), "");
+        // SG8[0] -> SG10[0] has CAV
+        let segs = nav.find_segments_in_child_group("CAV", &["SG4", "SG8"], 0, "SG10", 0);
+        assert_eq!(segs.len(), 1);
+    }
+
+    #[test]
+    fn test_child_group_invalid_path() {
+        let tree = tree_with_sg4_sg8();
+        let nav = AssembledTreeNavigator::new(&tree);
+        // Invalid parent path
+        assert_eq!(nav.child_group_instance_count(&["SG99"], 0, "SG10"), 0);
+        // Invalid parent instance
+        assert!(nav.find_segments_in_child_group("CCI", &["SG4", "SG8"], 99, "SG10", 0).is_empty());
+        // Invalid child instance
+        assert!(nav.find_segments_in_child_group("CCI", &["SG4", "SG8"], 0, "SG10", 99).is_empty());
+    }
+
+    #[test]
+    fn test_extract_value_in_group() {
+        let tree = tree_with_sg4_sg8();
+        let nav = AssembledTreeNavigator::new(&tree);
+        // SEQ qualifier in SG8[0]
+        assert_eq!(
+            nav.extract_value_in_group("SEQ", 0, 0, &["SG4", "SG8"], 0),
+            Some("Z98".to_string()),
+        );
+        // SEQ qualifier in SG8[1]
+        assert_eq!(
+            nav.extract_value_in_group("SEQ", 0, 0, &["SG4", "SG8"], 1),
+            Some("Z01".to_string()),
+        );
+    }
+
+    #[test]
+    fn test_extract_value_missing() {
+        let tree = tree_with_sg4_sg8();
+        let nav = AssembledTreeNavigator::new(&tree);
+        // Non-existent segment
+        assert_eq!(nav.extract_value_in_group("LOC", 0, 0, &["SG4", "SG8"], 0), None);
+        // Element index out of bounds
+        assert_eq!(nav.extract_value_in_group("SEQ", 5, 0, &["SG4", "SG8"], 0), None);
+        // Component index out of bounds
+        assert_eq!(nav.extract_value_in_group("SEQ", 0, 5, &["SG4", "SG8"], 0), None);
+        // Invalid group path
+        assert_eq!(nav.extract_value_in_group("SEQ", 0, 0, &["SG99"], 0), None);
     }
 }

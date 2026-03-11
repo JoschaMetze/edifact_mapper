@@ -173,6 +173,53 @@ impl<'a> EvaluationContext<'a> {
         }
     }
 
+    /// Count child group repetitions within a specific parent group instance.
+    /// Returns 0 if no navigator is set.
+    pub fn child_group_instance_count(
+        &self,
+        parent_path: &[&str],
+        parent_instance: usize,
+        child_group_id: &str,
+    ) -> usize {
+        match self.navigator {
+            Some(nav) => nav.child_group_instance_count(parent_path, parent_instance, child_group_id),
+            None => 0,
+        }
+    }
+
+    /// Find segments in a child group within a specific parent group instance.
+    /// Returns empty if no navigator is set.
+    pub fn find_segments_in_child_group(
+        &self,
+        segment_id: &str,
+        parent_path: &[&str],
+        parent_instance: usize,
+        child_group_id: &str,
+        child_instance: usize,
+    ) -> Vec<OwnedSegment> {
+        match self.navigator {
+            Some(nav) => nav.find_segments_in_child_group(
+                segment_id, parent_path, parent_instance, child_group_id, child_instance,
+            ),
+            None => Vec::new(),
+        }
+    }
+
+    /// Extract a single value from the first matching segment in a group instance.
+    /// Returns None if no navigator is set or value not found.
+    pub fn extract_value_in_group(
+        &self,
+        segment_id: &str,
+        element_index: usize,
+        component_index: usize,
+        group_path: &[&str],
+        instance_index: usize,
+    ) -> Option<String> {
+        self.navigator?.extract_value_in_group(
+            segment_id, element_index, component_index, group_path, instance_index,
+        )
+    }
+
     // --- High-level condition helpers ---
     // These reduce generated condition evaluator boilerplate by ~50%.
 
@@ -324,6 +371,190 @@ impl<'a> EvaluationContext<'a> {
         self.has_qualified_value(tag, qual_elem, qualifier, value_elem, value_comp, values)
     }
 
+    // --- Parent-child group navigation helpers ---
+
+    /// Pattern A: Check if parent group instances matching a qualifier have a child
+    /// group containing a specific qualifier.
+    ///
+    /// Example: "In the SG8 with SEQ+Z98, does its SG10 child have CCI+Z23?"
+    ///
+    /// Falls back to message-wide search if no navigator is available.
+    #[allow(clippy::too_many_arguments)]
+    pub fn filtered_parent_child_has_qualifier(
+        &self,
+        parent_path: &[&str],
+        parent_tag: &str,
+        parent_elem: usize,
+        parent_qual: &str,
+        child_group_id: &str,
+        child_tag: &str,
+        child_elem: usize,
+        child_qual: &str,
+    ) -> ConditionResult {
+        let parent_count = self.group_instance_count(parent_path);
+        if parent_count > 0 {
+            for pi in 0..parent_count {
+                // Check if this parent instance has the required qualifier
+                let parent_segs = self.find_segments_with_qualifier_in_group(
+                    parent_tag, parent_elem, parent_qual, parent_path, pi,
+                );
+                if parent_segs.is_empty() {
+                    continue;
+                }
+                // Check child group instances for the child qualifier
+                let child_count = self.child_group_instance_count(parent_path, pi, child_group_id);
+                for ci in 0..child_count {
+                    let child_segs = self.find_segments_in_child_group(
+                        child_tag, parent_path, pi, child_group_id, ci,
+                    );
+                    if child_segs.iter().any(|s| {
+                        s.elements
+                            .get(child_elem)
+                            .and_then(|e| e.first())
+                            .is_some_and(|v| v == child_qual)
+                    }) {
+                        return ConditionResult::True;
+                    }
+                }
+            }
+            return ConditionResult::False;
+        }
+        // Fallback: message-wide — check both qualifiers exist independently
+        let has_parent = !self.find_segments_with_qualifier(parent_tag, parent_elem, parent_qual).is_empty();
+        let has_child = !self.find_segments_with_qualifier(child_tag, child_elem, child_qual).is_empty();
+        ConditionResult::from(has_parent && has_child)
+    }
+
+    /// Pattern B: Check if any group instance has one qualifier present but another absent.
+    ///
+    /// Example: "In any SG8, SEQ+Z59 is present but CCI+11 is absent"
+    ///
+    /// Falls back to message-wide search if no navigator is available.
+    #[allow(clippy::too_many_arguments)]
+    pub fn any_group_has_qualifier_without(
+        &self,
+        present_tag: &str,
+        present_elem: usize,
+        present_qual: &str,
+        absent_tag: &str,
+        absent_elem: usize,
+        absent_qual: &str,
+        group_path: &[&str],
+    ) -> ConditionResult {
+        let instance_count = self.group_instance_count(group_path);
+        if instance_count > 0 {
+            for i in 0..instance_count {
+                let has_present = !self
+                    .find_segments_with_qualifier_in_group(present_tag, present_elem, present_qual, group_path, i)
+                    .is_empty();
+                let has_absent = !self
+                    .find_segments_with_qualifier_in_group(absent_tag, absent_elem, absent_qual, group_path, i)
+                    .is_empty();
+                if has_present && !has_absent {
+                    return ConditionResult::True;
+                }
+            }
+            return ConditionResult::False;
+        }
+        // Fallback: message-wide
+        let has_present = !self.find_segments_with_qualifier(present_tag, present_elem, present_qual).is_empty();
+        let has_absent = !self.find_segments_with_qualifier(absent_tag, absent_elem, absent_qual).is_empty();
+        ConditionResult::from(has_present && !has_absent)
+    }
+
+    /// Pattern C helper: Collect all values at a specific element+component across group instances.
+    ///
+    /// Returns `(instance_index, value)` pairs for non-empty values.
+    pub fn collect_group_values(
+        &self,
+        tag: &str,
+        elem: usize,
+        comp: usize,
+        group_path: &[&str],
+    ) -> Vec<(usize, String)> {
+        let instance_count = self.group_instance_count(group_path);
+        let mut results = Vec::new();
+        for i in 0..instance_count {
+            if let Some(val) = self.navigator.and_then(|nav| {
+                nav.extract_value_in_group(tag, elem, comp, group_path, i)
+            }) {
+                if !val.is_empty() {
+                    results.push((i, val));
+                }
+            }
+        }
+        results
+    }
+
+    /// Pattern C: Check if a value from one group path matches a value in another group path.
+    ///
+    /// Example: "Zeitraum-ID in SG6 RFF+Z49 matches reference in SG8 SEQ.c286"
+    ///
+    /// Finds qualified segments in source_path, extracts their value, then checks if
+    /// any instance in target_path has the same value at the target position.
+    ///
+    /// Falls back to message-wide search if no navigator is available.
+    #[allow(clippy::too_many_arguments)]
+    pub fn groups_share_qualified_value(
+        &self,
+        source_tag: &str,
+        source_qual_elem: usize,
+        source_qual: &str,
+        source_value_elem: usize,
+        source_value_comp: usize,
+        source_path: &[&str],
+        target_tag: &str,
+        target_elem: usize,
+        target_comp: usize,
+        target_path: &[&str],
+    ) -> ConditionResult {
+        let source_count = self.group_instance_count(source_path);
+        let target_count = self.group_instance_count(target_path);
+        if source_count > 0 && target_count > 0 {
+            // Collect source values from qualified segments
+            let mut source_values = Vec::new();
+            for si in 0..source_count {
+                let segs = self.find_segments_with_qualifier_in_group(
+                    source_tag, source_qual_elem, source_qual, source_path, si,
+                );
+                for seg in &segs {
+                    if let Some(val) = seg.elements.get(source_value_elem).and_then(|e| e.get(source_value_comp)) {
+                        if !val.is_empty() {
+                            source_values.push(val.clone());
+                        }
+                    }
+                }
+            }
+            if source_values.is_empty() {
+                return ConditionResult::Unknown;
+            }
+            // Check if any target instance has a matching value
+            let target_values = self.collect_group_values(target_tag, target_elem, target_comp, target_path);
+            for (_, tv) in &target_values {
+                if source_values.iter().any(|sv| sv == tv) {
+                    return ConditionResult::True;
+                }
+            }
+            return ConditionResult::False;
+        }
+        // Fallback: message-wide search
+        let source_segs = self.find_segments_with_qualifier(source_tag, source_qual_elem, source_qual);
+        let source_vals: Vec<&str> = source_segs
+            .iter()
+            .filter_map(|s| s.elements.get(source_value_elem).and_then(|e| e.get(source_value_comp)).map(|v| v.as_str()))
+            .filter(|v| !v.is_empty())
+            .collect();
+        if source_vals.is_empty() {
+            return ConditionResult::Unknown;
+        }
+        let target_segs = self.find_segments(target_tag);
+        let has_match = target_segs.iter().any(|s| {
+            s.elements.get(target_elem).and_then(|e| e.get(target_comp)).map(|v| v.as_str())
+                .is_some_and(|v| source_vals.contains(&v))
+        });
+        ConditionResult::from(has_match)
+    }
+
     /// Group-scoped co-occurrence check: two segment conditions must both be true
     /// in the same group instance.
     ///
@@ -409,15 +640,34 @@ mod tests {
     // --- Mock navigator for testing ---
     struct MockGroupNavigator {
         groups: Vec<(Vec<String>, usize, Vec<OwnedSegment>)>,
+        /// Children: (parent_path, parent_instance, child_group_id, child_instance, segments)
+        children: Vec<(Vec<String>, usize, String, usize, Vec<OwnedSegment>)>,
     }
 
     impl MockGroupNavigator {
         fn new() -> Self {
-            Self { groups: vec![] }
+            Self { groups: vec![], children: vec![] }
         }
         fn with_group(mut self, path: &[&str], instance: usize, segs: Vec<OwnedSegment>) -> Self {
             self.groups
                 .push((path.iter().map(|s| s.to_string()).collect(), instance, segs));
+            self
+        }
+        fn with_child_group(
+            mut self,
+            parent_path: &[&str],
+            parent_instance: usize,
+            child_id: &str,
+            child_instance: usize,
+            segs: Vec<OwnedSegment>,
+        ) -> Self {
+            self.children.push((
+                parent_path.iter().map(|s| s.to_string()).collect(),
+                parent_instance,
+                child_id.to_string(),
+                child_instance,
+                segs,
+            ));
             self
         }
         fn find_instance(&self, group_path: &[&str], idx: usize) -> Option<&[OwnedSegment]> {
@@ -473,6 +723,57 @@ mod tests {
                     ps.as_slice() == group_path
                 })
                 .count()
+        }
+        fn child_group_instance_count(
+            &self,
+            parent_path: &[&str],
+            parent_instance: usize,
+            child_group_id: &str,
+        ) -> usize {
+            self.children
+                .iter()
+                .filter(|(pp, pi, cid, _, _)| {
+                    let ps: Vec<&str> = pp.iter().map(|s| s.as_str()).collect();
+                    ps.as_slice() == parent_path && *pi == parent_instance && cid == child_group_id
+                })
+                .count()
+        }
+        fn find_segments_in_child_group(
+            &self,
+            segment_id: &str,
+            parent_path: &[&str],
+            parent_instance: usize,
+            child_group_id: &str,
+            child_instance: usize,
+        ) -> Vec<OwnedSegment> {
+            self.children
+                .iter()
+                .find(|(pp, pi, cid, ci, _)| {
+                    let ps: Vec<&str> = pp.iter().map(|s| s.as_str()).collect();
+                    ps.as_slice() == parent_path
+                        && *pi == parent_instance
+                        && cid == child_group_id
+                        && *ci == child_instance
+                })
+                .map(|(_, _, _, _, segs)| {
+                    segs.iter()
+                        .filter(|s| s.id == segment_id)
+                        .cloned()
+                        .collect()
+                })
+                .unwrap_or_default()
+        }
+        fn extract_value_in_group(
+            &self,
+            segment_id: &str,
+            element_index: usize,
+            component_index: usize,
+            group_path: &[&str],
+            instance_index: usize,
+        ) -> Option<String> {
+            let segs = self.find_instance(group_path, instance_index)?;
+            let seg = segs.iter().find(|s| s.id == segment_id)?;
+            seg.elements.get(element_index)?.get(component_index).cloned()
         }
     }
 
@@ -734,5 +1035,235 @@ mod tests {
             ),
             ConditionResult::False,
         );
+    }
+
+    // --- Parent-child navigation tests ---
+
+    #[test]
+    fn test_filtered_parent_child_has_qualifier() {
+        let external = NoOpExternalProvider;
+        // SG8[0] has SEQ+Z98, with SG10 child having CCI+Z23
+        // SG8[1] has SEQ+Z01, no SG10 children
+        let nav = MockGroupNavigator::new()
+            .with_group(&["SG4", "SG8"], 0, vec![make_segment("SEQ", vec![vec!["Z98"]])])
+            .with_group(&["SG4", "SG8"], 1, vec![make_segment("SEQ", vec![vec!["Z01"]])])
+            .with_child_group(&["SG4", "SG8"], 0, "SG10", 0, vec![
+                make_segment("CCI", vec![vec!["Z23"]]),
+            ]);
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+
+        // SG8 with SEQ+Z98 has SG10 child with CCI+Z23 → True
+        assert_eq!(
+            ctx.filtered_parent_child_has_qualifier(
+                &["SG4", "SG8"], "SEQ", 0, "Z98", "SG10", "CCI", 0, "Z23",
+            ),
+            ConditionResult::True,
+        );
+        // SG8 with SEQ+Z01 has no SG10 children → False
+        assert_eq!(
+            ctx.filtered_parent_child_has_qualifier(
+                &["SG4", "SG8"], "SEQ", 0, "Z01", "SG10", "CCI", 0, "Z23",
+            ),
+            ConditionResult::False,
+        );
+        // Wrong child qualifier → False
+        assert_eq!(
+            ctx.filtered_parent_child_has_qualifier(
+                &["SG4", "SG8"], "SEQ", 0, "Z98", "SG10", "CCI", 0, "Z99",
+            ),
+            ConditionResult::False,
+        );
+    }
+
+    #[test]
+    fn test_filtered_parent_child_fallback() {
+        // No navigator — falls back to message-wide
+        let segments = vec![
+            make_segment("SEQ", vec![vec!["Z98"]]),
+            make_segment("CCI", vec![vec!["Z23"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        assert_eq!(
+            ctx.filtered_parent_child_has_qualifier(
+                &["SG4", "SG8"], "SEQ", 0, "Z98", "SG10", "CCI", 0, "Z23",
+            ),
+            ConditionResult::True,
+        );
+        // Missing child qualifier in message-wide → False
+        assert_eq!(
+            ctx.filtered_parent_child_has_qualifier(
+                &["SG4", "SG8"], "SEQ", 0, "Z98", "SG10", "CCI", 0, "Z99",
+            ),
+            ConditionResult::False,
+        );
+    }
+
+    #[test]
+    fn test_any_group_has_qualifier_without() {
+        let external = NoOpExternalProvider;
+        // SG8[0]: SEQ+Z59 present, CCI+11 absent
+        // SG8[1]: SEQ+Z01 present, CCI+11 present
+        let nav = MockGroupNavigator::new()
+            .with_group(&["SG4", "SG8"], 0, vec![
+                make_segment("SEQ", vec![vec!["Z59"]]),
+            ])
+            .with_group(&["SG4", "SG8"], 1, vec![
+                make_segment("SEQ", vec![vec!["Z01"]]),
+                make_segment("CCI", vec![vec!["11"]]),
+            ]);
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+
+        // SG8[0] has SEQ+Z59 without CCI+11 → True
+        assert_eq!(
+            ctx.any_group_has_qualifier_without("SEQ", 0, "Z59", "CCI", 0, "11", &["SG4", "SG8"]),
+            ConditionResult::True,
+        );
+        // Looking for SEQ+Z01 without CCI+11 → False (SG8[1] has both)
+        assert_eq!(
+            ctx.any_group_has_qualifier_without("SEQ", 0, "Z01", "CCI", 0, "11", &["SG4", "SG8"]),
+            ConditionResult::False,
+        );
+        // Looking for SEQ+Z99 (doesn't exist) → False
+        assert_eq!(
+            ctx.any_group_has_qualifier_without("SEQ", 0, "Z99", "CCI", 0, "11", &["SG4", "SG8"]),
+            ConditionResult::False,
+        );
+    }
+
+    #[test]
+    fn test_any_group_has_qualifier_without_fallback() {
+        let segments = vec![
+            make_segment("SEQ", vec![vec!["Z59"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        // Message-wide: SEQ+Z59 present, CCI+11 absent → True
+        assert_eq!(
+            ctx.any_group_has_qualifier_without("SEQ", 0, "Z59", "CCI", 0, "11", &["SG4", "SG8"]),
+            ConditionResult::True,
+        );
+    }
+
+    #[test]
+    fn test_collect_group_values() {
+        let external = NoOpExternalProvider;
+        let nav = MockGroupNavigator::new()
+            .with_group(&["SG4", "SG6"], 0, vec![
+                make_segment("RFF", vec![vec!["Z49", "REF001"]]),
+            ])
+            .with_group(&["SG4", "SG6"], 1, vec![
+                make_segment("RFF", vec![vec!["Z49", "REF002"]]),
+            ]);
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+
+        let values = ctx.collect_group_values("RFF", 0, 1, &["SG4", "SG6"]);
+        assert_eq!(values.len(), 2);
+        assert_eq!(values[0], (0, "REF001".to_string()));
+        assert_eq!(values[1], (1, "REF002".to_string()));
+    }
+
+    #[test]
+    fn test_groups_share_qualified_value() {
+        let external = NoOpExternalProvider;
+        // SG6[0]: RFF+Z49 with value "TS001"
+        // SG8[0]: SEQ with c286 value "TS001" (matches)
+        // SG8[1]: SEQ with c286 value "TS999" (no match)
+        let nav = MockGroupNavigator::new()
+            .with_group(&["SG4", "SG6"], 0, vec![
+                make_segment("RFF", vec![vec!["Z49", "TS001"]]),
+            ])
+            .with_group(&["SG4", "SG8"], 0, vec![
+                make_segment("SEQ", vec![vec!["Z98"], vec!["TS001"]]),
+            ])
+            .with_group(&["SG4", "SG8"], 1, vec![
+                make_segment("SEQ", vec![vec!["Z01"], vec!["TS999"]]),
+            ]);
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+
+        // RFF+Z49 value "TS001" matches SEQ value at [1][0] → True
+        assert_eq!(
+            ctx.groups_share_qualified_value(
+                "RFF", 0, "Z49", 0, 1, &["SG4", "SG6"],
+                "SEQ", 1, 0, &["SG4", "SG8"],
+            ),
+            ConditionResult::True,
+        );
+    }
+
+    #[test]
+    fn test_groups_share_qualified_value_no_match() {
+        let external = NoOpExternalProvider;
+        let nav = MockGroupNavigator::new()
+            .with_group(&["SG4", "SG6"], 0, vec![
+                make_segment("RFF", vec![vec!["Z49", "TS001"]]),
+            ])
+            .with_group(&["SG4", "SG8"], 0, vec![
+                make_segment("SEQ", vec![vec!["Z98"], vec!["TS999"]]),
+            ]);
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+
+        // No matching value → False
+        assert_eq!(
+            ctx.groups_share_qualified_value(
+                "RFF", 0, "Z49", 0, 1, &["SG4", "SG6"],
+                "SEQ", 1, 0, &["SG4", "SG8"],
+            ),
+            ConditionResult::False,
+        );
+    }
+
+    #[test]
+    fn test_groups_share_qualified_value_no_source() {
+        let external = NoOpExternalProvider;
+        // No RFF+Z49 at all
+        let nav = MockGroupNavigator::new()
+            .with_group(&["SG4", "SG6"], 0, vec![
+                make_segment("RFF", vec![vec!["Z13", "55001"]]),
+            ])
+            .with_group(&["SG4", "SG8"], 0, vec![
+                make_segment("SEQ", vec![vec!["Z98"], vec!["TS001"]]),
+            ]);
+        let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
+
+        // No source qualifier match → Unknown
+        assert_eq!(
+            ctx.groups_share_qualified_value(
+                "RFF", 0, "Z49", 0, 1, &["SG4", "SG6"],
+                "SEQ", 1, 0, &["SG4", "SG8"],
+            ),
+            ConditionResult::Unknown,
+        );
+    }
+
+    #[test]
+    fn test_groups_share_qualified_value_fallback() {
+        // No navigator — falls back to message-wide
+        let segments = vec![
+            make_segment("RFF", vec![vec!["Z49", "TS001"]]),
+            make_segment("SEQ", vec![vec!["Z98"], vec!["TS001"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        assert_eq!(
+            ctx.groups_share_qualified_value(
+                "RFF", 0, "Z49", 0, 1, &["SG4", "SG6"],
+                "SEQ", 1, 0, &["SG4", "SG8"],
+            ),
+            ConditionResult::True,
+        );
+    }
+
+    #[test]
+    fn test_child_group_pass_throughs_no_navigator() {
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &[]);
+
+        assert_eq!(ctx.child_group_instance_count(&["SG4", "SG8"], 0, "SG10"), 0);
+        assert!(ctx.find_segments_in_child_group("CCI", &["SG4", "SG8"], 0, "SG10", 0).is_empty());
+        assert_eq!(ctx.extract_value_in_group("SEQ", 0, 0, &["SG4", "SG8"], 0), None);
     }
 }

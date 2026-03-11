@@ -72,6 +72,16 @@ pub struct EvaluationContext<'a> {
 **All group-scoped helpers** take `group_path: &[&str]` (e.g., `&["SG4", "SG8"]`) and automatically
 fall back to message-wide search when no group navigator is available.
 
+### Parent-child group navigation (for cross-SG conditions):
+- `ctx.filtered_parent_child_has_qualifier(parent_path, parent_tag, parent_elem, parent_qual, child_group_id, child_tag, child_elem, child_qual)` → `ConditionResult`
+  - "In the SG8 with SEQ+Z98, does its SG10 child have CCI+Z23?" — navigates parent→child group hierarchy.
+- `ctx.any_group_has_qualifier_without(present_tag, present_elem, present_qual, absent_tag, absent_elem, absent_qual, group_path)` → `ConditionResult`
+  - "In any SG8, SEQ+Z59 is present but CCI+11 is absent" — same-instance presence+absence.
+- `ctx.groups_share_qualified_value(source_tag, source_qual_elem, source_qual, source_value_elem, source_value_comp, source_path, target_tag, target_elem, target_comp, target_path)` → `ConditionResult`
+  - "Zeitraum-ID in SG6 RFF+Z49 matches reference in SG8 SEQ.c286" — cross-group value correlation.
+- `ctx.collect_group_values(tag, elem, comp, group_path)` → `Vec<(usize, String)>`
+  - Collects all values at a specific position across group instances. For custom cross-group logic.
+
 ## OwnedSegment structure
 
 ```rust
@@ -480,6 +490,34 @@ fn resolve_ahb_notations(description: &str) -> Vec<String> {
 /// Looks for phrases like "in derselben SG8" or "in dieser SG4" and returns
 /// a hint string directing the generator to use group-scoped API methods.
 fn detect_group_scope(description: &str) -> Option<String> {
+    // Pattern: parent SG with qualifier, child SG has something
+    // e.g., "in der SG8 mit SEQ+Z98 ... SG10 ... CCI+Z23"
+    let parent_child_re = regex::Regex::new(
+        r"(?i)(?:in\s+(?:der|einer)\s+)?(SG\d+)\s+(?:mit|mit\s+dem)\s+\w+\+\w+.*?(SG\d+)"
+    ).unwrap();
+    if let Some(cap) = parent_child_re.captures(description) {
+        let parent = cap.get(1).unwrap().as_str();
+        let child = cap.get(2).unwrap().as_str();
+        return Some(format!(
+            "PARENT-CHILD: Use filtered_parent_child_has_qualifier with parent \"{}\" and child \"{}\"",
+            parent, child
+        ));
+    }
+
+    // Pattern: presence + absence in same group
+    // e.g., "nicht vorhanden in derselben SG" or "fehlt in der gleichen SG"
+    let absence_re = regex::Regex::new(
+        r"(?i)(?:nicht\s+vorhanden|fehlt|absent)\s+(?:in\s+)?(?:derselben|der\s+gleichen)\s+(SG\d+)"
+    ).unwrap();
+    if let Some(cap) = absence_re.captures(description) {
+        let group = cap.get(1).unwrap().as_str();
+        return Some(format!(
+            "PRESENCE-ABSENCE: Use any_group_has_qualifier_without with group_path ending in \"{}\"",
+            group
+        ));
+    }
+
+    // Pattern: same group scope (existing)
     let re = regex::Regex::new(r"(?i)in\s+(?:derselben|dieser)\s+(SG\d+)").unwrap();
     re.captures(description).map(|cap| {
         let group = cap.get(1).unwrap().as_str();
@@ -551,6 +589,41 @@ fn evaluate_27(&self, ctx: &EvaluationContext) -> ConditionResult {
         }
         None => ConditionResult::Unknown,
     }
+}"#
+        .to_string(),
+        r#"// Example 9: Parent-child qualifier check — "In SG8 mit SEQ+Z98, hat das SG10-Kind CCI+Z23?"
+fn evaluate_30(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.filtered_parent_child_has_qualifier(
+        &["SG4", "SG8"], "SEQ", 0, "Z98",
+        "SG10", "CCI", 0, "Z23",
+    )
+}"#
+        .to_string(),
+        r#"// Example 10: Presence+absence in same group — "In irgendeiner SG8 SEQ+Z59 vorhanden aber CCI+11 nicht"
+fn evaluate_31(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.any_group_has_qualifier_without(
+        "SEQ", 0, "Z59",
+        "CCI", 0, "11",
+        &["SG4", "SG8"],
+    )
+}"#
+        .to_string(),
+        r#"// Example 11: Cross-group value correlation — "Zeitraum-ID in SG6 RFF+Z49 = Referenz in SG8 SEQ.c286"
+fn evaluate_32(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.groups_share_qualified_value(
+        "RFF", 0, "Z49", 0, 1, &["SG4", "SG6"],
+        "SEQ", 1, 0, &["SG4", "SG8"],
+    )
+}"#
+        .to_string(),
+        r#"// Example 12: Custom cross-group logic with collect_group_values
+fn evaluate_33(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let values = ctx.collect_group_values("RFF", 0, 1, &["SG4", "SG6"]);
+    if values.is_empty() {
+        return ConditionResult::Unknown;
+    }
+    // Check if all collected values match a pattern
+    ConditionResult::from(values.iter().all(|(_, v)| v.starts_with("TS")))
 }"#
         .to_string(),
     ]
