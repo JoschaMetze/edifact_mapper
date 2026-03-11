@@ -1,0 +1,445 @@
+{
+  "generated_at": "2026-03-11T11:20:13Z",
+  "ahb_file": "REQOTE_AHB_1_0a_Fehlerkorrektur_20250225.xml",
+  "format_version": "FV2504",
+  "conditions": {
+    "43": {
+      "confidence": "low",
+      "reasoning": "Checks if the product code in PIA+5 DE7140 belongs to the code list 'Konfigurationen' in Kapitel 4.6.2 'Werte nach Typ 2 aus SMGW', column 'Auslöser', value 'Bei Schwellwertunter-/-überschreitung'. This requires membership in an external product code list that is not derivable from the EDIFACT message structure alone.",
+      "description_hash": "ac6da87d",
+      "is_external": true
+    },
+    "931": {
+      "confidence": "high",
+      "reasoning": "Format condition: ZZZ = +00 (UTC timezone). This is a fixed-value format constraint on a DTM timezone component. Always True as informational annotation.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "509": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) describing that the value is the process number from CNI DE1490 of an IFTSTA with BGM+Z73. Cross-message value tracing is not evaluatable from the current message structure alone.",
+      "description_hash": "3a807315",
+      "is_external": false
+    },
+    "40": {
+      "confidence": "high",
+      "reasoning": "Same COM segment structure as condition 39. Checks DE3155 qualifier against the four telephony-related codes TE (telephone), FX (fax), AJ, and AL. Direct value comparison in the same C076 composite element.",
+      "description_hash": "d9351e4d",
+      "is_external": false
+    },
+    "500": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) indicating usage of a technical contact person for device takeover. Notes are not boolean conditions — they carry no evaluatable logic and should return Unknown.",
+      "description_hash": "c6b98d25",
+      "is_external": false
+    },
+    "511": {
+      "confidence": "high",
+      "reasoning": "Hinweis (informational note): 'Verwendung der ID der Steuerbaren Ressource' — this is a documentation hint, not a conditional check. Always evaluates to True.",
+      "description_hash": "9dd0a791",
+      "is_external": false
+    },
+    "27": {
+      "confidence": "low",
+      "reasoning": "Whether the ID in LOC+172 DE3225 belongs to a Netzlokation requires knowledge of the ID format conventions (prefix/length rules for Netzlokation vs Messlokation vs SteuerbareRessource). This cannot be determined from the message alone without an external format registry.",
+      "description_hash": "22632a16",
+      "is_external": true
+    },
+    "507": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) describing that the value is the process number (Vorgangsnummer) from SG4 IDE+24 DE7402 of a UTILMD with BGM+E01. It describes the semantic origin of a value in another message type, not an evaluatable boolean condition within this message.",
+      "description_hash": "c4344499",
+      "is_external": false
+    },
+    "21": {
+      "confidence": "high",
+      "reasoning": "LIN++Z66 presence check in SG27. The notation LIN++Z66 means elements[0] is empty and elements[1][0] is Z66.",
+      "description_hash": "a4358b45",
+      "is_external": false
+    },
+    "38": {
+      "confidence": "low",
+      "reasoning": "Requires checking if the product code in PIA+5 DE7140 within the same SG27 is in the 'Auslöser' column of Kapitel 4.4 with value 'Bei Schwellwertunter- / -überschreitung'. This is a two-level external lookup: code list membership AND specific column value — cannot be determined from the message.",
+      "description_hash": "6762271c",
+      "is_external": true
+    },
+    "31": {
+      "confidence": "low",
+      "reasoning": "Code list membership check against Kapitel 4.3 'Konfigurationsprodukte Ad-Hoc-Steuerkanal'. External code list reference — cannot be determined from the message.",
+      "description_hash": "87915e25",
+      "is_external": true
+    },
+    "492": {
+      "confidence": "medium",
+      "reasoning": "Checks whether the MP-ID in NAD+MR belongs to the electricity sector (Sparte Strom). The sector of a market participant cannot be derived from the EDIFACT message structure — it requires external market participant registry lookup. Delegated to external provider.",
+      "description_hash": "bd78e2d8",
+      "is_external": true
+    },
+    "494": {
+      "confidence": "low",
+      "reasoning": "States that the date in the DE must be the document creation time or earlier. This is a temporal validation constraint comparing a field value against the actual document creation timestamp, which cannot be evaluated from the EDIFACT message structure alone — we cannot determine from the message when it was actually created vs. what it claims.",
+      "description_hash": "785470ce",
+      "is_external": false
+    },
+    "36": {
+      "confidence": "low",
+      "reasoning": "Whether the MP-ID in NAD+MS has the market role NB (Netzbetreiber) requires an external role registry — the NAD segment only carries the MP-ID identifier.",
+      "description_hash": "cbcd3843",
+      "is_external": true
+    },
+    "508": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) describing that the value comes from BGM+Z73 DE1004 of an IFTSTA message answering the configuration order. Cross-message value tracing is not evaluatable from the current message structure alone.",
+      "description_hash": "5d5c40e1",
+      "is_external": false
+    },
+    "20": {
+      "confidence": "high",
+      "reasoning": "LIN++Z65 presence check in SG27. The notation LIN++Z65 means elements[0] is empty and elements[1][0] is Z65.",
+      "description_hash": "3a3e26d7",
+      "is_external": false
+    },
+    "37": {
+      "confidence": "low",
+      "reasoning": "Code list membership check against Kapitel 4.7 'Art der Werte für Messprodukte nach Typ 2'. External code list reference.",
+      "description_hash": "84946022",
+      "is_external": true
+    },
+    "503": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) indicating usage of the Messlokation ID. Notes carry no evaluatable boolean logic.",
+      "description_hash": "d7954b75",
+      "is_external": false
+    },
+    "950": {
+      "confidence": "high",
+      "reasoning": "Format condition: Marktlokations-ID format. Field-level format constraint specifying the expected ID format. Always True as informational annotation.",
+      "description_hash": "a9ddfaec",
+      "is_external": false
+    },
+    "2066": {
+      "confidence": "low",
+      "reasoning": "Condition requires checking whether a product code from PIA+5 DE7140 is listed in the external code list 'Werte nach Typ 2 aus SMGW' (Kapitel 4.6.2) with the value 'Bei Schwellwertunter-/-überschreitung' in the 'Auslöser' column. This references an external code list that cannot be evaluated from EDIFACT message content alone.",
+      "description_hash": "528ae1cd",
+      "is_external": true
+    },
+    "29": {
+      "confidence": "low",
+      "reasoning": "Code list membership check against Kapitel 4.1 'Konfigurationsprodukte Schaltzeitdefinition'. The allowed product codes are defined in an external document (chapter reference), not derivable from the message itself.",
+      "description_hash": "895d62df",
+      "is_external": true
+    },
+    "935": {
+      "confidence": "high",
+      "reasoning": "Format condition: HHMM = 0500. Fixed time value constraint. Always True as informational annotation.",
+      "description_hash": "192bd97e",
+      "is_external": false
+    },
+    "25": {
+      "confidence": "low",
+      "reasoning": "Whether the ID in LOC+172 DE3225 belongs to a Marktlokation requires a market participant registry lookup or knowledge of ID format conventions (MaLo-ID vs MeLo-ID). Cannot be determined from the EDIFACT message structure alone.",
+      "description_hash": "dda96b7c",
+      "is_external": true
+    },
+    "490": {
+      "confidence": "low",
+      "reasoning": "Checks whether a CCYYMMDDHHMM datetime falls within German Summer Time (MESZ) periods as defined in Tabelle Kapitel 3.5. While the MESZ transitions follow a predictable rule (last Sunday of March/October), implementing this requires year-specific calendar calculations and referencing the specific table, making it an external/complex temporal condition not directly evaluatable from segment structure alone.",
+      "description_hash": "cb594882",
+      "is_external": true
+    },
+    "491": {
+      "confidence": "low",
+      "reasoning": "Checks whether a CCYYMMDDHHMM datetime falls within German Winter Time (MEZ) periods as defined in Tabelle Kapitel 3.6. Same reasoning as condition 490 — requires year-specific calendar logic and external table reference.",
+      "description_hash": "5e5e4325",
+      "is_external": true
+    },
+    "939": {
+      "confidence": "high",
+      "reasoning": "Format condition: string must contain '@' and '.' (email-like format). This is a field-level format constraint, not a dynamic segment condition. Always True as informational annotation.",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "2065": {
+      "confidence": "low",
+      "reasoning": "Condition requires checking whether a product code from PIA+5 DE7140 is listed in the external code list 'Konfigurationen' (Kapitel 4.4) with the value 'Bei Schwellwertunter-/-überschreitung' in the 'Auslöser' column. This references an external code list that cannot be evaluated from EDIFACT message content alone.",
+      "description_hash": "2fd7e236",
+      "is_external": true
+    },
+    "501": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) indicating usage of a contact person for invoice processing. Notes carry no evaluatable boolean logic.",
+      "description_hash": "d0394b26",
+      "is_external": false
+    },
+    "502": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) indicating usage of the Marktlokation ID. Notes carry no evaluatable boolean logic.",
+      "description_hash": "9727b89c",
+      "is_external": false
+    },
+    "932": {
+      "confidence": "high",
+      "reasoning": "Format condition: HHMM = 2200. Fixed time value constraint. Always True as informational annotation.",
+      "description_hash": "943b98c4",
+      "is_external": false
+    },
+    "2063": {
+      "confidence": "medium",
+      "reasoning": "LIN with DE1229=Z67 (Erforderliches Messprodukt für Werte nach Typ 2 aus Backend) must appear at most once. Per segment structure reference, DE1229 is at elements[1][0]. Returns True when 0 or 1 such LIN segments exist.",
+      "description_hash": "bc9b2e65",
+      "is_external": false
+    },
+    "17": {
+      "confidence": "high",
+      "reasoning": "RFF+Z41 presence check in SG1. RFF elements[0][0] is the qualifier. has_qualifier returns True when any RFF with qualifier Z41 exists.",
+      "description_hash": "91c83dc2",
+      "is_external": false
+    },
+    "33": {
+      "confidence": "low",
+      "reasoning": "Code list membership check against Kapitel 4.4 'Messprodukte mit Konfigurationserlaubnis für Werte nach Typ 2 aus SMGW'. External code list reference.",
+      "description_hash": "27513ce1",
+      "is_external": true
+    },
+    "24": {
+      "confidence": "low",
+      "reasoning": "Wenn Produkt bestellt werden soll — whether a product is intended to be ordered is a business intent that cannot be determined from the EDIFACT message structure alone. Requires external context about the order intent.",
+      "description_hash": "504cb828",
+      "is_external": true
+    },
+    "1": {
+      "confidence": "high",
+      "reasoning": "DTM+203 absence check. DTM elements[0][0] is the qualifier. lacks_qualifier returns True when no DTM with qualifier 203 exists.",
+      "description_hash": "4554ba2c",
+      "is_external": false
+    },
+    "514": {
+      "confidence": "high",
+      "reasoning": "Hinweis (informational note): only one piece of information may be transmitted in DE3148. This is a cardinality hint, not a dynamic condition. Always True.",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "10": {
+      "confidence": "low",
+      "reasoning": "MP-ID nur aus Sparte Strom — whether a market participant ID belongs exclusively to the electricity sector cannot be determined from the EDIFACT message alone. Requires external business context (market participant registry).",
+      "description_hash": "43bf0d05",
+      "is_external": true
+    },
+    "960": {
+      "confidence": "low",
+      "reasoning": "Format validation condition (Netzlokations-ID format). Requires checking a specific field value against a format pattern. No format validation API is available in EvaluationContext.",
+      "description_hash": "0ce0bd80",
+      "is_external": false
+    },
+    "967": {
+      "confidence": "low",
+      "reasoning": "Format validation condition (X.509 certificate body per BSI TR-03109-4). Requires complex cryptographic certificate format validation which is not feasible via the EvaluationContext segment API.",
+      "description_hash": "a58c2a1e",
+      "is_external": false
+    },
+    "16": {
+      "confidence": "high",
+      "reasoning": "RFF+Z41 absence check in SG1. RFF elements[0][0] is the qualifier. lacks_qualifier returns True when no RFF with qualifier Z41 exists.",
+      "description_hash": "78961ba8",
+      "is_external": false
+    },
+    "2062": {
+      "confidence": "medium",
+      "reasoning": "LIN with DE1229=Z66 (Erforderliches Produkt Ad-hoc-Steuerkanal) must appear at most once. Per segment structure reference, DE1229 is at elements[1][0]. Returns True when 0 or 1 such LIN segments exist.",
+      "description_hash": "b38072ec",
+      "is_external": false
+    },
+    "516": {
+      "confidence": "high",
+      "reasoning": "Hinweis (informational note): a URI IPv6 must be provided. Documentation guidance only, always True.",
+      "description_hash": "3a8b5b15",
+      "is_external": false
+    },
+    "961": {
+      "confidence": "low",
+      "reasoning": "Format validation condition (SR-ID format). Requires checking a specific field value against a format pattern. No format validation API is available in EvaluationContext.",
+      "description_hash": "99d3e1d7",
+      "is_external": false
+    },
+    "19": {
+      "confidence": "high",
+      "reasoning": "LIN++Z64 presence check in SG27. The notation LIN++Z64 means elements[0] is empty and elements[1][0] is Z64. has_qualifier checks elements[1][0] == \"Z64\".",
+      "description_hash": "ea0d5689",
+      "is_external": false
+    },
+    "28": {
+      "confidence": "low",
+      "reasoning": "Same reasoning as condition 27 — determining whether LOC+172 DE3225 contains a SteuerbareRessource ID requires external ID format/registry knowledge not available from the EDIFACT message alone.",
+      "description_hash": "c2b05a71",
+      "is_external": true
+    },
+    "39": {
+      "confidence": "high",
+      "reasoning": "Standard EDIFACT COM segment: elements[0] is C076 composite where [0][0]=DE3148 (channel address) and [0][1]=DE3155 (channel qualifier). Checking for EM (electronic mail) is a direct value comparison.",
+      "description_hash": "eaf06e02",
+      "is_external": false
+    },
+    "41": {
+      "confidence": "low",
+      "reasoning": "Code list membership check against Kapitel 4.6.1 'Werte nach Typ 2 aus Backend'. External code list reference.",
+      "description_hash": "3c8c532a",
+      "is_external": true
+    },
+    "42": {
+      "confidence": "low",
+      "reasoning": "Code list membership check against Kapitel 4.6.2 'Werte nach Typ 2 aus SMGW'. External code list reference.",
+      "description_hash": "b2296bfe",
+      "is_external": true
+    },
+    "493": {
+      "confidence": "medium",
+      "reasoning": "Checks whether the MP-ID in NAD+MR belongs to the gas sector (Sparte Gas). Same reasoning as condition 492 — sector membership requires external registry lookup.",
+      "description_hash": "75612dee",
+      "is_external": true
+    },
+    "26": {
+      "confidence": "low",
+      "reasoning": "Whether the ID in LOC+172 DE3225 belongs to a Messlokation requires a market participant registry lookup or knowledge of ID format conventions (MaLo-ID vs MeLo-ID). Cannot be determined from the EDIFACT message structure alone.",
+      "description_hash": "8581245d",
+      "is_external": true
+    },
+    "2": {
+      "confidence": "high",
+      "reasoning": "DTM+469 absence check. DTM elements[0][0] is the qualifier. lacks_qualifier returns True when no DTM with qualifier 469 exists.",
+      "description_hash": "21214a46",
+      "is_external": false
+    },
+    "510": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) indicating usage of the Netzlokation ID. Notes carry no evaluatable boolean logic.",
+      "description_hash": "9592f83e",
+      "is_external": false
+    },
+    "903": {
+      "confidence": "high",
+      "reasoning": "Format condition: possible value is '1'. Format annotations in AHB are informational constraints on the field value, not dynamic Boolean conditions. Always True (the constraint is applied elsewhere during field validation).",
+      "description_hash": "ef3b7862",
+      "is_external": false
+    },
+    "515": {
+      "confidence": "high",
+      "reasoning": "Hinweis (informational note): a URI IPv4 must be provided. Documentation guidance only, always True.",
+      "description_hash": "c27cdaf6",
+      "is_external": false
+    },
+    "940": {
+      "confidence": "high",
+      "reasoning": "Format condition: string must start with '+' followed only by digits (E.164 telephone number format). Field-level format constraint, not a dynamic conditional. Always True as informational annotation.",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "22": {
+      "confidence": "high",
+      "reasoning": "LIN++Z67 presence check in SG27. The notation LIN++Z67 means elements[0] is empty and elements[1][0] is Z67.",
+      "description_hash": "ae126cd5",
+      "is_external": false
+    },
+    "962": {
+      "confidence": "low",
+      "reasoning": "Format validation condition (max. 6 digits before decimal point). Requires parsing a numeric field value and counting digits before the decimal separator. Without knowing the target segment/element in evaluation context, this cannot be implemented generically.",
+      "description_hash": "36f7f4e8",
+      "is_external": false
+    },
+    "2005": {
+      "confidence": "medium",
+      "reasoning": "SG27 must appear exactly once per message. LIN is the entry segment for SG27. Counting all LIN segments gives the SG27 instance count. Returns True when exactly one LIN exists.",
+      "description_hash": "af782d7f",
+      "is_external": false
+    },
+    "2060": {
+      "confidence": "medium",
+      "reasoning": "LIN with DE1229=Z64 (Erforderliches Produkt Schaltzeitdefinitionen) must appear at most once. Per segment structure reference, DE1229 (Handlung, Code) is at elements[1][0]. Returns True when 0 or 1 such LIN segments exist.",
+      "description_hash": "3990882e",
+      "is_external": false
+    },
+    "504": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) indicating usage of the Tranche ID. Notes carry no evaluatable boolean logic.",
+      "description_hash": "066912df",
+      "is_external": false
+    },
+    "512": {
+      "confidence": "high",
+      "reasoning": "Hinweis (informational note): receipt of values after type 2 from SMGW. Documentation hint only, always True.",
+      "description_hash": "5df791d3",
+      "is_external": false
+    },
+    "15": {
+      "confidence": "high",
+      "reasoning": "DTM+76 absence check. DTM elements[0][0] is the qualifier. lacks_qualifier returns True when no DTM with qualifier 76 exists.",
+      "description_hash": "cf402ed2",
+      "is_external": false
+    },
+    "30": {
+      "confidence": "low",
+      "reasoning": "Code list membership check against Kapitel 4.2 'Konfigurationsprodukte Leistungskurvendefinition'. External code list reference — cannot be determined from the message.",
+      "description_hash": "b558b9cd",
+      "is_external": true
+    },
+    "23": {
+      "confidence": "high",
+      "reasoning": "LIN++Z68 presence check in SG27. The notation LIN++Z68 means elements[0] is empty and elements[1][0] is Z68.",
+      "description_hash": "1f89f1e0",
+      "is_external": false
+    },
+    "951": {
+      "confidence": "low",
+      "reasoning": "Format validation condition (Zählpunktbezeichnung format). Requires checking the actual string value of a specific field against a format pattern. Without knowing which segment/element contains the value in this context, and without a format validation API in EvaluationContext, this cannot be implemented generically.",
+      "description_hash": "f35fc481",
+      "is_external": false
+    },
+    "32": {
+      "confidence": "low",
+      "reasoning": "Code list membership check against Kapitel 4.5 'Messprodukte für Werte nach Typ 2 aus Backend für LF und NB'. External code list reference.",
+      "description_hash": "6bdbb7fc",
+      "is_external": true
+    },
+    "35": {
+      "confidence": "low",
+      "reasoning": "Whether the MP-ID in NAD+MS has the market role LF (Lieferant) requires a role registry lookup — the NAD segment only contains the MP-ID, not the role. Role cannot be determined from the message alone.",
+      "description_hash": "67dbca70",
+      "is_external": true
+    },
+    "2061": {
+      "confidence": "medium",
+      "reasoning": "LIN with DE1229=Z65 (Erforderliches Produkt Leistungskurvendefinitionen) must appear at most once. Per segment structure reference, DE1229 is at elements[1][0]. Returns True when 0 or 1 such LIN segments exist.",
+      "description_hash": "85aa6c68",
+      "is_external": false
+    },
+    "18": {
+      "confidence": "high",
+      "reasoning": "IMD++Z55 presence check. The notation IMD++Z55 means elements[0] is empty and elements[1][0] is Z55. has_qualifier checks elements[1][0] == \"Z55\".",
+      "description_hash": "607da843",
+      "is_external": false
+    },
+    "2064": {
+      "confidence": "medium",
+      "reasoning": "LIN with DE1229=Z68 (Erforderliches Produkt Konfigurationserlaubnis für Werte nach Typ 2 aus SMGW) must appear at most once. Per segment structure reference, DE1229 is at elements[1][0]. Returns True when 0 or 1 such LIN segments exist.",
+      "description_hash": "01a92450",
+      "is_external": false
+    },
+    "906": {
+      "confidence": "high",
+      "reasoning": "Format condition: max 3 decimal places. This is a field-level format constraint applied during value validation, not a dynamic conditional. Always True.",
+      "description_hash": "97bdb0c7",
+      "is_external": false
+    },
+    "933": {
+      "confidence": "high",
+      "reasoning": "Format condition: HHMM = 2300. Fixed time value constraint. Always True as informational annotation.",
+      "description_hash": "b5e9c81e",
+      "is_external": false
+    },
+    "934": {
+      "confidence": "high",
+      "reasoning": "Format condition: HHMM = 0400. Fixed time value constraint. Always True as informational annotation.",
+      "description_hash": "d06a46c8",
+      "is_external": false
+    }
+  }
+}

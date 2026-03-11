@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-03-11T13:23:58Z",
+  "ahb_file": "CONTRL_AHB_2_4a_Fehlerkorrektur_20250331.xml",
+  "format_version": "FV2504",
+  "conditions": {
+    "1": {
+      "confidence": "low",
+      "reasoning": "\"Wenn Angabe möglich\" is a generic optionality condition that depends on external context (whether the sender has the relevant information to provide). Cannot be determined from EDIFACT structure alone.",
+      "description_hash": "ad273838",
+      "is_external": true
+    },
+    "9": {
+      "confidence": "high",
+      "reasoning": "Checks that no UCM segment has DE0013 (elements[4][0]) populated. Returns Unknown if no UCM segments exist at all (message malformed). Returns True only when all UCM segments have an absent/empty DE0013.",
+      "description_hash": "04507f82",
+      "is_external": false
+    },
+    "6": {
+      "confidence": "medium",
+      "reasoning": "Data element / group data element level errors are indicated by S011 being populated. DE0098 (elements[5][0]) holds the segment position of the faulty element. If present, the error is at element level.",
+      "description_hash": "5c5349c5",
+      "is_external": false
+    },
+    "8": {
+      "confidence": "high",
+      "reasoning": "Checks if any UCM segment has DE0013 (Service-Segmentbezeichner, elements[4][0]) present with a non-empty value (\"UNH\" or \"UNT\").",
+      "description_hash": "77f325ef",
+      "is_external": false
+    },
+    "2": {
+      "confidence": "high",
+      "reasoning": "Checks if any UCM segment has DE0013 (elements[4][0]) == \"UNH\" AND DE0085 (elements[3][0]) is non-empty, indicating a syntax error specifically in the UNH segment.",
+      "description_hash": "b8b7cbc3",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "medium",
+      "reasoning": "Segment-group level errors in UCM are identified by DE0085 (syntax error code, elements[3]) being present without S011/DE0098 (element position, elements[5][0]) — meaning the error is at segment level, not pinpointed to a specific data element.",
+      "description_hash": "2bd092ca",
+      "is_external": false
+    },
+    "3": {
+      "confidence": "high",
+      "reasoning": "Checks if any UCM segment has DE0013 (elements[4][0]) == \"UNT\" AND DE0085 (elements[3][0]) is non-empty, indicating a syntax error specifically in the UNT segment.",
+      "description_hash": "fa7b7821",
+      "is_external": false
+    }
+  }
+}

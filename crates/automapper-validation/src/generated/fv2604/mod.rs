@@ -13,11 +13,11 @@ pub use partin_conditions_fv2604::PartinConditionEvaluatorFV2604;
 mod remadv_conditions_fv2604;
 pub use remadv_conditions_fv2604::RemadvConditionEvaluatorFV2604;
 
-/// Alias: FV2604 conditions are identical to FV2504.
-pub type UtilmdStromConditionEvaluatorFV2604 = super::fv2504::UtilmdStromConditionEvaluatorFV2504;
+/// Alias: FV2604 UTILMD Strom conditions are identical to FV2510.
+pub type UtilmdStromConditionEvaluatorFV2604 = super::fv2510::UtilmdStromConditionEvaluatorFV2510;
 
-/// Alias: FV2604 conditions are identical to FV2504.
-pub type UtilmdGasConditionEvaluatorFV2604 = super::fv2504::UtilmdGasConditionEvaluatorFV2504;
+mod utilmd_gas_conditions_fv2604;
+pub use utilmd_gas_conditions_fv2604::UtilmdGasConditionEvaluatorFV2604;
 
 /// Alias: FV2604 conditions are identical to FV2504.
 pub type AperakConditionEvaluatorFV2604 = super::fv2504::AperakConditionEvaluatorFV2504;

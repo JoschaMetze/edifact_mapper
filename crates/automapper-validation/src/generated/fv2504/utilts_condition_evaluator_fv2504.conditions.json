@@ -1,0 +1,643 @@
+{
+  "generated_at": "2026-03-11T12:20:10Z",
+  "ahb_file": "UTILTS_AHB_1_0_Fehlerkorrektur_20250218.xml",
+  "format_version": "FV2504",
+  "conditions": {
+    "7": {
+      "confidence": "high",
+      "reasoning": "Co-occurrence in the same SG8 instance: SEQ+Z37 (elements[0][0]==\"Z37\") AND RFF+Z19 (elements[0][0]==\"Z19\") must both be present. Uses any_group_has_co_occurrence with group path SG4.SG8.",
+      "description_hash": "64f2bec9",
+      "is_external": false
+    },
+    "48": {
+      "confidence": "high",
+      "reasoning": "Checks that in the same SG8 group (Leistungskurvendefinition with SEQ+Z74), DTM+Z45 (Leistungskurvenänderungszeitpunkt) has format code 303. In Z74 SG8 groups the only DTM is Z45.",
+      "description_hash": "fc52651b",
+      "is_external": false
+    },
+    "501": {
+      "confidence": "low",
+      "reasoning": "Pure informational hint: 'Use the ID of the Marktlokation'. This is a documentation note, not an evaluatable boolean condition.",
+      "description_hash": "9727b89c",
+      "is_external": false
+    },
+    "29": {
+      "confidence": "medium",
+      "reasoning": "In the same SG8, SEQ+Z43 (Zählzeitdefinition) must be present and DTM must have format code 303 at elements[0][2]. In a SEQ+Z43 SG8, the only DTM present is DTM+Z33, so checking format code 303 without qualifying by Z33 is safe.",
+      "description_hash": "31a4cc57",
+      "is_external": false
+    },
+    "933": {
+      "confidence": "low",
+      "reasoning": "Format constraint: time component HHMM must equal 2300. Same as 932 — a specific time value constraint without sufficient target context for unambiguous implementation.",
+      "description_hash": "b5e9c81e",
+      "is_external": false
+    },
+    "12": {
+      "confidence": "low",
+      "reasoning": "Uniqueness constraint: when an SG8 SEQ+Z37 has SG9 CCI+Z86 CAV+Z83 (Positivwert), no other SG8 with the same Rechenschrittidentifikator and Zeitraum-ID may exist. Requires cross-SG8 duplicate detection with multi-field key matching — beyond current API coverage.",
+      "description_hash": "d666c843",
+      "is_external": false
+    },
+    "41": {
+      "confidence": "high",
+      "reasoning": "Checks if any SG8 group instance within the SG5 transaction group contains SEQ with qualifier Z42 (Zählzeitdefinition) at elements[0][0]. Group-scoped to SG5→SG8.",
+      "description_hash": "b0bc1ebf",
+      "is_external": false
+    },
+    "532": {
+      "confidence": "medium",
+      "reasoning": "Cross-group Zeitraum-ID matching: collect DE1156 values from SG6 RFF+Z49/Z53 segments, then verify that SG8 RFF+Z46 references (DE1154) point to one of those IDs. Medium confidence because the condition is a hint about correct data linkage across groups, and the exact scoping (per-SG5/SG6 instance vs message-wide) may require navigator-based logic for full correctness.",
+      "description_hash": "d0030a2b",
+      "is_external": false
+    },
+    "2007": {
+      "confidence": "medium",
+      "reasoning": "The condition says the segment group must appear exactly once for each Zeitraum-ID from SG5 STS+Z23+Z33 (Berechnungsformel angefügt). From the MIG reference, STS with Statuskategorie Z23 has elements[0][0]=Z23, elements[1][0]=status code (Z33=angefügt), and elements[2][0]=Zeitraum-ID. The evaluator returns True when at least one such STS+Z23+Z33 is present in the message, which is when the cardinality rule triggers. Full cardinality counting (exactly one group per Zeitraum-ID) would require navigator-level group instance counting and cross-referencing, which goes beyond what the boolean ConditionResult can express — the condition is really a presence trigger for the group requirement.",
+      "description_hash": "df5b81e6",
+      "is_external": false
+    },
+    "521": {
+      "confidence": "medium",
+      "reasoning": "Incomplete condition text but follows the same pattern as 517 (DTM+Z44/401/'0000') but for DTM+Z45. Medium confidence due to incomplete specification.",
+      "description_hash": "536d3978",
+      "is_external": false
+    },
+    "524": {
+      "confidence": "low",
+      "reasoning": "Hint: a code for a Zählzeitdefinition must be given. Requires business context about which specific codes qualify — cannot be evaluated without domain-specific code list knowledge.",
+      "description_hash": "055aa583",
+      "is_external": false
+    },
+    "510": {
+      "confidence": "low",
+      "reasoning": "Structural hint: for each Zählzeitänderungszeitpunkt (SG8 DTM+Z33), the segment group must appear once. This is a cardinality constraint note, not a binary evaluatable condition.",
+      "description_hash": "047418b3",
+      "is_external": false
+    },
+    "963": {
+      "confidence": "low",
+      "reasoning": "Format condition: numeric value ≤ 100 (percentage or factor). Cannot determine which segment/element in UTILTS this applies to without AHB field context.",
+      "description_hash": "18dbe9b5",
+      "is_external": false
+    },
+    "511": {
+      "confidence": "medium",
+      "reasoning": "Checks that no DTM+Z33 DE2380 value is repeated across SG8 instances. Collects all Z33 qualifier DTM segments and verifies uniqueness. Medium confidence because SG8-scoped iteration falls back to message-wide, which is correct here since each DTM+Z33 belongs to a distinct SG8.",
+      "description_hash": "06f29fa9",
+      "is_external": false
+    },
+    "13": {
+      "confidence": "low",
+      "reasoning": "Pairing constraint: when an SG8 SEQ+Z37 has CAV+Z80/Z81 (Divisor/Dividend), exactly one complementary SG8 with the same Rechenschrittidentifikator and Zeitraum-ID must exist containing the other operator. Requires exact-count matching and operator complement validation across correlated SG8 instances — beyond current API coverage.",
+      "description_hash": "5154570e",
+      "is_external": false
+    },
+    "62": {
+      "confidence": "high",
+      "reasoning": "Cannot determine the market role (MSB = Messstellenbetreiber) of a party from the NAD+MR ID alone — requires a market party registry lookup. Delegated to external condition provider.",
+      "description_hash": "cf2a70c6",
+      "is_external": true
+    },
+    "36": {
+      "confidence": "medium",
+      "reasoning": "In the same SG8, SEQ+Z43 (Zählzeitdefinition) must be present and DTM+Z33 must have format code 401 at elements[0][2]. Counterpart to condition [29] for the 401 format code.",
+      "description_hash": "d30c47ca",
+      "is_external": false
+    },
+    "15": {
+      "confidence": "low",
+      "reasoning": "Count-based rule: within a SG5 IDE+24, exactly one SG8 SEQ+Z37 with RFF+Z19 (Messlokation) must exist for a given Zeitraum-ID. Requires counting SG8 instances filtered by SEQ+Z37 AND RFF+Z19 presence, scoped to the same SG5 and same Zeitraum-ID — beyond current API coverage.",
+      "description_hash": "73521a1f",
+      "is_external": false
+    },
+    "50": {
+      "confidence": "medium",
+      "reasoning": "Checks that all DTM segments in the message use the same DE2379 format code. Full per-IDE+24 scoping would require a navigator, but message-wide consistency is a practical approximation — in well-formed UTILTS messages a single IDE is common. Returns Unknown when no DTMs are found.",
+      "description_hash": "2e4dc8a2",
+      "is_external": false
+    },
+    "37": {
+      "confidence": "low",
+      "reasoning": "Whether a validity end date can already be specified is external business context (depends on process state and contractual knowledge) that cannot be determined from the message structure alone.",
+      "description_hash": "43eafe84",
+      "is_external": true
+    },
+    "504": {
+      "confidence": "low",
+      "reasoning": "Informational hint referencing a value from a separate ORDERS message (BGM+Z55 DE1004). Cross-message references cannot be evaluated from the current EDIFACT message alone.",
+      "description_hash": "36bbf34b",
+      "is_external": false
+    },
+    "21": {
+      "confidence": "high",
+      "reasoning": "Check CAV segment where DE7111 (elements[0][0]) == 'ZD3' (Zählzeitdefinitionstyp qualifier) and DE7110 (elements[0][3]) == 'Z32' (sonstiger Zählzeitdefinitionstyp). Segment structure confirms ZD3 at elements[0][0] and the value field at elements[0][3]; has_qualified_value handles both the qualifier filter and the value check.",
+      "description_hash": "c4b17900",
+      "is_external": false
+    },
+    "526": {
+      "confidence": "low",
+      "reasoning": "Hint: a code for a Leistungskurvendefinition must be given. Requires business context about which specific codes qualify.",
+      "description_hash": "dd490e4b",
+      "is_external": false
+    },
+    "47": {
+      "confidence": "high",
+      "reasoning": "Same pattern as condition 46 but checks for format code 401 instead of 303. Both 303 and 401 are valid codes for DTM+Z44 per the segment reference.",
+      "description_hash": "b6999cb1",
+      "is_external": false
+    },
+    "530": {
+      "confidence": "low",
+      "reasoning": "Hinweis: Informational constraint that only one piece of information may be transmitted in DE3148. This is a cardinality/format validation note, not a boolean condition evaluatable from segment context alone without knowing the target field.",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "508": {
+      "confidence": "low",
+      "reasoning": "Pure informational hint about the semantics of the date for Schaltzeitdefinitionen overview validity. Not an evaluatable condition.",
+      "description_hash": "ffd91393",
+      "is_external": false
+    },
+    "937": {
+      "confidence": "low",
+      "reasoning": "Format constraint: no decimal places allowed. This is a numeric precision validation note requiring knowledge of the target field and numeric parsing, not a boolean condition evaluatable from segment context alone.",
+      "description_hash": "e3f49bb8",
+      "is_external": false
+    },
+    "940": {
+      "confidence": "low",
+      "reasoning": "Format condition: string must start with '+' followed only by digits (international phone number). Cannot determine which specific segment/element this applies to without AHB table context.",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "519": {
+      "confidence": "high",
+      "reasoning": "Uniqueness check: no DTM+Z45 value (DE2380) may appear more than once. Same pattern as 515 but for Z45.",
+      "description_hash": "f8082ce2",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "low",
+      "reasoning": "Format constraint: timezone component ZZZ must equal +00. This is a datetime format validation note. While it could technically be checked against a DTM segment value, the condition lacks the segment/element target context needed to implement it unambiguously.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "42": {
+      "confidence": "low",
+      "reasoning": "Uniqueness of the Schaltzeitdefinition code within an IDE (Vorgang) requires collecting all code values across SG8 group instances and checking for duplicates. Cross-group uniqueness validation cannot be expressed with the available API helpers.",
+      "description_hash": "52641061",
+      "is_external": false
+    },
+    "8": {
+      "confidence": "low",
+      "reasoning": "Complex cross-group rule: the Rechenschrittidentifikator in an RFF+Z23 must reference a SEQ+Z37 DE1050 value within the same SG5 IDE+24 scope and matching Zeitraum-ID. Requires multi-level parent scoping (SG5 boundary), cross-SG8-instance value correlation, and Zeitraum-ID matching — beyond available helper coverage.",
+      "description_hash": "ae4073f9",
+      "is_external": false
+    },
+    "516": {
+      "confidence": "medium",
+      "reasoning": "When format code 303 is used in DTM+Z44 DE2379, at least one DTM+Z44 DE2380 value must match a SG5 DTM+Z34 DE2380 value. Cross-group check; medium confidence due to SG5 context dependency.",
+      "description_hash": "b3c32d7a",
+      "is_external": false
+    },
+    "43": {
+      "confidence": "low",
+      "reasoning": "Uniqueness of the Leistungskurvendefinition code within an IDE (Vorgang) requires collecting all code values across SG8 group instances and checking for duplicates. Cross-group uniqueness validation cannot be expressed with the available API helpers.",
+      "description_hash": "e5848c11",
+      "is_external": false
+    },
+    "513": {
+      "confidence": "high",
+      "reasoning": "When DTM+Z33 uses format code 401 in elements[0][2], exactly one DE2380 value (elements[0][1]) across all Z33 instances must be '0000'. Straightforward filter-and-count over parsed segments using authoritative element positions from the MIG schema reference.",
+      "description_hash": "3ce923ad",
+      "is_external": false
+    },
+    "33": {
+      "confidence": "low",
+      "reasoning": "Requires temporal comparison: timestamp in current DE must be <= value from DTM+Z35 (Gültigkeitsende). Cross-field temporal comparison cannot be expressed with available API helpers.",
+      "description_hash": "ee4fe772",
+      "is_external": false
+    },
+    "915": {
+      "confidence": "low",
+      "reasoning": "Format constraint: value must be ≠ 1. This is a numeric exclusion validation note, not a boolean condition evaluatable from segment context without knowing the specific target field.",
+      "description_hash": "bbccfc5b",
+      "is_external": false
+    },
+    "518": {
+      "confidence": "low",
+      "reasoning": "Structural cardinality hint for DTM+Z45 (Leistungskurvenänderungszeitpunkt). Same pattern as 514. Not evaluable from segment content alone.",
+      "description_hash": "8ad36bf0",
+      "is_external": false
+    },
+    "30": {
+      "confidence": "low",
+      "reasoning": "Requires temporal arithmetic: CCYY in current DE must be exactly 1 higher than CCYY from SG5 DTM+Z34. Cross-field year arithmetic cannot be expressed with the available API helpers.",
+      "description_hash": "caf76cd4",
+      "is_external": false
+    },
+    "506": {
+      "confidence": "low",
+      "reasoning": "Pure informational hint about the semantics of the DTM+157 date value. Not an evaluatable condition.",
+      "description_hash": "ae6d3b5f",
+      "is_external": false
+    },
+    "523": {
+      "confidence": "low",
+      "reasoning": "Structural hint: each rolled-out load curve definition must be in its own IDE segment. Same pattern as 522.",
+      "description_hash": "c8d7baba",
+      "is_external": false
+    },
+    "6": {
+      "confidence": "high",
+      "reasoning": "Same-group absence pattern: in some SG8 instance RFF+Z23 (Rechenschritt reference, elements[0][0]==\"Z23\") is present AND SEQ+Z37 (elements[0][0]==\"Z37\") is absent. Mirrors condition 5 but for RFF+Z23 rather than RFF+Z19.",
+      "description_hash": "1c91b7f5",
+      "is_external": false
+    },
+    "515": {
+      "confidence": "high",
+      "reasoning": "Uniqueness check: no DTM+Z44 value (DE2380) may appear more than once. Collect all Z44 DE2380 values and check for duplicates.",
+      "description_hash": "a3473634",
+      "is_external": false
+    },
+    "2004": {
+      "confidence": "medium",
+      "reasoning": "For each Zeitraum-ID from SG6 RFF+Z49 DE1156 (elements[0][2]), exactly one SG5 STS must reference it. STS+E01 (Status der Antwort) stores Zeitraum-ID at elements[2][3] (DE9012). STS+Z23 (Status der Berechnungsformel) stores it at elements[2][0] (DE9013). Checks count == 1 for each Zeitraum-ID.",
+      "description_hash": "3cc9bfe9",
+      "is_external": false
+    },
+    "520": {
+      "confidence": "medium",
+      "reasoning": "When format code 303 is used in DTM+Z45 DE2379, at least one DTM+Z45 DE2380 value must match a SG5 DTM+Z34 DE2380 value. Same pattern as 516 but for Z45.",
+      "description_hash": "4f5d7811",
+      "is_external": false
+    },
+    "531": {
+      "confidence": "low",
+      "reasoning": "Hinweis: Pure cross-reference to chapter 4.1 of the AHB specification. Contains no evaluatable logic — it is a documentation pointer only.",
+      "description_hash": "e3d01b9a",
+      "is_external": false
+    },
+    "533": {
+      "confidence": "low",
+      "reasoning": "Hinweis: Cardinality constraint — each transmitted Zeitraum from the Berechnungsformel submission must appear exactly once. This is a count-based validation note rather than a simple boolean presence/absence condition; evaluating it would require counting group instances and correlating with the referenced Berechnungsformel, which goes beyond the available EvaluationContext API.",
+      "description_hash": "7aa52f50",
+      "is_external": false
+    },
+    "914": {
+      "confidence": "low",
+      "reasoning": "Format constraint: value must be > 0. This is a numeric range validation note, not a boolean condition evaluatable from segment context without knowing the specific target field.",
+      "description_hash": "533e37f6",
+      "is_external": false
+    },
+    "939": {
+      "confidence": "low",
+      "reasoning": "Format condition: string must contain '@' and '.' (email address format). Cannot determine which specific segment/element in UTILTS this applies to without the full AHB table mapping condition to field.",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "26": {
+      "confidence": "low",
+      "reasoning": "Whether a complaint was made via ORDERS is external business context not available in the EDIFACT message.",
+      "description_hash": "baf706cc",
+      "is_external": true
+    },
+    "951": {
+      "confidence": "low",
+      "reasoning": "Format condition: Zählpunktbezeichnung (meter point designation) format. Cannot determine which segment/element in UTILTS this applies to without AHB field context.",
+      "description_hash": "f35fc481",
+      "is_external": false
+    },
+    "25": {
+      "confidence": "low",
+      "reasoning": "Market participant role (LF = Lieferant) cannot be determined from the EDIFACT message alone. NAD+MR provides the MP-ID but not their market role.",
+      "description_hash": "55130474",
+      "is_external": true
+    },
+    "34": {
+      "confidence": "medium",
+      "reasoning": "Checks if any DTM segment has format code 401 at elements[0][2] (DE2379). Counterpart to condition [31] for the 401 format code (point-in-time without timezone vs. UTC offset).",
+      "description_hash": "8c613b6d",
+      "is_external": false
+    },
+    "2005": {
+      "confidence": "medium",
+      "reasoning": "Finds STS+E01 segments where DE9013 (Code des Prüfschritts, elements[2][0]) = 'A99' (Sonstiges), then collects Zeitraum-IDs from DE9012 (elements[2][3]). For each such ID, checks that exactly one SG8 RFF+Z46 (elements[0][1]) references it, confirming the annotated segment appears exactly once per qualifying Zeitraum-ID.",
+      "description_hash": "095365c3",
+      "is_external": false
+    },
+    "512": {
+      "confidence": "medium",
+      "reasoning": "When DTM+Z33 uses format code 303 in elements[0][2], exactly one DE2380 value (elements[0][1]) across all Z33 instances must equal the DE2380 value of DTM+Z34 from SG5. Medium confidence due to cross-SG group scoping — the message-wide fallback gives correct semantics here since we're correlating across SG5 and SG8 boundaries.",
+      "description_hash": "d1833f5c",
+      "is_external": false
+    },
+    "514": {
+      "confidence": "low",
+      "reasoning": "Structural cardinality hint: for each SG8 DTM+Z44, this segment group must appear once. This is a schema cardinality constraint, not evaluable from segment content alone without group context.",
+      "description_hash": "5e3435f9",
+      "is_external": false
+    },
+    "2": {
+      "confidence": "high",
+      "reasoning": "Check if any SG5 instance contains STS where elements[0][0]==\"Z23\" (Statuskategorie Berechnungsformel) and elements[1][0]==\"Z34\" (Berechnungsformel muss beim Absender angefragt werden). Segment structure confirms STS Statuskategorie at elements[0][0] and Status Code at elements[1][0].",
+      "description_hash": "1e218dae",
+      "is_external": false
+    },
+    "529": {
+      "confidence": "low",
+      "reasoning": "Hinweis: Informational note about using the Netzlokation ID. This is editorial guidance for implementers, not an evaluatable boolean condition from EDIFACT segment data.",
+      "description_hash": "9592f83e",
+      "is_external": false
+    },
+    "912": {
+      "confidence": "low",
+      "reasoning": "Format constraint: value may have at most 6 decimal places. This is a numeric precision validation note, not a boolean condition evaluatable from EDIFACT segment context without knowing the target field and performing numeric parsing.",
+      "description_hash": "871dfa95",
+      "is_external": false
+    },
+    "947": {
+      "confidence": "low",
+      "reasoning": "Format condition: MMDDHHMM = 12312300 (Dec 31 23:00) — a specific fixed-value or year-end timestamp constraint. Cannot determine which DTM segment/element this applies to without AHB field context.",
+      "description_hash": "4ff9a749",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "Same-group absence pattern: in some SG8 instance RFF+Z19 (Messlokation reference, elements[0][0]==\"Z19\") is present AND SEQ+Z37 (Bestandteil des Rechenschritts, elements[0][0]==\"Z37\") is absent. Uses any_group_has_qualifier_without for same-SG8 presence+absence check.",
+      "description_hash": "92e177d6",
+      "is_external": false
+    },
+    "31": {
+      "confidence": "medium",
+      "reasoning": "Checks if any DTM segment has format code 303 at elements[0][2] (DE2379). Applies to DTM+Z33/Z44/Z45 which can carry format codes 303 or 401. Message-wide check is sufficient since these are the only DTMs with variable format codes.",
+      "description_hash": "9b38e578",
+      "is_external": false
+    },
+    "502": {
+      "confidence": "low",
+      "reasoning": "Pure informational hint: 'Use the ID of the Messlokation'. This is a documentation note, not an evaluatable boolean condition.",
+      "description_hash": "d7954b75",
+      "is_external": false
+    },
+    "59": {
+      "confidence": "medium",
+      "reasoning": "Cross-group Zeitraum-ID correlation: SG8 RFF+Z46 DE1154 (reference to Zeitraum-ID) must match a DE1156 value from SG6 RFF+Z49 (Verwendungszeitraum der Daten). Collects DE1156 values from all RFF+Z49 instances and checks whether any RFF+Z46 reference value matches. Returns Unknown when either set is empty.",
+      "description_hash": "04a44c0d",
+      "is_external": false
+    },
+    "950": {
+      "confidence": "low",
+      "reasoning": "Format condition: Marktlokations-ID format (18-digit ID). Cannot determine which segment/element in UTILTS this validates without knowing the AHB field assignment.",
+      "description_hash": "a9ddfaec",
+      "is_external": false
+    },
+    "32": {
+      "confidence": "low",
+      "reasoning": "Requires temporal comparison: timestamp in current DE must be >= value from DTM+Z34 (Gültigkeitsbeginn). Cross-field temporal comparison cannot be expressed with available API helpers.",
+      "description_hash": "82d7f5eb",
+      "is_external": false
+    },
+    "517": {
+      "confidence": "high",
+      "reasoning": "When format code 401 is used in DTM+Z44 DE2379, at least one DTM+Z44 DE2380 value must equal '0000'. Direct value check.",
+      "description_hash": "a608cbdf",
+      "is_external": false
+    },
+    "964": {
+      "confidence": "low",
+      "reasoning": "Format condition: HHMM ≥ 0000 (time lower bound). Cannot determine which DTM or time field in UTILTS this applies to without AHB field context.",
+      "description_hash": "aa3ada39",
+      "is_external": false
+    },
+    "14": {
+      "confidence": "low",
+      "reasoning": "Operator exclusivity: when an SG8 SEQ+Z37 has CAV+Z82 (Faktor), other SG8 instances sharing the same Rechenschrittidentifikator and Zeitraum-ID may only contain CAV+Z82. Requires grouping SG8 instances by composite key and validating operator homogeneity — beyond current API coverage.",
+      "description_hash": "b775c878",
+      "is_external": false
+    },
+    "56": {
+      "confidence": "low",
+      "reasoning": "Complex temporal rule: DTM+Z25 in the SG6 RFF+Z49/Z53 with DE1156=='1' must be the following or same calendar day (00:00 German time) as the message date DTM+137. Requires date parsing, German timezone (CET/CEST) conversion, and calendar-day arithmetic — not expressible with the available API.",
+      "description_hash": "f7beebcf",
+      "is_external": false
+    },
+    "27": {
+      "confidence": "high",
+      "reasoning": "Checks CAV with DE7111=ZD4 at elements[0][0] (qualifier) and DE7110=Z26 at elements[0][3] (keine Verwendung des Hochlastzeitfensters). Both qualifier and value are in the same C889 composite.",
+      "description_hash": "8d89b387",
+      "is_external": false
+    },
+    "509": {
+      "confidence": "low",
+      "reasoning": "Pure informational hint about the semantics of the date for Leistungskurvendefinitionen overview validity. Not an evaluatable condition.",
+      "description_hash": "b50b9651",
+      "is_external": false
+    },
+    "534": {
+      "confidence": "low",
+      "reasoning": "Hinweis: Informational note stating the value must originate from SG5 IDE+24 DE7402 of the corresponding Berechnungsformel submission. This is a data provenance instruction for authors, not an evaluatable boolean condition from message segments alone.",
+      "description_hash": "e936f8bb",
+      "is_external": false
+    },
+    "58": {
+      "confidence": "medium",
+      "reasoning": "True when at least two SG6 RFF+Z49/Z53 instances exist with different DE1156 Zeitraum-IDs (i.e. min < max across all parsed integer IDs). This satisfies the 'smaller than another' ordering condition. Returns False for single-instance or equal-ID cases.",
+      "description_hash": "4e255b62",
+      "is_external": false
+    },
+    "2002": {
+      "confidence": "medium",
+      "reasoning": "For each CCI+Z39 code (Zählzeitdefinition code, elements[2][0]) found in SG9 groups, at least 2 SG8 instances must have RFF+Z27 (elements[0][0]=Z27, elements[0][1]=code value) matching that code. Uses message-wide scan since navigator API does not expose a simple find-in-group method for non-child groups.",
+      "description_hash": "21dab83e",
+      "is_external": false
+    },
+    "44": {
+      "confidence": "low",
+      "reasoning": "Uniqueness of Zählzeitdefinition code within an IDE+24 Vorgang requires collecting all RFF+Z27 (or similar Zählzeitdefinition identifier) codes across SG8 instances within one IDE group and checking for duplicates. This is a cross-instance validation rule rather than a binary evaluable condition — the available helpers cannot express per-group-scope deduplication checks.",
+      "description_hash": "8fec87d5",
+      "is_external": false
+    },
+    "53": {
+      "confidence": "high",
+      "reasoning": "COM segment structure: elements[0] is C076 composite where [0][0]=DE3148 (communication address) and [0][1]=DE3155 (communication means type code). Checks if any COM has DE3155=='EM' (Email).",
+      "description_hash": "f7255aef",
+      "is_external": false
+    },
+    "913": {
+      "confidence": "low",
+      "reasoning": "Format constraint: possible values 1 to 99999. This is a numeric range validation note, not a boolean condition evaluatable from EDIFACT segment context without knowing the specific target field.",
+      "description_hash": "d15f5fb9",
+      "is_external": false
+    },
+    "9": {
+      "confidence": "low",
+      "reasoning": "Intra-group value inequality: the RFF+Z23 reference value (DE1154) must not equal the SEQ+Z37 DE1050 value in the same SG8 instance. Requires per-instance segment value comparison within a single SG8 — no available API helper covers same-group value inequality checks.",
+      "description_hash": "4046510e",
+      "is_external": false
+    },
+    "1": {
+      "confidence": "medium",
+      "reasoning": "Whether the MP-ID belongs to the electricity sector (Sparte Strom) cannot be determined from the EDIFACT message alone — requires external market participant registry lookup.",
+      "description_hash": "f3221dba",
+      "is_external": true
+    },
+    "960": {
+      "confidence": "low",
+      "reasoning": "Format condition: Netzlokations-ID format. Cannot determine which segment/element in UTILTS this applies to without AHB field context.",
+      "description_hash": "0ce0bd80",
+      "is_external": false
+    },
+    "49": {
+      "confidence": "high",
+      "reasoning": "Same as condition 48 but checks for format code 401.",
+      "description_hash": "93ba4b27",
+      "is_external": false
+    },
+    "932": {
+      "confidence": "low",
+      "reasoning": "Format constraint: time component HHMM must equal 2200. This is a specific time value constraint note. Without knowing which DTM qualifier and element this applies to, it cannot be implemented unambiguously.",
+      "description_hash": "943b98c4",
+      "is_external": false
+    },
+    "54": {
+      "confidence": "high",
+      "reasoning": "Same COM DE3155 check as condition 53 but for codes TE (Telephone), FX (Fax), AJ, and AL.",
+      "description_hash": "6aac2a48",
+      "is_external": false
+    },
+    "522": {
+      "confidence": "low",
+      "reasoning": "Structural hint: each rolled-out switch time definition must be in its own IDE segment. Schema cardinality constraint about IDE grouping, not evaluable from segment content alone.",
+      "description_hash": "2f89522f",
+      "is_external": false
+    },
+    "505": {
+      "confidence": "low",
+      "reasoning": "Pure informational hint about message structure: each rolled-out Zählzeitdefinition must be in its own IDE. This is a structural documentation note, not a binary evaluatable condition.",
+      "description_hash": "8502b371",
+      "is_external": false
+    },
+    "491": {
+      "confidence": "low",
+      "reasoning": "References an external table in Kapitel 3.6 'Prozesszeitpunkt bei MEZ mit UTC'. The date range table for MEZ/UTC transitions is not derivable from the EDIFACT message itself — requires an external lookup table.",
+      "description_hash": "305e3493",
+      "is_external": true
+    },
+    "525": {
+      "confidence": "low",
+      "reasoning": "Hint: a code for a Schaltzeitdefinition must be given. Requires business context about which specific codes qualify.",
+      "description_hash": "9bbb8200",
+      "is_external": false
+    },
+    "46": {
+      "confidence": "high",
+      "reasoning": "Checks that in the same SG8 group instance (Schaltzeitdefinition), SEQ has qualifier Z73 AND DTM has elements[0][2]=='303' (format code 303). In Z73 SG8 groups the only DTM present is Z44 (Schaltzeitänderungszeitpunkt), so checking the format code without an additional qualifier filter is sufficient.",
+      "description_hash": "d92b37c0",
+      "is_external": false
+    },
+    "527": {
+      "confidence": "low",
+      "reasoning": "Hint: this code is required when it is a one-time definition (einmalig zu übermittelnde Definition). Requires business context about which code identifies a one-time definition.",
+      "description_hash": "b63dfb1f",
+      "is_external": false
+    },
+    "61": {
+      "confidence": "low",
+      "reasoning": "The 'Ablehnung' (rejection) cluster codes for STS+E01 DE9013 are defined in the UTILTS AHB code list (Kapitel 6 or cluster table) but are not derivable from the EDIFACT segment structure alone. Without the explicit enumeration of which DE9013 values constitute the Ablehnung cluster, a reliable implementation is not possible.",
+      "description_hash": "790da731",
+      "is_external": false
+    },
+    "24": {
+      "confidence": "high",
+      "reasoning": "Checks STS with Statuskategorie Z36 (Status der Nutzung von Definitionen, elements[0][0]) and Status Code Z45 (Definitionen werden verwendet, elements[1][0]).",
+      "description_hash": "7936a6e8",
+      "is_external": false
+    },
+    "494": {
+      "confidence": "low",
+      "reasoning": "The condition requires comparing the stated date against 'now' (document creation time or earlier). This temporal comparison requires external time context not available in the EDIFACT message.",
+      "description_hash": "785470ce",
+      "is_external": true
+    },
+    "10": {
+      "confidence": "low",
+      "reasoning": "'wenn vorhanden' is a generic presence condition without specifying which segment or data element to test. Cannot implement without knowing the target field. Returns Unknown as a safe default.",
+      "description_hash": "07e09f1a",
+      "is_external": false
+    },
+    "528": {
+      "confidence": "low",
+      "reasoning": "Hint: this code is required when it is an annual definition (jährlich zu übermittelnde Definition). Requires business context about which code identifies an annual definition.",
+      "description_hash": "a07166c1",
+      "is_external": false
+    },
+    "507": {
+      "confidence": "low",
+      "reasoning": "Pure informational hint about time zone usage (German legal time). Not an evaluatable boolean condition.",
+      "description_hash": "f9a00eb2",
+      "is_external": false
+    },
+    "969": {
+      "confidence": "low",
+      "reasoning": "Format condition: numeric value ≤ 1 (ratio or factor). Cannot determine which segment/element in UTILTS this applies to without AHB field context.",
+      "description_hash": "7520c2ab",
+      "is_external": false
+    },
+    "57": {
+      "confidence": "low",
+      "reasoning": "Cross-group sequential date continuity rule: DTM+Z25 in any non-first SG6 (DE1156 > 1) must equal DTM+Z26 of the preceding SG6 (next-lower DE1156). Requires ordering SG6 instances by Zeitraum-ID and comparing dates across consecutive pairs — cannot be expressed with available helpers.",
+      "description_hash": "958047d8",
+      "is_external": false
+    },
+    "965": {
+      "confidence": "low",
+      "reasoning": "Format condition: HHMM ≤ 2359 (time upper bound). Cannot determine which DTM or time field in UTILTS this applies to without AHB field context.",
+      "description_hash": "abf42608",
+      "is_external": false
+    },
+    "2001": {
+      "confidence": "low",
+      "reasoning": "Generic cardinality rule: segment/group must appear exactly once. Too abstract to implement without knowing which specific segment or group instance count to validate in context.",
+      "description_hash": "fad041fa",
+      "is_external": false
+    },
+    "55": {
+      "confidence": "low",
+      "reasoning": "Sequential ordinal numbering rule: DE1156 in each SG6 RFF+Z49/Z53 must equal the instance's 1-based position among all Z49/Z53 groups (1st→'1', 2nd→'2', etc.). This is an instructional filling rule rather than a binary evaluable condition — expressing 'the current instance's ordinal position matches DE1156' requires per-instance positional context not available through the API.",
+      "description_hash": "9953f598",
+      "is_external": false
+    },
+    "2006": {
+      "confidence": "medium",
+      "reasoning": "Finds STS+Z23 (Status der Berechnungsformel) where status code (elements[1][0]) = 'Z33' (formula attached), collects Zeitraum-IDs from DE9013 (elements[2][0]). For each such ID, checks that at least one SG8 RFF+Z46 (elements[0][1]) references it, confirming the calculation formula group appears at minimum once per qualifying Zeitraum-ID.",
+      "description_hash": "2c5ec989",
+      "is_external": false
+    },
+    "22": {
+      "confidence": "medium",
+      "reasoning": "Whether the MP-ID in NAD+MS (Nachrichtenabsender) holds the role of NB (Netzbetreiber) cannot be determined from the EDIFACT message alone — requires external market participant role registry.",
+      "description_hash": "b51d892c",
+      "is_external": true
+    },
+    "11": {
+      "confidence": "low",
+      "reasoning": "Complex operator grouping rule: when an SG8 SEQ+Z37 with SG9 CCI+Z86 CAV+Z69/Z70 exists, additional SG8 instances sharing the same Rechenschrittidentifikator and Zeitraum-ID may only use operators Z69/Z70. Requires cross-SG8 grouping by Rechenschrittidentifikator, Zeitraum-ID correlation, and per-group operator set validation — beyond current API coverage.",
+      "description_hash": "b8d277b2",
+      "is_external": false
+    },
+    "930": {
+      "confidence": "low",
+      "reasoning": "Format constraint: maximum 2 decimal places. This is a numeric precision validation note, not a boolean condition evaluatable from segment context without knowing the target field and performing numeric parsing.",
+      "description_hash": "30e8c861",
+      "is_external": false
+    },
+    "490": {
+      "confidence": "low",
+      "reasoning": "References an external table in Kapitel 3.5 'Prozesszeitpunkt bei MESZ mit UTC'. The date range table for MESZ/UTC transitions is not derivable from the EDIFACT message itself — requires an external lookup table.",
+      "description_hash": "b21c790d",
+      "is_external": true
+    }
+  }
+}

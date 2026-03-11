@@ -1,0 +1,655 @@
+{
+  "generated_at": "2026-03-11T12:02:00Z",
+  "ahb_file": "ORDRSP_AHB_1_0a_Fehlerkorrektur_20250417.xml",
+  "format_version": "FV2504",
+  "conditions": {
+    "493": {
+      "confidence": "low",
+      "reasoning": "Whether the recipient MP-ID in NAD+MR belongs to the gas sector (Sparte Gas) requires a market participant registry lookup — the sector affiliation is not encoded in the EDIFACT message itself.",
+      "description_hash": "75612dee",
+      "is_external": true
+    },
+    "69": {
+      "confidence": "high",
+      "reasoning": "Same pattern as 66/67 with A01/A02/A03 codes, checking E_0547 as Positionsnummer.",
+      "description_hash": "18382986",
+      "is_external": false
+    },
+    "47": {
+      "confidence": "high",
+      "reasoning": "Check AJT DE4465=A06 (elements[0][0]) AND DE1082=E_0553 (elements[1][0]).",
+      "description_hash": "5f155c0e",
+      "is_external": false
+    },
+    "525": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+Z24 DE1004 of the originating ORDERS (Allokationsliste request). Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "7f2eac4e",
+      "is_external": false
+    },
+    "1": {
+      "confidence": "high",
+      "reasoning": "BGM+7 means BGM segment with elements[0][0]==\"7\". Simple qualifier existence check.",
+      "description_hash": "3b330761",
+      "is_external": false
+    },
+    "68": {
+      "confidence": "high",
+      "reasoning": "AJT with narrowed set A02/A03 in DE4465 (A01 excluded) and E_0546 in DE1082.",
+      "description_hash": "a56d7bec",
+      "is_external": false
+    },
+    "14": {
+      "confidence": "low",
+      "reasoning": "The role (MSB=Messstellenbetreiber) of the market participant identified in NAD+MR cannot be determined from the EDIFACT message alone — it requires a market participant registry lookup.",
+      "description_hash": "a82103d0",
+      "is_external": true
+    },
+    "21": {
+      "confidence": "high",
+      "reasoning": "IMD++Z01: the ++ means elements[0] is empty, and elements[1][0]==\"Z01\". has_qualifier(\"IMD\", 1, \"Z01\") checks elements[1][0] for the Z01 qualifier.",
+      "description_hash": "7bd1a4bb",
+      "is_external": false
+    },
+    "535": {
+      "confidence": "low",
+      "reasoning": "Hinweis (informational note): references a value from an external ORDERS message (BGM+Z13 DE1004). This is a cross-message reference that cannot be evaluated from the current ORDRSP message alone.",
+      "description_hash": "6ef5d42e",
+      "is_external": false
+    },
+    "542": {
+      "confidence": "low",
+      "reasoning": "Hinweis (informational note): references a value from an external ORDERS message (BGM+Z91 DE1004). This is a cross-message reference that cannot be evaluated from the current ORDRSP message alone.",
+      "description_hash": "41c850f8",
+      "is_external": false
+    },
+    "62": {
+      "confidence": "low",
+      "reasoning": "'Wenn es sich bei der Reklamation um die Reklamation der Übersicht der Leistungskurvendefinitionen handelte' — type of original Reklamation is external context not derivable from the ORDRSP message structure.",
+      "description_hash": "48ca7062",
+      "is_external": true
+    },
+    "533": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+Z51 DE1004 of the originating ORDCHG message. Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "2b8be82a",
+      "is_external": false
+    },
+    "50": {
+      "confidence": "high",
+      "reasoning": "COM segment structure: elements[0] = [address, channel_qualifier]. DE3155 (channel qualifier) is elements[0][1]. Check for EM (electronic mail) in the same COM element composite as the address.",
+      "description_hash": "eaf06e02",
+      "is_external": false
+    },
+    "71": {
+      "confidence": "low",
+      "reasoning": "Whether the complaint concerns rolled-out switching time definitions (ausgerollte Schaltzeitdefinitionen) is business context that cannot be determined from EDIFACT message segments alone — it depends on the original request type.",
+      "description_hash": "61ac1fdb",
+      "is_external": true
+    },
+    "57": {
+      "confidence": "high",
+      "reasoning": "Same pattern as 56 but checks for E_0549 as the Positionsnummer in DE1082.",
+      "description_hash": "646739bb",
+      "is_external": false
+    },
+    "935": {
+      "confidence": "low",
+      "reasoning": "Format condition: 'HHMM = 0500'. This is a fixed time-of-day constraint (05:00) on a specific DTM element's time component. Without knowing which DTM qualifier and element this applies to in context, a generic implementation is not meaningful.",
+      "description_hash": "192bd97e",
+      "is_external": false
+    },
+    "60": {
+      "confidence": "low",
+      "reasoning": "'Wenn es sich bei der Reklamation um die Reklamation der Übersicht der Zählzeitdefinitionen handelte' — the type of the original Reklamation (complaint about Zählzeitdefinitionen overview) cannot be determined from the ORDRSP message alone. Requires knowledge of the original UTILTS request context.",
+      "description_hash": "274e3c54",
+      "is_external": true
+    },
+    "504": {
+      "confidence": "low",
+      "reasoning": "Pure informational Hinweis about potential date correction when the ORDERS date exceeds the maximum continuation period. Describes a processing rule, not an evaluable condition.",
+      "description_hash": "a397b9d3",
+      "is_external": false
+    },
+    "10": {
+      "confidence": "low",
+      "reasoning": "The role (MSB=Messstellenbetreiber) of the market participant identified in NAD+MS cannot be determined from the EDIFACT message alone — it requires a market participant registry lookup.",
+      "description_hash": "d0e2cd6f",
+      "is_external": true
+    },
+    "40": {
+      "confidence": "low",
+      "reasoning": "Checks whether a country code from DE3207 (NAD street/address segment) is listed with 'X' in the 'PLZ vorhanden' column of the 'EDI@Energy Codeliste der europäischen Ländercodes'. This requires a lookup against an external code list that is not part of the EDIFACT message itself.",
+      "description_hash": "0c5ce0ff",
+      "is_external": true
+    },
+    "500": {
+      "confidence": "low",
+      "reasoning": "Pure informational Hinweis about specifying a technical contact for device transfer (Geräteübernahme). Not an evaluable True/False condition.",
+      "description_hash": "c6b98d25",
+      "is_external": false
+    },
+    "33": {
+      "confidence": "high",
+      "reasoning": "AJT+A02/A03+E_0488: Check AJT elements[0][0] in [A02, A03] AND elements[1][0]=E_0488. Both components must match in the same segment instance.",
+      "description_hash": "8fe3da9a",
+      "is_external": false
+    },
+    "42": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT segment has DE4465 (elements[0][0]) equal to Z07 (Antwortkategorie: Ablehnung Keine Berechtigung).",
+      "description_hash": "33c28b2e",
+      "is_external": false
+    },
+    "518": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+Z10 DE1004 of the originating ORDERS message. Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "46dbd744",
+      "is_external": false
+    },
+    "38": {
+      "confidence": "low",
+      "reasoning": "'Möglicher Wert: ZB4 oder ZB5' describes an allowed value set for a DE in the current context, not a standalone evaluatable condition. Without knowing which segment/element this constrains, a correct predicate cannot be generated.",
+      "description_hash": "787e46ad",
+      "is_external": false
+    },
+    "52": {
+      "confidence": "low",
+      "reasoning": "Whether the complaint was specifically about 'ausgerollte Leistungskurvendefinitionen' (rolled-out load profile curve definitions) is business context that cannot be determined from the ORDRSP message segments alone.",
+      "description_hash": "69617bbb",
+      "is_external": true
+    },
+    "43": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT has DE4465=A02 or A03 (elements[0][0]) AND DE1082=E_1001 (elements[1][0]). No single helper covers multi-qualifier + second-element check, so low-level access is used.",
+      "description_hash": "b9307ec8",
+      "is_external": false
+    },
+    "63": {
+      "confidence": "low",
+      "reasoning": "'Dokumentennummer aus BGM+Z60 DE1004 der UTILTS' — this references the document number of a BGM+Z60 segment from a separate UTILTS message. The originating UTILTS is not contained in the ORDRSP and cannot be accessed from the EvaluationContext.",
+      "description_hash": "84ca7999",
+      "is_external": true
+    },
+    "540": {
+      "confidence": "low",
+      "reasoning": "Hinweis (informational note): cardinality constraint 'only one piece of information may be transmitted in DE3148'. Without knowing which segment/group DE3148 appears in for the field being validated, this cannot be generically implemented. This is a structural cardinality check best handled by the validator framework.",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "67": {
+      "confidence": "high",
+      "reasoning": "Same pattern as 66 but checking E_0545 as Positionsnummer.",
+      "description_hash": "d3877ac2",
+      "is_external": false
+    },
+    "903": {
+      "confidence": "low",
+      "reasoning": "Format condition: 'Possible value: 1'. This is a fixed-value constraint on a specific field. Without knowing which segment element this applies to in the calling context, a generic implementation is not meaningful. Format conditions are typically enforced by field-level validators.",
+      "description_hash": "ef3b7862",
+      "is_external": false
+    },
+    "2036": {
+      "confidence": "medium",
+      "reasoning": "Cardinality condition requiring SG27 to appear exactly once per message. SG27 is the transaction group (tx_group) in ORDRSP FV2504. Uses the group navigator to count SG27 instances at the top level. Falls back to Unknown when no navigator is available (e.g., when context is used without a pre-assembled tree). This is a structural cardinality rule rather than a content condition.",
+      "description_hash": "af782d7f",
+      "is_external": false
+    },
+    "15": {
+      "confidence": "low",
+      "reasoning": "The role (NB=Netzbetreiber) of the market participant identified in NAD+MR cannot be determined from the EDIFACT message alone — it requires a market participant registry lookup.",
+      "description_hash": "55f447c8",
+      "is_external": true
+    },
+    "25": {
+      "confidence": "high",
+      "reasoning": "BGM+Z52: BGM elements[0][0] is DE1001 (document name code). Z52 is a known ORDRSP document type code.",
+      "description_hash": "a7e9f389",
+      "is_external": false
+    },
+    "46": {
+      "confidence": "high",
+      "reasoning": "Check AJT DE4465=A06 (elements[0][0]) AND DE1082=E_0552 (elements[1][0]).",
+      "description_hash": "2d5ffc7a",
+      "is_external": false
+    },
+    "64": {
+      "confidence": "low",
+      "reasoning": "'Dokumentennummer aus BGM+Z78 DE1004 der UTILTS' — references a document number from a BGM+Z78 in a separate UTILTS message. External context required.",
+      "description_hash": "d1fbbb96",
+      "is_external": true
+    },
+    "73": {
+      "confidence": "high",
+      "reasoning": "Same pattern as [72] but checking Positionsnummer E_0553 in DE1082 at elements[1][0].",
+      "description_hash": "4aed6c9d",
+      "is_external": false
+    },
+    "494": {
+      "confidence": "low",
+      "reasoning": "This is a validation rule/hint stating that the referenced date must be at or before the document creation time. It constrains a specific DE value contextually and is not a binary evaluable condition against message structure.",
+      "description_hash": "785470ce",
+      "is_external": false
+    },
+    "18": {
+      "confidence": "low",
+      "reasoning": "Whether an AJT Prüfschritt code belongs to the EBD cluster 'Ablehnung' (rejection) is an external business rule requiring EBD schema knowledge not present in the EDIFACT message.",
+      "description_hash": "4ab37899",
+      "is_external": true
+    },
+    "513": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+Z12 DE1004 of the originating ORDERS message. It is a cross-message reference hint, not a boolean condition evaluable from the current ORDRSP message.",
+      "description_hash": "712fab5c",
+      "is_external": false
+    },
+    "11": {
+      "confidence": "high",
+      "reasoning": "AJT+A09+E_0470: AJT elements[0][0]==\"A09\" (DE4465 Prüfschritt code) and elements[1][0]==\"E_0470\" (DE1082 Positionsnummer). has_qualified_value finds AJT segments with qualifier A09 at elem 0, then checks elem 1 comp 0 for E_0470.",
+      "description_hash": "74c9435b",
+      "is_external": false
+    },
+    "28": {
+      "confidence": "high",
+      "reasoning": "AJT+A99: AJT elements[0]=DE4465 (Prüfschritt code). Simple qualifier presence check for A99.",
+      "description_hash": "d6ccc0bb",
+      "is_external": false
+    },
+    "520": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+Z29 DE1004 of the originating ORDERS message. Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "cc2fd785",
+      "is_external": false
+    },
+    "538": {
+      "confidence": "low",
+      "reasoning": "Hinweis (informational note): references a value from an external ORDERS message (BGM+Z76 DE1004). This is a cross-message reference that cannot be evaluated from the current ORDRSP message alone.",
+      "description_hash": "409af98f",
+      "is_external": false
+    },
+    "930": {
+      "confidence": "low",
+      "reasoning": "Format condition: 'max. 2 decimal places'. This is a numeric precision constraint on a specific field value. Without knowing which segment element this applies to, a generic implementation is not possible. Format conditions are typically enforced by field-level validators.",
+      "description_hash": "30e8c861",
+      "is_external": false
+    },
+    "34": {
+      "confidence": "low",
+      "reasoning": "Condition 'wenn vorhanden' is too vague without additional context — no segment tag, qualifier, or element reference is provided. Cannot generate a correct implementation without knowing what entity this refers to.",
+      "description_hash": "07e09f1a",
+      "is_external": false
+    },
+    "58": {
+      "confidence": "high",
+      "reasoning": "Same pattern but with a smaller set of Prüfschritt codes (A02/A03/A06/A07 only — A10/A11 excluded) and E_0550 as Positionsnummer.",
+      "description_hash": "6590f78c",
+      "is_external": false
+    },
+    "526": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+Z23 DE1004 of the originating ORDERS (bilanzierte Menge request). Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "070c500a",
+      "is_external": false
+    },
+    "934": {
+      "confidence": "low",
+      "reasoning": "Format condition: 'HHMM = 0400'. This is a fixed time-of-day constraint (04:00) on a specific DTM element's time component. Without knowing which DTM qualifier and element this applies to in context, a generic implementation is not meaningful.",
+      "description_hash": "d06a46c8",
+      "is_external": false
+    },
+    "48": {
+      "confidence": "high",
+      "reasoning": "Check AJT DE4465=A06 (elements[0][0]) AND DE1082=E_0554 (elements[1][0]).",
+      "description_hash": "3d96c70f",
+      "is_external": false
+    },
+    "75": {
+      "confidence": "low",
+      "reasoning": "Whether the order contains a measurement product from the SMGW Type 2 configuration code list (Kapitel 4.6.2) requires access to an external product catalogue — this cannot be determined from EDIFACT segments alone.",
+      "description_hash": "d0853f8a",
+      "is_external": true
+    },
+    "523": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+7 DE1004 of the originating ORDERS message (Brennwert/Zustandszahl request). Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "d089be11",
+      "is_external": false
+    },
+    "41": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT segment has DE4465 (elements[0][0]) equal to ZB5.",
+      "description_hash": "2b460038",
+      "is_external": false
+    },
+    "902": {
+      "confidence": "low",
+      "reasoning": "Format condition: 'Possible value: >= 0'. This is a numeric range validation on a specific field. Without knowing which segment element this applies to in the calling context, a generic implementation is not meaningful. Format conditions are typically enforced by field-level validators, not message-structure evaluators.",
+      "description_hash": "a05d1ee1",
+      "is_external": false
+    },
+    "59": {
+      "confidence": "high",
+      "reasoning": "Same pattern as 56/57 with the full six-code set, checking E_0551 as Positionsnummer.",
+      "description_hash": "f964e25b",
+      "is_external": false
+    },
+    "17": {
+      "confidence": "low",
+      "reasoning": "Whether an AJT Prüfschritt code belongs to the EBD cluster 'Zustimmung' (approval) is an external business rule requiring EBD schema knowledge not present in the EDIFACT message.",
+      "description_hash": "f4105a14",
+      "is_external": true
+    },
+    "537": {
+      "confidence": "low",
+      "reasoning": "Hinweis (informational note): references a value from an external ORDERS message (BGM+Z72 DE1004). This is a cross-message reference that cannot be evaluated from the current ORDRSP message alone.",
+      "description_hash": "5c17080c",
+      "is_external": false
+    },
+    "933": {
+      "confidence": "low",
+      "reasoning": "Format condition: 'HHMM = 2300'. This is a fixed time-of-day constraint (23:00) on a specific DTM element's time component. Without knowing which DTM qualifier and element this applies to in context, a generic implementation is not meaningful.",
+      "description_hash": "b5e9c81e",
+      "is_external": false
+    },
+    "30": {
+      "confidence": "low",
+      "reasoning": "MP-ID nur aus Sparte Strom — whether the market participant ID belongs exclusively to the electricity sector cannot be determined from the EDIFACT message content alone. Requires external master data lookup.",
+      "description_hash": "43bf0d05",
+      "is_external": true
+    },
+    "31": {
+      "confidence": "low",
+      "reasoning": "MP-ID mit Rolle MSB — whether a market participant ID has the MSB (Messstellenbetreiber) role cannot be determined from the EDIFACT message alone. Requires external role/master data lookup.",
+      "description_hash": "bf415ebf",
+      "is_external": true
+    },
+    "72": {
+      "confidence": "high",
+      "reasoning": "AJT segment: elements[0][0] is DE4465 (Code des Prüfschritts) = \"A04\", elements[1][0] is DE1082 (Positionsnummer) = \"E_0552\". has_qualified_value finds AJT with qualifier A04 at elem 0, then checks elem 1 comp 0 for E_0552.",
+      "description_hash": "a85d86c5",
+      "is_external": false
+    },
+    "45": {
+      "confidence": "high",
+      "reasoning": "Check AJT DE4465=A09 (elements[0][0]) AND DE1082=E_1000 (elements[1][0]).",
+      "description_hash": "4de92a3c",
+      "is_external": false
+    },
+    "54": {
+      "confidence": "low",
+      "reasoning": "Same as condition 53 but for UTILTS with BGM+Z80. Cross-message reference to the originating UTILTS cannot be resolved from within the ORDRSP.",
+      "description_hash": "29222234",
+      "is_external": true
+    },
+    "49": {
+      "confidence": "low",
+      "reasoning": "Condition references the ORIGINAL inbound message ('ursprüngliche Nachricht') to check for IMD++Z60. The ORDRSP validator only has access to the response message, not the original ORDERS/UTILTS that triggered it. This requires external business context.",
+      "description_hash": "287d20bb",
+      "is_external": true
+    },
+    "66": {
+      "confidence": "high",
+      "reasoning": "AJT with A01/A02/A03 in DE4465 and E_0544 in DE1082. Standard two-element AJT qualifier+position check.",
+      "description_hash": "830cd8cf",
+      "is_external": false
+    },
+    "16": {
+      "confidence": "low",
+      "reasoning": "The role (ÜNB=Übertragungsnetzbetreiber) of the market participant identified in NAD+MR cannot be determined from the EDIFACT message alone — it requires a market participant registry lookup.",
+      "description_hash": "6e173e81",
+      "is_external": true
+    },
+    "24": {
+      "confidence": "high",
+      "reasoning": "BGM+Z51: BGM elements[0][0] is DE1001 (document name code). Z51 is a known ORDRSP document type code.",
+      "description_hash": "621d1e01",
+      "is_external": false
+    },
+    "39": {
+      "confidence": "low",
+      "reasoning": "'Möglicher Wert: E17 oder Z07' describes an allowed value set for a DE in the current context, not a standalone evaluatable condition. Without knowing which segment/element this constrains, a correct predicate cannot be generated.",
+      "description_hash": "74190ad3",
+      "is_external": false
+    },
+    "22": {
+      "confidence": "high",
+      "reasoning": "IMD++Z02: the ++ means elements[0] is empty, and elements[1][0]==\"Z02\". has_qualifier(\"IMD\", 1, \"Z02\") checks elements[1][0] for the Z02 qualifier.",
+      "description_hash": "c09022dc",
+      "is_external": false
+    },
+    "76": {
+      "confidence": "high",
+      "reasoning": "True when no FTX segment has qualifier Z27 (IP-Adresse des Absenders) at elements[0][0]. Straightforward absence check.",
+      "description_hash": "ffcc30a9",
+      "is_external": false
+    },
+    "77": {
+      "confidence": "high",
+      "reasoning": "True when no FTX segment has qualifier Z28 (IP-Range des Absenders) at elements[0][0]. Straightforward absence check.",
+      "description_hash": "bacb16eb",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "low",
+      "reasoning": "The role (LF=Lieferant) of the market participant identified in NAD+MS cannot be determined from the EDIFACT message alone — it requires a market participant registry lookup.",
+      "description_hash": "a7b362f4",
+      "is_external": true
+    },
+    "37": {
+      "confidence": "high",
+      "reasoning": "CUX+2: CUX elements[0]=C504, elements[0][0]=DE6347 (Währungsverwendung Qualifier). The MIG schema confirms qualifier '2' at elements[0][0]. Since CUX only appears in SG8 in ORDRSP, a message-wide check is equivalent to checking within SG8.",
+      "description_hash": "89df2720",
+      "is_external": false
+    },
+    "490": {
+      "confidence": "low",
+      "reasoning": "Checking whether a specific CCYYMMDDHHMM datetime value falls within MESZ (summer time) ranges defined in the statutory table Kapitel 3.5 requires external lookup data and the actual DE value under validation — not determinable from message structure alone.",
+      "description_hash": "cb594882",
+      "is_external": true
+    },
+    "492": {
+      "confidence": "low",
+      "reasoning": "Whether the recipient MP-ID in NAD+MR belongs to the electricity sector (Sparte Strom) requires a market participant registry lookup — the sector affiliation is not encoded in the EDIFACT message itself.",
+      "description_hash": "bd78e2d8",
+      "is_external": true
+    },
+    "503": {
+      "confidence": "low",
+      "reasoning": "Pure informational Hinweis about the date until which the MSBA is obligated to continue (Fortführungsverpflichtung). Not an evaluable True/False condition.",
+      "description_hash": "da292969",
+      "is_external": false
+    },
+    "519": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+7 DE1004 of the originating ORDERS message. Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "e0bb496a",
+      "is_external": false
+    },
+    "521": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+Z14/Z61/Z62 DE1004 of the originating ORDERS message. Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "d82e40a6",
+      "is_external": false
+    },
+    "12": {
+      "confidence": "low",
+      "reasoning": "Whether the NB (Netzbetreiber) can provide non-binding price information (unverbindliche Preisinformation) is a business capability check that cannot be determined from the EDIFACT message content alone.",
+      "description_hash": "54b833c6",
+      "is_external": true
+    },
+    "55": {
+      "confidence": "low",
+      "reasoning": "Same as condition 53 but for UTILTS with BGM+Z81. Cross-message reference to the originating UTILTS cannot be resolved from within the ORDRSP.",
+      "description_hash": "ca6da580",
+      "is_external": true
+    },
+    "65": {
+      "confidence": "low",
+      "reasoning": "'Dokumentennummer aus BGM+Z79 DE1004 der UTILTS' — references a document number from a BGM+Z79 in a separate UTILTS message. External context required.",
+      "description_hash": "f35ea5d5",
+      "is_external": true
+    },
+    "51": {
+      "confidence": "high",
+      "reasoning": "COM DE3155 is elements[0][1] (channel qualifier). Check for telephone (TE), fax (FX), AJ, or AL channel codes in the same COM composite.",
+      "description_hash": "d9351e4d",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "low",
+      "reasoning": "The role (LF=Lieferant) of the market participant identified in NAD+MR cannot be determined from the EDIFACT message alone — it requires a market participant registry lookup.",
+      "description_hash": "512fd697",
+      "is_external": true
+    },
+    "3": {
+      "confidence": "low",
+      "reasoning": "The role (NB=Netzbetreiber) of the market participant identified in NAD+MS cannot be determined from the EDIFACT message alone — it requires a market participant registry lookup.",
+      "description_hash": "fd644a6a",
+      "is_external": true
+    },
+    "61": {
+      "confidence": "low",
+      "reasoning": "'Wenn es sich bei der Reklamation um die Reklamation der Übersicht der Schaltzeitdefinitionen handelte' — type of original Reklamation is external context not derivable from the ORDRSP message structure.",
+      "description_hash": "8f0affe3",
+      "is_external": true
+    },
+    "524": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+Z14 DE1004 of the originating ORDERS message from the MSB Gas. Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "5ce36c7f",
+      "is_external": false
+    },
+    "530": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the document number comes from BGM DE1004 of the originating ORDCHG message. Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "fcf953b7",
+      "is_external": false
+    },
+    "23": {
+      "confidence": "high",
+      "reasoning": "IMD++Z03: elements[0] is empty (++), elements[1][0] is the item description code qualifier. Check for Z03 at elements[1][0].",
+      "description_hash": "903d27b9",
+      "is_external": false
+    },
+    "522": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+7/Z28/Z48 DE1004 of the originating ORDERS message. Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "b624c325",
+      "is_external": false
+    },
+    "9": {
+      "confidence": "low",
+      "reasoning": "Identical to condition 5: sender role LF cannot be determined from EDIFACT message content alone.",
+      "description_hash": "a7b362f4",
+      "is_external": true
+    },
+    "44": {
+      "confidence": "high",
+      "reasoning": "Check AJT DE4465=A05 (elements[0][0]) AND DE1082=E_1000 (elements[1][0]).",
+      "description_hash": "0679d46b",
+      "is_external": false
+    },
+    "534": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+Z52 DE1004 of the originating ORDCHG message. Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "6767ac60",
+      "is_external": false
+    },
+    "536": {
+      "confidence": "low",
+      "reasoning": "Hinweis (informational note): describes a business rule about whether the requested MSB is itself the owner. This depends on external business context (MSB ownership relationship) that cannot be determined from the EDIFACT message content.",
+      "description_hash": "755df655",
+      "is_external": true
+    },
+    "932": {
+      "confidence": "low",
+      "reasoning": "Format condition: 'HHMM = 2200'. This is a fixed time-of-day constraint (end-of-day at 22:00) on a specific DTM element's time component. Without knowing which DTM qualifier and element this applies to in the calling context, a generic implementation is not meaningful.",
+      "description_hash": "943b98c4",
+      "is_external": false
+    },
+    "70": {
+      "confidence": "low",
+      "reasoning": "'Wenn es sich bei der Reklamation um die Reklamation der ausgerollten Zählzeitdefinitionen handelte' — whether the original Reklamation concerned rolled-out Zählzeitdefinitionen is external business context not encoded in the ORDRSP message structure.",
+      "description_hash": "ecce53f5",
+      "is_external": true
+    },
+    "53": {
+      "confidence": "low",
+      "reasoning": "This condition identifies the Vorgangsnummer as coming from IDE DE7402 of a UTILTS message with BGM+Z59. This cross-message reference to the originating UTILTS cannot be resolved from within the ORDRSP message alone.",
+      "description_hash": "b62c835c",
+      "is_external": true
+    },
+    "56": {
+      "confidence": "high",
+      "reasoning": "AJT elements[0]=DE4465 (Prüfschritt code), elements[1]=DE1082 (Positionsnummer). Check if any AJT segment has one of the listed Prüfschritt codes and the specific E_0548 Positionsnummer.",
+      "description_hash": "ebe3a6a8",
+      "is_external": false
+    },
+    "527": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the value comes from BGM+Z34 DE1004 of the originating ORDERS (Reklamation von Werten). Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "51eb9747",
+      "is_external": false
+    },
+    "27": {
+      "confidence": "high",
+      "reasoning": "AJT+A05+E_0470: AJT elements[0]=DE4465 (Prüfschritt code), elements[1]=DE1082 (position number/EBD code). Check for A05 at [0][0] and E_0470 at [1][0].",
+      "description_hash": "6939a7ed",
+      "is_external": false
+    },
+    "539": {
+      "confidence": "low",
+      "reasoning": "Hinweis (informational note): references a value from an external ORDERS message (BGM+Z73/Z74 DE1004). This is a cross-message reference that cannot be evaluated from the current ORDRSP message alone.",
+      "description_hash": "13f8a3c5",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "low",
+      "reasoning": "Format condition: 'ZZZ = +00' (timezone component must be +00). This is a fixed-value sub-component constraint on a DTM or similar segment's timezone field. Without knowing the specific segment and element position this applies to in context, a generic implementation would be fragile.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "29": {
+      "confidence": "low",
+      "reasoning": "MP-ID nur aus Sparte Gas — whether the market participant ID belongs exclusively to the gas sector cannot be determined from the EDIFACT message content alone. Requires external master data lookup.",
+      "description_hash": "6eb01bf6",
+      "is_external": true
+    },
+    "939": {
+      "confidence": "medium",
+      "reasoning": "Format condition checking that the string contains '@' and '.' — characteristic of an email address format requirement. Applied to COM segment with EM (Electronic Mail) qualifier where elements[0][0] is the address and elements[0][1] is the communication means type code. Returns Unknown when no COM+EM segment is found (condition not applicable).",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "74": {
+      "confidence": "high",
+      "reasoning": "Same pattern as [72] but checking Positionsnummer E_0554 in DE1082 at elements[1][0].",
+      "description_hash": "fb72e6f9",
+      "is_external": false
+    },
+    "529": {
+      "confidence": "low",
+      "reasoning": "This is a 'Hinweis' (informational note) stating the document number comes from BGM DE1004 of the originating ORDERS message. Cross-message reference — not evaluable from the current ORDRSP.",
+      "description_hash": "883bffe2",
+      "is_external": false
+    },
+    "940": {
+      "confidence": "medium",
+      "reasoning": "Format condition checking that the string starts with '+' and contains only digits afterwards — the international phone number format (e.g. +4912345678). Applied to COM segments with phone-type qualifiers (TE=Telephone, FX=Telefax, AH=After Hours). Returns Unknown when no COM segment with a phone qualifier is found. Requires at least one digit after '+' (len > 1) since a bare '+' is not a valid phone number.",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "32": {
+      "confidence": "low",
+      "reasoning": "MP-ID mit Rolle NB — whether a market participant ID has the NB (Netzbetreiber) role cannot be determined from the EDIFACT message alone. Requires external role/master data lookup.",
+      "description_hash": "d56a9524",
+      "is_external": true
+    },
+    "491": {
+      "confidence": "low",
+      "reasoning": "Checking whether a specific CCYYMMDDHHMM datetime value falls within MEZ (winter time) ranges defined in the statutory table Kapitel 3.6 requires external lookup data and the actual DE value under validation — not determinable from message structure alone.",
+      "description_hash": "5e5e4325",
+      "is_external": true
+    }
+  }
+}

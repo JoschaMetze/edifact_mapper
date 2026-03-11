@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-03-11T12:51:21Z",
+  "ahb_file": "ORDCHG_AHB_1_0a_20241001.xml",
+  "format_version": "FV2504",
+  "conditions": {
+    "1": {
+      "confidence": "low",
+      "reasoning": "MP-ID nur aus Sparte Strom — checks whether the market participant ID belongs to the electricity sector. Cannot be determined from EDIFACT message content alone; requires external market participant registry lookup.",
+      "description_hash": "43bf0d05",
+      "is_external": true
+    },
+    "931": {
+      "confidence": "medium",
+      "reasoning": "Format constraint: ZZZ (timezone) must be '+00' (UTC). DTM elements[0][1] contains the datetime value including timezone suffix. Checks all DTM segments to ensure their datetime values end with '+00'. Returns Unknown when no DTM segments present, False if any DTM violates the constraint.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "501": {
+      "confidence": "low",
+      "reasoning": "Hinweis (note): specifies that the value originates from BGM+Z33 DE1004 of the IFTSTA message conveying the Entsperrauftrag. Cross-message reference; cannot be evaluated from the ORDCHG message alone.",
+      "description_hash": "6832ceb8",
+      "is_external": false
+    },
+    "502": {
+      "confidence": "low",
+      "reasoning": "Hinweis (note): specifies that the Vorgangsnummer comes from CNI DE1490 of the IFTSTA with BGM+Z33. Cross-message reference; cannot be evaluated from the ORDCHG message alone.",
+      "description_hash": "70489296",
+      "is_external": false
+    },
+    "3": {
+      "confidence": "high",
+      "reasoning": "BGM+Z52 (Entsperrung) vorhanden — checks BGM elements[0][0] == 'Z52'. Straightforward qualifier existence check using has_qualifier helper.",
+      "description_hash": "fb79618b",
+      "is_external": false
+    },
+    "503": {
+      "confidence": "low",
+      "reasoning": "Hinweis (note): only one piece of information may be transmitted in DE3148. This is a cardinality constraint/editorial note, not a boolean condition to evaluate at the condition level. Validation belongs in a separate schema constraint check.",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "940": {
+      "confidence": "medium",
+      "reasoning": "Format check: the phone/fax number string in COM DE3148 (elements[0][0]) when DE3155 (elements[0][1]) is TE/FX/AJ/AL must start with '+' followed by digits only. Returns Unknown if no phone-typed COM segment is found.",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "2": {
+      "confidence": "high",
+      "reasoning": "BGM+Z51 (Sperrung) vorhanden — checks BGM elements[0][0] == 'Z51'. Straightforward qualifier existence check using has_qualifier helper.",
+      "description_hash": "106bd6fc",
+      "is_external": false
+    },
+    "500": {
+      "confidence": "low",
+      "reasoning": "Hinweis (note): specifies that the document number comes from BGM DE1004 of the original ORDERS message. This is a population instruction for editors, not an evaluatable boolean condition.",
+      "description_hash": "883bffe2",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "Checks if DE3155 (communication type) in any COM segment equals TE (telephone), FX (fax), AJ (IP), or AL (web). Same COM structure as condition 4 — DE3155 is at elements[0][1].",
+      "description_hash": "d9351e4d",
+      "is_external": false
+    },
+    "939": {
+      "confidence": "medium",
+      "reasoning": "Format check: the email address string in COM DE3148 (elements[0][0]) when DE3155 (elements[0][1]) is 'EM' must contain both '@' and '.'. Returns Unknown if no EM-typed COM segment is found.",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "494": {
+      "confidence": "low",
+      "reasoning": "Temporal validation rule: the date must be the document creation time or earlier. Cannot evaluate purely from EDIFACT — requires external knowledge of the actual creation timestamp to compare against. This is a constraint note, not a boolean condition derivable from message content.",
+      "description_hash": "785470ce",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "high",
+      "reasoning": "Checks if DE3155 (communication type code) in any COM segment equals 'EM' (email). COM+<DE3148>:<DE3155> maps to elements[0][0]=DE3148 (number), elements[0][1]=DE3155 (type code). Low-level access needed since has_qualifier checks [N][0] but DE3155 is at [0][1].",
+      "description_hash": "eaf06e02",
+      "is_external": false
+    }
+  }
+}

@@ -34,8 +34,8 @@ pub use remadv_conditions_fv2510::RemadvConditionEvaluatorFV2510;
 mod insrpt_conditions_fv2510;
 pub use insrpt_conditions_fv2510::InsrptConditionEvaluatorFV2510;
 
-/// Alias: FV2510 conditions are identical to FV2504.
-pub type UtilmdStromConditionEvaluatorFV2510 = super::fv2504::UtilmdStromConditionEvaluatorFV2504;
+mod utilmd_strom_conditions_fv2510;
+pub use utilmd_strom_conditions_fv2510::UtilmdStromConditionEvaluatorFV2510;
 
 /// Alias: FV2510 conditions are identical to FV2504.
 pub type UtilmdGasConditionEvaluatorFV2510 = super::fv2504::UtilmdGasConditionEvaluatorFV2504;

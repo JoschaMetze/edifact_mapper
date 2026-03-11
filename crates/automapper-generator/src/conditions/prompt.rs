@@ -132,9 +132,24 @@ pub trait ExternalConditionProvider: Send + Sync {
 ```
 
 ## Confidence levels
-- **high**: Simple segment existence checks, qualifier comparisons, value matches
+- **high**: Simple segment existence checks, qualifier comparisons, value matches, Hinweis notes
 - **medium**: Logic requiring some interpretation but structurally clear
 - **low**: Complex business rules that need clarification, temporal logic
+
+## Hinweis (informational note) conditions
+Conditions starting with "Hinweis:" or "Hinweis " are **informational annotations**, NOT boolean
+predicates. They document field usage, value origins, cardinality guidance, or business context.
+They always apply unconditionally — return `ConditionResult::True` with **high confidence**.
+```rust
+fn evaluate_NNN(&self, _ctx: &EvaluationContext) -> ConditionResult {
+    // Hinweis: [description] — informational note, always applies
+    ConditionResult::True
+}
+```
+These are NEVER external, NEVER low confidence, and NEVER Unknown. Recognize them by:
+- Starting with "Hinweis:" or "Hinweis "
+- Describing what a field means, where a value comes from, or how many times something appears
+- NOT containing a boolean predicate ("Wenn ...", "Falls ...", "Nur wenn ...")
 
 ## External conditions
 Some conditions CANNOT be determined from the EDIFACT message alone — they depend on
@@ -229,14 +244,19 @@ pub fn build_user_prompt(conditions: &[ConditionInput], context: &ConditionConte
                 prompt.push_str(&format!("    Used by fields: {}\n", fields.join(", ")));
             }
         }
-        // Parse AHB notation from description and resolve element indices
-        let resolutions = resolve_ahb_notations(&condition.description);
-        for resolution in &resolutions {
-            prompt.push_str(&format!("    → {}\n", resolution));
-        }
-        // Detect group-scoped conditions
-        if let Some(scope_hint) = detect_group_scope(&condition.description) {
-            prompt.push_str(&format!("    → {}\n", scope_hint));
+        // Detect Hinweis (informational) conditions early
+        if is_hinweis(&condition.description) {
+            prompt.push_str("    → HINWEIS: Informational note — return ConditionResult::True with high confidence\n");
+        } else {
+            // Parse AHB notation from description and resolve element indices
+            let resolutions = resolve_ahb_notations(&condition.description);
+            for resolution in &resolutions {
+                prompt.push_str(&format!("    → {}\n", resolution));
+            }
+            // Detect group-scoped conditions
+            if let Some(scope_hint) = detect_group_scope(&condition.description) {
+                prompt.push_str(&format!("    → {}\n", scope_hint));
+            }
         }
     }
 
@@ -486,6 +506,12 @@ fn resolve_ahb_notations(description: &str) -> Vec<String> {
     }
 
     results
+}
+
+/// Returns true if the condition description is a Hinweis (informational note).
+fn is_hinweis(description: &str) -> bool {
+    let trimmed = description.trim();
+    trimmed.starts_with("Hinweis:") || trimmed.starts_with("Hinweis ")
 }
 
 /// Detects if a condition description requires group-scoped evaluation.
@@ -782,6 +808,13 @@ fn evaluate_316(&self, ctx: &EvaluationContext) -> ConditionResult {
         "RFF", 0, "Z14",  // absent: RFF+Z14
         &["SG4", "SG8"],
     )
+}"#
+        .to_string(),
+        r#"// Example 15: Hinweis (informational note) — always True, high confidence
+// "Hinweis: Nur ein Wert ist in DE3148 zu übermitteln."
+fn evaluate_534(&self, _ctx: &EvaluationContext) -> ConditionResult {
+    // Hinweis: informational annotation, always applies
+    ConditionResult::True
 }"#
         .to_string(),
     ]
