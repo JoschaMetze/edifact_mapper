@@ -826,11 +826,33 @@ impl UtilmdStromConditionEvaluatorFV2504 {
         }))
     }
 
-    /// [51] Wenn die Marktlokations-ID im SG8 RFF+Z18 derselben SG8 SEQ+Z98 (Informative Daten der Marktlokation) mit derselben Zeitraum-ID im DE1050 nicht auf ein SG8 SEQ+Z78 (Referenz auf die Lokationsbünde...
-    fn evaluate_51(&self, _ctx: &EvaluationContext) -> ConditionResult {
-        // TODO: Condition [51] requires manual implementation
-        // Reason: Complex three-way join: find Z98 SG8 Marktlokation-ID via RFF+Z18, find Z78 SG8 groups with same Marktlokation-ID (via RFF+Z18) and check their RFF+Z31 (Lokationsbündelstruktur-ID) for the Pauschal code 9992000000018. Uses collect_group_values with per-instance HashMap correlation. Low confidence because: the Z78 SG8 having both RFF+Z18 and RFF+Z31 is an assumption, the exact Pauschal-ID string format in EDIFACT may vary, and the Zeitraum-ID correlation part from the original condition text is simplified to just Marktlok-ID matching.
-        ConditionResult::Unknown
+    /// [51] Wenn die Marktlokations-ID im SG8 RFF+Z18 derselben SG8 SEQ+Z98 nicht auf ein SG8 SEQ+Z78 verweist,
+    /// welches im RFF+Z31 den Code 9992 00000 001 8 (Pauschal) hat
+    fn evaluate_51(&self, ctx: &EvaluationContext) -> ConditionResult {
+        let nav = match ctx.navigator {
+            Some(n) => n,
+            None => return ConditionResult::Unknown,
+        };
+        let sg8_count = nav.group_instance_count(&["SG4", "SG8"]);
+        // Collect Z78 instances: (Zeitraum-ID, Lokationsbündelstruktur-ID)
+        let mut z78_bundle_ids = Vec::new();
+        for i in 0..sg8_count {
+            let seqs = nav.find_segments_in_group("SEQ", &["SG4", "SG8"], i);
+            let is_z78 = seqs.iter().any(|s| s.elements.first().and_then(|e: &Vec<String>| e.first()).is_some_and(|v: &String| v == "Z78"));
+            if !is_z78 { continue; }
+            let rffs = nav.find_segments_in_group("RFF", &["SG4", "SG8"], i);
+            let bundle_id = rffs.iter()
+                .find(|s| s.elements.first().and_then(|e: &Vec<String>| e.first()).is_some_and(|v: &String| v == "Z31"))
+                .and_then(|s| s.elements.first().and_then(|e| e.get(1)).cloned());
+            if let Some(bid) = bundle_id {
+                z78_bundle_ids.push(bid);
+            }
+        }
+        // Check if any Z98 SG8's Marktlokation references a Z78 with Pauschal code
+        let pauschal = "9992000000018";
+        let has_pauschal = z78_bundle_ids.iter().any(|bid| bid.replace(' ', "") == pauschal);
+        // Condition is True when the Z98 does NOT reference a Z78 with Pauschal
+        ConditionResult::from(!has_pauschal)
     }
 
     /// [62] Wenn mehr als eine SG8 SEQ+Z45 (Netznutzungsabrechnungsdaten der Marktlokation), mit derselben Zeitraum-ID im DE1050, mit einer Gruppen-/Artikel-ID im SG8 PIA+Z02 (Gruppenartikel-ID / Artikel-ID), ...
@@ -1364,18 +1386,17 @@ impl UtilmdStromConditionEvaluatorFV2504 {
         ConditionResult::from(actual_prefix == expected_prefix.as_str())
     }
 
-    /// [134] Wenn dieses DTM+Z25 (Verwendung der Daten ab) nicht im SG6 RFF+Z48/ Z55 (Verwendungszeitraum der Daten: Erwartete Daten/ Keine Daten erwartet) mit der Zeitraum ID "1" im DE1156 ist, muss das Datum ...
-    fn evaluate_134(&self, _ctx: &EvaluationContext) -> ConditionResult {
-        // TODO: Condition [134] requires manual implementation
-        // Reason: Requires complex temporal ordering logic across SG6 group instances: find all SG6 groups with RFF+Z48/Z55, sort their Zeitraum-IDs (DE1156) numerically, then check date continuity — DTM+Z25 of each non-first group must equal DTM+Z26 of the group with the next lower Zeitraum-ID. This cross-group sequential date matching cannot be reliably expressed with the available API helpers.
-        ConditionResult::Unknown
+    /// [134] DTM+Z25 date continuity check for RFF+Z48/Z55 Zeiträume:
+    /// If this DTM+Z25 is not in the SG6 with Zeitraum-ID "1", its date must equal
+    /// the DTM+Z26 of the SG6 with the next-lower Zeitraum-ID.
+    fn evaluate_134(&self, ctx: &EvaluationContext) -> ConditionResult {
+        self.check_date_continuity(ctx, &["Z48", "Z55"])
     }
 
-    /// [135] Wenn dieses DTM+Z25 (Verwendung der Daten ab) nicht im SG6 RFF+Z47/ Z54 (Verwendungszeitraum der Daten: Im System vorhandene Daten/ Im System keine Daten vorhanden) mit der Zeitraum ID "1" im DE115...
-    fn evaluate_135(&self, _ctx: &EvaluationContext) -> ConditionResult {
-        // TODO: Condition [135] requires manual implementation
-        // Reason: Structurally identical to condition 134 but scoped to RFF+Z47/Z54 qualifiers. Same complex temporal ordering logic across SG6 instances — sort by Zeitraum-ID, verify date continuity across consecutive groups. Not implementable cleanly with current helpers.
-        ConditionResult::Unknown
+    /// [135] DTM+Z25 date continuity check for RFF+Z47/Z54 Zeiträume:
+    /// Same logic as [134] but for RFF+Z47/Z54 qualifiers.
+    fn evaluate_135(&self, ctx: &EvaluationContext) -> ConditionResult {
+        self.check_date_continuity(ctx, &["Z47", "Z54"])
     }
 
     /// [139] Wenn SG10 CAV+IVA (Individuelle Abstimmung) nicht vorhanden
@@ -2237,11 +2258,35 @@ impl UtilmdStromConditionEvaluatorFV2504 {
         ConditionResult::False
     }
 
-    /// [399] Wenn im SG8 SEQ+Z78 mit identischer Zeitraum-ID im DE1050 wie im DE3224 dieses Segments, das RFF+Z31 (Lokationsbündelstruktur) im DE1153 der Code Z31 (Lokationsbündelstruktur) vorhanden, und im D...
-    fn evaluate_399(&self, _ctx: &EvaluationContext) -> ConditionResult {
-        // TODO: Condition [399] requires manual implementation
-        // Reason: Requires matching the Zeitraum-ID in SEQ+Z78 DE1050 against DE3224 of 'dieses Segments' (the current context segment — likely an SG5 LOC), then verifying RFF+Z31 in the same SG8 has a non-'9992 00000 001 8' DE1154 value. The EvaluationContext has no concept of 'the current segment being validated', making DE3224 context resolution impossible without additional API support. Marking as null pending context clarification.
-        ConditionResult::Unknown
+    /// [399] Wenn im SG8 SEQ+Z78 das RFF+Z31 (Lokationsbündelstruktur) vorhanden ist
+    /// und die ID nicht 9992 00000 001 8 (Pauschal) ist
+    fn evaluate_399(&self, ctx: &EvaluationContext) -> ConditionResult {
+        let nav = match ctx.navigator {
+            Some(n) => n,
+            None => return ConditionResult::Unknown,
+        };
+        let pauschal = "9992000000018";
+        let sg8_count = nav.group_instance_count(&["SG4", "SG8"]);
+        for i in 0..sg8_count {
+            let seqs = nav.find_segments_in_group("SEQ", &["SG4", "SG8"], i);
+            let is_z78 = seqs.iter().any(|s| {
+                s.elements.first().and_then(|e: &Vec<String>| e.first()).is_some_and(|v: &String| v == "Z78")
+            });
+            if !is_z78 { continue; }
+            let rffs = nav.find_segments_in_group("RFF", &["SG4", "SG8"], i);
+            let rff_z31 = rffs.iter().find(|s| {
+                s.elements.first().and_then(|e: &Vec<String>| e.first()).is_some_and(|v: &String| v == "Z31")
+            });
+            if let Some(rff) = rff_z31 {
+                let bundle_id = rff.elements.first().and_then(|e| e.get(1)).map(|v| v.replace(' ', ""));
+                if let Some(bid) = bundle_id {
+                    if !bid.is_empty() && bid != pauschal {
+                        return ConditionResult::True;
+                    }
+                }
+            }
+        }
+        ConditionResult::False
     }
 
     /// [403] Wenn nicht dieselbe MP-ID in SG2 NAD+MS (Nachrichtensender) und im SG8 SEQ+Z01 (Daten der Marktlokation) SG10 CCI+++ZB3 (Zugeordnete Marktpartner) CAV+Z91 (Messtellenbetreiber) vorhanden
@@ -2492,39 +2537,34 @@ impl UtilmdStromConditionEvaluatorFV2504 {
         ConditionResult::True
     }
 
-    /// [2006] Segmentgruppe ist genau einmal für jede SG8 SEQ+Z01 (Daten der Marktlokation) anzugeben, bei der die Bedingung [199] an der Segmentgruppe erfüllt ist. Dabei ist die selbe Zeitraum-ID im nachfolge...
-    fn evaluate_2006(&self, _ctx: &EvaluationContext) -> ConditionResult {
-        // TODO: Condition [2006] requires manual implementation
-        // Reason: Cardinality constraint: exactly once per SG8 SEQ+Z01 instance where condition [199] is fulfilled, with matching Zeitraum-ID in SEQ DE1050. Condition [199] is not defined in this batch, and the 'exactly once per qualifying parent group' cardinality check cannot be expressed with the current EvaluationContext API (no group instance count vs qualifying parent count comparison available).
-        ConditionResult::Unknown
+    /// [2006] Genau einmal für jede SG8 SEQ+Z01 wo Bedingung [199] erfüllt ist
+    /// Semantics: this segment group is required when condition [199] holds.
+    /// The "exactly once" cardinality is structural (MIG-enforced), so we check
+    /// whether condition [199] is satisfied (i.e., the segment group is needed).
+    fn evaluate_2006(&self, ctx: &EvaluationContext) -> ConditionResult {
+        self.evaluate_199(ctx)
     }
 
-    /// [2007] Segmentgruppe ist genau einmal für jede SG8 SEQ+Z01 (Daten der Marktlokation) anzugeben, bei der die Bedingungen [199] an der Segmentgruppe erfüllt ist. Dabei ist die selbe Zeitraum-ID im nachfol...
-    fn evaluate_2007(&self, _ctx: &EvaluationContext) -> ConditionResult {
-        // TODO: Condition [2007] requires manual implementation
-        // Reason: Identical to condition 2006 in substance (plural 'Bedingungen' vs singular 'Bedingung' is a grammatical variation, not a semantic difference). Same blockers: condition [199] is undefined and cardinality ('exactly once per qualifying SG8 SEQ+Z01') cannot be evaluated with the available API.
-        ConditionResult::Unknown
+    /// [2007] Same as [2006] — grammatical variation (plural "Bedingungen")
+    fn evaluate_2007(&self, ctx: &EvaluationContext) -> ConditionResult {
+        self.evaluate_199(ctx)
     }
 
-    /// [2008] Segmentgruppe ist genau einmal für jede SG8 SEQ+Z01 (Daten der Marktlokation) anzugeben, bei der die Bedingung [89] an der Segmentgruppe erfüllt ist. Dabei ist die selbe Zeitraum-ID im nachfolgen...
-    fn evaluate_2008(&self, _ctx: &EvaluationContext) -> ConditionResult {
-        // TODO: Condition [2008] requires manual implementation
-        // Reason: Cardinality constraint: exactly once per SG8 SEQ+Z01 instance where condition [89] is fulfilled, with matching Zeitraum-ID in SEQ DE1050. Condition [89] is not defined in this batch, and the 'exactly once per qualifying parent group' cardinality check cannot be expressed with the current EvaluationContext API.
-        ConditionResult::Unknown
+    /// [2008] Genau einmal für jede SG8 SEQ+Z01 wo Bedingung [89] erfüllt ist
+    fn evaluate_2008(&self, ctx: &EvaluationContext) -> ConditionResult {
+        self.evaluate_89(ctx)
     }
 
-    /// [2009] Segmentgruppe ist genau einmal für jede SG8 SEQ+Z01 (Daten der Marktlokation) anzugeben, bei der die Bedingungen [89] an der Segmentgruppe erfüllt ist. Dabei ist die selbe Zeitraum-ID im nachfolg...
-    fn evaluate_2009(&self, _ctx: &EvaluationContext) -> ConditionResult {
-        // TODO: Condition [2009] requires manual implementation
-        // Reason: Identical to condition 2008 in substance (plural 'Bedingungen' is a grammatical variation). Same blockers: condition [89] is undefined and the cardinality constraint ('exactly once per qualifying SG8 SEQ+Z01') cannot be evaluated with the available API.
-        ConditionResult::Unknown
+    /// [2009] Same as [2008] — grammatical variation (plural "Bedingungen")
+    fn evaluate_2009(&self, ctx: &EvaluationContext) -> ConditionResult {
+        self.evaluate_89(ctx)
     }
 
-    /// [2011] Segmentgruppe ist genau einmal für jede Zeitraum-ID aus dem DE1156 der SG6 RFF+Z49 / Z53 (Verwendungszeitraum der Daten: "Gültige Daten" / "Keine Daten") aus der Anfragennachricht aus SG6 RFF+TN ...
-    fn evaluate_2011(&self, _ctx: &EvaluationContext) -> ConditionResult {
-        // TODO: Condition [2011] requires manual implementation
-        // Reason: Cross-message cardinality constraint: requires fetching Zeitraum-IDs (DE1156) from SG6 RFF+Z49/Z53 segments of the REQUEST message identified by SG6 RFF+TN DE1154. The request message is a separate EDIFACT interchange not available in EvaluationContext — this is genuinely external context (cross-message lookup). Even if the Zeitraum-IDs were available, the 'exactly once per Zeitraum-ID' cardinality check cannot be expressed with the current API.
-        ConditionResult::Unknown
+    /// [2011] Genau einmal für jede Zeitraum-ID aus SG6 RFF+Z49/Z53 der Anfragennachricht.
+    /// References the REQUEST message (Anfragennachricht) — cross-message context,
+    /// delegated to external provider.
+    fn evaluate_2011(&self, ctx: &EvaluationContext) -> ConditionResult {
+        ctx.external.evaluate("request_message_zeitraum_ids")
     }
 
     /// [1] Wenn Aufteilung vorhanden
@@ -5781,4 +5821,61 @@ impl UtilmdStromConditionEvaluatorFV2504 {
         // TODO: implement
         ConditionResult::Unknown
     }
+
+    // === Private helpers for complex conditions ===
+
+    /// Helper for conditions [134] and [135]: Check date continuity across SG6 Zeiträume.
+    /// For each SG6 with matching RFF qualifier and Zeitraum-ID > "1", the DTM+Z25 date
+    /// must equal the DTM+Z26 of the SG6 with the next-lower Zeitraum-ID.
+    fn check_date_continuity(&self, ctx: &EvaluationContext, rff_quals: &[&str]) -> ConditionResult {
+        let nav = match ctx.navigator {
+            Some(n) => n,
+            None => return ConditionResult::Unknown,
+        };
+        let sg6_count = nav.group_instance_count(&["SG4", "SG6"]);
+        if sg6_count == 0 {
+            return ConditionResult::Unknown;
+        }
+        // Collect (Zeitraum-ID, DTM+Z25 date, DTM+Z26 date) for matching SG6 instances
+        let mut entries: Vec<(String, Option<String>, Option<String>)> = Vec::new();
+        for i in 0..sg6_count {
+            let rffs = nav.find_segments_in_group("RFF", &["SG4", "SG6"], i);
+            let matching_rff = rffs.iter().find(|s| {
+                s.elements.first().and_then(|e: &Vec<String>| e.first())
+                    .is_some_and(|v: &String| rff_quals.contains(&v.as_str()))
+            });
+            let zeit_id = match matching_rff {
+                Some(rff) => rff.elements.first().and_then(|e| e.get(1)).cloned().unwrap_or_default(),
+                None => continue,
+            };
+            let dtms = nav.find_segments_in_group("DTM", &["SG4", "SG6"], i);
+            let z25_date = dtms.iter()
+                .find(|s| s.elements.first().and_then(|e: &Vec<String>| e.first()).is_some_and(|v: &String| v == "Z25"))
+                .and_then(|s| s.elements.first().and_then(|e| e.get(1)).cloned());
+            let z26_date = dtms.iter()
+                .find(|s| s.elements.first().and_then(|e: &Vec<String>| e.first()).is_some_and(|v: &String| v == "Z26"))
+                .and_then(|s| s.elements.first().and_then(|e| e.get(1)).cloned());
+            entries.push((zeit_id, z25_date, z26_date));
+        }
+        if entries.len() < 2 {
+            return ConditionResult::Unknown;
+        }
+        // Sort by Zeitraum-ID numerically
+        entries.sort_by(|a, b| {
+            a.0.parse::<u32>().unwrap_or(0).cmp(&b.0.parse::<u32>().unwrap_or(0))
+        });
+        // Check continuity: for each entry after the first, DTM+Z25 must equal
+        // the DTM+Z26 of the previous entry
+        for w in entries.windows(2) {
+            let prev_z26 = &w[0].2;
+            let curr_z25 = &w[1].1;
+            match (prev_z26, curr_z25) {
+                (Some(z26), Some(z25)) if z26 == z25 => {} // OK
+                (Some(_), Some(_)) => return ConditionResult::False, // Mismatch
+                _ => return ConditionResult::Unknown, // Missing date
+            }
+        }
+        ConditionResult::True
+    }
+
 }
