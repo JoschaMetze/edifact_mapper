@@ -112,6 +112,49 @@ fall back to message-wide search when no group navigator is available.
 - `ctx.count_in_group(tag, group_path)` → `usize`
   - Counts all segments with tag across ALL group instances.
 
+### Format validation helpers (for 900-series "Format:" conditions):
+These are standalone functions imported via `use crate::eval::*`. Use them to validate data element values.
+
+**Numeric format:**
+- `validate_max_decimal_places(value, max)` → `ConditionResult` — "höchstens N Nachkommastellen"
+- `validate_max_integer_digits(value, max)` → `ConditionResult` — "höchstens N Vorkommastellen"
+- `validate_numeric(value, op, threshold)` → `ConditionResult` — op is "==", "!=", ">", ">=", "<", "<="
+
+**DTM time/timezone:**
+- `validate_hhmm_equals(dtm_value, expected_hhmm)` → `ConditionResult` — "HHMM = 2200"
+- `validate_hhmm_range(dtm_value, min, max)` → `ConditionResult` — "HHMM >= 0000 und <= 2359"
+- `validate_mmddhhmm_equals(dtm_value, expected)` → `ConditionResult` — "MMDDHHMM = 12312300"
+- `validate_timezone_utc(dtm_value)` → `ConditionResult` — "ZZZ = +00"
+
+**Contact format:**
+- `validate_email(value)` → `ConditionResult` — must contain @ and .
+- `validate_phone(value)` → `ConditionResult` — must start with + followed by digits only
+
+**ID format:**
+- `validate_malo_id(value)` → `ConditionResult` — 11 digits with Luhn check digit
+- `validate_zahlpunkt(value)` → `ConditionResult` — 33 alphanumeric characters
+- `validate_malo_or_zahlpunkt(value)` → `ConditionResult` — either format
+
+**Artikelnummer patterns:**
+- `validate_artikel_pattern(value, &[n1, n2, ...])` → `ConditionResult` — dash-separated digit segments
+
+**String validation:**
+- `validate_exact_length(value, n)` → `ConditionResult` — exact character count
+- `validate_max_length(value, n)` → `ConditionResult` — maximum character count
+- `validate_all_digits(value)` → `ConditionResult` — only ASCII digits
+
+**Usage pattern for Format: conditions**: Extract the value from the relevant segment, then validate:
+```rust
+fn evaluate_930(&self, ctx: &EvaluationContext) -> ConditionResult {
+    // Format: Max 2 Nachkommastellen — applied to QTY value
+    let segs = ctx.find_segments("QTY");
+    match segs.first().and_then(|s| s.elements.first()).and_then(|e| e.get(1)) {
+        Some(val) => validate_max_decimal_places(val, 2),
+        None => ConditionResult::Unknown,
+    }
+}
+```
+
 ## OwnedSegment structure
 
 ```rust
@@ -861,6 +904,60 @@ fn evaluate_551(&self, ctx: &EvaluationContext) -> ConditionResult {
         r#"// Example 18: Group cardinality — "Wenn mehr als ein CCI+Z23 in SG8 vorhanden"
 fn evaluate_552(&self, ctx: &EvaluationContext) -> ConditionResult {
     ConditionResult::from(ctx.count_qualified_in_group("CCI", 0, "Z23", &["SG4", "SG8"]) > 1)
+}"#
+        .to_string(),
+        r#"// Example 19: Format — max decimal places — "Format: Wert muss max. 2 Nachkommastellen haben"
+fn evaluate_930(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let segs = ctx.find_segments("QTY");
+    match segs.first().and_then(|s| s.elements.first()).and_then(|e| e.get(1)) {
+        Some(val) => validate_max_decimal_places(val, 2),
+        None => ConditionResult::Unknown,
+    }
+}"#
+        .to_string(),
+        r#"// Example 20: Format — numeric range — "Format: Wert >= 0"
+fn evaluate_902(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let segs = ctx.find_segments("QTY");
+    match segs.first().and_then(|s| s.elements.first()).and_then(|e| e.get(1)) {
+        Some(val) => validate_numeric(val, ">=", 0.0),
+        None => ConditionResult::Unknown,
+    }
+}"#
+        .to_string(),
+        r#"// Example 21: Format — HHMM time check — "Format: HHMM = 2200"
+fn evaluate_932(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let dtm_segs = ctx.find_segments_with_qualifier("DTM", 0, "163");
+    match dtm_segs.first().and_then(|s| s.elements.first()).and_then(|e| e.get(1)) {
+        Some(val) => validate_hhmm_equals(val, "2200"),
+        None => ConditionResult::Unknown,
+    }
+}"#
+        .to_string(),
+        r#"// Example 22: Format — Artikelnummer pattern — "Format: n1-n2-n1-n3"
+fn evaluate_942(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let segs = ctx.find_segments("PIA");
+    match segs.first().and_then(|s| s.elements.get(1)).and_then(|e| e.first()) {
+        Some(val) => validate_artikel_pattern(val, &[1, 2, 1, 3]),
+        None => ConditionResult::Unknown,
+    }
+}"#
+        .to_string(),
+        r#"// Example 23: Format — MaLo-ID validation — "Format: Marktlokations-ID"
+fn evaluate_950(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let segs = ctx.find_segments_with_qualifier("LOC", 0, "Z16");
+    match segs.first().and_then(|s| s.elements.get(1)).and_then(|e| e.first()) {
+        Some(val) => validate_malo_id(val),
+        None => ConditionResult::Unknown,
+    }
+}"#
+        .to_string(),
+        r#"// Example 24: Format — email/phone — "Format: E-Mail-Adresse"
+fn evaluate_939(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let segs = ctx.find_segments("COM");
+    match segs.first().and_then(|s| s.elements.first()).and_then(|e| e.first()) {
+        Some(val) => validate_email(val),
+        None => ConditionResult::Unknown,
+    }
 }"#
         .to_string(),
     ]

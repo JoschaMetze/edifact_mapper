@@ -30,7 +30,8 @@ pub fn generate_condition_evaluator_file(
     ));
     code.push_str("// </auto-generated>\n\n");
 
-    code.push_str("use crate::eval::{ConditionEvaluator, ConditionResult, EvaluationContext};\n\n");
+    code.push_str("use crate::eval::{ConditionEvaluator, ConditionResult, EvaluationContext};\n");
+    code.push_str("#[allow(unused_imports)]\nuse crate::eval::format_validators::*;\n\n");
 
     // Struct definition
     code.push_str(&format!(
