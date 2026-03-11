@@ -72,6 +72,15 @@ pub struct EvaluationContext<'a> {
 **All group-scoped helpers** take `group_path: &[&str]` (e.g., `&["SG4", "SG8"]`) and automatically
 fall back to message-wide search when no group navigator is available.
 
+### Direct navigator access (for complex custom logic):
+- `ctx.navigator()` → `Option<&dyn GroupNavigator>` — returns the group navigator if available
+  - Use `match ctx.navigator() { Some(nav) => ..., None => return fallback }` pattern
+  - `nav.group_instance_count(group_path)` → `usize`
+  - `nav.find_segments_in_group(tag, group_path, instance)` → `Vec<OwnedSegment>`
+  - `nav.child_group_instance_count(parent_path, parent_instance, child_id)` → `usize`
+  - `nav.find_segments_in_child_group(tag, parent_path, parent_instance, child_id, child_instance)` → `Vec<OwnedSegment>`
+  - Only use direct navigator access when high-level helpers don't cover the pattern.
+
 ### Parent-child group navigation (for cross-SG conditions):
 - `ctx.filtered_parent_child_has_qualifier(parent_path, parent_tag, parent_elem, parent_qual, child_group_id, child_tag, child_elem, child_qual)` → `ConditionResult`
   - "In the SG8 with SEQ+Z98, does its SG10 child have CCI+Z23?" — navigates parent→child group hierarchy.
@@ -81,6 +90,27 @@ fall back to message-wide search when no group navigator is available.
   - "Zeitraum-ID in SG6 RFF+Z49 matches reference in SG8 SEQ.c286" — cross-group value correlation.
 - `ctx.collect_group_values(tag, elem, comp, group_path)` → `Vec<(usize, String)>`
   - Collects all values at a specific position across group instances. For custom cross-group logic.
+
+### Multi-element segment matching:
+- `ctx.has_segment_matching(tag, &[(elem, comp, val), ...])` → `ConditionResult`
+  - True if ANY segment with that tag matches ALL element/component checks simultaneously.
+  - Unknown if no segments with that tag exist, False if segments exist but none match.
+  - Example: `ctx.has_segment_matching("STS", &[(0, 0, "Z20"), (1, 0, "Z32"), (2, 0, "A99")])`
+- `ctx.has_segment_matching_in_group(tag, &[(elem, comp, val), ...], group_path)` → `ConditionResult`
+  - Group-scoped version with message-wide fallback.
+
+### DTM date comparison:
+- `ctx.dtm_ge(qualifier, threshold)` → `ConditionResult` — True if DTM value >= threshold (string comparison, format 303)
+- `ctx.dtm_lt(qualifier, threshold)` → `ConditionResult` — True if DTM value < threshold
+- `ctx.dtm_le(qualifier, threshold)` → `ConditionResult` — True if DTM value <= threshold
+  - Returns Unknown if no DTM with that qualifier exists.
+  - Example: `ctx.dtm_ge("137", "202510010000")`
+
+### Group-scoped cardinality:
+- `ctx.count_qualified_in_group(tag, elem, qualifier, group_path)` → `usize`
+  - Counts segments matching tag+qualifier across ALL group instances.
+- `ctx.count_in_group(tag, group_path)` → `usize`
+  - Counts all segments with tag across ALL group instances.
 
 ## OwnedSegment structure
 
@@ -179,7 +209,7 @@ the exact `elements[N]` index for every data element and composite. Never guess 
 from the AHB shorthand notation alone.
 
 ## IMPORTANT rules for generated code
-1. **PREFER high-level helpers** (`has_qualifier`, `lacks_qualifier`, `has_qualified_value`, `any_group_has_*`, `filtered_parent_child_has_qualifier`, `any_group_has_qualifier_without`) for concise, readable code. Only use low-level segment access when helpers don't cover the pattern.
+1. **PREFER high-level helpers** (`has_qualifier`, `lacks_qualifier`, `has_qualified_value`, `any_group_has_*`, `filtered_parent_child_has_qualifier`, `any_group_has_qualifier_without`, `has_segment_matching`, `dtm_ge`/`dtm_lt`/`dtm_le`, `count_qualified_in_group`/`count_in_group`) for concise, readable code. Only use low-level segment access when helpers don't cover the pattern.
 2. Only use the `EvaluationContext` API described above. Do NOT invent fields like `ctx.transaktion`, `ctx.prozessdaten`, etc.
 3. Use `.get()` and `.and_then()` for safe element access when using low-level API — never panic on missing data.
 4. For **low confidence** conditions, set implementation to null.
@@ -815,6 +845,22 @@ fn evaluate_316(&self, ctx: &EvaluationContext) -> ConditionResult {
 fn evaluate_534(&self, _ctx: &EvaluationContext) -> ConditionResult {
     // Hinweis: informational annotation, always applies
     ConditionResult::True
+}"#
+        .to_string(),
+        r#"// Example 16: Multi-element match — "Wenn STS+Z20++Z32++A99"
+// Check if STS segment exists where elements[0][0]=="Z20" AND elements[1][0]=="Z32" AND elements[2][0]=="A99"
+fn evaluate_550(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.has_segment_matching("STS", &[(0, 0, "Z20"), (1, 0, "Z32"), (2, 0, "A99")])
+}"#
+        .to_string(),
+        r#"// Example 17: DTM date comparison — "Wenn Lieferbeginn (DTM+137) >= 01.10.2025"
+fn evaluate_551(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ctx.dtm_ge("137", "202510010000")
+}"#
+        .to_string(),
+        r#"// Example 18: Group cardinality — "Wenn mehr als ein CCI+Z23 in SG8 vorhanden"
+fn evaluate_552(&self, ctx: &EvaluationContext) -> ConditionResult {
+    ConditionResult::from(ctx.count_qualified_in_group("CCI", 0, "Z23", &["SG4", "SG8"]) > 1)
 }"#
         .to_string(),
     ]

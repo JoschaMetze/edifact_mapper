@@ -78,6 +78,11 @@ impl<'a> EvaluationContext<'a> {
         }
     }
 
+    /// Get the group navigator, if one is set.
+    pub fn navigator(&self) -> Option<&'a dyn GroupNavigator> {
+        self.navigator
+    }
+
     /// Find the first segment with the given ID.
     pub fn find_segment(&self, segment_id: &str) -> Option<&'a OwnedSegment> {
         self.segments.iter().find(|s| s.id == segment_id)
@@ -617,6 +622,148 @@ impl<'a> EvaluationContext<'a> {
                 .is_some_and(|v| vals_b.contains(&v))
         });
         ConditionResult::from(b_found)
+    }
+
+    // --- Multi-element matching helpers ---
+
+    /// Check if any segment with the given tag has ALL specified element/component values.
+    ///
+    /// Each check is `(element_index, component_index, expected_value)`.
+    /// Returns `True` if a matching segment exists, `False` if segments exist but none match,
+    /// `Unknown` if no segments with the tag exist.
+    ///
+    /// Example: `ctx.has_segment_matching("STS", &[(0, 0, "Z20"), (1, 0, "Z32"), (2, 0, "A99")])`
+    pub fn has_segment_matching(
+        &self,
+        tag: &str,
+        checks: &[(usize, usize, &str)],
+    ) -> ConditionResult {
+        let segments = self.find_segments(tag);
+        if segments.is_empty() {
+            return ConditionResult::Unknown;
+        }
+        let found = segments.iter().any(|seg| {
+            checks.iter().all(|(elem, comp, val)| {
+                seg.elements
+                    .get(*elem)
+                    .and_then(|e| e.get(*comp))
+                    .is_some_and(|v| v == val)
+            })
+        });
+        ConditionResult::from(found)
+    }
+
+    /// Group-scoped multi-element match with message-wide fallback.
+    ///
+    /// Checks if any group instance at `group_path` contains a segment with `tag`
+    /// where ALL element/component checks match.
+    pub fn has_segment_matching_in_group(
+        &self,
+        tag: &str,
+        checks: &[(usize, usize, &str)],
+        group_path: &[&str],
+    ) -> ConditionResult {
+        let instance_count = self.group_instance_count(group_path);
+        if instance_count > 0 {
+            for i in 0..instance_count {
+                let segs = self.find_segments_in_group(tag, group_path, i);
+                if segs.iter().any(|seg| {
+                    checks.iter().all(|(elem, comp, val)| {
+                        seg.elements
+                            .get(*elem)
+                            .and_then(|e| e.get(*comp))
+                            .is_some_and(|v| v == val)
+                    })
+                }) {
+                    return ConditionResult::True;
+                }
+            }
+            return ConditionResult::False;
+        }
+        // Fallback: message-wide
+        self.has_segment_matching(tag, checks)
+    }
+
+    // --- DTM date comparison helpers ---
+
+    /// Check if a DTM segment with the given qualifier has a value >= threshold.
+    ///
+    /// Both the DTM value and threshold should be in EDIFACT format 303 (CCYYMMDDHHMM).
+    /// Returns `Unknown` if no DTM with the qualifier exists.
+    pub fn dtm_ge(&self, qualifier: &str, threshold: &str) -> ConditionResult {
+        let segs = self.find_segments_with_qualifier("DTM", 0, qualifier);
+        match segs.first() {
+            Some(dtm) => match dtm.elements.first().and_then(|e| e.get(1)) {
+                Some(val) => ConditionResult::from(val.as_str() >= threshold),
+                None => ConditionResult::Unknown,
+            },
+            None => ConditionResult::Unknown,
+        }
+    }
+
+    /// Check if a DTM segment with the given qualifier has a value < threshold.
+    pub fn dtm_lt(&self, qualifier: &str, threshold: &str) -> ConditionResult {
+        let segs = self.find_segments_with_qualifier("DTM", 0, qualifier);
+        match segs.first() {
+            Some(dtm) => match dtm.elements.first().and_then(|e| e.get(1)) {
+                Some(val) => ConditionResult::from((val.as_str()) < threshold),
+                None => ConditionResult::Unknown,
+            },
+            None => ConditionResult::Unknown,
+        }
+    }
+
+    /// Check if a DTM segment with the given qualifier has a value <= threshold.
+    pub fn dtm_le(&self, qualifier: &str, threshold: &str) -> ConditionResult {
+        let segs = self.find_segments_with_qualifier("DTM", 0, qualifier);
+        match segs.first() {
+            Some(dtm) => match dtm.elements.first().and_then(|e| e.get(1)) {
+                Some(val) => ConditionResult::from(val.as_str() <= threshold),
+                None => ConditionResult::Unknown,
+            },
+            None => ConditionResult::Unknown,
+        }
+    }
+
+    // --- Group-scoped cardinality helpers ---
+
+    /// Count segments matching tag + qualifier within a group path (across all instances).
+    ///
+    /// Returns the total count across all group instances.
+    /// Falls back to message-wide count if no navigator.
+    pub fn count_qualified_in_group(
+        &self,
+        tag: &str,
+        element_index: usize,
+        qualifier: &str,
+        group_path: &[&str],
+    ) -> usize {
+        let instance_count = self.group_instance_count(group_path);
+        if instance_count > 0 {
+            let mut total = 0;
+            for i in 0..instance_count {
+                total += self
+                    .find_segments_with_qualifier_in_group(tag, element_index, qualifier, group_path, i)
+                    .len();
+            }
+            return total;
+        }
+        // Fallback: message-wide
+        self.find_segments_with_qualifier(tag, element_index, qualifier).len()
+    }
+
+    /// Count segments matching tag (any qualifier) within a group path.
+    pub fn count_in_group(&self, tag: &str, group_path: &[&str]) -> usize {
+        let instance_count = self.group_instance_count(group_path);
+        if instance_count > 0 {
+            let mut total = 0;
+            for i in 0..instance_count {
+                total += self.find_segments_in_group(tag, group_path, i).len();
+            }
+            return total;
+        }
+        // Fallback: message-wide
+        self.find_segments(tag).len()
     }
 }
 
@@ -1265,5 +1412,198 @@ mod tests {
         assert_eq!(ctx.child_group_instance_count(&["SG4", "SG8"], 0, "SG10"), 0);
         assert!(ctx.find_segments_in_child_group("CCI", &["SG4", "SG8"], 0, "SG10", 0).is_empty());
         assert_eq!(ctx.extract_value_in_group("SEQ", 0, 0, &["SG4", "SG8"], 0), None);
+    }
+
+    // --- has_segment_matching tests ---
+
+    #[test]
+    fn test_has_segment_matching_found() {
+        let segments = vec![
+            make_segment("STS", vec![vec!["7"], vec!["E01"], vec!["ZW4"]]),
+            make_segment("STS", vec![vec!["Z20"], vec!["Z32"], vec!["A99"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        assert_eq!(
+            ctx.has_segment_matching("STS", &[(0, 0, "Z20"), (1, 0, "Z32"), (2, 0, "A99")]),
+            ConditionResult::True,
+        );
+    }
+
+    #[test]
+    fn test_has_segment_matching_not_found() {
+        let segments = vec![
+            make_segment("STS", vec![vec!["7"], vec!["E01"], vec!["ZW4"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        assert_eq!(
+            ctx.has_segment_matching("STS", &[(0, 0, "Z20"), (1, 0, "Z32")]),
+            ConditionResult::False,
+        );
+    }
+
+    #[test]
+    fn test_has_segment_matching_no_segments() {
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &[]);
+
+        assert_eq!(
+            ctx.has_segment_matching("STS", &[(0, 0, "Z20")]),
+            ConditionResult::Unknown,
+        );
+    }
+
+    #[test]
+    fn test_has_segment_matching_in_group() {
+        let nav = MockGroupNavigator::new()
+            .with_group(
+                &["SG4"],
+                0,
+                vec![
+                    make_segment("STS", vec![vec!["7"], vec!["E01"]]),
+                ],
+            )
+            .with_group(
+                &["SG4"],
+                1,
+                vec![
+                    make_segment("STS", vec![vec!["Z20"], vec!["Z32"]]),
+                ],
+            );
+        let segments = vec![
+            make_segment("STS", vec![vec!["7"], vec!["E01"]]),
+            make_segment("STS", vec![vec!["Z20"], vec!["Z32"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::with_navigator("55001", &external, &segments, &nav);
+
+        assert_eq!(
+            ctx.has_segment_matching_in_group("STS", &[(0, 0, "Z20"), (1, 0, "Z32")], &["SG4"]),
+            ConditionResult::True,
+        );
+    }
+
+    // --- DTM comparison tests ---
+
+    #[test]
+    fn test_dtm_ge() {
+        let segments = vec![
+            make_segment("DTM", vec![vec!["137", "202601010000", "303"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        assert_eq!(ctx.dtm_ge("137", "202601010000"), ConditionResult::True);
+        assert_eq!(ctx.dtm_ge("137", "202501010000"), ConditionResult::True);
+        assert_eq!(ctx.dtm_ge("137", "202701010000"), ConditionResult::False);
+        assert_eq!(ctx.dtm_ge("999", "202601010000"), ConditionResult::Unknown);
+    }
+
+    #[test]
+    fn test_dtm_lt() {
+        let segments = vec![
+            make_segment("DTM", vec![vec!["137", "202601010000", "303"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        assert_eq!(ctx.dtm_lt("137", "202701010000"), ConditionResult::True);
+        assert_eq!(ctx.dtm_lt("137", "202601010000"), ConditionResult::False);
+        assert_eq!(ctx.dtm_lt("137", "202501010000"), ConditionResult::False);
+    }
+
+    #[test]
+    fn test_dtm_le() {
+        let segments = vec![
+            make_segment("DTM", vec![vec!["137", "202601010000", "303"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        assert_eq!(ctx.dtm_le("137", "202601010000"), ConditionResult::True);
+        assert_eq!(ctx.dtm_le("137", "202701010000"), ConditionResult::True);
+        assert_eq!(ctx.dtm_le("137", "202501010000"), ConditionResult::False);
+    }
+
+    // --- Count helpers tests ---
+
+    #[test]
+    fn test_count_qualified_in_group() {
+        let nav = MockGroupNavigator::new()
+            .with_group(
+                &["SG4", "SG8"],
+                0,
+                vec![
+                    make_segment("CCI", vec![vec!["Z23"]]),
+                    make_segment("CCI", vec![vec!["Z30"]]),
+                ],
+            )
+            .with_group(
+                &["SG4", "SG8"],
+                1,
+                vec![
+                    make_segment("CCI", vec![vec!["Z23"]]),
+                ],
+            );
+        let segments = vec![
+            make_segment("CCI", vec![vec!["Z23"]]),
+            make_segment("CCI", vec![vec!["Z30"]]),
+            make_segment("CCI", vec![vec!["Z23"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::with_navigator("55001", &external, &segments, &nav);
+
+        assert_eq!(ctx.count_qualified_in_group("CCI", 0, "Z23", &["SG4", "SG8"]), 2);
+        assert_eq!(ctx.count_qualified_in_group("CCI", 0, "Z30", &["SG4", "SG8"]), 1);
+        assert_eq!(ctx.count_qualified_in_group("CCI", 0, "Z99", &["SG4", "SG8"]), 0);
+    }
+
+    #[test]
+    fn test_count_in_group() {
+        let nav = MockGroupNavigator::new()
+            .with_group(
+                &["SG4", "SG8"],
+                0,
+                vec![
+                    make_segment("SEQ", vec![vec!["Z98"]]),
+                    make_segment("CCI", vec![vec!["Z23"]]),
+                ],
+            )
+            .with_group(
+                &["SG4", "SG8"],
+                1,
+                vec![
+                    make_segment("SEQ", vec![vec!["Z01"]]),
+                ],
+            );
+        let segments = vec![
+            make_segment("SEQ", vec![vec!["Z98"]]),
+            make_segment("CCI", vec![vec!["Z23"]]),
+            make_segment("SEQ", vec![vec!["Z01"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::with_navigator("55001", &external, &segments, &nav);
+
+        assert_eq!(ctx.count_in_group("SEQ", &["SG4", "SG8"]), 2);
+        assert_eq!(ctx.count_in_group("CCI", &["SG4", "SG8"]), 1);
+        assert_eq!(ctx.count_in_group("DTM", &["SG4", "SG8"]), 0);
+    }
+
+    #[test]
+    fn test_count_fallback_no_navigator() {
+        let segments = vec![
+            make_segment("CCI", vec![vec!["Z23"]]),
+            make_segment("CCI", vec![vec!["Z30"]]),
+            make_segment("CCI", vec![vec!["Z23"]]),
+        ];
+        let external = NoOpExternalProvider;
+        let ctx = EvaluationContext::new("55001", &external, &segments);
+
+        // Falls back to message-wide count
+        assert_eq!(ctx.count_qualified_in_group("CCI", 0, "Z23", &["SG4", "SG8"]), 2);
+        assert_eq!(ctx.count_in_group("CCI", &["SG4", "SG8"]), 3);
     }
 }

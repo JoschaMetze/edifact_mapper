@@ -1415,7 +1415,7 @@ impl UtilmdGasConditionEvaluatorFV2504 {
     /// [2061] Segment bzw. Segmentgruppe ist genau einmal je SG4 IDE (Vorgang) anzugeben
     // REVIEW: Condition states the segment/group is to be given exactly once per SG4 IDE (Vorgang). As a boolean applicability condition, this is True when the IDE segment (Vorgangsidentifikator) is present, indicating the SG4 context exists. Cardinality enforcement (exactly once) is a structural rule beyond a simple boolean evaluator. (medium confidence)
     fn evaluate_2061(&self, ctx: &EvaluationContext) -> ConditionResult {
-        ctx.has_segment("IDE")
+        ConditionResult::from(ctx.has_segment("IDE"))
     }
 
     /// [2119] Je SG8 SEQ+Z13 (Smartmeter-Gateway) ist genau einmal die Segmentgruppe anzugeben
