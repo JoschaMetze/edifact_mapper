@@ -200,6 +200,39 @@ fn test_decide_regeneration_preserve_high_confidence() {
 
 #[test]
 fn test_decide_regeneration_stale_description() {
+    // Staleness only triggers for medium-confidence conditions.
+    // High-confidence conditions are preserved regardless of hash changes.
+    let mut meta_conditions = HashMap::new();
+    meta_conditions.insert(
+        "1".to_string(),
+        ConditionMetadata {
+            confidence: "medium".to_string(),
+            reasoning: None,
+            description_hash: compute_description_hash("OLD description"),
+            is_external: false,
+        },
+    );
+
+    let metadata = ConditionMetadataFile {
+        generated_at: "2026-02-18T12:00:00Z".to_string(),
+        ahb_file: "test.xml".to_string(),
+        format_version: "FV2510".to_string(),
+        conditions: meta_conditions,
+    };
+
+    let conditions = vec![("1".to_string(), "NEW description".to_string())];
+    let mut existing_ids = HashSet::new();
+    existing_ids.insert("1".to_string());
+
+    let decision = decide_regeneration(&conditions, Some(&metadata), &existing_ids, false);
+
+    assert_eq!(decision.to_regenerate.len(), 1);
+    assert_eq!(decision.to_regenerate[0].reason, RegenerationReason::Stale);
+}
+
+#[test]
+fn test_decide_regeneration_high_confidence_not_stale() {
+    // High-confidence conditions are never regenerated for staleness
     let mut meta_conditions = HashMap::new();
     meta_conditions.insert(
         "1".to_string(),
@@ -224,8 +257,8 @@ fn test_decide_regeneration_stale_description() {
 
     let decision = decide_regeneration(&conditions, Some(&metadata), &existing_ids, false);
 
-    assert_eq!(decision.to_regenerate.len(), 1);
-    assert_eq!(decision.to_regenerate[0].reason, RegenerationReason::Stale);
+    assert_eq!(decision.to_regenerate.len(), 0);
+    assert_eq!(decision.to_preserve, vec!["1"]);
 }
 
 #[test]

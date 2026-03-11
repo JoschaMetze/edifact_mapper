@@ -177,17 +177,28 @@ fn should_regenerate(
         return Some(RegenerationReason::LowConfidence);
     }
 
-    // Check for staleness (description changed)
+    // High confidence conditions are never regenerated for staleness.
+    // This allows external scripts to force-preserve conditions by setting
+    // confidence to "high" regardless of description hash.
+    if condition_meta.confidence.to_lowercase() == "high" {
+        // Still check if implementation is missing from output file
+        if !existing_condition_ids.contains(id) {
+            return Some(RegenerationReason::MissingImplementation);
+        }
+        return None;
+    }
+
+    // Medium confidence: check for staleness (description changed)
     let current_hash = compute_description_hash(description);
     if condition_meta.description_hash != current_hash {
         return Some(RegenerationReason::Stale);
     }
 
-    // High confidence but implementation missing from output file
+    // Medium confidence but implementation missing from output file
     if !existing_condition_ids.contains(id) {
         return Some(RegenerationReason::MissingImplementation);
     }
 
-    // High confidence, not stale, implementation exists -> preserve
+    // Not stale, implementation exists -> preserve
     None
 }

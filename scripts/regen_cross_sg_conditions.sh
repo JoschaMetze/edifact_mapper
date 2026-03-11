@@ -37,28 +37,7 @@ with open(rs_path) as f:
 
 conds = data.get('conditions', {})
 
-# 1. Backfill: add "high" metadata for ALL conditions in the .rs file
-#    that have no metadata entry. This prevents them from being regenerated
-#    as "New" — we only want to regenerate our specific targets.
-all_rs_ids = set(re.findall(r'fn evaluate_(\d+)\(', rs_content))
-existing_ids = set(conds.keys())
-missing_ids = all_rs_ids - existing_ids
-
-if missing_ids:
-    print(f"  Backfilling {len(missing_ids)} conditions with no metadata (marking high to skip)")
-    for cid in missing_ids:
-        conds[cid] = {
-            "confidence": "high",
-            "reasoning": "[STUB] No previous generation — preserved as-is",
-            "description_hash": "00000000",
-            "is_external": False,
-        }
-
-# 2. Target specific condition IDs that benefit from the new cross-SG API.
-#    These were identified by analyzing condition reasoning for:
-#    - Pattern A: parent->child SG8->SG10 navigation
-#    - Pattern B: presence + absence in same group instance
-#    - Pattern C: cross-group value correlation (Zeitraum-ID matching)
+# Target specific condition IDs that benefit from the new cross-SG API.
 TARGET_IDS = {
     # Pattern A: parent->child (filtered_parent_child_has_qualifier)
     "47", "76", "90", "114", "117", "118", "122", "193", "197", "199",
@@ -74,14 +53,53 @@ TARGET_IDS = {
     "2004", "2005", "2006", "2007", "2008", "2009", "2011",
 }
 
+# Extract descriptions from the .rs file (doc comments before evaluate_ functions).
+# These are used to compute correct description hashes so the generator
+# doesn't mark non-target conditions as "stale".
+desc_pattern = re.compile(r'///?\s*\[(\d+)\]\s*(.*?)(?=\n\s*fn evaluate_)', re.DOTALL)
+rs_descriptions = {}
+for m in desc_pattern.finditer(rs_content):
+    cid = m.group(1)
+    desc = m.group(2).strip()
+    # Clean up multi-line doc comments
+    desc = re.sub(r'\n\s*///?', ' ', desc).strip()
+    rs_descriptions[cid] = desc
+
+def compute_hash(text):
+    """Match Rust's compute_description_hash: SHA-256, first 4 bytes as hex."""
+    return hashlib.sha256(text.encode()).hexdigest()[:8]
+
+# Force ALL conditions to "high" first (prevents regeneration),
+# then selectively downgrade our targets to "low".
+all_rs_ids = set(re.findall(r'fn evaluate_(\d+)\(', rs_content))
+
+for cid in all_rs_ids:
+    # Compute the real description hash if we have the description
+    desc_hash = compute_hash(rs_descriptions[cid]) if cid in rs_descriptions else "00000000"
+
+    if cid not in conds:
+        conds[cid] = {
+            "confidence": "high",
+            "reasoning": "[PRESERVED] Existing implementation",
+            "description_hash": desc_hash,
+            "is_external": False,
+        }
+    elif cid not in TARGET_IDS:
+        # Force non-targets to high AND update their hash to prevent stale detection
+        conds[cid]['confidence'] = 'high'
+        if desc_hash != "00000000":
+            conds[cid]['description_hash'] = desc_hash
+
 changed = 0
 for cid in TARGET_IDS:
-    if cid in conds and conds[cid]['confidence'] != 'low':
+    if cid in conds:
         old_conf = conds[cid]['confidence']
         conds[cid]['confidence'] = 'low'
-        conds[cid]['reasoning'] = f"[REGEN:{old_conf}] {conds[cid].get('reasoning', '')}"
+        conds[cid]['reasoning'] = f"[REGEN:{old_conf}] Targeted for cross-SG API regeneration"
+        # Use a dummy hash that won't match — forces regeneration
+        conds[cid]['description_hash'] = '00000000'
         changed += 1
-    elif cid not in conds:
+    else:
         print(f"  WARNING: target condition [{cid}] not found in metadata")
 
 by_conf = {}
@@ -96,7 +114,7 @@ print(f"  Final distribution: {by_conf}")
 with open(metadata_path, 'w') as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
 
-print(f"  Generator will regenerate: {by_conf.get('low', 0)} conditions")
+print(f"  Generator will regenerate ONLY: {by_conf.get('low', 0)} conditions")
 PYEOF
 
 echo ""
@@ -108,13 +126,79 @@ cargo run -p automapper-generator -- generate-conditions \
     --format-version FV2504 \
     --message-type UTILMD_Strom \
     --mig-path "$MIG" \
-    --batch-size 15 \
-    --max-concurrent 4 \
+    --batch-size 5 \
+    --max-concurrent 2 \
     --incremental \
     "$@"
 
 echo ""
-echo "=== Step 3: Verify ==="
+echo "=== Step 3: Auto-fix common clippy issues ==="
+python3 << 'PYEOF2'
+import re
+
+path = "crates/automapper-validation/src/generated/fv2504/utilmd_strom_conditions_fv2504.rs"
+with open(path) as f:
+    content = f.read()
+
+# 1. Fix unused `ctx` → `_ctx` for functions that don't use ctx in their body
+lines = content.split('\n')
+result = []
+i = 0
+while i < len(lines):
+    line = lines[i]
+    m = re.match(r'(\s+fn evaluate_\d+\(&self,\s+)ctx(:\s+&EvaluationContext\)\s+->\s+ConditionResult\s+\{)', line)
+    if m:
+        body_lines = []
+        j = i + 1
+        brace_depth = 1
+        while j < len(lines) and brace_depth > 0:
+            for ch in lines[j]:
+                if ch == '{': brace_depth += 1
+                elif ch == '}': brace_depth -= 1
+            if brace_depth > 0:
+                body_lines.append(lines[j])
+            j += 1
+        body = '\n'.join(body_lines)
+        if 'ctx' not in body:
+            line = m.group(1) + '_ctx' + m.group(2)
+    result.append(line)
+    i += 1
+content = '\n'.join(result)
+
+# 2. Fix ctx.navigator() → ctx.navigator (field, not method)
+content = content.replace('ctx.navigator()', 'ctx.navigator')
+
+# 3. Fix .get(0) → .first()
+content = content.replace('.get(0)', '.first()')
+
+# 3. Fix .map(|v| v.clone()) → .cloned()
+content = re.sub(r'\.map\(\|v\| v\.clone\(\)\)', '.cloned()', content)
+
+# 4. Fix type annotations: .and_then(|e| e.first()) needs Vec<String> annotation
+content = re.sub(
+    r'\.and_then\(\|e\| e\.first\(\)\)',
+    '.and_then(|e: &Vec<String>| e.first())',
+    content
+)
+
+# 5. Fix type annotations: .is_some_and(|v| ...) needs &String annotation
+content = re.sub(
+    r'\.is_some_and\(\|v\| ',
+    '.is_some_and(|v: &String| ',
+    content
+)
+
+# 6. Fix for_kv_map: for (_x, y) in &map → for y in map.values()
+content = re.sub(r'for \(_\w+, (\w+)\) in &(\w+)', r'for \1 in \2.values()', content)
+
+with open(path, 'w') as f:
+    f.write(content)
+
+print("  Auto-fixed: unused ctx, navigator(), .get(0), type annotations, .map(|v| v.clone()), for_kv_map")
+PYEOF2
+
+echo ""
+echo "=== Step 4: Verify ==="
 cargo clippy -p automapper-validation -- -D warnings
 cargo test -p automapper-validation --lib
 

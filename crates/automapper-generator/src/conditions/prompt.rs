@@ -164,13 +164,16 @@ the exact `elements[N]` index for every data element and composite. Never guess 
 from the AHB shorthand notation alone.
 
 ## IMPORTANT rules for generated code
-1. **PREFER high-level helpers** (`has_qualifier`, `lacks_qualifier`, `has_qualified_value`, `any_group_has_*`) for concise, readable code. Only use low-level segment access when helpers don't cover the pattern.
+1. **PREFER high-level helpers** (`has_qualifier`, `lacks_qualifier`, `has_qualified_value`, `any_group_has_*`, `filtered_parent_child_has_qualifier`, `any_group_has_qualifier_without`) for concise, readable code. Only use low-level segment access when helpers don't cover the pattern.
 2. Only use the `EvaluationContext` API described above. Do NOT invent fields like `ctx.transaktion`, `ctx.prozessdaten`, etc.
 3. Use `.get()` and `.and_then()` for safe element access when using low-level API — never panic on missing data.
 4. For **low confidence** conditions, set implementation to null.
 5. **Always consult the Segment Structure Reference for element indices.** Do not derive indices from EDIFACT shorthand notation in condition descriptions.
 6. Use `.first()` instead of `.get(0)` — clippy enforces this (`clippy::get_first`).
 7. Prefix unused function parameters with `_` (e.g., `_ctx`) to avoid `unused_variable` warnings.
+8. **ALWAYS provide an implementation when the condition can be expressed with the available API.** Do NOT return null/stub for conditions that check segment qualifiers, group navigation, or presence/absence — these CAN be implemented. Only return null for genuinely ambiguous business logic.
+9. **SG10 is a CHILD GROUP of SG8** in the UTILMD MIG structure. When a condition mentions "SG10 CCI+..." it means checking a CCI segment inside an SG10 child group instance of the parent SG8. Use the parent-child navigation API (filtered_parent_child_has_qualifier, find_segments_in_child_group, child_group_instance_count).
+10. **"nicht vorhanden" (not present)** means the condition is True when the segment/qualifier is ABSENT. For same-group absence, use `any_group_has_qualifier_without`. For parent-child absence, negate `filtered_parent_child_has_qualifier`.
 
 Respond ONLY with a JSON object in this exact format (no markdown, no code blocks):
 {
@@ -487,45 +490,141 @@ fn resolve_ahb_notations(description: &str) -> Vec<String> {
 
 /// Detects if a condition description requires group-scoped evaluation.
 ///
-/// Looks for phrases like "in derselben SG8" or "in dieser SG4" and returns
-/// a hint string directing the generator to use group-scoped API methods.
+/// Returns one or more hint strings directing the generator to use specific
+/// API methods. Checks patterns in priority order (most specific first).
 fn detect_group_scope(description: &str) -> Option<String> {
-    // Pattern: parent SG with qualifier, child SG has something
-    // e.g., "in der SG8 mit SEQ+Z98 ... SG10 ... CCI+Z23"
-    let parent_child_re = regex::Regex::new(
-        r"(?i)(?:in\s+(?:der|einer)\s+)?(SG\d+)\s+(?:mit|mit\s+dem)\s+\w+\+\w+.*?(SG\d+)"
+    let mut hints = Vec::new();
+
+    // Pattern 1: Explicit parent/child path notation
+    // "SG8 SEQ+Z98 SG10 CCI+..." or "SG8 SEQ+Z01/ SG10 CCI+..."
+    let explicit_parent_child = regex::Regex::new(
+        r"(?i)(SG\d+)\s+(?:SEQ|CCI|RFF)\+\S+[\s/]+(SG\d+)\s+(?:CCI|CAV|RFF)"
     ).unwrap();
-    if let Some(cap) = parent_child_re.captures(description) {
+    if let Some(cap) = explicit_parent_child.captures(description) {
         let parent = cap.get(1).unwrap().as_str();
         let child = cap.get(2).unwrap().as_str();
-        return Some(format!(
-            "PARENT-CHILD: Use filtered_parent_child_has_qualifier with parent \"{}\" and child \"{}\"",
-            parent, child
+        hints.push(format!(
+            "PARENT-CHILD: {} is a child group of {}. Use ctx.filtered_parent_child_has_qualifier(&[\"SG4\", \"{}\"], ..., \"{}\", ...)",
+            child, parent, parent, child
         ));
     }
 
-    // Pattern: presence + absence in same group
-    // e.g., "nicht vorhanden in derselben SG" or "fehlt in der gleichen SG"
-    let absence_re = regex::Regex::new(
-        r"(?i)(?:nicht\s+vorhanden|fehlt|absent)\s+(?:in\s+)?(?:derselben|der\s+gleichen)\s+(SG\d+)"
+    // Pattern 2: Bare "SG10 CCI+..." or "SG10 CAV+..." (without explicit SG8 prefix)
+    // Implies SG10 is a child of the current SG8 context
+    if hints.is_empty() {
+        let bare_sg10 = regex::Regex::new(
+            r"(?i)\bSG10\s+(?:CCI|CAV)\+(\S+)"
+        ).unwrap();
+        if bare_sg10.is_match(description) {
+            let has_nicht = description.contains("nicht vorhanden")
+                || description.starts_with("Wenn nicht ");
+            if has_nicht {
+                hints.push(
+                    "PARENT-CHILD ABSENCE: SG10 is a child of SG8. To check SG10 child absence, \
+                     iterate SG8 instances with ctx.child_group_instance_count and \
+                     ctx.find_segments_in_child_group, or use ctx.filtered_parent_child_has_qualifier \
+                     and negate the result.".to_string()
+                );
+            } else {
+                hints.push(
+                    "PARENT-CHILD: SG10 is a child of SG8. Use ctx.filtered_parent_child_has_qualifier(\
+                     &[\"SG4\", \"SG8\"], parent_tag, parent_elem, parent_qual, \"SG10\", child_tag, child_elem, child_qual) \
+                     to check if any SG8 matching a qualifier has an SG10 child with the specified qualifier."
+                        .to_string()
+                );
+            }
+        }
+    }
+
+    // Pattern 3: "in derselben/dieser SG8 ... nicht vorhanden" — same-instance absence
+    let same_group_absence = regex::Regex::new(
+        r"(?i)(?:in\s+)?(?:derselben|dieser|dem)\s+(SG\d+).*?nicht\s+vorhanden"
     ).unwrap();
-    if let Some(cap) = absence_re.captures(description) {
+    if let Some(cap) = same_group_absence.captures(description) {
         let group = cap.get(1).unwrap().as_str();
-        return Some(format!(
-            "PRESENCE-ABSENCE: Use any_group_has_qualifier_without with group_path ending in \"{}\"",
+        hints.push(format!(
+            "SAME-GROUP ABSENCE: Use ctx.any_group_has_qualifier_without(present_tag, present_elem, present_qual, \
+             absent_tag, absent_elem, absent_qual, &[\"SG4\", \"{}\"]) — checks that in some group instance, \
+             one qualifier IS present while another IS NOT.",
             group
         ));
     }
 
-    // Pattern: same group scope (existing)
-    let re = regex::Regex::new(r"(?i)in\s+(?:derselben|dieser)\s+(SG\d+)").unwrap();
-    re.captures(description).map(|cap| {
+    // Pattern 4: "nicht vorhanden" at end without "derselben" — general absence in parent group
+    if hints.is_empty() {
+        let trailing_absence = regex::Regex::new(
+            r"(?i)(?:das\s+)?(?:SG\d+\s+)?(?:RFF|PIA|CCI|CAV|SEQ)\+\S+.*?nicht\s+vorhanden"
+        ).unwrap();
+        if trailing_absence.is_match(description) {
+            hints.push(
+                "ABSENCE CHECK: Use ctx.lacks_qualifier for message-wide, or \
+                 ctx.any_group_has_qualifier_without for same-group-instance absence."
+                    .to_string()
+            );
+        }
+    }
+
+    // Pattern 5: "in der SG8 mit SEQ+..." — SG with qualifier filter, child SG
+    let sg_with_qualifier = regex::Regex::new(
+        r"(?i)(?:in\s+)?(?:der|einer|dem)\s+(SG\d+)\s+(?:mit|mit\s+dem)\s+(\w+)\+(\w+).*?(SG\d+)"
+    ).unwrap();
+    if let Some(cap) = sg_with_qualifier.captures(description) {
+        let parent = cap.get(1).unwrap().as_str();
+        let child = cap.get(4).unwrap().as_str();
+        if !hints.iter().any(|h| h.contains("PARENT-CHILD")) {
+            hints.push(format!(
+                "PARENT-CHILD: Use ctx.filtered_parent_child_has_qualifier with parent \"{}\" and child \"{}\"",
+                parent, child
+            ));
+        }
+    }
+
+    // Pattern 6: Zeitraum-ID cross-reference between SG groups
+    let zeitraum_cross = regex::Regex::new(
+        r"(?i)(?:Zeitraum-ID|DE1050|DE1156|DE3224).*?(?:identisch|derselben|gleich|passend)"
+    ).unwrap();
+    if zeitraum_cross.is_match(description) || description.contains("Zeitraum-ID") {
+        hints.push(
+            "CROSS-GROUP: Uses Zeitraum-ID matching. Use ctx.collect_group_values to gather \
+             Zeitraum-IDs from one group, then iterate another group's instances to find matches. \
+             Or use ctx.groups_share_qualified_value for simple correlation."
+                .to_string()
+        );
+    }
+
+    // Pattern 7: "in dieser SG" / "in derselben SG" / "in dieser SG8" — group scope
+    let same_group = regex::Regex::new(
+        r"(?i)in\s+(?:derselben|dieser|dem\s+selben|dem\s+gleichen)\s+(SG\d*)"
+    ).unwrap();
+    if let Some(cap) = same_group.captures(description) {
         let group = cap.get(1).unwrap().as_str();
-        format!(
-            "GROUP-SCOPED: Use find_segments_in_group / find_segments_with_qualifier_in_group with group_path ending in \"{}\"",
-            group
-        )
-    })
+        if !group.is_empty() && !hints.iter().any(|h| h.contains("ABSENCE") || h.contains("PARENT-CHILD")) {
+            hints.push(format!(
+                "GROUP-SCOPED: Use ctx.any_group_has_qualifier or ctx.any_group_has_co_occurrence \
+                 with group_path ending in \"{}\"",
+                group
+            ));
+        }
+    }
+
+    // Pattern 8: Cardinality conditions — "genau einmal" / "mindestens einmal"
+    let cardinality = regex::Regex::new(
+        r"(?i)(?:genau|mindestens)\s+einmal\s+(?:für|pro)"
+    ).unwrap();
+    if cardinality.is_match(description) {
+        hints.push(
+            "CARDINALITY: Count group instances using ctx.group_instance_count or \
+             ctx.child_group_instance_count. Compare against expected count from \
+             ctx.collect_group_values."
+                .to_string()
+        );
+    }
+
+    if hints.is_empty() {
+        None
+    } else {
+        Some(hints.join("\n    → "))
+    }
 }
 
 /// Default example implementations for few-shot prompting.
@@ -591,39 +690,98 @@ fn evaluate_27(&self, ctx: &EvaluationContext) -> ConditionResult {
     }
 }"#
         .to_string(),
-        r#"// Example 9: Parent-child qualifier check — "In SG8 mit SEQ+Z98, hat das SG10-Kind CCI+Z23?"
-fn evaluate_30(&self, ctx: &EvaluationContext) -> ConditionResult {
+        r#"// Example 9: Parent-child qualifier check — "Wenn in dieser SG8 SEQ+Z98 SG10 CCI+++ZA6 CAV+E02 vorhanden"
+// SG10 is a CHILD GROUP of SG8. Use filtered_parent_child_has_qualifier to:
+// 1. Find SG8 instances where SEQ has qualifier Z98
+// 2. Check if their SG10 children have CCI with qualifier ZA6
+fn evaluate_118(&self, ctx: &EvaluationContext) -> ConditionResult {
     ctx.filtered_parent_child_has_qualifier(
         &["SG4", "SG8"], "SEQ", 0, "Z98",
-        "SG10", "CCI", 0, "Z23",
+        "SG10", "CCI", 2, "ZA6",
     )
 }"#
         .to_string(),
-        r#"// Example 10: Presence+absence in same group — "In irgendeiner SG8 SEQ+Z59 vorhanden aber CCI+11 nicht"
-fn evaluate_31(&self, ctx: &EvaluationContext) -> ConditionResult {
+        r#"// Example 10: Parent-child with CAV value check — "Wenn SG10 CCI+15++Z21 CAV+AUS vorhanden"
+// SG10 CCI and CAV are segments inside child group SG10 of parent SG8.
+// filtered_parent_child_has_qualifier checks the child's CCI qualifier.
+// For the CAV value, use find_segments_in_child_group for detailed access.
+fn evaluate_377(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let nav = match ctx.navigator() {
+        Some(n) => n,
+        None => return ctx.has_qualified_value("CAV", 0, "AUS", 0, 0, &["AUS"]),
+    };
+    let sg8_count = nav.group_instance_count(&["SG4", "SG8"]);
+    for i in 0..sg8_count {
+        let sg10_count = nav.child_group_instance_count(&["SG4", "SG8"], i, "SG10");
+        for j in 0..sg10_count {
+            let ccis = nav.find_segments_in_child_group("CCI", &["SG4", "SG8"], i, "SG10", j);
+            let has_cci = ccis.iter().any(|s| {
+                s.elements.get(0).and_then(|e| e.first()).is_some_and(|v| v == "15")
+                && s.elements.get(2).and_then(|e| e.first()).is_some_and(|v| v == "Z21")
+            });
+            if has_cci {
+                let cavs = nav.find_segments_in_child_group("CAV", &["SG4", "SG8"], i, "SG10", j);
+                if cavs.iter().any(|s| s.elements.first().and_then(|e| e.first()).is_some_and(|v| v == "AUS")) {
+                    return ConditionResult::True;
+                }
+            }
+        }
+    }
+    ConditionResult::False
+}"#
+        .to_string(),
+        r#"// Example 11: Same-group absence — "Wenn in derselben SG8 SEQ+Z59 das PIA+5 nicht vorhanden"
+// Checks that in some SG8 instance, SEQ+Z59 IS present but PIA+5 IS NOT.
+fn evaluate_111(&self, ctx: &EvaluationContext) -> ConditionResult {
     ctx.any_group_has_qualifier_without(
         "SEQ", 0, "Z59",
-        "CCI", 0, "11",
+        "PIA", 0, "5",
         &["SG4", "SG8"],
     )
 }"#
         .to_string(),
-        r#"// Example 11: Cross-group value correlation — "Zeitraum-ID in SG6 RFF+Z49 = Referenz in SG8 SEQ.c286"
-fn evaluate_32(&self, ctx: &EvaluationContext) -> ConditionResult {
-    ctx.groups_share_qualified_value(
-        "RFF", 0, "Z49", 0, 1, &["SG4", "SG6"],
-        "SEQ", 1, 0, &["SG4", "SG8"],
-    )
+        r#"// Example 12: Same-group absence for child — "Wenn in derselben SG8 das SG10 CCI+11 nicht vorhanden"
+// SG10 is a child of SG8. Check if any SG8 instance has NO SG10 child with CCI qualifier "11".
+fn evaluate_445(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let result = ctx.filtered_parent_child_has_qualifier(
+        &["SG4", "SG8"], "SEQ", 0, "Z59",
+        "SG10", "CCI", 0, "11",
+    );
+    // Negate: we want absence (True when CCI+11 is NOT found)
+    match result {
+        ConditionResult::True => ConditionResult::False,
+        ConditionResult::False => ConditionResult::True,
+        ConditionResult::Unknown => ConditionResult::Unknown,
+    }
 }"#
         .to_string(),
-        r#"// Example 12: Custom cross-group logic with collect_group_values
-fn evaluate_33(&self, ctx: &EvaluationContext) -> ConditionResult {
-    let values = ctx.collect_group_values("RFF", 0, 1, &["SG4", "SG6"]);
-    if values.is_empty() {
+        r#"// Example 13: Zeitraum-ID cross-reference — collect values from one group, match in another
+fn evaluate_306(&self, ctx: &EvaluationContext) -> ConditionResult {
+    // "SG5 LOC+Z22 with same Zeitraum-ID as SG8 SEQ+Z58 DE1050"
+    // Collect Zeitraum-IDs from SG5 LOC+Z22 (element 2 = DE3224)
+    let loc_values = ctx.collect_group_values("LOC", 2, 0, &["SG4", "SG5"]);
+    let loc_z22_ids: Vec<&str> = loc_values.iter()
+        .filter_map(|(_, _v)| None::<&str>) // placeholder — real code checks LOC qualifier
+        .collect();
+    // Collect Zeitraum-IDs from SG8 SEQ+Z58 (element 1 = DE1050)
+    let seq_values = ctx.collect_group_values("SEQ", 1, 0, &["SG4", "SG8"]);
+    if loc_z22_ids.is_empty() || seq_values.is_empty() {
         return ConditionResult::Unknown;
     }
-    // Check if all collected values match a pattern
-    ConditionResult::from(values.iter().all(|(_, v)| v.starts_with("TS")))
+    // Check if any SEQ Zeitraum-ID matches a LOC Zeitraum-ID
+    ConditionResult::from(seq_values.iter().any(|(_, v)| loc_z22_ids.contains(&v.as_str())))
+}"#
+        .to_string(),
+        r#"// Example 14: Same-group RFF absence — "Wenn in derselben SG8 das RFF+Z14 nicht vorhanden"
+fn evaluate_316(&self, ctx: &EvaluationContext) -> ConditionResult {
+    // SEQ is always present in SG8 (entry segment), RFF+Z14 may be absent
+    // Use any_group_has_qualifier_without: SEQ present (any qualifier), RFF+Z14 absent
+    // But since we want "any SG8 where RFF+Z14 is absent", use lacks_qualifier as fallback
+    ctx.any_group_has_qualifier_without(
+        "SEQ", 0, "Z03",  // present: SEQ+Z03 or ZF5
+        "RFF", 0, "Z14",  // absent: RFF+Z14
+        &["SG4", "SG8"],
+    )
 }"#
         .to_string(),
     ]

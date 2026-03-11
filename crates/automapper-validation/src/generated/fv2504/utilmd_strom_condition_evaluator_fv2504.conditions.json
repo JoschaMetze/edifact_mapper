@@ -1,0 +1,3631 @@
+{
+  "generated_at": "2026-03-11T10:21:11Z",
+  "ahb_file": "UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml",
+  "format_version": "FV2504",
+  "conditions": {
+    "408": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b9a3d72e",
+      "is_external": false
+    },
+    "144": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b8d3f6d3",
+      "is_external": false
+    },
+    "20": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a5387753",
+      "is_external": false
+    },
+    "373": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c6c20b9b",
+      "is_external": false
+    },
+    "409": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "842dd489",
+      "is_external": false
+    },
+    "490": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d566ca5a",
+      "is_external": false
+    },
+    "525": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3915f006",
+      "is_external": false
+    },
+    "599": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "efb5859c",
+      "is_external": false
+    },
+    "967": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a58c2a1e",
+      "is_external": false
+    },
+    "121": {
+      "confidence": "high",
+      "reasoning": "Checks if in any SG8 where SEQ has qualifier Z03 or ZF5 (Zähleinrichtungsdaten), the RFF+Z14 (Smartmeter-Gateway reference) is absent. Uses any_group_has_qualifier_without for each SEQ qualifier variant with OR logic — True when such a Z03/ZF5 SG8 exists that lacks RFF+Z14.",
+      "description_hash": "d0f8c420",
+      "is_external": false
+    },
+    "621": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6169d177",
+      "is_external": false
+    },
+    "99": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "573b03f7",
+      "is_external": true
+    },
+    "97": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "648cfd4a",
+      "is_external": false
+    },
+    "77": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2e4bb8df",
+      "is_external": false
+    },
+    "209": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0e2d44dd",
+      "is_external": false
+    },
+    "41": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "068a4fcf",
+      "is_external": false
+    },
+    "413": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e3c772b5",
+      "is_external": false
+    },
+    "611": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "302e02d6",
+      "is_external": false
+    },
+    "117": {
+      "confidence": "medium",
+      "reasoning": "Full condition requires: (1) current SG8 has RFF+Z18=X, (2) another SG8 with SEQ+Z01 also has RFF+Z18=X, (3) that SG8 has SG10 with CCI elements[2][0]='ZA6' AND CAV elements[0][0]='E14'. Implementation simplifies to checking whether any SG8 has SG10 with both CCI+++ZA6 and CAV+E14 co-occurring in the same SG10 instance. The cross-SG RFF+Z18 value correlation and SEQ+Z01 parent check are omitted because the navigator API only exposes child-group segments (SG10 within SG8), not SG8's own entry segments. Medium confidence due to this structural limitation.",
+      "description_hash": "eb20a943",
+      "is_external": false
+    },
+    "2313": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2643e6c2",
+      "is_external": false
+    },
+    "332": {
+      "confidence": "medium",
+      "reasoning": "Checks whether any SG8 instance lacks CCI+6++ZA9 (Aggregationsverantwortung ÜNB, elements[0]='6' and elements[2][0]='ZA9') in its SG10 children. With navigator: iterates SG8 instances and their SG10 children. Without navigator: falls back to message-wide CCI+6 with ZA9 check. The Zeitraum-ID cross-reference between this SG8 and the Z01 SG8 cannot be fully verified without direct SG8-level segment access via navigator, so this is an approximation that may produce false positives in multi-SG4-group messages.",
+      "description_hash": "342e346b",
+      "is_external": false
+    },
+    "130": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e6eba96d",
+      "is_external": false
+    },
+    "531": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4cfd44cd",
+      "is_external": false
+    },
+    "460": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "fbc28059",
+      "is_external": true
+    },
+    "380": {
+      "confidence": "medium",
+      "reasoning": "Variant of condition 377 that accepts either 'AUS' or 'AU1' as the CAV value for the Überführungszeitreihentyp. Same SG8→SG10 parent-child navigation, broadened CAV value check.",
+      "description_hash": "4bb13075",
+      "is_external": false
+    },
+    "698": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "92acdd76",
+      "is_external": false
+    },
+    "67": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3425657a",
+      "is_external": false
+    },
+    "257": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d66be7c8",
+      "is_external": false
+    },
+    "101": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "604d44a7",
+      "is_external": false
+    },
+    "933": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b5e9c81e",
+      "is_external": false
+    },
+    "107": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "8bd07fa4",
+      "is_external": false
+    },
+    "399": {
+      "confidence": "low",
+      "reasoning": "Requires matching the Zeitraum-ID in SEQ+Z78 DE1050 against DE3224 of 'dieses Segments' (the current context segment — likely an SG5 LOC), then verifying RFF+Z31 in the same SG8 has a non-'9992 00000 001 8' DE1154 value. The EvaluationContext has no concept of 'the current segment being validated', making DE3224 context resolution impossible without additional API support. Marking as null pending context clarification.",
+      "description_hash": "3a9c269e",
+      "is_external": false
+    },
+    "180": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "10a8ce18",
+      "is_external": false
+    },
+    "284": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "07fe648e",
+      "is_external": false
+    },
+    "233": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "28c43e5e",
+      "is_external": true
+    },
+    "177": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f1b6f51b",
+      "is_external": false
+    },
+    "16": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "01e37a5a",
+      "is_external": false
+    },
+    "395": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "00540387",
+      "is_external": false
+    },
+    "2350": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "836ba524",
+      "is_external": false
+    },
+    "473": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "233249fb",
+      "is_external": false
+    },
+    "404": {
+      "confidence": "medium",
+      "reasoning": "Reads NAD+MR MP-ID from elements[1][0], then iterates all SG8 SG10 children looking for CCI with elements[2][0]==ZB3 and CAV with elements[0][0]==Z91 where the MP-ID (elements[0][1]) matches. Returns False if same MP-ID found (condition 'not same' fails), True otherwise. Approximation: cannot filter SG8 instances by SEQ+Z01/Z98 without find_segments_in_group; checks all SG8 SG10 children. This is acceptable since CCI+ZB3 CAV+Z91 patterns in other SG8 types would still represent valid MSB assignments to compare against.",
+      "description_hash": "4e297cb2",
+      "is_external": false
+    },
+    "940": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "576": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "713e5866",
+      "is_external": false
+    },
+    "432": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a8b36ddc",
+      "is_external": false
+    },
+    "694": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "399f0585",
+      "is_external": false
+    },
+    "939": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "477": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "45693558",
+      "is_external": false
+    },
+    "240": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "01868623",
+      "is_external": false
+    },
+    "2318": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4ef57ef5",
+      "is_external": false
+    },
+    "123": {
+      "confidence": "medium",
+      "reasoning": "Scans segments linearly to collect RFF+MG device IDs from each SG8 group with SEQ+Z20 (OBIS-Daten der Zähleinrichtung/Smartmeter-Gateway). A new SEQ starts a new SG8 context; RFF+MG within that context records the device number. Returns True if any device ID appears in 2+ different SG8 groups (indicating multiple OBIS datasets reference the same device). Linear scan is used because the navigator API does not expose a direct method to retrieve segments within a parent SG8 instance by absolute index.",
+      "description_hash": "84604faf",
+      "is_external": false
+    },
+    "510": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "72d664cc",
+      "is_external": false
+    },
+    "153": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ffcc30a9",
+      "is_external": false
+    },
+    "370": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "232cf419",
+      "is_external": false
+    },
+    "323": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "2960665d",
+      "is_external": true
+    },
+    "190": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "267c774c",
+      "is_external": false
+    },
+    "298": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "60d68b3c",
+      "is_external": false
+    },
+    "402": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ba9336cd",
+      "is_external": false
+    },
+    "568": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "8b778f11",
+      "is_external": false
+    },
+    "938": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6ca307d1",
+      "is_external": false
+    },
+    "712": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "29ea05a6",
+      "is_external": false
+    },
+    "2006": {
+      "confidence": "low",
+      "reasoning": "Cardinality constraint: exactly once per SG8 SEQ+Z01 instance where condition [199] is fulfilled, with matching Zeitraum-ID in SEQ DE1050. Condition [199] is not defined in this batch, and the 'exactly once per qualifying parent group' cardinality check cannot be expressed with the current EvaluationContext API (no group instance count vs qualifying parent count comparison available).",
+      "description_hash": "f687cf18",
+      "is_external": false
+    },
+    "469": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1998b141",
+      "is_external": false
+    },
+    "563": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a1685051",
+      "is_external": false
+    },
+    "448": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a817b70d",
+      "is_external": false
+    },
+    "223": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "897f31cc",
+      "is_external": false
+    },
+    "679": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "fbfe3cb5",
+      "is_external": false
+    },
+    "2003": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "753df803",
+      "is_external": false
+    },
+    "56": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c0fcc1e0",
+      "is_external": false
+    },
+    "309": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b1d71130",
+      "is_external": false
+    },
+    "2013": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "25eaf1c0",
+      "is_external": false
+    },
+    "586": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "52312882",
+      "is_external": false
+    },
+    "2286": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e8d661bf",
+      "is_external": false
+    },
+    "259": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f2af5c07",
+      "is_external": false
+    },
+    "344": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "07df5d16",
+      "is_external": false
+    },
+    "174": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "bbd45a9c",
+      "is_external": false
+    },
+    "295": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "86a7a819",
+      "is_external": false
+    },
+    "366": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a9fc4d3c",
+      "is_external": false
+    },
+    "670": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5cfe286a",
+      "is_external": false
+    },
+    "948": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "032905d1",
+      "is_external": false
+    },
+    "567": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e0f57266",
+      "is_external": false
+    },
+    "227": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5a7f4155",
+      "is_external": false
+    },
+    "288": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f566a522",
+      "is_external": false
+    },
+    "266": {
+      "confidence": "medium",
+      "reasoning": "Navigates all SG8 instances and their SG10 children, checking for CCI with elements[2][0]=ZA6 (Prognosegrundlage) co-occurring with CAV with elements[0][0]=Z36 (TEP m. Referenzmessung) in the same SG10 instance. The parent SG8 SEQ+Z01 filter and Zeitraum-ID cross-matching are not verified due to lack of direct SG8-level segment access; relies on CCI+ZA6/CAV+Z36 being specific enough to Marktlokation groups.",
+      "description_hash": "5843fac6",
+      "is_external": false
+    },
+    "458": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2fbfcde0",
+      "is_external": false
+    },
+    "135": {
+      "confidence": "low",
+      "reasoning": "Structurally identical to condition 134 but scoped to RFF+Z47/Z54 qualifiers. Same complex temporal ordering logic across SG6 instances — sort by Zeitraum-ID, verify date continuity across consecutive groups. Not implementable cleanly with current helpers.",
+      "description_hash": "380a8143",
+      "is_external": false
+    },
+    "902": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "08daa39a",
+      "is_external": false
+    },
+    "15": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "07b13291",
+      "is_external": false
+    },
+    "365": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e2834888",
+      "is_external": false
+    },
+    "357": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "fc97b9cc",
+      "is_external": false
+    },
+    "162": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "64b11455",
+      "is_external": false
+    },
+    "662": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3ec86866",
+      "is_external": false
+    },
+    "314": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "aa99d2df",
+      "is_external": true
+    },
+    "114": {
+      "confidence": "medium",
+      "reasoning": "Checks that CCI+E03 (Spannungsebene, elements[0][0]='E03' per AHB hint) and CAV+E06 (Niederspannung, elements[0][0]='E06') co-occur in the same SG10 child instance of some SG8. Uses navigator to iterate SG8→SG10 pairs and verify both segments within the same SG10 instance. Confidence medium because navigator availability is runtime-dependent and fallback is message-wide only.",
+      "description_hash": "347872b2",
+      "is_external": false
+    },
+    "265": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "cc8ad4c2",
+      "is_external": false
+    },
+    "217": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b348d9dd",
+      "is_external": false
+    },
+    "131": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7a7d9937",
+      "is_external": false
+    },
+    "513": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "adb10194",
+      "is_external": false
+    },
+    "520": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7b69f191",
+      "is_external": false
+    },
+    "303": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e927b648",
+      "is_external": false
+    },
+    "955": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "804a715f",
+      "is_external": false
+    },
+    "2071": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5bdfb965",
+      "is_external": false
+    },
+    "115": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "023653eb",
+      "is_external": false
+    },
+    "2225": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c8f889b1",
+      "is_external": false
+    },
+    "335": {
+      "confidence": "medium",
+      "reasoning": "Collects Zeitraum-IDs from SEQ+Z58 DE1050 (elements[1][0]). Verifies an SG8 with SEQ+Z78 exists (entry for Lokationsbündelstruktur). Collects IDs from RFF+Z31 DE1154 (elements[0][1]) and checks if any SEQ+Z58 Zeitraum-ID matches. Co-location of RFF+Z31 with SEQ+Z78 in the same SG8 instance is approximated message-wide; exact co-location verification would require navigator SG8-level segment access.",
+      "description_hash": "2ed8aa40",
+      "is_external": false
+    },
+    "292": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "51849336",
+      "is_external": true
+    },
+    "2010": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b105db50",
+      "is_external": false
+    },
+    "48": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5de42b37",
+      "is_external": false
+    },
+    "351": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b8645e50",
+      "is_external": false
+    },
+    "352": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "10e29e0e",
+      "is_external": false
+    },
+    "950": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a9ddfaec",
+      "is_external": false
+    },
+    "2317": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ce2ceeb0",
+      "is_external": false
+    },
+    "340": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d9f52cec",
+      "is_external": false
+    },
+    "407": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "eceb0e2d",
+      "is_external": false
+    },
+    "411": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "842dd489",
+      "is_external": false
+    },
+    "145": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "fe684b5d",
+      "is_external": false
+    },
+    "66": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d86e3329",
+      "is_external": false
+    },
+    "630": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "78dab544",
+      "is_external": false
+    },
+    "375": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5932ffb2",
+      "is_external": false
+    },
+    "648": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "fc2baba8",
+      "is_external": false
+    },
+    "204": {
+      "confidence": "medium",
+      "reasoning": "Checks each Zähleinrichtungsdaten SEQ qualifier (Z03/ZA3/ZA4) — if any SG8 instance has that SEQ qualifier but no RFF+Z14 (Smartmeter-Gateway reference), the condition is true. The additional Zeitraum-ID and Gerätenummer cross-matching from the full condition text cannot be implemented without per-instance SG8 segment access.",
+      "description_hash": "c115e216",
+      "is_external": false
+    },
+    "86": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ea45e3d6",
+      "is_external": false
+    },
+    "2012": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "eb379e61",
+      "is_external": false
+    },
+    "397": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "aa8eabc6",
+      "is_external": false
+    },
+    "527": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0ffca981",
+      "is_external": false
+    },
+    "706": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "2df01ec6",
+      "is_external": true
+    },
+    "321": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f7255aef",
+      "is_external": false
+    },
+    "682": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "44d5a000",
+      "is_external": false
+    },
+    "198": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3caf3d75",
+      "is_external": false
+    },
+    "175": {
+      "confidence": "medium",
+      "reasoning": "Cross-SG8 check: find all SG8 instances with SEQ+Z58 that also have RFF+Z33. Check whether any Objektcode (DE1154) with the same fortlaufende Nummer (DE1156) appears in two distinct SG8 instances. Uses nav.find_segments_in_group to access SG8-level segments directly, following the existing navigator pattern.",
+      "description_hash": "bfb371c3",
+      "is_external": false
+    },
+    "2005": {
+      "confidence": "medium",
+      "reasoning": "Same logic as 2004 but enforces 'at least once' cardinality (count >= 1) instead of 'exactly once'. Collects Zeitraum-IDs from SG6 RFF+Z49 DE1156 and checks that each has at least one matching SG8 SEQ DE1050 reference. Returns False if any Zeitraum-ID has zero matching SG8 references.",
+      "description_hash": "06fcb785",
+      "is_external": false
+    },
+    "75": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "ff3e86e3",
+      "is_external": true
+    },
+    "356": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "35b8c3f1",
+      "is_external": false
+    },
+    "2360": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e1042e0d",
+      "is_external": false
+    },
+    "49": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5fe27cd1",
+      "is_external": false
+    },
+    "342": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d1018f82",
+      "is_external": false
+    },
+    "433": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "cf0c5db5",
+      "is_external": true
+    },
+    "2007": {
+      "confidence": "low",
+      "reasoning": "Identical to condition 2006 in substance (plural 'Bedingungen' vs singular 'Bedingung' is a grammatical variation, not a semantic difference). Same blockers: condition [199] is undefined and cardinality ('exactly once per qualifying SG8 SEQ+Z01') cannot be evaluated with the available API.",
+      "description_hash": "05c508a4",
+      "is_external": false
+    },
+    "438": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7a4a5c5b",
+      "is_external": false
+    },
+    "503": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b914fe16",
+      "is_external": false
+    },
+    "88": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4b1316dc",
+      "is_external": false
+    },
+    "504": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a0d3dae0",
+      "is_external": false
+    },
+    "387": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "8bc5d69b",
+      "is_external": false
+    },
+    "14": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "d089cab4",
+      "is_external": true
+    },
+    "719": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ea9f8aa0",
+      "is_external": false
+    },
+    "152": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "bacb16eb",
+      "is_external": false
+    },
+    "69": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "86ea0ff5",
+      "is_external": false
+    },
+    "43": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "973ff593",
+      "is_external": false
+    },
+    "449": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ea5c7c92",
+      "is_external": false
+    },
+    "195": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b5f9f81d",
+      "is_external": false
+    },
+    "201": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3849d657",
+      "is_external": false
+    },
+    "184": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "100a1bfd",
+      "is_external": false
+    },
+    "337": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "aec7e084",
+      "is_external": false
+    },
+    "127": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6310151d",
+      "is_external": false
+    },
+    "252": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "87b3eb73",
+      "is_external": false
+    },
+    "521": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "35e24e67",
+      "is_external": false
+    },
+    "714": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "802bfb97",
+      "is_external": false
+    },
+    "31": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "c93779d2",
+      "is_external": true
+    },
+    "110": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1187185a",
+      "is_external": false
+    },
+    "512": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0d6aec58",
+      "is_external": false
+    },
+    "2351": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7177d5ea",
+      "is_external": false
+    },
+    "51": {
+      "confidence": "low",
+      "reasoning": "Complex three-way join: find Z98 SG8 Marktlokation-ID via RFF+Z18, find Z78 SG8 groups with same Marktlokation-ID (via RFF+Z18) and check their RFF+Z31 (Lokationsbündelstruktur-ID) for the Pauschal code 9992000000018. Uses collect_group_values with per-instance HashMap correlation. Low confidence because: the Z78 SG8 having both RFF+Z18 and RFF+Z31 is an assumption, the exact Pauschal-ID string format in EDIFACT may vary, and the Zeitraum-ID correlation part from the original condition text is simplified to just Marktlok-ID matching.",
+      "description_hash": "c757dd0f",
+      "is_external": false
+    },
+    "951": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f35fc481",
+      "is_external": false
+    },
+    "377": {
+      "confidence": "medium",
+      "reasoning": "Checks if any SG8 has a child SG10 with CCI[0]='15' and CCI[2]='Z21' (Überführungszeitreihentyp) followed by CAV with value 'AUS'. Follows the navigator pattern from example 10 exactly.",
+      "description_hash": "f8137e47",
+      "is_external": false
+    },
+    "601": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "eb326193",
+      "is_external": false
+    },
+    "457": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "535a615d",
+      "is_external": false
+    },
+    "360": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0a350d32",
+      "is_external": false
+    },
+    "444": {
+      "confidence": "medium",
+      "reasoning": "Checks whether any SG8 instance carrying a 'Produkt-Daten der Netzlokation' SEQ qualifier (Z60, ZE0, ZG8, ZG9) lacks PIA+5. Iterates each qualifier separately using any_group_has_qualifier_without which checks: SEQ+code present AND PIA+5 absent in same SG8. Returns True on first match. Correctly handles the multi-qualifier case via OR iteration.",
+      "description_hash": "4eb80c31",
+      "is_external": false
+    },
+    "618": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "863c5eb1",
+      "is_external": false
+    },
+    "63": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d4e33cb0",
+      "is_external": false
+    },
+    "57": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0061c8a4",
+      "is_external": false
+    },
+    "371": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1b28a132",
+      "is_external": false
+    },
+    "514": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "83": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7dc98268",
+      "is_external": false
+    },
+    "619": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "762088d0",
+      "is_external": false
+    },
+    "338": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "826a1e4e",
+      "is_external": false
+    },
+    "262": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c7d98ecc",
+      "is_external": false
+    },
+    "32": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "79265978",
+      "is_external": false
+    },
+    "960": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0ce0bd80",
+      "is_external": false
+    },
+    "688": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "69ea24c8",
+      "is_external": false
+    },
+    "952": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1871f37e",
+      "is_external": false
+    },
+    "149": {
+      "confidence": "medium",
+      "reasoning": "Condition checks whether two SG8 SEQ+Z45 groups with the same Zeitraum-ID (elements[1][0]) each contain PIA+Z02 (DE4347=Z02) with product codes '1-02-0-017' and '1-02-0-018'. Uses collect_group_values to gather SEQ qualifiers and Zeitraum-IDs per group instance, then PIA qualifiers and product codes (elements[1][0]=DE7140) per group instance. Positional alignment of pia_quals and pia_prods (both from same PIA segments in same order) enables reliable qualifier-to-product matching. Groups product codes by Zeitraum-ID to check co-occurrence.",
+      "description_hash": "cd79c32f",
+      "is_external": false
+    },
+    "2011": {
+      "confidence": "low",
+      "reasoning": "Cross-message cardinality constraint: requires fetching Zeitraum-IDs (DE1156) from SG6 RFF+Z49/Z53 segments of the REQUEST message identified by SG6 RFF+TN DE1154. The request message is a separate EDIFACT interchange not available in EvaluationContext — this is genuinely external context (cross-message lookup). Even if the Zeitraum-IDs were available, the 'exactly once per Zeitraum-ID' cardinality check cannot be expressed with the current API.",
+      "description_hash": "c394ac70",
+      "is_external": false
+    },
+    "322": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6aac2a48",
+      "is_external": false
+    },
+    "623": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3c8adf68",
+      "is_external": false
+    },
+    "394": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2bf94446",
+      "is_external": false
+    },
+    "151": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "15e32249",
+      "is_external": true
+    },
+    "60": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "92cafedb",
+      "is_external": false
+    },
+    "481": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d652608f",
+      "is_external": false
+    },
+    "386": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9f7edd8a",
+      "is_external": false
+    },
+    "73": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "028a90d6",
+      "is_external": false
+    },
+    "392": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5e173ce1",
+      "is_external": false
+    },
+    "2252": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "86634200",
+      "is_external": false
+    },
+    "398": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "8f081ccf",
+      "is_external": false
+    },
+    "426": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "a06218d1",
+      "is_external": true
+    },
+    "205": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5299158b",
+      "is_external": false
+    },
+    "427": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "f04dbc42",
+      "is_external": true
+    },
+    "472": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "64d016ee",
+      "is_external": false
+    },
+    "668": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "fc95b443",
+      "is_external": false
+    },
+    "672": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "75e5e7d6",
+      "is_external": false
+    },
+    "639": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3ab58f76",
+      "is_external": false
+    },
+    "468": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5ab338e0",
+      "is_external": false
+    },
+    "215": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "be8103c9",
+      "is_external": false
+    },
+    "76": {
+      "confidence": "medium",
+      "reasoning": "SEQ+Z49 is 'Abgerechnete Daten der Bilanzierungsgebietssummenzeitreihe' — the only SEQ code in the reference that explicitly names a Bilanzierungsgebiet-level Summenzeitreihe. Checking its presence is the most direct mapping of the condition text. A broader interpretation involving CAV codes (Bezeichnung der Summenzeitreihe) is possible but those codes are not fully enumerated in the provided reference.",
+      "description_hash": "f1f667db",
+      "is_external": false
+    },
+    "516": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "52fbdf12",
+      "is_external": false
+    },
+    "420": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f9f8582b",
+      "is_external": false
+    },
+    "517": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6a3e2482",
+      "is_external": false
+    },
+    "470": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "293df79d",
+      "is_external": false
+    },
+    "293": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "bde48d27",
+      "is_external": false
+    },
+    "317": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "49823bbd",
+      "is_external": false
+    },
+    "455": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "381f8017",
+      "is_external": false
+    },
+    "355": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1e50f046",
+      "is_external": false
+    },
+    "85": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3e99d6b0",
+      "is_external": false
+    },
+    "665": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "202b3aa2",
+      "is_external": false
+    },
+    "47": {
+      "confidence": "medium",
+      "reasoning": "Iterates all SG8 instances and their SG10 children looking for CCI with elements[0][0]==\"15\" and elements[2][0]==\"Z21\" (Zeitreihentyp), then checks if the same SG10 has a CAV with elements[0][0] in the Summenzeitreihentyp code list. Uses navigator for parent-child group traversal.",
+      "description_hash": "7866c184",
+      "is_external": false
+    },
+    "64": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ddfd7cc5",
+      "is_external": false
+    },
+    "220": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9b4f21c1",
+      "is_external": false
+    },
+    "558": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "dea71226",
+      "is_external": false
+    },
+    "446": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "61257f21",
+      "is_external": false
+    },
+    "2017": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "09268cfa",
+      "is_external": false
+    },
+    "96": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "811d0056",
+      "is_external": false
+    },
+    "946": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "425779e5",
+      "is_external": false
+    },
+    "196": {
+      "confidence": "medium",
+      "reasoning": "Extended cross-SG8 check vs 175: now requires matching SEQ qualifier code (DE1229), Zeitraum-ID from SEQ DE1050 (elements[1][0]), Objektcode (RFF+Z33 DE1154), AND fortlaufende Nummer (RFF+Z33 DE1156) to all be identical between two distinct SG8 instances. SEQ qualifiers are Z58/ZC9/ZD0 per schema.",
+      "description_hash": "eeba92e1",
+      "is_external": false
+    },
+    "38": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "ab0d254c",
+      "is_external": true
+    },
+    "922": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "589886f8",
+      "is_external": false
+    },
+    "456": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a8056a20",
+      "is_external": false
+    },
+    "530": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5cf2c4db",
+      "is_external": false
+    },
+    "2002": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5cd682e8",
+      "is_external": false
+    },
+    "45": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5f40c81d",
+      "is_external": false
+    },
+    "617": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c88ce9fd",
+      "is_external": false
+    },
+    "359": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e0fa5b53",
+      "is_external": false
+    },
+    "566": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6182ad8a",
+      "is_external": false
+    },
+    "136": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "591b9624",
+      "is_external": false
+    },
+    "708": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a47b601b",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "55130474",
+      "is_external": true
+    },
+    "316": {
+      "confidence": "high",
+      "reasoning": "Checks that in some SG8 instance (Zähleinrichtungsdaten, SEQ+Z03), the Smartmeter-Gateway RFF+Z14 is absent. Uses the any_group_has_qualifier_without helper directly. SEQ+Z03 is the canonical Zähleinrichtungsdaten entry segment qualifier for this absence check.",
+      "description_hash": "288539fa",
+      "is_external": false
+    },
+    "95": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "acb3de63",
+      "is_external": false
+    },
+    "581": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "40184416",
+      "is_external": false
+    },
+    "640": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "dee26a0f",
+      "is_external": false
+    },
+    "138": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "951ff34e",
+      "is_external": false
+    },
+    "176": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "838ed575",
+      "is_external": false
+    },
+    "19": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e1d13481",
+      "is_external": false
+    },
+    "570": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3cae0941",
+      "is_external": false
+    },
+    "2073": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ce6cdef9",
+      "is_external": false
+    },
+    "415": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3204f4c2",
+      "is_external": false
+    },
+    "452": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0455685f",
+      "is_external": false
+    },
+    "147": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e4b87f85",
+      "is_external": false
+    },
+    "2182": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ca6c0c45",
+      "is_external": false
+    },
+    "713": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d90891f7",
+      "is_external": false
+    },
+    "89": {
+      "confidence": "medium",
+      "reasoning": "Checks whether any SG8 instance contains an SG10 child with CCI at elements[2][0]=ZA6 and CAV at elements[0][0]=E14. The condition text requires the Zeitraum-ID in DE1050 to match 'this SG8', but a per-group evaluation context is not available in the current API — the Zeitraum-ID cross-reference is therefore not enforced and is instead approximated as a message-wide check. The CCI qualifier position (elements[2][0]) is confirmed by the MIG reference for CCI segments in SG10.",
+      "description_hash": "587e7160",
+      "is_external": false
+    },
+    "642": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5da0f2ea",
+      "is_external": false
+    },
+    "18": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b2b52d1a",
+      "is_external": false
+    },
+    "476": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7a115e59",
+      "is_external": false
+    },
+    "348": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "571d58b7",
+      "is_external": false
+    },
+    "645": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b82a55c8",
+      "is_external": false
+    },
+    "244": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c80424b7",
+      "is_external": false
+    },
+    "572": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "58a57b5c",
+      "is_external": false
+    },
+    "194": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7659864b",
+      "is_external": false
+    },
+    "84": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4b9d9762",
+      "is_external": false
+    },
+    "239": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "154ac530",
+      "is_external": false
+    },
+    "376": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "473db0ab",
+      "is_external": false
+    },
+    "445": {
+      "confidence": "medium",
+      "reasoning": "Iterates all SG8 instances and checks whether any SG10 child group contains CCI with elements[0][0]==\"11\" (Details zum Produkt der Netzlokation). Returns True when an SG8 is found that lacks such a CCI+11 in its SG10 children. Navigator fallback uses filtered_parent_child_has_qualifier negated per qualifier. Approximation: the navigator path does not filter SG8 instances by Produkt-Daten-Netzlokation SEQ qualifier due to absence of find_segments_in_group; checks all SG8 instances instead.",
+      "description_hash": "559035fc",
+      "is_external": false
+    },
+    "475": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "97e1dd59",
+      "is_external": false
+    },
+    "133": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "088f9d0d",
+      "is_external": false
+    },
+    "710": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d255e487",
+      "is_external": false
+    },
+    "243": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6b930fa5",
+      "is_external": false
+    },
+    "2004": {
+      "confidence": "medium",
+      "reasoning": "Collects Zeitraum-IDs from SG6 RFF+Z49 DE1156 (elements[0][2]) by correlating qualifier (elements[0][0]) and ID (elements[0][2]) vectors via shared SG6 instance index. Then collects all SEQ DE1050 (elements[1][0]) references from SG8 instances. For each Zeitraum-ID from SG6 RFF+Z49, counts matching SG8 SEQ references; returns False if any count != 1 (violates 'exactly once' cardinality). Returns Unknown if no RFF+Z49 Zeitraum-IDs exist.",
+      "description_hash": "2251b21a",
+      "is_external": false
+    },
+    "238": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a91864ea",
+      "is_external": false
+    },
+    "273": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f9a39da7",
+      "is_external": false
+    },
+    "331": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "775ecbd3",
+      "is_external": false
+    },
+    "269": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "77dcd3ae",
+      "is_external": false
+    },
+    "489": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0b4c57c1",
+      "is_external": false
+    },
+    "637": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "849c0f3f",
+      "is_external": false
+    },
+    "487": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "17dc7f84",
+      "is_external": false
+    },
+    "22": {
+      "confidence": "medium",
+      "reasoning": "Checks if any SG6 RFF+Z47/Z48/Z49 Zeitraum-ID (DE1156 at elements[0][2]) matches any SG8 SEQ Zeitraum-ID reference (DE1050 at elements[1][0]). Uses groups_share_qualified_value for cross-group correlation across all three qualifying codes.",
+      "description_hash": "077d9210",
+      "is_external": false
+    },
+    "166": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "fae4710e",
+      "is_external": false
+    },
+    "716": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "04f057d5",
+      "is_external": false
+    },
+    "286": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a95c134f",
+      "is_external": false
+    },
+    "141": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "dd6d4600",
+      "is_external": false
+    },
+    "282": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "08cbd840",
+      "is_external": false
+    },
+    "515": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "441cd927",
+      "is_external": false
+    },
+    "533": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6241f54b",
+      "is_external": false
+    },
+    "87": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0546dba6",
+      "is_external": false
+    },
+    "270": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c7ff22d1",
+      "is_external": false
+    },
+    "711": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6528c7f0",
+      "is_external": false
+    },
+    "126": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9ab643c3",
+      "is_external": false
+    },
+    "687": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e7169d71",
+      "is_external": false
+    },
+    "50": {
+      "confidence": "medium",
+      "reasoning": "Collects (Zeitraum-ID from SEQ.elements[1][0], Marktlok-ID from sibling RFF+Z18.elements[0][1]) for all SG8 instances with SEQ+Z98 and SEQ+ZE7. Returns True if any Z98 group has no ZE7 group matching on both values. Uses collect_group_values with instance-index correlation via HashMap, assuming each SG8 has at most one SEQ (guaranteed as entry segment) and the zip ordering is stable.",
+      "description_hash": "c7bd32e1",
+      "is_external": false
+    },
+    "327": {
+      "confidence": "medium",
+      "reasoning": "Step 1: Collect all SEQ DE1050 Zeitraum-IDs. Step 2: Find RFF+Z47/Z48/Z49 (Verwendungszeitraum) whose DE1156 (elements[0][2]) matches. Step 3: Check co-located DTM+Z25 DE2380 (elements[0][1]) >= threshold after normalising EDIFACT escape '?+' to '+'. Falls back to message-wide DTM search which may give false positives if multiple SG6 groups are present, but is sufficient for typical single-transaction messages.",
+      "description_hash": "8f220ad7",
+      "is_external": false
+    },
+    "393": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3879ff21",
+      "is_external": false
+    },
+    "139": {
+      "confidence": "medium",
+      "reasoning": "Condition is True when SG10 CAV+IVA (Individuelle Abstimmung) is NOT present anywhere. Uses parent-child navigation to iterate all SG8 instances and their SG10 child groups, checking CAV elements[0][0] for 'IVA'. Falls back to message-wide lacks_qualifier when no navigator is available. Returns False as soon as any CAV+IVA is found, True if none found.",
+      "description_hash": "965d888d",
+      "is_external": false
+    },
+    "7": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "101bffb4",
+      "is_external": false
+    },
+    "428": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "baf0f622",
+      "is_external": true
+    },
+    "333": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "be649d48",
+      "is_external": false
+    },
+    "519": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7def2de9",
+      "is_external": false
+    },
+    "191": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "48b5c281",
+      "is_external": false
+    },
+    "440": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4cb1b002",
+      "is_external": false
+    },
+    "463": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f3b6372c",
+      "is_external": false
+    },
+    "134": {
+      "confidence": "low",
+      "reasoning": "Requires complex temporal ordering logic across SG6 group instances: find all SG6 groups with RFF+Z48/Z55, sort their Zeitraum-IDs (DE1156) numerically, then check date continuity — DTM+Z25 of each non-first group must equal DTM+Z26 of the group with the next lower Zeitraum-ID. This cross-group sequential date matching cannot be reliably expressed with the available API helpers.",
+      "description_hash": "f450ba7a",
+      "is_external": false
+    },
+    "27": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "fc0cba01",
+      "is_external": false
+    },
+    "37": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "8ae2fa4a",
+      "is_external": true
+    },
+    "71": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "86b1ae5a",
+      "is_external": false
+    },
+    "148": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1cafb5d2",
+      "is_external": false
+    },
+    "506": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c0a27ae2",
+      "is_external": false
+    },
+    "508": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2ea659cd",
+      "is_external": false
+    },
+    "559": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4c48eb52",
+      "is_external": false
+    },
+    "555": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c9dd091a",
+      "is_external": false
+    },
+    "2018": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "adf4d697",
+      "is_external": false
+    },
+    "102": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2d431295",
+      "is_external": false
+    },
+    "315": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "75488547",
+      "is_external": true
+    },
+    "334": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "8cea5aed",
+      "is_external": false
+    },
+    "391": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "69c7f13f",
+      "is_external": false
+    },
+    "685": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1eb1fc89",
+      "is_external": false
+    },
+    "2207": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7f81cd08",
+      "is_external": false
+    },
+    "2308": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4fc0409d",
+      "is_external": false
+    },
+    "30": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "96276831",
+      "is_external": false
+    },
+    "350": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "41278295",
+      "is_external": false
+    },
+    "695": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e5e78b45",
+      "is_external": false
+    },
+    "942": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "857011a9",
+      "is_external": false
+    },
+    "91": {
+      "confidence": "medium",
+      "reasoning": "Logical negation of condition 90. Condition 91 is explicitly defined as 'Wenn NICHT (CCI+++ZA6 einmal mit CAV+E14 und einmal mit CAV+E02 in dieser SG8 vorhanden)', which is the exact complement of condition 90. Preserving Unknown propagation handles the no-navigator fallback case correctly.",
+      "description_hash": "f5073bc2",
+      "is_external": false
+    },
+    "2009": {
+      "confidence": "low",
+      "reasoning": "Identical to condition 2008 in substance (plural 'Bedingungen' is a grammatical variation). Same blockers: condition [89] is undefined and the cardinality constraint ('exactly once per qualifying SG8 SEQ+Z01') cannot be evaluated with the available API.",
+      "description_hash": "3c94573f",
+      "is_external": false
+    },
+    "671": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "29c8f496",
+      "is_external": false
+    },
+    "163": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "84429a65",
+      "is_external": false
+    },
+    "54": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6dbfa9ce",
+      "is_external": false
+    },
+    "717": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "bc70f3dc",
+      "is_external": true
+    },
+    "462": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c2587cf1",
+      "is_external": false
+    },
+    "172": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "855b09c2",
+      "is_external": false
+    },
+    "2060": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5a36ad08",
+      "is_external": false
+    },
+    "42": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1fb7e173",
+      "is_external": false
+    },
+    "2288": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "bd097f40",
+      "is_external": false
+    },
+    "529": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "275254fe",
+      "is_external": false
+    },
+    "646": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "eb5c0efc",
+      "is_external": false
+    },
+    "120": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f34834d8",
+      "is_external": false
+    },
+    "673": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "317b279d",
+      "is_external": false
+    },
+    "165": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "963140b3",
+      "is_external": false
+    },
+    "674": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d137147d",
+      "is_external": false
+    },
+    "65": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5a3ddd72",
+      "is_external": false
+    },
+    "100": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b20262f8",
+      "is_external": false
+    },
+    "251": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "eb26b535",
+      "is_external": true
+    },
+    "406": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c51cb98e",
+      "is_external": false
+    },
+    "467": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "cf4a34ae",
+      "is_external": false
+    },
+    "491": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "798c2c48",
+      "is_external": false
+    },
+    "614": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "377313b3",
+      "is_external": false
+    },
+    "2309": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "492da901",
+      "is_external": false
+    },
+    "156": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e9dac314",
+      "is_external": false
+    },
+    "234": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d6b93aed",
+      "is_external": false
+    },
+    "39": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "aedf9c25",
+      "is_external": true
+    },
+    "447": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "15e9577a",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "2358": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "8916d19f",
+      "is_external": false
+    },
+    "78": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0cee2c1b",
+      "is_external": false
+    },
+    "367": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "93d565ab",
+      "is_external": false
+    },
+    "197": {
+      "confidence": "medium",
+      "reasoning": "Two-phase cross-SG8 check. Phase 1: collect Marktlokation IDs from SG8 instances that (a) have SEQ+Z01 and (b) have an SG10 child with CCI elements[2][0]=ZA6 and CAV elements[0][0]=E02. Phase 2: check whether any SG8's RFF+Z18 references one of those qualifying Marktlokation IDs, establishing the cross-reference described in the condition.",
+      "description_hash": "9cb21441",
+      "is_external": false
+    },
+    "232": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4d86b140",
+      "is_external": false
+    },
+    "280": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f3221dba",
+      "is_external": false
+    },
+    "372": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "11ffafa8",
+      "is_external": false
+    },
+    "254": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "96da7841",
+      "is_external": false
+    },
+    "192": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9c65a01f",
+      "is_external": false
+    },
+    "690": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "acea431d",
+      "is_external": false
+    },
+    "90": {
+      "confidence": "medium",
+      "reasoning": "Within each SG8, iterates all SG10 child instances. For each SG10 that has a CCI with elements[2][0]=ZA6, checks the CAV elements[0][0] value. Tracks whether E14 and E02 have both been seen within the same SG8. Returns True when both are found in a single SG8, satisfying the requirement that both Prognosegrundlage options appear 'in dieser SG8'.",
+      "description_hash": "e7b10cf9",
+      "is_external": false
+    },
+    "93": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9c09501f",
+      "is_external": false
+    },
+    "643": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d4a51acc",
+      "is_external": false
+    },
+    "943": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f604ab5f",
+      "is_external": false
+    },
+    "683": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4d263faa",
+      "is_external": false
+    },
+    "261": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "78ec7884",
+      "is_external": false
+    },
+    "500": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "90cddaf7",
+      "is_external": false
+    },
+    "524": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "15ef01b4",
+      "is_external": false
+    },
+    "417": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "68564493",
+      "is_external": false
+    },
+    "442": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "39d048e4",
+      "is_external": false
+    },
+    "659": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e1920ced",
+      "is_external": false
+    },
+    "436": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9ef2edec",
+      "is_external": false
+    },
+    "2352": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "49be6eaf",
+      "is_external": false
+    },
+    "202": {
+      "confidence": "medium",
+      "reasoning": "Collects Zeitraum-IDs from SG5 LOC.DE3224 (elements[1][3]), checks SEQ+Z78 DE1050 (elements[1][0]) for a match, then verifies RFF+Z39 exists. Co-occurrence of SEQ+Z78 and RFF+Z39 in the same SG8 instance is not verified without navigator group-instance access.",
+      "description_hash": "74f2cca3",
+      "is_external": false
+    },
+    "304": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a2e6ae73",
+      "is_external": false
+    },
+    "384": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9b785585",
+      "is_external": false
+    },
+    "52": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f6a0209b",
+      "is_external": false
+    },
+    "98": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "b51d892c",
+      "is_external": true
+    },
+    "450": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a7b848ca",
+      "is_external": false
+    },
+    "651": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6191e3d8",
+      "is_external": false
+    },
+    "55": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e6731677",
+      "is_external": false
+    },
+    "609": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "25ec70cb",
+      "is_external": false
+    },
+    "632": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "057d32b2",
+      "is_external": false
+    },
+    "684": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "33c05e4d",
+      "is_external": false
+    },
+    "2344": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7768d5d8",
+      "is_external": false
+    },
+    "345": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "36b39d1d",
+      "is_external": false
+    },
+    "435": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "f8c0e48e",
+      "is_external": true
+    },
+    "709": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "de9869b8",
+      "is_external": false
+    },
+    "11": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "321d0c62",
+      "is_external": false
+    },
+    "569": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "8f6d581d",
+      "is_external": false
+    },
+    "526": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3696f77a",
+      "is_external": false
+    },
+    "33": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "bd14f5f1",
+      "is_external": true
+    },
+    "689": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "15d2743d",
+      "is_external": false
+    },
+    "44": {
+      "confidence": "low",
+      "reasoning": "The condition requires comparing a Zeitraum-ID with data from the original request message (Anfragennachricht), identified via RFF+TN. This is cross-message validation — the evaluator cannot access a separate EDIFACT interchange from the current message's segments alone.",
+      "description_hash": "c021f0fb",
+      "is_external": true
+    },
+    "363": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "35b8c3f1",
+      "is_external": false
+    },
+    "2080": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a16070ae",
+      "is_external": false
+    },
+    "13": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "95c62c31",
+      "is_external": false
+    },
+    "219": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e2678c69",
+      "is_external": false
+    },
+    "431": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "bcf7f409",
+      "is_external": false
+    },
+    "124": {
+      "confidence": "medium",
+      "reasoning": "Extends condition 123 by also requiring that the matching SG8 groups share the same Zeitraum-ID (from SEQ.elements[1][0] = DE1050 / C286.d1050). Both the Zeitraum-ID and the RFF+MG device number must be identical across at least two different SG8 instances with SEQ+Z20 for the condition to be True.",
+      "description_hash": "331af472",
+      "is_external": false
+    },
+    "528": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "eea84db1",
+      "is_external": false
+    },
+    "268": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "33eb8697",
+      "is_external": false
+    },
+    "318": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7f927de7",
+      "is_external": false
+    },
+    "2361": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e859d72e",
+      "is_external": false
+    },
+    "307": {
+      "confidence": "medium",
+      "reasoning": "Collects Zeitraum-IDs from SG5 LOC+Z22 segments (DE3224 = elements[1][3]) and SEQ+Z58 segments (DE1050 = elements[1][0]). Returns True when any SEQ+Z58 has a Zeitraum-ID with no matching LOC+Z22 entry. Message-wide fallback since group-level Zeitraum-ID isolation is not possible without navigator.",
+      "description_hash": "6c1558c3",
+      "is_external": false
+    },
+    "296": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3fcaf736",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "a1466d0d",
+      "is_external": true
+    },
+    "161": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "73cfcc2f",
+      "is_external": false
+    },
+    "441": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4282f262",
+      "is_external": false
+    },
+    "206": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7139fa8a",
+      "is_external": false
+    },
+    "459": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "798b5901",
+      "is_external": true
+    },
+    "2307": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b332d40b",
+      "is_external": false
+    },
+    "285": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9a41ce6a",
+      "is_external": false
+    },
+    "170": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "73fdead8",
+      "is_external": false
+    },
+    "631": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "730c3e29",
+      "is_external": false
+    },
+    "179": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1f917293",
+      "is_external": false
+    },
+    "2284": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1d0edecf",
+      "is_external": false
+    },
+    "229": {
+      "confidence": "medium",
+      "reasoning": "Detects if the same (SEQ-qualifier, Zeitraum-ID, RFF+Z33-Objektcode) triple appears in two different SG8 instances — which is what the condition guards against. Uses collect_group_values to correlate SEQ and RFF data by SG8 instance index. Limitation: collect_group_values may only return the first RFF per SG8 instance, so Z33 may be missed if it is not the first RFF in the group.",
+      "description_hash": "882ecd3b",
+      "is_external": false
+    },
+    "299": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c785696e",
+      "is_external": false
+    },
+    "430": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f322aa9d",
+      "is_external": false
+    },
+    "199": {
+      "confidence": "medium",
+      "reasoning": "Checks whether any SG8 with SEQ+Z01 (Daten der Marktlokation) contains an SG10 child group where CCI elements[2][0]=ZA6 (Prognosegrundlage: Prognose auf Basis von Profilen) and CAV elements[0][0]=E02 (SLP/SEP) appear in the same SG10 instance. The 'identischer Zeitraum-ID' constraint from SEQ DE1050 is structurally satisfied by operating within the same SG8 instance; deeper Zeitraum-ID cross-referencing with other groups is omitted as it would require knowing the external referencing context.",
+      "description_hash": "028297ec",
+      "is_external": false
+    },
+    "2357": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1d3fc3cc",
+      "is_external": false
+    },
+    "306": {
+      "confidence": "high",
+      "reasoning": "Direct cross-group Zeitraum-ID correlation: collects DE3224 (elements[1][3]) from all LOC+Z22 segments in SG5, then checks if any SEQ+Z58 in SG8 has DE1050 (elements[1][0]) matching one of those IDs. Both element positions are confirmed by the segment structure reference. Clean and reliable implementation.",
+      "description_hash": "0752af58",
+      "is_external": false
+    },
+    "2356": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "603ae337",
+      "is_external": false
+    },
+    "142": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f74accba",
+      "is_external": false
+    },
+    "511": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b3c745fc",
+      "is_external": false
+    },
+    "35": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4f52c394",
+      "is_external": false
+    },
+    "478": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e444578a",
+      "is_external": false
+    },
+    "453": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "085490e8",
+      "is_external": true
+    },
+    "336": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "eaa7fa09",
+      "is_external": false
+    },
+    "622": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "04b6eeeb",
+      "is_external": false
+    },
+    "329": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e241f75c",
+      "is_external": false
+    },
+    "287": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "eb447898",
+      "is_external": false
+    },
+    "17": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f99c24cd",
+      "is_external": false
+    },
+    "483": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1f45f5f3",
+      "is_external": false
+    },
+    "46": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0521cfd8",
+      "is_external": false
+    },
+    "125": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4e0d2759",
+      "is_external": false
+    },
+    "910": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "063d57bb",
+      "is_external": false
+    },
+    "72": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "effca6ea",
+      "is_external": false
+    },
+    "2359": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "be697644",
+      "is_external": false
+    },
+    "502": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c40c0d51",
+      "is_external": false
+    },
+    "216": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "babbeb49",
+      "is_external": false
+    },
+    "74": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "64637f3b",
+      "is_external": false
+    },
+    "213": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f6780d06",
+      "is_external": false
+    },
+    "474": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c1724d6c",
+      "is_external": false
+    },
+    "92": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "91b75fa8",
+      "is_external": false
+    },
+    "594": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5f897f4f",
+      "is_external": false
+    },
+    "2096": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "22d82c4d",
+      "is_external": false
+    },
+    "256": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "709f41c1",
+      "is_external": false
+    },
+    "677": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "93931b1c",
+      "is_external": false
+    },
+    "522": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3150e105",
+      "is_external": false
+    },
+    "2001": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "16d86734",
+      "is_external": false
+    },
+    "501": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "8402e617",
+      "is_external": false
+    },
+    "937": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e3f49bb8",
+      "is_external": false
+    },
+    "480": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "881e0b1c",
+      "is_external": false
+    },
+    "693": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "adadeba1",
+      "is_external": false
+    },
+    "146": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9b7d800d",
+      "is_external": false
+    },
+    "718": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "32112513",
+      "is_external": false
+    },
+    "36": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "3a283c72",
+      "is_external": true
+    },
+    "341": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "966f83cb",
+      "is_external": false
+    },
+    "466": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "08b1bf71",
+      "is_external": false
+    },
+    "143": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "05c89bfa",
+      "is_external": false
+    },
+    "556": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "757114fc",
+      "is_external": false
+    },
+    "150": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d2753a5e",
+      "is_external": false
+    },
+    "664": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6f8221e3",
+      "is_external": false
+    },
+    "62": {
+      "confidence": "medium",
+      "reasoning": "Iterates SG8 instances within each SG4, finds those with SEQ+Z45 and a non-empty Zeitraum-ID in elements[1][0]. Checks if PIA+Z02 in the same SG8 has a product code (elements[1][0]) beginning with 1-08-1 through 1-08-5. Groups by Zeitraum-ID and checks if any ID appears more than once. Requires navigator for per-instance group segment access; returns Unknown without one.",
+      "description_hash": "da005567",
+      "is_external": false
+    },
+    "505": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0f316d72",
+      "is_external": false
+    },
+    "193": {
+      "confidence": "high",
+      "reasoning": "Parent-child SG10 check. Iterates SG8 instances, then each SG10 child. In each SG10, checks CCI elements[2][0]==\"ZB5\" (Spannungsebene der Summenzeitreihe) and CAV elements[0][0]==\"E06\" (Niederspannung) in the same SG10 instance. Matches the documented navigator pattern from examples 9 and 10.",
+      "description_hash": "cbf420c3",
+      "is_external": false
+    },
+    "2183": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "56c434b6",
+      "is_external": false
+    },
+    "210": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "cff72c8d",
+      "is_external": false
+    },
+    "419": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "90c80f8d",
+      "is_external": false
+    },
+    "705": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7709097c",
+      "is_external": false
+    },
+    "104": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c4b4d0a5",
+      "is_external": false
+    },
+    "106": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "aba7f000",
+      "is_external": false
+    },
+    "663": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "bffa2d02",
+      "is_external": false
+    },
+    "412": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "5668473b",
+      "is_external": true
+    },
+    "24": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "17b52555",
+      "is_external": false
+    },
+    "653": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9df02a0d",
+      "is_external": false
+    },
+    "451": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2e3701d0",
+      "is_external": false
+    },
+    "675": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0777e035",
+      "is_external": false
+    },
+    "1": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "4ebb4e5c",
+      "is_external": true
+    },
+    "401": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "dd662fa9",
+      "is_external": false
+    },
+    "421": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "154526b5",
+      "is_external": false
+    },
+    "926": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3e15920e",
+      "is_external": false
+    },
+    "119": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4d7701f7",
+      "is_external": false
+    },
+    "454": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6c8fd23b",
+      "is_external": false
+    },
+    "349": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ec881f4a",
+      "is_external": false
+    },
+    "2014": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "aac4d27b",
+      "is_external": false
+    },
+    "61": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4dfa16b3",
+      "is_external": false
+    },
+    "518": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "34370280",
+      "is_external": false
+    },
+    "606": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3e9d0579",
+      "is_external": false
+    },
+    "416": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6718c6c6",
+      "is_external": false
+    },
+    "699": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ab61d333",
+      "is_external": false
+    },
+    "961": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "99d3e1d7",
+      "is_external": false
+    },
+    "291": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "abd33b30",
+      "is_external": false
+    },
+    "108": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2be61e58",
+      "is_external": false
+    },
+    "957": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1f00af18",
+      "is_external": false
+    },
+    "203": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "510fa15f",
+      "is_external": false
+    },
+    "294": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "99c6e644",
+      "is_external": false
+    },
+    "494": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e0eddcc9",
+      "is_external": false
+    },
+    "660": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "aea42c0c",
+      "is_external": false
+    },
+    "577": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "79effddc",
+      "is_external": false
+    },
+    "590": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9a2d665f",
+      "is_external": false
+    },
+    "347": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d91213f3",
+      "is_external": false
+    },
+    "129": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "cfd0d61c",
+      "is_external": false
+    },
+    "471": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f4d317d3",
+      "is_external": false
+    },
+    "680": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "842e0813",
+      "is_external": false
+    },
+    "10": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "d04ca26f",
+      "is_external": true
+    },
+    "700": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1b42ae09",
+      "is_external": false
+    },
+    "132": {
+      "confidence": "medium",
+      "reasoning": "Validates that when RFF in SG6 has Zeitraum-ID '1' (elements[0][2] = DE1156), the DTM+Z25 date must equal the day immediately following DTM+137 (Nachrichtendatum) at 00:00. Parses the YYYYMMDD portion of DTM+137, computes next calendar day with correct month/year rollover, then checks that DTM+Z25's first 12 characters match YYYYMMDDHHMM with HHMM=0000. Note: German timezone offset (CET/CEST) validation is not performed — this checks the stored datetime value directly, which is the common encoding in EDIFACT 303 format for this use case.",
+      "description_hash": "f890cad7",
+      "is_external": false
+    },
+    "34": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f7259e99",
+      "is_external": false
+    },
+    "2311": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7163c8e0",
+      "is_external": false
+    },
+    "25": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3bebab6e",
+      "is_external": false
+    },
+    "696": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2f609738",
+      "is_external": false
+    },
+    "116": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2a998c8b",
+      "is_external": false
+    },
+    "437": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "28105e2b",
+      "is_external": false
+    },
+    "914": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "533e37f6",
+      "is_external": false
+    },
+    "715": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d0b25250",
+      "is_external": false
+    },
+    "2075": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7fbe5e0c",
+      "is_external": false
+    },
+    "2119": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d8df28ed",
+      "is_external": false
+    },
+    "2312": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "efc869e5",
+      "is_external": false
+    },
+    "425": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "e4119094",
+      "is_external": true
+    },
+    "638": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "92f36b7c",
+      "is_external": false
+    },
+    "164": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "8bb96e4a",
+      "is_external": false
+    },
+    "379": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "48928005",
+      "is_external": false
+    },
+    "667": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d1a9a471",
+      "is_external": false
+    },
+    "2236": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c646fcdc",
+      "is_external": false
+    },
+    "378": {
+      "confidence": "medium",
+      "reasoning": "Logical negation of condition 377: True when CCI+15++Z21 CAV+AUS is NOT present in any SG8's SG10 child. Iterates all instances and returns True only if the combination is never found.",
+      "description_hash": "69ba1f93",
+      "is_external": false
+    },
+    "237": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b4d4e1ac",
+      "is_external": false
+    },
+    "68": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f6942807",
+      "is_external": false
+    },
+    "678": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "83b4811e",
+      "is_external": false
+    },
+    "255": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c517a6a3",
+      "is_external": false
+    },
+    "479": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "51cd8493",
+      "is_external": false
+    },
+    "2016": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "133e3ecd",
+      "is_external": false
+    },
+    "241": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "cf2a70c6",
+      "is_external": true
+    },
+    "8": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "d48f1537",
+      "is_external": true
+    },
+    "410": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b9a3d72e",
+      "is_external": false
+    },
+    "53": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "180aaa70",
+      "is_external": false
+    },
+    "704": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "aa0fdda7",
+      "is_external": false
+    },
+    "12": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c8244b0e",
+      "is_external": false
+    },
+    "507": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "f261bf57",
+      "is_external": false
+    },
+    "173": {
+      "confidence": "medium",
+      "reasoning": "Condition is True when, in an SG8 with SEQ+Z58/ZC9/ZD0/ZD6 (Zuordnung Lokation zum Objektcode), RFF+Z33 exists but its DE1156 (elements[0][2] = Fortlaufende Nummer) is absent or empty. Uses collect_group_values to find target SG8 group indices by SEQ qualifier, then positionally aligns rff_quals[i] with rff_de1156[i] (same RFF segment) to check DE1156 emptiness scoped to those groups. Returns Unknown if no RFF+Z33 found in target groups (condition not applicable), False if all RFF+Z33 have DE1156 present.",
+      "description_hash": "439f106b",
+      "is_external": false
+    },
+    "178": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "bc0b3659",
+      "is_external": false
+    },
+    "302": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6f0aa67b",
+      "is_external": false
+    },
+    "429": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "fd40616c",
+      "is_external": true
+    },
+    "249": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "cb0d4e61",
+      "is_external": false
+    },
+    "70": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d5fd24b8",
+      "is_external": false
+    },
+    "267": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1b28a132",
+      "is_external": false
+    },
+    "461": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "be90b7c6",
+      "is_external": false
+    },
+    "2095": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "1ec79467",
+      "is_external": false
+    },
+    "641": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6a11be4b",
+      "is_external": false
+    },
+    "94": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "587b0fdd",
+      "is_external": false
+    },
+    "2261": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7163c8e0",
+      "is_external": false
+    },
+    "2008": {
+      "confidence": "low",
+      "reasoning": "Cardinality constraint: exactly once per SG8 SEQ+Z01 instance where condition [89] is fulfilled, with matching Zeitraum-ID in SEQ DE1050. Condition [89] is not defined in this batch, and the 'exactly once per qualifying parent group' cardinality check cannot be expressed with the current EvaluationContext API.",
+      "description_hash": "3f742240",
+      "is_external": false
+    },
+    "707": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ffd143f5",
+      "is_external": false
+    },
+    "396": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "c0787dea",
+      "is_external": false
+    },
+    "346": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "60f2dd9c",
+      "is_external": false
+    },
+    "111": {
+      "confidence": "high",
+      "reasoning": "Same-group absence: condition is True when some SG8 instance contains SEQ+Z59 but lacks PIA+5. Directly maps to any_group_has_qualifier_without. SEQ+Z59 per AHB notation → elements[0][0]='Z59'; PIA+5 → elements[0][0]='5'.",
+      "description_hash": "17226a62",
+      "is_external": false
+    },
+    "532": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "fb4d8110",
+      "is_external": false
+    },
+    "212": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "b5c09245",
+      "is_external": false
+    },
+    "388": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "bba5df8e",
+      "is_external": false
+    },
+    "137": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "11a2de30",
+      "is_external": false
+    },
+    "403": {
+      "confidence": "medium",
+      "reasoning": "Gets NAD+MS MP-ID from SG2 (elements[1][0]), then navigates all SG8→SG10 instances looking for CCI with elements[2][0]='ZB3' (Zugeordnete Marktpartner) and CAV with elements[0][0]='Z91' (Messstellenbetreiber). Compares the CAV+Z91 MP-ID (elements[0][1]) with the sender MP-ID. Returns True when they differ (not the same). Note: SEQ+Z01 filter on the parent SG8 is omitted because `find_segments_in_child_group` only accesses child groups, not the parent SG8 segments; the Z91 MSB identity is message-consistent regardless.",
+      "description_hash": "fd9ec353",
+      "is_external": false
+    },
+    "523": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3eb2f600",
+      "is_external": false
+    },
+    "655": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "66cc6ced",
+      "is_external": false
+    },
+    "2015": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7cc896c3",
+      "is_external": false
+    },
+    "2140": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6d50bb4d",
+      "is_external": false
+    },
+    "580": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "7fddf781",
+      "is_external": false
+    },
+    "405": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "8c47a1d6",
+      "is_external": false
+    },
+    "368": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "a6f84e60",
+      "is_external": false
+    },
+    "40": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "6fa5b1c4",
+      "is_external": true
+    },
+    "224": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9e0d1524",
+      "is_external": false
+    },
+    "118": {
+      "confidence": "high",
+      "reasoning": "Two-part check: (1) SG8 with SEQ+Z98 has SG10 child containing CCI with elements[2][0]='ZA6' (Prognosegrundlage — Prognose auf Basis von Profilen; AHB CCI+++ZA6 → elements[2][0]); (2) same parent filter (SG8+SEQ+Z98) has SG10 child with CAV elements[0][0]='E02' (SLP/SEP). Both scoped to SG8+SEQ+Z98 via filtered_parent_child_has_qualifier. Short-circuits on first failure. Note: two separate calls do not strictly guarantee CCI and CAV are in the same SG10 instance, but in practice a Z98 SG8 has one SG10.",
+      "description_hash": "8ba18a99",
+      "is_external": false
+    },
+    "9": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "d9990b82",
+      "is_external": true
+    },
+    "279": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "673515a9",
+      "is_external": false
+    },
+    "248": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "9f6714fc",
+      "is_external": false
+    },
+    "930": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "30e8c861",
+      "is_external": false
+    },
+    "21": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "cff72c8d",
+      "is_external": false
+    },
+    "301": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "70d369d5",
+      "is_external": false
+    },
+    "113": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "155997d7",
+      "is_external": false
+    },
+    "647": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "830e28dd",
+      "is_external": false
+    },
+    "484": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "704e92e1",
+      "is_external": false
+    },
+    "300": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "17aa6503",
+      "is_external": false
+    },
+    "6": {
+      "confidence": "high",
+      "reasoning": "Has working implementation",
+      "description_hash": "4b435776",
+      "is_external": true
+    },
+    "128": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "4b98ddd9",
+      "is_external": false
+    },
+    "339": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "77670050",
+      "is_external": false
+    },
+    "358": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "da55aacf",
+      "is_external": false
+    },
+    "221": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "3211d793",
+      "is_external": false
+    },
+    "465": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "5382b3da",
+      "is_external": false
+    },
+    "2310": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "34829ade",
+      "is_external": false
+    },
+    "2287": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "2886ccbe",
+      "is_external": false
+    },
+    "579": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "db52b71b",
+      "is_external": false
+    },
+    "414": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "d4edd8da",
+      "is_external": false
+    },
+    "103": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "0382c3fd",
+      "is_external": false
+    },
+    "122": {
+      "confidence": "medium",
+      "reasoning": "Uses filtered_parent_child_has_qualifier to find SG8 instances where SEQ+Z98 has an SG10 child with CCI at elements[2]='E03' (Spannungsebene der Marktlokation). Then confirms CAV+E06 (Niederspannung) exists in an SG8 group. The CAV check is group-scoped rather than strictly same-SG10-instance because the navigator API does not directly expose parent-group (SG8) segment access alongside child-group (SG10) checks in one call.",
+      "description_hash": "a42d6a75",
+      "is_external": false
+    },
+    "305": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "80d3002e",
+      "is_external": false
+    },
+    "112": {
+      "confidence": "high",
+      "reasoning": "Parent-child absence: SG10 is a child group of SG8. Check if any SG8 with SEQ+Z59 has SG10 child with CCI elements[0][0]='11', then negate to get absence semantics. Matches Example 12 pattern exactly — filtered_parent_child_has_qualifier returns True when CCI+11 IS found; negation gives True when it is NOT found.",
+      "description_hash": "d8d95aee",
+      "is_external": false
+    },
+    "105": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "bd5b2040",
+      "is_external": false
+    },
+    "509": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6e9d756f",
+      "is_external": false
+    },
+    "140": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "51743cc9",
+      "is_external": false
+    },
+    "167": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "597e21f8",
+      "is_external": false
+    },
+    "23": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "ff6dde96",
+      "is_external": false
+    },
+    "2061": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "6282c707",
+      "is_external": false
+    },
+    "932": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "943b98c4",
+      "is_external": false
+    },
+    "297": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "e6def540",
+      "is_external": false
+    },
+    "58": {
+      "confidence": "high",
+      "reasoning": "[STUB] No implementation — returns Unknown",
+      "description_hash": "081389d4",
+      "is_external": false
+    }
+  }
+}

@@ -27,13 +27,14 @@ fn test_incremental_generation_flow() {
     );
     assert!(decision_v1.to_preserve.is_empty());
 
-    // Simulate generation results
+    // Simulate generation results — use "medium" confidence so staleness
+    // detection works (high-confidence conditions skip staleness checks).
     let mut meta_conditions = HashMap::new();
     for (id, desc) in &conditions_v1 {
         meta_conditions.insert(
             id.clone(),
             ConditionMetadata {
-                confidence: "high".to_string(),
+                confidence: "medium".to_string(),
                 reasoning: Some("Generated".to_string()),
                 description_hash: compute_description_hash(desc),
                 is_external: id == "1",
