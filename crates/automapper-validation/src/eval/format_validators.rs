@@ -6,6 +6,9 @@
 
 use super::evaluator::ConditionResult;
 
+// Re-export timezone helpers so generated code can use `use crate::eval::format_validators::*`
+pub use super::timezone::{is_mesz_utc, is_mez_utc};
+
 // --- Decimal/digit place validation ---
 
 /// Validate that a numeric string has at most `max` decimal places.
@@ -168,6 +171,19 @@ pub fn validate_malo_id(value: &str) -> ConditionResult {
     }
     let expected = (10 - (sum % 10)) % 10;
     ConditionResult::from(check == expected)
+}
+
+/// Validate Transaktionsreferenz-ID (TR-ID): 1-35 alphanumeric characters.
+pub fn validate_tr_id(value: &str) -> ConditionResult {
+    if value.is_empty() {
+        return ConditionResult::Unknown;
+    }
+    ConditionResult::from(value.len() <= 35 && value.chars().all(|c| c.is_ascii_alphanumeric()))
+}
+
+/// Validate Steuerbare-Ressource-ID (SR-ID): same format as MaLo-ID (11 digits, Luhn check).
+pub fn validate_sr_id(value: &str) -> ConditionResult {
+    validate_malo_id(value)
 }
 
 /// Validate Zahlpunktbezeichnung: exactly 33 alphanumeric characters.
@@ -358,6 +374,27 @@ mod tests {
         assert_eq!(validate_artikel_pattern("1-23-4-56", &[1, 2, 1, 3]), ConditionResult::False);
         assert_eq!(validate_artikel_pattern("1-AB-4", &[1, 2, 1]), ConditionResult::False);
         assert_eq!(validate_artikel_pattern("", &[1, 2, 1]), ConditionResult::Unknown);
+    }
+
+    // --- TR-ID / SR-ID validation ---
+
+    #[test]
+    fn test_tr_id() {
+        assert_eq!(validate_tr_id("ABC123"), ConditionResult::True);
+        assert_eq!(validate_tr_id("A"), ConditionResult::True);
+        assert_eq!(validate_tr_id(&"A".repeat(35)), ConditionResult::True);
+        assert_eq!(validate_tr_id(&"A".repeat(36)), ConditionResult::False);
+        assert_eq!(validate_tr_id("has spaces"), ConditionResult::False);
+        assert_eq!(validate_tr_id("has-dash"), ConditionResult::False);
+        assert_eq!(validate_tr_id(""), ConditionResult::Unknown);
+    }
+
+    #[test]
+    fn test_sr_id() {
+        assert_eq!(validate_sr_id("50820849854"), ConditionResult::True);
+        assert_eq!(validate_sr_id("50820849855"), ConditionResult::False);
+        assert_eq!(validate_sr_id("1234567890"), ConditionResult::False);
+        assert_eq!(validate_sr_id(""), ConditionResult::False);
     }
 
     // --- String validation ---

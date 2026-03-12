@@ -12,10 +12,10 @@ bo4e-extensions.workspace = true
 mig-types.workspace = true
 thiserror.workspace = true
 serde.workspace = true
+serde_json.workspace = true
 
 [dev-dependencies]
 test-case.workspace = true
 pretty_assertions = "1"
 proptest.workspace = true
-serde_json.workspace = true
 insta = { workspace = true, features = ["json"] }

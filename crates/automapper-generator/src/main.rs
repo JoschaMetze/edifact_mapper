@@ -385,6 +385,26 @@ enum Commands {
         #[arg(long, default_value = "SG4")]
         tx_group: Option<String>,
     },
+
+    /// Extract all code lists from a MIG XML into a JSON file.
+    /// Run once per format version; output is committed as generated artifact.
+    ExtractCodeLists {
+        /// Path to MIG XML file
+        #[arg(long)]
+        mig_path: PathBuf,
+
+        /// Output JSON file path
+        #[arg(long)]
+        output: PathBuf,
+
+        /// EDIFACT message type (e.g., "UTILMD")
+        #[arg(long)]
+        message_type: String,
+
+        /// Format version (e.g., "FV2504")
+        #[arg(long)]
+        format_version: String,
+    },
 }
 
 /// Parses an existing generated condition evaluator `.rs` file and extracts
@@ -2001,6 +2021,33 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 }
             }
 
+            Ok(())
+        }
+        Commands::ExtractCodeLists {
+            mig_path,
+            output,
+            message_type,
+            format_version,
+        } => {
+            let mig_filename = mig_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+            let variant = infer_variant(mig_filename);
+            let mig = automapper_generator::parsing::mig_parser::parse_mig(
+                &mig_path,
+                &message_type,
+                variant,
+                &format_version,
+            )?;
+            let code_lists =
+                automapper_generator::codegen::code_list_extractor::extract_code_lists(&mig);
+            automapper_generator::codegen::code_list_extractor::write_code_lists(
+                &code_lists, &output,
+            )?;
+            eprintln!(
+                "Extracted {} code lists ({} total codes) to {}",
+                code_lists.len(),
+                code_lists.values().map(|e| e.codes.len()).sum::<usize>(),
+                output.display()
+            );
             Ok(())
         }
     }

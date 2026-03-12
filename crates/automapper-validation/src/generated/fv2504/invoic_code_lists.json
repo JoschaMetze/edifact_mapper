@@ -1,0 +1,774 @@
+{
+  "0001": {
+    "name": "Syntax-Kennung",
+    "codes": [
+      {
+        "value": "UNOC",
+        "name": "UN/ECE-Zeichensatz C"
+      }
+    ]
+  },
+  "0002": {
+    "name": "Syntax-Versionsnummer",
+    "codes": [
+      {
+        "value": "3",
+        "name": "Version 3"
+      }
+    ]
+  },
+  "0007": {
+    "name": "Teilnehmerbezeichnung, Qualifier",
+    "codes": [
+      {
+        "value": "14",
+        "name": "GS1"
+      },
+      {
+        "value": "500",
+        "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)"
+      },
+      {
+        "value": "ZZZ",
+        "name": "ETSO"
+      }
+    ]
+  },
+  "0029": {
+    "name": "Verarbeitungspriorität, Code",
+    "codes": [
+      {
+        "value": "A",
+        "name": "Höchste Priorität"
+      }
+    ]
+  },
+  "0035": {
+    "name": "Test-Kennzeichen",
+    "codes": [
+      {
+        "value": "1",
+        "name": "Übertragungsdatei ist ein Test"
+      }
+    ]
+  },
+  "0051": {
+    "name": "Verwaltende Organisation",
+    "codes": [
+      {
+        "value": "UN",
+        "name": "UN/CEFACT"
+      }
+    ]
+  },
+  "0052": {
+    "name": "Versionsnummer des Nachrichtentyps",
+    "codes": [
+      {
+        "value": "D",
+        "name": "Entwurfs-Version"
+      }
+    ]
+  },
+  "0054": {
+    "name": "Freigabenummer des Nachrichtentyps",
+    "codes": [
+      {
+        "value": "06A",
+        "name": "Ausgabe 2006 - A"
+      }
+    ]
+  },
+  "0057": {
+    "name": "Anwendungscode der zuständigen Organisation",
+    "codes": [
+      {
+        "value": "2.8d",
+        "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung"
+      }
+    ]
+  },
+  "0065": {
+    "name": "Nachrichtentyp-Kennung",
+    "codes": [
+      {
+        "value": "INVOIC",
+        "name": "Rechnung"
+      }
+    ]
+  },
+  "0081": {
+    "name": "Abschnittskennung, codiert",
+    "codes": [
+      {
+        "value": "S",
+        "name": "Trennung von Positions- und Summenteil"
+      }
+    ]
+  },
+  "1001": {
+    "name": "Dokumentenname, Code",
+    "codes": [
+      {
+        "value": "380",
+        "name": "Handelsrechnung"
+      },
+      {
+        "value": "389",
+        "name": "Selbst ausgestellte Rechnung (engl.: \"Self-billed invoice\")"
+      },
+      {
+        "value": "457",
+        "name": "Storno einer Belastung."
+      },
+      {
+        "value": "Z25",
+        "name": "Storno für selbst ausgestellte Rechnung (Gutschrift im Gutschriftsverfahren)"
+      }
+    ]
+  },
+  "1153": {
+    "name": "Referenz, Qualifier",
+    "codes": [
+      {
+        "value": "Z13",
+        "name": "Prüfidentifikator"
+      },
+      {
+        "value": "OI",
+        "name": "Ursprungsrechnungsnummer"
+      },
+      {
+        "value": "ACE",
+        "name": "Nummer des zugehörigen Dokuments"
+      },
+      {
+        "value": "Z56",
+        "name": "Preise des Netzbetreibers"
+      },
+      {
+        "value": "VA",
+        "name": "Umsatzsteuernummer"
+      },
+      {
+        "value": "FC",
+        "name": "Steuernummer"
+      },
+      {
+        "value": "AFL",
+        "name": "Zugehörige Rechnungen"
+      }
+    ]
+  },
+  "1154": {
+    "name": "Referenz, Identifikation",
+    "codes": [
+      {
+        "value": "31001",
+        "name": "Abschlagsrechnung"
+      },
+      {
+        "value": "31002",
+        "name": "NN-Rechnung"
+      },
+      {
+        "value": "31003",
+        "name": "WiM-Rechnung"
+      },
+      {
+        "value": "31004",
+        "name": "Stornorechnung"
+      },
+      {
+        "value": "31005",
+        "name": "MMM-Rechnung"
+      },
+      {
+        "value": "31006",
+        "name": "MMM-selbst ausgestellte Rechnung"
+      },
+      {
+        "value": "31007",
+        "name": "Aggregierte MMM-Rechnung"
+      },
+      {
+        "value": "31008",
+        "name": "Aggregierte MMM-selbst ausgestellte Rechnung"
+      },
+      {
+        "value": "31009",
+        "name": "MSB-Rechnung"
+      },
+      {
+        "value": "31010",
+        "name": "Kapazitätsrechnung"
+      },
+      {
+        "value": "31011",
+        "name": "Rechnung sonstige Leistung"
+      }
+    ]
+  },
+  "1225": {
+    "name": "Nachrichtenfunktion, Code",
+    "codes": [
+      {
+        "value": "7",
+        "name": "Duplikat"
+      },
+      {
+        "value": "9",
+        "name": "Original"
+      }
+    ]
+  },
+  "2005": {
+    "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+    "codes": [
+      {
+        "value": "137",
+        "name": "Dokumenten-/Nachrichtendatum/-zeit"
+      },
+      {
+        "value": "9",
+        "name": "Bearbeitungs-/Verarbeitungsdatum/-zeit"
+      },
+      {
+        "value": "155",
+        "name": "Rechnungsperiode, Beginndatum"
+      },
+      {
+        "value": "156",
+        "name": "Rechnungsperiode, Endedatum"
+      },
+      {
+        "value": "Z42",
+        "name": "vorläufiger Abrechnungszeitraum Beginn"
+      },
+      {
+        "value": "Z43",
+        "name": "vorläufiger Abrechnungszeitraum Ende"
+      },
+      {
+        "value": "203",
+        "name": "Ausführungsdatum/-zeit"
+      },
+      {
+        "value": "Z11",
+        "name": "Beginndatum Bilanzierung zugeordnete Periode"
+      },
+      {
+        "value": "Z12",
+        "name": "Ende Netznutzung zugeordnete Periode"
+      },
+      {
+        "value": "171",
+        "name": "Referenzdatum/-zeit"
+      },
+      {
+        "value": "265",
+        "name": "Fälligkeitsdatum"
+      },
+      {
+        "value": "3",
+        "name": "Rechnungsdatum/-zeit"
+      }
+    ]
+  },
+  "2379": {
+    "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+    "codes": [
+      {
+        "value": "303",
+        "name": "CCYYMMDDHHMMZZZ"
+      },
+      {
+        "value": "102",
+        "name": "CCYYMMDD"
+      }
+    ]
+  },
+  "3035": {
+    "name": "Beteiligter, Qualifier",
+    "codes": [
+      {
+        "value": "MS",
+        "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender"
+      },
+      {
+        "value": "MR",
+        "name": "Nachrichtenempfänger"
+      },
+      {
+        "value": "DP",
+        "name": "Lieferanschrift"
+      },
+      {
+        "value": "ZSH",
+        "name": "Netzkonto"
+      }
+    ]
+  },
+  "3045": {
+    "name": "Format für den Namen des Beteiligten, Code",
+    "codes": [
+      {
+        "value": "Z01",
+        "name": "Struktur von Personennamen"
+      },
+      {
+        "value": "Z02",
+        "name": "Struktur der Firmenbezeichnung"
+      }
+    ]
+  },
+  "3055": {
+    "name": "Verantwortliche Stelle für die Codepflege, Code",
+    "codes": [
+      {
+        "value": "9",
+        "name": "GS1"
+      },
+      {
+        "value": "293",
+        "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)"
+      },
+      {
+        "value": "332",
+        "name": "DE, DVGW Service & Consult GmbH"
+      }
+    ]
+  },
+  "3139": {
+    "name": "Funktion des Ansprechpartners, Code",
+    "codes": [
+      {
+        "value": "IC",
+        "name": "Informationskontakt"
+      }
+    ]
+  },
+  "3155": {
+    "name": "Art des Kommunikationsmittels, Code",
+    "codes": [
+      {
+        "value": "EM",
+        "name": "Elektronische Post"
+      },
+      {
+        "value": "FX",
+        "name": "Telefax"
+      },
+      {
+        "value": "TE",
+        "name": "Telefon"
+      },
+      {
+        "value": "AJ",
+        "name": "weiteres Telefon"
+      },
+      {
+        "value": "AL",
+        "name": "Handy"
+      }
+    ]
+  },
+  "3227": {
+    "name": "Ortsangabe, Qualifier",
+    "codes": [
+      {
+        "value": "172",
+        "name": "Meldepunkt"
+      }
+    ]
+  },
+  "4279": {
+    "name": "Zahlungsbedingung, Qualifier",
+    "codes": [
+      {
+        "value": "3",
+        "name": "Fixdatum"
+      }
+    ]
+  },
+  "4441": {
+    "name": "Freier Text, Code",
+    "codes": [
+      {
+        "value": "RCH",
+        "name": "Reverse Charge gemäß §13b UStG / Steuerschuldnerschaft des Leistungsempfängers"
+      }
+    ]
+  },
+  "4451": {
+    "name": "Textbezug, Qualifier",
+    "codes": [
+      {
+        "value": "REG",
+        "name": "Meldeinformationen"
+      }
+    ]
+  },
+  "5025": {
+    "name": "Geldbetrag, Qualifier",
+    "codes": [
+      {
+        "value": "203",
+        "name": "Positionsbetrag (ohne USt.)"
+      },
+      {
+        "value": "131",
+        "name": "Gesamtzu- oder abschlagsbetrag"
+      },
+      {
+        "value": "25",
+        "name": "Zu-/Abschlagsbasis"
+      },
+      {
+        "value": "Z01",
+        "name": "Gemeinderabatt"
+      },
+      {
+        "value": "77",
+        "name": "Rechnungsbetrag"
+      },
+      {
+        "value": "113",
+        "name": "Vorausbezahlter Betrag (inkl. USt.)"
+      },
+      {
+        "value": "9",
+        "name": "Fälliger Betrag (inkl. USt.)"
+      },
+      {
+        "value": "115",
+        "name": "Vorausbezahlte Steuern (USt.-Anteil des vorausbezahlten Betrages)"
+      },
+      {
+        "value": "125",
+        "name": "Besteuerungsgrundlage"
+      },
+      {
+        "value": "161",
+        "name": "Steuer-/Gebühren-/Abgabebetrag"
+      }
+    ]
+  },
+  "5125": {
+    "name": "Preis, Qualifier",
+    "codes": [
+      {
+        "value": "CAL",
+        "name": "Berechnungspreis"
+      }
+    ]
+  },
+  "5153": {
+    "name": "Zoll-/Steuer-/Gebühren-Art, Code",
+    "codes": [
+      {
+        "value": "VAT",
+        "name": "Umsatzsteuer"
+      }
+    ]
+  },
+  "5189": {
+    "name": "Zu- oder Abschlag, Code",
+    "codes": [
+      {
+        "value": "Z01",
+        "name": "Gemeinderabatt nach Konzessionsabgabenverordnung"
+      },
+      {
+        "value": "Z04",
+        "name": "Anpassung nach § 19, Absatz 2 Stromnetzentgeltverordnung"
+      },
+      {
+        "value": "Z02",
+        "name": "Umspannungszuschlag"
+      },
+      {
+        "value": "Z03",
+        "name": "allein genutzte Betriebsmittel nach § 19, Absatz 3 Stromnetzentgeltverordnung"
+      },
+      {
+        "value": "Z05",
+        "name": "Anpassung Pauschale Netzentgeltreduzierung nach § 14a EnWG auf Höhe der NNE"
+      }
+    ]
+  },
+  "5245": {
+    "name": "Prozentsatz, Qualifier",
+    "codes": [
+      {
+        "value": "3",
+        "name": "Zu- oder Abschlag"
+      }
+    ]
+  },
+  "5283": {
+    "name": "Zoll-/Steuer-/Gebührenfunktion, Qualifier",
+    "codes": [
+      {
+        "value": "7",
+        "name": "Steuer"
+      }
+    ]
+  },
+  "5305": {
+    "name": "Zoll-/Steuer-/Gebührenkategorie, Code",
+    "codes": [
+      {
+        "value": "S",
+        "name": "Einheitssatz (Standard)"
+      },
+      {
+        "value": "O",
+        "name": "nicht steuerbar"
+      },
+      {
+        "value": "AE",
+        "name": "Reverse Charge / Steuerschuldnerschaft des Leistungsempfängers"
+      }
+    ]
+  },
+  "5463": {
+    "name": "Zu- oder Abschlag, Qualifier",
+    "codes": [
+      {
+        "value": "A",
+        "name": "Abschlag"
+      },
+      {
+        "value": "C",
+        "name": "Zuschlag"
+      }
+    ]
+  },
+  "6063": {
+    "name": "Menge, Qualifier",
+    "codes": [
+      {
+        "value": "47",
+        "name": "Berechnete (fakturierte) Menge"
+      },
+      {
+        "value": "136",
+        "name": "Erreichte Menge in dem Zeitintervall"
+      },
+      {
+        "value": "Z17",
+        "name": "Korrekturfaktor"
+      }
+    ]
+  },
+  "6343": {
+    "name": "Währung, Qualifier",
+    "codes": [
+      {
+        "value": "4",
+        "name": "Währung der Rechnung"
+      }
+    ]
+  },
+  "6345": {
+    "name": "Währung, Code",
+    "codes": [
+      {
+        "value": "EUR",
+        "name": "Euro"
+      }
+    ]
+  },
+  "6347": {
+    "name": "Währungsverwendung, Qualifier",
+    "codes": [
+      {
+        "value": "2",
+        "name": "Referenzwährung"
+      }
+    ]
+  },
+  "6411": {
+    "name": "Maßeinheit, Code",
+    "codes": [
+      {
+        "value": "KWH",
+        "name": "Kilowattstunde"
+      },
+      {
+        "value": "KWT",
+        "name": "Kilowatt"
+      },
+      {
+        "value": "KVR",
+        "name": "kilovar"
+      },
+      {
+        "value": "K3",
+        "name": "kilovolt ampere reactive hour"
+      },
+      {
+        "value": "H87",
+        "name": "Stück"
+      },
+      {
+        "value": "DAY",
+        "name": "Tag"
+      },
+      {
+        "value": "MON",
+        "name": "Monat"
+      },
+      {
+        "value": "ANN",
+        "name": "Jahr"
+      }
+    ]
+  },
+  "7009": {
+    "name": "Produkt-/Leistungsbeschreibung, Code",
+    "codes": [
+      {
+        "value": "Z06",
+        "name": "Erzeugung"
+      },
+      {
+        "value": "Z07",
+        "name": "Verbrauch"
+      }
+    ]
+  },
+  "7081": {
+    "name": "Produkt/Leistung, Code",
+    "codes": [
+      {
+        "value": "ABR",
+        "name": "Abschlussrechnung"
+      },
+      {
+        "value": "ABS",
+        "name": "Abschlagsrechnung"
+      },
+      {
+        "value": "JVR",
+        "name": "Turnusrechnung"
+      },
+      {
+        "value": "MVR",
+        "name": "Monatsrechnung"
+      },
+      {
+        "value": "WIM",
+        "name": "Rechnung für WiM"
+      },
+      {
+        "value": "ZVR",
+        "name": "Zwischenrechnung"
+      },
+      {
+        "value": "13I",
+        "name": "Integrierte 13. Rechnung"
+      },
+      {
+        "value": "13R",
+        "name": "13. Rechnung"
+      },
+      {
+        "value": "MMM",
+        "name": "Mehr-/Mindermengenabrechnung"
+      },
+      {
+        "value": "MSB",
+        "name": "Rechnung für Messstellenbetrieb"
+      },
+      {
+        "value": "NAP",
+        "name": "Kapazitätsrechnung"
+      },
+      {
+        "value": "Z43",
+        "name": "Rechnung für Sperren und Wiederinbetriebnahme"
+      },
+      {
+        "value": "Z44",
+        "name": "Verzugskostenrechnung"
+      },
+      {
+        "value": "Z45",
+        "name": "Blindarbeitrechnung"
+      },
+      {
+        "value": "SOR",
+        "name": "Sonderrechnung"
+      },
+      {
+        "value": "KON",
+        "name": "Abrechnung von Konfigurationen (Universalbestellprozess)"
+      }
+    ]
+  },
+  "7143": {
+    "name": "Art der Produkt-/Leistungsnummer, Code",
+    "codes": [
+      {
+        "value": "Z01",
+        "name": "Artikelnummer"
+      },
+      {
+        "value": "Z09",
+        "name": "Artikel-ID"
+      }
+    ]
+  },
+  "7365": {
+    "name": "Verarbeitungsindikator, Code",
+    "codes": [
+      {
+        "value": "Z01",
+        "name": "Konzessionsabgabe (Testat)"
+      },
+      {
+        "value": "Z02",
+        "name": "Individuelle Vereinbarung für atypische und energieintensive Netznutzung"
+      },
+      {
+        "value": "Z03",
+        "name": "Individuelle Vereinbarung für singuläre Netznutzung"
+      },
+      {
+        "value": "Z04",
+        "name": "KWKG-Umlage"
+      },
+      {
+        "value": "Z05",
+        "name": "Offshore-Netzumlage"
+      },
+      {
+        "value": "Z06",
+        "name": "§ 19 StromNEV-Umlage"
+      },
+      {
+        "value": "Z07",
+        "name": "§18 AbLaV"
+      },
+      {
+        "value": "Z08",
+        "name": "Konzessionsabgabe (Wechsel auf Lastgangmessung)"
+      },
+      {
+        "value": "Z09",
+        "name": "Privilegierung nach EnFG"
+      }
+    ]
+  },
+  "9649": {
+    "name": "Verarbeitungsinformation, Qualifier",
+    "codes": [
+      {
+        "value": "Z01",
+        "name": "Art der Sonderrechnung"
+      }
+    ]
+  }
+}

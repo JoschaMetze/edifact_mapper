@@ -4,7 +4,7 @@
 //! - [`CompositeExternalProvider`]: chains multiple providers, returning the first
 //!   non-[`Unknown`](super::ConditionResult::Unknown) result.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use super::evaluator::{ConditionResult, ExternalConditionProvider};
 
@@ -69,6 +69,89 @@ impl CompositeExternalProvider {
     pub fn new(providers: Vec<Box<dyn ExternalConditionProvider>>) -> Self {
         Self { providers }
     }
+
+    /// Build a composite provider with the standard static providers.
+    ///
+    /// - `sector`: If Some, adds a `SectorProvider`
+    /// - `roles`: If Some((sender_roles, recipient_roles)), adds a `MarketRoleProvider`
+    /// - `code_list_json`: If Some, adds a `CodeListProvider` loaded from JSON
+    /// - `konfigurationen_json`: If Some((json, product_code)), adds a `KonfigurationenProvider`
+    pub fn with_defaults(
+        sector: Option<Sector>,
+        roles: Option<(Vec<MarketRole>, Vec<MarketRole>)>,
+        code_list_json: Option<&str>,
+    ) -> Self {
+        Self::builder()
+            .sector(sector)
+            .roles(roles)
+            .code_list_json(code_list_json)
+            .build()
+    }
+
+    /// Start building a composite provider with fine-grained control.
+    pub fn builder() -> CompositeProviderBuilder {
+        CompositeProviderBuilder::default()
+    }
+}
+
+/// Builder for constructing a [`CompositeExternalProvider`] with multiple provider types.
+#[derive(Default)]
+pub struct CompositeProviderBuilder {
+    sector: Option<Sector>,
+    roles: Option<(Vec<MarketRole>, Vec<MarketRole>)>,
+    code_list_json: Option<String>,
+    konfigurationen_json: Option<String>,
+    product_code: Option<String>,
+}
+
+impl CompositeProviderBuilder {
+    pub fn sector(mut self, sector: Option<Sector>) -> Self {
+        self.sector = sector;
+        self
+    }
+
+    pub fn roles(mut self, roles: Option<(Vec<MarketRole>, Vec<MarketRole>)>) -> Self {
+        self.roles = roles;
+        self
+    }
+
+    pub fn code_list_json(mut self, json: Option<&str>) -> Self {
+        self.code_list_json = json.map(String::from);
+        self
+    }
+
+    pub fn konfigurationen_json(mut self, json: &str) -> Self {
+        self.konfigurationen_json = Some(json.to_string());
+        self
+    }
+
+    pub fn product_code(mut self, code: Option<String>) -> Self {
+        self.product_code = code;
+        self
+    }
+
+    pub fn build(self) -> CompositeExternalProvider {
+        let mut providers: Vec<Box<dyn ExternalConditionProvider>> = Vec::new();
+
+        if let Some(sector) = self.sector {
+            providers.push(Box::new(SectorProvider::new(sector)));
+        }
+        if let Some((sender, recipient)) = self.roles {
+            providers.push(Box::new(MarketRoleProvider::new(sender, recipient)));
+        }
+        if let Some(json) = &self.code_list_json {
+            if let Ok(provider) = CodeListProvider::from_json(json) {
+                providers.push(Box::new(provider));
+            }
+        }
+        if let Some(json) = &self.konfigurationen_json {
+            if let Ok(provider) = KonfigurationenProvider::from_json(json, self.product_code) {
+                providers.push(Box::new(provider));
+            }
+        }
+
+        CompositeExternalProvider::new(providers)
+    }
 }
 
 impl ExternalConditionProvider for CompositeExternalProvider {
@@ -79,6 +162,347 @@ impl ExternalConditionProvider for CompositeExternalProvider {
                 return result;
             }
         }
+        ConditionResult::Unknown
+    }
+}
+
+/// Provider that checks whether a value belongs to a known code list.
+///
+/// Condition name format: `"code_in_<data_element_id>:<value>"`
+/// Returns True if the value is in the list, False if not, Unknown if the list is unknown.
+pub struct CodeListProvider {
+    lists: HashMap<String, HashSet<String>>,
+}
+
+impl CodeListProvider {
+    pub fn new(lists: HashMap<String, Vec<String>>) -> Self {
+        Self {
+            lists: lists
+                .into_iter()
+                .map(|(k, v)| (k, v.into_iter().collect()))
+                .collect(),
+        }
+    }
+
+    /// Load from the JSON format produced by `extract-code-lists` CLI.
+    pub fn from_json(json: &str) -> Result<Self, serde_json::Error> {
+        #[derive(serde::Deserialize)]
+        struct Entry {
+            codes: Vec<CodeValue>,
+        }
+        #[derive(serde::Deserialize)]
+        struct CodeValue {
+            value: String,
+        }
+
+        let raw: HashMap<String, Entry> = serde_json::from_str(json)?;
+        let lists = raw
+            .into_iter()
+            .map(|(k, v)| (k, v.codes.into_iter().map(|c| c.value).collect()))
+            .collect();
+        Ok(Self { lists })
+    }
+
+    /// Load from a JSON file path.
+    pub fn from_json_file(
+        path: &std::path::Path,
+    ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+        let json = std::fs::read_to_string(path)?;
+        Ok(Self::from_json(&json)?)
+    }
+}
+
+impl ExternalConditionProvider for CodeListProvider {
+    fn evaluate(&self, condition_name: &str) -> ConditionResult {
+        let rest = match condition_name.strip_prefix("code_in_") {
+            Some(r) => r,
+            None => return ConditionResult::Unknown,
+        };
+        let (de_id, value) = match rest.split_once(':') {
+            Some(pair) => pair,
+            None => return ConditionResult::Unknown,
+        };
+        match self.lists.get(de_id) {
+            Some(set) => ConditionResult::from(set.contains(value)),
+            None => ConditionResult::Unknown,
+        }
+    }
+}
+
+/// Energy sector (Strom = electricity, Gas = natural gas).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Sector {
+    Strom,
+    Gas,
+}
+
+/// Provider that resolves sector-based conditions from deployment configuration.
+pub struct SectorProvider {
+    sector: Sector,
+}
+
+impl SectorProvider {
+    pub fn new(sector: Sector) -> Self {
+        Self { sector }
+    }
+
+    /// Create from variant string (e.g., "Strom", "Gas").
+    pub fn from_variant(variant: &str) -> Option<Self> {
+        match variant {
+            "Strom" => Some(Self::new(Sector::Strom)),
+            "Gas" => Some(Self::new(Sector::Gas)),
+            _ => None,
+        }
+    }
+}
+
+const STROM_CONDITIONS: &[&str] = &[
+    "recipient_is_strom",
+    "recipient_market_sector_is_strom",
+    "recipient_is_electricity_sector",
+    "sender_is_strom",
+    "mp_id_is_strom",
+    "mp_id_is_strom_sector",
+    "mp_id_is_electricity_sector",
+    "mp_id_from_electricity_sector",
+    "mp_id_only_strom",
+    "mp_id_strom_only",
+    "mp_id_sparte_strom",
+    "market_location_is_electricity",
+    "marktpartner_is_strom",
+    "location_is_strom",
+    "metering_point_is_strom",
+    "network_location_is_strom",
+];
+
+const GAS_CONDITIONS: &[&str] = &[
+    "recipient_is_gas",
+    "recipient_market_sector_is_gas",
+    "recipient_is_gas_sector",
+    "sender_is_gas",
+    "mp_id_is_gas",
+    "mp_id_is_gas_sector",
+    "market_location_is_gas",
+    "marktpartner_is_gas",
+    "location_is_gas",
+    "metering_point_is_gas",
+    "network_location_is_gas",
+    "recipient_is_msb_gas",
+];
+
+impl ExternalConditionProvider for SectorProvider {
+    fn evaluate(&self, condition_name: &str) -> ConditionResult {
+        if STROM_CONDITIONS.contains(&condition_name) {
+            return ConditionResult::from(self.sector == Sector::Strom);
+        }
+        if GAS_CONDITIONS.contains(&condition_name) {
+            return ConditionResult::from(self.sector == Sector::Gas);
+        }
+        ConditionResult::Unknown
+    }
+}
+
+/// Market participant roles in the German energy market.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum MarketRole {
+    /// Lieferant (supplier)
+    LF,
+    /// Netzbetreiber (network operator)
+    NB,
+    /// Messstellenbetreiber (metering point operator)
+    MSB,
+    /// Messdienstleister (metering service provider)
+    MDL,
+    /// Übertragungsnetzbetreiber (TSO)
+    UENB,
+    /// Bilanzkreisverantwortlicher
+    BKV,
+    /// Bilanzkoordinator
+    BIKO,
+    /// Einsatzverantwortlicher
+    ESA,
+}
+
+impl MarketRole {
+    fn from_suffix(s: &str) -> Option<Self> {
+        match s {
+            "lf" => Some(Self::LF),
+            "nb" => Some(Self::NB),
+            "msb" => Some(Self::MSB),
+            "mdl" => Some(Self::MDL),
+            "uenb" => Some(Self::UENB),
+            "bkv" => Some(Self::BKV),
+            "biko" => Some(Self::BIKO),
+            "esa" => Some(Self::ESA),
+            _ => None,
+        }
+    }
+
+    /// Parse a compound role suffix like "lf_msb_nb" into multiple roles.
+    /// Returns None if any component is unrecognized.
+    fn parse_compound(s: &str) -> Option<Vec<Self>> {
+        let parts: Vec<&str> = s.split('_').collect();
+        let mut roles = Vec::new();
+        for part in parts {
+            roles.push(Self::from_suffix(part)?);
+        }
+        if roles.is_empty() {
+            None
+        } else {
+            Some(roles)
+        }
+    }
+}
+
+/// Provider that resolves sender/recipient market role conditions.
+pub struct MarketRoleProvider {
+    sender_roles: HashSet<MarketRole>,
+    recipient_roles: HashSet<MarketRole>,
+}
+
+impl MarketRoleProvider {
+    pub fn new(sender_roles: Vec<MarketRole>, recipient_roles: Vec<MarketRole>) -> Self {
+        Self {
+            sender_roles: sender_roles.into_iter().collect(),
+            recipient_roles: recipient_roles.into_iter().collect(),
+        }
+    }
+}
+
+impl ExternalConditionProvider for MarketRoleProvider {
+    fn evaluate(&self, condition_name: &str) -> ConditionResult {
+        // Single role: sender_is_lf, recipient_is_nb
+        if let Some(role_str) = condition_name.strip_prefix("sender_is_") {
+            if let Some(role) = MarketRole::from_suffix(role_str) {
+                return ConditionResult::from(self.sender_roles.contains(&role));
+            }
+            // Compound: sender_is_lf_nb = sender is LF OR NB
+            if let Some(roles) = MarketRole::parse_compound(role_str) {
+                return ConditionResult::from(
+                    roles.iter().any(|r| self.sender_roles.contains(r)),
+                );
+            }
+        }
+        if let Some(role_str) = condition_name.strip_prefix("recipient_is_") {
+            if let Some(role) = MarketRole::from_suffix(role_str) {
+                return ConditionResult::from(self.recipient_roles.contains(&role));
+            }
+            // Compound: recipient_is_lf_msb = recipient is LF OR MSB
+            if let Some(roles) = MarketRole::parse_compound(role_str) {
+                return ConditionResult::from(
+                    roles.iter().any(|r| self.recipient_roles.contains(r)),
+                );
+            }
+        }
+        if let Some(role_str) = condition_name.strip_prefix("sender_role_is_not_") {
+            if let Some(role) = MarketRole::from_suffix(role_str) {
+                return ConditionResult::from(!self.sender_roles.contains(&role));
+            }
+        }
+        if let Some(role_str) = condition_name.strip_prefix("recipient_role_is_not_") {
+            if let Some(role) = MarketRole::from_suffix(role_str) {
+                return ConditionResult::from(!self.recipient_roles.contains(&role));
+            }
+        }
+        // mp_id_role_is_<role> — treated like sender role check
+        if let Some(role_str) = condition_name.strip_prefix("mp_id_role_is_") {
+            if let Some(role) = MarketRole::from_suffix(role_str) {
+                return ConditionResult::from(self.sender_roles.contains(&role));
+            }
+        }
+        ConditionResult::Unknown
+    }
+}
+
+/// Provider that resolves product/Konfigurationen conditions based on a product code.
+///
+/// Loads the categorized product codes from the Codeliste der Konfigurationen and checks
+/// whether a given product code belongs to specific categories.
+///
+/// Supports conditions like:
+/// - `messprodukt_standard_marktlokation` — product is in chapter 2.1
+/// - `messprodukt_standard_tranche` — product is in chapter 2.2
+/// - `config_product_leistungskurve` — product is the Leistungskurve product
+/// - `code_list_membership_check` — product is in any category of the Konfigurationen
+pub struct KonfigurationenProvider {
+    /// Map from category name to set of product codes.
+    categories: HashMap<String, HashSet<String>>,
+    /// All known product codes across all categories.
+    all_codes: HashSet<String>,
+    /// The product code to check against.
+    product_code: Option<String>,
+}
+
+impl KonfigurationenProvider {
+    /// Create from pre-parsed categories and a product code to check.
+    pub fn new(
+        categories: HashMap<String, Vec<String>>,
+        product_code: Option<String>,
+    ) -> Self {
+        let mut all_codes = HashSet::new();
+        let categories = categories
+            .into_iter()
+            .map(|(k, v)| {
+                for code in &v {
+                    all_codes.insert(code.clone());
+                }
+                (k, v.into_iter().collect())
+            })
+            .collect();
+        Self {
+            categories,
+            all_codes,
+            product_code,
+        }
+    }
+
+    /// Load from the JSON format of `konfigurationen_code_lists.json`.
+    pub fn from_json(
+        json: &str,
+        product_code: Option<String>,
+    ) -> Result<Self, serde_json::Error> {
+        #[derive(serde::Deserialize)]
+        struct KonfigurationenFile {
+            categories: HashMap<String, Vec<String>>,
+            #[serde(default)]
+            all_product_codes: Vec<String>,
+        }
+        let file: KonfigurationenFile = serde_json::from_str(json)?;
+        let mut provider = Self::new(file.categories, product_code);
+        // Merge explicit all_product_codes list if present
+        for code in file.all_product_codes {
+            provider.all_codes.insert(code);
+        }
+        Ok(provider)
+    }
+
+    /// Load from a JSON file path.
+    pub fn from_json_file(
+        path: &std::path::Path,
+        product_code: Option<String>,
+    ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+        let json = std::fs::read_to_string(path)?;
+        Ok(Self::from_json(&json, product_code)?)
+    }
+}
+
+impl ExternalConditionProvider for KonfigurationenProvider {
+    fn evaluate(&self, condition_name: &str) -> ConditionResult {
+        let code = match &self.product_code {
+            Some(c) => c,
+            None => return ConditionResult::Unknown,
+        };
+
+        // Generic membership: is this product in the Konfigurationen at all?
+        if condition_name == "code_list_membership_check" {
+            return ConditionResult::from(self.all_codes.contains(code.as_str()));
+        }
+
+        // Category-specific: is this product in the named category?
+        if let Some(set) = self.categories.get(condition_name) {
+            return ConditionResult::from(set.contains(code.as_str()));
+        }
+
         ConditionResult::Unknown
     }
 }
@@ -164,5 +588,350 @@ mod tests {
         let composite = CompositeExternalProvider::new(vec![]);
 
         assert_eq!(composite.evaluate("Anything"), ConditionResult::Unknown);
+    }
+
+    // ---- CodeListProvider tests ----
+
+    #[test]
+    fn test_code_list_provider_known_code() {
+        let mut lists = HashMap::new();
+        lists.insert(
+            "7111".to_string(),
+            vec!["Z91".to_string(), "Z90".to_string()],
+        );
+        let provider = CodeListProvider::new(lists);
+        assert_eq!(
+            provider.evaluate("code_in_7111:Z91"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("code_in_7111:ZZZ"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            provider.evaluate("code_in_9999:Z91"),
+            ConditionResult::Unknown
+        );
+    }
+
+    #[test]
+    fn test_code_list_provider_loads_json() {
+        let json = r#"{
+            "7111": { "name": "Eigenschaft", "codes": [{"value": "Z91", "name": "MSB"}] },
+            "3225": { "name": "Ort", "codes": [{"value": "Z16", "name": "MaLo"}] }
+        }"#;
+        let provider = CodeListProvider::from_json(json).unwrap();
+        assert_eq!(
+            provider.evaluate("code_in_7111:Z91"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("code_in_3225:Z16"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("code_in_3225:Z99"),
+            ConditionResult::False
+        );
+    }
+
+    #[test]
+    fn test_code_list_provider_invalid_format() {
+        let mut lists = HashMap::new();
+        lists.insert("7111".to_string(), vec!["Z91".to_string()]);
+        let provider = CodeListProvider::new(lists);
+        assert_eq!(
+            provider.evaluate("not_a_code_check"),
+            ConditionResult::Unknown
+        );
+        assert_eq!(
+            provider.evaluate("code_in_7111"),
+            ConditionResult::Unknown
+        ); // no colon
+    }
+
+    // ---- SectorProvider tests ----
+
+    #[test]
+    fn test_sector_provider_strom() {
+        let provider = SectorProvider::new(Sector::Strom);
+        assert_eq!(
+            provider.evaluate("recipient_is_strom"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("recipient_is_gas"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            provider.evaluate("mp_id_is_strom"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("mp_id_is_gas"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            provider.evaluate("market_location_is_electricity"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("market_location_is_gas"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            provider.evaluate("unrelated_condition"),
+            ConditionResult::Unknown
+        );
+    }
+
+    #[test]
+    fn test_sector_provider_gas() {
+        let provider = SectorProvider::new(Sector::Gas);
+        assert_eq!(
+            provider.evaluate("recipient_is_strom"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            provider.evaluate("recipient_is_gas"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("recipient_is_msb_gas"),
+            ConditionResult::True
+        );
+    }
+
+    #[test]
+    fn test_sector_from_variant() {
+        assert!(SectorProvider::from_variant("Strom").is_some());
+        assert!(SectorProvider::from_variant("Gas").is_some());
+        assert!(SectorProvider::from_variant("Water").is_none());
+    }
+
+    // ---- MarketRoleProvider tests ----
+
+    #[test]
+    fn test_market_role_provider() {
+        let provider = MarketRoleProvider::new(
+            vec![MarketRole::LF],
+            vec![MarketRole::NB, MarketRole::MSB],
+        );
+        assert_eq!(provider.evaluate("sender_is_lf"), ConditionResult::True);
+        assert_eq!(provider.evaluate("sender_is_nb"), ConditionResult::False);
+        assert_eq!(provider.evaluate("recipient_is_nb"), ConditionResult::True);
+        assert_eq!(provider.evaluate("recipient_is_msb"), ConditionResult::True);
+        assert_eq!(provider.evaluate("recipient_is_lf"), ConditionResult::False);
+        assert_eq!(provider.evaluate("unrelated"), ConditionResult::Unknown);
+    }
+
+    #[test]
+    fn test_market_role_provider_negated() {
+        let provider = MarketRoleProvider::new(vec![MarketRole::MSB], vec![MarketRole::NB]);
+        assert_eq!(
+            provider.evaluate("sender_role_is_not_msb"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            provider.evaluate("sender_role_is_not_lf"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("recipient_role_is_not_nb"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            provider.evaluate("recipient_role_is_not_lf"),
+            ConditionResult::True
+        );
+    }
+
+    #[test]
+    fn test_market_role_unknown_suffix() {
+        let provider = MarketRoleProvider::new(vec![MarketRole::LF], vec![]);
+        // "sender_is_xyz" — xyz not a known role, so Unknown
+        assert_eq!(
+            provider.evaluate("sender_is_xyz"),
+            ConditionResult::Unknown
+        );
+    }
+
+    #[test]
+    fn test_market_role_compound() {
+        let provider = MarketRoleProvider::new(
+            vec![MarketRole::LF],
+            vec![MarketRole::NB],
+        );
+        // recipient_is_lf_msb = recipient is LF OR MSB → NB is neither → False
+        assert_eq!(
+            provider.evaluate("recipient_is_lf_msb"),
+            ConditionResult::False
+        );
+        // recipient_is_nb_lf = recipient is NB OR LF → NB matches → True
+        assert_eq!(
+            provider.evaluate("recipient_is_nb_lf"),
+            ConditionResult::True
+        );
+        // recipient_is_lf_nb_msb = LF or NB or MSB → NB matches → True
+        assert_eq!(
+            provider.evaluate("recipient_is_lf_nb_msb"),
+            ConditionResult::True
+        );
+        // mp_id_role_is_lf → sender has LF → True
+        assert_eq!(
+            provider.evaluate("mp_id_role_is_lf"),
+            ConditionResult::True
+        );
+    }
+
+    #[test]
+    fn test_sector_provider_additional_names() {
+        let provider = SectorProvider::new(Sector::Strom);
+        assert_eq!(
+            provider.evaluate("mp_id_is_strom_sector"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("marktpartner_is_strom"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("recipient_is_gas_sector"),
+            ConditionResult::False
+        );
+    }
+
+    #[test]
+    fn test_composite_with_defaults() {
+        let composite = CompositeExternalProvider::with_defaults(
+            Some(Sector::Strom),
+            Some((vec![MarketRole::LF], vec![MarketRole::NB])),
+            None,
+        );
+        // Sector resolved
+        assert_eq!(
+            composite.evaluate("recipient_is_strom"),
+            ConditionResult::True
+        );
+        // Market role resolved
+        assert_eq!(composite.evaluate("sender_is_lf"), ConditionResult::True);
+        // Unknown conditions still return Unknown
+        assert_eq!(
+            composite.evaluate("some_unknown"),
+            ConditionResult::Unknown
+        );
+    }
+
+    // ---- KonfigurationenProvider tests ----
+
+    fn make_konfigurationen_provider(product_code: Option<&str>) -> KonfigurationenProvider {
+        let mut categories = HashMap::new();
+        categories.insert(
+            "messprodukt_standard_marktlokation".to_string(),
+            vec!["9991000000044".to_string(), "9991000000052".to_string()],
+        );
+        categories.insert(
+            "messprodukt_standard_tranche".to_string(),
+            vec!["9991000000143".to_string()],
+        );
+        categories.insert(
+            "config_product_leistungskurve".to_string(),
+            vec!["9991000000721".to_string()],
+        );
+        KonfigurationenProvider::new(categories, product_code.map(String::from))
+    }
+
+    #[test]
+    fn test_konfigurationen_category_match() {
+        let provider = make_konfigurationen_provider(Some("9991000000044"));
+        assert_eq!(
+            provider.evaluate("messprodukt_standard_marktlokation"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("messprodukt_standard_tranche"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            provider.evaluate("config_product_leistungskurve"),
+            ConditionResult::False
+        );
+    }
+
+    #[test]
+    fn test_konfigurationen_generic_membership() {
+        let provider = make_konfigurationen_provider(Some("9991000000044"));
+        assert_eq!(
+            provider.evaluate("code_list_membership_check"),
+            ConditionResult::True
+        );
+
+        let provider2 = make_konfigurationen_provider(Some("0000000000000"));
+        assert_eq!(
+            provider2.evaluate("code_list_membership_check"),
+            ConditionResult::False
+        );
+    }
+
+    #[test]
+    fn test_konfigurationen_no_product_code() {
+        let provider = make_konfigurationen_provider(None);
+        assert_eq!(
+            provider.evaluate("messprodukt_standard_marktlokation"),
+            ConditionResult::Unknown
+        );
+        assert_eq!(
+            provider.evaluate("code_list_membership_check"),
+            ConditionResult::Unknown
+        );
+    }
+
+    #[test]
+    fn test_konfigurationen_unknown_condition() {
+        let provider = make_konfigurationen_provider(Some("9991000000044"));
+        assert_eq!(
+            provider.evaluate("completely_unrelated"),
+            ConditionResult::Unknown
+        );
+    }
+
+    #[test]
+    fn test_konfigurationen_from_json() {
+        let json = r#"{
+            "source": "Test",
+            "categories": {
+                "messprodukt_standard_marktlokation": ["9991000000044", "9991000000052"],
+                "config_product_leistungskurve": ["9991000000721"]
+            },
+            "all_product_codes": ["9991000000044", "9991000000052", "9991000000721"]
+        }"#;
+        let provider =
+            KonfigurationenProvider::from_json(json, Some("9991000000721".to_string())).unwrap();
+        assert_eq!(
+            provider.evaluate("messprodukt_standard_marktlokation"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            provider.evaluate("config_product_leistungskurve"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("code_list_membership_check"),
+            ConditionResult::True
+        );
+    }
+
+    #[test]
+    fn test_konfigurationen_specific_product() {
+        // Test config_product_leistungskurve matches exactly one code
+        let provider = make_konfigurationen_provider(Some("9991000000721"));
+        assert_eq!(
+            provider.evaluate("config_product_leistungskurve"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("messprodukt_standard_marktlokation"),
+            ConditionResult::False
+        );
     }
 }

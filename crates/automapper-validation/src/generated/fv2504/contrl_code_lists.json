@@ -1,0 +1,267 @@
+{
+  "0007": {
+    "name": "Teilnehmerbezeichnung, Qualifier",
+    "codes": [
+      {
+        "value": "14",
+        "name": "GS1"
+      },
+      {
+        "value": "500",
+        "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)"
+      },
+      {
+        "value": "502",
+        "name": "DE, DVGW (Deutsche Vereinigung des Gas- und Wasserfaches e.V.)"
+      }
+    ]
+  },
+  "0013": {
+    "name": "Service-Segmentbezeichner, codiert",
+    "codes": [
+      {
+        "value": "UNA",
+        "name": "Trennzeichenvorgabe"
+      },
+      {
+        "value": "UNB",
+        "name": "Nutzdaten-Kopfsegment"
+      },
+      {
+        "value": "UNZ",
+        "name": "Nutzdaten-Endesegment"
+      },
+      {
+        "value": "UNH",
+        "name": "Nachrichten-Kopfsegment"
+      },
+      {
+        "value": "UNT",
+        "name": "Nachrichten-Endesegment"
+      }
+    ]
+  },
+  "0051": {
+    "name": "Verwaltende Organisation",
+    "codes": [
+      {
+        "value": "UN",
+        "name": "UN/CEFACT"
+      }
+    ]
+  },
+  "0052": {
+    "name": "Versionsnummer des Nachrichtentyps",
+    "codes": [
+      {
+        "value": "D",
+        "name": "Entwurfs-Version"
+      }
+    ]
+  },
+  "0054": {
+    "name": "Freigabenummer des Nachrichtentyps",
+    "codes": [
+      {
+        "value": "3",
+        "name": "Dritte Ausgabe (CONTRL-Nachricht)"
+      },
+      {
+        "value": "XYZ",
+        "name": "Beispielcode"
+      }
+    ]
+  },
+  "0057": {
+    "name": "Anwendungscode der zuständigen Organisation",
+    "codes": [
+      {
+        "value": "2.0b",
+        "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung"
+      },
+      {
+        "value": "XYZ",
+        "name": "Beispielcode"
+      }
+    ]
+  },
+  "0065": {
+    "name": "Nachrichtentyp-Kennung",
+    "codes": [
+      {
+        "value": "CONTRL",
+        "name": "Syntax- und Servicebericht"
+      },
+      {
+        "value": "APERAK",
+        "name": "Anwendungsfehler- und Bestätigungs-Nachricht"
+      },
+      {
+        "value": "COMDIS",
+        "name": "Handelsunstimmigkeit"
+      },
+      {
+        "value": "IFTSTA",
+        "name": "Multimodaler Statusbericht"
+      },
+      {
+        "value": "INSRPT",
+        "name": "Prüfbericht"
+      },
+      {
+        "value": "INVOIC",
+        "name": "Rechnung"
+      },
+      {
+        "value": "MSCONS",
+        "name": "Bericht über den Verbrauch messbarer Dienstleistungen"
+      },
+      {
+        "value": "ORDCHG",
+        "name": "Bestelländerung"
+      },
+      {
+        "value": "ORDERS",
+        "name": "Bestellung"
+      },
+      {
+        "value": "ORDRSP",
+        "name": "Bestellantwort"
+      },
+      {
+        "value": "PARTIN",
+        "name": "Partnerstammdaten"
+      },
+      {
+        "value": "PRICAT",
+        "name": "Preisliste/Katalog"
+      },
+      {
+        "value": "QUOTES",
+        "name": "Angebot"
+      },
+      {
+        "value": "REMADV",
+        "name": "Zahlungsavis"
+      },
+      {
+        "value": "REQOTE",
+        "name": "Anfrage"
+      },
+      {
+        "value": "UTILMD",
+        "name": "Netzanschluss-Stammdaten"
+      },
+      {
+        "value": "UTILTS",
+        "name": "Netznutzungszeiten-Nachricht"
+      }
+    ]
+  },
+  "0083": {
+    "name": "Aktion, codiert",
+    "codes": [
+      {
+        "value": "4",
+        "name": "Diese Ebene und alle tieferen Ebenen zurückgewiesen"
+      },
+      {
+        "value": "7",
+        "name": "Übertragung bestätigt (keine Syntaxfehler)"
+      }
+    ]
+  },
+  "0085": {
+    "name": "Syntax-Fehler, codiert",
+    "codes": [
+      {
+        "value": "2",
+        "name": "Syntax-Version oder -ebene nicht unterstützt"
+      },
+      {
+        "value": "7",
+        "name": "Empfänger der Übertragungsdatei ist nicht der tatsächliche Empfänger"
+      },
+      {
+        "value": "12",
+        "name": "Ungültiger Wert"
+      },
+      {
+        "value": "13",
+        "name": "Fehlt"
+      },
+      {
+        "value": "16",
+        "name": "Zu viele Bestandteile"
+      },
+      {
+        "value": "20",
+        "name": "Zeichen ungültig als Service-Zeichen"
+      },
+      {
+        "value": "21",
+        "name": "Ungültige(s) Zeichen"
+      },
+      {
+        "value": "23",
+        "name": "Unbekannter Absender der Übertragungsdatei"
+      },
+      {
+        "value": "25",
+        "name": "Test-Kennzeichen nicht unterstützt"
+      },
+      {
+        "value": "26",
+        "name": "Duplikat gefunden"
+      },
+      {
+        "value": "28",
+        "name": "Referenzen stimmen nicht überein"
+      },
+      {
+        "value": "29",
+        "name": "Kontrollzähler entspricht nicht der Anzahl empfangender Fälle"
+      },
+      {
+        "value": "32",
+        "name": "Tiefere Ebene leer"
+      },
+      {
+        "value": "22",
+        "name": "Ungültige(s) Service-Zeichen"
+      },
+      {
+        "value": "39",
+        "name": "Datenelement zu lang"
+      },
+      {
+        "value": "15",
+        "name": "Nicht unterstützt an dieser Position"
+      },
+      {
+        "value": "35",
+        "name": "Zu viele Segment-Wiederholungen"
+      },
+      {
+        "value": "36",
+        "name": "Zu viele Segmentgruppen-Wiederholungen"
+      },
+      {
+        "value": "19",
+        "name": "Ungültige Dezimalbeschreibung"
+      },
+      {
+        "value": "37",
+        "name": "Ungültige Zeichenart"
+      },
+      {
+        "value": "38",
+        "name": "Fehlende Ziffer vor dem Dezimalzeichen"
+      },
+      {
+        "value": "40",
+        "name": "Datenelement zu kurz"
+      }
+    ]
+  }
+}

@@ -36,8 +36,10 @@ pub mod validator;
 // Re-export key types at crate root for convenience
 pub use error::{ParseError, ValidationError};
 pub use eval::{
-    CompositeExternalProvider, ConditionEvaluator, ConditionExprEvaluator, ConditionResult,
-    EvaluationContext, GroupNavigator, MapExternalProvider, NoOpGroupNavigator,
+    CodeListProvider, CompositeExternalProvider, ConditionEvaluator, ConditionExprEvaluator,
+    ConditionResult, EvaluationContext, GroupNavigator, KonfigurationenProvider,
+    MapExternalProvider, MarketRole, MarketRoleProvider, NoOpGroupNavigator, Sector,
+    SectorProvider,
 };
 pub use expr::{ConditionExpr, ConditionParser};
 pub use validator::{

@@ -1,4 +1,5 @@
 pub mod code_enum_index;
+pub mod code_list_extractor;
 pub mod coordinator_gen;
 pub mod mapper_gen;
 pub mod mig_type_gen;
