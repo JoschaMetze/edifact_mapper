@@ -40,6 +40,9 @@ pub struct MessageTypeConfig {
     pub format_version: &'static str,
 }
 
+/// Base directory for bincode cache files (relative to crate root).
+const CACHE_BASE: &str = "../../cache/mappings";
+
 impl MessageTypeConfig {
     pub fn path_resolver(&self) -> PathResolver {
         PathResolver::from_schema_dir(Path::new(self.schema_dir))
@@ -55,6 +58,17 @@ impl MessageTypeConfig {
 
     pub fn pid_dir(&self, pid: &str) -> PathBuf {
         Path::new(self.mappings_base).join(format!("pid_{pid}"))
+    }
+
+    /// Cache directory for this message type variant.
+    fn cache_dir(&self) -> PathBuf {
+        let variant_name = match self.variant {
+            Some(v) => format!("{}_{}", self.message_type, v),
+            None => self.message_type.to_string(),
+        };
+        Path::new(CACHE_BASE)
+            .join(self.format_version)
+            .join(variant_name)
     }
 
     pub fn schema_index(&self, pid: &str) -> PidSchemaIndex {
@@ -110,8 +124,20 @@ impl MessageTypeConfig {
         fixtures
     }
 
-    /// Load split engines with common/ inheritance when available.
+    /// Load split engines — tries bincode cache first, falls back to TOML.
     pub fn load_split_engines(&self, pid: &str) -> (MappingEngine, MappingEngine) {
+        let cache_dir = self.cache_dir();
+        let msg_cache = cache_dir.join("msg.bin");
+        let tx_cache = cache_dir.join(format!("tx_pid_{pid}.bin"));
+
+        // Try cache first (paths already resolved, no PathResolver needed)
+        if msg_cache.exists() && tx_cache.exists() {
+            let msg = MappingEngine::load_cached(&msg_cache).unwrap();
+            let tx = MappingEngine::load_cached(&tx_cache).unwrap();
+            return (msg, tx);
+        }
+
+        // Fall back to TOML loading with path resolution
         let msg_dir = self.message_dir();
         let cmn_dir = self.common_dir();
         let tx_dir = self.pid_dir(pid);
@@ -133,8 +159,14 @@ impl MessageTypeConfig {
         }
     }
 
-    /// Load message-only engine (for PIDs without a transaction group).
+    /// Load message-only engine — tries bincode cache first, falls back to TOML.
     pub fn load_message_engine(&self) -> MappingEngine {
+        let msg_cache = self.cache_dir().join("msg.bin");
+        if msg_cache.exists() {
+            return MappingEngine::load_cached(&msg_cache).unwrap();
+        }
+
+        // Fall back to TOML
         let msg_dir = self.message_dir();
         let resolver = self.path_resolver();
         MappingEngine::load(&msg_dir)
