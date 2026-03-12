@@ -8,6 +8,46 @@ use std::collections::{HashMap, HashSet};
 
 use super::evaluator::{ConditionResult, ExternalConditionProvider};
 
+/// Countries where postal codes (PLZ) are required in the EU/EEA energy market.
+const COUNTRIES_WITH_PLZ: &[&str] = &[
+    "DE", "AT", "CH", "BE", "BG", "CZ", "DK", "EE", "FI", "FR", "GR", "HR", "HU", "IE", "IT",
+    "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK", "ES", "GB", "NO", "CY",
+    "IS", "LI",
+];
+
+const COUNTRY_PLZ_CONDITIONS: &[&str] = &[
+    "country_code_has_plz",
+    "country_has_postal_code",
+    "country_has_postal_code_requirement",
+];
+
+/// Provider that resolves country→postal code (PLZ) conditions.
+///
+/// Returns True if the country code is in the set of countries with PLZ requirements,
+/// False if it's a known country without PLZ, Unknown if no country code is set.
+pub struct CountryPostalCodeProvider {
+    country_code: Option<String>,
+}
+
+impl CountryPostalCodeProvider {
+    /// Create a new provider with the given ISO 3166-1 alpha-2 country code.
+    pub fn new(country_code: Option<String>) -> Self {
+        Self { country_code }
+    }
+}
+
+impl ExternalConditionProvider for CountryPostalCodeProvider {
+    fn evaluate(&self, condition_name: &str) -> ConditionResult {
+        if !COUNTRY_PLZ_CONDITIONS.contains(&condition_name) {
+            return ConditionResult::Unknown;
+        }
+        match &self.country_code {
+            Some(code) => ConditionResult::from(COUNTRIES_WITH_PLZ.contains(&code.as_str())),
+            None => ConditionResult::Unknown,
+        }
+    }
+}
+
 /// An [`ExternalConditionProvider`] backed by a `HashMap<String, bool>`.
 ///
 /// Returns `True`/`False` for keys present in the map and `Unknown` for
@@ -102,6 +142,7 @@ pub struct CompositeProviderBuilder {
     code_list_json: Option<String>,
     konfigurationen_json: Option<String>,
     product_code: Option<String>,
+    country_code: Option<String>,
 }
 
 impl CompositeProviderBuilder {
@@ -130,6 +171,11 @@ impl CompositeProviderBuilder {
         self
     }
 
+    pub fn country_code(mut self, code: Option<String>) -> Self {
+        self.country_code = code;
+        self
+    }
+
     pub fn build(self) -> CompositeExternalProvider {
         let mut providers: Vec<Box<dyn ExternalConditionProvider>> = Vec::new();
 
@@ -148,6 +194,9 @@ impl CompositeProviderBuilder {
             if let Ok(provider) = KonfigurationenProvider::from_json(json, self.product_code) {
                 providers.push(Box::new(provider));
             }
+        }
+        if self.country_code.is_some() {
+            providers.push(Box::new(CountryPostalCodeProvider::new(self.country_code)));
         }
 
         CompositeExternalProvider::new(providers)
@@ -280,6 +329,7 @@ const GAS_CONDITIONS: &[&str] = &[
     "recipient_market_sector_is_gas",
     "recipient_is_gas_sector",
     "sender_is_gas",
+    "sender_is_gas_sector",
     "mp_id_is_gas",
     "mp_id_is_gas_sector",
     "market_location_is_gas",
@@ -321,6 +371,10 @@ pub enum MarketRole {
     BIKO,
     /// Einsatzverantwortlicher
     ESA,
+    /// Marktgebietsverantwortlicher (market area manager)
+    MGV,
+    /// Kunde (customer)
+    KN,
 }
 
 impl MarketRole {
@@ -334,13 +388,28 @@ impl MarketRole {
             "bkv" => Some(Self::BKV),
             "biko" => Some(Self::BIKO),
             "esa" => Some(Self::ESA),
+            "mgv" => Some(Self::MGV),
+            "kn" => Some(Self::KN),
             _ => None,
         }
     }
 
-    /// Parse a compound role suffix like "lf_msb_nb" into multiple roles.
+    /// Parse a compound role suffix like "lf_msb_nb" or "lf_or_nb" into multiple roles.
+    /// Tries `_or_` splitting first, then falls back to `_` splitting.
     /// Returns None if any component is unrecognized.
     fn parse_compound(s: &str) -> Option<Vec<Self>> {
+        // Try splitting on "_or_" first (e.g., "lf_or_nb")
+        if s.contains("_or_") {
+            let parts: Vec<&str> = s.split("_or_").collect();
+            let mut roles = Vec::new();
+            for part in parts {
+                roles.push(Self::from_suffix(part)?);
+            }
+            if !roles.is_empty() {
+                return Some(roles);
+            }
+        }
+        // Fall back to splitting on "_" (e.g., "lf_msb_nb")
         let parts: Vec<&str> = s.split('_').collect();
         let mut roles = Vec::new();
         for part in parts {
@@ -404,6 +473,28 @@ impl ExternalConditionProvider for MarketRoleProvider {
                 return ConditionResult::from(!self.recipient_roles.contains(&role));
             }
         }
+        // recipient_not_<roles> = recipient is NOT any of the given roles
+        if let Some(role_str) = condition_name.strip_prefix("recipient_not_") {
+            if let Some(role) = MarketRole::from_suffix(role_str) {
+                return ConditionResult::from(!self.recipient_roles.contains(&role));
+            }
+            if let Some(roles) = MarketRole::parse_compound(role_str) {
+                return ConditionResult::from(
+                    !roles.iter().any(|r| self.recipient_roles.contains(r)),
+                );
+            }
+        }
+        // sender_not_<roles> = sender is NOT any of the given roles
+        if let Some(role_str) = condition_name.strip_prefix("sender_not_") {
+            if let Some(role) = MarketRole::from_suffix(role_str) {
+                return ConditionResult::from(!self.sender_roles.contains(&role));
+            }
+            if let Some(roles) = MarketRole::parse_compound(role_str) {
+                return ConditionResult::from(
+                    !roles.iter().any(|r| self.sender_roles.contains(r)),
+                );
+            }
+        }
         // mp_id_role_is_<role> — treated like sender role check
         if let Some(role_str) = condition_name.strip_prefix("mp_id_role_is_") {
             if let Some(role) = MarketRole::from_suffix(role_str) {
@@ -424,11 +515,60 @@ impl ExternalConditionProvider for MarketRoleProvider {
 /// - `messprodukt_standard_tranche` — product is in chapter 2.2
 /// - `config_product_leistungskurve` — product is the Leistungskurve product
 /// - `code_list_membership_check` — product is in any category of the Konfigurationen
+///
+/// Aliases that map alternative condition names to Konfigurationen lookups.
+enum KonfigurationenAlias {
+    /// Check against all_codes (same as code_list_membership_check).
+    AllCodes,
+    /// Check against a single category by canonical name.
+    Category(&'static str),
+    /// Check against the union of all messprodukt_* categories.
+    MessproduktUnion,
+}
+
+fn resolve_konfigurationen_alias(condition_name: &str) -> Option<KonfigurationenAlias> {
+    match condition_name {
+        "is_konfigurationsprodukt_code" | "lin_prefix_is_valid_product_code" => {
+            Some(KonfigurationenAlias::AllCodes)
+        }
+        "is_messprodukt_code" => Some(KonfigurationenAlias::MessproduktUnion),
+        "messprodukts_typ2_smgw" | "product_in_typ2_smgw_codelist"
+        | "order_contains_smgw_type2_product" => {
+            Some(KonfigurationenAlias::Category("messprodukt_typ2_smgw"))
+        }
+        "valid_adhoc_steuerkanal_product" => {
+            Some(KonfigurationenAlias::Category("config_product_adhoc_steuerkanal"))
+        }
+        "product_code_level_messlokation" => {
+            Some(KonfigurationenAlias::Category("messprodukt_standard_messlokation"))
+        }
+        "product_code_level_netzlokation" => {
+            Some(KonfigurationenAlias::Category("messprodukt_standard_netzlokation"))
+        }
+        "product_code_abrechnungsdaten_valid" => {
+            Some(KonfigurationenAlias::Category("produkte_aenderung_abrechnungsdaten"))
+        }
+        "lin_product_code_is_lokationsaenderung_strom" => {
+            Some(KonfigurationenAlias::Category("produkte_aenderung_lokation"))
+        }
+        _ => None,
+    }
+}
+
+/// Prefixes for messprodukt_* category matching to build the union set.
+const MESSPRODUKT_CATEGORY_PREFIXES: &[&str] = &[
+    "messprodukt_standard_",
+    "messprodukt_typ2_smgw",
+    "messprodukt_esa",
+];
+
 pub struct KonfigurationenProvider {
     /// Map from category name to set of product codes.
     categories: HashMap<String, HashSet<String>>,
     /// All known product codes across all categories.
     all_codes: HashSet<String>,
+    /// Union of all messprodukt_* categories.
+    messprodukt_union: HashSet<String>,
     /// The product code to check against.
     product_code: Option<String>,
 }
@@ -440,7 +580,7 @@ impl KonfigurationenProvider {
         product_code: Option<String>,
     ) -> Self {
         let mut all_codes = HashSet::new();
-        let categories = categories
+        let categories: HashMap<String, HashSet<String>> = categories
             .into_iter()
             .map(|(k, v)| {
                 for code in &v {
@@ -449,9 +589,22 @@ impl KonfigurationenProvider {
                 (k, v.into_iter().collect())
             })
             .collect();
+
+        // Build the messprodukt union from all matching categories
+        let mut messprodukt_union = HashSet::new();
+        for (name, codes) in &categories {
+            let is_messprodukt = MESSPRODUKT_CATEGORY_PREFIXES
+                .iter()
+                .any(|prefix| name.starts_with(prefix) || name == prefix);
+            if is_messprodukt {
+                messprodukt_union.extend(codes.iter().cloned());
+            }
+        }
+
         Self {
             categories,
             all_codes,
+            messprodukt_union,
             product_code,
         }
     }
@@ -496,6 +649,25 @@ impl ExternalConditionProvider for KonfigurationenProvider {
         // Generic membership: is this product in the Konfigurationen at all?
         if condition_name == "code_list_membership_check" {
             return ConditionResult::from(self.all_codes.contains(code.as_str()));
+        }
+
+        // Check aliases before category lookup
+        if let Some(alias) = resolve_konfigurationen_alias(condition_name) {
+            return match alias {
+                KonfigurationenAlias::AllCodes => {
+                    ConditionResult::from(self.all_codes.contains(code.as_str()))
+                }
+                KonfigurationenAlias::Category(cat) => {
+                    if let Some(set) = self.categories.get(cat) {
+                        ConditionResult::from(set.contains(code.as_str()))
+                    } else {
+                        ConditionResult::Unknown
+                    }
+                }
+                KonfigurationenAlias::MessproduktUnion => {
+                    ConditionResult::from(self.messprodukt_union.contains(code.as_str()))
+                }
+            };
         }
 
         // Category-specific: is this product in the named category?
@@ -932,6 +1104,330 @@ mod tests {
         assert_eq!(
             provider.evaluate("messprodukt_standard_marktlokation"),
             ConditionResult::False
+        );
+    }
+
+    // ---- CountryPostalCodeProvider tests ----
+
+    #[test]
+    fn test_country_plz_provider_de() {
+        let provider = CountryPostalCodeProvider::new(Some("DE".to_string()));
+        assert_eq!(
+            provider.evaluate("country_code_has_plz"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("country_has_postal_code"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            provider.evaluate("country_has_postal_code_requirement"),
+            ConditionResult::True
+        );
+    }
+
+    #[test]
+    fn test_country_plz_provider_various_countries() {
+        for code in &["AT", "CH", "FR", "NL", "GB", "NO", "IS", "LI"] {
+            let provider = CountryPostalCodeProvider::new(Some(code.to_string()));
+            assert_eq!(
+                provider.evaluate("country_code_has_plz"),
+                ConditionResult::True,
+                "{code} should have PLZ"
+            );
+        }
+    }
+
+    #[test]
+    fn test_country_plz_provider_unknown_country() {
+        let provider = CountryPostalCodeProvider::new(Some("XX".to_string()));
+        assert_eq!(
+            provider.evaluate("country_code_has_plz"),
+            ConditionResult::False
+        );
+    }
+
+    #[test]
+    fn test_country_plz_provider_no_country() {
+        let provider = CountryPostalCodeProvider::new(None);
+        assert_eq!(
+            provider.evaluate("country_code_has_plz"),
+            ConditionResult::Unknown
+        );
+    }
+
+    #[test]
+    fn test_country_plz_provider_unrelated_condition() {
+        let provider = CountryPostalCodeProvider::new(Some("DE".to_string()));
+        assert_eq!(
+            provider.evaluate("unrelated_condition"),
+            ConditionResult::Unknown
+        );
+    }
+
+    // ---- SectorProvider: sender_is_gas_sector ----
+
+    #[test]
+    fn test_sector_provider_sender_is_gas_sector() {
+        let provider = SectorProvider::new(Sector::Gas);
+        assert_eq!(
+            provider.evaluate("sender_is_gas_sector"),
+            ConditionResult::True
+        );
+        let provider_strom = SectorProvider::new(Sector::Strom);
+        assert_eq!(
+            provider_strom.evaluate("sender_is_gas_sector"),
+            ConditionResult::False
+        );
+    }
+
+    // ---- MarketRole: MGV and KN ----
+
+    #[test]
+    fn test_market_role_mgv_kn() {
+        let provider = MarketRoleProvider::new(
+            vec![MarketRole::MGV],
+            vec![MarketRole::KN],
+        );
+        assert_eq!(provider.evaluate("sender_is_mgv"), ConditionResult::True);
+        assert_eq!(provider.evaluate("recipient_is_kn"), ConditionResult::True);
+        assert_eq!(provider.evaluate("sender_is_kn"), ConditionResult::False);
+        assert_eq!(provider.evaluate("recipient_is_mgv"), ConditionResult::False);
+    }
+
+    // ---- MarketRole: _or_ compound ----
+
+    #[test]
+    fn test_market_role_or_compound() {
+        let provider = MarketRoleProvider::new(
+            vec![MarketRole::LF],
+            vec![MarketRole::NB],
+        );
+        // recipient_is_lf_or_nb = recipient is LF OR NB → NB matches → True
+        assert_eq!(
+            provider.evaluate("recipient_is_lf_or_nb"),
+            ConditionResult::True
+        );
+        // recipient_is_msb_or_mdl = recipient is MSB OR MDL → NB is neither → False
+        assert_eq!(
+            provider.evaluate("recipient_is_msb_or_mdl"),
+            ConditionResult::False
+        );
+    }
+
+    // ---- MarketRole: recipient_not_ prefix ----
+
+    #[test]
+    fn test_market_role_recipient_not() {
+        let provider = MarketRoleProvider::new(
+            vec![MarketRole::LF],
+            vec![MarketRole::NB],
+        );
+        // recipient_not_mgv_or_kn = recipient is NOT (MGV or KN) → NB is neither → True
+        assert_eq!(
+            provider.evaluate("recipient_not_mgv_or_kn"),
+            ConditionResult::True
+        );
+        // recipient_not_nb = recipient is NOT NB → False (NB is the recipient)
+        assert_eq!(
+            provider.evaluate("recipient_not_nb"),
+            ConditionResult::False
+        );
+        // recipient_not_lf = recipient is NOT LF → True (NB is the recipient)
+        assert_eq!(
+            provider.evaluate("recipient_not_lf"),
+            ConditionResult::True
+        );
+        // sender_not_lf = sender is NOT LF → False (LF is the sender)
+        assert_eq!(
+            provider.evaluate("sender_not_lf"),
+            ConditionResult::False
+        );
+        // sender_not_nb_or_msb = sender is NOT (NB or MSB) → LF is neither → True
+        assert_eq!(
+            provider.evaluate("sender_not_nb_or_msb"),
+            ConditionResult::True
+        );
+    }
+
+    // ---- KonfigurationenProvider alias tests ----
+
+    fn make_konfigurationen_provider_with_messprodukt(
+        product_code: Option<&str>,
+    ) -> KonfigurationenProvider {
+        let mut categories = HashMap::new();
+        categories.insert(
+            "messprodukt_standard_marktlokation".to_string(),
+            vec!["9991000000044".to_string(), "9991000000052".to_string()],
+        );
+        categories.insert(
+            "messprodukt_standard_tranche".to_string(),
+            vec!["9991000000143".to_string()],
+        );
+        categories.insert(
+            "messprodukt_standard_messlokation".to_string(),
+            vec!["9991000000200".to_string()],
+        );
+        categories.insert(
+            "messprodukt_standard_netzlokation".to_string(),
+            vec!["9991000000300".to_string()],
+        );
+        categories.insert(
+            "messprodukt_typ2_smgw".to_string(),
+            vec!["9991000000500".to_string()],
+        );
+        categories.insert(
+            "messprodukt_esa".to_string(),
+            vec!["9991000000600".to_string()],
+        );
+        categories.insert(
+            "config_product_leistungskurve".to_string(),
+            vec!["9991000000721".to_string()],
+        );
+        categories.insert(
+            "config_product_adhoc_steuerkanal".to_string(),
+            vec!["9991000000800".to_string()],
+        );
+        categories.insert(
+            "produkte_aenderung_abrechnungsdaten".to_string(),
+            vec!["9991000000900".to_string()],
+        );
+        categories.insert(
+            "produkte_aenderung_lokation".to_string(),
+            vec!["9991000001000".to_string()],
+        );
+        KonfigurationenProvider::new(categories, product_code.map(String::from))
+    }
+
+    #[test]
+    fn test_konfigurationen_alias_all_codes() {
+        let provider =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000000044"));
+        // is_konfigurationsprodukt_code → all_codes check
+        assert_eq!(
+            provider.evaluate("is_konfigurationsprodukt_code"),
+            ConditionResult::True
+        );
+        // lin_prefix_is_valid_product_code → all_codes check
+        assert_eq!(
+            provider.evaluate("lin_prefix_is_valid_product_code"),
+            ConditionResult::True
+        );
+
+        let provider2 =
+            make_konfigurationen_provider_with_messprodukt(Some("0000000000000"));
+        assert_eq!(
+            provider2.evaluate("is_konfigurationsprodukt_code"),
+            ConditionResult::False
+        );
+    }
+
+    #[test]
+    fn test_konfigurationen_alias_messprodukt_union() {
+        // Code in messprodukt_standard_marktlokation (part of union)
+        let provider =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000000044"));
+        assert_eq!(
+            provider.evaluate("is_messprodukt_code"),
+            ConditionResult::True
+        );
+
+        // Code in messprodukt_typ2_smgw (part of union)
+        let provider2 =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000000500"));
+        assert_eq!(
+            provider2.evaluate("is_messprodukt_code"),
+            ConditionResult::True
+        );
+
+        // Code in messprodukt_esa (part of union)
+        let provider3 =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000000600"));
+        assert_eq!(
+            provider3.evaluate("is_messprodukt_code"),
+            ConditionResult::True
+        );
+
+        // Code in config_product_leistungskurve (NOT in union)
+        let provider4 =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000000721"));
+        assert_eq!(
+            provider4.evaluate("is_messprodukt_code"),
+            ConditionResult::False
+        );
+    }
+
+    #[test]
+    fn test_konfigurationen_alias_single_category() {
+        let provider =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000000500"));
+        // messprodukts_typ2_smgw → messprodukt_typ2_smgw
+        assert_eq!(
+            provider.evaluate("messprodukts_typ2_smgw"),
+            ConditionResult::True
+        );
+        // product_in_typ2_smgw_codelist → messprodukt_typ2_smgw
+        assert_eq!(
+            provider.evaluate("product_in_typ2_smgw_codelist"),
+            ConditionResult::True
+        );
+        // order_contains_smgw_type2_product → messprodukt_typ2_smgw
+        assert_eq!(
+            provider.evaluate("order_contains_smgw_type2_product"),
+            ConditionResult::True
+        );
+
+        let provider2 =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000000800"));
+        // valid_adhoc_steuerkanal_product → config_product_adhoc_steuerkanal
+        assert_eq!(
+            provider2.evaluate("valid_adhoc_steuerkanal_product"),
+            ConditionResult::True
+        );
+
+        let provider3 =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000000200"));
+        // product_code_level_messlokation → messprodukt_standard_messlokation
+        assert_eq!(
+            provider3.evaluate("product_code_level_messlokation"),
+            ConditionResult::True
+        );
+
+        let provider4 =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000000300"));
+        // product_code_level_netzlokation → messprodukt_standard_netzlokation
+        assert_eq!(
+            provider4.evaluate("product_code_level_netzlokation"),
+            ConditionResult::True
+        );
+
+        let provider5 =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000000900"));
+        // product_code_abrechnungsdaten_valid → produkte_aenderung_abrechnungsdaten
+        assert_eq!(
+            provider5.evaluate("product_code_abrechnungsdaten_valid"),
+            ConditionResult::True
+        );
+
+        let provider6 =
+            make_konfigurationen_provider_with_messprodukt(Some("9991000001000"));
+        // lin_product_code_is_lokationsaenderung_strom → produkte_aenderung_lokation
+        assert_eq!(
+            provider6.evaluate("lin_product_code_is_lokationsaenderung_strom"),
+            ConditionResult::True
+        );
+    }
+
+    // ---- CompositeProviderBuilder: country_code ----
+
+    #[test]
+    fn test_builder_with_country_code() {
+        let composite = CompositeExternalProvider::builder()
+            .country_code(Some("DE".to_string()))
+            .build();
+        assert_eq!(
+            composite.evaluate("country_code_has_plz"),
+            ConditionResult::True
         );
     }
 }

@@ -37,9 +37,9 @@ pub mod validator;
 pub use error::{ParseError, ValidationError};
 pub use eval::{
     CodeListProvider, CompositeExternalProvider, ConditionEvaluator, ConditionExprEvaluator,
-    ConditionResult, EvaluationContext, GroupNavigator, KonfigurationenProvider,
-    MapExternalProvider, MarketRole, MarketRoleProvider, NoOpGroupNavigator, Sector,
-    SectorProvider,
+    ConditionResult, CountryPostalCodeProvider, EvaluationContext, GroupNavigator,
+    KonfigurationenProvider, MapExternalProvider, MarketRole, MarketRoleProvider,
+    NoOpGroupNavigator, Sector, SectorProvider,
 };
 pub use expr::{ConditionExpr, ConditionParser};
 pub use validator::{

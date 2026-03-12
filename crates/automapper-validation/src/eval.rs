@@ -16,8 +16,9 @@ pub use expr_eval::ConditionExprEvaluator;
 pub use format_validators::*;
 pub use mig_types::navigator::GroupNavigator;
 pub use providers::{
-    CodeListProvider, CompositeExternalProvider, KonfigurationenProvider, MapExternalProvider,
-    MarketRole, MarketRoleProvider, Sector, SectorProvider,
+    CodeListProvider, CompositeExternalProvider, CountryPostalCodeProvider,
+    KonfigurationenProvider, MapExternalProvider, MarketRole, MarketRoleProvider, Sector,
+    SectorProvider,
 };
 pub use registry::EvaluatorRegistry;
 pub use timezone::{is_mesz_utc, is_mez_utc};
