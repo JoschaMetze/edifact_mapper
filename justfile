@@ -112,6 +112,10 @@ generate-utilmd-fv2504:
         xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml \
         xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml
 
+# Regenerate mapping cache (run after TOML changes)
+compile-mappings:
+    cargo run -p automapper-generator -- compile-mappings
+
 # --- Benchmarks ---
 
 # Run benchmarks
