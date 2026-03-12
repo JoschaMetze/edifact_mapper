@@ -2,6 +2,8 @@ use std::path::{Path, PathBuf};
 
 use clap::{Parser, Subcommand};
 
+mod compile_cache;
+
 #[derive(Parser)]
 #[command(name = "automapper-generator")]
 #[command(about = "Generates Rust mapper code from MIG/AHB XML schemas")]
@@ -404,6 +406,21 @@ enum Commands {
         /// Format version (e.g., "FV2504")
         #[arg(long)]
         format_version: String,
+    },
+
+    /// Compile TOML mappings into cache files for fast loading
+    CompileMappings {
+        /// Base directory containing TOML mapping files (e.g., mappings/)
+        #[arg(long, default_value = "mappings")]
+        mappings_dir: PathBuf,
+
+        /// Base directory containing generated PID schema files
+        #[arg(long, default_value = "crates/mig-types/src/generated")]
+        schema_dir: PathBuf,
+
+        /// Output directory for cache files
+        #[arg(long, default_value = "cache/mappings")]
+        output_dir: PathBuf,
     },
 }
 
@@ -2048,6 +2065,36 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 code_lists.values().map(|e| e.codes.len()).sum::<usize>(),
                 output.display()
             );
+            Ok(())
+        }
+        Commands::CompileMappings {
+            mappings_dir,
+            schema_dir,
+            output_dir,
+        } => {
+            eprintln!(
+                "Compiling TOML mappings from {:?} to {:?}",
+                mappings_dir, output_dir
+            );
+            let stats =
+                compile_cache::compile_all(&mappings_dir, &schema_dir, &output_dir)
+                    .map_err(|e| automapper_generator::GeneratorError::Validation {
+                        message: e.to_string(),
+                    })?;
+
+            eprintln!("\n=== Compilation Complete ===");
+            eprintln!("  Message engines:     {}", stats.message_engines);
+            eprintln!("  Transaction engines:  {}", stats.transaction_engines);
+            eprintln!("  Combined engines:     {}", stats.combined_engines);
+
+            if !stats.errors.is_empty() {
+                eprintln!("\n  Errors ({}):", stats.errors.len());
+                for err in &stats.errors {
+                    eprintln!("    - {}", err);
+                }
+            }
+
+            eprintln!("Output: {:?}", output_dir);
             Ok(())
         }
     }
