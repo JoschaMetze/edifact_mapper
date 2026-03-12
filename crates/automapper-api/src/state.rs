@@ -112,7 +112,7 @@ impl MigServiceRegistry {
                             }
                             let variant = variant_entry.file_name().to_string_lossy().to_string();
 
-                            // Build PathResolver for EDIFACT ID path resolution
+                            // PathResolver for EDIFACT ID path resolution (lazy — only for TOML fallback)
                             let msg_type =
                                 variant.split('_').next().unwrap_or(&variant).to_lowercase();
                             let fv_lower = fv.to_lowercase();
@@ -120,12 +120,14 @@ impl MigServiceRegistry {
                                 "crates/mig-types/src/generated/{}/{}/pids",
                                 fv_lower, msg_type
                             );
-                            let resolver = if std::path::Path::new(&schema_dir_path).is_dir() {
-                                Some(PathResolver::from_schema_dir(std::path::Path::new(
-                                    &schema_dir_path,
-                                )))
-                            } else {
-                                None
+                            let mut resolver: Option<PathResolver> = None;
+                            let ensure_resolver = |resolver: &mut Option<PathResolver>| {
+                                if resolver.is_none() {
+                                    let dir = std::path::Path::new(&schema_dir_path);
+                                    if dir.is_dir() {
+                                        *resolver = Some(PathResolver::from_schema_dir(dir));
+                                    }
+                                }
                             };
 
                             // Load message-level engine (shared across PIDs)
@@ -153,6 +155,7 @@ impl MigServiceRegistry {
                                     }
                                 }
                             } else if message_dir.is_dir() {
+                                ensure_resolver(&mut resolver);
                                 match MappingEngine::load(&message_dir) {
                                     Ok(engine) => {
                                         let engine = if let Some(ref r) = resolver {
@@ -248,6 +251,7 @@ impl MigServiceRegistry {
                                     }
 
                                     // Fall back to TOML loading
+                                    ensure_resolver(&mut resolver);
                                     // Load combined engine (message + common + PID transaction defs)
                                     let load_result = if message_dir.is_dir() {
                                         if common_dir.is_dir() {
