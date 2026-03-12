@@ -88,3 +88,35 @@ fn test_roundtrip_cache_with_path_resolution() {
         );
     }
 }
+
+/// load_cached_or_toml uses cache when present.
+#[test]
+fn test_load_cached_or_toml_uses_cache() {
+    let toml_dir = Path::new("../../mappings/FV2504/UTILMD_Strom/message");
+    if !toml_dir.exists() {
+        eprintln!("Skipping: TOML dir not found");
+        return;
+    }
+
+    let engine = MappingEngine::load(toml_dir).expect("load TOML");
+    let tmp = tempfile::tempdir().expect("tempdir");
+    let cache_path = tmp.path().join("msg.bin");
+    engine.save_cached(&cache_path).expect("save_cached");
+
+    let loaded = MappingEngine::load_cached_or_toml(&cache_path, toml_dir).expect("load");
+    assert_eq!(loaded.definitions().len(), engine.definitions().len());
+}
+
+/// load_cached_or_toml falls back to TOML when cache missing.
+#[test]
+fn test_load_cached_or_toml_fallback() {
+    let toml_dir = Path::new("../../mappings/FV2504/UTILMD_Strom/message");
+    if !toml_dir.exists() {
+        eprintln!("Skipping: TOML dir not found");
+        return;
+    }
+
+    let nonexistent = Path::new("/tmp/nonexistent_cache_test_12345.bin");
+    let loaded = MappingEngine::load_cached_or_toml(nonexistent, toml_dir).expect("load");
+    assert!(!loaded.definitions().is_empty());
+}

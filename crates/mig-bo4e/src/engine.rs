@@ -199,6 +199,18 @@ impl MappingEngine {
         Ok(())
     }
 
+    /// Load from cache if available, otherwise fall back to TOML directory.
+    ///
+    /// When loading from cache, PathResolver is NOT needed (paths pre-resolved).
+    /// When falling back to TOML, the caller should chain `.with_path_resolver()`.
+    pub fn load_cached_or_toml(cache_path: &Path, toml_dir: &Path) -> Result<Self, MappingError> {
+        if cache_path.exists() {
+            Self::load_cached(cache_path)
+        } else {
+            Self::load(toml_dir)
+        }
+    }
+
     /// Load definitions from a cache file.
     ///
     /// Returns an engine with only `definitions` populated. Attach `segment_structure`
