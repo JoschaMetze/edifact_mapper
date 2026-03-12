@@ -515,22 +515,51 @@ impl MigServiceRegistry {
             }
         }
 
-        // Load AHB schemas for PID lookup
+        // Load AHB schemas for PID lookup — discover all *_AHB_*.xml files
         let mut ahb_schemas = HashMap::new();
-        let ahb_base = std::path::Path::new("xml-migs-and-ahbs");
-        if ahb_base.exists() {
-            // Known format versions and their AHB configs
-            let ahb_configs: Vec<(&str, &str, &str, &str)> =
-                vec![("FV2504", "UTILMD", "Strom", "UTILMD_AHB_Strom_")];
-            for (fv, msg_type, variant, prefix) in &ahb_configs {
-                let fv_dir = ahb_base.join(fv);
-                if let Ok(entries) = std::fs::read_dir(&fv_dir) {
-                    for entry in entries.flatten() {
-                        let fname = entry.file_name().to_string_lossy().to_string();
-                        if fname.starts_with(prefix) && fname.ends_with(".xml") {
-                            match parse_ahb(&entry.path(), msg_type, Some(variant), fv) {
+        if xml_base.is_dir() {
+            if let Ok(fv_entries) = std::fs::read_dir(xml_base) {
+                for fv_entry in fv_entries.flatten() {
+                    let fv_path = fv_entry.path();
+                    if !fv_path.is_dir() {
+                        continue;
+                    }
+                    let fv = fv_entry.file_name().to_string_lossy().to_string();
+                    if let Ok(files) = std::fs::read_dir(&fv_path) {
+                        for file in files.flatten() {
+                            let fname = file.file_name().to_string_lossy().to_string();
+                            if !fname.contains("_AHB_") || !fname.ends_with(".xml") {
+                                continue;
+                            }
+                            // Parse filename: {MSG_TYPE}_AHB_{Variant}_... or {MSG_TYPE}_AHB_...
+                            // e.g. "UTILMD_AHB_Strom_2_1_..." → msg_type=UTILMD, variant=Strom
+                            // e.g. "ORDRSP_AHB_1_0a_..." → msg_type=ORDRSP, variant=None
+                            let msg_type = fname.split("_AHB_").next().unwrap_or("");
+                            if msg_type.is_empty() {
+                                continue;
+                            }
+                            // Determine variant: check if there's a known variant name after _AHB_
+                            let after_ahb = fname
+                                .split("_AHB_")
+                                .nth(1)
+                                .unwrap_or("");
+                            let variant = if after_ahb.starts_with("Strom") {
+                                Some("Strom")
+                            } else if after_ahb.starts_with("Gas") {
+                                Some("Gas")
+                            } else {
+                                None
+                            };
+                            let key = match variant {
+                                Some(v) => format!("{}/{}_{}", fv, msg_type, v),
+                                None => format!("{}/{}", fv, msg_type),
+                            };
+                            // Skip if already loaded (first file wins per key)
+                            if ahb_schemas.contains_key(&key) {
+                                continue;
+                            }
+                            match parse_ahb(&file.path(), msg_type, variant, &fv) {
                                 Ok(schema) => {
-                                    let key = format!("{}/{}_{}", fv, msg_type, variant);
                                     tracing::info!(
                                         "Loaded AHB schema for {key} with {} workflows",
                                         schema.workflows.len()
@@ -540,11 +569,10 @@ impl MigServiceRegistry {
                                 Err(e) => {
                                     tracing::warn!(
                                         "Failed to load AHB from {}: {e}",
-                                        entry.path().display()
+                                        file.path().display()
                                     );
                                 }
                             }
-                            break; // Only load first matching AHB per config
                         }
                     }
                 }
