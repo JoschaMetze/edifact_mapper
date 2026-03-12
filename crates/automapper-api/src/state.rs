@@ -89,10 +89,12 @@ impl MigServiceRegistry {
 
         // Load TOML mapping definitions: mappings/{FV}/{msg_variant}/{pid}/
         // Also loads shared message-level definitions from mappings/{FV}/{msg_variant}/message/
+        // Tries precompiled cache files first (cache/mappings/), falls back to TOML.
         let mut mapping_engines = HashMap::new();
         let mut message_engines = HashMap::new();
         let mut transaction_engines = HashMap::new();
         let mappings_base = std::path::Path::new("mappings");
+        let cache_base = std::path::Path::new("cache/mappings");
         if mappings_base.exists() {
             if let Ok(fv_entries) = std::fs::read_dir(mappings_base) {
                 for fv_entry in fv_entries.flatten() {
@@ -127,8 +129,30 @@ impl MigServiceRegistry {
                             };
 
                             // Load message-level engine (shared across PIDs)
+                            // Try cache first, then fall back to TOML
                             let message_dir = variant_path.join("message");
-                            if message_dir.is_dir() {
+                            let msg_cache = cache_base.join(&fv).join(&variant).join("msg.bin");
+                            if msg_cache.exists() {
+                                match MappingEngine::load_cached(&msg_cache) {
+                                    Ok(engine) => {
+                                        let engine = attach_code_lookup_for_message(
+                                            &fv, &variant, &variant_path, engine,
+                                        );
+                                        let key = format!("{}/{}", fv, variant);
+                                        tracing::info!(
+                                            "Loaded {} cached message mappings for {key}",
+                                            engine.definitions().len()
+                                        );
+                                        message_engines.insert(key, engine);
+                                    }
+                                    Err(e) => {
+                                        tracing::warn!(
+                                            "Cache load failed for {}: {e}",
+                                            msg_cache.display()
+                                        );
+                                    }
+                                }
+                            } else if message_dir.is_dir() {
                                 match MappingEngine::load(&message_dir) {
                                     Ok(engine) => {
                                         let engine = if let Some(ref r) = resolver {
@@ -136,8 +160,6 @@ impl MigServiceRegistry {
                                         } else {
                                             engine
                                         };
-                                        // Attach CodeLookup from any available PID schema
-                                        // (root_segments are identical across all PIDs)
                                         let engine = attach_code_lookup_for_message(
                                             &fv,
                                             &variant,
@@ -174,6 +196,58 @@ impl MigServiceRegistry {
                                     if dirname == "message" || dirname == "common" {
                                         continue;
                                     }
+
+                                    // Try cache first for both combined and transaction engines
+                                    let cache_dir = cache_base.join(&fv).join(&variant);
+                                    let combined_cache =
+                                        cache_dir.join(format!("combined_{}.bin", dirname));
+                                    let tx_cache =
+                                        cache_dir.join(format!("tx_{}.bin", dirname));
+
+                                    if combined_cache.exists() && tx_cache.exists() {
+                                        if let Ok(engine) =
+                                            MappingEngine::load_cached(&combined_cache)
+                                        {
+                                            let engine = if let Some(svc) = services.get(&fv) {
+                                                engine.with_segment_structure(
+                                                    SegmentStructure::from_mig(svc.mig()),
+                                                )
+                                            } else {
+                                                engine
+                                            };
+                                            let engine = attach_code_lookup(
+                                                &fv, &variant, &dirname, engine,
+                                            );
+                                            let key =
+                                                format!("{}/{}/{}", fv, variant, dirname);
+                                            tracing::info!(
+                                                "Loaded {} cached mappings for {key}",
+                                                engine.definitions().len()
+                                            );
+                                            mapping_engines.insert(key, engine);
+                                        }
+                                        if let Ok(tx_engine) =
+                                            MappingEngine::load_cached(&tx_cache)
+                                        {
+                                            let tx_engine = if let Some(svc) = services.get(&fv)
+                                            {
+                                                tx_engine.with_segment_structure(
+                                                    SegmentStructure::from_mig(svc.mig()),
+                                                )
+                                            } else {
+                                                tx_engine
+                                            };
+                                            let tx_engine = attach_code_lookup(
+                                                &fv, &variant, &dirname, tx_engine,
+                                            );
+                                            let key =
+                                                format!("{}/{}/{}", fv, variant, dirname);
+                                            transaction_engines.insert(key, tx_engine);
+                                        }
+                                        continue;
+                                    }
+
+                                    // Fall back to TOML loading
                                     // Load combined engine (message + common + PID transaction defs)
                                     let load_result = if message_dir.is_dir() {
                                         if common_dir.is_dir() {
