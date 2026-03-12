@@ -1462,6 +1462,29 @@ pub fn generate_pid_schema_with_index(
         }
     }
 
+    // Build AHB field-level status index: (mig_number, data_element_id, occurrence) → (ahb_status, parent_group_ahb_status).
+    // This captures per-element AHB status strings like "Muss [182] ∧ [152]".
+    type AhbFieldIndex = HashMap<(String, String, usize), (String, Option<String>)>;
+    let mut ahb_fields: AhbFieldIndex = HashMap::new();
+    let mut field_de_occurrence: HashMap<(String, String), usize> = HashMap::new();
+    for field in &pid.fields {
+        let Some(ref mig_num) = field.mig_number else {
+            continue;
+        };
+        if let Some(de_id) = field.segment_path.rsplit('/').next() {
+            let occ_key = (mig_num.clone(), de_id.to_string());
+            let occurrence = field_de_occurrence.entry(occ_key).or_insert(0);
+            ahb_fields.insert(
+                (mig_num.clone(), de_id.to_string(), *occurrence),
+                (
+                    field.ahb_status.clone(),
+                    field.parent_group_ahb_status.clone(),
+                ),
+            );
+            *occurrence += 1;
+        }
+    }
+
     let mut root = serde_json::Map::new();
     root.insert("pid".to_string(), serde_json::Value::String(pid.id.clone()));
     root.insert(
@@ -1488,7 +1511,7 @@ pub fn generate_pid_schema_with_index(
         let field_name = make_wrapper_field_name(group);
         fields.insert(
             field_name,
-            group_to_schema_value(group, &number_index, mig, &ahb_codes, enum_index),
+            group_to_schema_value(group, &number_index, mig, &ahb_codes, &ahb_fields, enum_index),
         );
     }
     root.insert("fields".to_string(), serde_json::Value::Object(fields));
@@ -1503,7 +1526,7 @@ pub fn generate_pid_schema_with_index(
                 .iter()
                 .find(|s| s.id.eq_ignore_ascii_case(seg_id))
         })
-        .map(|seg| segment_to_schema_value(seg, None, &ahb_codes, enum_index))
+        .map(|seg| segment_to_schema_value(seg, None, &ahb_codes, &ahb_fields, enum_index))
         .collect();
     if !root_segments.is_empty() {
         root.insert(
@@ -1542,6 +1565,7 @@ fn group_to_schema_value(
     number_index: &HashMap<String, &MigSegment>,
     mig: &MigSchema,
     ahb_codes: &HashMap<(String, String, usize), Vec<crate::schema::ahb::AhbCodeValue>>,
+    ahb_fields: &HashMap<(String, String, usize), (String, Option<String>)>,
     enum_index: &mut crate::codegen::code_enum_index::CodeEnumIndex,
 ) -> serde_json::Value {
     let mut obj = serde_json::Map::new();
@@ -1560,6 +1584,12 @@ fn group_to_schema_value(
         obj.insert(
             "data_quality_hint".to_string(),
             serde_json::Value::String(quality.clone()),
+        );
+    }
+    if !group.ahb_status.is_empty() {
+        obj.insert(
+            "ahb_status".to_string(),
+            serde_json::Value::String(group.ahb_status.clone()),
         );
     }
 
@@ -1601,7 +1631,7 @@ fn group_to_schema_value(
 
         if let Some(mig_seg) = mig_seg {
             segments.push(segment_to_schema_value(
-                mig_seg, mig_number, ahb_codes, enum_index,
+                mig_seg, mig_number, ahb_codes, ahb_fields, enum_index,
             ));
         } else {
             let mut s = serde_json::Map::new();
@@ -1625,7 +1655,7 @@ fn group_to_schema_value(
             let name = make_wrapper_field_name(child);
             children.insert(
                 name,
-                group_to_schema_value(child, number_index, mig, ahb_codes, enum_index),
+                group_to_schema_value(child, number_index, mig, ahb_codes, ahb_fields, enum_index),
             );
         }
         obj.insert("children".to_string(), serde_json::Value::Object(children));
@@ -1642,6 +1672,7 @@ fn segment_to_schema_value(
     seg: &MigSegment,
     mig_number: Option<&String>,
     ahb_codes: &HashMap<(String, String, usize), Vec<crate::schema::ahb::AhbCodeValue>>,
+    ahb_fields: &HashMap<(String, String, usize), (String, Option<String>)>,
     enum_index: &mut crate::codegen::code_enum_index::CodeEnumIndex,
 ) -> serde_json::Value {
     let mut obj = serde_json::Map::new();
@@ -1682,7 +1713,7 @@ fn segment_to_schema_value(
 
         let occ = de_occurrence.entry(de.id.clone()).or_insert(0);
         emit_element_codes(
-            &mut el, &de.codes, &de.id, mig_number, *occ, ahb_codes, enum_index,
+            &mut el, &de.codes, &de.id, mig_number, *occ, ahb_codes, ahb_fields, enum_index,
         );
         *occ += 1;
 
@@ -1731,7 +1762,7 @@ fn segment_to_schema_value(
 
             let occ = de_occurrence.entry(de.id.clone()).or_insert(0);
             emit_element_codes(
-                &mut sub, &de.codes, &de.id, mig_number, *occ, ahb_codes, enum_index,
+                &mut sub, &de.codes, &de.id, mig_number, *occ, ahb_codes, ahb_fields, enum_index,
             );
             *occ += 1;
 
@@ -1757,8 +1788,31 @@ fn emit_element_codes(
     mig_number: Option<&String>,
     occurrence: usize,
     ahb_codes: &HashMap<(String, String, usize), Vec<crate::schema::ahb::AhbCodeValue>>,
+    ahb_fields: &HashMap<(String, String, usize), (String, Option<String>)>,
     enum_index: &mut crate::codegen::code_enum_index::CodeEnumIndex,
 ) {
+    // Emit per-element AHB status if available
+    if let Some(num) = mig_number {
+        if let Some((status, parent_status)) =
+            ahb_fields.get(&(num.clone(), de_id.to_string(), occurrence))
+        {
+            if !status.is_empty() {
+                el.insert(
+                    "ahb_status".to_string(),
+                    serde_json::Value::String(status.clone()),
+                );
+            }
+            if let Some(ref ps) = parent_status {
+                if !ps.is_empty() {
+                    el.insert(
+                        "parent_group_ahb_status".to_string(),
+                        serde_json::Value::String(ps.clone()),
+                    );
+                }
+            }
+        }
+    }
+
     // Try AHB-filtered codes first (only codes this PID allows)
     let ahb_filtered =
         mig_number.and_then(|num| ahb_codes.get(&(num.clone(), de_id.to_string(), occurrence)));
@@ -2500,5 +2554,39 @@ mod tests {
         assert!(!codes.is_empty(), "NAD/3035 should have codes");
         let has_status = codes.iter().any(|c| c.get("ahb_status").is_some());
         assert!(has_status, "Code entries should include ahb_status");
+    }
+
+    #[test]
+    fn test_schema_elements_include_ahb_status() {
+        let mig_path = std::path::Path::new("../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml");
+        let ahb_path = std::path::Path::new("../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml");
+        if !mig_path.exists() || !ahb_path.exists() {
+            eprintln!("Skipping: MIG/AHB XML not found");
+            return;
+        }
+        let mig = crate::parsing::mig_parser::parse_mig(mig_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+        let ahb = crate::parsing::ahb_parser::parse_ahb(ahb_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+        let pid = ahb.workflows.iter().find(|w| w.id == "55001").unwrap();
+        let schema_str = generate_pid_schema(pid, &mig, &ahb);
+        let schema: serde_json::Value = serde_json::from_str(&schema_str).unwrap();
+
+        // Child groups (SG5, SG8, etc. inside SG4) should have ahb_status.
+        // Top-level groups (SG2, SG4) are containers and may not have ahb_status.
+        let sg4 = &schema["fields"]["sg4"];
+        let sg4_children = sg4["children"].as_object().unwrap();
+        let child_with_status = sg4_children.values().any(|v| v.get("ahb_status").is_some());
+        assert!(child_with_status, "At least one SG4 child group should have ahb_status");
+
+        // NAD element 3035 should have ahb_status
+        let sg2 = &schema["fields"]["sg2"];
+        let nad = sg2["segments"].as_array().unwrap().iter().find(|s| s["id"] == "NAD").unwrap();
+        let el_3035 = nad["elements"].as_array().unwrap().iter().find(|e| e["id"] == "3035").unwrap();
+        assert!(el_3035.get("ahb_status").is_some(), "NAD/3035 element should have ahb_status");
+
+        // SG4/IDE composite C206 component 7402 should have ahb_status
+        let ide = sg4["segments"].as_array().unwrap().iter().find(|s| s["id"] == "IDE").unwrap();
+        let c206 = ide["elements"].as_array().unwrap().iter().find(|e| e.get("composite").map(|v| v == "C206").unwrap_or(false)).unwrap();
+        let d7402 = c206["components"].as_array().unwrap().iter().find(|c| c["id"] == "7402").unwrap();
+        assert!(d7402.get("ahb_status").is_some(), "IDE/C206/7402 component should have ahb_status");
     }
 }
