@@ -26,4 +26,10 @@ pub enum MappingError {
 
     #[error("TOML deserialization error: {0}")]
     Toml(#[from] toml::de::Error),
+
+    #[error("Cache write error: {path} — {message}")]
+    CacheWrite { path: String, message: String },
+
+    #[error("Cache read error: {path} — {message}")]
+    CacheRead { path: String, message: String },
 }

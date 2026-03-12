@@ -181,6 +181,42 @@ impl MappingEngine {
         }
     }
 
+    /// Save definitions to a cache file.
+    ///
+    /// Only the `definitions` are serialized — `segment_structure` and `code_lookup`
+    /// must be re-attached after loading from cache. Paths in the definitions are
+    /// already resolved to numeric indices, so no `PathResolver` is needed at load time.
+    pub fn save_cached(&self, path: &Path) -> Result<(), MappingError> {
+        let encoded =
+            serde_json::to_vec(&self.definitions).map_err(|e| MappingError::CacheWrite {
+                path: path.display().to_string(),
+                message: e.to_string(),
+            })?;
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        std::fs::write(path, encoded)?;
+        Ok(())
+    }
+
+    /// Load definitions from a cache file.
+    ///
+    /// Returns an engine with only `definitions` populated. Attach `segment_structure`
+    /// and `code_lookup` via the builder methods if needed.
+    pub fn load_cached(path: &Path) -> Result<Self, MappingError> {
+        let bytes = std::fs::read(path)?;
+        let definitions: Vec<MappingDefinition> =
+            serde_json::from_slice(&bytes).map_err(|e| MappingError::CacheRead {
+                path: path.display().to_string(),
+                message: e.to_string(),
+            })?;
+        Ok(Self {
+            definitions,
+            segment_structure: None,
+            code_lookup: None,
+        })
+    }
+
     /// Attach a MIG-derived segment structure for trailing element padding.
     ///
     /// When set, `map_reverse` pads each segment's elements up to the
