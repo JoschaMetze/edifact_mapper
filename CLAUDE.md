@@ -35,6 +35,9 @@ cargo fmt --all                  # Auto-format
 cargo bench -p mig-assembly      # MIG-driven pipeline benchmarks (includes batch)
 cargo build --release --workspace
 
+# Regenerate mapping cache after TOML changes (precompiles for fast startup)
+cargo run -p automapper-generator -- compile-mappings
+
 # Schema lookup CLI — inspect PID schemas for TOML mapping authoring
 cargo run -p automapper-generator -- schema-lookup --pid 55035                # List all groups
 cargo run -p automapper-generator -- schema-lookup --pid 55035 --group sg4.sg8_zf0  # Detail for one group
