@@ -5,6 +5,7 @@
 
 use std::path::Path;
 
+use mig_bo4e::code_lookup::CodeLookup;
 use mig_bo4e::path_resolver::PathResolver;
 use mig_bo4e::pid_schema_index::PidSchemaIndex;
 use mig_bo4e::MappingEngine;
@@ -55,9 +56,7 @@ pub fn compile_all(
             match compile_variant(mappings_base, schema_base, &fv, &variant, output_base) {
                 Ok(variant_stats) => stats.merge(variant_stats),
                 Err(e) => {
-                    stats
-                        .errors
-                        .push(format!("{fv}/{variant}: {e}"));
+                    stats.errors.push(format!("{fv}/{variant}: {e}"));
                 }
             }
         }
@@ -69,9 +68,10 @@ pub fn compile_all(
 /// Compile a single format-version/variant pair.
 ///
 /// Produces:
-/// - `{output}/{fv}/{variant}/msg.bin` — message-level engine
-/// - `{output}/{fv}/{variant}/tx_pid_NNNNN.bin` — transaction engine per PID
-/// - `{output}/{fv}/{variant}/combined_pid_NNNNN.bin` — combined engine per PID
+/// - `{output}/{fv}/{variant}.json` — consolidated VariantCache (one file for all engines)
+/// - `{output}/{fv}/{variant}/msg.bin` — message-level engine (backward compat)
+/// - `{output}/{fv}/{variant}/tx_pid_NNNNN.bin` — transaction engine per PID (backward compat)
+/// - `{output}/{fv}/{variant}/combined_pid_NNNNN.bin` — combined engine per PID (backward compat)
 pub fn compile_variant(
     mappings_base: &Path,
     schema_base: &Path,
@@ -79,6 +79,9 @@ pub fn compile_variant(
     variant: &str,
     output_base: &Path,
 ) -> Result<CompileStats, Box<dyn std::error::Error>> {
+    use mig_bo4e::engine::VariantCache;
+    use std::collections::HashMap;
+
     let mut stats = CompileStats::default();
     let variant_path = mappings_base.join(fv).join(variant);
     let output_dir = output_base.join(fv).join(variant);
@@ -93,6 +96,12 @@ pub fn compile_variant(
         None
     };
 
+    // VariantCache accumulator
+    let mut variant_message_defs = Vec::new();
+    let mut variant_transaction_defs: HashMap<String, Vec<_>> = HashMap::new();
+    let mut variant_combined_defs: HashMap<String, Vec<_>> = HashMap::new();
+    let mut variant_code_lookups: HashMap<String, CodeLookup> = HashMap::new();
+
     // Load and cache message engine
     let message_dir = variant_path.join("message");
     if message_dir.is_dir() {
@@ -100,12 +109,11 @@ pub fn compile_variant(
             Ok(engine) => {
                 let cache_path = output_dir.join("msg.bin");
                 engine.save_cached(&cache_path)?;
+                variant_message_defs = engine.definitions().to_vec();
                 stats.message_engines += 1;
             }
             Err(e) => {
-                stats
-                    .errors
-                    .push(format!("{fv}/{variant}/message: {e}"));
+                stats.errors.push(format!("{fv}/{variant}/message: {e}"));
             }
         }
     }
@@ -139,6 +147,17 @@ pub fn compile_variant(
                     stats.transaction_engines += 1;
                 }
 
+                // Store tx defs in variant cache
+                variant_transaction_defs.insert(dirname.clone(), tx_engine.definitions().to_vec());
+
+                // Build CodeLookup from schema JSON
+                let schema_file = schema_dir.join(format!("{dirname}_schema.json"));
+                if schema_file.exists() {
+                    if let Ok(cl) = CodeLookup::from_schema_file(&schema_file) {
+                        variant_code_lookups.insert(dirname.clone(), cl);
+                    }
+                }
+
                 // Build combined engine (message + tx)
                 if message_dir.is_dir() {
                     match MappingEngine::load(&message_dir) {
@@ -146,9 +165,12 @@ pub fn compile_variant(
                             let msg_engine = apply_resolver(msg_engine, resolver.as_ref());
                             let mut combined_defs = msg_engine.definitions().to_vec();
                             combined_defs.extend(tx_engine.definitions().to_vec());
+
+                            // Store combined defs in variant cache
+                            variant_combined_defs.insert(dirname.clone(), combined_defs.clone());
+
                             let combined = MappingEngine::from_definitions(combined_defs);
-                            let combined_path =
-                                output_dir.join(format!("combined_{dirname}.bin"));
+                            let combined_path = output_dir.join(format!("combined_{dirname}.bin"));
                             if let Err(e) = combined.save_cached(&combined_path) {
                                 stats
                                     .errors
@@ -171,6 +193,20 @@ pub fn compile_variant(
                     .push(format!("{fv}/{variant}/{dirname} tx: {e}"));
             }
         }
+    }
+
+    // Write consolidated VariantCache file
+    let variant_cache = VariantCache {
+        message_defs: variant_message_defs,
+        transaction_defs: variant_transaction_defs,
+        combined_defs: variant_combined_defs,
+        code_lookups: variant_code_lookups,
+    };
+    let variant_cache_path = output_base.join(fv).join(format!("{variant}.json"));
+    if let Err(e) = variant_cache.save(&variant_cache_path) {
+        stats
+            .errors
+            .push(format!("{fv}/{variant} variant cache: {e}"));
     }
 
     Ok(stats)
@@ -236,10 +272,7 @@ mod tests {
 
         // Verify UTILMD_Strom files exist
         let utilmd_dir = output.join("FV2504/UTILMD_Strom");
-        assert!(
-            utilmd_dir.join("msg.bin").exists(),
-            "msg.bin should exist"
-        );
+        assert!(utilmd_dir.join("msg.bin").exists(), "msg.bin should exist");
         assert!(
             utilmd_dir.join("tx_pid_55001.bin").exists(),
             "tx_pid_55001.bin should exist"
@@ -268,6 +301,26 @@ mod tests {
         assert!(
             !loaded.definitions().is_empty(),
             "cached tx engine should have definitions"
+        );
+
+        // Verify consolidated variant cache file exists and is loadable
+        let variant_cache_path = output.join("FV2504/UTILMD_Strom.json");
+        assert!(
+            variant_cache_path.exists(),
+            "variant cache file should exist"
+        );
+        let vc = mig_bo4e::engine::VariantCache::load(&variant_cache_path).unwrap();
+        assert!(
+            !vc.message_defs.is_empty(),
+            "variant cache should have message defs"
+        );
+        assert!(
+            vc.combined_defs.contains_key("pid_55001"),
+            "variant cache should have pid_55001 combined defs"
+        );
+        assert!(
+            vc.transaction_defs.contains_key("pid_55001"),
+            "variant cache should have pid_55001 tx defs"
         );
     }
 }

@@ -490,23 +490,21 @@ impl MappingEngine {
         // At intermediate levels, parent_rep_idx is updated to the current rep's
         // position within its group. At the leaf level, the parent_rep_idx from
         // the previous level is preserved — giving us the DIRECT parent index.
-        let first_reps: Vec<(usize, &AssembledGroupInstance)> =
-            if let Some(q) = first_qualifier {
-                let matching =
-                    find_all_reps_by_entry_qualifier(&first_group.repetitions, q);
-                let mut result = Vec::new();
-                for m in matching {
-                    let idx = first_group
-                        .repetitions
-                        .iter()
-                        .position(|r| std::ptr::eq(r, m))
-                        .unwrap_or(0);
-                    result.push((idx, m));
-                }
-                result
-            } else {
-                first_group.repetitions.iter().enumerate().collect()
-            };
+        let first_reps: Vec<(usize, &AssembledGroupInstance)> = if let Some(q) = first_qualifier {
+            let matching = find_all_reps_by_entry_qualifier(&first_group.repetitions, q);
+            let mut result = Vec::new();
+            for m in matching {
+                let idx = first_group
+                    .repetitions
+                    .iter()
+                    .position(|r| std::ptr::eq(r, m))
+                    .unwrap_or(0);
+                result.push((idx, m));
+            }
+            result
+        } else {
+            first_group.repetitions.iter().enumerate().collect()
+        };
 
         let mut current: Vec<(usize, &AssembledGroupInstance)> = first_reps;
         let remaining = &parts[1..];
@@ -522,24 +520,24 @@ impl MappingEngine {
                     .iter()
                     .find(|g| g.group_id.eq_ignore_ascii_case(group_id))
                 {
-                    let matching: Vec<(usize, &AssembledGroupInstance)> =
-                        if let Some(q) = qualifier {
-                            let filtered =
-                                find_all_reps_by_entry_qualifier(&child_group.repetitions, q);
-                            filtered
-                                .into_iter()
-                                .map(|m| {
-                                    let idx = child_group
-                                        .repetitions
-                                        .iter()
-                                        .position(|r| std::ptr::eq(r, m))
-                                        .unwrap_or(0);
-                                    (idx, m)
-                                })
-                                .collect()
-                        } else {
-                            child_group.repetitions.iter().enumerate().collect()
-                        };
+                    let matching: Vec<(usize, &AssembledGroupInstance)> = if let Some(q) = qualifier
+                    {
+                        let filtered =
+                            find_all_reps_by_entry_qualifier(&child_group.repetitions, q);
+                        filtered
+                            .into_iter()
+                            .map(|m| {
+                                let idx = child_group
+                                    .repetitions
+                                    .iter()
+                                    .position(|r| std::ptr::eq(r, m))
+                                    .unwrap_or(0);
+                                (idx, m)
+                            })
+                            .collect()
+                    } else {
+                        child_group.repetitions.iter().enumerate().collect()
+                    };
 
                     for (rep_idx, child_rep) in matching {
                         if is_leaf {
@@ -1464,7 +1462,10 @@ impl MappingEngine {
         &self,
         tree: &AssembledTree,
         enrich_codes: bool,
-    ) -> (serde_json::Value, std::collections::HashMap<String, Vec<usize>>) {
+    ) -> (
+        serde_json::Value,
+        std::collections::HashMap<String, Vec<usize>>,
+    ) {
         let mut result = serde_json::Map::new();
         let mut nesting_info: std::collections::HashMap<String, Vec<usize>> =
             std::collections::HashMap::new();
@@ -1685,8 +1686,8 @@ impl MappingEngine {
                         parts.len() > 1 && parts[parts.len() - 1] == *child_id
                     })
                     .and_then(|d| d.meta.source_path.as_deref());
-                let distribution = child_source_path
-                    .and_then(|key| nesting_info.and_then(|ni| ni.get(key)));
+                let distribution =
+                    child_source_path.and_then(|key| nesting_info.and_then(|ni| ni.get(key)));
                 for (i, child_rep) in child_group.repetitions.into_iter().enumerate() {
                     let target_idx = distribution
                         .and_then(|dist| dist.get(i))
@@ -2024,7 +2025,10 @@ impl MappingEngine {
                             // SG36[1]). Single items and items with explicit :N
                             // indices use the existing resolve_child_relative path.
                             let nesting_idx = if items.len() > 1 {
-                                dm.def.meta.source_path.as_ref()
+                                dm.def
+                                    .meta
+                                    .source_path
+                                    .as_ref()
                                     .and_then(|sp| tx.nesting_info.get(sp))
                                     .and_then(|dist| dist.get(item_idx))
                                     .copied()
@@ -2698,6 +2702,47 @@ fn set_nested_value_json(
         current.insert(leaf.to_string(), val);
     } else {
         map.insert(path.to_string(), val);
+    }
+}
+
+/// Precompiled cache for a single format-version/variant (e.g., FV2504/UTILMD_Strom).
+///
+/// Contains all engines with paths pre-resolved, ready for immediate use.
+/// Loading one `VariantCache` file replaces thousands of individual `.bin` reads.
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct VariantCache {
+    /// Message-level definitions (shared across PIDs).
+    pub message_defs: Vec<MappingDefinition>,
+    /// Per-PID transaction definitions (key: "pid_55001").
+    pub transaction_defs: HashMap<String, Vec<MappingDefinition>>,
+    /// Per-PID combined definitions (key: "pid_55001").
+    pub combined_defs: HashMap<String, Vec<MappingDefinition>>,
+    /// Per-PID code lookups (key: "pid_55001"). Cached to avoid reading schema JSONs at load time.
+    #[serde(default)]
+    pub code_lookups: HashMap<String, crate::code_lookup::CodeLookup>,
+}
+
+impl VariantCache {
+    /// Save this variant cache to a single JSON file.
+    pub fn save(&self, path: &Path) -> Result<(), MappingError> {
+        let encoded = serde_json::to_vec(self).map_err(|e| MappingError::CacheWrite {
+            path: path.display().to_string(),
+            message: e.to_string(),
+        })?;
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        std::fs::write(path, encoded)?;
+        Ok(())
+    }
+
+    /// Load a variant cache from a single JSON file.
+    pub fn load(path: &Path) -> Result<Self, MappingError> {
+        let bytes = std::fs::read(path)?;
+        serde_json::from_slice(&bytes).map_err(|e| MappingError::CacheRead {
+            path: path.display().to_string(),
+            message: e.to_string(),
+        })
     }
 }
 

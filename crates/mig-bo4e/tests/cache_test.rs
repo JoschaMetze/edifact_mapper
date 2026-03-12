@@ -1,6 +1,7 @@
+use std::collections::HashMap;
 use std::path::Path;
 
-use mig_bo4e::engine::MappingEngine;
+use mig_bo4e::engine::{MappingEngine, VariantCache};
 
 /// Load from TOML dir, save to cache, reload, verify definitions match.
 #[test]
@@ -119,4 +120,99 @@ fn test_load_cached_or_toml_fallback() {
     let nonexistent = Path::new("/tmp/nonexistent_cache_test_12345.bin");
     let loaded = MappingEngine::load_cached_or_toml(nonexistent, toml_dir).expect("load");
     assert!(!loaded.definitions().is_empty());
+}
+
+/// VariantCache roundtrip: build from engines, save, reload, verify contents.
+#[test]
+fn test_variant_cache_roundtrip() {
+    let toml_dir = Path::new("../../mappings/FV2504/UTILMD_Strom/message");
+    if !toml_dir.exists() {
+        eprintln!("Skipping test_variant_cache_roundtrip: TOML dir not found");
+        return;
+    }
+
+    let msg_engine = MappingEngine::load(toml_dir).expect("load message TOML");
+    let msg_defs = msg_engine.definitions().to_vec();
+
+    let mut tx_map = HashMap::new();
+    let mut combined_map = HashMap::new();
+
+    // Use message defs as stand-in for tx/combined to test the roundtrip
+    tx_map.insert("pid_55001".to_string(), msg_defs.clone());
+    combined_map.insert("pid_55001".to_string(), msg_defs.clone());
+
+    let cache = VariantCache {
+        message_defs: msg_defs.clone(),
+        transaction_defs: tx_map,
+        combined_defs: combined_map,
+        code_lookups: HashMap::new(),
+    };
+
+    let tmp = tempfile::tempdir().expect("tempdir");
+    let cache_path = tmp.path().join("UTILMD_Strom.json");
+
+    cache.save(&cache_path).expect("save variant cache");
+    assert!(cache_path.exists(), "variant cache file should exist");
+
+    let loaded = VariantCache::load(&cache_path).expect("load variant cache");
+
+    assert_eq!(
+        loaded.message_defs.len(),
+        msg_defs.len(),
+        "message defs count mismatch"
+    );
+    assert!(
+        loaded.transaction_defs.contains_key("pid_55001"),
+        "should have pid_55001 tx defs"
+    );
+    assert!(
+        loaded.combined_defs.contains_key("pid_55001"),
+        "should have pid_55001 combined defs"
+    );
+    assert_eq!(
+        loaded.transaction_defs["pid_55001"].len(),
+        msg_defs.len(),
+        "tx defs count mismatch"
+    );
+}
+
+/// VariantCache from compile_all: verify the consolidated file is loadable.
+#[test]
+fn test_variant_cache_from_compile() {
+    let cache_path = Path::new("../../cache/mappings/FV2504/UTILMD_Strom.json");
+    if !cache_path.exists() {
+        eprintln!(
+            "Skipping test_variant_cache_from_compile: {} not found (run compile-mappings first)",
+            cache_path.display()
+        );
+        return;
+    }
+
+    let vc = VariantCache::load(cache_path).expect("load variant cache");
+
+    assert!(
+        !vc.message_defs.is_empty(),
+        "variant cache should have message defs"
+    );
+    assert!(
+        !vc.transaction_defs.is_empty(),
+        "variant cache should have transaction defs"
+    );
+    assert!(
+        !vc.combined_defs.is_empty(),
+        "variant cache should have combined defs"
+    );
+
+    // Verify a known PID exists
+    assert!(
+        vc.combined_defs.contains_key("pid_55001"),
+        "should have pid_55001 in combined defs"
+    );
+
+    eprintln!(
+        "VariantCache: {} message defs, {} tx PIDs, {} combined PIDs",
+        vc.message_defs.len(),
+        vc.transaction_defs.len(),
+        vc.combined_defs.len()
+    );
 }

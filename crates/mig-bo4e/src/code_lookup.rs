@@ -14,7 +14,7 @@ use std::path::Path;
 pub type CodeLookupKey = (String, String, usize, usize);
 
 /// Enrichment data for a single EDIFACT code value.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct CodeEnrichment {
     pub meaning: String,
     pub enum_key: Option<String>,
@@ -28,6 +28,38 @@ pub type CodeMeanings = BTreeMap<String, CodeEnrichment>;
 #[derive(Debug, Clone, Default)]
 pub struct CodeLookup {
     entries: HashMap<CodeLookupKey, CodeMeanings>,
+}
+
+// Custom serialization: convert tuple keys to "source_path|segment_tag|elem|comp" strings
+impl serde::Serialize for CodeLookup {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeMap;
+        let mut map = serializer.serialize_map(Some(self.entries.len()))?;
+        for ((path, tag, elem, comp), meanings) in &self.entries {
+            let key = format!("{path}|{tag}|{elem}|{comp}");
+            map.serialize_entry(&key, meanings)?;
+        }
+        map.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for CodeLookup {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let raw: HashMap<String, CodeMeanings> = HashMap::deserialize(deserializer)?;
+        let mut entries = HashMap::with_capacity(raw.len());
+        for (key_str, meanings) in raw {
+            let parts: Vec<&str> = key_str.splitn(4, '|').collect();
+            if parts.len() == 4 {
+                let elem: usize = parts[2].parse().map_err(serde::de::Error::custom)?;
+                let comp: usize = parts[3].parse().map_err(serde::de::Error::custom)?;
+                entries.insert(
+                    (parts[0].to_string(), parts[1].to_string(), elem, comp),
+                    meanings,
+                );
+            }
+        }
+        Ok(Self { entries })
+    }
 }
 
 impl CodeLookup {

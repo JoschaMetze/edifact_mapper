@@ -26,6 +26,7 @@ pub mod pid_schema_index;
 pub mod segment_structure;
 
 pub use engine::MappingEngine;
+pub use engine::VariantCache;
 pub use error::MappingError;
 pub use error_mapping::Bo4eFieldIndex;
 pub use handlers::HandlerRegistry;

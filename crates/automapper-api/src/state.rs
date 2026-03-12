@@ -8,6 +8,7 @@ use automapper_generator::schema::ahb::AhbSchema;
 use mig_assembly::parsing::parse_mig;
 use mig_assembly::ConversionService;
 use mig_bo4e::code_lookup::CodeLookup;
+use mig_bo4e::engine::VariantCache;
 use mig_bo4e::path_resolver::PathResolver;
 use mig_bo4e::pid_schema_index::PidSchemaIndex;
 use mig_bo4e::segment_structure::SegmentStructure;
@@ -112,6 +113,98 @@ impl MigServiceRegistry {
                             }
                             let variant = variant_entry.file_name().to_string_lossy().to_string();
 
+                            // Try consolidated VariantCache first (one file for all engines)
+                            let variant_cache_path =
+                                cache_base.join(&fv).join(format!("{}.json", variant));
+                            if variant_cache_path.exists() {
+                                match VariantCache::load(&variant_cache_path) {
+                                    Ok(vc) => {
+                                        // Use first cached code lookup for message engine
+                                        let first_code_lookup = vc
+                                            .code_lookups
+                                            .values()
+                                            .next()
+                                            .cloned();
+
+                                        // Insert message engine
+                                        if !vc.message_defs.is_empty() {
+                                            let mut engine =
+                                                MappingEngine::from_definitions(vc.message_defs);
+                                            if let Some(cl) = first_code_lookup {
+                                                engine = engine.with_code_lookup(cl);
+                                            }
+                                            let key = format!("{}/{}", fv, variant);
+                                            tracing::info!(
+                                                "Loaded {} message mappings for {key} (variant cache)",
+                                                engine.definitions().len()
+                                            );
+                                            message_engines.insert(key, engine);
+                                        }
+
+                                        // Insert combined and transaction engines per PID
+                                        for (pid_dirname, combined_defs) in vc.combined_defs {
+                                            let mut engine =
+                                                MappingEngine::from_definitions(combined_defs);
+                                            if let Some(svc) = services.get(&fv) {
+                                                engine = engine.with_segment_structure(
+                                                    SegmentStructure::from_mig(svc.mig()),
+                                                );
+                                            }
+                                            if let Some(cl) = vc.code_lookups.get(&pid_dirname) {
+                                                engine = engine.with_code_lookup(cl.clone());
+                                            }
+                                            let key = format!("{}/{}/{}", fv, variant, pid_dirname);
+                                            mapping_engines.insert(key, engine);
+                                        }
+
+                                        for (pid_dirname, tx_defs) in vc.transaction_defs {
+                                            let mut engine =
+                                                MappingEngine::from_definitions(tx_defs);
+                                            if let Some(svc) = services.get(&fv) {
+                                                engine = engine.with_segment_structure(
+                                                    SegmentStructure::from_mig(svc.mig()),
+                                                );
+                                            }
+                                            if let Some(cl) = vc.code_lookups.get(&pid_dirname) {
+                                                engine = engine.with_code_lookup(cl.clone());
+                                            }
+                                            let key = format!("{}/{}/{}", fv, variant, pid_dirname);
+                                            transaction_engines.insert(key, engine);
+                                        }
+
+                                        tracing::info!(
+                                            "Loaded variant cache for {}/{} ({} combined, {} tx engines, {} code lookups)",
+                                            fv,
+                                            variant,
+                                            mapping_engines
+                                                .keys()
+                                                .filter(|k| k.starts_with(&format!(
+                                                    "{}/{}/",
+                                                    fv, variant
+                                                )))
+                                                .count(),
+                                            transaction_engines
+                                                .keys()
+                                                .filter(|k| k.starts_with(&format!(
+                                                    "{}/{}/",
+                                                    fv, variant
+                                                )))
+                                                .count(),
+                                            vc.code_lookups.len(),
+                                        );
+                                        continue; // Skip per-PID iteration
+                                    }
+                                    Err(e) => {
+                                        tracing::warn!(
+                                            "Variant cache load failed for {}: {e}, falling back to individual files",
+                                            variant_cache_path.display()
+                                        );
+                                    }
+                                }
+                            }
+
+                            // Fall back to individual .bin files or TOML loading
+
                             // PathResolver for EDIFACT ID path resolution (lazy — only for TOML fallback)
                             let msg_type =
                                 variant.split('_').next().unwrap_or(&variant).to_lowercase();
@@ -138,7 +231,10 @@ impl MigServiceRegistry {
                                 match MappingEngine::load_cached(&msg_cache) {
                                     Ok(engine) => {
                                         let engine = attach_code_lookup_for_message(
-                                            &fv, &variant, &variant_path, engine,
+                                            &fv,
+                                            &variant,
+                                            &variant_path,
+                                            engine,
                                         );
                                         let key = format!("{}/{}", fv, variant);
                                         tracing::info!(
@@ -204,8 +300,7 @@ impl MigServiceRegistry {
                                     let cache_dir = cache_base.join(&fv).join(&variant);
                                     let combined_cache =
                                         cache_dir.join(format!("combined_{}.bin", dirname));
-                                    let tx_cache =
-                                        cache_dir.join(format!("tx_{}.bin", dirname));
+                                    let tx_cache = cache_dir.join(format!("tx_{}.bin", dirname));
 
                                     if combined_cache.exists() && tx_cache.exists() {
                                         if let Ok(engine) =
@@ -218,22 +313,18 @@ impl MigServiceRegistry {
                                             } else {
                                                 engine
                                             };
-                                            let engine = attach_code_lookup(
-                                                &fv, &variant, &dirname, engine,
-                                            );
-                                            let key =
-                                                format!("{}/{}/{}", fv, variant, dirname);
+                                            let engine =
+                                                attach_code_lookup(&fv, &variant, &dirname, engine);
+                                            let key = format!("{}/{}/{}", fv, variant, dirname);
                                             tracing::info!(
                                                 "Loaded {} cached mappings for {key}",
                                                 engine.definitions().len()
                                             );
                                             mapping_engines.insert(key, engine);
                                         }
-                                        if let Ok(tx_engine) =
-                                            MappingEngine::load_cached(&tx_cache)
+                                        if let Ok(tx_engine) = MappingEngine::load_cached(&tx_cache)
                                         {
-                                            let tx_engine = if let Some(svc) = services.get(&fv)
-                                            {
+                                            let tx_engine = if let Some(svc) = services.get(&fv) {
                                                 tx_engine.with_segment_structure(
                                                     SegmentStructure::from_mig(svc.mig()),
                                                 )
@@ -243,8 +334,7 @@ impl MigServiceRegistry {
                                             let tx_engine = attach_code_lookup(
                                                 &fv, &variant, &dirname, tx_engine,
                                             );
-                                            let key =
-                                                format!("{}/{}/{}", fv, variant, dirname);
+                                            let key = format!("{}/{}/{}", fv, variant, dirname);
                                             transaction_engines.insert(key, tx_engine);
                                         }
                                         continue;
