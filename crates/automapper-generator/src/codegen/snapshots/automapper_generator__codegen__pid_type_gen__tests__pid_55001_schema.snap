@@ -21,6 +21,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
@@ -67,26 +68,31 @@ expression: schema
                     {
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "ELEKTRONISCHE_POST",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
@@ -120,6 +126,7 @@ expression: schema
             {
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
@@ -147,11 +154,13 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
                       "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
@@ -176,6 +185,7 @@ expression: schema
             {
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
@@ -203,11 +213,13 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
                       "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
@@ -248,6 +260,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "KORRESPONDENZANSCHRIFT_KUNDEN_LF",
                       "name": "Korrespondenzanschrift des Kunden des LF",
                       "value": "Z04"
@@ -337,11 +350,13 @@ expression: schema
                     {
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "STRUKTUR_PERSONENNAMEN",
                           "name": "Struktur von Personennamen",
                           "value": "Z01"
                         },
                         {
+                          "ahb_status": "X",
                           "enum": "STRUKTUR_FIRMENBEZEICHNUNG",
                           "name": "Struktur der Firmenbezeichnung",
                           "value": "Z02"
@@ -422,6 +437,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "KUNDE_LF",
                       "name": "Kunde des LF",
                       "value": "Z09"
@@ -493,11 +509,13 @@ expression: schema
                     {
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "STRUKTUR_PERSONENNAMEN",
                           "name": "Struktur von Personennamen",
                           "value": "Z01"
                         },
                         {
+                          "ahb_status": "X",
                           "enum": "STRUKTUR_FIRMENBEZEICHNUNG",
                           "name": "Struktur der Firmenbezeichnung",
                           "value": "Z02"
@@ -536,6 +554,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "MARKTLOKATION",
                       "name": "Marktlokation",
                       "value": "Z16"
@@ -600,6 +619,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "RUHENDE_MARKTLOKATION",
                       "name": "Ruhende Marktlokation",
                       "value": "Z22"
@@ -661,6 +681,7 @@ expression: schema
                     {
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "PRUEFIDENTIFIKATOR",
                           "name": "Prüfidentifikator",
                           "value": "Z13"
@@ -674,6 +695,7 @@ expression: schema
                     {
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "GPKE_ANMELDUNG_VERBRAUCHENDE_MALO",
                           "name": "GPKE / Anmeldung verbrauchende MaLo",
                           "value": "55001"
@@ -732,11 +754,13 @@ expression: schema
                         {
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "HAUSHALTSKUNDE_ENWG",
                               "name": "Haushaltskunde gem. EnWG",
                               "value": "Z15"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "KEIN_HAUSHALTSKUNDE_ENWG",
                               "name": "Kein Haushaltskunde gem. EnWG",
                               "value": "Z18"
@@ -775,6 +799,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "DATEN_MARKTLOKATION",
                       "name": "Daten der Marktlokation",
                       "value": "Z01"
@@ -820,6 +845,7 @@ expression: schema
                     {
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "GRUNDLAGE_VERRINGERUNG_UMLAGEN_ENFG",
                           "name": "Grundlage zur Verringerung der Umlagen nach EnFG",
                           "value": "Z61"
@@ -848,16 +874,19 @@ expression: schema
                         {
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "CODE_ANZUWENDEN_LIEFERANT_VERRINGERUNG_UMLAGE_ENFG_KUNDEN",
                               "name": "Der Code ist anzuwenden, wenn der Lieferant eine Verringerung der Umlage nach EnFG für den Kunden an der genannten Marktlokation erwartet, da der Kunde die Voraussetzung nach EnFG erfüllt.",
                               "value": "ZF9"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "CODE_ANZUWENDEN_LIEFERANT_KEINE_VERRINGERUNG_UMLAGE_ENFG",
                               "name": "Der Code ist anzuwenden, wenn der Lieferant keine Verringerung der Umlage nach EnFG für den Kunden an der genannten Marktlokation erwartet, da der Kunde die Voraussetzung nach EnFG nicht erfüllt.",
                               "value": "ZG0"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "CODE_ANZUWENDEN_LIEFERANT_VERRINGERUNG_UMLAGE_ENFG_KUNDEN_2",
                               "name": "Der Code ist anzuwenden, wenn der Lieferant eine Verringerung der Umlage nach EnFG für den Kunden an der genannten Marktlokation nicht erwartet, da die Marktlokation die Voraussetzung nach EnFG nicht erfüllt.",
                               "value": "ZG1"
@@ -884,46 +913,55 @@ expression: schema
                         {
                           "codes": [
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "PARAGRAPH_21_ENFG_STROMSPEICHER_VERLUSTENERGIE",
                               "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
                               "value": "ZU5"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "PARAGRAPH_22_ENFG_ELEKTRISCH_ANGETRIEBENE_WAERMEPUMPEN",
                               "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
                               "value": "ZU6"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "PARAGRAPH_23_ENFG_UMLAGEERHEBUNG_ANLAGEN_VERSTROMUNG",
                               "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
                               "value": "ZU7"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "PARAGRAPH_24_ENFG_HERSTELLUNG_GRUENEN_WASSERSTOFF",
                               "name": "§ 24 EnFG Herstellung von Grünen Wasserstoff",
                               "value": "ZU8"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "PARAGRAPHPARAGRAPH_30_35_ENFG_STROMKOSTENINTENSIVE",
                               "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
                               "value": "ZU9"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "PARAGRAPH_36_ENFG_HERSTELLUNG_WASSERSTOFF",
                               "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
                               "value": "ZV0"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "PARAGRAPH_37_ENFG_SCHIENENBAHNEN",
                               "name": "§ 37 EnFG Schienenbahnen",
                               "value": "ZV1"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "PARAGRAPH_38_ENFG_ELEKTRISCHE_BETRIEBENE_BUSSEN",
                               "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
                               "value": "ZV2"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "PARAGRAPH_39_ENFG_LANDSTROMANLAGEN",
                               "name": "§ 39 EnFG Landstromanlagen",
                               "value": "ZV3"
@@ -962,6 +1000,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "DATEN_KUNDEN_LIEFERANTEN",
                       "name": "Daten des Kunden des Lieferanten",
                       "value": "Z75"
@@ -1007,6 +1046,7 @@ expression: schema
                     {
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "PRODUKTEIGENSCHAFT",
                           "name": "Produkteigenschaft",
                           "value": "Z66"
@@ -1028,6 +1068,7 @@ expression: schema
                         {
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "CODE_PRODUKTEIGENSCHAFT",
                               "name": "Code der Produkteigenschaft",
                               "value": "ZH9"
@@ -1072,6 +1113,7 @@ expression: schema
                         {
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "WERTEDETAILS_PRODUKT",
                               "name": "Wertedetails zum Produkt",
                               "value": "ZV4"
@@ -1128,6 +1170,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "BESTANDTEIL_PRODUKTPAKETS",
                       "name": " Bestandteil eines Produktpakets",
                       "value": "Z79"
@@ -1160,6 +1203,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "PRODUKTIDENTIFIKATION",
                       "name": "Produktidentifikation",
                       "value": "5"
@@ -1181,6 +1225,7 @@ expression: schema
                     {
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "PRODUKT",
                           "name": "Produkt",
                           "value": "Z11"
@@ -1218,6 +1263,7 @@ expression: schema
                     {
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "UMSETZUNGSGRADVORGABE_PRODUKTPAKETS",
                           "name": "Umsetzungsgradvorgabe des Produktpakets",
                           "value": "Z65"
@@ -1231,11 +1277,13 @@ expression: schema
                     {
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..5]",
                           "enum": "NB_DARF_LF_MARKTLOKATION_TRANCHE_DANN_DIESEM_PRODUKTPAKET",
                           "name": "Der NB darf den LF der Marktlokation bzw. Tranche nur dann mit diesem Produktpaket zuordnen, wenn alle Produkte des Produktpakets zum Zuordnungsbeginn zur Anwendung kommen.",
                           "value": "Z01"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "NB_DARF_LF_MARKTLOKATION_TRANCHE_DANN_DIESEM_PRODUKTPAKET_2",
                           "name": "Der NB darf den LF der Marktlokation bzw. Tranche dann mit diesem Produktpaket zuordnen, wenn alle oder auch nur ein Teil der Produkte des Produktpakets zum Zuordnungsbeginn zur Anwendung kommen.",
                           "value": "Z02"
@@ -1283,26 +1331,31 @@ expression: schema
                         {
                           "codes": [
                             {
+                              "ahb_status": "X [10P1..1]",
                               "enum": "1_PRIORITAET",
                               "name": "1. Priorität",
                               "value": "Z75"
                             },
                             {
+                              "ahb_status": "X [10P1..1]",
                               "enum": "2_PRIORITAET",
                               "name": "2. Priorität",
                               "value": "Z76"
                             },
                             {
+                              "ahb_status": "X [11P1..1]",
                               "enum": "3_PRIORITAET",
                               "name": "3. Priorität",
                               "value": "Z77"
                             },
                             {
+                              "ahb_status": "X [12P1..1]",
                               "enum": "4_PRIORITAET",
                               "name": "4. Priorität",
                               "value": "Z78"
                             },
                             {
+                              "ahb_status": "X [13P1..1]",
                               "enum": "5_PRIORITAET",
                               "name": "5. Priorität",
                               "value": "Z79"
@@ -1341,6 +1394,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "PRIORISIERUNG_ERFORDERLICHES_PRODUKTPAKET",
                       "name": "Priorisierung erforderliches Produktpaket",
                       "value": "ZH0"
@@ -1382,6 +1436,7 @@ expression: schema
             {
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "TRANSAKTION",
                   "name": "Transaktion",
                   "value": "24"
@@ -1416,6 +1471,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "DATUM_VERTRAGSBEGINN",
                       "name": "Datum Vertragsbeginn",
                       "value": "92"
@@ -1435,6 +1491,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "CCYYMMDDHHMMZZZ",
                       "name": "CCYYMMDDHHMMZZZ",
                       "value": "303"
@@ -1461,6 +1518,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "DATUM_VERTRAGSENDE",
                       "name": "Datum Vertragsende",
                       "value": "93"
@@ -1480,6 +1538,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "CCYYMMDDHHMMZZZ",
                       "name": "CCYYMMDDHHMMZZZ",
                       "value": "303"
@@ -1506,6 +1565,7 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "TRANSAKTIONSGRUND",
                       "name": "Transaktionsgrund",
                       "value": "7"
@@ -1539,11 +1599,13 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "KUNDE_VERLAESST_BEZIEHT_BESTEHENDE_MARKTLOKATION",
                       "name": "Kunde verlässt oder bezieht eine schon bestehende Marktlokation",
                       "value": "E01"
                     },
                     {
+                      "ahb_status": "X",
                       "enum": "KUNDE_BLEIBT_MARKTLOKATION_MARKTPARTNER_GEWECHSELT",
                       "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt\r\n- Marktpartner hat den Kunden gekündigt",
                       "value": "E03"
@@ -1564,11 +1626,13 @@ expression: schema
                 {
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "VERBRAUCHENDE_MARKTLOKATION",
                       "name": "Verbrauchende Marktlokation",
                       "value": "ZW4"
                     },
                     {
+                      "ahb_status": "X",
                       "enum": "RUHENDE_MARKTLOKATION",
                       "name": "ruhende Marktlokation",
                       "value": "ZAP"

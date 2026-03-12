@@ -1820,6 +1820,12 @@ fn ahb_codes_to_json(
         let enum_key =
             crate::codegen::code_enum_index::lookup_or_derive(enum_index, de_id, &c.value, name);
         obj.insert("enum".to_string(), serde_json::Value::String(enum_key));
+        if let Some(ref status) = c.ahb_status {
+            obj.insert(
+                "ahb_status".to_string(),
+                serde_json::Value::String(status.clone()),
+            );
+        }
         result.push(serde_json::Value::Object(obj));
     }
     serde_json::Value::Array(result)
@@ -2471,5 +2477,28 @@ mod tests {
             "55001 SG4 should have at least 2 DTM entries (92 and 93), got {}",
             dtm_count
         );
+    }
+
+    #[test]
+    fn test_schema_codes_include_ahb_status() {
+        let mig_path = std::path::Path::new("../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml");
+        let ahb_path = std::path::Path::new("../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml");
+        if !mig_path.exists() || !ahb_path.exists() {
+            eprintln!("Skipping: MIG/AHB XML not found");
+            return;
+        }
+        let mig = crate::parsing::mig_parser::parse_mig(mig_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+        let ahb = crate::parsing::ahb_parser::parse_ahb(ahb_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+        let pid = ahb.workflows.iter().find(|w| w.id == "55001").unwrap();
+        let schema_str = generate_pid_schema(pid, &mig, &ahb);
+        let schema: serde_json::Value = serde_json::from_str(&schema_str).unwrap();
+        // SG2/NAD/3035 has code MS — it should have ahb_status
+        let sg2 = &schema["fields"]["sg2"];
+        let nad = sg2["segments"].as_array().unwrap().iter().find(|s| s["id"] == "NAD").unwrap();
+        let el_3035 = nad["elements"].as_array().unwrap().iter().find(|e| e["id"] == "3035").unwrap();
+        let codes = el_3035["codes"].as_array().unwrap();
+        assert!(!codes.is_empty(), "NAD/3035 should have codes");
+        let has_status = codes.iter().any(|c| c.get("ahb_status").is_some());
+        assert!(has_status, "Code entries should include ahb_status");
     }
 }
