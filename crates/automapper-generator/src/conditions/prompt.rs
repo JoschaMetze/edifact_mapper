@@ -134,6 +134,8 @@ These are standalone functions imported via `use crate::eval::*`. Use them to va
 - `validate_malo_id(value)` → `ConditionResult` — 11 digits with Luhn check digit
 - `validate_zahlpunkt(value)` → `ConditionResult` — 33 alphanumeric characters
 - `validate_malo_or_zahlpunkt(value)` → `ConditionResult` — either format
+- `validate_tr_id(value)` → `ConditionResult` — TR-ID: 1-35 alphanumeric chars
+- `validate_sr_id(value)` → `ConditionResult` — SR-ID: 11 digits with Luhn check (same as MaLo-ID)
 
 **Artikelnummer patterns:**
 - `validate_artikel_pattern(value, &[n1, n2, ...])` → `ConditionResult` — dash-separated digit segments
@@ -142,6 +144,12 @@ These are standalone functions imported via `use crate::eval::*`. Use them to va
 - `validate_exact_length(value, n)` → `ConditionResult` — exact character count
 - `validate_max_length(value, n)` → `ConditionResult` — maximum character count
 - `validate_all_digits(value)` → `ConditionResult` — only ASCII digits
+
+**Timezone (DST) validation:**
+- `is_mesz_utc(dtm_value)` → `ConditionResult` — True if CCYYMMDDHHMM falls in German summer time (MESZ, UTC+2)
+- `is_mez_utc(dtm_value)` → `ConditionResult` — True if CCYYMMDDHHMM falls in German winter time (MEZ, UTC+1)
+  - Uses EU DST rule: MESZ = last Sunday of March 01:00 UTC to last Sunday of October 01:00 UTC
+  - Input format: CCYYMMDDHHMM (12+ chars), timezone suffix ignored (value assumed UTC)
 
 **Usage pattern for Format: conditions**: Extract the value from the relevant segment, then validate:
 ```rust
@@ -262,6 +270,10 @@ from the AHB shorthand notation alone.
 8. **ALWAYS provide an implementation when the condition can be expressed with the available API.** Do NOT return null/stub for conditions that check segment qualifiers, group navigation, or presence/absence — these CAN be implemented. Only return null for genuinely ambiguous business logic.
 9. **SG10 is a CHILD GROUP of SG8** in the UTILMD MIG structure. When a condition mentions "SG10 CCI+..." it means checking a CCI segment inside an SG10 child group instance of the parent SG8. Use the parent-child navigation API (filtered_parent_child_has_qualifier, find_segments_in_child_group, child_group_instance_count).
 10. **"nicht vorhanden" (not present)** means the condition is True when the segment/qualifier is ABSENT. For same-group absence, use `any_group_has_qualifier_without`. For parent-child absence, negate `filtered_parent_child_has_qualifier`.
+11. **Recursive condition evaluation**: When a condition says "where condition [N] is fulfilled" or
+    "bei der die Bedingung [N] erfüllt ist", call `self.evaluate(N, ctx)` to check that condition.
+    This works because all evaluate_NNN methods have `&self` access. Use sparingly — only when
+    the condition text explicitly references another condition number.
 
 Respond ONLY with a JSON object in this exact format (no markdown, no code blocks):
 {
@@ -719,6 +731,18 @@ fn detect_group_scope(description: &str) -> Option<String> {
         );
     }
 
+    // Pattern 9: Condition reference — "Bedingung [N]" or "Bedingungen [N]"
+    let cond_ref = regex::Regex::new(
+        r"(?i)(?:Bedingung|Bedingungen)\s+\[(\d+)\]"
+    ).unwrap();
+    if let Some(cap) = cond_ref.captures(description) {
+        let cond_id = cap.get(1).unwrap().as_str();
+        hints.push(format!(
+            "RECURSIVE: References condition [{}]. Use self.evaluate({}, ctx) to check it.",
+            cond_id, cond_id
+        ));
+    }
+
     if hints.is_empty() {
         None
     } else {
@@ -958,6 +982,141 @@ fn evaluate_939(&self, ctx: &EvaluationContext) -> ConditionResult {
         Some(val) => validate_email(val),
         None => ConditionResult::Unknown,
     }
+}"#
+        .to_string(),
+        r#"// Example 25: DST timezone check — "Tabelle Kapitel 3.5 Prozesszeitpunkt bei MESZ mit UTC"
+fn evaluate_490(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let dtm_segs = ctx.find_segments("DTM");
+    match dtm_segs.first().and_then(|s| s.elements.first()).and_then(|e| e.get(1)) {
+        Some(val) => is_mesz_utc(val),
+        None => ConditionResult::Unknown,
+    }
+}"#
+        .to_string(),
+        r#"// Example 26: Uniqueness check — "Wert darf nicht mehrfach vorkommen"
+// Collect values across group instances, check for duplicates
+fn evaluate_515(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let nav = match ctx.navigator() {
+        Some(n) => n,
+        None => return ConditionResult::Unknown,
+    };
+    let sg8_count = nav.group_instance_count(&["SG5", "SG8"]);
+    let mut seen = std::collections::HashSet::new();
+    for i in 0..sg8_count {
+        let dtm_segs = nav.find_segments_in_group("DTM", &["SG5", "SG8"], i);
+        for dtm in &dtm_segs {
+            if dtm.elements.first().and_then(|e| e.first()).is_some_and(|v| v == "Z44") {
+                if let Some(val) = dtm.elements.first().and_then(|e| e.get(1)) {
+                    if !val.is_empty() && !seen.insert(val.clone()) {
+                        return ConditionResult::False; // duplicate found
+                    }
+                }
+            }
+        }
+    }
+    if seen.is_empty() { ConditionResult::Unknown } else { ConditionResult::True }
+}"#
+        .to_string(),
+        r#"// Example 27: Cross-group reference — "Rechenschrittidentifikator must reference existing SEQ+Z37"
+fn evaluate_8(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let nav = match ctx.navigator() {
+        Some(n) => n,
+        None => return ConditionResult::Unknown,
+    };
+    // Collect all valid SEQ+Z37 DE1050 reference targets
+    let sg8_count = nav.group_instance_count(&["SG5", "SG8"]);
+    let mut valid_ids: std::collections::HashSet<String> = std::collections::HashSet::new();
+    for i in 0..sg8_count {
+        let seq_segs = nav.find_segments_in_group("SEQ", &["SG5", "SG8"], i);
+        for seq in &seq_segs {
+            if seq.elements.first().and_then(|e| e.first()).is_some_and(|v| v == "Z37") {
+                if let Some(val) = seq.elements.get(1).and_then(|e| e.first()) {
+                    if !val.is_empty() {
+                        valid_ids.insert(val.clone());
+                    }
+                }
+            }
+        }
+    }
+    if valid_ids.is_empty() {
+        return ConditionResult::Unknown;
+    }
+    // Check that all RFF+Z23 reference values point to valid IDs
+    for i in 0..sg8_count {
+        let rff_segs = nav.find_segments_in_group("RFF", &["SG5", "SG8"], i);
+        for rff in &rff_segs {
+            if rff.elements.first().and_then(|e| e.first()).is_some_and(|v| v == "Z23") {
+                if let Some(ref_val) = rff.elements.first().and_then(|e| e.get(1)) {
+                    if !ref_val.is_empty() && !valid_ids.contains(ref_val) {
+                        return ConditionResult::False;
+                    }
+                }
+            }
+        }
+    }
+    ConditionResult::True
+}"#
+        .to_string(),
+        r#"// Example 28: Cross-group DTM min/max — "DTM+163 is the earliest across SG10 instances"
+fn evaluate_87(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let nav = match ctx.navigator() {
+        Some(n) => n,
+        None => return ConditionResult::Unknown,
+    };
+    let sg6_count = nav.group_instance_count(&["SG5", "SG6"]);
+    for gi in 0..sg6_count {
+        let sg10_count = nav.child_group_instance_count(&["SG5", "SG6"], gi, "SG10");
+        let mut values: Vec<String> = Vec::new();
+        for si in 0..sg10_count {
+            let dtms = nav.find_segments_in_child_group("DTM", &["SG5", "SG6"], gi, "SG10", si);
+            for dtm in &dtms {
+                if dtm.elements.first().and_then(|e| e.first()).is_some_and(|v| v == "163") {
+                    if let Some(val) = dtm.elements.first().and_then(|e| e.get(1)) {
+                        if !val.is_empty() {
+                            values.push(val.clone());
+                        }
+                    }
+                }
+            }
+        }
+        if let Some(min_val) = values.iter().min() {
+            let sg6_dtms = nav.find_segments_in_group("DTM", &["SG5", "SG6"], gi);
+            for dtm in &sg6_dtms {
+                if dtm.elements.first().and_then(|e| e.first()).is_some_and(|v| v == "163") {
+                    if let Some(val) = dtm.elements.first().and_then(|e| e.get(1)) {
+                        if val != min_val {
+                            return ConditionResult::False;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    ConditionResult::True
+}"#
+        .to_string(),
+        r#"// Example 29: Recursive condition — "genau einmal für jede SG8 SEQ+Z01 bei der Bedingung [199] erfüllt ist"
+// Call self.evaluate(N, ctx) to check another condition from within this one
+fn evaluate_2006(&self, ctx: &EvaluationContext) -> ConditionResult {
+    let nav = match ctx.navigator() {
+        Some(n) => n,
+        None => return ConditionResult::Unknown,
+    };
+    let sg8_count = nav.group_instance_count(&["SG4", "SG8"]);
+    let mut qualifying_count = 0usize;
+    for i in 0..sg8_count {
+        let seq_segs = nav.find_segments_in_group("SEQ", &["SG4", "SG8"], i);
+        let has_z01 = seq_segs.iter().any(|s| {
+            s.elements.first().and_then(|e| e.first()).is_some_and(|v| v == "Z01")
+        });
+        if has_z01 && self.evaluate(199, ctx).is_true() {
+            qualifying_count += 1;
+        }
+    }
+    if qualifying_count == 0 {
+        return ConditionResult::Unknown;
+    }
+    ConditionResult::from(qualifying_count > 0)
 }"#
         .to_string(),
     ]

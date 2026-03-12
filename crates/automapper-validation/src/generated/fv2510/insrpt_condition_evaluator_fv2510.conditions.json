@@ -1,0 +1,187 @@
+{
+  "generated_at": "2026-03-12T11:19:05Z",
+  "ahb_file": "INSRPT_AHB_1_1g_außerordentliche_20251211.xml",
+  "format_version": "FV2510",
+  "conditions": {
+    "511": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about numbering starting at 1 per document, always applies unconditionally.",
+      "description_hash": "71335e1b",
+      "is_external": false
+    },
+    "509": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about using Messlokation ID, always applies unconditionally.",
+      "description_hash": "d7954b75",
+      "is_external": false
+    },
+    "507": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition specifying that SG7 FTX+AAO must contain the root cause for why the MSB cannot resolve the fault. This is a content guidance annotation, not a boolean predicate. Always returns True.",
+      "description_hash": "bb4d9c29",
+      "is_external": false
+    },
+    "7": {
+      "confidence": "low",
+      "reasoning": "\"Keine weitere SG7 mit demselben Meldepunkt und DTM+9\" requires cross-SG7 comparison on a 'Meldepunkt' identifier. The provided schema for SG7 only shows DTM and STS segments — no LOC, NAD, DOC, or RFF segment carrying the Meldepunkt identifier is documented. Without knowing which segment and element position carries the Meldepunkt reference, a correct implementation cannot be written.",
+      "description_hash": "742d42dd",
+      "is_external": false
+    },
+    "508": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition noting that the Vorgangsnummer comes from DOC DE1004. This is a value-origin annotation, not a boolean predicate. Always returns True.",
+      "description_hash": "272f70d9",
+      "is_external": false
+    },
+    "12": {
+      "confidence": "high",
+      "reasoning": "External condition: whether a fault (Störung) was detected and subsequently resolved by the MSB (Messstellenbetreiber) is an operational lifecycle fact not present in the EDIFACT message. Requires external tracking of the fault resolution process.",
+      "description_hash": "918547d7",
+      "is_external": true
+    },
+    "9": {
+      "confidence": "high",
+      "reasoning": "\"Eine Störung festgestellt wurde, die durch den MSB selbständig und unverschuldet nicht behoben werden konnte\" is a business/operational judgment about physical equipment and the MSB's ability to remedy the fault. This cannot be determined from the EDIFACT message content alone — it reflects a real-world operational situation that must be supplied by the external condition provider.",
+      "description_hash": "93e96b5b",
+      "is_external": true
+    },
+    "13": {
+      "confidence": "high",
+      "reasoning": "DE2379 is the date/time format code at elements[0][2] in the DTM C507 composite (qualifier at [0][0], value at [0][1], format code at [0][2]). Check if any DTM uses format code 303.",
+      "description_hash": "26ef5cf9",
+      "is_external": false
+    },
+    "494": {
+      "confidence": "medium",
+      "reasoning": "This condition constrains a specific date field to be at or before document creation time. Without knowing which DTM qualifier is being constrained at this AHB position in INSRPT, ConditionResult::True is the appropriate approximation — the constraint is unconditional when the field is present.",
+      "description_hash": "e0eddcc9",
+      "is_external": false
+    },
+    "950": {
+      "confidence": "high",
+      "reasoning": "Format: Marktlokations-ID validates that the value is an 11-digit number passing the Luhn check digit algorithm. Applied to LOC+Z16 (Marktlokation), where the ID is in elements[1][0] (C517 composite, first component). validate_malo_id implements this check.",
+      "description_hash": "a9ddfaec",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "low",
+      "reasoning": "Whether the market participant identified by NAD+MR acts in the role LF (Lieferant) cannot be determined from the EDIFACT message content alone — role membership requires external registry/business context lookup.",
+      "description_hash": "991a4cfd",
+      "is_external": true
+    },
+    "10": {
+      "confidence": "high",
+      "reasoning": "\"DE4405 = Z09\" maps directly to STS elements[1][0] (C555.DE4405 per the Segment Structure Reference). Group-scoped to SG7 because the condition says \"in diesem STS\" implying context within the current SG7 instance. any_group_has_qualifier checks across SG7 group instances with automatic message-wide fallback.",
+      "description_hash": "db71430d",
+      "is_external": false
+    },
+    "951": {
+      "confidence": "medium",
+      "reasoning": "Format condition for Zählpunktbezeichnung (meter point designation) — 33 alphanumeric characters. Uses validate_zahlpunkt helper. Without the exact INSRPT segment structure reference, the implementation checks LOC segment element 1 (typical location for identifiers) with a fallback to NAD C082. Confidence is medium because the exact segment path for the Zählpunktbezeichnung in INSRPT is not confirmed without the MIG segment structure reference.",
+      "description_hash": "f35fc481",
+      "is_external": false
+    },
+    "512": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about repeating the segment group twice when a fault was detected and resolved, always applies unconditionally.",
+      "description_hash": "4463f3e7",
+      "is_external": false
+    },
+    "2": {
+      "confidence": "high",
+      "reasoning": "Checks whether an STS segment exists in SG7 with Statuskategorie Z06 (elements[0][0]), Status Z10 (elements[1][0]), and Statusanlaß ZC1 (elements[2][0]). All three positions are confirmed by the MIG segment structure reference. has_segment_matching checks all three simultaneously.",
+      "description_hash": "983d9b3a",
+      "is_external": false
+    },
+    "908": {
+      "confidence": "medium",
+      "reasoning": "Format condition 'Mögliche Werte: 1 bis n' means the value must be a positive integer (>= 1). In INSRPT, the most likely target is a sequence number element (SEQ DE1050). Implemented using validate_numeric with '>=' 1.0. Medium confidence because the exact segment/element target is not specified in the provided structure reference.",
+      "description_hash": "f0e2a917",
+      "is_external": false
+    },
+    "510": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about using Marktlokation ID, always applies unconditionally.",
+      "description_hash": "9727b89c",
+      "is_external": false
+    },
+    "11": {
+      "confidence": "high",
+      "reasoning": "STS DE4405 (Status Code) is at elements[1][0] per the INSRPT MIG schema (C555 composite). Check if any STS segment has Status Code Z10.",
+      "description_hash": "8786444b",
+      "is_external": false
+    },
+    "1": {
+      "confidence": "low",
+      "reasoning": "Cannot determine from EDIFACT message alone whether the message sender was informed by the customer — this is a business context fact external to the message content.",
+      "description_hash": "f4db253d",
+      "is_external": true
+    },
+    "514": {
+      "confidence": "high",
+      "reasoning": "Condition starts with 'Hinweis:' — it is an informational annotation describing cardinality guidance for fault segments, not a boolean predicate. Always returns True.",
+      "description_hash": "cde3f550",
+      "is_external": false
+    },
+    "8": {
+      "confidence": "high",
+      "reasoning": "Direct multi-element match on STS segment: elements[0][0]==\"Z06\" (Statuskategorie C601.DE9015) and elements[1][0]==\"Z10\" (Status C555.DE4405). Both positions are confirmed by the EDIFACT Segment Structure Reference. Group-scoped to SG7 via has_segment_matching_in_group.",
+      "description_hash": "3c78419f",
+      "is_external": false
+    },
+    "513": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about using the segment group exactly once when no fault was detected, always applies unconditionally.",
+      "description_hash": "9302317a",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "high",
+      "reasoning": "Format: ZZZ = +00 means the DTM value must be in UTC (timezone offset +00). The segment structure reference shows DTM+137 as the Dokumentendatum (document date) at elements[0][1]. validate_timezone_utc checks that the timestamp value ends with the +00 UTC marker.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "14": {
+      "confidence": "high",
+      "reasoning": "External condition: determining whether an MP-ID belongs to Sparte Strom (electricity sector) requires lookup in an external market participant registry, not available in the EDIFACT message.",
+      "description_hash": "f3221dba",
+      "is_external": true
+    },
+    "3": {
+      "confidence": "low",
+      "reasoning": "\"Wenn vorhanden\" is too vague without knowing which specific segment, element, or group this condition is applied to. No structural reference to evaluate against.",
+      "description_hash": "0bc6f6f8",
+      "is_external": false
+    },
+    "495": {
+      "confidence": "medium",
+      "reasoning": "DTM+137 is the document date. The condition requires all SG7 DTMs (qualifiers 9, 163, 164, 292) to be ≤ the document date value. String comparison is valid for EDIFACT format 303 (CCYYMMDDHHMM) timestamps. Medium confidence because the condition says 'Der Zeitpunkt' (singular) but applies to DTMs in SG7 — unclear which specific one without AHB context.",
+      "description_hash": "15943b5e",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "low",
+      "reasoning": "Whether the market participant identified by NAD+MR acts in the role NB (Netzbetreiber) cannot be determined from the EDIFACT message content alone — the MP-ID is present but role membership requires external registry/business context lookup.",
+      "description_hash": "6cb73063",
+      "is_external": true
+    },
+    "6": {
+      "confidence": "medium",
+      "reasoning": "\"Keine Störung festgestellt\" maps to STS Gerätestatus category Z06 with status Z09. Z09 appears in the STS schema as one of the valid DE4405 status codes, and condition [10] explicitly checks 'DE4405 = Z09', strongly suggesting Z09 encodes the no-fault result. Medium confidence because the semantic mapping of Z09 to 'no fault' is inferred from context rather than explicitly stated in the schema.",
+      "description_hash": "dff8b411",
+      "is_external": false
+    },
+    "515": {
+      "confidence": "high",
+      "reasoning": "Condition starts with 'Hinweis:' — it is a clarifying annotation explaining the semantics of a date comparison constraint, not a boolean predicate. Always returns True.",
+      "description_hash": "89a42cb3",
+      "is_external": false
+    },
+    "506": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition describing when this segment/field is to be used (when the MSB cannot resolve the fault independently and without fault). This is a usage annotation, not a boolean predicate. Always returns True.",
+      "description_hash": "85c6b783",
+      "is_external": false
+    }
+  }
+}

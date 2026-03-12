@@ -1,0 +1,583 @@
+{
+  "generated_at": "2026-03-12T10:50:20Z",
+  "ahb_file": "PRICAT_AHB_2_0f_Fehlerkorrektur_20251211.xml",
+  "format_version": "FV2510",
+  "conditions": {
+    "55": {
+      "confidence": "medium",
+      "reasoning": "Each SG36 represents one price zone (one RNG). Collects DE6162 (lower range boundary) from RNG elements[1][1] (C280 component 1 = lower bound) across all SG36 instances under SG17. Condition is True if any zone has a strictly higher lower bound than another (min < max), meaning there exists a zone with higher DE6162 than the current minimum. Returns False if fewer than 2 zones or all lower bounds are equal. Group path SG17.SG36 follows PRICAT tx_group=SG17 convention.",
+      "description_hash": "9fd920f5",
+      "is_external": false
+    },
+    "503": {
+      "confidence": "high",
+      "reasoning": "Informational hint about entering value 1000 in DE5118 — documentation annotation, not an evaluatable condition.",
+      "description_hash": "20897c34",
+      "is_external": false
+    },
+    "70": {
+      "confidence": "low",
+      "reasoning": "Whether the prefix before '-' in LIN DE7140 is a valid product code requires checking against an external product catalog or registry (Kapitel 6 reference). Cannot be determined from the EDIFACT message alone.",
+      "description_hash": "68775c74",
+      "is_external": true
+    },
+    "30": {
+      "confidence": "high",
+      "reasoning": "Market participant role (LF = Lieferant) of the NAD+MR party cannot be determined from the EDIFACT message alone — it requires external business context about the receiving party's role in the market.",
+      "description_hash": "788d0ae2",
+      "is_external": true
+    },
+    "521": {
+      "confidence": "high",
+      "reasoning": "The condition text begins with 'Hinweis:' and documents a structural invariant about RNG segment values per Artikel-ID. It is an informational annotation for implementors, not a boolean predicate evaluable from parsed segments alone. Always returns True.",
+      "description_hash": "a8d4054a",
+      "is_external": false
+    },
+    "48": {
+      "confidence": "high",
+      "reasoning": "Checks if any LIN segment in the message has DE7140 (elements[2][0]) matching one of the 13 specified product codes. Group-scoped to SG36 via message-wide LIN search since all LINs belong to SG36 instances.",
+      "description_hash": "4241c1d7",
+      "is_external": false
+    },
+    "939": {
+      "confidence": "medium",
+      "reasoning": "Email address format validation: the string must contain both '@' and '.'. This pattern matches COM segment (communication address) with channel code EM (Electronic Mail). elements[0][0] holds the address, elements[0][1] holds the channel qualifier. Checks channel=EM first, then falls back to any non-empty COM value. Medium confidence because PRICAT segment structure reference not provided.",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "53": {
+      "confidence": "medium",
+      "reasoning": "Validates that SG40 appears exactly once within each SG36 instance. Uses the group navigator to count child SG40 instances per SG36 parent. PRICAT tx_group is SG17; SG36 is a nested group within SG17. Falls back to Unknown when no navigator is available. Medium confidence because the exact parent path [\"SG17\", \"SG36\"] is inferred from PRICAT structure conventions without an explicit segment reference.",
+      "description_hash": "6e83f9cb",
+      "is_external": false
+    },
+    "519": {
+      "confidence": "high",
+      "reasoning": "Informational hint about only one value being allowed in DE3148 — documentation annotation about cardinality, not an evaluatable condition in this context.",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "968": {
+      "confidence": "medium",
+      "reasoning": "Format: Möglicher Wert: ≤ 0 means the numeric value must be less than or equal to zero. In PRICAT, PRI segment element 0 component 1 holds the price amount. Using validate_numeric with \"<=\", 0.0. Medium confidence because the exact target segment depends on AHB context — could also be MOA or another numeric field.",
+      "description_hash": "f517a639",
+      "is_external": false
+    },
+    "29": {
+      "confidence": "medium",
+      "reasoning": "Checks the last character of the article ID in PIA elements[1][0]. Last digit > '1' (i.e., '2'–'9') → True, last digit <= '1' → False. Same assumptions as condition 28 regarding PIA element path.",
+      "description_hash": "cfaba144",
+      "is_external": false
+    },
+    "50": {
+      "confidence": "high",
+      "reasoning": "Compares MP-ID from RFF+Z56 (elements[0][1]) with MP-ID from NAD+MS (elements[1][0]). Both values must be non-empty for a definitive result.",
+      "description_hash": "14d8eb59",
+      "is_external": false
+    },
+    "34": {
+      "confidence": "high",
+      "reasoning": "BGM DE1001 is at elements[0][0] (component 0 of C002). Simple check for value Z77 (Preisblatt Konfigurationen).",
+      "description_hash": "83b4dc81",
+      "is_external": false
+    },
+    "51": {
+      "confidence": "high",
+      "reasoning": "Checks if BGM segment has DE1001 (elements[0][0]) == Z54, using has_qualifier helper.",
+      "description_hash": "a1e929d1",
+      "is_external": false
+    },
+    "42": {
+      "confidence": "high",
+      "reasoning": "Requires both structural validation against the EDI@Energy formation rules AND membership check in the PRICAT Codeverwendung column — fully external code list validation that cannot be determined from the raw EDIFACT message.",
+      "description_hash": "a23d37de",
+      "is_external": true
+    },
+    "912": {
+      "confidence": "medium",
+      "reasoning": "Max 6 decimal places format check. In PRICAT context, price values (PRI segment, element 0, component 1) are the primary numeric values with decimal places. Medium confidence because the exact segment this applies to depends on context — it could also apply to QTY or other numeric fields.",
+      "description_hash": "8464aa40",
+      "is_external": false
+    },
+    "41": {
+      "confidence": "high",
+      "reasoning": "Requires lookup against the external EDI@Energy Codeliste der Artikelnummern with 'PRICAT Codeverwendung' column X — cannot be determined from the EDIFACT message alone.",
+      "description_hash": "b8a75b64",
+      "is_external": true
+    },
+    "9": {
+      "confidence": "high",
+      "reasoning": "BGM DE1373 is at elements[4][0] per the segment reference. Condition is True when BGM DE1373 is NOT '11' (including when the element is absent). Returns Unknown only when no BGM segment exists at all.",
+      "description_hash": "f62d4221",
+      "is_external": false
+    },
+    "495": {
+      "confidence": "medium",
+      "reasoning": "The condition checks that the Betrachtungszeitintervall (DTM+492) value is <= the Nachrichtendatum (DTM+137) value. Both DTM qualifiers appear in the segment reference for PRICAT. We extract DTM+137's DE2380 value as the threshold and use dtm_le to compare. Medium confidence because 'Der Zeitpunkt' could refer to DTM+157 (Gültigkeitsbeginn) instead of DTM+492 — the exact field being validated is not explicit in the description.",
+      "description_hash": "15943b5e",
+      "is_external": false
+    },
+    "69": {
+      "confidence": "low",
+      "reasoning": "'Konfigurationsprodukt-Code' membership requires checking the code part before '-' against a configuration product code list defined in Kapitel 6 of the AHB. This code list is external to the EDIFACT message and cannot be determined from segment content alone.",
+      "description_hash": "60c207f0",
+      "is_external": true
+    },
+    "68": {
+      "confidence": "low",
+      "reasoning": "'Messprodukt-Code' membership requires checking the code part before '-' against a product code list defined in Kapitel 6 of the AHB, which is not present in the EDIFACT message itself. This is an external code-list lookup that cannot be determined from message segments alone.",
+      "description_hash": "dba5a500",
+      "is_external": true
+    },
+    "502": {
+      "confidence": "high",
+      "reasoning": "Informational hint ('Preis in Euro je MWh') — not an evaluatable condition, always satisfied.",
+      "description_hash": "96dcb640",
+      "is_external": false
+    },
+    "3": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier check: IMD+X means IMD segment with elements[0][0]=='X' (Beschreibungsformat, Code = X). Message-level check since no SG36 scoping is mentioned in the condition.",
+      "description_hash": "2cd996af",
+      "is_external": false
+    },
+    "520": {
+      "confidence": "high",
+      "reasoning": "Informational hint about repeating SG40 for zoned pricing — documentation annotation about repetition semantics, not an evaluatable condition.",
+      "description_hash": "1e28e21a",
+      "is_external": false
+    },
+    "27": {
+      "confidence": "high",
+      "reasoning": "BGM DE1001 is at elements[0][0]. lacks_qualifier returns True when no BGM segment has Z70 at that position.",
+      "description_hash": "f47e2e6e",
+      "is_external": false
+    },
+    "56": {
+      "confidence": "medium",
+      "reasoning": "Checks BGM DE1001 == Z94, then validates DTM+137 (document date) >= 2025-10-01 00:00. Mirrors condition 44 pattern but for the Z94 document code introduced with FV2510 and the later threshold date. Condition is inapplicable (Unknown) when BGM code is not Z94. German legal time threshold 2025-10-01 00:00 mapped to 202510010000.",
+      "description_hash": "d5f1453f",
+      "is_external": false
+    },
+    "6": {
+      "confidence": "high",
+      "reasoning": "Check if any SG36 instance contains a LIN segment with DE7140 (elements[2][0]) equal to the specific article ID 9990001000798. collect_group_values collects all LIN.elements[2][0] values across SG36 instances with navigator fallback.",
+      "description_hash": "80faf921",
+      "is_external": false
+    },
+    "2": {
+      "confidence": "high",
+      "reasoning": "Check if any SG36 instance contains a LIN segment with DE7140 (elements[2][0]) equal to the specific article ID 9990001000813. collect_group_values collects all LIN.elements[2][0] values across SG36 instances with navigator fallback.",
+      "description_hash": "fa0a6346",
+      "is_external": false
+    },
+    "932": {
+      "confidence": "medium",
+      "reasoning": "DTM time check: extracts HHMM portion from DTM value. Format 203 (CCYYMMDDHHmm) places hours at positions 8-11. Format 401 (HHmm) starts at position 0. Condition requires exactly 2200. Medium confidence because the specific DTM qualifier context in PRICAT is unknown without the segment structure reference.",
+      "description_hash": "943b98c4",
+      "is_external": false
+    },
+    "36": {
+      "confidence": "high",
+      "reasoning": "Market participant role (NB = Netzbetreiber) of the NAD+MR party cannot be determined from the EDIFACT message alone — requires external business context about the receiving party's role.",
+      "description_hash": "6cb73063",
+      "is_external": true
+    },
+    "39": {
+      "confidence": "high",
+      "reasoning": "Requires lookup against the external EDI@Energy Codeliste der Artikelnummern with MaBiS column X — cannot be determined from the EDIFACT message alone.",
+      "description_hash": "3679e17e",
+      "is_external": true
+    },
+    "490": {
+      "confidence": "high",
+      "reasoning": "Condition checks if the CCYYMMDD portion of a DTM value falls within the MESZ (German summer time, UTC+2) period defined in Table Chapter 3.5. The `is_mesz_utc` helper implements exactly this check using EU DST rules. Extract the value from DTM elements[0][1] and delegate to the helper.",
+      "description_hash": "b21c790d",
+      "is_external": false
+    },
+    "911": {
+      "confidence": "medium",
+      "reasoning": "Format condition specifying values 1 to n, starting at 1 and continuously ascending per message or segment group. This describes sequential position numbering, which in PRICAT is DE1082 in the LIN segment. The implementation collects all LIN segments and verifies their position numbers are 1, 2, 3, ... in order. Medium confidence because the specific element and scope (per-message vs per-SG17 group) are not explicit in the condition description alone.",
+      "description_hash": "d1f33af5",
+      "is_external": false
+    },
+    "902": {
+      "confidence": "high",
+      "reasoning": "Format annotation ('Möglicher Wert: >= 0') — this is a format/range constraint on a data element value, not an evaluatable segment-presence condition. Format validation occurs at the field level, not in condition evaluators.",
+      "description_hash": "08daa39a",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "high",
+      "reasoning": "Group-scoped check: in this SG36 instance, is there an IMD segment with elements[0][0]=='C' (Beschreibungsformat, Code = C)? Uses group-scoped helper with SG36 path.",
+      "description_hash": "8c0c1faf",
+      "is_external": false
+    },
+    "65": {
+      "confidence": "medium",
+      "reasoning": "Checks if the part of LIN DE7140 (elements[2][0]) after '-' differs from '01'. Iterates SG36 instances via navigator; falls back to message-wide LIN scan. Returns True if any SG36 contains a LIN where the suffix is not '01'.",
+      "description_hash": "596797e4",
+      "is_external": false
+    },
+    "504": {
+      "confidence": "high",
+      "reasoning": "Informational hint ('Dokumentennummer der PRICAT') — documentation annotation, not an evaluatable condition.",
+      "description_hash": "8ef883ef",
+      "is_external": false
+    },
+    "512": {
+      "confidence": "high",
+      "reasoning": "Informational hint ('Der genannte Wert gehört zum Intervall') — documentation annotation, not an evaluatable condition.",
+      "description_hash": "da3bdec4",
+      "is_external": false
+    },
+    "926": {
+      "confidence": "medium",
+      "reasoning": "Value must be exactly 0. Applies to a numeric data element — QTY is most common in PRICAT for this kind of constraint (e.g., minimum order quantity of 0). Medium confidence because the specific segment depends on where this condition is referenced in the AHB.",
+      "description_hash": "3e15920e",
+      "is_external": false
+    },
+    "12": {
+      "confidence": "medium",
+      "reasoning": "The notation-resolved hint says elements[0]=Z04. BGM C002.DE1001 is at elements[0][0]. has_qualifier checks elements[0][0]=='Z04'. The 'only one per UNB' structural constraint is an AHB rule consuming this condition — within a single message, we can only check if this IS a Z04 message type.",
+      "description_hash": "f6ad540b",
+      "is_external": false
+    },
+    "494": {
+      "confidence": "high",
+      "reasoning": "This is an informational annotation (Hinweis) describing the semantic requirement for the date field: it must be the document creation time or earlier. It is a business rule description, not a boolean predicate about when to apply the field. As a Hinweis-style condition it always evaluates to True.",
+      "description_hash": "e0eddcc9",
+      "is_external": false
+    },
+    "929": {
+      "confidence": "medium",
+      "reasoning": "Value must be exactly 1000. In PRICAT, 1000 is a common reference quantity (e.g., price per 1000 units in QTY). Medium confidence because the exact target segment depends on where this condition is used in the AHB.",
+      "description_hash": "64e767ca",
+      "is_external": false
+    },
+    "942": {
+      "confidence": "high",
+      "reasoning": "Format: n1-n2-n1-n3 is an Artikelnummer pattern with segments of lengths 1, 2, 1, 3. Uses validate_artikel_pattern helper on the PIA segment's article ID field.",
+      "description_hash": "857011a9",
+      "is_external": false
+    },
+    "35": {
+      "confidence": "low",
+      "reasoning": "Whether the MSB (Messstellenbetreiber) uses the price list specified in BGM DE1001 cannot be determined from the EDIFACT message itself — it depends on external business context.",
+      "description_hash": "3cbfa1bd",
+      "is_external": true
+    },
+    "40": {
+      "confidence": "high",
+      "reasoning": "Requires lookup against the external EDI@Energy Codeliste der Artikelnummern with column H marked X — cannot be determined from the EDIFACT message alone.",
+      "description_hash": "d31cf6a7",
+      "is_external": true
+    },
+    "491": {
+      "confidence": "high",
+      "reasoning": "Condition checks if the CCYYMMDD portion of a DTM value falls within the MEZ (German winter time, UTC+1) period defined in Table Chapter 3.6. The `is_mez_utc` helper implements exactly this check — it is the complement of is_mesz_utc. Extract the value from DTM elements[0][1] and delegate to the helper.",
+      "description_hash": "305e3493",
+      "is_external": false
+    },
+    "19": {
+      "confidence": "medium",
+      "reasoning": "Nur MP-ID aus Sparte Strom — checking whether a market participant ID belongs to the electricity (Strom) sector requires a lookup against an external market participant registry (Marktstammdatenregister or similar). The sector classification cannot be derived from the EDIFACT message content alone.",
+      "description_hash": "f3221dba",
+      "is_external": true
+    },
+    "22": {
+      "confidence": "medium",
+      "reasoning": "This condition requires a lookup of the Artikel-ID from LIN DE7140 (elements[2][0]) against the EDI@Energy code list of article numbers, specifically checking whether the 'PRICAT Preisangabe' column has an X for that entry. Code list membership checks against external EDI@Energy publications cannot be determined from EDIFACT message content alone — they require an external code list resolver.",
+      "description_hash": "37f2baf5",
+      "is_external": true
+    },
+    "7": {
+      "confidence": "high",
+      "reasoning": "Absence check: condition is True when no SG36 instance has a LIN segment with DE7140 (elements[2][0]) equal to 9990001000798. Negation of condition 6.",
+      "description_hash": "660bc742",
+      "is_external": false
+    },
+    "38": {
+      "confidence": "medium",
+      "reasoning": "Same COM segment structure as condition 37. Checks DE3155 for any of TE (telephone), FX (fax), AJ, AL channel codes.",
+      "description_hash": "6aac2a48",
+      "is_external": false
+    },
+    "26": {
+      "confidence": "high",
+      "reasoning": "BGM DE1001 is C002 at elements[0][0]. has_qualifier checks elements[0][0]=='Z70'. Simple qualifier existence check for BGM message type Z70.",
+      "description_hash": "17d24c69",
+      "is_external": false
+    },
+    "940": {
+      "confidence": "medium",
+      "reasoning": "Phone number format: must start with '+' then only digits (international E.164 format). Applies to COM segment with telephone/fax channel codes (TE, FX, AJ). elements[0][0] = number, elements[0][1] = channel code. Medium confidence because PRICAT segment structure reference not provided.",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "946": {
+      "confidence": "medium",
+      "reasoning": "Format: max. 11 Nachkommastellen — validates that a numeric value has at most 11 decimal places. In PRICAT, price values appear in PRI segment element 0 component 1. Using PRI as the most likely price segment in PRICAT context.",
+      "description_hash": "425779e5",
+      "is_external": false
+    },
+    "49": {
+      "confidence": "high",
+      "reasoning": "Logical negation of condition 48: True when none of the 13 specific product codes are present in LIN DE7140 in this SG36.",
+      "description_hash": "9c7b8495",
+      "is_external": false
+    },
+    "492": {
+      "confidence": "medium",
+      "reasoning": "Checks if the NAD+MR market participant ID belongs to the electricity (Strom) sector. Sector membership cannot be determined from the EDIFACT message alone — requires external business context.",
+      "description_hash": "bd78e2d8",
+      "is_external": true
+    },
+    "941": {
+      "confidence": "medium",
+      "reasoning": "Article number format validation on PIA segment (Additional Product ID), element 1, component 0. The pattern n1-n2-n1-n3 is a common PRICAT Artikelnummer format in the German energy market. Medium confidence because the exact digit-segment pattern may differ — should be verified against the specific AHB table for this condition reference.",
+      "description_hash": "99519970",
+      "is_external": false
+    },
+    "948": {
+      "confidence": "high",
+      "reasoning": "Format: n1-n2-n1-n8-n2 is an Artikelnummer pattern with segments of lengths 1, 2, 1, 8, 2. Uses validate_artikel_pattern helper on the PIA segment's article ID field.",
+      "description_hash": "032905d1",
+      "is_external": false
+    },
+    "959": {
+      "confidence": "medium",
+      "reasoning": "Format: n13-n2 is an Artikelnummer pattern — 13 digits, dash, 2 digits. In PRICAT, article identifiers appear in PIA element 1 component 0. Using validate_artikel_pattern with &[13, 2]. Medium confidence because the exact target segment/element depends on AHB context not provided here.",
+      "description_hash": "a847d598",
+      "is_external": false
+    },
+    "44": {
+      "confidence": "medium",
+      "reasoning": "Checks BGM DE1001 == Z77, then validates DTM+137 (document date) >= 2023-10-01 00:00. 'Der hier genannte Zeitpunkt' refers to the timestamp field where this condition is annotated in the AHB; DTM+137 is assumed as the document date for PRICAT. Condition is inapplicable (Unknown) when BGM code is not Z77. German legal time threshold mapped to 202310010000 using dtm_ge string comparison on format 303.",
+      "description_hash": "80323589",
+      "is_external": false
+    },
+    "63": {
+      "confidence": "low",
+      "reasoning": "Whether the previous DE7008 (IMD elements[2][3]) is 'insufficient' to describe the service of this article ID is a subjective business judgment. It cannot be determined from the EDIFACT message content alone — it requires domain knowledge about article description completeness. Marking as external.",
+      "description_hash": "413a0ade",
+      "is_external": true
+    },
+    "71": {
+      "confidence": "high",
+      "reasoning": "Straightforward value check: LIN DE7140 (elements[2][0]) must equal the specific code '9991000003030-01'. Checks any LIN segment in the message.",
+      "description_hash": "443c1efc",
+      "is_external": false
+    },
+    "60": {
+      "confidence": "low",
+      "reasoning": "Requires checking if the part of LIN DE7140 before '-' belongs to the EDI@Energy code list for 'Produkte zur Bestellung einer Änderung an einer Lokation in der Sparte Strom' (Kapitel reference). That external code list cannot be embedded in the evaluator — depends on a versioned external document.",
+      "description_hash": "cee3b228",
+      "is_external": true
+    },
+    "511": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational note documenting that the named value does not belong to the interval and that lower bounds must be strictly increasing across article IDs differing only in last digit. No boolean predicate — always applies unconditionally.",
+      "description_hash": "5781b1c5",
+      "is_external": false
+    },
+    "522": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing how the service associated with this article ID should be described relative to other article IDs sharing the same 13-character prefix. No boolean predicate — always applies unconditionally.",
+      "description_hash": "b076cfcf",
+      "is_external": false
+    },
+    "24": {
+      "confidence": "high",
+      "reasoning": "Format n1-n2-n1-n8-n2-n1 means 6 hyphen-separated numeric groups with lengths 1,2,1,8,2,1. collect_group_values retrieves all LIN.elements[2][0] values from SG36 instances, then validates each against the exact length pattern with all-digit check.",
+      "description_hash": "507368d1",
+      "is_external": false
+    },
+    "8": {
+      "confidence": "low",
+      "reasoning": "Whether the NB (Netzbetreiber) uses the price list specified in BGM DE1001 cannot be determined from the EDIFACT message itself — it depends on external business context (market participant configuration, contracts, etc.).",
+      "description_hash": "6356c504",
+      "is_external": true
+    },
+    "62": {
+      "confidence": "high",
+      "reasoning": "IMD elements[0][0] is DE7077 (Beschreibungsformat, Code). Code 'F' (Free-form) is one of the valid codes [C, F, X]. Simple qualifier existence check.",
+      "description_hash": "bdf43dc0",
+      "is_external": false
+    },
+    "933": {
+      "confidence": "medium",
+      "reasoning": "Same structure as condition 932 but checks for 2300 instead of 2200. Extracts HHMM portion from DTM value using format code to determine position.",
+      "description_hash": "b5e9c81e",
+      "is_external": false
+    },
+    "28": {
+      "confidence": "medium",
+      "reasoning": "Checks the last character of the article ID (Artikel-ID) in the PIA segment. The PIA segment's additional product identification is at elements[1][0]. Last digit '1' → True, any other digit → False. Medium confidence because the exact PIA element path for Artikel-ID in PRICAT is assumed from convention; no segment structure reference provided.",
+      "description_hash": "d7a2c2fb",
+      "is_external": false
+    },
+    "14": {
+      "confidence": "medium",
+      "reasoning": "This is a transmission-level cardinality constraint: per UNB envelope, at most one message per DE1001 message type code is allowed. Enforcing this requires visibility into all messages within the same UNB envelope, which is outside the scope of evaluating a single message's EvaluationContext. Must be handled externally at the interchange/envelope level.",
+      "description_hash": "540bf829",
+      "is_external": true
+    },
+    "937": {
+      "confidence": "medium",
+      "reasoning": "No decimal places allowed — integer values only. Implemented as validate_max_decimal_places with 0. In PRICAT, this typically applies to QTY (quantity must be whole number). Medium confidence because the exact target segment depends on AHB context.",
+      "description_hash": "e3f49bb8",
+      "is_external": false
+    },
+    "66": {
+      "confidence": "low",
+      "reasoning": "Extremely complex cross-group RNG condition: requires finding all RNG segments whose LIN prefix matches, comparing their DE6152 values, and enforcing that when suffix=='02' the DE must be 0 and all matching RNG values must be identical. This involves multi-level cross-group value correlation beyond what the available helpers can express cleanly, and the exact element positions for RNG segments are not provided in the segment reference.",
+      "description_hash": "58d9e200",
+      "is_external": false
+    },
+    "45": {
+      "confidence": "low",
+      "reasoning": "Requires knowledge of the EDI@Energy code list for 'Abrechnung Messstellenbetrieb für die Sparte Strom' article numbers and IDs per market role — this is an external reference that cannot be derived from the EDIFACT message content alone. Must be evaluated by a service with access to the current code list for the relevant market role context.",
+      "description_hash": "167c6ad5",
+      "is_external": true
+    },
+    "52": {
+      "confidence": "high",
+      "reasoning": "Logical negation of condition 51: True when BGM DE1001 != Z54 (no BGM with Z54 qualifier present).",
+      "description_hash": "751c68fd",
+      "is_external": false
+    },
+    "46": {
+      "confidence": "low",
+      "reasoning": "Requires knowledge of the EDI@Energy code list for 'Artikel-ID für die Bestellprozesse beim MSB' — an external reference list that cannot be derived from the EDIFACT message alone. Depends on which article IDs are listed in the referenced chapter of the specification.",
+      "description_hash": "6c16b0e0",
+      "is_external": true
+    },
+    "61": {
+      "confidence": "medium",
+      "reasoning": "LIN DE7140 is elements[2][0]. The condition checks if the numeric part after '-' is greater than 01 (i.e., > 1). Uses group-scoped navigator for SG36 instances, falls back to message-wide on no navigator. Parses after the dash and compares as u32.",
+      "description_hash": "83e7105d",
+      "is_external": false
+    },
+    "43": {
+      "confidence": "medium",
+      "reasoning": "Checks BGM DE1001==Z32, LIN DE7140 contains hyphens (n1-n2-n1-n3 format like '1-01-6-005'), and DTM+157 (Gültigkeitsbeginn) >= 20240101. Medium confidence because 'der hier genannte Zeitpunkt' is assumed to be DTM+157.",
+      "description_hash": "30ed5125",
+      "is_external": false
+    },
+    "908": {
+      "confidence": "high",
+      "reasoning": "Format annotation ('Mögliche Werte: 1 bis n') — this is a format/range constraint on a data element value, not an evaluatable segment-presence condition. Format validation occurs at the field level, not in condition evaluators.",
+      "description_hash": "f0e2a917",
+      "is_external": false
+    },
+    "57": {
+      "confidence": "high",
+      "reasoning": "BGM elements[0][0] is DE1001. Check if it equals Z94 (Preisblatt Technik). Simple qualifier existence check.",
+      "description_hash": "bb091bb5",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "medium",
+      "reasoning": "DTM timezone check: EDIFACT DTM format 303 (CCYYMMDDHHMMzzz) or 719 encodes timezone offset. The condition requires ZZZ=+00 (UTC offset). elements[0][1] holds the datetime value string; checking it ends with '+00' covers standard EDIFACT timezone encoding. Medium confidence because the exact DTM qualifier and format code context is unknown without the segment structure reference.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "47": {
+      "confidence": "medium",
+      "reasoning": "Checks BGM DE1001==Z32, LIN DE7140 is exactly 13 digits with no hyphens (legacy EAN/GLN format), and DTM+157 < 20240101. Complement of condition 43.",
+      "description_hash": "773be48e",
+      "is_external": false
+    },
+    "72": {
+      "confidence": "medium",
+      "reasoning": "Cross-SG36 interval continuity check: for each SG36 whose LIN DE7140 ends with digit > 1, there must be another SG36 with DE7140 differing only in the last digit, and that SG36's RNG DE6152 (upper bound, elements[1][2]) must equal this SG36's RNG DE6162 (lower bound, elements[1][1]). RNG is in child group SG40 under SG36. Implemented via navigator with parent-child navigation. Medium confidence due to complexity of cross-group interval continuity logic.",
+      "description_hash": "6de580a3",
+      "is_external": false
+    },
+    "54": {
+      "confidence": "medium",
+      "reasoning": "'Falls der Preis des Artikels gezont ist' describes whether the article has zone-based pricing — a product/business configuration attribute. While zone pricing might leave structural traces in the message (multiple zone segments), whether a price is fundamentally 'gezont' is a business model characteristic of the article that is external to the EDIFACT message content itself.",
+      "description_hash": "44b6c2a1",
+      "is_external": true
+    },
+    "10": {
+      "confidence": "medium",
+      "reasoning": "Requires iterating all SG36 instances, extracting LIN DE7140 (elements[2][0]), splitting on the last '-', and checking whether any other SG36 has the same prefix with a strictly higher numeric suffix. This is the 'Gruppenartikel-ID / Artikel-ID' relationship. Group path SG17→SG36 based on PRICAT tx_group='SG17' from project knowledge.",
+      "description_hash": "309de1fc",
+      "is_external": false
+    },
+    "949": {
+      "confidence": "high",
+      "reasoning": "Format: n1-n2-n1-n8-n2-n1 is an Artikelnummer pattern with segments of lengths 1, 2, 1, 8, 2, 1. Uses validate_artikel_pattern helper on the PIA segment's article ID field.",
+      "description_hash": "2270fed2",
+      "is_external": false
+    },
+    "67": {
+      "confidence": "medium",
+      "reasoning": "Iterates all SG17 instances and collects (prefix, suffix) pairs from LIN DE7140 across all their child SG36 instances. For each code, checks whether another LIN in the same SG17 has the same prefix and a numerically incremented suffix (preserving leading-zero width). Returns True if such a consecutive pair exists.",
+      "description_hash": "b2ed5bab",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "Group-scoped check: in this SG36 instance, is there an IMD segment with elements[0][0]=='X' (Beschreibungsformat, Code = X)? Uses group-scoped helper with SG36 path.",
+      "description_hash": "f572ddc9",
+      "is_external": false
+    },
+    "909": {
+      "confidence": "medium",
+      "reasoning": "Format condition specifying possible values 0 to n (non-negative). Applied to LIN DE1082 (Positionsnummer) as the most likely numeric element in PRICAT that can take values starting from 0. Medium confidence because the AHB context specifying which exact element this condition applies to is not included in the description.",
+      "description_hash": "263e3a0f",
+      "is_external": false
+    },
+    "33": {
+      "confidence": "medium",
+      "reasoning": "Mirror of condition 32 with >= comparison. DTM+157 DE2380 at elements[0][1], format 303. Returns Unknown if segment absent.",
+      "description_hash": "5f3a895c",
+      "is_external": false
+    },
+    "957": {
+      "confidence": "high",
+      "reasoning": "Format: n1-n2-n1-n8 is an Artikelnummer pattern with segments of lengths 1, 2, 1, 8. Uses validate_artikel_pattern helper on the PIA segment's article ID field.",
+      "description_hash": "1f00af18",
+      "is_external": false
+    },
+    "1": {
+      "confidence": "medium",
+      "reasoning": "Whether a Vorgängerversion (predecessor version) exists is a business context question — it depends on whether a prior PRICAT was sent for the same catalog/articles and is tracked outside the EDIFACT message itself. Cannot be determined from the current message content alone.",
+      "description_hash": "922379a2",
+      "is_external": true
+    },
+    "513": {
+      "confidence": "high",
+      "reasoning": "Informational hint about price unit being defined in the code list — documentation annotation, not an evaluatable condition.",
+      "description_hash": "b75ae6d7",
+      "is_external": false
+    },
+    "37": {
+      "confidence": "medium",
+      "reasoning": "COM segment C076 has DE3148 (number) at elements[0][0] and DE3155 (channel code) at elements[0][1]. The condition checks if DE3155 == \"EM\" (email). COM segment structure is standard EDIFACT and not ambiguous despite not being in the provided reference. 'Demselben COM' at message level means any COM with EM qualifier.",
+      "description_hash": "f7255aef",
+      "is_external": false
+    },
+    "32": {
+      "confidence": "medium",
+      "reasoning": "DTM+157 (Gültigkeitsbeginn) has DE2380 at elements[0][1] in format 303 (YYYYMMDDHHMM). String comparison is valid for this zero-padded numeric format. Assumes German local time encoding as per EDI@Energy convention. Returns Unknown if DTM+157 is absent.",
+      "description_hash": "1037d64a",
+      "is_external": false
+    },
+    "31": {
+      "confidence": "high",
+      "reasoning": "BGM DE1001 is at elements[0][0] (component 0 of C002). Simple check for value Z32 (Preisblatt Messstellenbetrieb).",
+      "description_hash": "51966417",
+      "is_external": false
+    },
+    "64": {
+      "confidence": "high",
+      "reasoning": "Finds DTM+157 (Gültigkeitsbeginn, qualifier 157 at elements[0][0]), extracts DE2380 (elements[0][1]) and compares the first 8 characters (YYYYMMDD) against '20260101'. High confidence — straightforward temporal comparison.",
+      "description_hash": "9eb94e6a",
+      "is_external": false
+    }
+  }
+}

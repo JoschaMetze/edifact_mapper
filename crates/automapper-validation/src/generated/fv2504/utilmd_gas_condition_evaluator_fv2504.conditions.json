@@ -1,186 +1,42 @@
 {
-  "generated_at": "2026-03-11T14:07:00Z",
+  "generated_at": "2026-03-12T10:28:10Z",
   "ahb_file": "UTILMD_AHB_Gas_1_0a_außerordentliche_20240726.xml",
   "format_version": "FV2504",
   "conditions": {
-    "490": {
-      "confidence": "low",
-      "reasoning": "Requires checking whether a date value falls within the MESZ (Mitteleuropäische Sommerzeit) DST transition period per Kapitel 3.5 table. This is timezone/calendar logic requiring external reference data not derivable from EDIFACT segments.",
-      "description_hash": "d566ca5a",
+    "66": {
+      "confidence": "high",
+      "reasoning": "Count all CCI+Z19 (Bilanzkreis) segments across the message. True when more than one occurrence. Message-wide count is correct since 'im Vorgang' means across the whole transaction.",
+      "description_hash": "c5b8359a",
+      "is_external": false
+    },
+    "345": {
+      "confidence": "high",
+      "reasoning": "Check if LOC+172 (Meldepunkt) in SG5 has a 33-character identifier at elements[1][0] (DE3225). 33-character IDs are German MALO-IDs. Direct string length check.",
+      "description_hash": "f55b927f",
+      "is_external": false
+    },
+    "2286": {
+      "confidence": "high",
+      "reasoning": "Condition states: to be given at least once for each SEQ+Z18 (Daten der Messlokation). As a boolean applicability condition, True when any SG8 instance contains SEQ with qualifier Z18 at elements[0][0].",
+      "description_hash": "54d011cf",
+      "is_external": false
+    },
+    "29": {
+      "confidence": "high",
+      "reasoning": "Whether balancing (Bilanzierung) takes place is a business context fact about market participant configuration — it cannot be determined from the EDIFACT message content alone.",
+      "description_hash": "2ee6d67e",
       "is_external": true
     },
-    "47": {
-      "confidence": "medium",
-      "reasoning": "Logical negation of condition 46: CCI+Z12 Klimazone DE3055=293 NOT present in SG10 under SG8+Z35. Propagates Unknown to maintain three-valued semantics.",
-      "description_hash": "da6a7cc7",
-      "is_external": false
-    },
-    "81": {
-      "confidence": "high",
-      "reasoning": "FTX+ABO where C107.DE4441 (elements[2][0]) = Z05. Per MIG schema, the code Z05 (Änderung vorhanden) is at elements[2][0] in the C107 composite, not elements[1]. AHB shorthand notation is overridden by the authoritative segment structure reference.",
-      "description_hash": "b6eafc83",
-      "is_external": false
-    },
-    "571": {
+    "324": {
       "confidence": "low",
-      "reasoning": "Pure informational hint explaining which market partner triggers the transaction depending on STS Transaktionsgrund. No condition to evaluate — it is documentation for the segment content, not a business rule.",
-      "description_hash": "a62b6b47",
-      "is_external": false
-    },
-    "12": {
-      "confidence": "high",
-      "reasoning": "DTM+471 (Ende zum nächstmöglichem Termin): elements[0][0]=qualifier='471'. lacks_qualifier returns True when no such DTM exists.",
-      "description_hash": "c8244b0e",
-      "is_external": false
-    },
-    "36": {
-      "confidence": "high",
-      "reasoning": "STS: elements[0][0]='E01' (Status-Kategorie: Antwort), elements[2][0] is DE9013 (status reason code, C556 composite). ZC5 = Ablehnung andere Anmeldung in Bearbeitung. has_qualified_value finds STS where qualifier matches and then checks the target element.",
-      "description_hash": "63e626a8",
-      "is_external": false
-    },
-    "16": {
-      "confidence": "high",
-      "reasoning": "STS+E01++Z12 (Status der Antwort: Ablehnung Vertragsbindung): elements[0][0]='E01', elements[2][0]='Z12'. Direct has_qualified_value check.",
-      "description_hash": "01e37a5a",
-      "is_external": false
-    },
-    "361": {
-      "confidence": "high",
-      "reasoning": "True when no STS+E01 segment has Prüfschritt code A03 or A04 at elements[2][0]. Notation resolved confirms elements[2] is C556 (Statusanlass/Prüfschritt) with A03/A04 values. Negation of existence check.",
-      "description_hash": "833a0f5a",
-      "is_external": false
-    },
-    "655": {
-      "confidence": "low",
-      "reasoning": "'Wenn ein Zähler an einen Mengenumwerter angeschlossen ist' (when a meter is connected to a volume converter) is hardware/installation topology information that cannot be derived from EDIFACT segment content — it requires external knowledge of the physical meter installation.",
-      "description_hash": "3db6ca4a",
+      "reasoning": "Requires checking all OBIS codes at the Zähleinrichtung against an external code list (EDI@Energy OBIS Kennzahlen Kap. 4) and matching against Messprodukt-Codes from 'Codeliste der Konfigurationen' Kap. 5.2. Cannot be determined from the EDIFACT message alone — depends on external product configuration and code list membership.",
+      "description_hash": "d156d789",
       "is_external": true
     },
-    "651": {
-      "confidence": "low",
-      "reasoning": "'Marktraumumstellung (Gas)' is a business process type (gas market area conversion/migration). Whether the current transaction is part of a Marktraumumstellung is determined by business/operational context, not by evaluating EDIFACT segments in isolation.",
-      "description_hash": "98ebc4e0",
-      "is_external": true
-    },
-    "268": {
+    "951": {
       "confidence": "high",
-      "reasoning": "External condition: whether the DE3207 country code is listed with 'X' in the PLZ column of the EDI@Energy European country code list requires an external code list lookup — cannot be evaluated from EDIFACT message content.",
-      "description_hash": "532d2567",
-      "is_external": true
-    },
-    "68": {
-      "confidence": "high",
-      "reasoning": "Count all CCI+Z19 (Bilanzkreis) segments across the message. True when more than two occurrences.",
-      "description_hash": "432deca0",
-      "is_external": false
-    },
-    "2353": {
-      "confidence": "high",
-      "reasoning": "Condition states: to be given at least once for each SEQ+Z09 (Mengenumwerter-Daten). As a boolean applicability condition, True when any SG8 instance contains SEQ with qualifier Z09 at elements[0][0].",
-      "description_hash": "e2d813e2",
-      "is_external": false
-    },
-    "559": {
-      "confidence": "high",
-      "reasoning": "Pure Hinweis annotation clarifying that the correspondence address field is not an identification field. No condition logic to evaluate.",
-      "description_hash": "4c48eb52",
-      "is_external": false
-    },
-    "216": {
-      "confidence": "medium",
-      "reasoning": "CCI+++Z88 means elements[2][0]=='Z88' (Netznutzung). CAV+Z74:::Z08 means elements[0][0]=='Z74' and elements[0][3]=='Z08' (Direkter Vertrag). Uses parent-child group navigation to check co-occurrence within the same SG10 instance.",
-      "description_hash": "babbeb49",
-      "is_external": false
-    },
-    "10": {
-      "confidence": "high",
-      "reasoning": "STS+Z17 means Statuskategorie (elements[0][0]) == 'Z17', which is the Transaktionsgrundergänzung für befristete Anmeldung segment. Simple qualifier check.",
-      "description_hash": "532a5167",
-      "is_external": false
-    },
-    "241": {
-      "confidence": "high",
-      "reasoning": "External condition: whether the NAD+MR recipient (Nachrichtenempfänger) acts in the role of MSB (Messstellenbetreiber) cannot be determined from EDIFACT content — requires external market role registry lookup.",
-      "description_hash": "cf2a70c6",
-      "is_external": true
-    },
-    "2335": {
-      "confidence": "medium",
-      "reasoning": "Condition states: to be given exactly once for each SEQ+Z02 (OBIS-Daten der Marktlokation) where PIA+5 transmits OBIS code 7-20:99.33.17 or 7-0:33.86.0. Per segment structure reference, PIA elements[1][0] (DE7140) holds the OBIS code. Checks message-wide PIA+5 for the target OBIS values, then verifies SEQ+Z02 is present. Since PIA is always nested in the same SG8 as its SEQ, message-wide PIA check is a valid approximation when group navigator is unavailable.",
-      "description_hash": "5cb76c47",
-      "is_external": false
-    },
-    "202": {
-      "confidence": "high",
-      "reasoning": "STS 'Status der Antwort' has elements[0][0]=\"E01\" (qualifier) and elements[1][0]=DE4405 (Status, Code). Finds STS where qualifier is E01 and checks elements[1][0] for value ZG2 (Gültiges Ergebnis nach der Datenprüfung).",
-      "description_hash": "6bc1f9f5",
-      "is_external": false
-    },
-    "638": {
-      "confidence": "low",
-      "reasoning": "'Bei Aufforderung zur Übernahme der einzelnen Messlokation durch den gMSB' describes a specific business process (gMSB taking over individual metering location) that is determined by business context, not by evaluating segments in the current message.",
-      "description_hash": "92f36b7c",
-      "is_external": true
-    },
-    "502": {
-      "confidence": "high",
-      "reasoning": "Pure Hinweis annotation describing business context for Ersatzbelieferung. No condition logic to evaluate.",
-      "description_hash": "19bf8dcf",
-      "is_external": false
-    },
-    "590": {
-      "confidence": "low",
-      "reasoning": "Informational hint specifying that the Marktlokation ID and all Messlokation identifiers must be provided. Data-completeness instruction for the sender, not an evaluable condition from the parsed message.",
-      "description_hash": "d190b4c7",
-      "is_external": false
-    },
-    "636": {
-      "confidence": "low",
-      "reasoning": "Informational hint explaining that the RFF classifies the DTM segments in the same group via DE1153. Describes segment semantics/classification purpose, not an evaluable condition.",
-      "description_hash": "c639fa99",
-      "is_external": false
-    },
-    "644": {
-      "confidence": "low",
-      "reasoning": "This condition references a *related* prior message (Anmeldung 44001) checking if STS+7++E02 (Einzug in Neuanlage) was present in it. The current message does not contain the referenced prior message — this requires cross-message business context knowledge.",
-      "description_hash": "66c57193",
-      "is_external": true
-    },
-    "69": {
-      "confidence": "high",
-      "reasoning": "Count all CCI+Z19 (Bilanzkreis) segments across the message. True when more than three occurrences.",
-      "description_hash": "7ec31f5d",
-      "is_external": false
-    },
-    "165": {
-      "confidence": "low",
-      "reasoning": "'Wenn bekannt' — whether a piece of information is known cannot be determined from the EDIFACT message structure. This is a business/operational context condition.",
-      "description_hash": "963140b3",
-      "is_external": true
-    },
-    "108": {
-      "confidence": "low",
-      "reasoning": "Kundenwertverfahren (customer value procedure, e.g. TU München method) is a product/contract configuration attribute not present in the EDIFACT message — requires external business context.",
-      "description_hash": "a793b602",
-      "is_external": true
-    },
-    "494": {
-      "confidence": "low",
-      "reasoning": "Requires comparing 'this DE' (the specific data element value being validated) against DTM+137 (Nachrichtendatum). EvaluationContext does not expose the current field value being validated, making this temporal comparison impossible to implement.",
-      "description_hash": "e0eddcc9",
-      "is_external": false
-    },
-    "84": {
-      "confidence": "high",
-      "reasoning": "STS with C601.DE9015=E01 (Status der Antwort) and C556.DE9013=Z35 (Ablehnung der Abmeldeanfrage). elements[0][0]=E01 is category, elements[2][0]=Z35 is the Prüfschritt code.",
-      "description_hash": "c678bc5e",
-      "is_external": false
-    },
-    "209": {
-      "confidence": "medium",
-      "reasoning": "Checks if any DTM segment has DE2379 (elements[0][2]) equal to '303'. 'Im selben Segment' implies checking the format code component within the same DTM segment context; falls back to message-wide check without segment-level navigation.",
-      "description_hash": "0e2d44dd",
+      "reasoning": "Zählpunktbezeichnung is 33 alphanumeric characters — validate_zahlpunkt covers this exactly. In UTILMD Gas, the Zählpunkt is identified via LOC+Z19, element[1][0].",
+      "description_hash": "f35fc481",
       "is_external": false
     },
     "77": {
@@ -189,16 +45,76 @@
       "description_hash": "2e4bb8df",
       "is_external": false
     },
+    "10": {
+      "confidence": "high",
+      "reasoning": "STS+Z17 means Statuskategorie (elements[0][0]) == 'Z17', which is the Transaktionsgrundergänzung für befristete Anmeldung segment. Simple qualifier check.",
+      "description_hash": "532a5167",
+      "is_external": false
+    },
+    "230": {
+      "confidence": "medium",
+      "reasoning": "Compares the later of DTM+Z21 and DTM+Z09 (end of Turnuszeitraum) against DTM+92 (start date). Date formats differ across the three DTM qualifiers (Z21=CCYYMM/format 106, Z09=format 602, DTM+92=CCYYMMDDHHMM/format 303), so comparison is normalized to the CCYYMM prefix (first 6 chars). The exact definition of 'sich ergebendes Datum' from Z21+Z09 introduces some ambiguity — using max(Z21,Z09) as the best approximation.",
+      "description_hash": "3d0160be",
+      "is_external": false
+    },
+    "367": {
+      "confidence": "high",
+      "reasoning": "True when a STS+E01 segment exists with Prüfschritt code A04 at elements[2][0] (C556 DE9013). Notation resolved confirms elements[2] holds A04. Direct use of has_qualified_value helper.",
+      "description_hash": "4914eff7",
+      "is_external": false
+    },
+    "1": {
+      "confidence": "high",
+      "reasoning": "'Wenn Aufteilung vorhanden' — whether message splitting is active is a runtime business context decision that cannot be determined from the EDIFACT message content alone.",
+      "description_hash": "4ebb4e5c",
+      "is_external": true
+    },
+    "64": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier existence: DTM+158 (Bilanzierungsbeginn) at elements[0][0].",
+      "description_hash": "a8edfdd7",
+      "is_external": false
+    },
+    "12": {
+      "confidence": "high",
+      "reasoning": "DTM+471 (Ende zum nächstmöglichem Termin): elements[0][0]=qualifier='471'. lacks_qualifier returns True when no such DTM exists.",
+      "description_hash": "c8244b0e",
+      "is_external": false
+    },
+    "252": {
+      "confidence": "medium",
+      "reasoning": "DE0068 is the Common Access Reference in UNH (elements[2][0]). Checks if it is present and non-empty in any UNH segment.",
+      "description_hash": "87b3eb73",
+      "is_external": false
+    },
+    "19": {
+      "confidence": "high",
+      "reasoning": "SG10 is a child group of SG8. Find SG8 instances where SEQ+Z01 (Daten der Marktlokation, elements[0][0]='Z01') is present, then check if their SG10 children contain CCI with elements[2][0]='ZC0' (Prognose auf Basis von Werten). The CCI+++ZC0 notation places the qualifier at elements[2][0] per segment structure.",
+      "description_hash": "2ce7666f",
+      "is_external": false
+    },
+    "427": {
+      "confidence": "high",
+      "reasoning": "References external codelist 'Codeliste der Standard-Messprodukte Gas' from Kapitel 3 — cannot be evaluated from EDIFACT message segments alone; requires access to the external codelist.",
+      "description_hash": "e562240b",
+      "is_external": true
+    },
+    "442": {
+      "confidence": "medium",
+      "reasoning": "Condition is True when NO SG8 with SEQ+Z09 (Mengenumwerterdaten) has a co-occurring RFF+MG. Implemented by negating any_group_has_co_occurrence. Medium confidence because the 'same device number as meter' cross-reference aspect cannot be fully validated without knowing which meter device number to compare against.",
+      "description_hash": "3ff742e0",
+      "is_external": false
+    },
+    "46": {
+      "confidence": "medium",
+      "reasoning": "In SG8 with SEQ+Z35 (Lastprofildaten), check SG10 children for CCI+Z12 (Lastprofil, elements[0][0]='Z12') AND a Klimazone CCI with DE3055=293 at elements[2][2] (responsible agency code = BDEW/GS1-DE). Uses collect_group_values to find Z35 SG8 instances by index, then navigator for SG10 child traversal.",
+      "description_hash": "332ba921",
+      "is_external": false
+    },
     "28": {
       "confidence": "high",
       "reasoning": "Checks message-wide whether any DTM segment with elements[0][0]='93' (Ende zum) is present.",
       "description_hash": "379d10ac",
-      "is_external": false
-    },
-    "576": {
-      "confidence": "low",
-      "reasoning": "Pure informational hint 'Stammdaten des bisherigen Messstellenbetreibers' — annotation only, no evaluable condition.",
-      "description_hash": "713e5866",
       "is_external": false
     },
     "560": {
@@ -207,22 +123,250 @@
       "description_hash": "58cc7c2e",
       "is_external": false
     },
-    "427": {
-      "confidence": "low",
-      "reasoning": "References external codelist (Kapitel 3 'Codeliste der Standard-Messprodukte Gas'). Valid Messprodukt codes for gas cannot be verified from EDIFACT message structure alone.",
-      "description_hash": "e562240b",
-      "is_external": true
-    },
-    "501": {
-      "confidence": "low",
-      "reasoning": "This is a documentation hint ('Hinweis') stating the value should be copied from DTM+157 (Änderung zum) of the Zuordnungsliste. It describes a data derivation rule, not a boolean condition to evaluate.",
-      "description_hash": "454cdf46",
+    "952": {
+      "confidence": "medium",
+      "reasoning": "DIN 43863-5 Gerätenummer is an alphanumeric device identifier with a max length of 20 characters. No dedicated validator exists, so validate_max_length(20) is used as the structural check. The exact segment/element depends on the AHB table position — IDE is the most common carrier for device IDs in UTILMD Gas, with PIA as a fallback. Medium confidence due to uncertainty about the exact segment without the full AHB table context.",
+      "description_hash": "1871f37e",
       "is_external": false
     },
-    "277": {
+    "570": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation labeling this as the previous network operator (Netzbetreiber Alt). Always applies unconditionally.",
+      "description_hash": "3cae0941",
+      "is_external": false
+    },
+    "621": {
+      "confidence": "high",
+      "reasoning": "Informational note — always applies unconditionally.",
+      "description_hash": "6169d177",
+      "is_external": false
+    },
+    "930": {
+      "confidence": "high",
+      "reasoning": "Format condition: max 2 decimal places. Applies to QTY segment value at elements[0][1]. Direct use of validate_max_decimal_places helper.",
+      "description_hash": "30e8c861",
+      "is_external": false
+    },
+    "581": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing field usage, always applies unconditionally.",
+      "description_hash": "c0a5d56f",
+      "is_external": false
+    },
+    "502": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis annotation describing business context for Ersatzbelieferung. No condition logic to evaluate.",
+      "description_hash": "19bf8dcf",
+      "is_external": false
+    },
+    "58": {
       "confidence": "medium",
-      "reasoning": "'Wenn Zuordnung vorhanden' most likely refers to Bilanzkreiszuordnung zur Marktlokation, indicated by STS+Z18 per the MIG segment reference. Medium confidence as 'Zuordnung' could refer to other assignments in different PID contexts.",
-      "description_hash": "e2f1e3f9",
+      "reasoning": "DE3055 (Verantwortliche Stelle für die Codepflege) appears at CCI elements[2][2] in CCI — Klimazone/Temperaturmessstelle. Checks any CCI in the message has that code. 'In diesem CCI' implies context-local check; falls back to message-wide.",
+      "description_hash": "081389d4",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "'Wenn MP-ID in SG2 NAD+MS in der Rolle LF' — the NAD+MS segment contains the sender's MP-ID, but whether that market participant holds the role of Lieferant (LF) is external business context not encoded in the EDIFACT message itself.",
+      "description_hash": "a1466d0d",
+      "is_external": true
+    },
+    "368": {
+      "confidence": "high",
+      "reasoning": "\"Es sind alle Codes aus der Codeliste G_0009 erlaubt\" is an informational note stating that all codes from code list G_0009 are permitted for this field. It is a permissive annotation about valid values, not a boolean predicate — equivalent to a Hinweis. Always returns True.",
+      "description_hash": "6c1d28dd",
+      "is_external": false
+    },
+    "643": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation, always applies unconditionally.",
+      "description_hash": "d4a51acc",
+      "is_external": false
+    },
+    "25": {
+      "confidence": "medium",
+      "reasoning": "Marktlokations-ID in German gas market is a numeric (all-digit) identifier. LOC+172 has elements[0][0]='172', elements[1][0]=DE3225. Checks if value consists entirely of ASCII digits. Returns Unknown if no LOC+172 exists.",
+      "description_hash": "ebb975a2",
+      "is_external": false
+    },
+    "219": {
+      "confidence": "medium",
+      "reasoning": "'Wenn an Marktlokation vorhanden' — whether specific data exists at the market location is a registry/master-data lookup that cannot be derived from the EDIFACT message content. Marked external.",
+      "description_hash": "7d998d8c",
+      "is_external": true
+    },
+    "558": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis annotation indicating voluntary data exchange. No condition logic to evaluate.",
+      "description_hash": "dea71226",
+      "is_external": false
+    },
+    "622": {
+      "confidence": "high",
+      "reasoning": "Informational note — always applies unconditionally.",
+      "description_hash": "04b6eeeb",
+      "is_external": false
+    },
+    "654": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about data relevance to the addressed market partner. Always applies unconditionally.",
+      "description_hash": "8e1d3102",
+      "is_external": false
+    },
+    "508": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis annotation describing the semantic meaning of a date field. No condition logic to evaluate.",
+      "description_hash": "67845c9f",
+      "is_external": false
+    },
+    "912": {
+      "confidence": "high",
+      "reasoning": "Format condition: max 6 decimal places. Applies to QTY segment value at elements[0][1]. Direct use of validate_max_decimal_places helper.",
+      "description_hash": "8464aa40",
+      "is_external": false
+    },
+    "362": {
+      "confidence": "high",
+      "reasoning": "True when no STS+E01 segment has Prüfschritt code A03 or A17 at elements[2][0]. Same pattern as condition 361 but checking A17 instead of A04.",
+      "description_hash": "dfcdeefa",
+      "is_external": false
+    },
+    "507": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis annotation describing the semantic meaning of a date field. No condition logic to evaluate.",
+      "description_hash": "f261bf57",
+      "is_external": false
+    },
+    "81": {
+      "confidence": "high",
+      "reasoning": "FTX+ABO where C107.DE4441 (elements[2][0]) = Z05. Per MIG schema, the code Z05 (Änderung vorhanden) is at elements[2][0] in the C107 composite, not elements[1]. AHB shorthand notation is overridden by the authoritative segment structure reference.",
+      "description_hash": "b6eafc83",
+      "is_external": false
+    },
+    "336": {
+      "confidence": "medium",
+      "reasoning": "\"Wenn in Änderungsmeldung gefüllt\" means the condition applies when this field is populated in the context of an amendment message (Änderungsmeldung). Whether a given transmission constitutes an amendment depends on business context (the PID / Vorgang type) that cannot be reliably determined from the raw EDIFACT segments alone. Delegated to external provider.",
+      "description_hash": "eaa7fa09",
+      "is_external": true
+    },
+    "953": {
+      "confidence": "high",
+      "reasoning": "validate_malo_or_zahlpunkt covers both cases exactly: 11-digit MaLo-ID with Luhn check digit, or 33-character Zählpunktbezeichnung. The identifier is typically in a LOC segment's element[1][0]. High confidence because the helper is a direct match for the condition description.",
+      "description_hash": "0e6a91c8",
+      "is_external": false
+    },
+    "78": {
+      "confidence": "high",
+      "reasoning": "STS+7 with C556.DE9013=E02 (Transaktionsgrund: Einzug in Neuanlage) must NOT be present. elements[0][0]=7 is the category qualifier, elements[2][0]=DE9013 is the reason code. Negate the positive check.",
+      "description_hash": "0cee2c1b",
+      "is_external": false
+    },
+    "130": {
+      "confidence": "medium",
+      "reasoning": "'Wenn an Messlokation vorhanden' is interpreted as: a Messlokation section exists in the message, indicated by SEQ+Z18 (Daten der Messlokation) in SG8. Returns True when such a section is present.",
+      "description_hash": "e6eba96d",
+      "is_external": false
+    },
+    "13": {
+      "confidence": "high",
+      "reasoning": "Negation of STS+E01++Z01 (Status der Antwort: Zustimmung mit Terminänderung). elements[0][0]='E01', elements[2][0]='Z01'. Condition is True when this status is absent.",
+      "description_hash": "95c62c31",
+      "is_external": false
+    },
+    "257": {
+      "confidence": "high",
+      "reasoning": "Checks that SEQ+Z02 (OBIS-Daten der Marktlokation) and PIA with OBIS code '7-0:33.86.0' (EDIFACT escape ?. decoded as literal colon) co-occur in the same SG8 instance.",
+      "description_hash": "634cbfce",
+      "is_external": false
+    },
+    "9": {
+      "confidence": "high",
+      "reasoning": "Negation of STS+7++ZE4 presence. If no STS+7 exists or ZE4 is not the value, condition 'nicht vorhanden' is True. Only False when ZE4 is explicitly found.",
+      "description_hash": "1f2a0b03",
+      "is_external": false
+    },
+    "26": {
+      "confidence": "medium",
+      "reasoning": "Zählpunktbezeichnung format contains non-digit characters (typically alphanumeric string). Negates condition 25's all-digit check. Returns True if DE3225 of LOC+172 is non-empty and contains at least one non-digit character.",
+      "description_hash": "0585333d",
+      "is_external": false
+    },
+    "274": {
+      "confidence": "medium",
+      "reasoning": "Checks co-occurrence of SEQ+Z20 and PIA+5 in same SG8, then verifies the OBIS code (elements[1][0]) matches pattern '7-b:X.X.X' where b is variable (any subgroup) and suffix is one of the 16 listed measurement quantities. EDIFACT ?. decoded as literal colon. OBIS suffix match is message-wide as a secondary filter.",
+      "description_hash": "e644ccb3",
+      "is_external": false
+    },
+    "490": {
+      "confidence": "high",
+      "reasoning": "References an external date range table from Kapitel 3.5 'Prozesszeitpunkt bei MESZ mit UTC' — the valid date ranges for MESZ (Central European Summer Time) periods cannot be determined from the EDIFACT message itself.",
+      "description_hash": "d566ca5a",
+      "is_external": true
+    },
+    "638": {
+      "confidence": "high",
+      "reasoning": "Informational note — always applies unconditionally.",
+      "description_hash": "92f36b7c",
+      "is_external": false
+    },
+    "70": {
+      "confidence": "high",
+      "reasoning": "Count all CCI+Z19 (Bilanzkreis) segments across the message. True when exactly five occurrences.",
+      "description_hash": "92ec7e79",
+      "is_external": false
+    },
+    "129": {
+      "confidence": "medium",
+      "reasoning": "Whether the supplier has contract knowledge about the amount of a special KA (Sonder-Kapazitätsanteil) is contract-based knowledge. Cannot be derived from the EDIFACT message.",
+      "description_hash": "7004cb99",
+      "is_external": true
+    },
+    "315": {
+      "confidence": "low",
+      "reasoning": "This condition requires validating that all required OBIS codes per EDI@Energy code list (Kapitel 4, 4.6) and matching Messprodukt-Codes from Kapitel 5.2 of 'Codeliste der Konfigurationen' are present. The required set depends on external reference documents and cannot be determined from the EDIFACT message content alone. Requires access to the external OBIS code lists and configuration code lists.",
+      "description_hash": "1d08e79a",
+      "is_external": true
+    },
+    "200": {
+      "confidence": "high",
+      "reasoning": "BGM elements[0] is C002, elements[0][0] is DE1001 (Kategorie). BGM+Z26 means elements[0][0]=\"Z26\" (Vorläufige Meldung zur Marktraumumstellung). has_qualifier checks elements[elem][0] directly.",
+      "description_hash": "04a6317b",
+      "is_external": false
+    },
+    "108": {
+      "confidence": "medium",
+      "reasoning": "Kundenwertverfahren (e.g., TU München) is a specific billing methodology determined by contract terms, not derivable from the EDIFACT message content itself.",
+      "description_hash": "a793b602",
+      "is_external": true
+    },
+    "69": {
+      "confidence": "high",
+      "reasoning": "Count all CCI+Z19 (Bilanzkreis) segments across the message. True when more than three occurrences.",
+      "description_hash": "7ec31f5d",
+      "is_external": false
+    },
+    "651": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about Marktraumumstellung Gas process. Always applies unconditionally.",
+      "description_hash": "98ebc4e0",
+      "is_external": false
+    },
+    "202": {
+      "confidence": "high",
+      "reasoning": "STS 'Status der Antwort' has elements[0][0]=\"E01\" (qualifier) and elements[1][0]=DE4405 (Status, Code). Finds STS where qualifier is E01 and checks elements[1][0] for value ZG2 (Gültiges Ergebnis nach der Datenprüfung).",
+      "description_hash": "6bc1f9f5",
+      "is_external": false
+    },
+    "37": {
+      "confidence": "high",
+      "reasoning": "Whether a registration/change is time-limited (befristet) is a business property of the registration itself. Matches the known external condition pattern 'Wenn befristet' → registration_is_time_limited documented in CLAUDE.md.",
+      "description_hash": "8ae2fa4a",
+      "is_external": true
+    },
+    "559": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis annotation clarifying that the correspondence address field is not an identification field. No condition logic to evaluate.",
+      "description_hash": "4c48eb52",
       "is_external": false
     },
     "24": {
@@ -231,23 +375,53 @@
       "description_hash": "83eea6a7",
       "is_external": false
     },
-    "934": {
-      "confidence": "low",
-      "reasoning": "Format condition: 'HHMM = 0400' specifies that the time value must be exactly 0400. This is a fixed-value format constraint, not an evaluatable logical condition from segment presence/absence.",
-      "description_hash": "d06a46c8",
-      "is_external": false
-    },
-    "953": {
-      "confidence": "low",
-      "reasoning": "Format condition specifying either Marktlokations-ID or Zählpunktbezeichnung format. This is a value format constraint with alternatives, not a boolean condition evaluatable from message segments alone.",
-      "description_hash": "0e6a91c8",
-      "is_external": false
-    },
-    "7": {
+    "39": {
       "confidence": "high",
-      "reasoning": "STS Transaktionsgrund: elements[0][0]=Statuskategorie='7', elements[2][0]=Statusanlass code. Check for ZG9/ZH1/ZH2 using has_qualified_value.",
-      "description_hash": "101bffb4",
+      "reasoning": "Whether the LF (Lieferant) intends to transmit a meter reading (Zählerstand) is an intent/agreement outside the current EDIFACT message — it reflects a bilateral agreement or process state that cannot be derived from message segments alone.",
+      "description_hash": "7c58b9f1",
+      "is_external": true
+    },
+    "138": {
+      "confidence": "high",
+      "reasoning": "Directly checks absence of LOC segment with qualifier 172 (Meldepunkt) at elements[0]. Returns True when no such LOC segment exists in the message.",
+      "description_hash": "66e06dca",
       "is_external": false
+    },
+    "2353": {
+      "confidence": "high",
+      "reasoning": "Condition states: to be given at least once for each SEQ+Z09 (Mengenumwerter-Daten). As a boolean applicability condition, True when any SG8 instance contains SEQ with qualifier Z09 at elements[0][0].",
+      "description_hash": "e2d813e2",
+      "is_external": false
+    },
+    "209": {
+      "confidence": "medium",
+      "reasoning": "Checks if any DTM segment has DE2379 (elements[0][2]) equal to '303'. 'Im selben Segment' implies checking the format code component within the same DTM segment context; falls back to message-wide check without segment-level navigation.",
+      "description_hash": "0e2d44dd",
+      "is_external": false
+    },
+    "494": {
+      "confidence": "high",
+      "reasoning": "This is a Hinweis — an informational annotation describing the semantic meaning of the date field (must be the document creation time or earlier). It does not encode a boolean predicate derivable from other segments; it is a constraint description that always applies unconditionally.",
+      "description_hash": "e0eddcc9",
+      "is_external": false
+    },
+    "165": {
+      "confidence": "high",
+      "reasoning": "'Wenn bekannt' — the classic 'if known' external condition. Whether a piece of information (e.g., a date or value) is known to the sender is runtime business context outside the message. Marked external.",
+      "description_hash": "963140b3",
+      "is_external": true
+    },
+    "36": {
+      "confidence": "high",
+      "reasoning": "STS: elements[0][0]='E01' (Status-Kategorie: Antwort), elements[2][0] is DE9013 (status reason code, C556 composite). ZC5 = Ablehnung andere Anmeldung in Bearbeitung. has_qualified_value finds STS where qualifier matches and then checks the target element.",
+      "description_hash": "63e626a8",
+      "is_external": false
+    },
+    "98": {
+      "confidence": "medium",
+      "reasoning": "'Wenn MP-ID in SG2 NAD+MS in der Rolle NB' — while we can confirm NAD+MS exists in the message, determining whether that market participant ID is registered in the role of Netzbetreiber (NB) requires an external role/master-data lookup. Cannot be derived from the EDIFACT message content alone.",
+      "description_hash": "b51d892c",
+      "is_external": true
     },
     "527": {
       "confidence": "high",
@@ -261,484 +435,16 @@
       "description_hash": "1f38de55",
       "is_external": false
     },
-    "92": {
-      "confidence": "low",
-      "reasoning": "Change detection within a segment or segment group (Wert geändert) requires comparison with a previous message state or business transaction history — not determinable from the EDIFACT message content alone.",
-      "description_hash": "91b75fa8",
-      "is_external": true
-    },
-    "491": {
-      "confidence": "low",
-      "reasoning": "Requires checking whether a date value falls within the MEZ (Mitteleuropäische Zeit) DST transition period per Kapitel 3.6 table. This is timezone/calendar logic requiring external reference data not derivable from EDIFACT segments.",
-      "description_hash": "798c2c48",
-      "is_external": true
-    },
-    "577": {
-      "confidence": "low",
-      "reasoning": "Informational hint stating the field is filled with the NB-confirmed start date. Describes data provenance, not an evaluable condition.",
-      "description_hash": "38a15778",
-      "is_external": false
-    },
-    "98": {
-      "confidence": "low",
-      "reasoning": "The market participant role (NB = Netzbetreiber) of the NAD+MS sender cannot be determined from the MP-ID string alone — requires external registry/role lookup.",
-      "description_hash": "b51d892c",
-      "is_external": true
-    },
-    "249": {
-      "confidence": "medium",
-      "reasoning": "Checks that all STS+E01 segments have identical DE1131 values (elements[2][1] — Codeliste, Code within C556). Returns True when all values match the first occurrence. Message-wide fallback without per-SG4 grouping.",
-      "description_hash": "db65781e",
-      "is_external": false
-    },
-    "205": {
+    "106": {
       "confidence": "high",
-      "reasoning": "Checks absence of QTY segment with qualifier Y02 (TUM Kundenwert) at elements[0][0]. Returns True when no QTY+Y02 exists anywhere in the message.",
-      "description_hash": "7f34a39b",
+      "reasoning": "In SG8 instances where SEQ+Z01 (Daten der Marktlokation) is present, check if child SG10 contains CCI with DE7037=ZA6 (Prognosegrundlage: Prognose auf Basis von Profilen) at elements[2][0]. Uses parent-child navigation.",
+      "description_hash": "919232fd",
       "is_external": false
     },
-    "931": {
-      "confidence": "low",
-      "reasoning": "Format condition: 'ZZZ = +00' specifies that the timezone component must be '+00'. This is a value format/content constraint, not a logical presence/absence condition — it validates a specific field value rather than evaluating a business rule.",
-      "description_hash": "825c510c",
-      "is_external": false
-    },
-    "2061": {
-      "confidence": "medium",
-      "reasoning": "Condition states the segment/group is to be given exactly once per SG4 IDE (Vorgang). As a boolean applicability condition, this is True when the IDE segment (Vorgangsidentifikator) is present, indicating the SG4 context exists. Cardinality enforcement (exactly once) is a structural rule beyond a simple boolean evaluator.",
-      "description_hash": "6282c707",
-      "is_external": false
-    },
-    "166": {
-      "confidence": "low",
-      "reasoning": "'Wenn vorhanden' is too generic without knowing which specific data element or segment is being referenced. Cannot implement without additional context about what is expected to be present.",
-      "description_hash": "fae4710e",
-      "is_external": true
-    },
-    "1": {
-      "confidence": "low",
-      "reasoning": "Aufteilung (message splitting) is an external business context decision that cannot be determined from the EDIFACT message content alone.",
-      "description_hash": "4ebb4e5c",
-      "is_external": true
-    },
-    "257": {
+    "16": {
       "confidence": "high",
-      "reasoning": "Checks that SEQ+Z02 (OBIS-Daten der Marktlokation) and PIA with OBIS code '7-0:33.86.0' (EDIFACT escape ?. decoded as literal colon) co-occur in the same SG8 instance.",
-      "description_hash": "634cbfce",
-      "is_external": false
-    },
-    "500": {
-      "confidence": "low",
-      "reasoning": "This is a documentation hint ('Hinweis') instructing the sender to select the code matching the category of the message being cancelled. It is content guidance, not a boolean evaluatable condition.",
-      "description_hash": "90cddaf7",
-      "is_external": false
-    },
-    "951": {
-      "confidence": "low",
-      "reasoning": "Format condition specifying the Zählpunktbezeichnung format. This is a value format constraint, not a boolean condition evaluatable from message segments alone.",
-      "description_hash": "f35fc481",
-      "is_external": false
-    },
-    "37": {
-      "confidence": "low",
-      "reasoning": "Wenn Anmeldung/Änderung befristet — whether a registration or change is time-limited is external business context that cannot be determined from the EDIFACT message content.",
-      "description_hash": "8ae2fa4a",
-      "is_external": true
-    },
-    "643": {
-      "confidence": "low",
-      "reasoning": "'Nachfolgender Netzbetreiber' (subsequent/following network operator) is a business relationship context — whether there is a subsequent network operator involved cannot be determined from segment content alone.",
-      "description_hash": "d4a51acc",
-      "is_external": true
-    },
-    "912": {
-      "confidence": "low",
-      "reasoning": "Format condition: 'max. 6 Nachkommastellen' specifies a numeric precision constraint (maximum 6 decimal places). This is a value format validator, not a logical condition evaluatable from segment structure.",
-      "description_hash": "8464aa40",
-      "is_external": false
-    },
-    "11": {
-      "confidence": "high",
-      "reasoning": "Negation of condition 7 (STS+7++ZG9/ZH1/ZH2). If none of those Transaktionsgrund codes are present, condition is True.",
-      "description_hash": "321d0c62",
-      "is_external": false
-    },
-    "29": {
-      "confidence": "low",
-      "reasoning": "Wenn eine Bilanzierung stattfindet — whether billing/balancing takes place is business context outside the EDIFACT message content. Cannot be determined from segments alone.",
-      "description_hash": "2ee6d67e",
-      "is_external": true
-    },
-    "17": {
-      "confidence": "low",
-      "reasoning": "Whether a confirmed cancellation (Kündigung) already exists from a customer or market participant is external business context — requires lookup in external systems, not derivable from this EDIFACT message.",
-      "description_hash": "3ae99890",
-      "is_external": true
-    },
-    "510": {
-      "confidence": "high",
-      "reasoning": "Pure Hinweis annotation describing usage context for ESV deregistration. No condition logic to evaluate.",
-      "description_hash": "72d664cc",
-      "is_external": false
-    },
-    "530": {
-      "confidence": "high",
-      "reasoning": "Pure Hinweis annotation about data completeness requirements at a given date. No condition logic to evaluate.",
-      "description_hash": "76504406",
-      "is_external": false
-    },
-    "367": {
-      "confidence": "high",
-      "reasoning": "True when a STS+E01 segment exists with Prüfschritt code A04 at elements[2][0] (C556 DE9013). Notation resolved confirms elements[2] holds A04. Direct use of has_qualified_value helper.",
-      "description_hash": "4914eff7",
-      "is_external": false
-    },
-    "26": {
-      "confidence": "medium",
-      "reasoning": "Zählpunktbezeichnung format contains non-digit characters (typically alphanumeric string). Negates condition 25's all-digit check. Returns True if DE3225 of LOC+172 is non-empty and contains at least one non-digit character.",
-      "description_hash": "0585333d",
-      "is_external": false
-    },
-    "48": {
-      "confidence": "high",
-      "reasoning": "Same structure as condition 36. STS: elements[0][0]='E01' (Antwort-Statuskategorie), elements[2][0]=DE9013 status reason code. E14 = Ablehnung Sonstiges. has_qualified_value handles the co-element check on the same segment.",
-      "description_hash": "5fe27cd1",
-      "is_external": false
-    },
-    "200": {
-      "confidence": "high",
-      "reasoning": "BGM elements[0] is C002, elements[0][0] is DE1001 (Kategorie). BGM+Z26 means elements[0][0]=\"Z26\" (Vorläufige Meldung zur Marktraumumstellung). has_qualifier checks elements[elem][0] directly.",
-      "description_hash": "04a6317b",
-      "is_external": false
-    },
-    "345": {
-      "confidence": "high",
-      "reasoning": "Check if LOC+172 (Meldepunkt) in SG5 has a 33-character identifier at elements[1][0] (DE3225). 33-character IDs are German MALO-IDs. Direct string length check.",
-      "description_hash": "f55b927f",
-      "is_external": false
-    },
-    "507": {
-      "confidence": "high",
-      "reasoning": "Pure Hinweis annotation describing the semantic meaning of a date field. No condition logic to evaluate.",
-      "description_hash": "f261bf57",
-      "is_external": false
-    },
-    "13": {
-      "confidence": "high",
-      "reasoning": "Negation of STS+E01++Z01 (Status der Antwort: Zustimmung mit Terminänderung). elements[0][0]='E01', elements[2][0]='Z01'. Condition is True when this status is absent.",
-      "description_hash": "95c62c31",
-      "is_external": false
-    },
-    "952": {
-      "confidence": "low",
-      "reasoning": "Format condition specifying the Gerätenummer nach DIN 43863-5 format standard. This is a value format constraint, not a boolean condition evaluatable from message segments alone.",
-      "description_hash": "1871f37e",
-      "is_external": false
-    },
-    "230": {
-      "confidence": "low",
-      "reasoning": "Complex temporal calculation: requires computing a derived end date from DTM+Z21 (Termin der Netznutzungsabrechnung) and DTM+Z09 (Nächste Netznutzungsabrechnung) billing intervals and comparing against DTM+92 (Beginn zum). Requires German energy market billing period arithmetic not expressible with the available EvaluationContext API.",
-      "description_hash": "3d0160be",
-      "is_external": false
-    },
-    "252": {
-      "confidence": "medium",
-      "reasoning": "DE0068 is the Common Access Reference in UNH (elements[2][0]). Checks if it is present and non-empty in any UNH segment.",
-      "description_hash": "87b3eb73",
-      "is_external": false
-    },
-    "508": {
-      "confidence": "high",
-      "reasoning": "Pure Hinweis annotation describing the semantic meaning of a date field. No condition logic to evaluate.",
-      "description_hash": "67845c9f",
-      "is_external": false
-    },
-    "937": {
-      "confidence": "low",
-      "reasoning": "Format condition: 'keine Nachkommastelle' specifies that the value must have no decimal places (integer only). This is a numeric format validator, not a logical condition evaluatable from segment structure.",
-      "description_hash": "e3f49bb8",
-      "is_external": false
-    },
-    "368": {
-      "confidence": "low",
-      "reasoning": "This is a documentation note stating all codes from codelist G_0009 are permitted. It describes allowed values rather than expressing a boolean runtime condition to evaluate.",
-      "description_hash": "6c1d28dd",
-      "is_external": false
-    },
-    "336": {
-      "confidence": "low",
-      "reasoning": "'Wenn in Änderungsmeldung gefüllt' depends on whether the overall transaction is classified as a change message (Änderungsmeldung). This is a business context determination not derivable solely from EDIFACT segment content.",
-      "description_hash": "eaa7fa09",
-      "is_external": true
-    },
-    "581": {
-      "confidence": "low",
-      "reasoning": "Informational hint instructing senders to provide the next possible cancellation date. Describes data-filling guidance, not an evaluable condition.",
-      "description_hash": "c0a5d56f",
-      "is_external": false
-    },
-    "9": {
-      "confidence": "high",
-      "reasoning": "Negation of STS+7++ZE4 presence. If no STS+7 exists or ZE4 is not the value, condition 'nicht vorhanden' is True. Only False when ZE4 is explicitly found.",
-      "description_hash": "1f2a0b03",
-      "is_external": false
-    },
-    "584": {
-      "confidence": "low",
-      "reasoning": "Pure informational hint 'Verwendung der ID der Messlokation' — annotation describing ID usage, not an evaluable condition.",
-      "description_hash": "d7954b75",
-      "is_external": false
-    },
-    "138": {
-      "confidence": "high",
-      "reasoning": "Directly checks absence of LOC segment with qualifier 172 (Meldepunkt) at elements[0]. Returns True when no such LOC segment exists in the message.",
-      "description_hash": "66e06dca",
-      "is_external": false
-    },
-    "46": {
-      "confidence": "medium",
-      "reasoning": "In SG8 with SEQ+Z35 (Lastprofildaten), check SG10 children for CCI+Z12 (Lastprofil, elements[0][0]='Z12') AND a Klimazone CCI with DE3055=293 at elements[2][2] (responsible agency code = BDEW/GS1-DE). Uses collect_group_values to find Z35 SG8 instances by index, then navigator for SG10 child traversal.",
-      "description_hash": "332ba921",
-      "is_external": false
-    },
-    "203": {
-      "confidence": "high",
-      "reasoning": "STS Transaktionsgrund has elements[0][0]=\"7\". The Transaktionsgrund codes are at elements[2][0] (DE9013, Statusanlass). Checks for the listed codes. Duplicate ZC6 in the condition text is deduplicated.",
-      "description_hash": "6f46418b",
-      "is_external": false
-    },
-    "558": {
-      "confidence": "high",
-      "reasoning": "Pure Hinweis annotation indicating voluntary data exchange. No condition logic to evaluate.",
-      "description_hash": "dea71226",
-      "is_external": false
-    },
-    "654": {
-      "confidence": "low",
-      "reasoning": "This is an informational note ('Hinweis') about data completeness rules: only data relevant to the NAD+MR recipient should be included. It is a guidance rule for message construction, not an evaluatable presence/absence condition that maps to True/False/Unknown.",
-      "description_hash": "8e1d3102",
-      "is_external": false
-    },
-    "274": {
-      "confidence": "medium",
-      "reasoning": "Checks co-occurrence of SEQ+Z20 and PIA+5 in same SG8, then verifies the OBIS code (elements[1][0]) matches pattern '7-b:X.X.X' where b is variable (any subgroup) and suffix is one of the 16 listed measurement quantities. EDIFACT ?. decoded as literal colon. OBIS suffix match is message-wide as a secondary filter.",
-      "description_hash": "e644ccb3",
-      "is_external": false
-    },
-    "637": {
-      "confidence": "low",
-      "reasoning": "'Bei Verpflichtungsanfrage' (obligation request) is a business process context that cannot be determined from EDIFACT segment content alone — requires external knowledge of whether this is a Verpflichtungsanfrage transaction type.",
-      "description_hash": "849c0f3f",
-      "is_external": true
-    },
-    "907": {
-      "confidence": "low",
-      "reasoning": "Format condition: 'max. 4 Nachkommastellen' specifies a numeric precision constraint (maximum 4 decimal places). This is a value format validator, not a logical condition evaluatable from segment structure.",
-      "description_hash": "cb9ee7ba",
-      "is_external": false
-    },
-    "212": {
-      "confidence": "medium",
-      "reasoning": "Checks if any NAD in SG12 has DE3124 (C058 first component, elements[2][0]) absent or empty. Without group-scoped navigation, falls back to message-wide NAD check.",
-      "description_hash": "b5c09245",
-      "is_external": false
-    },
-    "324": {
-      "confidence": "low",
-      "reasoning": "References external codelist (OBIS codes Kapitel 4 and Messprodukt codes from Codeliste der Konfigurationen Kapitel 5.2). Cannot verify minimum OBIS scope for meter device from message segments alone.",
-      "description_hash": "d156d789",
-      "is_external": true
-    },
-    "362": {
-      "confidence": "high",
-      "reasoning": "True when no STS+E01 segment has Prüfschritt code A03 or A17 at elements[2][0]. Same pattern as condition 361 but checking A17 instead of A04.",
-      "description_hash": "dfcdeefa",
-      "is_external": false
-    },
-    "442": {
-      "confidence": "low",
-      "reasoning": "Complex cross-SG validation: checks whether the Zähler device number from the current evaluation DE1154 context appears in any SG8+SEQ+Z09 (Mengenumwerter) RFF+MG. EvaluationContext has no access to the specific field value currently being validated ('in diesem RFF DE1154'), making field-level cross-referencing impossible with the available API.",
-      "description_hash": "3ff742e0",
-      "is_external": false
-    },
-    "128": {
-      "confidence": "high",
-      "reasoning": "Checks if any SG10 instance (child of SG8) contains a CAV segment with code TAS, TKS, SAS, or KAS at elements[0][0]. These are Konzessionsabgabe sub-types. The group path SG4→SG8→SG10 correctly targets CAV segments in child groups.",
-      "description_hash": "405942ea",
-      "is_external": false
-    },
-    "621": {
-      "confidence": "low",
-      "reasoning": "Informational hint specifying which MSB to name (the one assigned from the DTM+76 date onwards). Describes data-selection logic for the sender, not an evaluable condition.",
-      "description_hash": "6169d177",
-      "is_external": false
-    },
-    "70": {
-      "confidence": "high",
-      "reasoning": "Count all CCI+Z19 (Bilanzkreis) segments across the message. True when exactly five occurrences.",
-      "description_hash": "92ec7e79",
-      "is_external": false
-    },
-    "504": {
-      "confidence": "high",
-      "reasoning": "Pure Hinweis annotation clarifying cross-sector code usage. No condition logic to evaluate.",
-      "description_hash": "41aa339c",
-      "is_external": false
-    },
-    "5": {
-      "confidence": "low",
-      "reasoning": "The role of a market participant (LF = Lieferant) cannot be determined from the NAD+MS MP-ID alone — role membership is external business context that requires a registry lookup.",
-      "description_hash": "a1466d0d",
-      "is_external": true
-    },
-    "64": {
-      "confidence": "high",
-      "reasoning": "Simple qualifier existence: DTM+158 (Bilanzierungsbeginn) at elements[0][0].",
-      "description_hash": "a8edfdd7",
-      "is_external": false
-    },
-    "18": {
-      "confidence": "high",
-      "reasoning": "DTM+93 (Ende zum): elements[0][0]=qualifier='93'. lacks_qualifier returns True when no DTM with qualifier 93 exists in the message.",
-      "description_hash": "b2b52d1a",
-      "is_external": false
-    },
-    "938": {
-      "confidence": "low",
-      "reasoning": "Format condition specifying a maximum numeric value (<= 10). This is a value constraint on a specific field, not a boolean condition evaluatable from segment structure alone without knowing which field instance to validate.",
-      "description_hash": "6ca307d1",
-      "is_external": false
-    },
-    "127": {
-      "confidence": "low",
-      "reasoning": "Whether the supplier knows from their contract that the customer has no high concession fee (keine hohe KA) is contractual/business context outside the EDIFACT message. Cannot be determined from segment data alone.",
-      "description_hash": "c59beaeb",
-      "is_external": true
-    },
-    "556": {
-      "confidence": "low",
-      "reasoning": "Hinweis about fallback address logic. Whether a correspondence address 'exists' is external business context not derivable from the message itself.",
-      "description_hash": "757114fc",
-      "is_external": false
-    },
-    "2284": {
-      "confidence": "high",
-      "reasoning": "Condition states: to be given exactly once for each Messlokations-ID in SG5 LOC+172 (Meldepunkt) DE3225. As a boolean applicability condition, True when any SG5 instance contains LOC with qualifier 172 at elements[0][0].",
-      "description_hash": "b0478343",
-      "is_external": false
-    },
-    "14": {
-      "confidence": "low",
-      "reasoning": "Whether a date is known is external business context — it cannot be determined from the EDIFACT message segments alone.",
-      "description_hash": "d089cab4",
-      "is_external": true
-    },
-    "622": {
-      "confidence": "low",
-      "reasoning": "Informational hint about repeating the segment group per Marktrolle when an OBIS code is relevant for multiple market roles. Describes structural repetition guidance, not an evaluable condition.",
-      "description_hash": "04b6eeeb",
-      "is_external": false
-    },
-    "15": {
-      "confidence": "high",
-      "reasoning": "STS+E01++Z34 (Status der Antwort: Ablehnung Mehrfachkündigung): elements[0][0]='E01' (Statuskategorie), elements[2][0]='Z34' (Statusanlass). Direct has_qualified_value check.",
-      "description_hash": "254c0e3d",
-      "is_external": false
-    },
-    "32": {
-      "confidence": "high",
-      "reasoning": "BGM elements[0][0] is DE1001 (document name code). E03 = Änderungsmeldungen. Direct qualifier check.",
-      "description_hash": "f0bcae17",
-      "is_external": false
-    },
-    "2119": {
-      "confidence": "high",
-      "reasoning": "Condition states the segment group is to be given exactly once per SG8 SEQ+Z13 (Smartmeter-Gateway). As a boolean applicability condition, True when any SG8 instance contains SEQ with qualifier Z13 at elements[0][0].",
-      "description_hash": "8e48029e",
-      "is_external": false
-    },
-    "4": {
-      "confidence": "low",
-      "reasoning": "The role of a market participant (LF = Lieferant) cannot be determined from the NAD+MR MP-ID alone — role membership is external business context that requires a registry lookup.",
-      "description_hash": "55130474",
-      "is_external": true
-    },
-    "78": {
-      "confidence": "high",
-      "reasoning": "STS+7 with C556.DE9013=E02 (Transaktionsgrund: Einzug in Neuanlage) must NOT be present. elements[0][0]=7 is the category qualifier, elements[2][0]=DE9013 is the reason code. Negate the positive check.",
-      "description_hash": "0cee2c1b",
-      "is_external": false
-    },
-    "65": {
-      "confidence": "low",
-      "reasoning": "Market area overlap (Marktgebietsüberlappung) is a business topology condition that cannot be determined from EDIFACT message content alone — requires external network/market data.",
-      "description_hash": "ef0b34cd",
-      "is_external": true
-    },
-    "58": {
-      "confidence": "medium",
-      "reasoning": "DE3055 (Verantwortliche Stelle für die Codepflege) appears at CCI elements[2][2] in CCI — Klimazone/Temperaturmessstelle. Checks any CCI in the message has that code. 'In diesem CCI' implies context-local check; falls back to message-wide.",
-      "description_hash": "081389d4",
-      "is_external": false
-    },
-    "219": {
-      "confidence": "low",
-      "reasoning": "External condition: 'Wenn an Marktlokation vorhanden' depends on business context about whether the transaction concerns a Marktlokation. Cannot be reliably determined from EDIFACT message segments alone.",
-      "description_hash": "7d998d8c",
-      "is_external": true
-    },
-    "570": {
-      "confidence": "low",
-      "reasoning": "Pure informational hint 'Netzbetreiber Alt' — no evaluable condition, just a notation label.",
-      "description_hash": "3cae0941",
-      "is_external": false
-    },
-    "123": {
-      "confidence": "medium",
-      "reasoning": "Collects device IDs (via RFF+MG or RFF+Z11) from all SG8 instances that have SEQ+Z20. Returns True if any device ID appears in at least two such instances, indicating at least one further SG8 references the same device. Requires navigator for proper group-scoped traversal.",
-      "description_hash": "c65110f0",
-      "is_external": false
-    },
-    "39": {
-      "confidence": "low",
-      "reasoning": "Wenn LF beabsichtigt Zählerstand zu übermitteln — intent of the Lieferant to transmit a meter reading is external business context, not encoded in the EDIFACT message itself.",
-      "description_hash": "7c58b9f1",
-      "is_external": true
-    },
-    "935": {
-      "confidence": "low",
-      "reasoning": "Format condition: 'HHMM = 0500' specifies that the time value must be exactly 0500. This is a fixed-value format constraint, not an evaluatable logical condition from segment presence/absence.",
-      "description_hash": "192bd97e",
-      "is_external": false
-    },
-    "133": {
-      "confidence": "low",
-      "reasoning": "'Wenn an der übermittelten Marktlokation / Messlokation vorhanden' is too generic without knowing which specific attribute is being guarded. Depends on business context about the specific data present at the transmitted location object.",
-      "description_hash": "088f9d0d",
-      "is_external": true
-    },
-    "35": {
-      "confidence": "high",
-      "reasoning": "DTM C507 composite: elements[0][0]=qualifier (Z01), elements[0][1]=DE2380 (date value). Checks if 4th character (index 3) of DE2380 equals 'T' (Termin = fixed date). Matches Example 8 pattern.",
-      "description_hash": "4f52c394",
-      "is_external": false
-    },
-    "583": {
-      "confidence": "low",
-      "reasoning": "Pure informational hint 'Verwendung der ID der Marktlokation' — annotation describing ID usage, not an evaluable condition.",
-      "description_hash": "9727b89c",
-      "is_external": false
-    },
-    "930": {
-      "confidence": "low",
-      "reasoning": "Format condition: 'max. 2 Nachkommastellen' specifies a numeric precision constraint (maximum 2 decimal places). This is a value format validator, not a logical condition evaluatable from segment structure.",
-      "description_hash": "30e8c861",
-      "is_external": false
-    },
-    "25": {
-      "confidence": "medium",
-      "reasoning": "Marktlokations-ID in German gas market is a numeric (all-digit) identifier. LOC+172 has elements[0][0]='172', elements[1][0]=DE3225. Checks if value consists entirely of ASCII digits. Returns Unknown if no LOC+172 exists.",
-      "description_hash": "ebb975a2",
+      "reasoning": "STS+E01++Z12 (Status der Antwort: Ablehnung Vertragsbindung): elements[0][0]='E01', elements[2][0]='Z12'. Direct has_qualified_value check.",
+      "description_hash": "01e37a5a",
       "is_external": false
     },
     "33": {
@@ -747,28 +453,64 @@
       "description_hash": "c2391377",
       "is_external": false
     },
-    "19": {
+    "51": {
       "confidence": "high",
-      "reasoning": "SG10 is a child group of SG8. Find SG8 instances where SEQ+Z01 (Daten der Marktlokation, elements[0][0]='Z01') is present, then check if their SG10 children contain CCI with elements[2][0]='ZC0' (Prognose auf Basis von Werten). The CCI+++ZC0 notation places the qualifier at elements[2][0] per segment structure.",
-      "description_hash": "2ce7666f",
+      "reasoning": "Whether the delivery end/start is retroactive (rückwirkend) requires comparing the delivery date against a system reference date or business process clock — this is a business context determination that cannot be made from the EDIFACT message content alone.",
+      "description_hash": "f2ebdab8",
+      "is_external": true
+    },
+    "65": {
+      "confidence": "high",
+      "reasoning": "Whether a market area overlap (Marktgebietsüberlappung) exists and which balance groups (Bilanzkreise) of the LF have free capacity at the NB is entirely a market topology and capacity question — it depends on external registry/capacity data that is not encoded in the EDIFACT message itself.",
+      "description_hash": "ef0b34cd",
+      "is_external": true
+    },
+    "907": {
+      "confidence": "high",
+      "reasoning": "Format condition: max 4 decimal places. Applies to QTY segment value at elements[0][1]. Direct use of validate_max_decimal_places helper.",
+      "description_hash": "cb9ee7ba",
       "is_external": false
     },
-    "213": {
+    "556": {
       "confidence": "high",
-      "reasoning": "Simple qualifier presence check: NAD+Z09 (Kunde des Lieferanten) exists when elements[0][0]=='Z09'.",
-      "description_hash": "f6780d06",
+      "reasoning": "Hinweis: informational annotation describing fallback address logic (use Marktlokation address if no correspondence address available). Always applies unconditionally.",
+      "description_hash": "757114fc",
+      "is_external": false
+    },
+    "590": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing which IDs to include, always applies unconditionally.",
+      "description_hash": "d190b4c7",
+      "is_external": false
+    },
+    "636": {
+      "confidence": "high",
+      "reasoning": "Informational note — always applies unconditionally.",
+      "description_hash": "c639fa99",
       "is_external": false
     },
     "601": {
-      "confidence": "low",
-      "reasoning": "Informational hint specifying that the Marktlokation ID and all Messlokation identifiers must be provided. Data-completeness instruction for the sender, not an evaluable condition.",
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing which IDs to include, always applies unconditionally.",
       "description_hash": "55b3c5f4",
       "is_external": false
     },
-    "566": {
+    "17": {
       "confidence": "high",
-      "reasoning": "Pure Hinweis label identifying the 'Altlieferant' role. No condition logic to evaluate.",
-      "description_hash": "6182ad8a",
+      "reasoning": "'Wenn bereits eine bestätigte Kündigung durch Kunde oder MP vorhanden' — whether a confirmed cancellation by the customer or market participant already exists requires access to external business state (prior transactions, contract history) not present in the current EDIFACT message.",
+      "description_hash": "3ae99890",
+      "is_external": true
+    },
+    "2284": {
+      "confidence": "high",
+      "reasoning": "Condition states: to be given exactly once for each Messlokations-ID in SG5 LOC+172 (Meldepunkt) DE3225. As a boolean applicability condition, True when any SG5 instance contains LOC with qualifier 172 at elements[0][0].",
+      "description_hash": "b0478343",
+      "is_external": false
+    },
+    "513": {
+      "confidence": "medium",
+      "reasoning": "Hinweis describing precedence rule between QTY+Y02 and QTY+31. Partial implementation checks whether QTY+Y02 is present (i.e. the rule is active). Full semantic enforcement (exclusive use) cannot be expressed as a simple ConditionResult.",
+      "description_hash": "8e54734d",
       "is_external": false
     },
     "137": {
@@ -777,40 +519,148 @@
       "description_hash": "11a2de30",
       "is_external": false
     },
-    "315": {
-      "confidence": "low",
-      "reasoning": "References external codelist (EDI@Energy OBIS codes Kapitel 4/4.6 and Codeliste der Konfigurationen Kapitel 5.2). Minimum OBIS scope compliance cannot be determined from EDIFACT message segments alone.",
-      "description_hash": "1d08e79a",
+    "644": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing how E01 is used when the corresponding Anmeldung contained E02. Always applies unconditionally.",
+      "description_hash": "66c57193",
+      "is_external": false
+    },
+    "572": {
+      "confidence": "high",
+      "reasoning": "Hinweis informational annotation — always applies unconditionally.",
+      "description_hash": "58a57b5c",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "high",
+      "reasoning": "'Wenn MP-ID in SG2 NAD+MR in der Rolle LF' — the NAD+MR segment contains the recipient's MP-ID, but whether that market participant holds the role of Lieferant (LF) is external business context not encoded in the EDIFACT message itself.",
+      "description_hash": "55130474",
       "is_external": true
     },
-    "513": {
+    "18": {
+      "confidence": "high",
+      "reasoning": "DTM+93 (Ende zum): elements[0][0]=qualifier='93'. lacks_qualifier returns True when no DTM with qualifier 93 exists in the message.",
+      "description_hash": "b2b52d1a",
+      "is_external": false
+    },
+    "655": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about OBIS code assignment when Zähler is connected to Mengenumwerter. Always applies unconditionally.",
+      "description_hash": "3db6ca4a",
+      "is_external": false
+    },
+    "950": {
+      "confidence": "high",
+      "reasoning": "Format condition for Marktlokations-ID. Uses validate_malo_id which checks 11-digit Luhn check digit format. Extracts from LOC+Z16 segment (Z16 is the EDIFACT qualifier for Marktlokation in UTILMD Gas), elements[1][0] holds the ID value.",
+      "description_hash": "a9ddfaec",
+      "is_external": false
+    },
+    "491": {
+      "confidence": "high",
+      "reasoning": "References an external date range table from Kapitel 3.6 'Prozesszeitpunkt bei MEZ mit UTC' — the valid date ranges for MEZ (Central European Time) periods cannot be determined from the EDIFACT message itself.",
+      "description_hash": "798c2c48",
+      "is_external": true
+    },
+    "47": {
       "confidence": "medium",
-      "reasoning": "Hinweis describing precedence rule between QTY+Y02 and QTY+31. Partial implementation checks whether QTY+Y02 is present (i.e. the rule is active). Full semantic enforcement (exclusive use) cannot be expressed as a simple ConditionResult.",
-      "description_hash": "8e54734d",
+      "reasoning": "Logical negation of condition 46: CCI+Z12 Klimazone DE3055=293 NOT present in SG10 under SG8+Z35. Propagates Unknown to maintain three-valued semantics.",
+      "description_hash": "da6a7cc7",
       "is_external": false
     },
-    "129": {
-      "confidence": "low",
-      "reasoning": "Whether the supplier knows the amount of the special concession fee (Sonder-KA) from their contract is contractual/business context that cannot be determined from the EDIFACT message itself.",
-      "description_hash": "7004cb99",
-      "is_external": true
-    },
-    "147": {
-      "confidence": "low",
-      "reasoning": "'Wenn in Anfrage vorhanden' — whether data was present in the preceding request message cannot be determined from the current EDIFACT message alone. Requires access to the prior request transaction.",
-      "description_hash": "e4b87f85",
-      "is_external": true
-    },
-    "567": {
+    "902": {
       "confidence": "high",
-      "reasoning": "Pure Hinweis label identifying the 'Neulieferant' role. No condition logic to evaluate.",
-      "description_hash": "e0f57266",
+      "reasoning": "Format condition: value must be >= 0. Applies to QTY segment value at elements[0][1]. Direct use of validate_numeric helper.",
+      "description_hash": "08daa39a",
       "is_external": false
     },
-    "528": {
+    "938": {
       "confidence": "high",
-      "reasoning": "Pure Hinweis annotation about date carryover from request. No condition logic to evaluate.",
-      "description_hash": "eea84db1",
+      "reasoning": "Format condition 'Möglicher Wert: <= 10' checks that the numeric value is at most 10. Uses validate_numeric with '<=' operator on the QTY value element.",
+      "description_hash": "6ca307d1",
+      "is_external": false
+    },
+    "566": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis label identifying the 'Altlieferant' role. No condition logic to evaluate.",
+      "description_hash": "6182ad8a",
+      "is_external": false
+    },
+    "584": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing field usage, always applies unconditionally.",
+      "description_hash": "d7954b75",
+      "is_external": false
+    },
+    "68": {
+      "confidence": "high",
+      "reasoning": "Count all CCI+Z19 (Bilanzkreis) segments across the message. True when more than two occurrences.",
+      "description_hash": "432deca0",
+      "is_external": false
+    },
+    "128": {
+      "confidence": "high",
+      "reasoning": "Checks if any SG10 instance (child of SG8) contains a CAV segment with code TAS, TKS, SAS, or KAS at elements[0][0]. These are Konzessionsabgabe sub-types. The group path SG4→SG8→SG10 correctly targets CAV segments in child groups.",
+      "description_hash": "405942ea",
+      "is_external": false
+    },
+    "213": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier presence check: NAD+Z09 (Kunde des Lieferanten) exists when elements[0][0]=='Z09'.",
+      "description_hash": "f6780d06",
+      "is_external": false
+    },
+    "84": {
+      "confidence": "high",
+      "reasoning": "STS with C601.DE9015=E01 (Status der Antwort) and C556.DE9013=Z35 (Ablehnung der Abmeldeanfrage). elements[0][0]=E01 is category, elements[2][0]=Z35 is the Prüfschritt code.",
+      "description_hash": "c678bc5e",
+      "is_external": false
+    },
+    "2061": {
+      "confidence": "medium",
+      "reasoning": "Condition states the segment/group is to be given exactly once per SG4 IDE (Vorgang). As a boolean applicability condition, this is True when the IDE segment (Vorgangsidentifikator) is present, indicating the SG4 context exists. Cardinality enforcement (exactly once) is a structural rule beyond a simple boolean evaluator.",
+      "description_hash": "6282c707",
+      "is_external": false
+    },
+    "35": {
+      "confidence": "high",
+      "reasoning": "DTM C507 composite: elements[0][0]=qualifier (Z01), elements[0][1]=DE2380 (date value). Checks if 4th character (index 3) of DE2380 equals 'T' (Termin = fixed date). Matches Example 8 pattern.",
+      "description_hash": "4f52c394",
+      "is_external": false
+    },
+    "277": {
+      "confidence": "medium",
+      "reasoning": "'Wenn Zuordnung vorhanden' most likely refers to Bilanzkreiszuordnung zur Marktlokation, indicated by STS+Z18 per the MIG segment reference. Medium confidence as 'Zuordnung' could refer to other assignments in different PID contexts.",
+      "description_hash": "e2f1e3f9",
+      "is_external": false
+    },
+    "500": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing how to choose the code based on the category of the message being cancelled. Always applies unconditionally.",
+      "description_hash": "90cddaf7",
+      "is_external": false
+    },
+    "7": {
+      "confidence": "high",
+      "reasoning": "STS Transaktionsgrund: elements[0][0]=Statuskategorie='7', elements[2][0]=Statusanlass code. Check for ZG9/ZH1/ZH2 using has_qualified_value.",
+      "description_hash": "101bffb4",
+      "is_external": false
+    },
+    "934": {
+      "confidence": "high",
+      "reasoning": "Format condition checking HHMM = 0400. Uses validate_hhmm_equals helper on the DTM value. Searches all DTM segments and validates the time component. High confidence as it directly maps to the validate_hhmm_equals helper.",
+      "description_hash": "d06a46c8",
+      "is_external": false
+    },
+    "935": {
+      "confidence": "high",
+      "reasoning": "Format condition checking HHMM = 0500. Uses validate_hhmm_equals helper on the DTM value. Analogous to 934 but checking 0500 (summer time / UTC offset variant for gas supply times in the German energy market).",
+      "description_hash": "192bd97e",
+      "is_external": false
+    },
+    "530": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis annotation about data completeness requirements at a given date. No condition logic to evaluate.",
+      "description_hash": "76504406",
       "is_external": false
     },
     "2287": {
@@ -819,41 +669,185 @@
       "description_hash": "e8615b2d",
       "is_external": false
     },
-    "2286": {
+    "241": {
       "confidence": "high",
-      "reasoning": "Condition states: to be given at least once for each SEQ+Z18 (Daten der Messlokation). As a boolean applicability condition, True when any SG8 instance contains SEQ with qualifier Z18 at elements[0][0].",
-      "description_hash": "54d011cf",
-      "is_external": false
-    },
-    "130": {
-      "confidence": "medium",
-      "reasoning": "'Wenn an Messlokation vorhanden' is interpreted as: a Messlokation section exists in the message, indicated by SEQ+Z18 (Daten der Messlokation) in SG8. Returns True when such a section is present.",
-      "description_hash": "e6eba96d",
-      "is_external": false
-    },
-    "573": {
-      "confidence": "low",
-      "reasoning": "Informational hint describing fallback construction logic for NAD+Z05 meter-reading-card address from NAD+Z09 and NAD+Z04. This is a data-composition instruction for the sender, not an evaluable condition from the parsed message.",
-      "description_hash": "03badedc",
-      "is_external": false
-    },
-    "51": {
-      "confidence": "low",
-      "reasoning": "Bei rückwirkendem Lieferende/Lieferbeginn — whether a supply end/start is retroactive requires comparison of dates against business context outside the message. Cannot be determined from EDIFACT content alone.",
-      "description_hash": "f2ebdab8",
+      "reasoning": "External condition: whether the NAD+MR recipient (Nachrichtenempfänger) acts in the role of MSB (Messstellenbetreiber) cannot be determined from EDIFACT content — requires external market role registry lookup.",
+      "description_hash": "cf2a70c6",
       "is_external": true
     },
-    "574": {
-      "confidence": "low",
-      "reasoning": "Pure informational hint 'Netzbetreiber' — annotation label only, no evaluable condition.",
-      "description_hash": "a1e18cd6",
+    "567": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis label identifying the 'Neulieferant' role. No condition logic to evaluate.",
+      "description_hash": "e0f57266",
       "is_external": false
     },
-    "66": {
+    "931": {
       "confidence": "high",
-      "reasoning": "Count all CCI+Z19 (Bilanzkreis) segments across the message. True when more than one occurrence. Message-wide count is correct since 'im Vorgang' means across the whole transaction.",
-      "description_hash": "c5b8359a",
+      "reasoning": "Format condition: ZZZ = +00 means UTC timezone. Applies to DTM segment value at elements[0][1] (the datetime string which embeds timezone, e.g. '202505312200+00'). Uses validate_timezone_utc helper which checks the timezone portion of the value.",
+      "description_hash": "825c510c",
       "is_external": false
+    },
+    "937": {
+      "confidence": "high",
+      "reasoning": "Format condition 'keine Nachkommastelle' means no decimal places allowed, i.e., max 0 decimal places. Uses validate_max_decimal_places(val, 0) on the QTY value, which is the most common numeric value segment in UTILMD.",
+      "description_hash": "e3f49bb8",
+      "is_external": false
+    },
+    "48": {
+      "confidence": "high",
+      "reasoning": "Same structure as condition 36. STS: elements[0][0]='E01' (Antwort-Statuskategorie), elements[2][0]=DE9013 status reason code. E14 = Ablehnung Sonstiges. has_qualified_value handles the co-element check on the same segment.",
+      "description_hash": "5fe27cd1",
+      "is_external": false
+    },
+    "212": {
+      "confidence": "medium",
+      "reasoning": "Checks if any NAD in SG12 has DE3124 (C058 first component, elements[2][0]) absent or empty. Without group-scoped navigation, falls back to message-wide NAD check.",
+      "description_hash": "b5c09245",
+      "is_external": false
+    },
+    "11": {
+      "confidence": "high",
+      "reasoning": "Negation of condition 7 (STS+7++ZG9/ZH1/ZH2). If none of those Transaktionsgrund codes are present, condition is True.",
+      "description_hash": "321d0c62",
+      "is_external": false
+    },
+    "510": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis annotation describing usage context for ESV deregistration. No condition logic to evaluate.",
+      "description_hash": "72d664cc",
+      "is_external": false
+    },
+    "166": {
+      "confidence": "medium",
+      "reasoning": "'Wenn vorhanden' — generic 'if present/available' without a specific segment reference. When used as a standalone condition this refers to business data availability that cannot be determined from the EDIFACT message structure alone. Marked external.",
+      "description_hash": "fae4710e",
+      "is_external": true
+    },
+    "203": {
+      "confidence": "high",
+      "reasoning": "STS Transaktionsgrund has elements[0][0]=\"7\". The Transaktionsgrund codes are at elements[2][0] (DE9013, Statusanlass). Checks for the listed codes. Duplicate ZC6 in the condition text is deduplicated.",
+      "description_hash": "6f46418b",
+      "is_external": false
+    },
+    "32": {
+      "confidence": "high",
+      "reasoning": "BGM elements[0][0] is DE1001 (document name code). E03 = Änderungsmeldungen. Direct qualifier check.",
+      "description_hash": "f0bcae17",
+      "is_external": false
+    },
+    "92": {
+      "confidence": "medium",
+      "reasoning": "'Wenn Wert innerhalb SG bzw. Segment geändert wird' — whether a value was changed compared to a prior state cannot be determined from the EDIFACT message alone; requires external business context comparing current vs previous transmission.",
+      "description_hash": "91b75fa8",
+      "is_external": true
+    },
+    "123": {
+      "confidence": "medium",
+      "reasoning": "Collects device IDs (via RFF+MG or RFF+Z11) from all SG8 instances that have SEQ+Z20. Returns True if any device ID appears in at least two such instances, indicating at least one further SG8 references the same device. Requires navigator for proper group-scoped traversal.",
+      "description_hash": "c65110f0",
+      "is_external": false
+    },
+    "249": {
+      "confidence": "medium",
+      "reasoning": "Checks that all STS+E01 segments have identical DE1131 values (elements[2][1] — Codeliste, Code within C556). Returns True when all values match the first occurrence. Message-wide fallback without per-SG4 grouping.",
+      "description_hash": "db65781e",
+      "is_external": false
+    },
+    "2335": {
+      "confidence": "medium",
+      "reasoning": "Condition states: to be given exactly once for each SEQ+Z02 (OBIS-Daten der Marktlokation) where PIA+5 transmits OBIS code 7-20:99.33.17 or 7-0:33.86.0. Per segment structure reference, PIA elements[1][0] (DE7140) holds the OBIS code. Checks message-wide PIA+5 for the target OBIS values, then verifies SEQ+Z02 is present. Since PIA is always nested in the same SG8 as its SEQ, message-wide PIA check is a valid approximation when group navigator is unavailable.",
+      "description_hash": "5cb76c47",
+      "is_external": false
+    },
+    "133": {
+      "confidence": "medium",
+      "reasoning": "'Wenn an der übermittelten Marktlokation / Messlokation vorhanden' — whether a specific data element exists at the transmitted market or metering location is a business/registry lookup that cannot be determined from the EDIFACT message content alone. Marked external.",
+      "description_hash": "088f9d0d",
+      "is_external": true
+    },
+    "127": {
+      "confidence": "medium",
+      "reasoning": "Whether the supplier knows from their contract that the customer has no high KA (Kapazitätsanteil) is contract-based knowledge external to the EDIFACT message. Cannot be determined from segment data alone.",
+      "description_hash": "c59beaeb",
+      "is_external": true
+    },
+    "2119": {
+      "confidence": "high",
+      "reasoning": "Condition states the segment group is to be given exactly once per SG8 SEQ+Z13 (Smartmeter-Gateway). As a boolean applicability condition, True when any SG8 instance contains SEQ with qualifier Z13 at elements[0][0].",
+      "description_hash": "8e48029e",
+      "is_external": false
+    },
+    "583": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing field usage, always applies unconditionally.",
+      "description_hash": "9727b89c",
+      "is_external": false
+    },
+    "205": {
+      "confidence": "high",
+      "reasoning": "Checks absence of QTY segment with qualifier Y02 (TUM Kundenwert) at elements[0][0]. Returns True when no QTY+Y02 exists anywhere in the message.",
+      "description_hash": "7f34a39b",
+      "is_external": false
+    },
+    "216": {
+      "confidence": "medium",
+      "reasoning": "CCI+++Z88 means elements[2][0]=='Z88' (Netznutzung). CAV+Z74:::Z08 means elements[0][0]=='Z74' and elements[0][3]=='Z08' (Direkter Vertrag). Uses parent-child group navigation to check co-occurrence within the same SG10 instance.",
+      "description_hash": "babbeb49",
+      "is_external": false
+    },
+    "501": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing where the value originates (from DTM+157 of the assignment list). Always applies unconditionally.",
+      "description_hash": "454cdf46",
+      "is_external": false
+    },
+    "268": {
+      "confidence": "high",
+      "reasoning": "External condition: whether the DE3207 country code is listed with 'X' in the PLZ column of the EDI@Energy European country code list requires an external code list lookup — cannot be evaluated from EDIFACT message content.",
+      "description_hash": "532d2567",
+      "is_external": true
+    },
+    "14": {
+      "confidence": "high",
+      "reasoning": "'Wenn Datum bekannt' — whether a specific date is known is a runtime business context condition that cannot be determined from the EDIFACT message content alone.",
+      "description_hash": "d089cab4",
+      "is_external": true
+    },
+    "504": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis annotation clarifying cross-sector code usage. No condition logic to evaluate.",
+      "description_hash": "41aa339c",
+      "is_external": false
+    },
+    "528": {
+      "confidence": "high",
+      "reasoning": "Pure Hinweis annotation about date carryover from request. No condition logic to evaluate.",
+      "description_hash": "eea84db1",
+      "is_external": false
+    },
+    "571": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing which market partner triggers the process based on Transaktionsgrund codes (LFA for ZG9, LFN for ZH0, NB for ZH1). Always applies unconditionally.",
+      "description_hash": "a62b6b47",
+      "is_external": false
+    },
+    "637": {
+      "confidence": "high",
+      "reasoning": "Informational note — always applies unconditionally.",
+      "description_hash": "849c0f3f",
+      "is_external": false
+    },
+    "15": {
+      "confidence": "high",
+      "reasoning": "STS+E01++Z34 (Status der Antwort: Ablehnung Mehrfachkündigung): elements[0][0]='E01' (Statuskategorie), elements[2][0]='Z34' (Statusanlass). Direct has_qualified_value check.",
+      "description_hash": "254c0e3d",
+      "is_external": false
+    },
+    "147": {
+      "confidence": "medium",
+      "reasoning": "'Wenn in Anfrage vorhanden' — whether something is present in the original inquiry/request message is a cross-message business context that cannot be determined from the current EDIFACT message alone. Marked external.",
+      "description_hash": "e4b87f85",
+      "is_external": true
     },
     "283": {
       "confidence": "high",
@@ -861,28 +855,10 @@
       "description_hash": "13f0997a",
       "is_external": true
     },
-    "572": {
-      "confidence": "low",
-      "reasoning": "Pure informational hint 'Kundenname aus Anmeldung Lieferant neu' — annotation only, no evaluable condition.",
-      "description_hash": "58a57b5c",
-      "is_external": false
-    },
-    "950": {
-      "confidence": "low",
-      "reasoning": "Format condition specifying the Marktlokations-ID format. This is a value format constraint, not a boolean condition evaluatable from message segments alone.",
-      "description_hash": "a9ddfaec",
-      "is_external": false
-    },
-    "106": {
+    "361": {
       "confidence": "high",
-      "reasoning": "In SG8 instances where SEQ+Z01 (Daten der Marktlokation) is present, check if child SG10 contains CCI with DE7037=ZA6 (Prognosegrundlage: Prognose auf Basis von Profilen) at elements[2][0]. Uses parent-child navigation.",
-      "description_hash": "919232fd",
-      "is_external": false
-    },
-    "902": {
-      "confidence": "low",
-      "reasoning": "Format condition: 'Möglicher Wert: ≥ 0' specifies a numeric value constraint (non-negative). This is a value format/range validator, not a logical presence/absence condition evaluatable as True/False/Unknown from segment structure.",
-      "description_hash": "08daa39a",
+      "reasoning": "True when no STS+E01 segment has Prüfschritt code A03 or A04 at elements[2][0]. Notation resolved confirms elements[2] is C556 (Statusanlass/Prüfschritt) with A03/A04 values. Negation of existence check.",
+      "description_hash": "833a0f5a",
       "is_external": false
     }
   }

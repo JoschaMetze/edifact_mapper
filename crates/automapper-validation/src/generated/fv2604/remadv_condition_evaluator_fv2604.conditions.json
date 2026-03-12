@@ -1,0 +1,793 @@
+{
+  "generated_at": "2026-03-12T11:29:23Z",
+  "ahb_file": "REMADV_AHB_1_0a_20251001.xml",
+  "format_version": "FV2604",
+  "conditions": {
+    "91": {
+      "confidence": "high",
+      "reasoning": "\"In diesem AJT\" — check any AJT segment where DE1082 (elements[1][0]) equals E_0566.",
+      "description_hash": "3f0f51ba",
+      "is_external": false
+    },
+    "47": {
+      "confidence": "high",
+      "reasoning": "DE1082 is elements[1] in AJT per the segment reference. 'in diesem AJT' means current AJT context — approximated as message-wide check since no group path is specified.",
+      "description_hash": "22f00c6d",
+      "is_external": false
+    },
+    "2": {
+      "confidence": "high",
+      "reasoning": "Check if any SG7 group instance contains AJT with DE4465 (elements[0][0]) == \"28\". Group-scoped with message-wide fallback.",
+      "description_hash": "a988ef65",
+      "is_external": false
+    },
+    "100": {
+      "confidence": "high",
+      "reasoning": "Checks if any SG7 group instance contains an AJT segment with elements[0][0] == 'A01'. Falls back to message-wide search if no group navigator is available.",
+      "description_hash": "0d5b4df8",
+      "is_external": false
+    },
+    "121": {
+      "confidence": "medium",
+      "reasoning": "Checks for AJT segment in SG7 where DE4465 (elements[0][0]) is A08 or A99, AND DE1082 (elements[1][0]) is E_3038. Uses message-wide AJT search as fallback since the group navigator may not be available; SG7 AJT segments are distinct from SG12 AJT segments by their qualifier codes. Medium confidence because the exact E_3038 value was partially truncated in the notation resolution hint but matches the DE1082 code pattern seen in the schema (E_NNNN format).",
+      "description_hash": "27bdcc7b",
+      "is_external": false
+    },
+    "11": {
+      "confidence": "medium",
+      "reasoning": "Check if AJT has DE1082 (elements[1][0]) == E_0406. 'In diesem AJT' implies same-segment context; message-wide fallback via has_qualifier is the safe approximation without per-instance scoping.",
+      "description_hash": "3454e18e",
+      "is_external": false
+    },
+    "87": {
+      "confidence": "high",
+      "reasoning": "AJT DE4465 (elements[0][0]) in SG7 matches one of the listed codes.",
+      "description_hash": "402fdb49",
+      "is_external": false
+    },
+    "39": {
+      "confidence": "high",
+      "reasoning": "DE4465 is elements[0] in AJT per the segment reference. Single value AC1, group-scoped to SG7.",
+      "description_hash": "0802aa9c",
+      "is_external": false
+    },
+    "55": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in this SG12 has DE1082 (elements[1]) equal to E_0259.",
+      "description_hash": "221fde1d",
+      "is_external": false
+    },
+    "111": {
+      "confidence": "high",
+      "reasoning": "Checks AJT DE1082 (elements[1][0]) for value E_0273 within the current SG7 group instance.",
+      "description_hash": "8925c3ed",
+      "is_external": false
+    },
+    "503": {
+      "confidence": "high",
+      "reasoning": "Starts with 'Hinweis:' — informational recommendation to include contact person details for rejection follow-up. Not a boolean predicate.",
+      "description_hash": "9041639c",
+      "is_external": false
+    },
+    "14": {
+      "confidence": "high",
+      "reasoning": "The description 'A-Code aus Cluster Ablehnung auf Kopfebene' is an informational annotation referencing a specific AHB code cluster (Ablehnung = rejection) and its scope (Kopfebene = header level). It documents the source of valid code values rather than expressing a boolean predicate. No 'Wenn/Falls' conditional structure present.",
+      "description_hash": "177244b4",
+      "is_external": false
+    },
+    "73": {
+      "confidence": "high",
+      "reasoning": "AJT+A99+E_0522: same pattern as 72, checking for E_0522 in SG7.",
+      "description_hash": "b6df689b",
+      "is_external": false
+    },
+    "68": {
+      "confidence": "high",
+      "reasoning": "DE1082 is at elements[1][0]. Check AJT in SG12 where elements[1][0]==\"E_0517\". Using qual+val on same position is redundant but correct — finds AJT with that DE1082 value.",
+      "description_hash": "e48a0042",
+      "is_external": false
+    },
+    "82": {
+      "confidence": "high",
+      "reasoning": "Group-scoped version of condition 77 — checks DE1082=E_0515 on AJT within SG7 group instances.",
+      "description_hash": "694db5d7",
+      "is_external": false
+    },
+    "112": {
+      "confidence": "high",
+      "reasoning": "Checks AJT DE1082 (elements[1][0]) for value E_0276 within the current SG7 group instance.",
+      "description_hash": "e15c567c",
+      "is_external": false
+    },
+    "110": {
+      "confidence": "high",
+      "reasoning": "Checks AJT DE1082 (elements[1][0]) for value E_0270 within the current SG7 group instance. any_group_has_qualifier checks elements[1][0] == \"E_0270\" across all SG7 instances.",
+      "description_hash": "52b7d79a",
+      "is_external": false
+    },
+    "517": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing cardinality/repetition guidance for SG7. Not a boolean predicate. Always applies unconditionally.",
+      "description_hash": "e4e0adcf",
+      "is_external": false
+    },
+    "77": {
+      "confidence": "medium",
+      "reasoning": "Same pattern as 75, checking DE1082=E_0515 in any AJT segment.",
+      "description_hash": "fbd75e31",
+      "is_external": false
+    },
+    "102": {
+      "confidence": "medium",
+      "reasoning": "Group-scoped check for AJT DE1082=E_0568 within SG7 (nested under SG5). Same pattern as condition 101 but checking E_0568 instead of E_0566.",
+      "description_hash": "ae14c6a7",
+      "is_external": false
+    },
+    "104": {
+      "confidence": "medium",
+      "reasoning": "Group-scoped check for AJT DE1082=E_0568 within SG12 (nested under SG10). Same pattern as condition 103 but checking E_0568.",
+      "description_hash": "cedec390",
+      "is_external": false
+    },
+    "95": {
+      "confidence": "high",
+      "reasoning": "SG7 AJT where DE4465 (elements[0][0])==A99 and DE1082 (elements[1][0])==E_0569.",
+      "description_hash": "18db5b11",
+      "is_external": false
+    },
+    "521": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about SG7 repetition cardinality for advance payment invoices that should not have been considered. Always returns True.",
+      "description_hash": "1df55440",
+      "is_external": false
+    },
+    "42": {
+      "confidence": "high",
+      "reasoning": "DE1082 is elements[1] in AJT per the segment reference. Five values, group-scoped to SG7. Note: the condition says 'in SG7' (not 'in dieser SG7') but the path is the same.",
+      "description_hash": "cbe5cfc6",
+      "is_external": false
+    },
+    "56": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in this SG7 has DE4465 (elements[0]) equal to A21.",
+      "description_hash": "946404f3",
+      "is_external": false
+    },
+    "116": {
+      "confidence": "high",
+      "reasoning": "Same pattern as 114 but checking DE1082 == E_0276 within SG12.",
+      "description_hash": "a2ac16ea",
+      "is_external": false
+    },
+    "535": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing repetition cardinality guidance for SG7 with AJT DE4465=A80 — always applies unconditionally.",
+      "description_hash": "d73d31fc",
+      "is_external": false
+    },
+    "28": {
+      "confidence": "high",
+      "reasoning": "Group-scoped check: in this SG12 instance, AJT DE4465 (elements[0][0]) must be one of the listed codes.",
+      "description_hash": "f96e8ad0",
+      "is_external": false
+    },
+    "22": {
+      "confidence": "high",
+      "reasoning": "Group-scoped check: in this SG7 instance, AJT DE4465 (elements[0][0]) must be one of the listed codes.",
+      "description_hash": "8558a26a",
+      "is_external": false
+    },
+    "107": {
+      "confidence": "medium",
+      "reasoning": "Checks if any AJT segment has DE1082 (elements[1][0]) == 'E_0276'. Same pattern as condition 105.",
+      "description_hash": "5f5ef399",
+      "is_external": false
+    },
+    "41": {
+      "confidence": "high",
+      "reasoning": "DE1082 is elements[1] in AJT per the segment reference. Single value E_0407, group-scoped to SG7.",
+      "description_hash": "4a1c43bc",
+      "is_external": false
+    },
+    "69": {
+      "confidence": "high",
+      "reasoning": "DE1082 is at elements[1][0]. Same pattern as 68, checking for E_0521 in SG12.",
+      "description_hash": "4b16afd1",
+      "is_external": false
+    },
+    "34": {
+      "confidence": "high",
+      "reasoning": "DE1082 is elements[1] in AJT per the segment reference. 'in diesem AJT' means the current AJT segment — approximated as message-wide check since no group path is given.",
+      "description_hash": "1604d953",
+      "is_external": false
+    },
+    "70": {
+      "confidence": "high",
+      "reasoning": "DE4465 is at elements[0][0]. has_qualifier checks elements[0][0]==\"A15\" within SG12 group instances.",
+      "description_hash": "637baed2",
+      "is_external": false
+    },
+    "80": {
+      "confidence": "medium",
+      "reasoning": "Same pattern as 75, checking DE1082=E_0521 in any AJT segment.",
+      "description_hash": "f443a6e7",
+      "is_external": false
+    },
+    "84": {
+      "confidence": "high",
+      "reasoning": "Collect all DE1082 values from AJT in SG7, check for E_0266.",
+      "description_hash": "a1edca1e",
+      "is_external": false
+    },
+    "117": {
+      "confidence": "high",
+      "reasoning": "Same pattern as 114 but checking DE1082 == E_0277 within SG12.",
+      "description_hash": "b1eece13",
+      "is_external": false
+    },
+    "72": {
+      "confidence": "high",
+      "reasoning": "AJT+A99+E_0518: DE4465=A99 at elements[0][0], DE1082=E_0518 at elements[1][0]. Use has_qualified_value scoped to SG7.",
+      "description_hash": "60d3836b",
+      "is_external": false
+    },
+    "97": {
+      "confidence": "high",
+      "reasoning": "AJT DE4465 (elements[0][0]) in SG12 equals A27.",
+      "description_hash": "f3499f63",
+      "is_external": false
+    },
+    "118": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in SG7 has elements[0][0]==\"A99\" (DE4465, Code des Prüfschritts) AND elements[1][0]==\"E_0272\" (DE1082, Positionsnummer). Uses has_segment_matching_in_group for multi-element check scoped to SG7.",
+      "description_hash": "f45f191b",
+      "is_external": false
+    },
+    "537": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing repetition cardinality guidance for SG7 with AJT DE4465=AC5 — always applies unconditionally.",
+      "description_hash": "e13fe8f5",
+      "is_external": false
+    },
+    "60": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in SG7 has elements[0]==A99 and elements[1][0]==E_0243.",
+      "description_hash": "0645e3be",
+      "is_external": false
+    },
+    "49": {
+      "confidence": "high",
+      "reasoning": "Checks if within the current SG7 group, AJT has DE4465 (elements[0][0]) equal to one of the listed A-codes. Group-scoped using any_group_has_any_qualifier with path &[\"SG7\"].",
+      "description_hash": "2007fe10",
+      "is_external": false
+    },
+    "88": {
+      "confidence": "high",
+      "reasoning": "AJT DE4465 (elements[0][0]) in SG7 equals A25.",
+      "description_hash": "68b11295",
+      "is_external": false
+    },
+    "81": {
+      "confidence": "high",
+      "reasoning": "Group-scoped version of condition 75 — checks DE1082=E_0264 on AJT within SG7 group instances.",
+      "description_hash": "e7567566",
+      "is_external": false
+    },
+    "515": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing the source of BGM DE1004. Always applies unconditionally.",
+      "description_hash": "f290d145",
+      "is_external": false
+    },
+    "549": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation about cardinality of DE3148 — always applies unconditionally.",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "79": {
+      "confidence": "medium",
+      "reasoning": "Same pattern as 75, checking DE1082=E_0519 in any AJT segment.",
+      "description_hash": "10daf200",
+      "is_external": false
+    },
+    "502": {
+      "confidence": "high",
+      "reasoning": "Starts with 'Hinweis:' — informational annotation explaining the sign convention for the amount field. Not a boolean predicate.",
+      "description_hash": "2ee5854f",
+      "is_external": false
+    },
+    "65": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in this SG12 has DE1082 (elements[1]) equal to E_0515.",
+      "description_hash": "8ca88f98",
+      "is_external": false
+    },
+    "54": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in this SG12 has DE1082 (elements[1]) equal to E_0210. Uses any_group_has_qualifier targeting element index 1.",
+      "description_hash": "1241aa9f",
+      "is_external": false
+    },
+    "85": {
+      "confidence": "high",
+      "reasoning": "Collect all DE1082 values from AJT in SG7, check for E_0517.",
+      "description_hash": "669eb8a7",
+      "is_external": false
+    },
+    "78": {
+      "confidence": "medium",
+      "reasoning": "Same pattern as 75, checking DE1082=E_0517 in any AJT segment.",
+      "description_hash": "53718ef6",
+      "is_external": false
+    },
+    "120": {
+      "confidence": "high",
+      "reasoning": "Checks if any AJT segment in SG7 has elements[0][0]==\"A01\" (DE4465 = A01). Simple group-scoped qualifier check on AJT element 0.",
+      "description_hash": "8eb81cee",
+      "is_external": false
+    },
+    "109": {
+      "confidence": "high",
+      "reasoning": "Checks AJT DE4465 (elements[0][0]) for any of the listed code values within the current SG7 group instance. any_group_has_any_qualifier iterates SG7 instances and returns True if any AJT segment has one of the specified qualifier codes at elements[0][0].",
+      "description_hash": "334126ce",
+      "is_external": false
+    },
+    "33": {
+      "confidence": "medium",
+      "reasoning": "Check if AJT has DE1082 (elements[1][0]) == S_0103. 'In diesem AJT' scoping approximated by message-wide check via has_qualifier.",
+      "description_hash": "d24c8c95",
+      "is_external": false
+    },
+    "57": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in this SG7 has DE1082 (elements[1]) equal to E_0210.",
+      "description_hash": "5df5b8fb",
+      "is_external": false
+    },
+    "59": {
+      "confidence": "high",
+      "reasoning": "AJT+A08/A99+E_0459: checks elements[0][0] in [A08, A99] (DE4465) AND elements[1][0] == E_0459 (DE1082). Requires simultaneous match of both fields in the same segment, so low-level access is needed. Returns False when absent (presence check semantics).",
+      "description_hash": "355b13a1",
+      "is_external": false
+    },
+    "114": {
+      "confidence": "high",
+      "reasoning": "Check within SG12 (under SG5 tx_group) if AJT segment has DE1082 (elements[1][0]) == E_0270. Use any_group_has_qualified_value with qual_elem==val_elem to express the value check concisely.",
+      "description_hash": "bd6f2fe9",
+      "is_external": false
+    },
+    "51": {
+      "confidence": "high",
+      "reasoning": "DE1082 is elements[1] in AJT per the segment reference. Single value E_0406, group-scoped to SG12.",
+      "description_hash": "2049dbcc",
+      "is_external": false
+    },
+    "940": {
+      "confidence": "high",
+      "reasoning": "Format condition: string must start with + followed only by digits — this is the phone number format validation. Use validate_phone helper which checks for + prefix and digits-only suffix.",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "518": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing cardinality guidance for SG7 usage. Not a boolean predicate. Always applies unconditionally.",
+      "description_hash": "f1dd3d63",
+      "is_external": false
+    },
+    "62": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in SG7 has elements[0]==A99 and elements[1][0]==E_1007.",
+      "description_hash": "91df3824",
+      "is_external": false
+    },
+    "101": {
+      "confidence": "medium",
+      "reasoning": "Group-scoped check for AJT DE1082=E_0566 within SG7 (nested under SG5). Uses navigator to iterate SG7 instances; falls back to message-wide AJT scan when no navigator available. 'Dieser SG7' semantics best approximated by iterating all SG7 instances.",
+      "description_hash": "2af9bc27",
+      "is_external": false
+    },
+    "523": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about FTX+Z14 field usage and repetition rules for advance payment invoice numbers. Always returns True.",
+      "description_hash": "adb34603",
+      "is_external": false
+    },
+    "533": {
+      "confidence": "medium",
+      "reasoning": "The trigger condition 'Wenn in dieser SG12 AJT DE4465=AA1/AA6/AA7/AB8/AD6' is evaluable via group-scoped multi-qualifier check on SG12. AJT DE4465 is at elements[0][0]. The subsequent repetition rule (how many times to repeat SG12) is informational and not a boolean condition.",
+      "description_hash": "504edef0",
+      "is_external": false
+    },
+    "94": {
+      "confidence": "high",
+      "reasoning": "SG7 AJT where DE4465 (elements[0][0])==A99 and DE1082 (elements[1][0])==E_0806.",
+      "description_hash": "30b027fb",
+      "is_external": false
+    },
+    "525": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about SG10 repetition cardinality for position-level errors. Always returns True.",
+      "description_hash": "f5e7133e",
+      "is_external": false
+    },
+    "544": {
+      "confidence": "high",
+      "reasoning": "Condition starts with 'Hinweis:' — this is an informational annotation describing a cardinality constraint on FTX DE4440 values when AJT DE4465=A21. It documents expected behaviour rather than expressing a boolean predicate to evaluate at runtime. Always returns True.",
+      "description_hash": "c01eea27",
+      "is_external": false
+    },
+    "26": {
+      "confidence": "high",
+      "reasoning": "Group-scoped check: in this SG12 instance, AJT DE4465 (elements[0][0]) must be one of the listed codes.",
+      "description_hash": "d981b175",
+      "is_external": false
+    },
+    "71": {
+      "confidence": "high",
+      "reasoning": "DE4465 is at elements[0][0]. Checks AJT+A99 presence within SG12 group instances.",
+      "description_hash": "9872bcea",
+      "is_external": false
+    },
+    "90": {
+      "confidence": "high",
+      "reasoning": "COM DE3155 is elements[0][1]. Check any COM where the channel code is TE, FX, AJ, or AL.",
+      "description_hash": "d9351e4d",
+      "is_external": false
+    },
+    "501": {
+      "confidence": "high",
+      "reasoning": "Starts with 'Hinweis:' — informational annotation describing that the amount should be taken from MOA+9 of the underlying INVOIC. Not a boolean predicate.",
+      "description_hash": "ee3d37d5",
+      "is_external": false
+    },
+    "86": {
+      "confidence": "high",
+      "reasoning": "Collect all DE1082 values from AJT in SG7, check for E_0521.",
+      "description_hash": "46413f32",
+      "is_external": false
+    },
+    "493": {
+      "confidence": "high",
+      "reasoning": "Whether the MP-ID in NAD+MR belongs to the Gas sector cannot be determined from EDIFACT segment content alone — it requires lookup against a market participant registry or business context.",
+      "description_hash": "4e00d72d",
+      "is_external": true
+    },
+    "45": {
+      "confidence": "low",
+      "reasoning": "\"Nur MP-ID aus Sparte Strom\" — restricts market participant IDs to the electricity sector (Strom). The sector/Sparte of a market participant cannot be determined from the EDIFACT message content alone; it requires external registry or business context lookup.",
+      "description_hash": "f3221dba",
+      "is_external": true
+    },
+    "15": {
+      "confidence": "high",
+      "reasoning": "Same pattern as condition 14: 'A-Code aus Cluster Ablehnung auf Positionsebene' is an informational annotation about code cluster membership and scope (Positionsebene = position/line level). Documents valid value source, not a boolean predicate.",
+      "description_hash": "51f61ca8",
+      "is_external": false
+    },
+    "519": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about SG7 repetition cardinality for missing invoice numbers. Always returns True.",
+      "description_hash": "e8025a37",
+      "is_external": false
+    },
+    "103": {
+      "confidence": "medium",
+      "reasoning": "Group-scoped check for AJT DE1082=E_0566 within SG12 (nested under SG10 for line-item rejections). Uses navigator to iterate SG12 instances; falls back to message-wide scan.",
+      "description_hash": "7d4322da",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "high",
+      "reasoning": "Parallel to condition 3: documents that when DOC has code 380 or 457 (standard invoice/reversal), MOA+12 (Überweisungsbetrag) equals MOA+9 (Geforderter Rechnungsbetrag) unchanged. The 'ist … anzugeben' phrasing marks this as a specification rule / Hinweis about how to populate the field, not an evaluable boolean predicate.",
+      "description_hash": "ecf307ba",
+      "is_external": false
+    },
+    "92": {
+      "confidence": "high",
+      "reasoning": "\"In diesem AJT\" — check any AJT segment where DE1082 (elements[1][0]) equals E_0568.",
+      "description_hash": "1618190d",
+      "is_external": false
+    },
+    "108": {
+      "confidence": "medium",
+      "reasoning": "Checks if any AJT segment has DE1082 (elements[1][0]) == 'E_0277'. Same pattern as condition 105.",
+      "description_hash": "4226934d",
+      "is_external": false
+    },
+    "512": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing the source of BGM DE1004. Always applies unconditionally.",
+      "description_hash": "616e5b1a",
+      "is_external": false
+    },
+    "492": {
+      "confidence": "high",
+      "reasoning": "Whether the MP-ID in NAD+MR belongs to the Strom (electricity) sector cannot be determined from EDIFACT segment content alone — it requires lookup against a market participant registry or business context.",
+      "description_hash": "7ef55690",
+      "is_external": true
+    },
+    "64": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in this SG12 has DE1082 (elements[1]) equal to E_0264.",
+      "description_hash": "3c821cb6",
+      "is_external": false
+    },
+    "106": {
+      "confidence": "medium",
+      "reasoning": "Checks if any AJT segment has DE1082 (elements[1][0]) == 'E_0273'. Same pattern as condition 105.",
+      "description_hash": "03bf415d",
+      "is_external": false
+    },
+    "526": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing the source of DE1082 value — always applies unconditionally.",
+      "description_hash": "e6215d29",
+      "is_external": false
+    },
+    "99": {
+      "confidence": "medium",
+      "reasoning": "Checks any AJT segment in the message where DE1082 (elements[1][0]) equals E_0568. No 'dieser' qualifier so message-wide search is appropriate. SG12 scoping not enforced due to API limitations without group path context.",
+      "description_hash": "73ae46d9",
+      "is_external": false
+    },
+    "529": {
+      "confidence": "medium",
+      "reasoning": "The trigger 'Wenn in dieser SG7 AJT DE4465=A75 vorhanden' is evaluable via group-scoped qualifier check on SG5.SG7. The subsequent content constraint (FTX DE4440 must contain only installment invoice numbers that appear in the invoice referenced by RFF+AFL) requires cross-message business context not available in the EDIFACT message itself, so only the trigger condition is implemented.",
+      "description_hash": "171864c9",
+      "is_external": false
+    },
+    "538": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing how position numbers should be encoded across DE4440 components and when to repeat SG7 FTX+Z16 — always applies unconditionally.",
+      "description_hash": "f5e209f3",
+      "is_external": false
+    },
+    "48": {
+      "confidence": "high",
+      "reasoning": "DE1082 is elements[1] in AJT per the segment reference. 'in diesem AJT' means current AJT context — approximated as message-wide check since no group path is specified.",
+      "description_hash": "59d19afc",
+      "is_external": false
+    },
+    "63": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in SG7 has elements[0] in {A01, A02} AND elements[1][0]==E_1009. Two separate qualified_value checks (one per qualifier) ORed together since the helper only accepts a single qualifier for the filter.",
+      "description_hash": "949f4b46",
+      "is_external": false
+    },
+    "35": {
+      "confidence": "high",
+      "reasoning": "DE4465 is elements[0] in AJT per the segment reference. Group-scoped to SG12, checking any of the four values.",
+      "description_hash": "7e1cab72",
+      "is_external": false
+    },
+    "18": {
+      "confidence": "high",
+      "reasoning": "Group-scoped check: in this SG7 instance, AJT DE4465 (elements[0][0]) must be one of A74/A75/A76/AC5.",
+      "description_hash": "7083023f",
+      "is_external": false
+    },
+    "930": {
+      "confidence": "medium",
+      "reasoning": "Format condition for maximum 2 decimal places. Applied to MOA segment value (element[0][1]) which is the primary numeric data element in REMADV messages.",
+      "description_hash": "30e8c861",
+      "is_external": false
+    },
+    "96": {
+      "confidence": "high",
+      "reasoning": "AJT+E_0503/E_1007: per the resolved notation, E_0503 and E_1007 are at elements[0][0] (DE4465). Checks if any SG7 instance contains an AJT segment where elements[0][0] is E_0503 or E_1007.",
+      "description_hash": "8384e6ff",
+      "is_external": false
+    },
+    "113": {
+      "confidence": "high",
+      "reasoning": "Checks AJT DE1082 (elements[1][0]) for value E_0277 within the current SG7 group instance.",
+      "description_hash": "7ae6e471",
+      "is_external": false
+    },
+    "534": {
+      "confidence": "medium",
+      "reasoning": "The trigger condition 'Wenn in dieser SG12 AJT DE4465=A34/A39/AA2/AB2' is evaluable via group-scoped multi-qualifier check on SG12. AJT DE4465 is at elements[0][0]. The subsequent repetition rule is informational.",
+      "description_hash": "2db5ed08",
+      "is_external": false
+    },
+    "75": {
+      "confidence": "medium",
+      "reasoning": "'In diesem AJT' means current segment context; approximated as message-wide AJT search. DE1082 at elements[1][0]. Redundant qual+val check correctly matches E_0264.",
+      "description_hash": "226ed48f",
+      "is_external": false
+    },
+    "61": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in SG7 has elements[0]==A99 and elements[1][0]==E_0261.",
+      "description_hash": "b404cf65",
+      "is_external": false
+    },
+    "115": {
+      "confidence": "high",
+      "reasoning": "Same pattern as 114 but checking DE1082 == E_0273 within SG12.",
+      "description_hash": "0ff3cfde",
+      "is_external": false
+    },
+    "83": {
+      "confidence": "high",
+      "reasoning": "Collect all DE1082 values from AJT in SG7, check for E_0519.",
+      "description_hash": "dbf7d582",
+      "is_external": false
+    },
+    "53": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in this SG12 has DE4465 (elements[0]) equal to one of A25/A31/A99/AF1. Uses any_group_has_any_qualifier with SG12 group path.",
+      "description_hash": "3c2e1211",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "high",
+      "reasoning": "Format condition checking timezone ZZZ = +00 (UTC). Applied to DTM segment value field (elements[0][1]) which contains the datetime string including timezone suffix.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "67": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in this SG12 has DE1082 (elements[1]) equal to E_0266.",
+      "description_hash": "980288e1",
+      "is_external": false
+    },
+    "8": {
+      "confidence": "high",
+      "reasoning": "AJT with DE4465 (elements[0][0]) in [A01,A02] AND DE1082 (elements[1][0]) == E_0505. Low-level access required since both conditions apply to the same segment instance.",
+      "description_hash": "d52b8a86",
+      "is_external": false
+    },
+    "510": {
+      "confidence": "high",
+      "reasoning": "Starts with 'Hinweis:' — informational annotation indicating this applies when rejecting a prior COMDIS message. Not a boolean predicate.",
+      "description_hash": "8cafe814",
+      "is_external": false
+    },
+    "98": {
+      "confidence": "high",
+      "reasoning": "Collect all DE1082 values from AJT in SG12, check for E_0407.",
+      "description_hash": "03fe45dd",
+      "is_external": false
+    },
+    "66": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in this SG12 has DE1082 (elements[1]) equal to E_0519.",
+      "description_hash": "23c17be5",
+      "is_external": false
+    },
+    "3": {
+      "confidence": "high",
+      "reasoning": "This condition describes a data transformation rule: when DOC has code 389 or Z25, the MOA+12 value must equal MOA+9 multiplied by -1. The phrasing 'ist … anzugeben' (must be specified as) is a specification/documentation pattern, not a boolean predicate. It documents how to derive the Überweisungsbetrag from the Geforderter Rechnungsbetrag — an informational Hinweis about field content semantics.",
+      "description_hash": "ed211d51",
+      "is_external": false
+    },
+    "12": {
+      "confidence": "medium",
+      "reasoning": "Check if AJT has DE1082 (elements[1][0]) == E_0407. Same pattern as condition 11.",
+      "description_hash": "523eadda",
+      "is_external": false
+    },
+    "52": {
+      "confidence": "high",
+      "reasoning": "DE1082 is elements[1] in AJT per the segment reference. Single value E_0407, group-scoped to SG12.",
+      "description_hash": "c9b5b3e2",
+      "is_external": false
+    },
+    "105": {
+      "confidence": "medium",
+      "reasoning": "Checks if any AJT segment has DE1082 (elements[1][0]) == 'E_0270'. 'In diesem AJT' refers to the current AJT context; without per-segment scope, we search all AJT segments. E_0270 appears in the SG12 AJT code list. Returns Unknown if no AJT segments exist.",
+      "description_hash": "df97affb",
+      "is_external": false
+    },
+    "119": {
+      "confidence": "high",
+      "reasoning": "Checks if any AJT segment in SG7 has elements[0][0]==\"A99\" (DE4465) and elements[1][0]==\"E_0275\" (DE1082). Multi-element match via has_segment_matching_in_group scoped to SG7.",
+      "description_hash": "f2c4cf22",
+      "is_external": false
+    },
+    "520": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about SG7 repetition cardinality for invoices containing advance payment invoices. Always returns True.",
+      "description_hash": "1e108d33",
+      "is_external": false
+    },
+    "939": {
+      "confidence": "high",
+      "reasoning": "Format condition: string must contain @ and . characters — this is the email format validation. Use validate_email helper which checks for @ and . presence.",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "548": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation about data element population from EBD — always applies unconditionally.",
+      "description_hash": "37187f62",
+      "is_external": false
+    },
+    "926": {
+      "confidence": "medium",
+      "reasoning": "Format condition checking that the value equals 0. Applied to MOA segment (monetary amount) which is the primary numeric field in REMADV. The segment is the most likely target for this constraint in REMADV context.",
+      "description_hash": "3e15920e",
+      "is_external": false
+    },
+    "43": {
+      "confidence": "high",
+      "reasoning": "DE4465 is elements[0] in AJT per the segment reference. Single value '28', group-scoped to SG12.",
+      "description_hash": "cc59c452",
+      "is_external": false
+    },
+    "9": {
+      "confidence": "high",
+      "reasoning": "AJT with DE4465 in [A32,A99] AND DE1082 == E_0503. Same pattern as condition 8.",
+      "description_hash": "41abeb62",
+      "is_external": false
+    },
+    "16": {
+      "confidence": "high",
+      "reasoning": "Same pattern as conditions 14 and 15: 'A-Code aus Cluster Ablehnung auf Summenebene' is an informational annotation about code cluster membership and scope (Summenebene = summary level). Documents valid value source, not a boolean predicate.",
+      "description_hash": "ab0390fc",
+      "is_external": false
+    },
+    "76": {
+      "confidence": "medium",
+      "reasoning": "Same pattern as 75, checking DE1082=E_0266 in any AJT segment.",
+      "description_hash": "0f57b5e1",
+      "is_external": false
+    },
+    "40": {
+      "confidence": "high",
+      "reasoning": "DE1082 is elements[1] in AJT per the segment reference. Single value E_0406, group-scoped to SG7.",
+      "description_hash": "8be8a0e2",
+      "is_external": false
+    },
+    "93": {
+      "confidence": "high",
+      "reasoning": "SG7 AJT where DE4465 (elements[0][0])==A99 and DE1082 (elements[1][0])==E_0804.",
+      "description_hash": "b2108ce5",
+      "is_external": false
+    },
+    "89": {
+      "confidence": "high",
+      "reasoning": "COM DE3155 is elements[0][1]. Check any COM where the channel code is EM.",
+      "description_hash": "eaf06e02",
+      "is_external": false
+    },
+    "536": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation documenting a field usage restriction — always applies unconditionally.",
+      "description_hash": "a6299bf5",
+      "is_external": false
+    },
+    "50": {
+      "confidence": "high",
+      "reasoning": "Same pattern as [49] but with different A-code values. Checks DE4465 (elements[0][0]) in the current SG7 group.",
+      "description_hash": "64f8caca",
+      "is_external": false
+    },
+    "36": {
+      "confidence": "high",
+      "reasoning": "DE4465 is elements[0] in AJT per the segment reference. Group-scoped to SG7, checking any of the four values.",
+      "description_hash": "70d3d260",
+      "is_external": false
+    },
+    "74": {
+      "confidence": "high",
+      "reasoning": "AJT+A99+E_0267: same pattern as 72, checking for E_0267 in SG7.",
+      "description_hash": "82c2417b",
+      "is_external": false
+    },
+    "58": {
+      "confidence": "high",
+      "reasoning": "Check if any AJT in this SG7 has DE1082 (elements[1]) equal to E_0259.",
+      "description_hash": "be9e94ea",
+      "is_external": false
+    },
+    "511": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing the source of BGM DE1004. Always applies unconditionally.",
+      "description_hash": "68017957",
+      "is_external": false
+    }
+  }
+}

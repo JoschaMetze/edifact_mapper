@@ -1,0 +1,367 @@
+{
+  "generated_at": "2026-03-12T11:36:50Z",
+  "ahb_file": "PARTIN_AHB_1_0f_Fehlerkorrektur_20251211.xml",
+  "format_version": "FV2604",
+  "conditions": {
+    "28": {
+      "confidence": "high",
+      "reasoning": "Check if NAD+Z34 (Bilanzkoordinator) exists with DE3207 (elements[8][0]) == \"DE\". Same pattern as condition 27 but with qualifier Z34.",
+      "description_hash": "6e6736b1",
+      "is_external": false
+    },
+    "2": {
+      "confidence": "high",
+      "reasoning": "This condition checks whether the country code in DE3207 has an 'X' in the 'PLZ vorhanden' column of the EDI@Energy European country codes list. The list is an external reference document — determining which countries have postal codes requires consulting that external codelist, not data derivable from the EDIFACT message itself.",
+      "description_hash": "0c5ce0ff",
+      "is_external": true
+    },
+    "508": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about Grundversorger obligations for Bilanzkreis transmission, always True.",
+      "description_hash": "a13062bd",
+      "is_external": false
+    },
+    "939": {
+      "confidence": "high",
+      "reasoning": "Format condition for email: value must contain @ and . characters. Uses validate_email helper on COM elements[0][0].",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "500": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about what value may appear in the field. Not a boolean predicate. Always returns True unconditionally.",
+      "description_hash": "5b514f38",
+      "is_external": false
+    },
+    "14": {
+      "confidence": "high",
+      "reasoning": "NAD+SU (Lieferant) identified by qualifier SU at elements[0][0]. DE3207 at elements[8][0]. Condition is True when country code is NOT 'DE'. If element 8 is absent, 'DE' is not present so condition is True (unwrap_or(true)).",
+      "description_hash": "4ac44903",
+      "is_external": false
+    },
+    "29": {
+      "confidence": "high",
+      "reasoning": "Check if NAD+Z35 (Bilanzkreisverantwortlicher) exists with DE3207 (elements[8][0]) == \"DE\". Same pattern as condition 27 but with qualifier Z35.",
+      "description_hash": "f0f6f73c",
+      "is_external": false
+    },
+    "18": {
+      "confidence": "high",
+      "reasoning": "Role check for NAD+MR (recipient) cannot be determined from the EDIFACT message alone — requires external business context.",
+      "description_hash": "51183951",
+      "is_external": true
+    },
+    "502": {
+      "confidence": "high",
+      "reasoning": "Condition starts with 'Hinweis:' and describes a cardinality constraint for data element DE3148 (only one value may be transmitted). This is an informational annotation about field usage, not a boolean predicate.",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "19": {
+      "confidence": "high",
+      "reasoning": "Role check for NAD+MR (recipient) cannot be determined from the EDIFACT message alone — requires external business context.",
+      "description_hash": "3f3f211c",
+      "is_external": true
+    },
+    "33": {
+      "confidence": "high",
+      "reasoning": "Check if any NAD+Z35 segment has DE3207 (elements[8][0]) equal to \"DE\". Condition is True when no such segment with code \"DE\" exists.",
+      "description_hash": "22f5ece0",
+      "is_external": false
+    },
+    "23": {
+      "confidence": "high",
+      "reasoning": "Role check for NAD+MR (recipient) cannot be determined from the EDIFACT message alone — requires external business context.",
+      "description_hash": "9f370888",
+      "is_external": true
+    },
+    "35": {
+      "confidence": "high",
+      "reasoning": "Whether the recipient MP-ID in NAD+MR acts in the role of ÜNB (Übertragungsnetzbetreiber) cannot be determined from the EDIFACT message itself — it requires external market participant role lookup.",
+      "description_hash": "4b435776",
+      "is_external": true
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "Cannot determine from the EDIFACT message alone whether the MP-ID in NAD+MR (elements[0][0]=MR) is operating in the role of Lieferant (LF). The NAD segment provides the ID but the role assignment requires an external market participant registry lookup.",
+      "description_hash": "55130474",
+      "is_external": true
+    },
+    "11": {
+      "confidence": "high",
+      "reasoning": "NAD+SU (Lieferant) is identified by qualifier SU at elements[0][0]. DE3207 (Ländername, Code) is at elements[8][0] per the schema. Condition is True when the country code is exactly 'DE'.",
+      "description_hash": "588982ba",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "high",
+      "reasoning": "Whether a predecessor version (Vorgängerversion) of the PARTIN message exists is a system/business context question — it requires knowledge of previously processed messages in the receiving system, which is not determinable from the EDIFACT message content alone.",
+      "description_hash": "922379a2",
+      "is_external": true
+    },
+    "20": {
+      "confidence": "high",
+      "reasoning": "Role check for NAD+MR (recipient) cannot be determined from the EDIFACT message alone — requires external business context.",
+      "description_hash": "065cc425",
+      "is_external": true
+    },
+    "6": {
+      "confidence": "high",
+      "reasoning": "In COM segments, composite C076 has DE3148 (communication value) at elements[0][0] and DE3155 (communication qualifier) at elements[0][1]. Check if any COM has DE3155 == 'EM' (electronic mail). Falls back to message-wide search since PARTIN SG3 group navigation is not available.",
+      "description_hash": "51baae43",
+      "is_external": false
+    },
+    "34": {
+      "confidence": "high",
+      "reasoning": "Check if any NAD+Z36 segment has DE3207 (elements[8][0]) equal to \"DE\". Condition is True when no such segment with code \"DE\" exists.",
+      "description_hash": "7f5d31f4",
+      "is_external": false
+    },
+    "7": {
+      "confidence": "high",
+      "reasoning": "DE3155 is the communication qualifier at elements[0][1] in COM composite C076. Check if any COM segment has type code TE (telephone), FX (fax), AJ (after hours telephone), or AL (answering service).",
+      "description_hash": "56c479ec",
+      "is_external": false
+    },
+    "16": {
+      "confidence": "high",
+      "reasoning": "NAD+DEB (Messstellenbetreiber) identified by qualifier DEB at elements[0][0]. DE3207 at elements[8][0]. Condition is True when country code is NOT 'DE'. If element 8 is absent, 'DE' is not present so condition is True (unwrap_or(true)).",
+      "description_hash": "1759b666",
+      "is_external": false
+    },
+    "9": {
+      "confidence": "high",
+      "reasoning": "Whether communication data from the sender is no longer active is a business/operational state that cannot be derived from the EDIFACT message content itself. It requires external context about the sender's current status.",
+      "description_hash": "e5459768",
+      "is_external": true
+    },
+    "36": {
+      "confidence": "high",
+      "reasoning": "Whether the recipient MP-ID in NAD+MR acts in the role of BKV (Bilanzkreisverantwortlicher) cannot be determined from the EDIFACT message itself — it requires external market participant role lookup.",
+      "description_hash": "59200882",
+      "is_external": true
+    },
+    "491": {
+      "confidence": "high",
+      "reasoning": "Uses the is_mez_utc() format validation helper which checks if a CCYYMMDDHHMM timestamp falls within German winter time (MEZ, UTC+1). The condition references 'Tabelle Kapitel 3.6 Prozesszeitpunkt bei MEZ mit UTC', which matches exactly the is_mez_utc helper's purpose. Reads the value component (index 1) from the first DTM element, consistent with Example 25's pattern for the analogous MESZ condition 490.",
+      "description_hash": "305e3493",
+      "is_external": false
+    },
+    "506": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about VAT law compliance for field content, always True.",
+      "description_hash": "414a4619",
+      "is_external": false
+    },
+    "505": {
+      "confidence": "medium",
+      "reasoning": "When RFF+ACW (predecessor version) is present, compare DE1056 (elements[0][3]) of RFF+AGK (current version) against DE1056 of RFF+ACW. Condition is True when current version is at least 1 higher than predecessor. Returns False when no ACW present (condition does not apply), Unknown if version numbers cannot be parsed.",
+      "description_hash": "399cbd23",
+      "is_external": false
+    },
+    "503": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about time zone usage, always True.",
+      "description_hash": "b5032c3e",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "high",
+      "reasoning": "Format condition: timezone portion of DTM value must be +00 (UTC). Uses validate_timezone_utc helper on the DTM element value at elements[0][1].",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "44": {
+      "confidence": "high",
+      "reasoning": "Exact negation of condition 43 — True when no NAD+Z71 with DE3207=\"DE\" is present.",
+      "description_hash": "7ed7e79c",
+      "is_external": false
+    },
+    "31": {
+      "confidence": "high",
+      "reasoning": "Negation of condition 27: True when NAD+Z31 exists but DE3207 is NOT \"DE\", False when it IS \"DE\", Unknown when no NAD+Z31 exists at all. Implemented by negating has_qualified_value result.",
+      "description_hash": "f6cb7df5",
+      "is_external": false
+    },
+    "32": {
+      "confidence": "high",
+      "reasoning": "Check if any NAD+Z34 segment has DE3207 (elements[8][0]) equal to \"DE\". Condition is True when no such segment with code \"DE\" exists.",
+      "description_hash": "ae1d0faa",
+      "is_external": false
+    },
+    "27": {
+      "confidence": "high",
+      "reasoning": "Check if NAD+Z31 (Übertragungsnetzbetreiber) exists with DE3207 (elements[8][0]) == \"DE\". The has_qualified_value helper finds NAD with qualifier Z31 at elements[0][0], then checks elements[8][0] for \"DE\".",
+      "description_hash": "2d7d9494",
+      "is_external": false
+    },
+    "21": {
+      "confidence": "high",
+      "reasoning": "Role check for NAD+MR (recipient) cannot be determined from the EDIFACT message alone — requires external business context.",
+      "description_hash": "89b87b8f",
+      "is_external": true
+    },
+    "3": {
+      "confidence": "high",
+      "reasoning": "'wenn vorhanden' is an AHB meta-annotation meaning the rule applies when this element is present. As a standalone condition it is informational — it does not encode a predicate over the message content but annotates optionality.",
+      "description_hash": "07e09f1a",
+      "is_external": false
+    },
+    "22": {
+      "confidence": "high",
+      "reasoning": "Role check for NAD+MR (recipient) cannot be determined from the EDIFACT message alone — requires external business context.",
+      "description_hash": "cf2a70c6",
+      "is_external": true
+    },
+    "45": {
+      "confidence": "high",
+      "reasoning": "The role (LF=Lieferant, NB=Netzbetreiber) of a market participant identified by their MP-ID in NAD+MR cannot be determined from the EDIFACT message alone — it requires an external market participant directory lookup.",
+      "description_hash": "c4fe01a5",
+      "is_external": true
+    },
+    "17": {
+      "confidence": "high",
+      "reasoning": "Role check for NAD+MR (recipient) cannot be determined from the EDIFACT message alone — requires external business context about which role the MP-ID holder has.",
+      "description_hash": "c0a2a0f3",
+      "is_external": true
+    },
+    "1": {
+      "confidence": "high",
+      "reasoning": "Whether an MP-ID belongs to the electricity sector (Sparte Strom) cannot be determined from the EDIFACT message content alone — it requires an external registry lookup of the market participant's sector classification.",
+      "description_hash": "f3221dba",
+      "is_external": true
+    },
+    "13": {
+      "confidence": "high",
+      "reasoning": "NAD+DEB (Messstellenbetreiber) is identified by qualifier DEB at elements[0][0]. DE3207 (Ländername, Code) is at elements[8][0] per the schema. Condition is True when the country code is exactly 'DE'.",
+      "description_hash": "187893cd",
+      "is_external": false
+    },
+    "10": {
+      "confidence": "high",
+      "reasoning": "BGM DE1373 (Dokumentenstatus, Code) is at elements[4][0] per the schema. Condition is True when DE1373 is NOT '11' (Dokument nicht verfügbar). If element 4 is absent, code 11 is not present, so the condition is True (unwrap_or(true)). Returns Unknown only when BGM itself is missing.",
+      "description_hash": "d296b74a",
+      "is_external": false
+    },
+    "932": {
+      "confidence": "high",
+      "reasoning": "Format condition: HHMM portion of DTM value must equal 2200. Uses validate_hhmm_equals helper on the DTM element value at elements[0][1].",
+      "description_hash": "943b98c4",
+      "is_external": false
+    },
+    "49": {
+      "confidence": "high",
+      "reasoning": "Checks if the message recipient (NAD+MR) has the role LF or MGV. Market participant roles cannot be determined from the EDIFACT message content alone — requires external business context.",
+      "description_hash": "0aead077",
+      "is_external": true
+    },
+    "933": {
+      "confidence": "high",
+      "reasoning": "Format condition: HHMM portion of DTM value must equal 2300. Uses validate_hhmm_equals helper on the DTM element value at elements[0][1].",
+      "description_hash": "b5e9c81e",
+      "is_external": false
+    },
+    "8": {
+      "confidence": "high",
+      "reasoning": "DE3155 is the communication qualifier at elements[0][1] in COM composite C076. Check if any COM segment has type code TE (telephone) or FX (fax).",
+      "description_hash": "3f5e6813",
+      "is_external": false
+    },
+    "501": {
+      "confidence": "high",
+      "reasoning": "Condition starts with 'Hinweis:' and states a data privacy / content rule: no natural person names may be transmitted; instead the organisational unit must be named. This is an informational annotation describing field content policy, not a boolean predicate derivable from the message structure.",
+      "description_hash": "cb1b655b",
+      "is_external": false
+    },
+    "41": {
+      "confidence": "high",
+      "reasoning": "Whether an MP-ID belongs to the Gas sector (Sparte Gas) requires external knowledge of the market participant registry — it cannot be determined from the EDIFACT message alone.",
+      "description_hash": "8cea5aed",
+      "is_external": true
+    },
+    "12": {
+      "confidence": "high",
+      "reasoning": "NAD+DDM (Netzbetreiber) is identified by qualifier DDM at elements[0][0]. DE3207 (Ländername, Code) is at elements[8][0] per the schema. Condition is True when the country code is exactly 'DE'.",
+      "description_hash": "e3f5ca5d",
+      "is_external": false
+    },
+    "490": {
+      "confidence": "high",
+      "reasoning": "Standard MESZ/UTC timezone check using the is_mesz_utc helper. Checks whether the CCYYMMDD portion of the DTM value falls in German summer time (MESZ, UTC+2) per the EU DST rule referenced in Kapitel 3.5.",
+      "description_hash": "b21c790d",
+      "is_external": false
+    },
+    "43": {
+      "confidence": "high",
+      "reasoning": "Check if any NAD segment has qualifier Z71 (Marktgebietsverantwortlicher) at elements[0][0] and country code DE at elements[8][0] (DE3207 per the MIG segment structure). has_segment_matching checks both conditions simultaneously.",
+      "description_hash": "7af8741e",
+      "is_external": false
+    },
+    "50": {
+      "confidence": "high",
+      "reasoning": "Checks if the message recipient (NAD+MR) has the role LF, MGV, or NB. Market participant roles cannot be determined from the EDIFACT message content alone — requires external business context.",
+      "description_hash": "4b4c7e9f",
+      "is_external": true
+    },
+    "15": {
+      "confidence": "high",
+      "reasoning": "NAD+DDM (Netzbetreiber) identified by qualifier DDM at elements[0][0]. DE3207 at elements[8][0]. Condition is True when country code is NOT 'DE'. If element 8 is absent, 'DE' is not present so condition is True (unwrap_or(true)).",
+      "description_hash": "72d7c979",
+      "is_external": false
+    },
+    "46": {
+      "confidence": "high",
+      "reasoning": "Checks if the message recipient (NAD+MR) has the role LF, MSB, or MGV. Market participant roles cannot be determined from the EDIFACT message content alone — requires external business context.",
+      "description_hash": "025c13d8",
+      "is_external": true
+    },
+    "25": {
+      "confidence": "high",
+      "reasoning": "Role check for NAD+MR (recipient) cannot be determined from the EDIFACT message alone — requires external business context.",
+      "description_hash": "28c43e5e",
+      "is_external": true
+    },
+    "940": {
+      "confidence": "high",
+      "reasoning": "Format condition for phone: value must start with + followed only by digits. Uses validate_phone helper on COM elements[0][0].",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "504": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about tax number requirements, always True.",
+      "description_hash": "8d5804b8",
+      "is_external": false
+    },
+    "908": {
+      "confidence": "high",
+      "reasoning": "Format condition 'Mögliche Werte: 1 bis n' is a cardinality annotation indicating the field accepts values 1 through n. This is an informational constraint note (similar to Hinweis) that always applies unconditionally.",
+      "description_hash": "f0e2a917",
+      "is_external": false
+    },
+    "30": {
+      "confidence": "high",
+      "reasoning": "Check if NAD+Z36 (Energieserviceanbieter) exists with DE3207 (elements[8][0]) == \"DE\". Same pattern as condition 27 but with qualifier Z36.",
+      "description_hash": "30b3f3a5",
+      "is_external": false
+    },
+    "26": {
+      "confidence": "high",
+      "reasoning": "Role check for NAD+MR (recipient) cannot be determined from the EDIFACT message alone — requires external business context.",
+      "description_hash": "51e3b058",
+      "is_external": true
+    },
+    "24": {
+      "confidence": "high",
+      "reasoning": "Role check for NAD+MR (recipient) cannot be determined from the EDIFACT message alone — requires external business context.",
+      "description_hash": "9206ded7",
+      "is_external": true
+    },
+    "494": {
+      "confidence": "medium",
+      "reasoning": "This condition states the referenced date must be the document creation timestamp or earlier. Verifying this would require knowing the actual document creation time as an external reference point, which is not present in the EDIFACT message itself. The phrasing describes a semantic constraint on the field's value origin rather than a checkable boolean predicate from message content. Treated as an always-true informational annotation similar to a Hinweis, since the field by definition carries the value the sender chose as the document date.",
+      "description_hash": "785470ce",
+      "is_external": false
+    }
+  }
+}

@@ -1,0 +1,775 @@
+{
+  "generated_at": "2026-03-12T11:09:04Z",
+  "ahb_file": "INVOIC_AHB_1_0_Fehlerkorrektur_20250623.xml",
+  "format_version": "FV2510",
+  "conditions": {
+    "50": {
+      "confidence": "high",
+      "reasoning": "Negation of IMD++SOR check: True when no IMD segment has elements[1][0]=\"SOR\" (DE7081 in C272).",
+      "description_hash": "a6b84f4b",
+      "is_external": false
+    },
+    "18": {
+      "confidence": "high",
+      "reasoning": "IMD++WIM notation means elements[0] is empty, elements[1][0]='WIM' (item characteristic code). lacks_qualifier checks for absence of any IMD with that value.",
+      "description_hash": "76ce13a0",
+      "is_external": false
+    },
+    "932": {
+      "confidence": "high",
+      "reasoning": "Format condition: HHMM = 2200 checks that the time portion of a DTM value equals 2200. Uses validate_hhmm_equals helper.",
+      "description_hash": "943b98c4",
+      "is_external": false
+    },
+    "75": {
+      "confidence": "high",
+      "reasoning": "Same as condition 74 but checks DE3155 for codes TE, FX, AJ, or AL (telephone, fax, or electronic messaging channel types).",
+      "description_hash": "d9351e4d",
+      "is_external": false
+    },
+    "47": {
+      "confidence": "high",
+      "reasoning": "IMD++Z43 means elements[1][0]=\"Z43\" (DE7081 in C272 Produkt/Leistung). Iterate all IMD segments and check element[1][0].",
+      "description_hash": "770a1936",
+      "is_external": false
+    },
+    "930": {
+      "confidence": "high",
+      "reasoning": "Max 2 decimal places format check. Standard for monetary/price quantities in INVOIC. Direct use of validate_max_decimal_places helper as shown in Example 19.",
+      "description_hash": "30e8c861",
+      "is_external": false
+    },
+    "3": {
+      "confidence": "high",
+      "reasoning": "Whether a line item represents a device purchase (Kauf) is a product/contract classification. Like condition [2], this is a business context property external to the message content.",
+      "description_hash": "5786b322",
+      "is_external": true
+    },
+    "12": {
+      "confidence": "high",
+      "reasoning": "QTY+136 (zeitliche Mengenangaben) presence check. QTY qualifier at elements[0][0]. Message-wide check is equivalent to SG26-scoped since QTY only appears in SG26.",
+      "description_hash": "e11f4176",
+      "is_external": false
+    },
+    "518": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational note explaining date semantics in various cancellation/blocking scenarios — always applies unconditionally",
+      "description_hash": "58711851",
+      "is_external": false
+    },
+    "15": {
+      "confidence": "medium",
+      "reasoning": "Whether a balancing (Bilanzierung) has occurred is operational/business context external to the EDIFACT message itself.",
+      "description_hash": "4ebc59b9",
+      "is_external": true
+    },
+    "37": {
+      "confidence": "medium",
+      "reasoning": "\"Wenn Lieferschein zuvor ausgetauscht wurde\" depends on whether a delivery note (Lieferschein) was exchanged in a prior business transaction. This cannot be determined from the current EDIFACT message alone; it requires external business context.",
+      "description_hash": "5d7d44b3",
+      "is_external": true
+    },
+    "520": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational note restricting article IDs to those from the price sheet — always applies unconditionally",
+      "description_hash": "4e248d7c",
+      "is_external": false
+    },
+    "29": {
+      "confidence": "medium",
+      "reasoning": "DTM+155 is Abrechnungszeitraum Beginn with format 303 (starts YYYYMMDD). 'nicht größer 31.12.2015' means <= 31.12.2015. Lexicographic comparison of 8-char ISO prefix is correct for this date format.",
+      "description_hash": "5dd951cc",
+      "is_external": false
+    },
+    "1": {
+      "confidence": "high",
+      "reasoning": "Condition asks whether a field was populated in the invoice being cancelled/reversed (storno). This requires knowledge of a prior message's content — external business context that cannot be determined from the current EDIFACT message alone.",
+      "description_hash": "a25cff5a",
+      "is_external": true
+    },
+    "14": {
+      "confidence": "high",
+      "reasoning": "LIN segment DE7140 (Produkt-/Leistungsnummer) at elements[2][0]. LIN is the entry segment of SG26, so checking all LIN segments is equivalent to checking all SG26 instances. The specific value '9990001000748' identifies 'Mehrmenge'.",
+      "description_hash": "620d0a10",
+      "is_external": false
+    },
+    "73": {
+      "confidence": "high",
+      "reasoning": "IMD++MSB means elements[1][0]==\"MSB\". Presence check across all IMD segments.",
+      "description_hash": "5207988e",
+      "is_external": false
+    },
+    "60": {
+      "confidence": "high",
+      "reasoning": "DTM+203 where DE2379 (elements[0][2]) == '303'. has_qualified_value finds DTM with elements[0][0]=='203' then checks elements[0][2] for '303'.",
+      "description_hash": "d3e2721b",
+      "is_external": false
+    },
+    "25": {
+      "confidence": "low",
+      "reasoning": "Requires German business calendar (Werktage) calculation: the target value must be <= 10 working days after DTM+137. Same reasoning as condition 24 — working day counting requires a calendar service with public holiday knowledge not available from the message.",
+      "description_hash": "c8edcf61",
+      "is_external": true
+    },
+    "83": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier absence check: condition is True when no GEI segment with elements[0][0]==\"Z10\" exists. The MIG schema confirms elements[0] is DE9649 (qualifier). Use lacks_qualifier for clean inversion.",
+      "description_hash": "5179e226",
+      "is_external": false
+    },
+    "490": {
+      "confidence": "high",
+      "reasoning": "Checks if the CCYYMMDD part of the DTM value falls within German summer time (MESZ, UTC+2) per Tabelle Kapitel 3.5. The is_mesz_utc() helper implements exactly this — EU DST rule from last Sunday of March 01:00 UTC to last Sunday of October 01:00 UTC.",
+      "description_hash": "b21c790d",
+      "is_external": false
+    },
+    "521": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation documenting the origin of BGM DE1004. Always returns True.",
+      "description_hash": "0ce89b2d",
+      "is_external": false
+    },
+    "74": {
+      "confidence": "high",
+      "reasoning": "COM segment: C076 composite at elements[0], where [0][0]=DE3148 (address) and [0][1]=DE3155 (channel qualifier). Check if any COM has DE3155==\"EM\".",
+      "description_hash": "eaf06e02",
+      "is_external": false
+    },
+    "512": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing how the amount value should be calculated. Always returns True.",
+      "description_hash": "9045f8f4",
+      "is_external": false
+    },
+    "51": {
+      "confidence": "medium",
+      "reasoning": "DTM+156 in SG26 (Positionsbezogener Abrechnungszeitraum Ende) uses format 303 (CCYYMMDDHHMM). January 1, 2023 at 00:00 = \"202301010000\". Without SG26-scoped group navigation, message-wide search is used; qualifier 156 in the SG26 context is distinct from the message-level 156, but without group navigation this is the best available approximation.",
+      "description_hash": "d2f3560d",
+      "is_external": false
+    },
+    "11": {
+      "confidence": "medium",
+      "reasoning": "Whether a deposit/advance payment (Abschlag) applies is business context that cannot be determined from the EDIFACT message structure alone — it depends on the contract type and billing arrangement.",
+      "description_hash": "571394bc",
+      "is_external": true
+    },
+    "58": {
+      "confidence": "high",
+      "reasoning": "Checks if MOA+113 (Vorausbezahlter Betrag steuersatzbezogen) is present within the current SG52 group. MOA elements[0][0]=='113'.",
+      "description_hash": "575edf0a",
+      "is_external": false
+    },
+    "946": {
+      "confidence": "high",
+      "reasoning": "Format: max 11 Nachkommastellen means at most 11 decimal places. Applied to QTY value element (elements[0][1]) following standard INVOIC QTY format validation pattern.",
+      "description_hash": "425779e5",
+      "is_external": false
+    },
+    "23": {
+      "confidence": "medium",
+      "reasoning": "DE3124 resides in C058 at elements[2][0] for all NAD variants. 'Im selben NAD' means within the same NAD instance; evaluated message-wide as: any NAD where this component is absent or empty.",
+      "description_hash": "d0bec6ee",
+      "is_external": false
+    },
+    "20": {
+      "confidence": "medium",
+      "reasoning": "MOA+9 is fälliger Betrag (due amount): elements[0][0]='9', elements[0][1]=amount. Parses the numeric value and checks >= 0.",
+      "description_hash": "036deaed",
+      "is_external": false
+    },
+    "13": {
+      "confidence": "medium",
+      "reasoning": "Whether a prepaid amount (vorausbezahlter Betrag) is present is billing business context that cannot be derived solely from the EDIFACT segments in the message.",
+      "description_hash": "2e30256c",
+      "is_external": true
+    },
+    "53": {
+      "confidence": "high",
+      "reasoning": "IMD++Z45 means elements[0] is empty, elements[1][0] is the type code Z45. has_qualifier checks elements[1][0]=='Z45'.",
+      "description_hash": "f91215c4",
+      "is_external": false
+    },
+    "8": {
+      "confidence": "high",
+      "reasoning": "Zeitabhängige Preise (time-dependent prices) is a product tariff configuration property. While DTM segments may accompany pricing groups, their mere presence does not unambiguously signal time-dependent pricing as opposed to other temporal qualifiers. This is a billing/contract context property that must be supplied externally.",
+      "description_hash": "fd4eefb1",
+      "is_external": true
+    },
+    "45": {
+      "confidence": "medium",
+      "reasoning": "\"Nur MP-ID aus Sparte Strom\" means only market-participant IDs that belong to the electricity sector are allowed. Determining which IDs are registered for Sparte Strom requires an external code list or market master data lookup and cannot be inferred from the EDIFACT message content.",
+      "description_hash": "f3221dba",
+      "is_external": true
+    },
+    "513": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing the calculation (MOA+25 * PCD+3). Always returns True.",
+      "description_hash": "4c166d4b",
+      "is_external": false
+    },
+    "80": {
+      "confidence": "medium",
+      "reasoning": "'GEI+Z01' refers to elements[1][0]==\"Z01\" (the specification code, not the fixed qualifier at elements[0]). Absence check.",
+      "description_hash": "7f9db965",
+      "is_external": false
+    },
+    "41": {
+      "confidence": "high",
+      "reasoning": "IMD++SOR means elements[0] is empty (Beschreibungsformat) and elements[1][0]=\"SOR\" (DE7081 in C272 Produkt/Leistung). Iterate all IMD segments and check element[1][0].",
+      "description_hash": "4ef0033a",
+      "is_external": false
+    },
+    "77": {
+      "confidence": "medium",
+      "reasoning": "SG26 DTM+156 means elements[0][0]==\"156\". Value at elements[0][1] in 303 format. Compare <= \"202401010000\" (Jan 1 2024 00:00). Medium confidence due to timezone nuance.",
+      "description_hash": "b3c72a0f",
+      "is_external": false
+    },
+    "912": {
+      "confidence": "high",
+      "reasoning": "Max 6 decimal places format check. In INVOIC, energy quantities (QTY) commonly require up to 6 decimal places for precise kWh/MWh values. Uses validate_max_decimal_places helper directly.",
+      "description_hash": "8464aa40",
+      "is_external": false
+    },
+    "85": {
+      "confidence": "medium",
+      "reasoning": "DE6411 is the measurement unit code, appearing in QTY segments as C186 composite: elements[0][0]=DE6063 (qualifier), elements[0][1]=DE6060 (quantity), elements[0][2]=DE6411 (unit code). 'DAY' is the unit code for daily quantities. Medium confidence as the specific segment context ('in diesem Segment') may require group scoping.",
+      "description_hash": "7c165171",
+      "is_external": false
+    },
+    "514": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about the document number of the Lieferschein-MSCONS. Always returns True.",
+      "description_hash": "7dc6dddf",
+      "is_external": false
+    },
+    "31": {
+      "confidence": "high",
+      "reasoning": "Whether the NAD+MR party holds the MGV (Messstellenbetreiber Grundversorgung) role cannot be determined from the EDIFACT message alone — requires a market participant role registry lookup.",
+      "description_hash": "c1dfbcb6",
+      "is_external": true
+    },
+    "84": {
+      "confidence": "high",
+      "reasoning": "ALC+C+:Z02/Z03/Z04 means elements[0][0]==\"C\" (DE5463 qualifier) and elements[1][1] (DE5189 code) in [Z02, Z03, Z04]. Group-scoped to SG39. any_group_has_qualified_value filters by qualifier 'C' at element 0 and checks element 1 component 1.",
+      "description_hash": "20fe51ca",
+      "is_external": false
+    },
+    "78": {
+      "confidence": "medium",
+      "reasoning": "GEI schema shows elements[0] qualifier is always Z01, while the specification code is at elements[1][0] (DE7365) with codes Z01-Z06 +3 more. 'GEI+Z08' in AHB shorthand refers to elements[1][0]==\"Z08\". Absence check returns True when not found.",
+      "description_hash": "6e4f9538",
+      "is_external": false
+    },
+    "4": {
+      "confidence": "medium",
+      "reasoning": "\"Wenn Steuerschuldnerschaft des Leistungsempfängers vorliegt\" is the reverse charge mechanism. In UN/EDIFACT INVOIC, TAX category code \"AE\" (VAT Reverse Charge) signals this. The TAX segment composite C241 component 3 holds the tax category code. Medium confidence because element indices are derived from standard UN/EDIFACT TAX structure without a specific MIG segment structure reference to confirm the exact index for this INVOIC variant.",
+      "description_hash": "7206c88b",
+      "is_external": false
+    },
+    "48": {
+      "confidence": "high",
+      "reasoning": "IMD++Z44 means elements[1][0]=\"Z44\" (DE7081 in C272 Produkt/Leistung). Iterate all IMD segments and check element[1][0].",
+      "description_hash": "85caeb66",
+      "is_external": false
+    },
+    "65": {
+      "confidence": "medium",
+      "reasoning": "SG26 DTM+155 (Positionsbezogener Abrechnungszeitraum Beginn) >= 2024-01-01 0:00. Same pattern as condition 59 but with threshold '20240101'.",
+      "description_hash": "cca1d5c7",
+      "is_external": false
+    },
+    "28": {
+      "confidence": "medium",
+      "reasoning": "'Wenn Zuschlag anfällt' (if a surcharge applies) is a business-context determination that cannot be derived from EDIFACT segment content alone. It depends on contract terms or tariff configuration held outside the message.",
+      "description_hash": "3d3f61ca",
+      "is_external": true
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "NAD+MR segment: qualifier at elements[0][0]='MR', DE3207 (Ländername) at elements[8][0]. Check if value differs from 'DE'.",
+      "description_hash": "26bf9dc7",
+      "is_external": false
+    },
+    "507": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation indicating this field contains the document number of the SSQNOT. Always applies unconditionally.",
+      "description_hash": "07e90ff2",
+      "is_external": false
+    },
+    "491": {
+      "confidence": "high",
+      "reasoning": "Checks if the CCYYMMDD part of the DTM value falls within German winter time (MEZ, UTC+1) per Tabelle Kapitel 3.6. The is_mez_utc() helper implements exactly this — complement of MESZ period.",
+      "description_hash": "305e3493",
+      "is_external": false
+    },
+    "937": {
+      "confidence": "high",
+      "reasoning": "Format: keine Nachkommastelle means no decimal places allowed (max 0). Applied to QTY value element (elements[0][1]) following standard INVOIC QTY format validation pattern.",
+      "description_hash": "e3f49bb8",
+      "is_external": false
+    },
+    "961": {
+      "confidence": "high",
+      "reasoning": "SR-ID (SteuerbareRessource-ID) uses the same 11-digit Luhn check digit format as Marktlokations-ID. LOC+Z19 is the qualifier for SteuerbareRessource.",
+      "description_hash": "99d3e1d7",
+      "is_external": false
+    },
+    "81": {
+      "confidence": "medium",
+      "reasoning": "Same pattern as condition 78. 'GEI+Z04' refers to elements[1][0]==\"Z04\".",
+      "description_hash": "7dfe11c1",
+      "is_external": false
+    },
+    "86": {
+      "confidence": "medium",
+      "reasoning": "DE6411 is the unit of measure code in QTY segments at elements[0][2] (C186 component 2). 'In diesem Segment' means within the current QTY context. Check message-wide for QTY with MON or ANN unit code.",
+      "description_hash": "d3909c03",
+      "is_external": false
+    },
+    "66": {
+      "confidence": "high",
+      "reasoning": "IMD++KON means elements[1][0]=='KON'. has_qualifier checks this directly.",
+      "description_hash": "283866f7",
+      "is_external": false
+    },
+    "523": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing the usage of the Steuerbare Ressource ID. Always returns True.",
+      "description_hash": "9dd0a791",
+      "is_external": false
+    },
+    "72": {
+      "confidence": "medium",
+      "reasoning": "Whether the MP-ID in NAD+MR has the market role LF (Lieferant) cannot be determined from the EDIFACT message alone — it requires a business registry lookup. The NAD+MR segment only provides the party identifier, not the assigned market role.",
+      "description_hash": "feeed1a1",
+      "is_external": true
+    },
+    "76": {
+      "confidence": "medium",
+      "reasoning": "Whether the MP-ID in NAD+MR has the market role NB (Netzbetreiber) cannot be determined from the EDIFACT message alone — it requires a business registry lookup. The NAD+MR segment only provides the party identifier, not the assigned market role.",
+      "description_hash": "12bec70f",
+      "is_external": true
+    },
+    "17": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier existence check: DTM segment with elements[0][0] == 'Z11' (Beginn Bilanzierung).",
+      "description_hash": "5ad7b867",
+      "is_external": false
+    },
+    "908": {
+      "confidence": "medium",
+      "reasoning": "Format condition requiring value in range 1..n (strictly positive). Applied to QTY quantity values in INVOIC (DE6060 at elements[0][1]). Medium confidence — the exact segment context depends on the full AHB table row.",
+      "description_hash": "f0e2a917",
+      "is_external": false
+    },
+    "2": {
+      "confidence": "high",
+      "reasoning": "Whether a line item represents a device lease (Nutzungsüberlassung/Pacht) is a product/contract classification that cannot be reliably determined from EDIFACT segment structure alone — it depends on business context or product configuration external to the message.",
+      "description_hash": "3718fe38",
+      "is_external": true
+    },
+    "34": {
+      "confidence": "medium",
+      "reasoning": "\"Wenn in Ursprungsrechnung vorhanden\" means the condition is met when the corresponding value was present in the referenced original invoice. That original document is not available inside the current EDIFACT message, so this is an external business-context check.",
+      "description_hash": "98f5aae7",
+      "is_external": true
+    },
+    "57": {
+      "confidence": "medium",
+      "reasoning": "DTM+156 (Abrechnungszeitraum Ende) <= 2023-01-01 0:00. Compares first 8 chars of date value against '20230101'. Returns True when the end date is on or before Jan 1 2023.",
+      "description_hash": "ed531486",
+      "is_external": false
+    },
+    "519": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational note stating cancelled advance invoices must not be listed — always applies unconditionally",
+      "description_hash": "7f163649",
+      "is_external": false
+    },
+    "88": {
+      "confidence": "high",
+      "reasoning": "DTM+155 is Abrechnungszeitraum Beginn. Per segment structure, elements[0][0]=qualifier, elements[0][1]=date value. Compare first 8 chars of the date value (CCYYMMDD) against 20260101.",
+      "description_hash": "ff135781",
+      "is_external": false
+    },
+    "24": {
+      "confidence": "low",
+      "reasoning": "Requires German business calendar (Werktage) calculation: the target value must be >= 10 working days after DTM+137. Working day counting requires knowledge of public holidays (which vary by German federal state) and is not determinable from EDIFACT message content alone. Marking as external.",
+      "description_hash": "9d49bcae",
+      "is_external": true
+    },
+    "40": {
+      "confidence": "medium",
+      "reasoning": "Condition requires validating that the article number/ID appears in the external \"Codeliste der Artikelnummern und Artikel-ID\" for the given Prüfidentifikator. Code-list membership cannot be verified from the EDIFACT message structure alone; it is an external reference-data check.",
+      "description_hash": "861c8cfb",
+      "is_external": true
+    },
+    "509": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation indicating this field contains the Marktlokation ID. Always applies unconditionally.",
+      "description_hash": "9727b89c",
+      "is_external": false
+    },
+    "9": {
+      "confidence": "medium",
+      "reasoning": "Checks whether any SG26 instance lacks DTM+203 (Ausführungsdatum). Uses group navigator when available, falling back to message-wide absence check. DTM qualifier at elements[0][0].",
+      "description_hash": "36e10c6e",
+      "is_external": false
+    },
+    "914": {
+      "confidence": "high",
+      "reasoning": "Value must be strictly greater than 0. Straightforward numeric range check using validate_numeric helper. Applies to QTY quantities in INVOIC which must be positive values.",
+      "description_hash": "533e37f6",
+      "is_external": false
+    },
+    "493": {
+      "confidence": "medium",
+      "reasoning": "Checks whether the NAD+MR (message recipient) MP-ID belongs to the gas (Gas) sector. Same reasoning as 492 — sector membership cannot be determined from the EDIFACT message alone; requires external market participant registry. Delegated to external provider.",
+      "description_hash": "4e00d72d",
+      "is_external": true
+    },
+    "19": {
+      "confidence": "high",
+      "reasoning": "IMD++WIM notation means elements[0] is empty, elements[1][0]='WIM'. has_qualifier checks presence.",
+      "description_hash": "614348d3",
+      "is_external": false
+    },
+    "504": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing that a positive amount is a claim of the invoice recipient. Always applies unconditionally.",
+      "description_hash": "c7cceae1",
+      "is_external": false
+    },
+    "515": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about the BGM document number from the INVOIC message being cancelled. Always returns True.",
+      "description_hash": "338fc6af",
+      "is_external": false
+    },
+    "44": {
+      "confidence": "high",
+      "reasoning": "Negation of IMD++ABS: True when no IMD segment has elements[1][0]=\"ABS\" (DE7081 in C272).",
+      "description_hash": "9a22eb87",
+      "is_external": false
+    },
+    "54": {
+      "confidence": "high",
+      "reasoning": "IMD++ABR/JVR/ZVR means elements[1][0] is one of the three codes. Iterates all IMD segments and checks element 1 component 0.",
+      "description_hash": "8c9d8169",
+      "is_external": false
+    },
+    "82": {
+      "confidence": "medium",
+      "reasoning": "Same pattern as condition 78. 'GEI+Z05' refers to elements[1][0]==\"Z05\".",
+      "description_hash": "c69a0d8b",
+      "is_external": false
+    },
+    "22": {
+      "confidence": "high",
+      "reasoning": "'Wenn vorhanden' is a self-referential AHB condition meaning the rule applies whenever the annotated element is present. As an evaluator it is always True — the calling validator determines whether the element itself is present.",
+      "description_hash": "fae4710e",
+      "is_external": false
+    },
+    "87": {
+      "confidence": "high",
+      "reasoning": "IMD++TEC notation: elements[0] is empty (first +), elements[1][0]==\"TEC\" (second +). The notation resolved in the prompt confirms elements[1]=TEC. Use has_qualifier targeting element index 1.",
+      "description_hash": "3abfd416",
+      "is_external": false
+    },
+    "950": {
+      "confidence": "high",
+      "reasoning": "Format: Marktlokations-ID — 11-digit ID with Luhn check digit. Applied to LOC+Z16 segment elements[1][0] which holds the location ID, matching the canonical example implementation.",
+      "description_hash": "a9ddfaec",
+      "is_external": false
+    },
+    "69": {
+      "confidence": "high",
+      "reasoning": "References an external code list (Kapitel 3 'Codeliste der Gruppenartikel-ID und Artikel-ID') to check whether the Artikel-ID has 'SOR' in the 'INVOIC Codeverwendung' column. External code list membership check — distinct from condition 68 which checks for 'X'.",
+      "description_hash": "7e037aad",
+      "is_external": true
+    },
+    "16": {
+      "confidence": "medium",
+      "reasoning": "Whether network usage (Netznutzung) has occurred is business context that cannot be determined solely from the EDIFACT message content.",
+      "description_hash": "e13e2088",
+      "is_external": true
+    },
+    "510": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about using the Messlokation ID. Always returns True.",
+      "description_hash": "d7954b75",
+      "is_external": false
+    },
+    "960": {
+      "confidence": "high",
+      "reasoning": "Netzlokations-ID uses the same 11-digit Luhn check digit format as Marktlokations-ID. LOC+Z18 is the qualifier for Netzlokation.",
+      "description_hash": "0ce0bd80",
+      "is_external": false
+    },
+    "67": {
+      "confidence": "high",
+      "reasoning": "References an external code list (Kapitel 2 'Codeliste der Artikelnummer') to check whether the Artikelnummer has an 'X' for the current PID. This is an external code list membership check — cannot be determined from the EDIFACT message content alone.",
+      "description_hash": "3d841aee",
+      "is_external": true
+    },
+    "902": {
+      "confidence": "medium",
+      "reasoning": "Format condition requiring value >= 0, applied to MOA amount (DE5004 at elements[0][1]). Medium confidence because exact segment/group context is inferred from INVOIC structure — the full AHB table row would clarify which specific MOA qualifier this applies to.",
+      "description_hash": "08daa39a",
+      "is_external": false
+    },
+    "27": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier check: ALC segment with elements[0][0] == 'C' (Zuschlag). The ALC reference confirms DE5463 qualifier 'C' for Zuschlag.",
+      "description_hash": "831db0d5",
+      "is_external": false
+    },
+    "71": {
+      "confidence": "medium",
+      "reasoning": "DTM+155 means elements[0][0]==\"155\". Value is at elements[0][1] in 303 format (YYYYMMDDhhmm). String comparison works for chronological ordering. Timezone nuance (German legal time) ignored — medium confidence.",
+      "description_hash": "5f8d5d31",
+      "is_external": false
+    },
+    "522": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing the usage of the Netzlokation ID. Always returns True.",
+      "description_hash": "9592f83e",
+      "is_external": false
+    },
+    "525": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing the usage context for reduced network fees. Always returns True.",
+      "description_hash": "070cf83b",
+      "is_external": false
+    },
+    "55": {
+      "confidence": "high",
+      "reasoning": "IMD++ABS means elements[1][0]=='ABS'. has_qualifier checks this directly.",
+      "description_hash": "b924e5b1",
+      "is_external": false
+    },
+    "7": {
+      "confidence": "high",
+      "reasoning": "Großkundenpostleitzahlen (large customer postal codes) in Germany are 5-digit PLZs assigned by Deutsche Post to specific large organisations. They are indistinguishable from geographic PLZs by digit pattern alone — a lookup against Deutsche Post's Großkunden registry is required. This cannot be determined from the EDIFACT message content alone.",
+      "description_hash": "6cb26f7a",
+      "is_external": true
+    },
+    "61": {
+      "confidence": "high",
+      "reasoning": "DTM+203 where DE2379 (elements[0][2]) == '102'. has_qualified_value finds DTM with elements[0][0]=='203' then checks elements[0][2] for '102'.",
+      "description_hash": "c4ad47e4",
+      "is_external": false
+    },
+    "21": {
+      "confidence": "medium",
+      "reasoning": "MOA+9 is fälliger Betrag. Parses numeric value and checks < 0. Inverse of condition 20.",
+      "description_hash": "cd7aea7b",
+      "is_external": false
+    },
+    "64": {
+      "confidence": "medium",
+      "reasoning": "DTM+156 (Abrechnungszeitraum Ende) <= 2024-01-01 0:00. Same pattern as condition 57 but with threshold '20240101'.",
+      "description_hash": "c6f280a4",
+      "is_external": false
+    },
+    "517": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational note describing the document number field — always applies unconditionally",
+      "description_hash": "d719ba07",
+      "is_external": false
+    },
+    "59": {
+      "confidence": "medium",
+      "reasoning": "SG26 DTM+155 (Positionsbezogener Abrechnungszeitraum Beginn) >= 2023-01-01 0:00. Finds DTM with qualifier 155 and compares first 8 chars of the date value against '20230101'.",
+      "description_hash": "8317e398",
+      "is_external": false
+    },
+    "526": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition documenting cross-reference requirement between MOA+113 (Vorausbezahlter Betrag) and the corresponding MOA+77 in the predecessor invoice referenced via SG51 RFF+AFL. Purely informational, no boolean predicate.",
+      "description_hash": "79209a27",
+      "is_external": false
+    },
+    "910": {
+      "confidence": "medium",
+      "reasoning": "Format condition accepting any numeric value (< 0 OR >= 0 is universally true). This documents that the field accepts negative values (unlike condition 902 which restricts to >= 0). Validates the value is a parseable number. Medium confidence on the exact segment — likely a MOA that can be a credit/deduction amount.",
+      "description_hash": "063d57bb",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "high",
+      "reasoning": "Format condition: ZZZ = +00 means the timezone suffix of a DTM value must be UTC (+00). Uses validate_timezone_utc helper.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "516": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational note about delivery notes for invoices — always applies unconditionally",
+      "description_hash": "d85586dc",
+      "is_external": false
+    },
+    "906": {
+      "confidence": "medium",
+      "reasoning": "Format condition requiring at most 3 decimal places. Most likely applies to MOA DE5004 (Geldbetrag) in INVOIC. Medium confidence — the exact MOA qualifier or group (SG27/SG42/SG50/SG52) depends on the AHB table row context not included in the condition description alone.",
+      "description_hash": "97bdb0c7",
+      "is_external": false
+    },
+    "32": {
+      "confidence": "high",
+      "reasoning": "ALC+A+:Z01 maps to elements[0]=\"A\" (DE5463 Qualifier) and elements[1][1]=\"Z01\" (DE5189 in C552 Zu-/Abschlagsinformation). has_qualified_value filters ALC segments by qualifier A then checks the DE5189 component.",
+      "description_hash": "a673e93a",
+      "is_external": false
+    },
+    "36": {
+      "confidence": "medium",
+      "reasoning": "DTM+156 (Abrechnungszeitraum Ende) uses format 303 (CCYYMMDDHHMM), so lexicographic string comparison is correct. German date 01.12.2019 = December 1, 2019 = \"201912010000\".",
+      "description_hash": "9c0662b6",
+      "is_external": false
+    },
+    "934": {
+      "confidence": "high",
+      "reasoning": "Format condition: HHMM = 0400 checks that the time portion of a DTM value equals 0400. Uses validate_hhmm_equals helper.",
+      "description_hash": "d06a46c8",
+      "is_external": false
+    },
+    "6": {
+      "confidence": "high",
+      "reasoning": "NAD+MR segment: qualifier at elements[0][0]='MR', DE3207 (Ländername) at elements[8][0]. Check if value equals 'DE'.",
+      "description_hash": "fdaa8c18",
+      "is_external": false
+    },
+    "30": {
+      "confidence": "medium",
+      "reasoning": "'Wenn MP-ID in NAD+MR nicht in der Rolle MGV oder KN' requires knowledge of which market-participant IDs correspond to the MGV (Messstellenbetreiber Gasvertrieb) or KN (Kunde/Netz) roles. Role assignment is maintained in an external registry and cannot be determined from the NAD segment alone.",
+      "description_hash": "4d0e0eaf",
+      "is_external": true
+    },
+    "49": {
+      "confidence": "high",
+      "reasoning": "True when neither IMD++Z43 nor IMD++Z44 are present anywhere in the message. Both absence checks applied with logical AND.",
+      "description_hash": "75f9e09a",
+      "is_external": false
+    },
+    "56": {
+      "confidence": "medium",
+      "reasoning": "DTM+137 Nachrichtendatum >= 2023-01-01. Parses the date value (format 303 = YYYYMMDDHHmm) and compares the first 8 characters against '20230101'. String comparison is valid for ISO date format.",
+      "description_hash": "ac67fd9d",
+      "is_external": false
+    },
+    "933": {
+      "confidence": "high",
+      "reasoning": "Format condition: HHMM = 2300 checks that the time portion of a DTM value equals 2300. Uses validate_hhmm_equals helper.",
+      "description_hash": "b5e9c81e",
+      "is_external": false
+    },
+    "26": {
+      "confidence": "high",
+      "reasoning": "ALC+A+:Z04: elements[0][0]='A' (Abschlag qualifier), elements[1][1]='Z04' (C552 DE5189 code). Finds ALC segments with qualifier 'A' and checks C552 component index 1 for 'Z04'.",
+      "description_hash": "955e44b2",
+      "is_external": false
+    },
+    "502": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing that this field contains the document number of the Bilanzierungs-MSCONS message. Not a boolean predicate; always applies unconditionally.",
+      "description_hash": "c453e9ea",
+      "is_external": false
+    },
+    "42": {
+      "confidence": "medium",
+      "reasoning": "DTM+155 (Abrechnungszeitraum Beginn) uses format 303 (CCYYMMDDHHMM). January 1, 2023 at 00:00 = \"202301010000\". Lexicographic comparison is correct for zero-padded CCYYMMDDHHMM.",
+      "description_hash": "92fa452f",
+      "is_external": false
+    },
+    "524": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about cardinality constraint on DE3148. Always returns True.",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "79": {
+      "confidence": "medium",
+      "reasoning": "Same pattern as condition 78. 'GEI+Z09' in AHB shorthand refers to elements[1][0]==\"Z09\".",
+      "description_hash": "d782362b",
+      "is_external": false
+    },
+    "503": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing that a positive amount is a claim of the invoice issuer. Always applies unconditionally.",
+      "description_hash": "bf3645c9",
+      "is_external": false
+    },
+    "508": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation indicating this field contains the document number of the QUOTES. Always applies unconditionally.",
+      "description_hash": "32ca2458",
+      "is_external": false
+    },
+    "935": {
+      "confidence": "high",
+      "reasoning": "Format condition: HHMM = 0500 checks that the time portion of a DTM value equals 0500. Uses validate_hhmm_equals helper.",
+      "description_hash": "192bd97e",
+      "is_external": false
+    },
+    "70": {
+      "confidence": "high",
+      "reasoning": "IMD++Z45 means elements[0] is empty and elements[1][0]==\"Z45\". Absence check: return True when no such IMD exists.",
+      "description_hash": "52af55d5",
+      "is_external": false
+    },
+    "951": {
+      "confidence": "high",
+      "reasoning": "Zählpunktbezeichnung (meter point ID) is a 33-character alphanumeric identifier. validate_zahlpunkt checks exactly this format.",
+      "description_hash": "f35fc481",
+      "is_external": false
+    },
+    "911": {
+      "confidence": "medium",
+      "reasoning": "Sequential numbering validation (1 to n, ascending) — only the >= 1 integer constraint can be checked on a single value. Full sequential ordering cannot be verified without stateful iteration across all instances. Applies to LIN line item numbers in INVOIC SG26. Medium confidence due to segment assumption and inability to verify sequential ordering in isolation.",
+      "description_hash": "d1f33af5",
+      "is_external": false
+    },
+    "940": {
+      "confidence": "high",
+      "reasoning": "Format: string must start with + followed only by digits — standard phone number validation. Applied to COM segment elements[0][0] which holds the communication value.",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "68": {
+      "confidence": "high",
+      "reasoning": "References an external code list (Kapitel 3 'Codeliste der Gruppenartikel-ID und Artikel-ID') to check whether the Artikel-ID has an 'X' in the 'INVOIC Codeverwendung' column. External code list membership check.",
+      "description_hash": "96d7b692",
+      "is_external": true
+    },
+    "492": {
+      "confidence": "medium",
+      "reasoning": "Checks whether the NAD+MR (message recipient) MP-ID belongs to the electricity (Strom) sector. The NAD+MR element structure is known (elements[0]=MR, elements[1][0]=MP-ID), but sector membership cannot be determined from the EDIFACT message content alone — it requires an external market participant registry. Delegated to external provider.",
+      "description_hash": "7ef55690",
+      "is_external": true
+    },
+    "10": {
+      "confidence": "medium",
+      "reasoning": "Both DTM+155 (Abrechnungszeitraum Beginn) and DTM+156 (Ende) must be absent in the SG26. Uses group navigator; both must be absent simultaneously for the condition to be True.",
+      "description_hash": "4c40aa9d",
+      "is_external": false
+    },
+    "927": {
+      "confidence": "medium",
+      "reasoning": "Value must be exactly -1. Used for special indicator values (e.g., a reversal or placeholder quantity). validate_numeric with == operator handles exact match. Medium confidence due to segment assumption — the -1 constraint is unusual and the exact segment context (QTY vs MOA) depends on which AHB data element references this condition.",
+      "description_hash": "43d19cf7",
+      "is_external": false
+    },
+    "939": {
+      "confidence": "high",
+      "reasoning": "Format: string must contain @ and . characters — standard email validation. Applied to COM segment elements[0][0] which holds the communication value.",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "501": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing that this field contains the document number of the ORDERS message. Not a boolean predicate; always applies unconditionally.",
+      "description_hash": "9c74b61f",
+      "is_external": false
+    }
+  }
+}

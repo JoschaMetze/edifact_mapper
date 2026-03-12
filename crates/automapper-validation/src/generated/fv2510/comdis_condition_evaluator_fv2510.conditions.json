@@ -1,0 +1,253 @@
+{
+  "generated_at": "2026-03-12T10:36:14Z",
+  "ahb_file": "COMDIS_AHB_1_0g__20250401.xml",
+  "format_version": "FV2510",
+  "conditions": {
+    "20": {
+      "confidence": "high",
+      "reasoning": "AJT elements[0] in {A01,A02,A03,A04,A06,A07,A09,A15} AND elements[1]=E_1008. Low-level iteration needed for multi-qualifier OR on the same element.",
+      "description_hash": "f0287647",
+      "is_external": false
+    },
+    "506": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation documenting that BGM DE1004 contains the document number from the previously rejected MSCONS message (via IFTSTA). Always applies unconditionally.",
+      "description_hash": "c8023f8b",
+      "is_external": false
+    },
+    "508": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about DE3148 cardinality constraint. Always returns True.",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "510": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational note describing a temporal context for message confirmation after a date. Always returns True.",
+      "description_hash": "b95db357",
+      "is_external": false
+    },
+    "509": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational note describing a temporal context for message confirmation before a date. Always returns True.",
+      "description_hash": "0abff4b4",
+      "is_external": false
+    },
+    "940": {
+      "confidence": "high",
+      "reasoning": "Format condition: string must start with + followed only by digits — matches validate_phone helper exactly.",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "930": {
+      "confidence": "medium",
+      "reasoning": "Format condition for max 2 decimal places. COMDIS carries monetary amounts (MOA) as the primary numeric value segment. Using MOA elements[0][1] for the amount value.",
+      "description_hash": "30e8c861",
+      "is_external": false
+    },
+    "21": {
+      "confidence": "high",
+      "reasoning": "COM C076 composite: elements[0][0]=communication number, elements[0][1]=DE3155 channel qualifier. Check that elements[0][1]==\"EM\" (email). The condition says 'in derselben COM' meaning the same COM segment instance where EM code is present.",
+      "description_hash": "eaf06e02",
+      "is_external": false
+    },
+    "28": {
+      "confidence": "medium",
+      "reasoning": "Condition states the field contains the data exchange reference from a prior CONTRL message. Whether the COMDIS is responding to a CONTRL cannot be determined from the EDIFACT message content alone — it depends on external business context about which prior message triggered this dispute.",
+      "description_hash": "921417c4",
+      "is_external": true
+    },
+    "19": {
+      "confidence": "high",
+      "reasoning": "AJT segment: elements[0]=DE4465 (Anpassungsgrund), elements[1]=DE1082 (Positionsnummer). Condition checks AJT where elements[0][0]==\"A99\" AND elements[1][0] is one of the listed Positionsnummer codes. has_qualified_value handles exactly this pattern: find segments matching tag+qualifier, then check value element.",
+      "description_hash": "2c6f32f1",
+      "is_external": false
+    },
+    "13": {
+      "confidence": "high",
+      "reasoning": "E_1008 variant of condition 6 — same segment check: AJT where DE4465 is A07 and DE1082 is E. Both E_0504 and E_1008 resolve to value 'E'.",
+      "description_hash": "7f1ac4ad",
+      "is_external": false
+    },
+    "18": {
+      "confidence": "high",
+      "reasoning": "AJT elements[0] in {A05, A10, A11} AND elements[1]=E_1008. Multiple qualifier alternatives require low-level iteration since has_qualified_value only handles one qualifier at a time.",
+      "description_hash": "ee443d04",
+      "is_external": false
+    },
+    "12": {
+      "confidence": "high",
+      "reasoning": "Check AJT where DE4465 is A99 and DE1082 is S.",
+      "description_hash": "0f6ec09a",
+      "is_external": false
+    },
+    "29": {
+      "confidence": "medium",
+      "reasoning": "Condition states the field contains the data exchange reference from a prior APERAK message. Whether the COMDIS is responding to an APERAK cannot be determined from the EDIFACT message content alone — it depends on external business context about which prior message triggered this dispute.",
+      "description_hash": "feb71a35",
+      "is_external": true
+    },
+    "22": {
+      "confidence": "high",
+      "reasoning": "COM elements[0][1]=DE3155. Check if any COM has channel qualifier TE (telephone), FX (fax), AJ (not standard — likely mobile), or AL (another code). Same COM composite structure as condition 21.",
+      "description_hash": "d9351e4d",
+      "is_external": false
+    },
+    "7": {
+      "confidence": "high",
+      "reasoning": "Check AJT where DE4465 is A02 and DE1082 is E (E_0504 variant).",
+      "description_hash": "3c16906e",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "high",
+      "reasoning": "Format condition validating UTC timezone (ZZZ = +00) on a DTM value. Uses validate_timezone_utc helper on the DTM value component.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "493": {
+      "confidence": "medium",
+      "reasoning": "Whether NAD+MR MP-ID belongs to Sparte Gas cannot be determined from the EDIFACT message content alone — it requires external business context (market participant registry or configuration).",
+      "description_hash": "4e00d72d",
+      "is_external": true
+    },
+    "24": {
+      "confidence": "high",
+      "reasoning": "The role of the MP-ID in NAD+MR cannot be determined from the EDIFACT message alone. The NAD segment only contains the party identifier and code list reference, not the market role (ESA). This requires external business context lookup.",
+      "description_hash": "2e2c7870",
+      "is_external": true
+    },
+    "23": {
+      "confidence": "high",
+      "reasoning": "The role of the MP-ID in NAD+MS cannot be determined from the EDIFACT message alone. The NAD segment only contains the party identifier and code list reference, not the market role (MSB). This requires external business context lookup.",
+      "description_hash": "d0a18224",
+      "is_external": true
+    },
+    "4": {
+      "confidence": "high",
+      "reasoning": "Union of conditions 1 and 2: DE4465 in {Z58..Z62} and DE1082 is S.",
+      "description_hash": "346bdb12",
+      "is_external": false
+    },
+    "9": {
+      "confidence": "high",
+      "reasoning": "Check AJT where DE4465 is one of A05/A10/A11/A14 and DE1082 is E.",
+      "description_hash": "9eab3580",
+      "is_external": false
+    },
+    "492": {
+      "confidence": "medium",
+      "reasoning": "Whether NAD+MR MP-ID belongs to Sparte Strom cannot be determined from the EDIFACT message content alone — it requires external business context (market participant registry or configuration).",
+      "description_hash": "7ef55690",
+      "is_external": true
+    },
+    "17": {
+      "confidence": "high",
+      "reasoning": "AJT elements[0]=A15, elements[1]=E_1008. Same pattern as condition 16 with A15 qualifier.",
+      "description_hash": "ee139b39",
+      "is_external": false
+    },
+    "30": {
+      "confidence": "medium",
+      "reasoning": "Condition states the field contains the message number from a prior APERAK. Like condition 29, whether the COMDIS is responding to an APERAK is external business context, not determinable from message content. Shares the same external predicate as condition 29.",
+      "description_hash": "d139a7a8",
+      "is_external": true
+    },
+    "8": {
+      "confidence": "high",
+      "reasoning": "Check AJT where DE4465 is one of A01/A04/A06/A09/A12 and DE1082 is E (E_0504 variant, includes A12).",
+      "description_hash": "22191b57",
+      "is_external": false
+    },
+    "1": {
+      "confidence": "high",
+      "reasoning": "Check AJT where DE4465 is Z61 or Z62 and DE1082 first component is S (S_0109 notation maps to value 'S').",
+      "description_hash": "4207079d",
+      "is_external": false
+    },
+    "11": {
+      "confidence": "high",
+      "reasoning": "Check AJT where DE4465 is A15 and DE1082 is E.",
+      "description_hash": "98d954a8",
+      "is_external": false
+    },
+    "25": {
+      "confidence": "high",
+      "reasoning": "The role of the MP-ID in NAD+MR cannot be determined from the EDIFACT message alone. The NAD segment only contains the party identifier and code list reference, not the market role (LF). This requires external business context lookup.",
+      "description_hash": "52764d6e",
+      "is_external": true
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "Check AJT where DE4465 is one of A01/A02/A03/A04/A06/A07/A09/A12/A15 and DE1082 is E.",
+      "description_hash": "45c4352c",
+      "is_external": false
+    },
+    "26": {
+      "confidence": "high",
+      "reasoning": "The role of the MP-ID in NAD+MR cannot be determined from the EDIFACT message alone. The NAD segment only contains the party identifier and code list reference, not the market role (NB). This requires external business context lookup.",
+      "description_hash": "ee194193",
+      "is_external": true
+    },
+    "14": {
+      "confidence": "high",
+      "reasoning": "E_1008 variant of condition 7 — same segment check: AJT where DE4465 is A02 and DE1082 is E.",
+      "description_hash": "ef6b9d3c",
+      "is_external": false
+    },
+    "6": {
+      "confidence": "high",
+      "reasoning": "Check AJT where DE4465 is A07 and DE1082 is E (E_0504 variant).",
+      "description_hash": "7c4029fd",
+      "is_external": false
+    },
+    "939": {
+      "confidence": "high",
+      "reasoning": "Format condition: string must contain @ and . characters — matches validate_email helper exactly.",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "27": {
+      "confidence": "high",
+      "reasoning": "The role of the MP-ID in NAD+MS cannot be determined from the EDIFACT message alone. The NAD segment only contains the party identifier and code list reference, not the market role (NB). This requires external business context lookup.",
+      "description_hash": "2c691b13",
+      "is_external": true
+    },
+    "10": {
+      "confidence": "high",
+      "reasoning": "Check AJT where DE4465 is A03 and DE1082 is E.",
+      "description_hash": "253a2035",
+      "is_external": false
+    },
+    "16": {
+      "confidence": "high",
+      "reasoning": "AJT elements[0]=A03 (Anpassungsgrund) and elements[1]=E_1008 (Positionsnummer). has_qualified_value finds AJT segments with qualifier A03 at elem 0, then checks elem[1][0] for E_1008.",
+      "description_hash": "4726283e",
+      "is_external": false
+    },
+    "2": {
+      "confidence": "high",
+      "reasoning": "Check AJT where DE4465 is Z58, Z59 or Z60 and DE1082 first component is S.",
+      "description_hash": "d4816830",
+      "is_external": false
+    },
+    "3": {
+      "confidence": "high",
+      "reasoning": "Market participant sector membership cannot be determined from the EDIFACT message; requires external registry lookup.",
+      "description_hash": "f3221dba",
+      "is_external": true
+    },
+    "15": {
+      "confidence": "high",
+      "reasoning": "E_1008 variant: DE4465 in {A01, A04, A06, A09} — A12 excluded vs condition 8 — and DE1082 is E.",
+      "description_hash": "c7161030",
+      "is_external": false
+    },
+    "505": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation documenting that BGM DE1004 contains the document number from the previously rejected INVOIC message (via REMADV). Always applies unconditionally.",
+      "description_hash": "4a104319",
+      "is_external": false
+    }
+  }
+}

@@ -1,18 +1,60 @@
 {
-  "generated_at": "2026-03-11T13:09:48Z",
+  "generated_at": "2026-03-12T10:19:40Z",
   "ahb_file": "APERAK_AHB_2_4a_Fehlerkorrektur_20250331.xml",
   "format_version": "FV2504",
   "conditions": {
-    "7": {
-      "confidence": "high",
-      "reasoning": "Simple qualifier existence check: ERC segment with elements[0][0]==\"Z21\" (Anwendungsfehler code Z21).",
-      "description_hash": "b7da6c70",
+    "2": {
+      "confidence": "medium",
+      "reasoning": "In APERAK messages, the ERC (Error Reason Code) segment is present when erroneous content is being reported. Checking for ERC existence is the best proxy for 'fehlerhafter Inhalt vorhanden'. An APERAK with no ERC segments is a pure positive acknowledgment with no errors.",
+      "description_hash": "568dc75c",
       "is_external": false
     },
-    "502": {
-      "confidence": "low",
-      "reasoning": "This is a cardinality constraint note (only one value may be transmitted in DE3148), not an evaluatable boolean condition from message content. Schema validation rather than condition evaluation applies.",
-      "description_hash": "b7cc061b",
+    "1": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier existence check: CTA segment with elements[0][0]==\"IC\" (Ansprechpartner function code) in SG3.",
+      "description_hash": "9b883b03",
+      "is_external": false
+    },
+    "500": {
+      "confidence": "high",
+      "reasoning": "'Hinweis: Für Folgeprozesse' is a Hinweis (informational annotation) indicating the field is used for downstream/follow-up processes. Hinweis conditions are always True.",
+      "description_hash": "9de584c2",
+      "is_external": false
+    },
+    "10": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier existence check: ERC segment with elements[0][0]==\"Z38\" (Anwendungsfehler code Z38).",
+      "description_hash": "c134b00e",
+      "is_external": false
+    },
+    "12": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier existence check: ERC segment with elements[0][0]==\"Z41\" (Anwendungsfehler code Z41).",
+      "description_hash": "5bbb7a68",
+      "is_external": false
+    },
+    "501": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about initial processes, always applies unconditionally.",
+      "description_hash": "02fbdb08",
+      "is_external": false
+    },
+    "940": {
+      "confidence": "medium",
+      "reasoning": "Phone number format check: the string must start with '+' followed by only digits. Checking COM element 0 component 0 across all COM segments covers international phone number format validation.",
+      "description_hash": "de8363bc",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "medium",
+      "reasoning": "Timezone format ZZZ = +00 means the datetime value string in DTM element 0 component 1 must end with '+00'. Checking all DTM segments for this suffix covers the format requirement.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "8": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier existence check: ERC segment with elements[0][0]==\"Z16\" (Anwendungsfehler code Z16).",
+      "description_hash": "abcad3bb",
       "is_external": false
     },
     "9": {
@@ -21,10 +63,28 @@
       "description_hash": "3ad86319",
       "is_external": false
     },
-    "4": {
-      "confidence": "medium",
-      "reasoning": "Checks whether RFF+TN is absent within the current SG4 group's child SG5 groups. Uses parent-child navigation: for each SG4 instance, inspects all SG5 children for RFF with qualifier TN. Falls back to message-wide lacks_qualifier when no navigator is available. Medium confidence because the SG4/SG5 nesting in APERAK may differ from other message types.",
-      "description_hash": "26cda793",
+    "7": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier existence check: ERC segment with elements[0][0]==\"Z21\" (Anwendungsfehler code Z21).",
+      "description_hash": "b7da6c70",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier existence check: ERC segment in SG4 with elements[0][0]==\"Z29\" (Anwendungsfehler code). ERC C901 composite element 0 is the error code.",
+      "description_hash": "dd0ebd59",
+      "is_external": false
+    },
+    "14": {
+      "confidence": "high",
+      "reasoning": "COM segment carries communication address and qualifier as a composite: `COM+addr:qualifier` → elements[0][0]=address, elements[0][1]=DE3155 qualifier. Checks if any COM in the same SG3 group has qualifier \"EM\" (electronic mail). Message-wide COM scan is appropriate since COM always appears under SG3 CTA+IC context.",
+      "description_hash": "f7255aef",
+      "is_external": false
+    },
+    "11": {
+      "confidence": "high",
+      "reasoning": "Simple qualifier existence check: ERC segment with elements[0][0]==\"Z39\" (Anwendungsfehler code Z39).",
+      "description_hash": "04aadeae",
       "is_external": false
     },
     "13": {
@@ -39,76 +99,22 @@
       "description_hash": "101d5363",
       "is_external": false
     },
-    "10": {
-      "confidence": "high",
-      "reasoning": "Simple qualifier existence check: ERC segment with elements[0][0]==\"Z38\" (Anwendungsfehler code Z38).",
-      "description_hash": "c134b00e",
-      "is_external": false
-    },
-    "15": {
-      "confidence": "high",
-      "reasoning": "Same COM composite structure as condition 14: elements[0][1] is DE3155 (communication type qualifier). Checks if any COM segment has one of the qualifiers TE (telephone), FX (fax), AJ (Anrufbeantworter/answering machine), or AL (additional line/Sammelrufnummer).",
-      "description_hash": "6aac2a48",
-      "is_external": false
-    },
-    "500": {
-      "confidence": "low",
-      "reasoning": "Whether the process is a follow-up process (Folgeprozess) is external business context that cannot be determined from the EDIFACT message alone.",
-      "description_hash": "9de584c2",
-      "is_external": true
-    },
-    "6": {
-      "confidence": "low",
-      "reasoning": "\"Wenn Fehler innerhalb der Vorgangsebene von IFTSTA, INSRPT, UTILMD oder UTILTS vorhanden\" — determining which message type the referenced error belongs to and whether the error is at transaction level (Vorgangsebene) requires knowledge of the referenced message context, which is external to this APERAK.",
-      "description_hash": "8a160e38",
-      "is_external": true
-    },
-    "931": {
+    "4": {
       "confidence": "medium",
-      "reasoning": "Timezone format ZZZ = +00 means the datetime value string in DTM element 0 component 1 must end with '+00'. Checking all DTM segments for this suffix covers the format requirement.",
-      "description_hash": "825c510c",
+      "reasoning": "Checks whether RFF+TN is absent within the current SG4 group's child SG5 groups. Uses parent-child navigation: for each SG4 instance, inspects all SG5 children for RFF with qualifier TN. Falls back to message-wide lacks_qualifier when no navigator is available. Medium confidence because the SG4/SG5 nesting in APERAK may differ from other message types.",
+      "description_hash": "26cda793",
       "is_external": false
     },
-    "12": {
-      "confidence": "high",
-      "reasoning": "Simple qualifier existence check: ERC segment with elements[0][0]==\"Z41\" (Anwendungsfehler code Z41).",
-      "description_hash": "5bbb7a68",
-      "is_external": false
-    },
-    "940": {
+    "494": {
       "confidence": "medium",
-      "reasoning": "Phone number format check: the string must start with '+' followed by only digits. Checking COM element 0 component 0 across all COM segments covers international phone number format validation.",
-      "description_hash": "de8363bc",
+      "reasoning": "This condition is a declarative constraint: the date in this field must be the document creation time or earlier. It is not a conditional predicate that selects when a field is used, but rather a validation rule that always applies. Without knowing the specific DTM qualifier pair to compare (which field this annotates vs. DTM+137), a full comparison is not implementable. Returning True reflects that the constraint is always in force.",
+      "description_hash": "e0eddcc9",
       "is_external": false
     },
-    "11": {
+    "502": {
       "confidence": "high",
-      "reasoning": "Simple qualifier existence check: ERC segment with elements[0][0]==\"Z39\" (Anwendungsfehler code Z39).",
-      "description_hash": "04aadeae",
-      "is_external": false
-    },
-    "501": {
-      "confidence": "low",
-      "reasoning": "Whether the process is an initial process (Initialprozess) is external business context that cannot be determined from the EDIFACT message alone.",
-      "description_hash": "02fbdb08",
-      "is_external": true
-    },
-    "1": {
-      "confidence": "high",
-      "reasoning": "Simple qualifier existence check: CTA segment with elements[0][0]==\"IC\" (Ansprechpartner function code) in SG3.",
-      "description_hash": "9b883b03",
-      "is_external": false
-    },
-    "2": {
-      "confidence": "low",
-      "reasoning": "\"Wenn fehlerhafter Inhalt vorhanden\" — whether erroneous content is present is a business-context determination that cannot be derived from the EDIFACT message structure alone. An APERAK always signals an error, but whether that error is 'content-level' vs format-level requires external context.",
-      "description_hash": "568dc75c",
-      "is_external": true
-    },
-    "8": {
-      "confidence": "high",
-      "reasoning": "Simple qualifier existence check: ERC segment with elements[0][0]==\"Z16\" (Anwendungsfehler code Z16).",
-      "description_hash": "abcad3bb",
+      "reasoning": "Hinweis condition — informational annotation about DE3148 cardinality constraint, always applies unconditionally.",
+      "description_hash": "b7cc061b",
       "is_external": false
     },
     "939": {
@@ -117,28 +123,22 @@
       "description_hash": "05a09b9a",
       "is_external": false
     },
-    "5": {
-      "confidence": "high",
-      "reasoning": "Simple qualifier existence check: ERC segment in SG4 with elements[0][0]==\"Z29\" (Anwendungsfehler code). ERC C901 composite element 0 is the error code.",
-      "description_hash": "dd0ebd59",
-      "is_external": false
-    },
     "3": {
       "confidence": "low",
-      "reasoning": "\"Wenn für weitere Fehlerangabe benötigt\" — whether an additional error detail is required is a business rule that depends on processing context and cannot be inferred from the raw EDIFACT segments.",
+      "reasoning": "\"Wenn für weitere Fehlerangabe benötigt\" — whether additional error detail is needed is a business/operational decision that cannot be determined from the EDIFACT message content alone. It depends on the error type and downstream processing requirements.",
       "description_hash": "034916f3",
       "is_external": true
     },
-    "14": {
-      "confidence": "high",
-      "reasoning": "COM segment carries communication address and qualifier as a composite: `COM+addr:qualifier` → elements[0][0]=address, elements[0][1]=DE3155 qualifier. Checks if any COM in the same SG3 group has qualifier \"EM\" (electronic mail). Message-wide COM scan is appropriate since COM always appears under SG3 CTA+IC context.",
-      "description_hash": "f7255aef",
-      "is_external": false
-    },
-    "494": {
+    "6": {
       "confidence": "low",
-      "reasoning": "Requires comparing the date in the segment against the document creation timestamp, which is external business context not determinable purely from EDIFACT message content.",
-      "description_hash": "e0eddcc9",
+      "reasoning": "\"Wenn Fehler innerhalb der Vorgangsebene von IFTSTA, INSRPT, UTILMD oder UTILTS vorhanden\" — whether an error exists specifically at the Vorgangsebene (transaction level) of the referenced message requires knowledge of the internal structure of the acknowledged message (IFTSTA/INSRPT/UTILMD/UTILTS), which is not carried within the APERAK message itself. The APERAK ERC segments indicate errors exist, but the level distinction (Vorgangsebene vs. Nachrichtenebene) and the message-type filter are external business context.",
+      "description_hash": "8a160e38",
+      "is_external": true
+    },
+    "15": {
+      "confidence": "high",
+      "reasoning": "Same COM composite structure as condition 14: elements[0][1] is DE3155 (communication type qualifier). Checks if any COM segment has one of the qualifiers TE (telephone), FX (fax), AJ (Anrufbeantworter/answering machine), or AL (additional line/Sammelrufnummer).",
+      "description_hash": "6aac2a48",
       "is_external": false
     }
   }

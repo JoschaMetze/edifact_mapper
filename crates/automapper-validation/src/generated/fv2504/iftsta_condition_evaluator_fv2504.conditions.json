@@ -1,222 +1,12 @@
 {
-  "generated_at": "2026-03-11T11:54:24Z",
+  "generated_at": "2026-03-12T09:53:39Z",
   "ahb_file": "IFTSTA_AHB_2_0g_Fehlerkorrektur_20250225.xml",
   "format_version": "FV2504",
   "conditions": {
-    "115": {
+    "510": {
       "confidence": "high",
-      "reasoning": "Whether the NAD+MS sender is acting in the role of NB (Netzbetreiber) cannot be determined from the EDIFACT message content alone — market participant roles are runtime business context.",
-      "description_hash": "3ec93c12",
-      "is_external": true
-    },
-    "6": {
-      "confidence": "low",
-      "reasoning": "Complex business rule about BIKO (Bilanzkoordinator) possessing a Prüfstatus for a 3-tuple (MaBiS-ZP, Betrachtungszeitraum, Version). Requires knowledge of external state (what BIKO has received/validated) that cannot be derived from EDIFACT message segments alone.",
-      "description_hash": "76154df7",
-      "is_external": true
-    },
-    "10": {
-      "confidence": "low",
-      "reasoning": "Whether the message from BKV/NB/ÜNB arrives after a deadline is a temporal/runtime condition that cannot be determined from EDIFACT message content. The message itself contains no field for 'arrival time vs. deadline' comparison.",
-      "description_hash": "a95c765d",
-      "is_external": true
-    },
-    "47": {
-      "confidence": "high",
-      "reasoning": "Unconditional restriction: only Ablehnung cluster codes are possible at this position. No qualifying condition — always evaluates to True to enforce the code cluster constraint.",
-      "description_hash": "e24adc62",
-      "is_external": false
-    },
-    "58": {
-      "confidence": "low",
-      "reasoning": "Same structural limitation as condition 56 but against STS+Z29 (Gegenvorschlag Ausfallarbeit). Cannot identify 'current SG15' from EvaluationContext.",
-      "description_hash": "80ecd449",
-      "is_external": false
-    },
-    "65": {
-      "confidence": "high",
-      "reasoning": "STS+Z28+Z32 vorhanden: identical to condition 53. The 'only codes from EBD-Cluster Ablehnung' clause is a value-set constraint; the condition checks presence of STS+Z28+Z32.",
-      "description_hash": "9c55b076",
-      "is_external": false
-    },
-    "99": {
-      "confidence": "high",
-      "reasoning": "Same DE1131 check as condition 96 — checks elements[2][1]=E_0487. The 'dann ist nur der Code A01 möglich' clause is a constraint implication, not an additional check; the evaluable predicate is identical to condition 96.",
-      "description_hash": "7e44e87a",
-      "is_external": false
-    },
-    "26": {
-      "confidence": "high",
-      "reasoning": "Whether the MP-ID in SG1 NAD+MR has the market role NB (Netzbetreiber) requires external business context — the NAD segment only carries the party identifier. Role classification is not encoded in the EDIFACT message itself.",
-      "description_hash": "cc9bd757",
-      "is_external": true
-    },
-    "143": {
-      "confidence": "medium",
-      "reasoning": "STS Z41 (Grund der Privilegierung nach EnFG) supports up to 5 C556 groups (elements[2]-[6]). 'mehr als ein Grund' is indicated when elements[3][0] (second C556 DE9013) is non-empty, meaning the first slot alone was insufficient. Medium confidence because the exact threshold depends on which positional slot this condition guards.",
-      "description_hash": "24f61146",
-      "is_external": false
-    },
-    "1": {
-      "confidence": "low",
-      "reasoning": "Whether non-codeable information transmission is needed is a business context decision that cannot be determined from EDIFACT message content alone.",
-      "description_hash": "6e845713",
-      "is_external": true
-    },
-    "490": {
-      "confidence": "low",
-      "reasoning": "Requires evaluating whether the CCYYMMDD date falls within the MESZ/UTC transition window as defined in the AHB document's Table in Chapter 3.5. This table contains specific annual transition dates and UTC offset rules that are not derivable from the EDIFACT message itself. Without access to the referenced table content, cannot implement reliably.",
-      "description_hash": "b21c790d",
-      "is_external": false
-    },
-    "495": {
-      "confidence": "low",
-      "reasoning": "The condition requires comparing 'this DE value' against DTM+137 DE2380 (elements[0][1]). DTM+137 is the document date — elements[0][0]='137', elements[0][1]=datetime value. While DTM+137 is accessible, the 'current field value' being constrained is not available from EvaluationContext. Returns Unknown pending field-level context support.",
-      "description_hash": "15943b5e",
-      "is_external": false
-    },
-    "130": {
-      "confidence": "medium",
-      "reasoning": "Check STS with Statuskategorie Z20, Status Z32, Prüfschritt A99 (elements[2][0]), and DE1131 E_0531 (elements[2][1]). Group-scoped to SG14 but falls back to message-wide search.",
-      "description_hash": "e1311b8f",
-      "is_external": false
-    },
-    "107": {
-      "confidence": "high",
-      "reasoning": "Checks STS where elements[0][0]=Z37 (Auftragstatus Sperren) and elements[1][0]=Z32 (Ablehnung). Uses has_qualified_value analogously to conditions 93/94.",
-      "description_hash": "ee810d4e",
-      "is_external": false
-    },
-    "70": {
-      "confidence": "medium",
-      "reasoning": "Condition 70 means: additionally to Fahrplananteil counter-proposal (STS Z30 Z32) being rejected, the Ausfallarbeit counter-proposal (STS Z29 Z32) is also rejected. The 'identischem Wert aus RFF+ACW' (same RFF+ACW reference) cross-group correlation is simplified — checks that both rejection STS types are present in the message. Full cross-SG14 value matching would require navigator group enumeration not fully supported by current helpers.",
-      "description_hash": "21375850",
-      "is_external": false
-    },
-    "144": {
-      "confidence": "medium",
-      "reasoning": "Checks that in some SG15 instance (inside SG14 for IFTSTA Family B), RFF+Z13 (Prüfidentifikator, always present) is present but RFF+Z45 (Artikel-ID reference) is absent. Uses RFF+Z13 as the anchor since it is mandatory in every SG15.",
-      "description_hash": "3c3a94d3",
-      "is_external": false
-    },
-    "911": {
-      "confidence": "low",
-      "reasoning": "Format constraint: sequential counter starting at 1 and incrementing per message. This requires stateful validation across all instances of the target element within the message to verify monotonic incrementation — not expressible as a simple per-segment condition check with the current API. Also requires knowing which element holds the counter.",
-      "description_hash": "d53234ee",
-      "is_external": false
-    },
-    "950": {
-      "confidence": "low",
-      "reasoning": "Validates Marktlokations-ID format: 33 characters, starts with 'DE', followed by 31 alphanumeric characters. Without the segment structure reference for IFTSTA, cannot pinpoint exact LOC element index. Checks LOC segment element 1 (location identification composite) as the most likely location.",
-      "description_hash": "a9ddfaec",
-      "is_external": false
-    },
-    "85": {
-      "confidence": "medium",
-      "reasoning": "STS+Z37 (Sperren) with Status Z32 (Ablehnung) and Statusanlass DE9013=A01 (Codeliste E_0501). Checks elements[0][0]=Z37, elements[1][0]=Z32, elements[2][0]=A01. Message-wide search used as SG14/SG15 child group traversal is not in documented helpers.",
-      "description_hash": "ccdd4cd0",
-      "is_external": false
-    },
-    "43": {
-      "confidence": "high",
-      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z01 (Prüfstatus Antwort auf Summenzeitreihen) and Status Code elements[1][0] is Z07. Presence indicates the Zustimmung code cluster applies per the segment structure reference.",
-      "description_hash": "a85c3159",
-      "is_external": false
-    },
-    "4": {
-      "confidence": "high",
-      "reasoning": "Checks that no STS segment exists with elements[0][0]='Z02' (Abweisung der Summenzeitreihe). Direct absence check using lacks_qualifier.",
-      "description_hash": "087a0315",
-      "is_external": false
-    },
-    "18": {
-      "confidence": "high",
-      "reasoning": "Checks that no STS segment exists with elements[0][0]='Z19' (Ersteinbau iMS Planungsstatus). Direct absence check using lacks_qualifier.",
-      "description_hash": "a26dfa5c",
-      "is_external": false
-    },
-    "492": {
-      "confidence": "low",
-      "reasoning": "Whether the MP-ID in NAD+MR belongs to the electricity (Strom) sector cannot be determined from the EDIFACT message alone. It requires a market participant registry lookup.",
-      "description_hash": "bd78e2d8",
-      "is_external": true
-    },
-    "68": {
-      "confidence": "high",
-      "reasoning": "STS Z30 = Statuskategorie for Gegenvorschlag des Fahrplananteils. Check elements[0][0]=Z30 and elements[1][0]=Z30 (Zustimmung). Condition is True when this acceptance STS exists.",
-      "description_hash": "6504c270",
-      "is_external": false
-    },
-    "98": {
-      "confidence": "high",
-      "reasoning": "Checks STS where elements[0][0]=Z38 (Auftragstatus Entsperren) and elements[1][0]=Z14 (erfolgreich). Mirror of condition 97.",
-      "description_hash": "a31d91f7",
-      "is_external": false
-    },
-    "16": {
-      "confidence": "high",
-      "reasoning": "Whether the MP-ID in SG1 NAD+MR has the market role BKV (Bilanzkreisverantwortlicher) cannot be determined from the EDIFACT message alone — NAD+MR only contains the party identifier, not their role classification. Role determination requires external business context.",
-      "description_hash": "d6343b1c",
-      "is_external": true
-    },
-    "55": {
-      "confidence": "high",
-      "reasoning": "STS+Z30+Z32: find STS where elements[0][0]==\"Z30\" (Gegenvorschlag Fahrplananteil), check elements[1][0]==\"Z32\".",
-      "description_hash": "77d1e5b6",
-      "is_external": false
-    },
-    "534": {
-      "confidence": "low",
-      "reasoning": "Informational note ('Hinweis'): states that only one piece of information may be transmitted in DE3148. Without the segment structure reference populated (no element index provided for DE3148 in the IFTSTA context) and without knowing which segment this applies to, cannot safely implement. Low confidence.",
-      "description_hash": "b7cc061b",
-      "is_external": false
-    },
-    "61": {
-      "confidence": "medium",
-      "reasoning": "Mirror of condition 60: checks whether any SG15 with STS+Z28+Z32 (Fahrplananteil rejected) shares the same RFF+ACW as an SG15 with STS+Z27+Z32 (Ausfallarbeit rejected). The two conditions are semantically equivalent but expressed from different perspectives (the AHB uses them on different fields). Same SG14→SG15 navigator approach.",
-      "description_hash": "a2b0ef3f",
-      "is_external": false
-    },
-    "142": {
-      "confidence": "high",
-      "reasoning": "Checks if any STS segment has DE1131 (elements[2][1], the Codeliste code in C556) equal to 'E_0535'. Straightforward value check.",
-      "description_hash": "f2aad151",
-      "is_external": false
-    },
-    "31": {
-      "confidence": "high",
-      "reasoning": "Checks QTY segment where DE6411 (unit code at elements[0][2] within C186 composite) is KWH or K3 (kilowatt-hours). Message-wide fallback for the SG16-scoped check since no QTY-specific group helper exists.",
-      "description_hash": "a72da16c",
-      "is_external": false
-    },
-    "496": {
-      "confidence": "low",
-      "reasoning": "Temporal comparison: 'Der Zeitpunkt' (the timestamp) must be greater than DE2380 of DTM+137. Without knowing which specific timestamp field this applies to (context-dependent), and because date comparison logic requires knowing the field being validated, this cannot be implemented as a general condition evaluator. Low confidence.",
-      "description_hash": "7b2ffff7",
-      "is_external": false
-    },
-    "8": {
-      "confidence": "low",
-      "reasoning": "Whether a Datenstatus of an NZR (Netzzeitreihe) from BIKO to NB is present depends on knowing the sender/receiver business roles (BIKO→NB direction) and which STS segments relate to NZR context. This is a business context condition external to the message.",
-      "description_hash": "ce6dded2",
-      "is_external": true
-    },
-    "30": {
-      "confidence": "medium",
-      "reasoning": "Checks STS segment for Statuskategorie Z20 (elements[0][0]), Status Z32 (elements[1][0]), Prüfschritt A07 (elements[2][0]), and Codeliste E_0207 (elements[2][1]). Uses message-wide low-level access since no group-scoped helper supports simultaneous multi-field checks on a single segment. The 'A07' code is taken from the AHB shorthand notation at DE9013 position per the segment structure reference.",
-      "description_hash": "6046a1d9",
-      "is_external": false
-    },
-    "84": {
-      "confidence": "medium",
-      "reasoning": "STS+Z38 (Entsperren) with Status Z13 and Statusanlass DE9013=A02 (Codeliste E_0499). Checks elements[0][0]=Z38, elements[1][0]=Z13, elements[2][0]=A02. Message-wide search used as SG14/SG15 child group traversal is not in documented helpers.",
-      "description_hash": "e1b044fb",
-      "is_external": false
-    },
-    "101": {
-      "confidence": "high",
-      "reasoning": "Checks STS where elements[0][0]=Z43 (Bearbeitungsstatus) and elements[1][0]=Z48. Mirror of condition 100 for the 'keine Änderung der Daten' cluster.",
-      "description_hash": "aa3859a2",
+      "reasoning": "Hinweis informational note — always returns True unconditionally.",
+      "description_hash": "9fda2a85",
       "is_external": false
     },
     "133": {
@@ -225,76 +15,10 @@
       "description_hash": "5baf7cfb",
       "is_external": false
     },
-    "134": {
-      "confidence": "high",
-      "reasoning": "Check any STS with Statuskategorie Z37 (Auftragstatus Sperren) where DE1131 (elements[2][1]) equals E_1002.",
-      "description_hash": "fca554e6",
-      "is_external": false
-    },
-    "137": {
-      "confidence": "high",
-      "reasoning": "Check any STS with Statuskategorie Z38 (Auftragstatus Entsperren) where DE1131 (elements[2][1]) equals E_1005.",
-      "description_hash": "b4faaf7b",
-      "is_external": false
-    },
-    "45": {
-      "confidence": "high",
-      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z03 (Prüfstatus zur Summenzeitreihe) and Status Code elements[1][0] is Z07. Presence confirms the Zustimmung cluster applies.",
-      "description_hash": "775dbdce",
-      "is_external": false
-    },
-    "44": {
-      "confidence": "high",
-      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z01 and Status Code elements[1][0] is Z08. Presence indicates the Ablehnung code cluster applies per the segment structure reference.",
-      "description_hash": "ffb7805b",
-      "is_external": false
-    },
-    "135": {
-      "confidence": "high",
-      "reasoning": "Check any STS with Statuskategorie Z21 (Bestellung) where DE9013 (elements[2][0]) equals A99. Group-scoped to SG15 but message-wide fallback via has_qualified_value.",
-      "description_hash": "7067c907",
-      "is_external": false
-    },
-    "138": {
-      "confidence": "high",
-      "reasoning": "Check any STS with Statuskategorie Z38 (Auftragstatus Entsperren) where DE1131 (elements[2][1]) equals E_1020.",
-      "description_hash": "a08ac0ec",
-      "is_external": false
-    },
-    "140": {
-      "confidence": "medium",
-      "reasoning": "Checks if any STS segment has DE9013 (elements[2][0]) with a non-empty value that is not 'A01'. Medium confidence because 'in diesem STS' implies a segment-level context that may not be fully captured by message-wide search.",
-      "description_hash": "5f1095ba",
-      "is_external": false
-    },
-    "501": {
+    "6": {
       "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Aus QUOTES BGM DE1004' — this is a documentation hint explaining the origin of a field value (from QUOTES BGM), not an evaluatable boolean condition.",
-      "description_hash": "450b3696",
-      "is_external": false
-    },
-    "522": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Zeitpunkt, ab dem der gMSB den Messstellenbetrieb übernimmt' — this is a semantic description of what a timestamp field represents (when gMSB takes over metering operations), not an evaluatable condition.",
-      "description_hash": "bffc0853",
-      "is_external": false
-    },
-    "530": {
-      "confidence": "low",
-      "reasoning": "Informational note ('Hinweis'): explains what the sender should include (expected Arbeit/Leistung for the stated period). This is guidance text, not an evaluatable condition.",
-      "description_hash": "e6500ab2",
-      "is_external": false
-    },
-    "503": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Auf Selbsteinbau eines iMS oder einer mME wird verzichtet' — this is a business context note about self-installation waiver, which cannot be determined from EDIFACT segments alone.",
-      "description_hash": "078bdff3",
-      "is_external": true
-    },
-    "94": {
-      "confidence": "high",
-      "reasoning": "Checks STS where elements[0][0]=Z37 (Auftragstatus Sperren) and elements[1][0]=Z14 (erfolgreich status). Mirror of condition 93.",
-      "description_hash": "00ff3dee",
+      "reasoning": "Complex co-occurrence rule: if Prüfstatus is available for the 3-tuple (MaBiS-ZP, Betrachtungszeitraum, Version der Summenzeitreihe) from BIKO, then it MUST always be transmitted together with the Datenstatus. Requires knowledge of the exact STS qualifier codes distinguishing Prüfstatus from Datenstatus in this IFTSTA context, and how the 3-tuple membership is expressed in segment structure. The AHB segment structure reference is needed to identify the correct element indices and qualifier values.",
+      "description_hash": "76154df7",
       "is_external": false
     },
     "136": {
@@ -304,9 +28,51 @@
       "is_external": false
     },
     "505": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Verwendung der ID der Messlokation' — this is a documentation hint about using the Messlokation ID, not an evaluatable boolean condition.",
+      "confidence": "high",
+      "reasoning": "Hinweis informational note — always returns True unconditionally.",
       "description_hash": "d7954b75",
+      "is_external": false
+    },
+    "7": {
+      "confidence": "low",
+      "reasoning": "Checks absence of Datenstatus values 'Abgerechnete Daten' and 'Abgerechnete Daten Korrektur-BKA' in STS segments. The structure (STS segment absence check) is clear, but the exact qualifier codes for these specific data status values in IFTSTA are not provided in the segment structure reference. Without authoritative codes from the AHB, implementing this would require guessing qualifier values, which risks incorrect behavior.",
+      "description_hash": "40e99b37",
+      "is_external": false
+    },
+    "117": {
+      "confidence": "high",
+      "reasoning": "Whether the NAD+MR recipient is acting in the role of MSB (Messstellenbetreiber) cannot be determined from the EDIFACT message content alone — market participant roles are runtime business context.",
+      "description_hash": "12ad921b",
+      "is_external": true
+    },
+    "94": {
+      "confidence": "high",
+      "reasoning": "Checks STS where elements[0][0]=Z37 (Auftragstatus Sperren) and elements[1][0]=Z14 (erfolgreich status). Mirror of condition 93.",
+      "description_hash": "00ff3dee",
+      "is_external": false
+    },
+    "70": {
+      "confidence": "medium",
+      "reasoning": "Condition 70 means: additionally to Fahrplananteil counter-proposal (STS Z30 Z32) being rejected, the Ausfallarbeit counter-proposal (STS Z29 Z32) is also rejected. The 'identischem Wert aus RFF+ACW' (same RFF+ACW reference) cross-group correlation is simplified — checks that both rejection STS types are present in the message. Full cross-SG14 value matching would require navigator group enumeration not fully supported by current helpers.",
+      "description_hash": "21375850",
+      "is_external": false
+    },
+    "86": {
+      "confidence": "high",
+      "reasoning": "'Wenn MP-ID in SG1 NAD+MS in der Rolle LF' checks whether the sender market participant (NAD+MS) has the role LF (Lieferant). Market participant roles cannot be determined from the BDEW/DVGW MP-ID in the EDIFACT message alone — requires external market role registry lookup.",
+      "description_hash": "c618521b",
+      "is_external": true
+    },
+    "47": {
+      "confidence": "high",
+      "reasoning": "Unconditional restriction: only Ablehnung cluster codes are possible at this position. No qualifying condition — always evaluates to True to enforce the code cluster constraint.",
+      "description_hash": "e24adc62",
+      "is_external": false
+    },
+    "93": {
+      "confidence": "high",
+      "reasoning": "Checks STS where elements[0][0]=Z37 (Auftragstatus Sperren) and elements[1][0]=Z13 (gescheitert status). Uses has_qualified_value with qualifier on element 0 and value check on element 1 component 0.",
+      "description_hash": "23b2ce5a",
       "is_external": false
     },
     "146": {
@@ -315,178 +81,16 @@
       "description_hash": "f7255aef",
       "is_external": false
     },
-    "506": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Verwendung der ID der Marktlokation' — this is a documentation hint about using the Marktlokation ID, not an evaluatable boolean condition.",
-      "description_hash": "9727b89c",
-      "is_external": false
-    },
-    "50": {
-      "confidence": "high",
-      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z25 and Status Code elements[1][0] is Z31. Presence confirms the Ablehnung cluster applies per the segment structure reference.",
-      "description_hash": "d30fb61b",
-      "is_external": false
-    },
-    "510": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Es ist neben der Information über die Ablehnung auch der unverändert gebliebene Datenstatus informell mitzugeben.' — this is a process instruction about including unchanged data status alongside rejection info, not an evaluatable condition.",
-      "description_hash": "9fda2a85",
-      "is_external": false
-    },
-    "51": {
-      "confidence": "high",
-      "reasoning": "Unconditional restriction: only Abweisung cluster codes are possible at this position. No qualifying condition — always evaluates to True to enforce the code cluster constraint.",
-      "description_hash": "5fb16850",
-      "is_external": false
-    },
-    "54": {
-      "confidence": "high",
-      "reasoning": "STS+Z29+Z32: find STS where elements[0][0]==\"Z29\" (Gegenvorschlag Ausfallarbeit), check elements[1][0]==\"Z32\".",
-      "description_hash": "3945d979",
-      "is_external": false
-    },
-    "69": {
-      "confidence": "high",
-      "reasoning": "STS Z30 = Statuskategorie for Gegenvorschlag des Fahrplananteils. Check elements[0][0]=Z30 and elements[1][0]=Z32 (Ablehnung). Condition is True when this rejection STS exists.",
-      "description_hash": "111ddc3f",
-      "is_external": false
-    },
-    "60": {
+    "940": {
       "confidence": "medium",
-      "reasoning": "Checks whether any SG15 with STS+Z27+Z32 (Ausfallarbeit rejected) shares the same RFF+ACW reference value as an SG15 with STS+Z28+Z32 (Fahrplananteil rejected), within the same SG14 transaction group. Assumes SG15 is a child group of SG14 (consistent with IFTSTA Family B tx_group=SG14).",
-      "description_hash": "24a1a5ae",
+      "reasoning": "Checks if any COM segment value starts with '+' and is followed only by digits — the international phone number format (E.164). This is the standard pattern for phone number validation in German energy market EDIFACT messages.",
+      "description_hash": "de8363bc",
       "is_external": false
     },
-    "19": {
+    "933": {
       "confidence": "high",
-      "reasoning": "Checks that no STS segment exists with elements[0][0]='Z24' (Ersteinbau mME Planungsstatus). Direct absence check using lacks_qualifier.",
-      "description_hash": "3e7dcc5a",
-      "is_external": false
-    },
-    "72": {
-      "confidence": "low",
-      "reasoning": "'Wenn Gegenvorschlag erstellt werden kann' is a business rule about whether a counter-proposal can be created. This depends on external business process state (contract terms, system state, timing) — cannot be determined from the EDIFACT message segments alone.",
-      "description_hash": "d14cc8c0",
-      "is_external": true
-    },
-    "86": {
-      "confidence": "high",
-      "reasoning": "'Wenn MP-ID in SG1 NAD+MS in der Rolle LF' checks whether the sender market participant (NAD+MS) has the role LF (Lieferant). Market participant roles cannot be determined from the BDEW/DVGW MP-ID in the EDIFACT message alone — requires external market role registry lookup.",
-      "description_hash": "c618521b",
-      "is_external": true
-    },
-    "3": {
-      "confidence": "high",
-      "reasoning": "Checks that no STS segment exists with elements[0][0]='Z01' (Prüfstatus Antwort auf Summenzeitreihen). Direct absence check using lacks_qualifier.",
-      "description_hash": "524f36ab",
-      "is_external": false
-    },
-    "49": {
-      "confidence": "high",
-      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z25 (Status des Lieferscheins) and Status Code elements[1][0] is Z30. Presence confirms the Zustimmung cluster applies per the segment structure reference.",
-      "description_hash": "783a3673",
-      "is_external": false
-    },
-    "91": {
-      "confidence": "high",
-      "reasoning": "Checks if any STS segment has DE1131 (elements[2][1] in C556) equal to E_0472. E_0472 appears in the Auftragstatus Sperren (Z37) STS variant.",
-      "description_hash": "68cf2a9c",
-      "is_external": false
-    },
-    "531": {
-      "confidence": "low",
-      "reasoning": "Informational note: describes the business context for a Vorgangsnummer (transaction number from MSBN step 1 of the SD process). This is a usage annotation requiring knowledge of the business process state outside the message — cannot be evaluated from EDIFACT content alone.",
-      "description_hash": "32f63123",
-      "is_external": false
-    },
-    "118": {
-      "confidence": "high",
-      "reasoning": "Check any STS with Statuskategorie Z21 (Bestellung) where DE1131 (elements[2][1]) equals E_0526. E_0526 is listed under Bestellung STS codes.",
-      "description_hash": "0e080cc1",
-      "is_external": false
-    },
-    "120": {
-      "confidence": "high",
-      "reasoning": "Check any STS with Statuskategorie Z21 (Bestellung) where DE1131 (elements[2][1]) equals E_0529.",
-      "description_hash": "71a6bd8b",
-      "is_external": false
-    },
-    "523": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Wert aus BGM DE1004 der MSCONS, auf die sich die Statusangabe bezieht' — this is a documentation hint about the field value origin (from MSCONS BGM DE1004 that the status refers to), not an evaluatable condition.",
-      "description_hash": "85e3ed2c",
-      "is_external": false
-    },
-    "906": {
-      "confidence": "low",
-      "reasoning": "Format constraint: maximum 3 decimal places. This is a numeric precision check requiring knowledge of which element to inspect. Without the segment structure reference populated for IFTSTA, cannot determine the target element index.",
-      "description_hash": "97bdb0c7",
-      "is_external": false
-    },
-    "20": {
-      "confidence": "high",
-      "reasoning": "Whether the MP-ID in SG1 NAD+MR has the market role LF (Lieferant) requires external business context — the NAD segment only carries the party identifier. Role classification is not encoded in the EDIFACT message itself.",
-      "description_hash": "b6ef0538",
-      "is_external": true
-    },
-    "57": {
-      "confidence": "low",
-      "reasoning": "Same structural limitation as condition 56 but against STS+Z28. Requires current-group context to identify 'this SG15' versus the SG15 with STS+Z28 — not available in EvaluationContext.",
-      "description_hash": "5c5954c6",
-      "is_external": false
-    },
-    "939": {
-      "confidence": "medium",
-      "reasoning": "Checks if any COM segment value contains both '@' and '.' characters, validating email address format. COM segments carry communication details; email format requires both characters. This is the standard way to detect email COM values in EDIFACT.",
-      "description_hash": "05a09b9a",
-      "is_external": false
-    },
-    "960": {
-      "confidence": "low",
-      "reasoning": "Validates Netzlokations-ID format. Netzlokations-IDs in the German energy market are 33-character alphanumeric identifiers. Without the segment structure reference for IFTSTA, cannot confirm exact LOC element. Low confidence due to missing specifics on Netzlokations-ID pattern vs Marktlokations-ID.",
-      "description_hash": "0ce0bd80",
-      "is_external": false
-    },
-    "519": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Aus ORDERS BGM DE1004' — this is a documentation hint explaining the field value originates from an ORDERS BGM segment, not an evaluatable boolean condition.",
-      "description_hash": "cdb82de2",
-      "is_external": false
-    },
-    "121": {
-      "confidence": "high",
-      "reasoning": "Check any STS with Statuskategorie Z21 (Bestellung) where DE1131 (elements[2][1]) equals E_0536.",
-      "description_hash": "1bdf0734",
-      "is_external": false
-    },
-    "502": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Aus REQOTE BGM DE1004' — this is a documentation hint explaining the field originates from a REQOTE BGM segment, not an evaluatable condition.",
-      "description_hash": "f3212ab6",
-      "is_external": false
-    },
-    "52": {
-      "confidence": "high",
-      "reasoning": "STS+Z27+Z32: find STS where elements[0][0]==\"Z27\" (Statuskategorie=Z27, Ausfallarbeit), check elements[1][0]==\"Z32\" (Status=Z32, abgelehnt). Direct match using has_qualified_value.",
-      "description_hash": "b47ac60e",
-      "is_external": false
-    },
-    "961": {
-      "confidence": "low",
-      "reasoning": "Validates SR-ID (Steuerbare Ressource ID) format. SR-IDs follow the 33-character alphanumeric pattern used for other location identifiers in the German energy market. Without the segment structure reference, the exact LOC qualifier and element index for SR-IDs in IFTSTA is uncertain.",
-      "description_hash": "99d3e1d7",
-      "is_external": false
-    },
-    "119": {
-      "confidence": "high",
-      "reasoning": "Check any STS with Statuskategorie Z21 (Bestellung) where DE1131 (elements[2][1]) equals E_0528.",
-      "description_hash": "4d292579",
-      "is_external": false
-    },
-    "525": {
-      "confidence": "low",
-      "reasoning": "Informational note ('Hinweis'): states that each SG14 contains status information for exactly one MSCONS. This is a structural constraint annotation, not an evaluatable boolean condition from message content.",
-      "description_hash": "29bd2359",
+      "reasoning": "Format condition checking HHMM portion of a DTM value equals 2300. Uses validate_hhmm_equals helper.",
+      "description_hash": "b5e9c81e",
       "is_external": false
     },
     "48": {
@@ -495,58 +99,70 @@
       "description_hash": "66dc7705",
       "is_external": false
     },
-    "512": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Aus MSCONS BGM DE1004' — this is a documentation hint explaining the field value originates from a MSCONS BGM segment, not an evaluatable boolean condition.",
-      "description_hash": "a27ff5a6",
+    "525": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation about cardinality (one MSCONS status per SG14). Always applies unconditionally.",
+      "description_hash": "29bd2359",
       "is_external": false
     },
-    "521": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Zeitpunkt, ab dem der MSBN tatsächlich den Messstellenbetrieb übernimmt' — this is a semantic description of what a timestamp field represents (when MSBN actually takes over metering operations), not an evaluatable condition.",
-      "description_hash": "ce831f68",
+    "961": {
+      "confidence": "medium",
+      "reasoning": "SR-ID (Steuerbare Ressource ID) uses the same 11-digit Luhn check digit format as Marktlokations-ID. LOC+Z19 is the standard qualifier for SteuerbareRessource. Element 1, component 0 holds the location ID.",
+      "description_hash": "99d3e1d7",
       "is_external": false
     },
-    "951": {
-      "confidence": "low",
-      "reasoning": "Validates Zählpunktbezeichnung (meter point designation) format: 33 characters starting with 'DE' followed by 31 alphanumeric characters — the German energy market standard for meter point IDs. Without segment structure reference, element index is uncertain.",
-      "description_hash": "f35fc481",
+    "84": {
+      "confidence": "medium",
+      "reasoning": "STS+Z38 (Entsperren) with Status Z13 and Statusanlass DE9013=A02 (Codeliste E_0499). Checks elements[0][0]=Z38, elements[1][0]=Z13, elements[2][0]=A02. Message-wide search used as SG14/SG15 child group traversal is not in documented helpers.",
+      "description_hash": "e1b044fb",
       "is_external": false
     },
-    "932": {
-      "confidence": "low",
-      "reasoning": "Format constraint: HHMM portion of a DTM value must equal '2200'. Without knowing which DTM qualifier (e.g. 163, 293, etc.) this constraint applies to in the IFTSTA message, and without the segment structure reference populated, the target element cannot be identified. Cannot implement safely.",
-      "description_hash": "943b98c4",
+    "61": {
+      "confidence": "medium",
+      "reasoning": "Mirror of condition 60: checks whether any SG15 with STS+Z28+Z32 (Fahrplananteil rejected) shares the same RFF+ACW as an SG15 with STS+Z27+Z32 (Ausfallarbeit rejected). The two conditions are semantically equivalent but expressed from different perspectives (the AHB uses them on different fields). Same SG14→SG15 navigator approach.",
+      "description_hash": "a2b0ef3f",
       "is_external": false
     },
-    "493": {
-      "confidence": "low",
-      "reasoning": "Whether the MP-ID in NAD+MR belongs to the gas (Gas) sector cannot be determined from the EDIFACT message alone. It requires a market participant registry lookup.",
-      "description_hash": "75612dee",
+    "100": {
+      "confidence": "high",
+      "reasoning": "Checks STS where elements[0][0]=Z43 (Bearbeitungsstatus) and elements[1][0]=Z47. Uses has_qualified_value with category qualifier on element 0 and status code check on element 1 component 0.",
+      "description_hash": "f8494ead",
+      "is_external": false
+    },
+    "131": {
+      "confidence": "medium",
+      "reasoning": "Check STS with Statuskategorie Z37 (Auftragstatus Sperren), Status Z13, DE9013 in {A04,A05,A06} (elements[2][0]), and DE1131 E_1003 (elements[2][1]). Group-scoped to SG14 but falls back to message-wide.",
+      "description_hash": "929fe380",
+      "is_external": false
+    },
+    "59": {
+      "confidence": "medium",
+      "reasoning": "Same cross-SG15 comparison pattern as condition 56, but referencing STS+Z30 (Status des Gegenvorschlags des Fahrplananteils).",
+      "description_hash": "abae0e02",
+      "is_external": false
+    },
+    "501": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation documenting that the value originates from QUOTES BGM DE1004. Always applies unconditionally with no boolean predicate.",
+      "description_hash": "450b3696",
+      "is_external": false
+    },
+    "20": {
+      "confidence": "high",
+      "reasoning": "Whether the MP-ID in SG1 NAD+MR has the market role LF (Lieferant) requires external business context — the NAD segment only carries the party identifier. Role classification is not encoded in the EDIFACT message itself.",
+      "description_hash": "b6ef0538",
       "is_external": true
     },
-    "141": {
-      "confidence": "medium",
-      "reasoning": "Checks if any STS segment has DE9013 (elements[2][0]) equal to 'A01'. Medium confidence due to segment-level context ambiguity.",
-      "description_hash": "6f486b1a",
+    "142": {
+      "confidence": "high",
+      "reasoning": "Checks if any STS segment has DE1131 (elements[2][1], the Codeliste code in C556) equal to 'E_0535'. Straightforward value check.",
+      "description_hash": "f2aad151",
       "is_external": false
     },
-    "64": {
+    "4": {
       "confidence": "high",
-      "reasoning": "STS+Z28+Z30 vorhanden: find STS where elements[0][0]==\"Z28\" (Fahrplananteil), check elements[1][0]==\"Z30\" (Zustimmung).",
-      "description_hash": "2e4df2d5",
-      "is_external": false
-    },
-    "32": {
-      "confidence": "high",
-      "reasoning": "Checks QTY segment where DE6411 (unit code at elements[0][2] within C186 composite) is KWT or K5 (kilowatts). Message-wide fallback for the SG16-scoped check.",
-      "description_hash": "dca23e0b",
-      "is_external": false
-    },
-    "66": {
-      "confidence": "high",
-      "reasoning": "STS+Z29+Z30 vorhanden: find STS where elements[0][0]==\"Z29\" (Gegenvorschlag Ausfallarbeit), check elements[1][0]==\"Z30\" (Zustimmung).",
-      "description_hash": "0f5cc580",
+      "reasoning": "Checks that no STS segment exists with elements[0][0]='Z02' (Abweisung der Summenzeitreihe). Direct absence check using lacks_qualifier.",
+      "description_hash": "087a0315",
       "is_external": false
     },
     "63": {
@@ -555,16 +171,10 @@
       "description_hash": "bceead95",
       "is_external": false
     },
-    "114": {
+    "50": {
       "confidence": "high",
-      "reasoning": "Whether the NAD+MS sender is acting in the role of MSB (Messstellenbetreiber) cannot be determined from the EDIFACT message content alone — market participant roles are runtime business context.",
-      "description_hash": "69f7033d",
-      "is_external": true
-    },
-    "931": {
-      "confidence": "low",
-      "reasoning": "Format constraint: timezone component ZZZ must equal '+00'. In DTM format 303 the datetime string encodes timezone as the last 3 characters (e.g. '+00'). Without knowing which DTM qualifier this condition is attached to in the IFTSTA AHB table, and without the segment structure reference populated, the correct qualifier filter cannot be determined. Cannot implement safely.",
-      "description_hash": "825c510c",
+      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z25 and Status Code elements[1][0] is Z31. Presence confirms the Ablehnung cluster applies per the segment structure reference.",
+      "description_hash": "d30fb61b",
       "is_external": false
     },
     "96": {
@@ -573,47 +183,41 @@
       "description_hash": "6f51a94a",
       "is_external": false
     },
-    "524": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Wert aus BGM DE1004 der MSCONS, die den Gegenvorschlag enthält' — this is a documentation hint about the field value origin (from the MSCONS BGM containing the counter-proposal), not an evaluatable condition.",
-      "description_hash": "dd973571",
-      "is_external": false
-    },
-    "53": {
+    "31": {
       "confidence": "high",
-      "reasoning": "STS+Z28+Z32: find STS where elements[0][0]==\"Z28\" (Statuskategorie=Z28, Fahrplananteil), check elements[1][0]==\"Z32\". Direct match using has_qualified_value.",
-      "description_hash": "9647225c",
+      "reasoning": "Checks QTY segment where DE6411 (unit code at elements[0][2] within C186 composite) is KWH or K3 (kilowatt-hours). Message-wide fallback for the SG16-scoped check since no QTY-specific group helper exists.",
+      "description_hash": "a72da16c",
       "is_external": false
     },
-    "5": {
+    "503": {
       "confidence": "high",
-      "reasoning": "Checks that no STS segment exists with elements[0][0]='Z03' (Prüfstatus zur Summenzeitreihe). Direct absence check using lacks_qualifier.",
-      "description_hash": "2469359b",
+      "reasoning": "Hinweis informational note — always returns True unconditionally.",
+      "description_hash": "078bdff3",
       "is_external": false
     },
-    "95": {
+    "911": {
       "confidence": "high",
-      "reasoning": "Checks if any STS segment has DE1131 (elements[2][1] in C556) equal to E_0499. E_0499 appears in the Auftragstatus Entsperren (Z38) STS variant.",
-      "description_hash": "c3761005",
+      "reasoning": "This is an informational note (Hinweis) describing that values must start at 1 and increment sequentially per message. Runtime sequential validation cannot be expressed with the available API — treating as informational annotation that always applies.",
+      "description_hash": "d53234ee",
       "is_external": false
     },
-    "532": {
-      "confidence": "low",
-      "reasoning": "Informational note ('Hinweis'): indicates that the ID of the Netzlokation is to be used here. This is a field-usage annotation, not an evaluatable boolean condition.",
-      "description_hash": "9592f83e",
-      "is_external": false
-    },
-    "76": {
+    "54": {
       "confidence": "high",
-      "reasoning": "'Wenn MP-ID in SG1 NAD+MR in der Rolle ESA' checks whether the recipient market participant (NAD+MR) has the role ESA (Energiedienstleister mit Sonderverteilung). Market participant roles cannot be determined from the MP-ID in the EDIFACT message alone — requires external role registry lookup.",
-      "description_hash": "25f93c25",
-      "is_external": true
+      "reasoning": "STS+Z29+Z32: find STS where elements[0][0]==\"Z29\" (Gegenvorschlag Ausfallarbeit), check elements[1][0]==\"Z32\".",
+      "description_hash": "3945d979",
+      "is_external": false
     },
-    "7": {
-      "confidence": "low",
-      "reasoning": "Checks for absence of specific Datenstatus codes 'Abgerechnete Daten' and 'Abgerechnete Daten Korrektur-BKA' in STS+Z04. The exact DE4405 codes for these named statuses are not provided in the segment structure reference, making a reliable implementation impossible without the code mapping.",
-      "description_hash": "40e99b37",
-      "is_external": true
+    "121": {
+      "confidence": "high",
+      "reasoning": "Check any STS with Statuskategorie Z21 (Bestellung) where DE1131 (elements[2][1]) equals E_0536.",
+      "description_hash": "1bdf0734",
+      "is_external": false
+    },
+    "138": {
+      "confidence": "high",
+      "reasoning": "Check any STS with Statuskategorie Z38 (Auftragstatus Entsperren) where DE1131 (elements[2][1]) equals E_1020.",
+      "description_hash": "a08ac0ec",
+      "is_external": false
     },
     "147": {
       "confidence": "high",
@@ -621,10 +225,106 @@
       "description_hash": "6aac2a48",
       "is_external": false
     },
-    "29": {
+    "83": {
+      "confidence": "medium",
+      "reasoning": "STS+Z37 (Sperren) with Status Z13 and Statusanlass (elements[2][0], DE9013) in {A04, A05, A06}. The Codeliste code E_0472 in elements[2][1] is not checked as the primary discriminator is the DE9013 Prüfschritt code. Message-wide search is used as group-scoped SG15 traversal is not available via documented helpers.",
+      "description_hash": "b6d7e077",
+      "is_external": false
+    },
+    "532": {
       "confidence": "high",
-      "reasoning": "The role ÜNB (Übertragungsnetzbetreiber) of the NAD+MR recipient cannot be derived from the EDIFACT message; requires external market participant role registry lookup.",
-      "description_hash": "ca618921",
+      "reasoning": "Hinweis condition — informational annotation about using Netzlokation ID. Always returns True.",
+      "description_hash": "9592f83e",
+      "is_external": false
+    },
+    "3": {
+      "confidence": "high",
+      "reasoning": "Checks that no STS segment exists with elements[0][0]='Z01' (Prüfstatus Antwort auf Summenzeitreihen). Direct absence check using lacks_qualifier.",
+      "description_hash": "524f36ab",
+      "is_external": false
+    },
+    "46": {
+      "confidence": "high",
+      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z03 and Status Code elements[1][0] is Z08. Presence confirms the Ablehnung cluster applies.",
+      "description_hash": "9c52f1da",
+      "is_external": false
+    },
+    "114": {
+      "confidence": "high",
+      "reasoning": "Whether the NAD+MS sender is acting in the role of MSB (Messstellenbetreiber) cannot be determined from the EDIFACT message content alone — market participant roles are runtime business context.",
+      "description_hash": "69f7033d",
+      "is_external": true
+    },
+    "69": {
+      "confidence": "high",
+      "reasoning": "STS Z30 = Statuskategorie for Gegenvorschlag des Fahrplananteils. Check elements[0][0]=Z30 and elements[1][0]=Z32 (Ablehnung). Condition is True when this rejection STS exists.",
+      "description_hash": "111ddc3f",
+      "is_external": false
+    },
+    "99": {
+      "confidence": "high",
+      "reasoning": "Same DE1131 check as condition 96 — checks elements[2][1]=E_0487. The 'dann ist nur der Code A01 möglich' clause is a constraint implication, not an additional check; the evaluable predicate is identical to condition 96.",
+      "description_hash": "7e44e87a",
+      "is_external": false
+    },
+    "44": {
+      "confidence": "high",
+      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z01 and Status Code elements[1][0] is Z08. Presence indicates the Ablehnung code cluster applies per the segment structure reference.",
+      "description_hash": "ffb7805b",
+      "is_external": false
+    },
+    "951": {
+      "confidence": "medium",
+      "reasoning": "Format condition validating Zählpunktbezeichnung (33 alphanumeric chars). In IFTSTA, Zählpunkt is typically associated with LOC+Z19 (Messlokation/Zählpunkt). Uses validate_zahlpunkt helper. Medium confidence because the exact LOC qualifier for Zählpunkt in IFTSTA may vary — could also be a different qualifier depending on context.",
+      "description_hash": "f35fc481",
+      "is_external": false
+    },
+    "491": {
+      "confidence": "high",
+      "reasoning": "Checks if the CCYYMMDD portion of the DTM value falls within the MEZ (German winter time, UTC+1) period as defined in Kapitel 3.6. Uses the is_mez_utc() format validation helper which implements the EU DST rule.",
+      "description_hash": "305e3493",
+      "is_external": false
+    },
+    "143": {
+      "confidence": "medium",
+      "reasoning": "STS Z41 (Grund der Privilegierung nach EnFG) supports up to 5 C556 groups (elements[2]-[6]). 'mehr als ein Grund' is indicated when elements[3][0] (second C556 DE9013) is non-empty, meaning the first slot alone was insufficient. Medium confidence because the exact threshold depends on which positional slot this condition guards.",
+      "description_hash": "24f61146",
+      "is_external": false
+    },
+    "17": {
+      "confidence": "high",
+      "reasoning": "Whether a message from BKV arrives at the wrong aggregation level is a business context check that cannot be determined from the EDIFACT message content alone — requires knowledge of the expected aggregation level for the market participant.",
+      "description_hash": "a4e7decb",
+      "is_external": true
+    },
+    "71": {
+      "confidence": "medium",
+      "reasoning": "Symmetric to condition 70: additionally to Ausfallarbeit counter-proposal (STS Z29 Z32) being rejected, the Fahrplananteil counter-proposal (STS Z30 Z32) is also rejected. Same simplification of the RFF+ACW cross-group correlation applies.",
+      "description_hash": "a65ae076",
+      "is_external": false
+    },
+    "120": {
+      "confidence": "high",
+      "reasoning": "Check any STS with Statuskategorie Z21 (Bestellung) where DE1131 (elements[2][1]) equals E_0529.",
+      "description_hash": "71a6bd8b",
+      "is_external": false
+    },
+    "494": {
+      "confidence": "medium",
+      "reasoning": "The date must be the document creation time (DTM+137) or earlier. Applied to DTM+334 (Zeitpunkt der Statusvergabe) which is the most natural target in IFTSTA. Format 303 timestamps are lexicographically ordered so string comparison is valid.",
+      "description_hash": "e0eddcc9",
+      "is_external": false
+    },
+    "496": {
+      "confidence": "medium",
+      "reasoning": "The timestamp must be strictly greater than DE2380 of DTM+137. Inverse of condition 495. Applied to DTM+334 which must be after the document creation date in this usage context.",
+      "description_hash": "7b2ffff7",
+      "is_external": false
+    },
+    "10": {
+      "confidence": "high",
+      "reasoning": "Whether a message from BKV/NB/ÜNB arrives after the deadline (nach Frist) cannot be determined from the EDIFACT message content itself — it requires comparison of the message receipt timestamp against a business-defined deadline, both of which are external to the message.",
+      "description_hash": "a95c765d",
       "is_external": true
     },
     "148": {
@@ -633,10 +333,142 @@
       "description_hash": "701a98ea",
       "is_external": false
     },
-    "71": {
+    "530": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing field semantics (expected work/performance in delivery note). Always applies unconditionally.",
+      "description_hash": "e6500ab2",
+      "is_external": false
+    },
+    "902": {
       "confidence": "medium",
-      "reasoning": "Symmetric to condition 70: additionally to Ausfallarbeit counter-proposal (STS Z29 Z32) being rejected, the Fahrplananteil counter-proposal (STS Z30 Z32) is also rejected. Same simplification of the RFF+ACW cross-group correlation applies.",
-      "description_hash": "a65ae076",
+      "reasoning": "Format condition requiring value >= 0. Applied to QTY segment value (elements[0][1]) which is the standard location for quantity values in EDIFACT. Uses validate_numeric helper with >= 0.0.",
+      "description_hash": "42d45052",
+      "is_external": false
+    },
+    "57": {
+      "confidence": "medium",
+      "reasoning": "Same cross-SG15 comparison pattern as condition 56, but referencing STS+Z28 (Status des Fahrplananteils) instead of Z27.",
+      "description_hash": "5c5954c6",
+      "is_external": false
+    },
+    "77": {
+      "confidence": "high",
+      "reasoning": "Check within SG14 group instances: STS with Statuskategorie Z37 (Auftragstatus Sperren) and Status code Z14 (erfolgreich abgeschlossen). elements[0][0]=Z37 as qualifier filter, elements[1][0]=Z14 as value check.",
+      "description_hash": "81a4c9a1",
+      "is_external": false
+    },
+    "506": {
+      "confidence": "high",
+      "reasoning": "Hinweis informational note — always returns True unconditionally.",
+      "description_hash": "9727b89c",
+      "is_external": false
+    },
+    "27": {
+      "confidence": "high",
+      "reasoning": "Whether an MP-ID belongs to the electricity sector (Sparte Strom) vs. gas or other sectors requires external lookup against market participant registry data. The MP-ID value in NAD segments is an opaque identifier — sector classification is not embedded in the EDIFACT message.",
+      "description_hash": "f3221dba",
+      "is_external": true
+    },
+    "939": {
+      "confidence": "medium",
+      "reasoning": "Checks if any COM segment value contains both '@' and '.' characters, validating email address format. COM segments carry communication details; email format requires both characters. This is the standard way to detect email COM values in EDIFACT.",
+      "description_hash": "05a09b9a",
+      "is_external": false
+    },
+    "92": {
+      "confidence": "high",
+      "reasoning": "Checks if any STS segment has DE1131 (elements[2][1] in C556) equal to E_0501. E_0501 appears in the Auftragstatus Sperren (Z37) STS variant.",
+      "description_hash": "9fa9c68f",
+      "is_external": false
+    },
+    "135": {
+      "confidence": "high",
+      "reasoning": "Check any STS with Statuskategorie Z21 (Bestellung) where DE9013 (elements[2][0]) equals A99. Group-scoped to SG15 but message-wide fallback via has_qualified_value.",
+      "description_hash": "7067c907",
+      "is_external": false
+    },
+    "493": {
+      "confidence": "high",
+      "reasoning": "The NAD+MR segment (recipient MP-ID) can be read from the message, but whether the market participant belongs to 'Sparte Gas' requires an external market participant registry lookup. The sector affiliation is not encoded in the EDIFACT message itself.",
+      "description_hash": "75612dee",
+      "is_external": true
+    },
+    "134": {
+      "confidence": "high",
+      "reasoning": "Check any STS with Statuskategorie Z37 (Auftragstatus Sperren) where DE1131 (elements[2][1]) equals E_1002.",
+      "description_hash": "fca554e6",
+      "is_external": false
+    },
+    "1": {
+      "confidence": "medium",
+      "reasoning": "Whether transmission of non-codeable information is necessary is a business context decision that cannot be determined from the EDIFACT message content alone. It depends on whether the sending system has information that cannot be expressed via defined code lists.",
+      "description_hash": "6e845713",
+      "is_external": true
+    },
+    "30": {
+      "confidence": "medium",
+      "reasoning": "Checks STS segment for Statuskategorie Z20 (elements[0][0]), Status Z32 (elements[1][0]), Prüfschritt A07 (elements[2][0]), and Codeliste E_0207 (elements[2][1]). Uses message-wide low-level access since no group-scoped helper supports simultaneous multi-field checks on a single segment. The 'A07' code is taken from the AHB shorthand notation at DE9013 position per the segment structure reference.",
+      "description_hash": "6046a1d9",
+      "is_external": false
+    },
+    "85": {
+      "confidence": "medium",
+      "reasoning": "STS+Z37 (Sperren) with Status Z32 (Ablehnung) and Statusanlass DE9013=A01 (Codeliste E_0501). Checks elements[0][0]=Z37, elements[1][0]=Z32, elements[2][0]=A01. Message-wide search used as SG14/SG15 child group traversal is not in documented helpers.",
+      "description_hash": "ccdd4cd0",
+      "is_external": false
+    },
+    "129": {
+      "confidence": "medium",
+      "reasoning": "Check STS with Statuskategorie Z20, Status Z32, Prüfschritt A99 (elements[2][0]), and DE1131 E_0524 (elements[2][1]). Group-scoped to SG14 but falls back to message-wide search.",
+      "description_hash": "7df1d73b",
+      "is_external": false
+    },
+    "524": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing where a value comes from. Always applies unconditionally.",
+      "description_hash": "dd973571",
+      "is_external": false
+    },
+    "534": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation that only one value may be transmitted in DE3148. Always returns True.",
+      "description_hash": "b7cc061b",
+      "is_external": false
+    },
+    "98": {
+      "confidence": "high",
+      "reasoning": "Checks STS where elements[0][0]=Z38 (Auftragstatus Entsperren) and elements[1][0]=Z14 (erfolgreich). Mirror of condition 97.",
+      "description_hash": "a31d91f7",
+      "is_external": false
+    },
+    "67": {
+      "confidence": "high",
+      "reasoning": "STS Z29 = Statuskategorie for Gegenvorschlag der Ausfallarbeit. Check elements[0][0]=Z29 (qualifier) and elements[1][0]=Z32 (Status, Ablehnung). Condition is True when this STS variant exists, constraining allowable EBD cluster codes to Ablehnung.",
+      "description_hash": "d0255067",
+      "is_external": false
+    },
+    "145": {
+      "confidence": "medium",
+      "reasoning": "Checks that in some SG15 instance, RFF+Z13 (mandatory Prüfidentifikator) is present but RFF+Z17 (Preisschlüsselstamm reference) is absent.",
+      "description_hash": "f84ebc8e",
+      "is_external": false
+    },
+    "19": {
+      "confidence": "high",
+      "reasoning": "Checks that no STS segment exists with elements[0][0]='Z24' (Ersteinbau mME Planungsstatus). Direct absence check using lacks_qualifier.",
+      "description_hash": "3e7dcc5a",
+      "is_external": false
+    },
+    "130": {
+      "confidence": "medium",
+      "reasoning": "Check STS with Statuskategorie Z20, Status Z32, Prüfschritt A99 (elements[2][0]), and DE1131 E_0531 (elements[2][1]). Group-scoped to SG14 but falls back to message-wide search.",
+      "description_hash": "e1311b8f",
+      "is_external": false
+    },
+    "502": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation documenting that the value originates from REQOTE BGM DE1004. Always applies unconditionally with no boolean predicate.",
+      "description_hash": "f3212ab6",
       "is_external": false
     },
     "62": {
@@ -651,148 +483,106 @@
       "description_hash": "8cea5aed",
       "is_external": true
     },
-    "902": {
-      "confidence": "low",
-      "reasoning": "Format constraint: value must be positive or zero. Without the segment structure reference populated (no segment tag or element index provided for this IFTSTA context) it is not possible to identify which element to validate. Cannot implement without authoritative element position.",
-      "description_hash": "42d45052",
-      "is_external": false
-    },
-    "903": {
-      "confidence": "low",
-      "reasoning": "Format constraint: only the value '1' is allowed. Without knowing which segment and element this applies to in the IFTSTA context (segment structure reference not populated), cannot implement safely.",
-      "description_hash": "ef3b7862",
-      "is_external": false
-    },
-    "92": {
+    "49": {
       "confidence": "high",
-      "reasoning": "Checks if any STS segment has DE1131 (elements[2][1] in C556) equal to E_0501. E_0501 appears in the Auftragstatus Sperren (Z37) STS variant.",
-      "description_hash": "9fa9c68f",
+      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z25 (Status des Lieferscheins) and Status Code elements[1][0] is Z30. Presence confirms the Zustimmung cluster applies per the segment structure reference.",
+      "description_hash": "783a3673",
       "is_external": false
     },
-    "33": {
+    "55": {
       "confidence": "high",
-      "reasoning": "Checks if DTM with qualifier 163 (Beginn Messperiode / Beginn des Zeitraums, elements[0][0]) is present in the SG16 group context. Falls back to message-wide search when no navigator is available.",
-      "description_hash": "48b5264e",
+      "reasoning": "STS+Z30+Z32: find STS where elements[0][0]==\"Z30\" (Gegenvorschlag Fahrplananteil), check elements[1][0]==\"Z32\".",
+      "description_hash": "77d1e5b6",
       "is_external": false
     },
-    "100": {
+    "115": {
       "confidence": "high",
-      "reasoning": "Checks STS where elements[0][0]=Z43 (Bearbeitungsstatus) and elements[1][0]=Z47. Uses has_qualified_value with category qualifier on element 0 and status code check on element 1 component 0.",
-      "description_hash": "f8494ead",
-      "is_external": false
+      "reasoning": "Whether the NAD+MS sender is acting in the role of NB (Netzbetreiber) cannot be determined from the EDIFACT message content alone — market participant roles are runtime business context.",
+      "description_hash": "3ec93c12",
+      "is_external": true
     },
-    "77": {
+    "66": {
       "confidence": "high",
-      "reasoning": "Check within SG14 group instances: STS with Statuskategorie Z37 (Auftragstatus Sperren) and Status code Z14 (erfolgreich abgeschlossen). elements[0][0]=Z37 as qualifier filter, elements[1][0]=Z14 as value check.",
-      "description_hash": "81a4c9a1",
+      "reasoning": "STS+Z29+Z30 vorhanden: find STS where elements[0][0]==\"Z29\" (Gegenvorschlag Ausfallarbeit), check elements[1][0]==\"Z30\" (Zustimmung).",
+      "description_hash": "0f5cc580",
       "is_external": false
     },
-    "131": {
+    "118": {
+      "confidence": "high",
+      "reasoning": "Check any STS with Statuskategorie Z21 (Bestellung) where DE1131 (elements[2][1]) equals E_0526. E_0526 is listed under Bestellung STS codes.",
+      "description_hash": "0e080cc1",
+      "is_external": false
+    },
+    "141": {
       "confidence": "medium",
-      "reasoning": "Check STS with Statuskategorie Z37 (Auftragstatus Sperren), Status Z13, DE9013 in {A04,A05,A06} (elements[2][0]), and DE1131 E_1003 (elements[2][1]). Group-scoped to SG14 but falls back to message-wide.",
-      "description_hash": "929fe380",
+      "reasoning": "Checks if any STS segment has DE9013 (elements[2][0]) equal to 'A01'. Medium confidence due to segment-level context ambiguity.",
+      "description_hash": "6f486b1a",
       "is_external": false
     },
-    "491": {
-      "confidence": "low",
-      "reasoning": "Requires evaluating whether the CCYYMMDD date falls within the MEZ/UTC window as defined in Chapter 3.6 table. Same reasoning as condition 490 — depends on external reference table with specific date ranges that are not part of the EDIFACT message.",
-      "description_hash": "305e3493",
-      "is_external": false
-    },
-    "934": {
-      "confidence": "low",
-      "reasoning": "Format constraint: HHMM portion of a DTM value must equal '0400'. Same issue as conditions 932/933 — DTM qualifier context is required and not available from the provided segment structure reference.",
-      "description_hash": "d06a46c8",
-      "is_external": false
-    },
-    "933": {
-      "confidence": "low",
-      "reasoning": "Format constraint: HHMM portion of a DTM value must equal '2300'. Same issue as condition 932 — DTM qualifier context is required and not available from the provided segment structure reference.",
-      "description_hash": "b5e9c81e",
+    "91": {
+      "confidence": "high",
+      "reasoning": "Checks if any STS segment has DE1131 (elements[2][1] in C556) equal to E_0472. E_0472 appears in the Auftragstatus Sperren (Z37) STS variant.",
+      "description_hash": "68cf2a9c",
       "is_external": false
     },
     "535": {
-      "confidence": "low",
-      "reasoning": "Informational note ('Hinweis'): states the value originates from UTILMD IDE DE7402. This is a cross-message data provenance annotation — the source value is in a different message (UTILMD) and cannot be verified from the IFTSTA message alone.",
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation that value comes from UTILMD IDE DE7402. Always returns True.",
       "description_hash": "eb18b623",
       "is_external": false
     },
-    "117": {
+    "119": {
       "confidence": "high",
-      "reasoning": "Whether the NAD+MR recipient is acting in the role of MSB (Messstellenbetreiber) cannot be determined from the EDIFACT message content alone — market participant roles are runtime business context.",
-      "description_hash": "12ad921b",
-      "is_external": true
-    },
-    "46": {
-      "confidence": "high",
-      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z03 and Status Code elements[1][0] is Z08. Presence confirms the Ablehnung cluster applies.",
-      "description_hash": "9c52f1da",
+      "reasoning": "Check any STS with Statuskategorie Z21 (Bestellung) where DE1131 (elements[2][1]) equals E_0528.",
+      "description_hash": "4d292579",
       "is_external": false
     },
-    "93": {
+    "137": {
       "confidence": "high",
-      "reasoning": "Checks STS where elements[0][0]=Z37 (Auftragstatus Sperren) and elements[1][0]=Z13 (gescheitert status). Uses has_qualified_value with qualifier on element 0 and value check on element 1 component 0.",
-      "description_hash": "23b2ce5a",
+      "reasoning": "Check any STS with Statuskategorie Z38 (Auftragstatus Entsperren) where DE1131 (elements[2][1]) equals E_1005.",
+      "description_hash": "b4faaf7b",
+      "is_external": false
+    },
+    "935": {
+      "confidence": "high",
+      "reasoning": "Format condition checking HHMM portion of a DTM value equals 0500. Uses validate_hhmm_equals helper.",
+      "description_hash": "192bd97e",
+      "is_external": false
+    },
+    "95": {
+      "confidence": "high",
+      "reasoning": "Checks if any STS segment has DE1131 (elements[2][1] in C556) equal to E_0499. E_0499 appears in the Auftragstatus Entsperren (Z38) STS variant.",
+      "description_hash": "c3761005",
+      "is_external": false
+    },
+    "45": {
+      "confidence": "high",
+      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z03 (Prüfstatus zur Summenzeitreihe) and Status Code elements[1][0] is Z07. Presence confirms the Zustimmung cluster applies.",
+      "description_hash": "775dbdce",
+      "is_external": false
+    },
+    "903": {
+      "confidence": "medium",
+      "reasoning": "Format condition requiring value == 1. Uses validate_numeric with == operator. Targets QTY segment value (elements[0][1]) as most common numeric value field in IFTSTA context.",
+      "description_hash": "ef3b7862",
+      "is_external": false
+    },
+    "960": {
+      "confidence": "medium",
+      "reasoning": "Netzlokations-ID uses the same 11-digit Luhn check digit format as Marktlokations-ID. LOC+Z18 is the standard qualifier for Netzlokation in IFTSTA. Element 1, component 0 holds the location ID.",
+      "description_hash": "0ce0bd80",
       "is_external": false
     },
     "56": {
-      "confidence": "low",
-      "reasoning": "Condition requires knowing which SG15 instance is 'current' — comparing RFF+ACW of the current SG15 with the RFF+ACW of the SG15 containing STS+Z27. The EvaluationContext has no current-group pointer; the condition cannot be faithfully implemented without that context.",
+      "confidence": "medium",
+      "reasoning": "Cross-SG15 comparison: find SG15 instances with STS+Z27, collect their RFF+ACW values, then check if any SG15's RFF+ACW differs. Requires low-level navigator access. Medium confidence because the exact group path (SG14→SG15) is inferred from IFTSTA Family B structure.",
       "description_hash": "634df52f",
       "is_external": false
     },
-    "145": {
+    "60": {
       "confidence": "medium",
-      "reasoning": "Checks that in some SG15 instance, RFF+Z13 (mandatory Prüfidentifikator) is present but RFF+Z17 (Preisschlüsselstamm reference) is absent.",
-      "description_hash": "f84ebc8e",
-      "is_external": false
-    },
-    "83": {
-      "confidence": "medium",
-      "reasoning": "STS+Z37 (Sperren) with Status Z13 and Statusanlass (elements[2][0], DE9013) in {A04, A05, A06}. The Codeliste code E_0472 in elements[2][1] is not checked as the primary discriminator is the DE9013 Prüfschritt code. Message-wide search is used as group-scoped SG15 traversal is not available via documented helpers.",
-      "description_hash": "b6d7e077",
-      "is_external": false
-    },
-    "520": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Zeitpunkt, zu dem der Wechsel erfolgt, falls er zustande kommt' — this is a semantic description of what a timestamp field represents (the switchover date if the switch occurs), not an evaluatable condition.",
-      "description_hash": "e6f61892",
-      "is_external": false
-    },
-    "533": {
-      "confidence": "low",
-      "reasoning": "Informational note ('Hinweis'): indicates that the ID of the Steuerbare Ressource is to be used here. This is a field-usage annotation, not an evaluatable boolean condition.",
-      "description_hash": "9dd0a791",
-      "is_external": false
-    },
-    "67": {
-      "confidence": "high",
-      "reasoning": "STS Z29 = Statuskategorie for Gegenvorschlag der Ausfallarbeit. Check elements[0][0]=Z29 (qualifier) and elements[1][0]=Z32 (Status, Ablehnung). Condition is True when this STS variant exists, constraining allowable EBD cluster codes to Ablehnung.",
-      "description_hash": "d0255067",
-      "is_external": false
-    },
-    "78": {
-      "confidence": "medium",
-      "reasoning": "STS+Z38 (Entsperren) is absent in the SG14 that contains STS+Z37 (Sperren). Uses any_group_has_qualifier_without to find an SG14 instance where STS+Z37 is present but STS+Z38 is not, covering the intra-SG14 scoping requirement.",
-      "description_hash": "e57d8c61",
-      "is_external": false
-    },
-    "17": {
-      "confidence": "low",
-      "reasoning": "Whether the BKV's message arrives at the wrong aggregation level is a business rule requiring knowledge of expected aggregation hierarchy (e.g., BKZ vs. Regelzone) that cannot be derived from EDIFACT segments. Fully external business context.",
-      "description_hash": "a4e7decb",
-      "is_external": true
-    },
-    "504": {
-      "confidence": "low",
-      "reasoning": "Hinweis (informational note): 'Verwendung der ID des MaBiS-ZP' — this is a documentation hint about which ID type is used (MaBiS metering point ID), not an evaluatable boolean condition.",
-      "description_hash": "249fdf5f",
-      "is_external": false
-    },
-    "59": {
-      "confidence": "low",
-      "reasoning": "Same structural limitation as condition 56 but against STS+Z30 (Gegenvorschlag Fahrplananteil). Cannot identify 'current SG15' from EvaluationContext.",
-      "description_hash": "abae0e02",
+      "reasoning": "Checks whether any SG15 with STS+Z27+Z32 (Ausfallarbeit rejected) shares the same RFF+ACW reference value as an SG15 with STS+Z28+Z32 (Fahrplananteil rejected), within the same SG14 transaction group. Assumes SG15 is a child group of SG14 (consistent with IFTSTA Family B tx_group=SG14).",
+      "description_hash": "24a1a5ae",
       "is_external": false
     },
     "79": {
@@ -801,10 +591,34 @@
       "description_hash": "c57bf964",
       "is_external": false
     },
-    "132": {
+    "533": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation about using Steuerbare Ressource ID. Always returns True.",
+      "description_hash": "9dd0a791",
+      "is_external": false
+    },
+    "934": {
+      "confidence": "high",
+      "reasoning": "Format condition checking HHMM portion of a DTM value equals 0400. Uses validate_hhmm_equals helper.",
+      "description_hash": "d06a46c8",
+      "is_external": false
+    },
+    "932": {
       "confidence": "medium",
-      "reasoning": "Check STS with Statuskategorie Z37 (Auftragstatus Sperren), Status Z32, Prüfschritt A01 (elements[2][0]), and DE1131 E_1002 (elements[2][1]). Group-scoped to SG14 but falls back to message-wide.",
-      "description_hash": "78b2cf0b",
+      "reasoning": "Format condition: HHMM must equal 2200. Uses validate_hhmm_equals. DTM+163 is a common time qualifier in IFTSTA for delivery end times.",
+      "description_hash": "943b98c4",
+      "is_external": false
+    },
+    "26": {
+      "confidence": "high",
+      "reasoning": "Whether the MP-ID in SG1 NAD+MR has the market role NB (Netzbetreiber) requires external business context — the NAD segment only carries the party identifier. Role classification is not encoded in the EDIFACT message itself.",
+      "description_hash": "cc9bd757",
+      "is_external": true
+    },
+    "32": {
+      "confidence": "high",
+      "reasoning": "Checks QTY segment where DE6411 (unit code at elements[0][2] within C186 composite) is KWT or K5 (kilowatts). Message-wide fallback for the SG16-scoped check.",
+      "description_hash": "dca23e0b",
       "is_external": false
     },
     "139": {
@@ -813,28 +627,58 @@
       "description_hash": "d6803868",
       "is_external": false
     },
-    "129": {
-      "confidence": "medium",
-      "reasoning": "Check STS with Statuskategorie Z20, Status Z32, Prüfschritt A99 (elements[2][0]), and DE1131 E_0524 (elements[2][1]). Group-scoped to SG14 but falls back to message-wide search.",
-      "description_hash": "7df1d73b",
-      "is_external": false
-    },
-    "494": {
-      "confidence": "low",
-      "reasoning": "This is a cross-field temporal validation rule: the date in the current DE must be ≤ the document creation timestamp. Without knowing which specific DE field 'hier' refers to at evaluation time, and without a way to access the 'current field value' from the EvaluationContext, this cannot be implemented as a standalone condition.",
-      "description_hash": "e0eddcc9",
-      "is_external": false
-    },
-    "80": {
+    "512": {
       "confidence": "high",
-      "reasoning": "Check within SG14 group instances: STS with Statuskategorie Z38 (Auftragstatus Entsperren) and Status code Z14. elements[0][0]=Z38 as qualifier filter, elements[1][0]=Z14 as value check.",
-      "description_hash": "398e23f5",
+      "reasoning": "Hinweis condition — informational annotation documenting value origin from MSCONS BGM DE1004. Always returns True.",
+      "description_hash": "a27ff5a6",
       "is_external": false
     },
-    "940": {
+    "29": {
+      "confidence": "high",
+      "reasoning": "The role ÜNB (Übertragungsnetzbetreiber) of the NAD+MR recipient cannot be derived from the EDIFACT message; requires external market participant role registry lookup.",
+      "description_hash": "ca618921",
+      "is_external": true
+    },
+    "144": {
       "confidence": "medium",
-      "reasoning": "Checks if any COM segment value starts with '+' and is followed only by digits — the international phone number format (E.164). This is the standard pattern for phone number validation in German energy market EDIFACT messages.",
-      "description_hash": "de8363bc",
+      "reasoning": "Checks that in some SG15 instance (inside SG14 for IFTSTA Family B), RFF+Z13 (Prüfidentifikator, always present) is present but RFF+Z45 (Artikel-ID reference) is absent. Uses RFF+Z13 as the anchor since it is mandatory in every SG15.",
+      "description_hash": "3c3a94d3",
+      "is_external": false
+    },
+    "52": {
+      "confidence": "high",
+      "reasoning": "STS+Z27+Z32: find STS where elements[0][0]==\"Z27\" (Statuskategorie=Z27, Ausfallarbeit), check elements[1][0]==\"Z32\" (Status=Z32, abgelehnt). Direct match using has_qualified_value.",
+      "description_hash": "b47ac60e",
+      "is_external": false
+    },
+    "53": {
+      "confidence": "high",
+      "reasoning": "STS+Z28+Z32: find STS where elements[0][0]==\"Z28\" (Statuskategorie=Z28, Fahrplananteil), check elements[1][0]==\"Z32\". Direct match using has_qualified_value.",
+      "description_hash": "9647225c",
+      "is_external": false
+    },
+    "931": {
+      "confidence": "medium",
+      "reasoning": "Format condition: timezone must be UTC (+00). Uses validate_timezone_utc on the DTM value field. Targets first DTM segment found.",
+      "description_hash": "825c510c",
+      "is_external": false
+    },
+    "492": {
+      "confidence": "high",
+      "reasoning": "The NAD+MR segment (recipient MP-ID) can be read from the message, but whether the market participant belongs to 'Sparte Strom' (electricity sector) requires an external market participant registry lookup. The sector affiliation is not encoded in the EDIFACT message itself.",
+      "description_hash": "bd78e2d8",
+      "is_external": true
+    },
+    "520": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing the point in time at which a switch occurs if it takes place. Always returns True.",
+      "description_hash": "e6f61892",
+      "is_external": false
+    },
+    "5": {
+      "confidence": "high",
+      "reasoning": "Checks that no STS segment exists with elements[0][0]='Z03' (Prüfstatus zur Summenzeitreihe). Direct absence check using lacks_qualifier.",
+      "description_hash": "2469359b",
       "is_external": false
     },
     "97": {
@@ -843,16 +687,172 @@
       "description_hash": "48ac4049",
       "is_external": false
     },
-    "27": {
+    "68": {
       "confidence": "high",
-      "reasoning": "Whether an MP-ID belongs to the electricity sector (Sparte Strom) vs. gas or other sectors requires external lookup against market participant registry data. The MP-ID value in NAD segments is an opaque identifier — sector classification is not embedded in the EDIFACT message.",
-      "description_hash": "f3221dba",
+      "reasoning": "STS Z30 = Statuskategorie for Gegenvorschlag des Fahrplananteils. Check elements[0][0]=Z30 and elements[1][0]=Z30 (Zustimmung). Condition is True when this acceptance STS exists.",
+      "description_hash": "6504c270",
+      "is_external": false
+    },
+    "16": {
+      "confidence": "high",
+      "reasoning": "Whether the MP-ID in SG1 NAD+MR has the market role BKV (Bilanzkreisverantwortlicher) cannot be determined from the EDIFACT message alone — NAD+MR only contains the party identifier, not their role classification. Role determination requires external business context.",
+      "description_hash": "d6343b1c",
       "is_external": true
     },
-    "935": {
+    "8": {
       "confidence": "low",
-      "reasoning": "Checks if a time field (HHMM portion of a DTM value) equals 0500. Without the segment structure reference, cannot determine which DTM element/qualifier to target, so this scans all DTM segments for a value with 0500 in the time position. Low confidence due to missing element index specifics.",
-      "description_hash": "192bd97e",
+      "reasoning": "Checks absence of the Datenstatus for a NZR (Netzregelzone-Zeitreihe) from BIKO to NB. The 'vom BIKO an NB' routing context and the specific qualifier codes identifying NZR-type Datenstatus in STS are not determinable without the AHB segment structure reference. This may also involve external context about message routing (whether this is a BIKO-to-NB message).",
+      "description_hash": "ce6dded2",
+      "is_external": false
+    },
+    "504": {
+      "confidence": "high",
+      "reasoning": "Hinweis informational note — always returns True unconditionally.",
+      "description_hash": "249fdf5f",
+      "is_external": false
+    },
+    "101": {
+      "confidence": "high",
+      "reasoning": "Checks STS where elements[0][0]=Z43 (Bearbeitungsstatus) and elements[1][0]=Z48. Mirror of condition 100 for the 'keine Änderung der Daten' cluster.",
+      "description_hash": "aa3859a2",
+      "is_external": false
+    },
+    "51": {
+      "confidence": "high",
+      "reasoning": "Unconditional restriction: only Abweisung cluster codes are possible at this position. No qualifying condition — always evaluates to True to enforce the code cluster constraint.",
+      "description_hash": "5fb16850",
+      "is_external": false
+    },
+    "495": {
+      "confidence": "medium",
+      "reasoning": "The timestamp must be ≤ DE2380 of DTM+137 (document creation date). Compares DTM+334 against DTM+137 using lexicographic ordering, valid for format 303 (YYYYMMDDhhmm) timestamps.",
+      "description_hash": "15943b5e",
+      "is_external": false
+    },
+    "132": {
+      "confidence": "medium",
+      "reasoning": "Check STS with Statuskategorie Z37 (Auftragstatus Sperren), Status Z32, Prüfschritt A01 (elements[2][0]), and DE1131 E_1002 (elements[2][1]). Group-scoped to SG14 but falls back to message-wide.",
+      "description_hash": "78b2cf0b",
+      "is_external": false
+    },
+    "65": {
+      "confidence": "high",
+      "reasoning": "STS+Z28+Z32 vorhanden: identical to condition 53. The 'only codes from EBD-Cluster Ablehnung' clause is a value-set constraint; the condition checks presence of STS+Z28+Z32.",
+      "description_hash": "9c55b076",
+      "is_external": false
+    },
+    "531": {
+      "confidence": "high",
+      "reasoning": "This is a Hinweis (informational note) describing the provenance and intended use of the field value — the transaction number used by MSBN in step 1 of the process document, for use by LF when ordering a configuration contingent on a successful MSB switch. It documents field semantics, not a boolean predicate, and always applies.",
+      "description_hash": "32f63123",
+      "is_external": false
+    },
+    "78": {
+      "confidence": "medium",
+      "reasoning": "STS+Z38 (Entsperren) is absent in the SG14 that contains STS+Z37 (Sperren). Uses any_group_has_qualifier_without to find an SG14 instance where STS+Z37 is present but STS+Z38 is not, covering the intra-SG14 scoping requirement.",
+      "description_hash": "e57d8c61",
+      "is_external": false
+    },
+    "522": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing the point in time from which the gMSB takes over metering operations. Always returns True.",
+      "description_hash": "bffc0853",
+      "is_external": false
+    },
+    "519": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation documenting value origin from ORDERS BGM DE1004. Always returns True.",
+      "description_hash": "cdb82de2",
+      "is_external": false
+    },
+    "140": {
+      "confidence": "medium",
+      "reasoning": "Checks if any STS segment has DE9013 (elements[2][0]) with a non-empty value that is not 'A01'. Medium confidence because 'in diesem STS' implies a segment-level context that may not be fully captured by message-wide search.",
+      "description_hash": "5f1095ba",
+      "is_external": false
+    },
+    "72": {
+      "confidence": "high",
+      "reasoning": "Whether a counter-proposal can be created depends on external business rules and system state, not on the content of the EDIFACT message itself.",
+      "description_hash": "d14cc8c0",
+      "is_external": true
+    },
+    "33": {
+      "confidence": "high",
+      "reasoning": "Checks if DTM with qualifier 163 (Beginn Messperiode / Beginn des Zeitraums, elements[0][0]) is present in the SG16 group context. Falls back to message-wide search when no navigator is available.",
+      "description_hash": "48b5264e",
+      "is_external": false
+    },
+    "18": {
+      "confidence": "high",
+      "reasoning": "Checks that no STS segment exists with elements[0][0]='Z19' (Ersteinbau iMS Planungsstatus). Direct absence check using lacks_qualifier.",
+      "description_hash": "a26dfa5c",
+      "is_external": false
+    },
+    "906": {
+      "confidence": "medium",
+      "reasoning": "Format condition: max 3 decimal places. Applies to QTY segment value field (elements[0][1]).",
+      "description_hash": "97bdb0c7",
+      "is_external": false
+    },
+    "76": {
+      "confidence": "high",
+      "reasoning": "'Wenn MP-ID in SG1 NAD+MR in der Rolle ESA' checks whether the recipient market participant (NAD+MR) has the role ESA (Energiedienstleister mit Sonderverteilung). Market participant roles cannot be determined from the MP-ID in the EDIFACT message alone — requires external role registry lookup.",
+      "description_hash": "25f93c25",
+      "is_external": true
+    },
+    "523": {
+      "confidence": "high",
+      "reasoning": "Hinweis: informational annotation describing where a value comes from. Always applies unconditionally.",
+      "description_hash": "85e3ed2c",
+      "is_external": false
+    },
+    "950": {
+      "confidence": "high",
+      "reasoning": "Format condition validating Marktlokations-ID (11-digit with Luhn check). Looks up LOC+Z16 segment and validates the ID in element 1 component 0 using validate_malo_id helper.",
+      "description_hash": "a9ddfaec",
+      "is_external": false
+    },
+    "64": {
+      "confidence": "high",
+      "reasoning": "STS+Z28+Z30 vorhanden: find STS where elements[0][0]==\"Z28\" (Fahrplananteil), check elements[1][0]==\"Z30\" (Zustimmung).",
+      "description_hash": "2e4df2d5",
+      "is_external": false
+    },
+    "58": {
+      "confidence": "medium",
+      "reasoning": "Same cross-SG15 comparison pattern as condition 56, but referencing STS+Z29 (Status des Gegenvorschlags der Ausfallarbeit).",
+      "description_hash": "80ecd449",
+      "is_external": false
+    },
+    "521": {
+      "confidence": "high",
+      "reasoning": "Hinweis condition — informational annotation describing the point in time from which the MSBN actually takes over metering operations. Always returns True.",
+      "description_hash": "ce831f68",
+      "is_external": false
+    },
+    "80": {
+      "confidence": "high",
+      "reasoning": "Check within SG14 group instances: STS with Statuskategorie Z38 (Auftragstatus Entsperren) and Status code Z14. elements[0][0]=Z38 as qualifier filter, elements[1][0]=Z14 as value check.",
+      "description_hash": "398e23f5",
+      "is_external": false
+    },
+    "107": {
+      "confidence": "high",
+      "reasoning": "Checks STS where elements[0][0]=Z37 (Auftragstatus Sperren) and elements[1][0]=Z32 (Ablehnung). Uses has_qualified_value analogously to conditions 93/94.",
+      "description_hash": "ee810d4e",
+      "is_external": false
+    },
+    "490": {
+      "confidence": "high",
+      "reasoning": "Checks if the CCYYMMDD portion of the DTM value falls within the MESZ (German summer time, UTC+2) period as defined in Kapitel 3.5. Uses the is_mesz_utc() format validation helper which implements the EU DST rule.",
+      "description_hash": "b21c790d",
+      "is_external": false
+    },
+    "43": {
+      "confidence": "high",
+      "reasoning": "Finds STS segments where Statuskategorie elements[0][0] is Z01 (Prüfstatus Antwort auf Summenzeitreihen) and Status Code elements[1][0] is Z07. Presence indicates the Zustimmung code cluster applies per the segment structure reference.",
+      "description_hash": "a85c3159",
       "is_external": false
     }
   }
