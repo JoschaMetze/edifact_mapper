@@ -146,6 +146,8 @@ fn test_variant_cache_roundtrip() {
         transaction_defs: tx_map,
         combined_defs: combined_map,
         code_lookups: HashMap::new(),
+        mig_schema: None,
+        segment_structure: None,
     };
 
     let tmp = tempfile::tempdir().expect("tempdir");

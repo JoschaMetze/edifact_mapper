@@ -2720,6 +2720,12 @@ pub struct VariantCache {
     /// Per-PID code lookups (key: "pid_55001"). Cached to avoid reading schema JSONs at load time.
     #[serde(default)]
     pub code_lookups: HashMap<String, crate::code_lookup::CodeLookup>,
+    /// Parsed MIG schema — cached to avoid re-parsing MIG XML at startup.
+    #[serde(default)]
+    pub mig_schema: Option<mig_types::schema::mig::MigSchema>,
+    /// Segment element counts derived from MIG — cached for reverse mapping padding.
+    #[serde(default)]
+    pub segment_structure: Option<crate::segment_structure::SegmentStructure>,
 }
 
 impl VariantCache {

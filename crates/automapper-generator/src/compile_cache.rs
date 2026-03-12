@@ -8,6 +8,7 @@ use std::path::Path;
 use mig_bo4e::code_lookup::CodeLookup;
 use mig_bo4e::path_resolver::PathResolver;
 use mig_bo4e::pid_schema_index::PidSchemaIndex;
+use mig_bo4e::segment_structure::SegmentStructure;
 use mig_bo4e::MappingEngine;
 
 /// Statistics from a cache compilation run.
@@ -35,6 +36,7 @@ pub fn compile_all(
     schema_base: &Path,
     output_base: &Path,
 ) -> Result<CompileStats, Box<dyn std::error::Error>> {
+    let xml_base = std::path::Path::new("xml-migs-and-ahbs");
     let mut stats = CompileStats::default();
 
     let fv_entries = std::fs::read_dir(mappings_base)?;
@@ -53,7 +55,8 @@ pub fn compile_all(
             }
             let variant = variant_entry.file_name().to_string_lossy().to_string();
 
-            match compile_variant(mappings_base, schema_base, &fv, &variant, output_base) {
+            match compile_variant(mappings_base, schema_base, xml_base, &fv, &variant, output_base)
+            {
                 Ok(variant_stats) => stats.merge(variant_stats),
                 Err(e) => {
                     stats.errors.push(format!("{fv}/{variant}: {e}"));
@@ -75,6 +78,7 @@ pub fn compile_all(
 pub fn compile_variant(
     mappings_base: &Path,
     schema_base: &Path,
+    xml_base: &Path,
     fv: &str,
     variant: &str,
     output_base: &Path,
@@ -95,6 +99,13 @@ pub fn compile_variant(
     } else {
         None
     };
+
+    // Parse MIG XML for this variant (if available)
+    // Looks for e.g. xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_*.xml
+    let msg_type_upper = variant.split('_').next().unwrap_or(variant);
+    let variant_suffix = variant.split('_').nth(1).unwrap_or("");
+    let mig_schema = find_and_parse_mig(xml_base, fv, msg_type_upper, variant_suffix);
+    let segment_structure = mig_schema.as_ref().map(SegmentStructure::from_mig);
 
     // VariantCache accumulator
     let mut variant_message_defs = Vec::new();
@@ -201,6 +212,8 @@ pub fn compile_variant(
         transaction_defs: variant_transaction_defs,
         combined_defs: variant_combined_defs,
         code_lookups: variant_code_lookups,
+        mig_schema,
+        segment_structure,
     };
     let variant_cache_path = output_base.join(fv).join(format!("{variant}.json"));
     if let Err(e) = variant_cache.save(&variant_cache_path) {
@@ -244,6 +257,49 @@ fn load_tx_engine(
         }
     }
     MappingEngine::load(pid_dir)
+}
+
+/// Find and parse a MIG XML for a given format version and message type/variant.
+///
+/// Searches `{xml_base}/{fv}/` for a file matching `{MSG_TYPE}_MIG_{Variant}_*.xml`.
+/// Returns None if no matching file is found or parsing fails.
+fn find_and_parse_mig(
+    xml_base: &Path,
+    fv: &str,
+    msg_type: &str,
+    variant_suffix: &str,
+) -> Option<mig_types::schema::mig::MigSchema> {
+    let fv_dir = xml_base.join(fv);
+    if !fv_dir.is_dir() {
+        return None;
+    }
+
+    // Build search prefix: e.g., "UTILMD_MIG_Strom_" or "ORDERS_MIG_"
+    let prefix = if variant_suffix.is_empty() {
+        format!("{msg_type}_MIG_")
+    } else {
+        format!("{msg_type}_MIG_{variant_suffix}_")
+    };
+
+    let entries = std::fs::read_dir(&fv_dir).ok()?;
+    for entry in entries.flatten() {
+        let name = entry.file_name().to_string_lossy().to_string();
+        if name.starts_with(&prefix) && name.ends_with(".xml") {
+            let variant = if variant_suffix.is_empty() {
+                None
+            } else {
+                Some(variant_suffix)
+            };
+            match mig_assembly::parsing::parse_mig(&entry.path(), msg_type, variant, fv) {
+                Ok(mig) => return Some(mig),
+                Err(e) => {
+                    eprintln!("Warning: Failed to parse MIG {fv}/{name}: {e}");
+                    return None;
+                }
+            }
+        }
+    }
+    None
 }
 
 #[cfg(test)]

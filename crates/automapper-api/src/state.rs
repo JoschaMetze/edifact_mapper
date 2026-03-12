@@ -67,26 +67,9 @@ impl MigServiceRegistry {
     pub fn discover() -> Self {
         let mut services = HashMap::new();
 
-        // Try to load the UTILMD Strom MIG for FV2504
-        let mig_path = std::path::Path::new(
-            "xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml",
-        );
-        if mig_path.exists() {
-            match ConversionService::new(mig_path, "UTILMD", Some("Strom"), "FV2504") {
-                Ok(svc) => {
-                    tracing::info!("Loaded MIG conversion service for FV2504");
-                    services.insert("FV2504".to_string(), svc);
-                }
-                Err(e) => {
-                    tracing::warn!("Failed to load MIG for FV2504: {e}");
-                }
-            }
-        } else {
-            tracing::info!(
-                "MIG XML not found at {}, MIG-driven modes unavailable",
-                mig_path.display()
-            );
-        }
+        // MIG services are populated from variant cache (preferred) or MIG XML fallback.
+        // The variant cache loading below will insert ConversionService entries from
+        // cached MigSchema when available.
 
         // Load TOML mapping definitions: mappings/{FV}/{msg_variant}/{pid}/
         // Also loads shared message-level definitions from mappings/{FV}/{msg_variant}/message/
@@ -119,6 +102,22 @@ impl MigServiceRegistry {
                             if variant_cache_path.exists() {
                                 match VariantCache::load(&variant_cache_path) {
                                     Ok(vc) => {
+                                        // Register ConversionService from cached MIG schema.
+                                        // Only use UTILMD_Strom variants (the primary MIG for assembly).
+                                        if let Some(mig) = vc.mig_schema {
+                                            if !services.contains_key(&fv)
+                                                && variant.starts_with("UTILMD_Strom")
+                                            {
+                                                tracing::info!(
+                                                    "Loaded MIG schema for {fv} from variant cache ({variant})"
+                                                );
+                                                services.insert(
+                                                    fv.clone(),
+                                                    ConversionService::from_mig(mig),
+                                                );
+                                            }
+                                        }
+
                                         // Use first cached code lookup for message engine
                                         let first_code_lookup = vc
                                             .code_lookups
@@ -142,13 +141,15 @@ impl MigServiceRegistry {
                                         }
 
                                         // Insert combined and transaction engines per PID
+                                        // Use cached segment structure (avoids re-deriving from MIG)
+                                        let seg_struct = &vc.segment_structure;
+
                                         for (pid_dirname, combined_defs) in vc.combined_defs {
                                             let mut engine =
                                                 MappingEngine::from_definitions(combined_defs);
-                                            if let Some(svc) = services.get(&fv) {
-                                                engine = engine.with_segment_structure(
-                                                    SegmentStructure::from_mig(svc.mig()),
-                                                );
+                                            if let Some(ss) = seg_struct {
+                                                engine =
+                                                    engine.with_segment_structure(ss.clone());
                                             }
                                             if let Some(cl) = vc.code_lookups.get(&pid_dirname) {
                                                 engine = engine.with_code_lookup(cl.clone());
@@ -160,10 +161,9 @@ impl MigServiceRegistry {
                                         for (pid_dirname, tx_defs) in vc.transaction_defs {
                                             let mut engine =
                                                 MappingEngine::from_definitions(tx_defs);
-                                            if let Some(svc) = services.get(&fv) {
-                                                engine = engine.with_segment_structure(
-                                                    SegmentStructure::from_mig(svc.mig()),
-                                                );
+                                            if let Some(ss) = seg_struct {
+                                                engine =
+                                                    engine.with_segment_structure(ss.clone());
                                             }
                                             if let Some(cl) = vc.code_lookups.get(&pid_dirname) {
                                                 engine = engine.with_code_lookup(cl.clone());
@@ -173,7 +173,7 @@ impl MigServiceRegistry {
                                         }
 
                                         tracing::info!(
-                                            "Loaded variant cache for {}/{} ({} combined, {} tx engines, {} code lookups)",
+                                            "Loaded variant cache for {}/{} ({} combined, {} tx engines, {} code lookups, mig: {})",
                                             fv,
                                             variant,
                                             mapping_engines
@@ -191,6 +191,7 @@ impl MigServiceRegistry {
                                                 )))
                                                 .count(),
                                             vc.code_lookups.len(),
+                                            if services.contains_key(&fv) { "cached" } else { "none" },
                                         );
                                         continue; // Skip per-PID iteration
                                     }
@@ -466,6 +467,47 @@ impl MigServiceRegistry {
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // MIG XML fallback: for any FV without a cached MIG schema, parse from XML
+        let xml_base = std::path::Path::new("xml-migs-and-ahbs");
+        if xml_base.is_dir() {
+            if let Ok(fv_entries) = std::fs::read_dir(xml_base) {
+                for fv_entry in fv_entries.flatten() {
+                    let fv_path = fv_entry.path();
+                    if !fv_path.is_dir() {
+                        continue;
+                    }
+                    let fv = fv_entry.file_name().to_string_lossy().to_string();
+                    if services.contains_key(&fv) {
+                        continue; // Already loaded from cache
+                    }
+                    if let Ok(files) = std::fs::read_dir(&fv_path) {
+                        for file in files.flatten() {
+                            let name = file.file_name().to_string_lossy().to_string();
+                            if name.starts_with("UTILMD_MIG_Strom_") && name.ends_with(".xml") {
+                                match ConversionService::new(
+                                    &file.path(),
+                                    "UTILMD",
+                                    Some("Strom"),
+                                    &fv,
+                                ) {
+                                    Ok(svc) => {
+                                        tracing::info!(
+                                            "Loaded MIG from XML for {fv} (cache miss): {name}"
+                                        );
+                                        services.insert(fv.clone(), svc);
+                                    }
+                                    Err(e) => {
+                                        tracing::warn!("Failed to load MIG for {fv}/{name}: {e}");
+                                    }
+                                }
+                                break;
                             }
                         }
                     }

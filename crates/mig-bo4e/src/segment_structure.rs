@@ -13,6 +13,7 @@ use mig_types::schema::mig::{MigSchema, MigSegment, MigSegmentGroup};
 /// Element count = `data_elements.len() + composites.len()` for each segment.
 /// This matches the EDIFACT convention where each data element or composite
 /// occupies one element position separated by `+`.
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub struct SegmentStructure {
     pub(crate) element_counts: HashMap<String, usize>,
 }
