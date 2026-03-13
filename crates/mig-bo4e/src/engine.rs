@@ -157,6 +157,31 @@ impl MappingEngine {
         })
     }
 
+    /// Load common definitions only (no per-PID dir), filtered by schema index.
+    ///
+    /// Used for PIDs that have no per-PID directory but can use shared common/ definitions.
+    pub fn load_common_only(
+        common_dir: &Path,
+        schema_index: &crate::pid_schema_index::PidSchemaIndex,
+    ) -> Result<Self, MappingError> {
+        let mut common_defs = Self::load(common_dir)?.definitions;
+
+        // Filter common defs by schema — keep only groups that exist in this PID
+        common_defs.retain(|d| {
+            d.meta
+                .source_path
+                .as_deref()
+                .map(|sp| schema_index.has_group(sp))
+                .unwrap_or(true)
+        });
+
+        Ok(Self {
+            definitions: common_defs,
+            segment_structure: None,
+            code_lookup: None,
+        })
+    }
+
     /// Load message + transaction engines with common template inheritance.
     ///
     /// Returns `(message_engine, transaction_engine)` where the transaction engine

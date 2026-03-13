@@ -209,6 +209,49 @@ pub fn compile_variant(
         }
     }
 
+    // Generate entries for AHB-known PIDs that don't have per-PID dirs.
+    // Uses common/ definitions (if available) filtered by schema index.
+    for pid_dirname in pid_segment_numbers.keys() {
+        if variant_transaction_defs.contains_key(pid_dirname) {
+            continue; // Already loaded from per-PID dir
+        }
+        let schema_file = schema_dir.join(format!("{pid_dirname}_schema.json"));
+
+        let tx_engine = if common_dir.is_dir() && schema_file.exists() {
+            // Load common/ definitions filtered by this PID's schema
+            if let Ok(idx) = PidSchemaIndex::from_schema_file(&schema_file) {
+                match MappingEngine::load_common_only(&common_dir, &idx) {
+                    Ok(engine) => apply_resolver(engine, resolver.as_ref()),
+                    Err(_) => MappingEngine::from_definitions(vec![]),
+                }
+            } else {
+                MappingEngine::from_definitions(vec![])
+            }
+        } else {
+            MappingEngine::from_definitions(vec![])
+        };
+
+        variant_transaction_defs.insert(pid_dirname.clone(), tx_engine.definitions().to_vec());
+
+        // Build CodeLookup from schema JSON
+        if schema_file.exists() {
+            if let Ok(cl) = CodeLookup::from_schema_file(&schema_file) {
+                variant_code_lookups.insert(pid_dirname.clone(), cl);
+            }
+        }
+
+        // Build combined engine (message + tx)
+        let mut combined_defs = variant_message_defs.clone();
+        combined_defs.extend(tx_engine.definitions().to_vec());
+        variant_combined_defs.insert(pid_dirname.clone(), combined_defs);
+
+        stats.transaction_engines += 1;
+        stats.combined_engines += 1;
+        eprintln!(
+            "  Generated cache entry for {fv}/{variant}/{pid_dirname} from common/ (no per-PID dir)",
+        );
+    }
+
     // Write consolidated VariantCache file
     let variant_cache = VariantCache {
         message_defs: variant_message_defs,
