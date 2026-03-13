@@ -124,7 +124,7 @@ fn test_fv2510_invoic_all_pids_roundtrip() {
     run_all_generated_roundtrips("INVOIC", &pids, &[], |pid| {
         let fixture = common::invoic_fv2510::discover_generated_fixture(pid)?;
         let mig = common::invoic_fv2510::load_pid_filtered_mig(pid)?;
-        let (msg, tx) = common::invoic_fv2510::load_engines_for_pid(pid);
+        let (msg, tx) = common::invoic_fv2510::load_split_engines(pid);
         Some((fixture, mig, msg, tx, common::invoic_fv2510::TX_GROUP))
     });
 }
@@ -232,7 +232,7 @@ fn test_fv2510_partin_all_pids_roundtrip() {
     run_all_generated_roundtrips("PARTIN", &pids, &[], |pid| {
         let fixture = common::partin_fv2510::discover_generated_fixture(pid)?;
         let mig = common::partin_fv2510::load_pid_filtered_mig(pid)?;
-        let (msg, tx) = common::partin_fv2510::load_engines_for_pid(pid);
+        let (msg, tx) = common::partin_fv2510::load_split_engines(pid);
         Some((fixture, mig, msg, tx, common::partin_fv2510::TX_GROUP))
     });
 }

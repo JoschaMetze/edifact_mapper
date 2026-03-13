@@ -65,58 +65,12 @@ pub fn load_split_engines(pid: &str) -> (MappingEngine, MappingEngine) {
     CONFIG.load_split_engines(pid)
 }
 
-/// Load engines for a PID, handling the case where no per-PID dir exists.
-pub fn load_engines_for_pid(pid: &str) -> (MappingEngine, MappingEngine) {
-    CONFIG.load_split_engines(pid)
-}
-
 pub fn run_full_roundtrip(pid: &str) {
-    run_full_roundtrip_with_skip(pid, &[]);
+    CONFIG.run_full_roundtrip(pid);
 }
 
 pub fn run_full_roundtrip_with_skip(pid: &str, known_incomplete: &[&str]) {
-    let fixtures = CONFIG.discover_fixtures(pid);
-    if fixtures.is_empty() {
-        eprintln!("Skipping roundtrip for PID {pid}: no fixtures found");
-        return;
-    }
-
-    let Some(filtered_mig) = CONFIG.load_pid_filtered_mig(pid) else {
-        eprintln!("Skipping roundtrip for PID {pid}: MIG/AHB XML not available");
-        return;
-    };
-
-    let (msg_engine, tx_engine) = load_engines_for_pid(pid);
-
-    let mut tested = 0;
-    let mut skipped = 0;
-
-    for fixture_path in &fixtures {
-        let fixture_name = fixture_path.file_name().unwrap().to_str().unwrap();
-        if known_incomplete.contains(&fixture_name) {
-            eprintln!("PID {pid}: {fixture_name} -- SKIPPED (known incomplete mapping)");
-            skipped += 1;
-            continue;
-        }
-
-        super::test_utils::run_single_fixture_roundtrip_with_tx_group(
-            pid,
-            fixture_path,
-            &filtered_mig,
-            &msg_engine,
-            &tx_engine,
-            TX_GROUP,
-        );
-        tested += 1;
-    }
-
-    assert!(
-        tested > 0 || skipped > 0,
-        "PID {pid}: expected at least one fixture"
-    );
-    if skipped > 0 {
-        eprintln!("PID {pid}: {tested} tested, {skipped} skipped (known incomplete)");
-    }
+    CONFIG.run_full_roundtrip_with_skip(pid, known_incomplete);
 }
 
 pub fn discover_generated_fixture(pid: &str) -> Option<PathBuf> {

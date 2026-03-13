@@ -157,7 +157,7 @@ fn run_generated_roundtrip(pid: &str) {
         return;
     };
 
-    let (msg_engine, tx_engine) = common::invoic::load_engines_for_pid(pid);
+    let (msg_engine, tx_engine) = common::invoic::load_split_engines(pid);
 
     common::test_utils::run_single_fixture_roundtrip_with_tx_group(
         pid,

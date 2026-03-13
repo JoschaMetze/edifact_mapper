@@ -70,11 +70,6 @@ pub fn load_split_engines(pid: &str) -> (MappingEngine, MappingEngine) {
     CONFIG.load_split_engines(pid)
 }
 
-/// Load engines for a PID, handling the case where no per-PID dir exists.
-pub fn load_engines_for_pid(pid: &str) -> (MappingEngine, MappingEngine) {
-    CONFIG.load_split_engines(pid)
-}
-
 /// Discover generated fixture file for a PID (single file in `generated/` subdir).
 pub fn discover_generated_fixture(pid: &str) -> Option<PathBuf> {
     let dir = Path::new(FIXTURE_DIR).join("generated");
