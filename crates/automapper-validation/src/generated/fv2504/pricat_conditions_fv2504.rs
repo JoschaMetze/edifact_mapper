@@ -138,7 +138,7 @@ impl ConditionEvaluator for PricatConditionEvaluatorFV2504 {
 
 impl PricatConditionEvaluatorFV2504 {
     /// [10] Wenn eine weitere Zone für diese Gruppenartikel-ID vorhanden
-    fn evaluate_10(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_10(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [10] requires manual implementation
         // Reason: Requires checking if another zone instance exists for the same Gruppenartikel-ID within the PRICAT SG17 group structure. This needs cross-group navigation to correlate zone entries to a specific Gruppenartikel-ID, but the exact PRICAT FV2504 segment structure for zone representation (which segment/element carries the zone discriminator relative to Gruppenartikel-ID) is not available in the provided schema context. Cannot implement correctly without the PID schema.
         ConditionResult::Unknown
@@ -166,7 +166,7 @@ impl PricatConditionEvaluatorFV2504 {
     }
 
     /// [55] Wenn eine weitere Zone für diese Artikel-ID vorhanden
-    fn evaluate_55(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_55(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [55] requires manual implementation
         // Reason: Requires checking if another zone instance exists for the same Artikel-ID within the PRICAT structure. Similar to condition 10 but for Artikel-ID (likely LIN/PIA segment). Requires cross-group navigation to count zone instances per Artikel-ID, but the exact PRICAT FV2504 zone segment structure (which element discriminates zones within an article's price group) is not available without the PID schema.
         ConditionResult::Unknown
@@ -738,7 +738,7 @@ impl PricatConditionEvaluatorFV2504 {
     }
 
     /// [494] Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt
-    fn evaluate_494(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_494(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument
         // erstellt wurde, oder ein Zeitpunkt, der davor liegt. Informational annotation
         // about the semantic meaning of the date field — always applies unconditionally.
@@ -762,60 +762,60 @@ impl PricatConditionEvaluatorFV2504 {
     }
 
     /// [502] Hinweis: Preis in Euro je MWh
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [503] Hinweis: Hier ist immer der Wert 1000 einzutragen, da in DE5118 der Preis in €/MWh angegeben wird.
-    fn evaluate_503(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_503(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [504] Hinweis: Dokumentennummer der PRICAT
-    fn evaluate_504(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_504(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [511] Hinweis: 1. Der genannte Wert gehört nicht zum Intervall.  2. Wenn in dieser SG36 die letzte Ziffer von LIN DE7140 &gt;1, dann ist der Wert identisch mit dem Wert des DE6152 im RNG-Segment, in der...
-    fn evaluate_511(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_511(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: informational annotation about RNG value semantics and ordering rules across Artikel-IDs
         ConditionResult::True
     }
 
     /// [512] Hinweis: Der genannte Wert gehört zum Intervall
-    fn evaluate_512(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_512(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [513] Hinweis: Die zum Preis gehörende Einheit ist in der Codeliste definiert
-    fn evaluate_513(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_513(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [519] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_519(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_519(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [520] Hinweis: Falls der Preis des Artikels gezont ist, ist diese SG40 so oft zu wiederholen, bis alle Preise zu diesem Artikel genannt sind
-    fn evaluate_520(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_520(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [521] Hinweis: Je Artikel-ID muss in einem RNG der Wert dieses DE = 0 sein und in allen anderen RNG zu dieser Artikel-ID muss der Wert dieses DE mit dem Wert des DE6152 eines anderen RNG zu dieser Artike...
-    fn evaluate_521(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_521(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: informational annotation about RNG DE value relationships — one RNG must have value 0,
         // all others must equal DE6152 of another RNG for the same Artikel-ID
         ConditionResult::True
     }
 
     /// [902] Format: Möglicher Wert: ≥ 0
-    fn evaluate_902(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_902(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [908] Format: Mögliche Werte: 1 bis n
-    fn evaluate_908(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_908(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 

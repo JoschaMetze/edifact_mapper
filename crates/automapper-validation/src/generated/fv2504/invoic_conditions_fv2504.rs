@@ -253,14 +253,14 @@ impl InvoicConditionEvaluatorFV2504 {
     }
 
     /// [24] Wert muss mindestens 10 WT nach Wert aus DTM+137 DE2380 liegen
-    fn evaluate_24(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_24(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [24] requires manual implementation
         // Reason: Condition requires calculating whether a date value is at least 10 Werktage (working days) after DTM+137 DE2380. Working-day arithmetic requires a German public holiday calendar, which is not available in the EvaluationContext API. Cannot implement accurately without external calendar data.
         ConditionResult::Unknown
     }
 
     /// [25] Wert darf maximal 10 WT nach Wert aus DTM+137 DE2380 liegen
-    fn evaluate_25(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_25(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [25] requires manual implementation
         // Reason: Requires computing a date that is at most 10 Werktage (working days) after DTM+137 DE2380. Working-day calculation requires a German public-holiday calendar (which varies by Bundesland) and cannot be performed with the available API helpers. Marking as low confidence / null.
         ConditionResult::Unknown
@@ -540,7 +540,7 @@ impl InvoicConditionEvaluatorFV2504 {
     }
 
     /// [22] Wenn vorhanden
-    fn evaluate_22(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_22(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Wenn vorhanden — self-referential presence condition, always True when evaluated
         ConditionResult::True
     }
@@ -1131,139 +1131,139 @@ impl InvoicConditionEvaluatorFV2504 {
     }
 
     /// [501] Hinweis: Dokumentennummer der ORDERS
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [502] Hinweis: Dokumentennummer der Bilanzierungs-MSCONS
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer der Bilanzierungs-MSCONS — informational note, always applies
         ConditionResult::True
     }
 
     /// [503] Hinweis: Ein positiver Betrag ist eine Forderung des Rechnungsstellers.
-    fn evaluate_503(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_503(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Ein positiver Betrag ist eine Forderung des Rechnungsstellers — informational note, always applies
         ConditionResult::True
     }
 
     /// [504] Hinweis: Ein positiver Betrag ist eine Forderung des Rechnungsempfängers.
-    fn evaluate_504(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_504(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Ein positiver Betrag ist eine Forderung des Rechnungsempfängers — informational note, always applies
         ConditionResult::True
     }
 
     /// [507] Hinweis: Dokumentennummer der SSQNOT
-    fn evaluate_507(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_507(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer der SSQNOT — informational note, always applies
         ConditionResult::True
     }
 
     /// [508] Hinweis: Dokumentennummer der QUOTES
-    fn evaluate_508(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_508(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer der QUOTES — informational note, always applies
         ConditionResult::True
     }
 
     /// [509] Hinweis: Verwendung der ID der Marktlokation
-    fn evaluate_509(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_509(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Marktlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [510] Hinweis: Verwendung der ID der Messlokation
-    fn evaluate_510(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_510(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Messlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [512] Hinweis: Hier ist entweder der Betrag aus MOA+203 oder der um den gültigen Steuerbetrag erhöhte Betrag aus MOA+203 anzugeben.
-    fn evaluate_512(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_512(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Hier ist entweder der Betrag aus MOA+203 oder der um den gültigen Steuerbetrag erhöhte Betrag aus MOA+203 anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [513] Hinweis: Hier ist das Ergebnis der Multiplikation von MOA+25 mit PCD+3 anzugeben.
-    fn evaluate_513(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_513(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Hier ist das Ergebnis der Multiplikation von MOA+25 mit PCD+3 anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [514] Hinweis: Dokumentennummer der Lieferschein-MSCONS
-    fn evaluate_514(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_514(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer der Lieferschein-MSCONS — informational note, always applies
         ConditionResult::True
     }
 
     /// [515] Hinweis: BGM DE1004 aus INVOIC-Nachricht, die storniert werden soll
-    fn evaluate_515(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_515(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: BGM DE1004 aus INVOIC-Nachricht, die storniert werden soll — informational note, always applies
         ConditionResult::True
     }
 
     /// [516] Hinweis: Ein Lieferschein zu einer Rechnung ist für alle Abrechnungszeiträume, die erstmals nach dem 1.12.2019 abgerechnet werden und für alle Abrechnungszeiträume, für die sich nach dem 1.12....
-    fn evaluate_516(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_516(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Ein Lieferschein zu einer Rechnung ist für alle Abrechnungszeiträume, die erstmals nach dem 1.12.2019 abgerechnet werden und für alle Abrechnungszeiträume, für die sich nach dem 1.12.2019 geänderte Mengen oder Leistungswerte ergeben, nötig.
         ConditionResult::True
     }
 
     /// [517] Hinweis: Dokumentennummer der PDF-Kapazitätsrechnung
-    fn evaluate_517(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_517(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer der PDF-Kapazitätsrechnung — informational annotation, always applies
         ConditionResult::True
     }
 
     /// [518] Hinweis:  Im Fall der Stornierung des Auftrags der Unterbrechung: Der Tag an dem der NB die Stornierung empfangen hat Bei erfolgreicher Sperrung: Tag der durchgeführten Sperrung Bei erfolgloser Sp...
-    fn evaluate_518(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_518(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Date semantics for cancellation/blocking scenarios — informational annotation, always applies
         ConditionResult::True
     }
 
     /// [519] Hinweis: Stornierte Abschlagsrechnungen sind nicht aufzuführen
-    fn evaluate_519(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_519(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Stornierte Abschlagsrechnungen sind nicht aufzuführen — informational annotation, always applies
         ConditionResult::True
     }
 
     /// [520] Hinweis: Es sind nur die Artikel-IDs aus dem Preisblatt erlaubt
-    fn evaluate_520(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_520(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es sind nur die Artikel-IDs aus dem Preisblatt erlaubt — informational annotation, always applies
         ConditionResult::True
     }
 
     /// [521] Hinweis: BGM DE1004 aus der INVOIC-Nachricht, für die Verzugskosten erhoben werden
-    fn evaluate_521(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_521(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: BGM DE1004 aus der INVOIC-Nachricht, für die Verzugskosten erhoben werden — informational note, always applies
         ConditionResult::True
     }
 
     /// [522] Hinweis: Verwendung der ID der Netzlokation
-    fn evaluate_522(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_522(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Netzlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [523] Hinweis: Verwendung der ID der Steuerbaren Ressource
-    fn evaluate_523(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_523(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Steuerbaren Ressource — informational note, always applies
         ConditionResult::True
     }
 
     /// [524] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_524(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_524(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es darf nur eine Information im DE3148 übermittelt werden — informational note, always applies
         ConditionResult::True
     }
 
     /// [525] Hinweis: Verwendung, sofern Netzentgelte geringer als die Pauschale Netzentgeltreduzierung
-    fn evaluate_525(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_525(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung, sofern Netzentgelte geringer als die Pauschale Netzentgeltreduzierung — informational note, always applies
         ConditionResult::True
     }
 
     /// [526] Hinweis: Der hier angegebene Geldbetrag muss mit dem identisch sein, der in SG50 MOA+77 im DE5004 der Abschlagsrechnung steht, die die Rechnungsnummer hat, die in dieser SG50 in SG51-RFF+AFL in DE1...
-    fn evaluate_526(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_526(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Der hier angegebene Geldbetrag muss mit dem identisch sein, der in SG50 MOA+77
         // im DE5004 der Abschlagsrechnung steht, die die Rechnungsnummer hat, die in dieser SG50
         // in SG51-RFF+AFL in DE1154 genannt ist.

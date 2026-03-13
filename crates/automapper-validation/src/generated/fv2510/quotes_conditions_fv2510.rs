@@ -255,31 +255,31 @@ impl QuotesConditionEvaluatorFV2510 {
     }
 
     /// [517] Hinweis: Wert aus BGM+Z93 (Bestellung eines Angebots Änderung der Technik der Lokation) DE1004 der REQOTE mit der die Anfrage Angebot Änderung Technik erfolgt ist.
-    fn evaluate_517(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_517(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z93 DE1004 der REQOTE — informational note about value origin, always applies
         ConditionResult::True
     }
 
     /// [518] Hinweis: Angabe gemäß Preisblatt B des MSB.
-    fn evaluate_518(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_518(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe gemäß Preisblatt B des MSB — informational note, always applies
         ConditionResult::True
     }
 
     /// [519] Hinweis: Wert aus BGM DE1004 der PRICAT mit der das Preisblatt B des MSB, auf dem dieses Angebot basiert, übermittelt wurde.
-    fn evaluate_519(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_519(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM DE1004 der PRICAT mit der das Preisblatt B des MSB, auf dem dieses Angebot basiert, übermittelt wurde.
         ConditionResult::True
     }
 
     /// [520] Hinweis: Angabe des Beginnzeitpunkts des voraussichtlich frühesten Umsetzungstermins, der zum Zeitpunkt der Angebotserstellung ermittelt werden kann.
-    fn evaluate_520(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_520(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe des Beginnzeitpunkts des voraussichtlich frühesten Umsetzungstermins, der zum Zeitpunkt der Angebotserstellung ermittelt werden kann.
         ConditionResult::True
     }
 
     /// [521] Hinweis: Angabe des Endezeitpunkts des voraussichtlich frühesten Umsetzungstermins, der zum Zeitpunkt der Angebotserstellung ermittelt werden kann..
-    fn evaluate_521(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_521(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe des Endezeitpunkts des voraussichtlich frühesten Umsetzungstermins, der zum Zeitpunkt der Angebotserstellung ermittelt werden kann.
         ConditionResult::True
     }
@@ -306,7 +306,7 @@ impl QuotesConditionEvaluatorFV2510 {
     }
 
     /// [2074] Pro Nachricht ist diese SG27 so oft zu wiederholen, bis für jedes angefragte Produkt derselben SG27 aus der Anfrage eine Angebotsposition angegeben wurde.
-    fn evaluate_2074(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2074(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Pro Nachricht ist diese SG27 so oft zu wiederholen, bis für jedes angefragte Produkt
         // derselben SG27 aus der Anfrage eine Angebotsposition angegeben wurde.
         // Informational cardinality rule about SG27 repetition — always applies.
@@ -314,7 +314,7 @@ impl QuotesConditionEvaluatorFV2510 {
     }
 
     /// [2075] Pro SG27 LIN kann die SG27 PIA+Z02 (Artikel-ID) bis zu zweimal angegeben werden. Einmal für die Artikel-ID gemäß Preisblatt B des MSB und einmal für die Artikel-ID "9991000003030-01" (Pauschale...
-    fn evaluate_2075(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2075(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Pro SG27 LIN kann die SG27 PIA+Z02 (Artikel-ID) bis zu zweimal angegeben werden —
         // einmal für die reguläre Artikel-ID gemäß Preisblatt B und einmal für die Pauschale Kosten-ID
         // '9991000003030-01'. Ob die zweite Angabe erlaubt ist, hängt vom Preisblatt B des MSB ab (extern).
@@ -323,7 +323,7 @@ impl QuotesConditionEvaluatorFV2510 {
     }
 
     /// [2076] Pro SG27 LIN kann die SG31 Preisangabe zur Position nur einmal angegeben werden. Die Angabe der Preisangaben zur Position bezieht sich auf die Artikel-ID bei der es sich nicht um die Artikel-ID "99...
-    fn evaluate_2076(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2076(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Pro SG27 LIN kann die SG31 Preisangabe zur Position nur einmal angegeben werden.
         // Die Preisangabe bezieht sich auf die Artikel-ID, die nicht die '9991000003030-01'
         // (Pauschale Kosten für das Scheitern der Änderung der Technik) ist.
@@ -894,79 +894,79 @@ impl QuotesConditionEvaluatorFV2510 {
     }
 
     /// [500] Hinweis: Angabe eines technischen Ansprechpartners für die Geräteübernahme
-    fn evaluate_500(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_500(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe eines technischen Ansprechpartners für die Geräteübernahme — informational note, always applies
         ConditionResult::True
     }
 
     /// [501] Hinweis: Verwendung der ID der Marktlokation
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Marktlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [502] Hinweis: Verwendung der ID der Messlokation
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Messlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [503] Hinweis: Es ist die MP-ID des Eigentümers (MSB) zur bilateralen Klärung anzugeben, wenn z. B. der MSBA das Gerät / die Geräte selbst gepachtet hat.
-    fn evaluate_503(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_503(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist die MP-ID des Eigentümers (MSB) zur bilateralen Klärung anzugeben, wenn z. B. der MSBA das Gerät / die Geräte selbst gepachtet hat.
         ConditionResult::True
     }
 
     /// [504] Hinweis: Wert aus BGM+311 DE1004 der REQOTE mit der die Angebotsanfrage erfolgt ist.
-    fn evaluate_504(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_504(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+311 DE1004 der REQOTE mit der die Angebotsanfrage erfolgt ist.
         ConditionResult::True
     }
 
     /// [505] Hinweis: Wert aus BGM+Z29 DE1004 der REQOTE, mit der die Anfrage Rechnungsabwicklung erfolgt ist.
-    fn evaluate_505(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_505(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z29 DE1004 der REQOTE, mit der die Anfrage Rechnungsabwicklung erfolgt ist.
         ConditionResult::True
     }
 
     /// [506] Hinweis: Wenn zu einer Position (z. B. Messwandlersatz) mehrere Gerätenummern existieren, sind die Gerätenummern in derselben Position (LIN-Segment) mittels Wiederholung der SG32 RFF+Z09 anzugeben
-    fn evaluate_506(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_506(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wenn zu einer Position mehrere Gerätenummern existieren, sind die Gerätenummern in derselben Position mittels Wiederholung der SG32 RFF+Z09 anzugeben.
         ConditionResult::True
     }
 
     /// [507] Hinweis: Verwendung der ID der Tranche
-    fn evaluate_507(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_507(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Tranche
         ConditionResult::True
     }
 
     /// [511] Hinweis: Wert aus BGM+Z74 (Bestellung eines Angebots einer Konfiguration) DE1004 der REQOTE mit der die Anfrage einer Konfiguration erfolgt ist.
-    fn evaluate_511(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_511(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z74 DE1004 der REQOTE — informational note, always applies
         ConditionResult::True
     }
 
     /// [512] Hinweis: Verwendung der ID der Netzlokation
-    fn evaluate_512(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_512(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Netzlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [513] Hinweis: Verwendung der ID der Steuerbaren Ressource
-    fn evaluate_513(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_513(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Steuerbaren Ressource — informational note, always applies
         ConditionResult::True
     }
 
     /// [514] Hinweis: Angabe gemäß Preisblatt des MSB. Bis zu einmal für die Parametrierung, bis zu einmal für den Betrieb und bis zu einmal für die Transaktion, sofern im Preisblatt des MSB vorhanden.
-    fn evaluate_514(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_514(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe gemäß Preisblatt des MSB — informational note, always applies
         ConditionResult::True
     }
 
     /// [516] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_516(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_516(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es darf nur eine Information im DE3148 übermittelt werden — informational note, always applies
         ConditionResult::True
     }
@@ -1017,7 +1017,7 @@ impl QuotesConditionEvaluatorFV2510 {
     }
 
     /// [911] Format: Mögliche Werte: 1 bis n, je Nachricht oder Segmentgruppe bei 1 beginnend und fortlaufend aufsteigend
-    fn evaluate_911(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_911(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Mögliche Werte: 1 bis n, je Nachricht oder Segmentgruppe bei 1 beginnend
         // und fortlaufend aufsteigend — informational annotation about sequential numbering,
         // always applies unconditionally
@@ -1378,7 +1378,7 @@ impl QuotesConditionEvaluatorFV2510 {
     }
 
     /// [2071] Diese SG31 PRI (Preisangabe zur Position) ist bis zu dreimal anzugeben. Es ist so oft anzugeben, wie innerhalb derselben SG27 LIN (Erforderliches Messprodukt für Werte nach Typ2 aus Backend) das P...
-    fn evaluate_2071(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2071(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Cardinality rule — SG31 PRI (Preisangabe) is given up to three times,
         // as often as PIA+Z02 (Artikel-ID) appears in the same SG27 LIN (Erforderliches Messprodukt
         // für Werte nach Typ2 aus Backend). Informational cardinality annotation, always applies.
@@ -1386,7 +1386,7 @@ impl QuotesConditionEvaluatorFV2510 {
     }
 
     /// [2072] Diese SG31 PRI (Preisangabe zur Position) ist bis zu dreimal anzugeben. Es ist so oft anzugeben, wie innerhalb derselben SG27 LIN (Erforderliches Produkt Konfigurationserlaubnis für Werte nach Typ...
-    fn evaluate_2072(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2072(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Cardinality rule — SG31 PRI (Preisangabe) is given up to three times,
         // as often as PIA+Z02 (Artikel-ID) appears in the same SG27 LIN (Erforderliches Produkt
         // Konfigurationserlaubnis für Werte nach Typ 2 aus SMGW). Informational cardinality annotation, always applies.
@@ -1394,7 +1394,7 @@ impl QuotesConditionEvaluatorFV2510 {
     }
 
     /// [2073] Das PIA (OBIS-Kennzahl für Werte nach Typ 2 Backend) ist mindestens einmal anzugeben. Es kann in Abhängigkeit zu den anderen PIA Segmenten innerhalb derselben SG27 LIN (Erforderliches Messprodukt...
-    fn evaluate_2073(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2073(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Cardinality rule — PIA (OBIS-Kennzahl für Werte nach Typ 2 Backend) must appear
         // at least once. It can appear up to 23 times if the other PIA segments in the same SG27 LIN
         // appear at most once each. The maximum total number of PIA segments per SG27 LIN is 25.

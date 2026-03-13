@@ -93,7 +93,7 @@ impl InsrptConditionEvaluatorFV2510 {
     }
 
     /// [3] Wenn vorhanden.
-    fn evaluate_3(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_3(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [3] requires manual implementation
         // Reason: "Wenn vorhanden" is too vague without knowing which specific segment, element, or group this condition is applied to. No structural reference to evaluate against.
         ConditionResult::Unknown
@@ -119,7 +119,7 @@ impl InsrptConditionEvaluatorFV2510 {
     }
 
     /// [7] Wenn keine weitere SG7 mit demselben Meldepunkt und DTM+9 vorhanden
-    fn evaluate_7(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_7(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [7] requires manual implementation
         // Reason: "Keine weitere SG7 mit demselben Meldepunkt und DTM+9" requires cross-SG7 comparison on a 'Meldepunkt' identifier. The provided schema for SG7 only shows DTM and STS segments — no LOC, NAD, DOC, or RFF segment carrying the Meldepunkt identifier is documented. Without knowing which segment and element position carries the Meldepunkt reference, a correct implementation cannot be written.
         ConditionResult::Unknown
@@ -167,7 +167,7 @@ impl InsrptConditionEvaluatorFV2510 {
 
     /// [494] Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt
     // REVIEW: This condition constrains a specific date field to be at or before document creation time. Without knowing which DTM qualifier is being constrained at this AHB position in INSRPT, ConditionResult::True is the appropriate approximation — the constraint is unconditional when the field is present. (medium confidence)
-    fn evaluate_494(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_494(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt
         // Informational constraint: the date in this field must be <= document creation time.
         // Without knowing which specific DTM qualifier is being constrained at this AHB position,
@@ -213,65 +213,65 @@ impl InsrptConditionEvaluatorFV2510 {
     }
 
     /// [506] Hinweis: Zu nutzen, wenn Behebung der Störung durch den MSB selbständig und unverschuldet nicht möglich ist.
-    fn evaluate_506(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_506(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Zu nutzen, wenn Behebung der Störung durch den MSB selbständig und unverschuldet nicht möglich ist.
         // Informational note about usage context — always applies
         ConditionResult::True
     }
 
     /// [507] Hinweis: In SG7 FTX+AAO ist anzugeben, was die übergeordnete Ursache ist, aufgrund derer der MSB nicht in der Lage ist die Störung zu beheben.
-    fn evaluate_507(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_507(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: In SG7 FTX+AAO ist anzugeben, was die übergeordnete Ursache ist, aufgrund derer der MSB nicht in der Lage ist die Störung zu beheben.
         // Informational note about what content to provide in FTX+AAO — always applies
         ConditionResult::True
     }
 
     /// [508] Hinweis: Vorgangsnummer aus DOC DE1004.
-    fn evaluate_508(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_508(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Vorgangsnummer aus DOC DE1004.
         // Informational note indicating the value origin (transaction number from DOC DE1004) — always applies
         ConditionResult::True
     }
 
     /// [509] Hinweis: Verwendung der ID der Messlokation
-    fn evaluate_509(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_509(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Messlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [510] Hinweis: Verwendung der ID der Marktlokation
-    fn evaluate_510(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_510(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Marktlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [511] Hinweis: Die Nummerierung beginnt in jedem Dokument bei 1
-    fn evaluate_511(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_511(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Die Nummerierung beginnt in jedem Dokument bei 1 — informational note, always applies
         ConditionResult::True
     }
 
     /// [512] Hinweis: Wurde eine Störung festgestellt und durch den MSB behoben, ist die Segmentgruppe mit demselben Meldepunkt zweimal anzugeben
-    fn evaluate_512(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_512(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wurde eine Störung festgestellt und durch den MSB behoben, ist die Segmentgruppe mit demselben Meldepunkt zweimal anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [513] Hinweis: Wurde keine Störung festgestellt, ist die Segmentgruppe genau einmal anzugeben
-    fn evaluate_513(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_513(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wurde keine Störung festgestellt, ist die Segmentgruppe genau einmal anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [514] Hinweis: Wurde eine Störung festgestellt, die nicht durch den MSB behoben werden konnte, ist die Segmentgruppe genau einmal anzugeben
-    fn evaluate_514(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_514(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wurde eine Störung festgestellt, die nicht durch den MSB behoben werden konnte, ist die Segmentgruppe genau einmal anzugeben
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [515] Hinweis: "≤ dem Wert im DE2380 des DTM+137" bedeutet, dass der dort genannte Tag ≥ dem in diesem DTM genannten Tag sein muss, wenn in DE2379 der Code 102 steht.
-    fn evaluate_515(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_515(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: "≤ dem Wert im DE2380 des DTM+137" bedeutet, dass der dort genannte Tag ≥ dem in diesem DTM genannten Tag sein muss, wenn in DE2379 der Code 102 steht.
         // Informational note — always applies
         ConditionResult::True

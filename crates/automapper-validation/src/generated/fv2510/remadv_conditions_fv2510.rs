@@ -360,7 +360,7 @@ impl RemadvConditionEvaluatorFV2510 {
     }
 
     /// [544] Hinweis: Wenn in dieser SG7 AJT DE4465 = A21 vorhanden, dann darf in den DE4440 dieses FTX-Segments jeweils nur eine Positionsnummer genannt sein, welche aus dem bestätigten Angebot nicht in der R...
-    fn evaluate_544(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_544(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wenn AJT DE4465 = A21 vorhanden, dann darf in den DE4440 dieses FTX-Segments jeweils nur eine Positionsnummer genannt sein, welche aus dem bestätigten Angebot nicht in der Rechnung enthalten sind — informational note, always applies
         ConditionResult::True
     }
@@ -371,14 +371,14 @@ impl RemadvConditionEvaluatorFV2510 {
     }
 
     /// [3] Bei SG5 DOC+389 / Z25 ist der Wert aus derselben SG5 MOA+9 mit (-1) multipliziert anzugeben.
-    fn evaluate_3(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_3(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Bei SG5 DOC+389/Z25 ist der Wert aus derselben SG5 MOA+9 mit (-1) multipliziert anzugeben.
         // Informational annotation describing the calculation rule for MOA+12 (Überweisungsbetrag).
         ConditionResult::True
     }
 
     /// [4] Bei SG5 DOC+380 / 457 ist der Wert aus derselben SG5 MOA+9 unverändert anzugeben.
-    fn evaluate_4(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_4(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Bei SG5 DOC+380/457 ist der Wert aus derselben SG5 MOA+9 unverändert anzugeben.
         // Informational annotation describing that MOA+12 (Überweisungsbetrag) equals MOA+9 unchanged.
         ConditionResult::True
@@ -439,21 +439,21 @@ impl RemadvConditionEvaluatorFV2510 {
     }
 
     /// [14] A-Code aus Cluster Ablehnung auf Kopfebene
-    fn evaluate_14(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_14(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: A-Code aus Cluster Ablehnung auf Kopfebene — informational annotation
         // describing that this field's valid values come from the 'Ablehnung' code cluster at header level.
         ConditionResult::True
     }
 
     /// [15] A-Code aus Cluster Ablehnung auf Positionsebene
-    fn evaluate_15(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_15(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: A-Code aus Cluster Ablehnung auf Positionsebene — informational annotation
         // describing that this field's valid values come from the 'Ablehnung' code cluster at position level.
         ConditionResult::True
     }
 
     /// [16] A-Code aus Cluster Ablehnung auf Summenebene
-    fn evaluate_16(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_16(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: A-Code aus Cluster Ablehnung auf Summenebene — informational annotation
         // describing that this field's valid values come from the 'Ablehnung' code cluster at summary level.
         ConditionResult::True
@@ -971,14 +971,14 @@ impl RemadvConditionEvaluatorFV2510 {
     }
 
     /// [501] Hinweis: An dieser Stelle ist der Betrag aus SG50 MOA+9 der zugrundeliegenden INVOIC zu übernehmen.
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: An dieser Stelle ist der Betrag aus SG50 MOA+9 der zugrundeliegenden INVOIC zu übernehmen.
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [502] Hinweis: Bei positivem Betrag ergibt sich eine Forderung des Rechnungsstellers. Bei negativem Betrag ergibt sich eine Forderung für den Rechnungsempfänger.
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Bei positivem Betrag ergibt sich eine Forderung des Rechnungsstellers.
         // Bei negativem Betrag ergibt sich eine Forderung für den Rechnungsempfänger.
         // Informational note — always applies
@@ -986,86 +986,86 @@ impl RemadvConditionEvaluatorFV2510 {
     }
 
     /// [503] Hinweis: Empfohlen, um bei Abweisung Ansprechpartner für Rückfragen zu erreichen.
-    fn evaluate_503(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_503(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Empfohlen, um bei Abweisung Ansprechpartner für Rückfragen zu erreichen.
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [510] Hinweis: Bei Ablehnung einer vorherigen COMDIS
-    fn evaluate_510(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_510(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Bei Ablehnung einer vorherigen COMDIS
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [511] Hinweis: BGM DE1004 aus der abgelehnten INVOIC-Nachricht
-    fn evaluate_511(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_511(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: BGM DE1004 aus der abgelehnten INVOIC-Nachricht — informational note, always applies
         ConditionResult::True
     }
 
     /// [512] Hinweis: BGM DE1004 aus der abgelehnten COMDIS-Nachricht
-    fn evaluate_512(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_512(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: BGM DE1004 aus der abgelehnten COMDIS-Nachricht — informational note, always applies
         ConditionResult::True
     }
 
     /// [515] Hinweis: BGM DE1004 aus der bestätigten INVOIC- Nachricht
-    fn evaluate_515(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_515(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: BGM DE1004 aus der bestätigten INVOIC-Nachricht — informational note, always applies
         ConditionResult::True
     }
 
     /// [517] Hinweis: Wenn in dieser SG5 in AJT DE4465 ein Code aus Cluster Ablehnung auf Summenebene verwendet wird, ist diese SG7 so oft zu wiederholen, bis alle Fehler der Summenebene genannt sind.
-    fn evaluate_517(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_517(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Cardinality guidance for SG7 repetition when AJT DE4465 uses a rejection code at sum level — informational note, always applies
         ConditionResult::True
     }
 
     /// [518] Hinweis: Wenn in dieser SG5 in AJT DE4465 ein Code aus Cluster Ablehnung auf Kopfebene verwendet wird, der von A80 abweicht, ist diese SG7 genau einmal zu nutzen.
-    fn evaluate_518(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_518(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Cardinality guidance for SG7 — exactly once when AJT DE4465 uses a header-level rejection code other than A80 — informational note, always applies
         ConditionResult::True
     }
 
     /// [519] Hinweis: Diese SG7 ist so oft mit AJT DE4465 = A74 zu wiederholen, bis alle Rechnungsnummern im RFF-Segment dieser SG7 genannt sind, die in der INVOIC fehlen, die in diesem SG5 DOC DE1004 genannt ist
-    fn evaluate_519(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_519(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Diese SG7 ist so oft mit AJT DE4465 = A74 zu wiederholen, bis alle Rechnungsnummern im RFF-Segment dieser SG7 genannt sind, die in der INVOIC fehlen, die in diesem SG5 DOC DE1004 genannt ist
         // Informational note, always applies
         ConditionResult::True
     }
 
     /// [520] Hinweis: Diese SG7 ist so oft mit AJT DE4465 = A75 zu wiederholen, bis alle Rechnungsnummern der Rechnungen genannt sind, die mindestens eine Abschlagsrechnung enthalten, die in der INVOIC abgerech...
-    fn evaluate_520(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_520(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Diese SG7 ist so oft mit AJT DE4465 = A75 zu wiederholen, bis alle Rechnungsnummern der Rechnungen genannt sind, die mindestens eine Abschlagsrechnung enthalten, die in der INVOIC abgerechnet wurden, die in diesem SG5 DOC DE1004 genannt ist.
         // Informational note, always applies
         ConditionResult::True
     }
 
     /// [521] Hinweis: Diese SG7 ist so oft mit AJT DE4465 = A76 zu wiederholen, bis alle Rechnungsnummern der Abschlagsrechnungen genannt sind, die in der INVOIC, die in diesem SG5 DOC DE1004 genannt ist, nicht...
-    fn evaluate_521(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_521(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Diese SG7 ist so oft mit AJT DE4465 = A76 zu wiederholen, bis alle Rechnungsnummern der Abschlagsrechnungen genannt sind, die in der INVOIC, die in diesem SG5 DOC DE1004 genannt ist, nicht hätten berücksichtigt werden dürfen.
         // Informational note, always applies
         ConditionResult::True
     }
 
     /// [523] Hinweis: Jede Rechnungsnummer einer Abschlagsrechnung muss in einem separaten DE4440 angegeben werden. Reichen die fünf DE4440 für die Rechnungsnummern aller anzugebenden Abschlagrechnungen nicht...
-    fn evaluate_523(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_523(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Jede Rechnungsnummer einer Abschlagsrechnung muss in einem separaten DE4440 angegeben werden. Reichen die fünf DE4440 für die Rechnungsnummern aller anzugebenden Abschlagrechnungen nicht aus, ist das FTX+Z14 zu wiederholen.
         // Informational note, always applies
         ConditionResult::True
     }
 
     /// [525] Hinweis: Diese SG10 ist so oft zu wiederholen, bis alle Fehler der Positionsebene genannt sind.
-    fn evaluate_525(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_525(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Diese SG10 ist so oft zu wiederholen, bis alle Fehler der Positionsebene genannt sind.
         // Informational note, always applies
         ConditionResult::True
     }
 
     /// [526] Hinweis: Wert aus DE1082 der SG26 in der sich der nachfolgende Fehler in der INVOIC befindet, die in diesem SG5 DOC DE1004 genannt ist.
-    fn evaluate_526(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_526(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus DE1082 der SG26 in der sich der nachfolgende Fehler in der INVOIC befindet, die in diesem SG5 DOC DE1004 genannt ist.
         ConditionResult::True
     }
@@ -1099,37 +1099,37 @@ impl RemadvConditionEvaluatorFV2510 {
     }
 
     /// [535] Hinweis: Diese SG7 ist so oft mit AJT DE4465 = A80 zu wiederholen, bis die Rechnungsnummern der nicht stornierten Sonderrechnungen mit derselben Sonderrechnungsart wie sie in Sonderrechnung genannt...
-    fn evaluate_535(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_535(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Diese SG7 ist so oft mit AJT DE4465 = A80 zu wiederholen, bis die Rechnungsnummern der nicht stornierten Sonderrechnungen... — informational note about repetition cardinality, always applies
         ConditionResult::True
     }
 
     /// [536] Hinweis: Dieses DE darf keine Abschlagsrechnungsnummer enthalten
-    fn evaluate_536(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_536(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dieses DE darf keine Abschlagsrechnungsnummer enthalten — informational note about field usage restriction, always applies
         ConditionResult::True
     }
 
     /// [537] Hinweis: Diese SG7 ist so oft mit AJT DE4465 = AC5 zu wiederholen, bis alle Rechnungsnummern im RFF Segment dieser SG7 genannt sind, die in der INVOIC berücksichtigt werden sollten, die in diesem ...
-    fn evaluate_537(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_537(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Diese SG7 ist so oft mit AJT DE4465 = AC5 zu wiederholen, bis alle Rechnungsnummern im RFF Segment dieser SG7 genannt sind... — informational note about repetition cardinality, always applies
         ConditionResult::True
     }
 
     /// [538] Hinweis: Jede Positionsnummer eines Angebotes muss in einem separaten DE4440 angegeben werden. Reichen die fünf DE4440 für die Positionsnummern aller anzugebenden Angebote nicht aus, ist das SG7 ...
-    fn evaluate_538(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_538(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Jede Positionsnummer eines Angebotes muss in einem separaten DE4440 angegeben werden. Reichen die fünf DE4440 nicht aus, ist das SG7 FTX+Z16 zu wiederholen. — informational note about field usage, always applies
         ConditionResult::True
     }
 
     /// [548] Hinweis: Die Befüllung des Datenelements ergibt sich aus dem zugehörigen EBD.
-    fn evaluate_548(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_548(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Die Befüllung des Datenelements ergibt sich aus dem zugehörigen EBD.
         ConditionResult::True
     }
 
     /// [549] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_549(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_549(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es darf nur eine Information im DE3148 übermittelt werden — informational note, always applies
         ConditionResult::True
     }

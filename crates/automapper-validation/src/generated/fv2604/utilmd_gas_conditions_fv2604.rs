@@ -277,25 +277,25 @@ impl UtilmdGasConditionEvaluatorFV2604 {
     }
 
     /// [502] Hinweis:  Ersatzbelieferung gibt es nur bei  - Marktlokationen in der  Niederdruckebene, die kein Haushaltskunde gem. EnWG sind und die nicht mehr der gesetzlichen Ersatzversorgung (drei Monate) un...
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Ersatzbelieferung gibt es nur bei Marktlokationen in der Niederdruckebene, die kein Haushaltskunde gem. EnWG sind und die nicht mehr der gesetzlichen Ersatzversorgung unterliegen, und für Marktlokationen in Mitteldruck. Grundlage ist die bilaterale Vereinbarung — informational note, always applies
         ConditionResult::True
     }
 
     /// [504] Hinweis: Der Code Z22 wird auch in der Sparte Strom genutzt. Der Verweis auf den Einspeisevergütungsintervall ist in der Sparte Gas nicht relevant
-    fn evaluate_504(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_504(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Code Z22 wird auch in der Sparte Strom genutzt. Der Verweis auf den Einspeisevergütungsintervall ist in der Sparte Gas nicht relevant — informational note, always applies
         ConditionResult::True
     }
 
     /// [505] Hinweis: Übergangsversorgung gibt es nur bei Marktlokationen, die unter § 38a EnWG fallen. Grundlage ist eine bilaterale Vereinbarung
-    fn evaluate_505(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_505(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Übergangsversorgung gibt es nur bei Marktlokationen, die unter § 38a EnWG fallen. Grundlage ist eine bilaterale Vereinbarung — informational note, always applies
         ConditionResult::True
     }
 
     /// [511] Hinweis: Zu verwenden bei der Abmeldung der Übergangsversorgung
-    fn evaluate_511(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_511(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Zu verwenden bei der Abmeldung der Übergangsversorgung — informational note, always applies
         ConditionResult::True
     }
@@ -1109,7 +1109,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
     }
 
     /// [368] Es sind alle Codes aus der Codeliste G_0009 erlaubt
-    fn evaluate_368(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_368(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
@@ -1152,39 +1152,39 @@ impl UtilmdGasConditionEvaluatorFV2604 {
     }
 
     /// [494] Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt
-    fn evaluate_494(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_494(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Das genannte Datum muss dem Dokumenterstellungszeitpunkt oder einem früheren Zeitpunkt entsprechen — informational annotation
         ConditionResult::True
     }
 
     /// [500] Hinweis: Code ist gemäß der Kategorie der zu stornierenden Meldung zu wählen
-    fn evaluate_500(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_500(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Code ist gemäß der Kategorie der zu stornierenden Meldung zu wählen — informational note, always applies
         ConditionResult::True
     }
 
     /// [501] Hinweis: Die Angabe wird aus dem DTM+157 (Änderung zum) der Zuordnungsliste übernommen
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Die Angabe wird aus dem DTM+157 (Änderung zum) der Zuordnungsliste übernommen — informational note, always applies
         ConditionResult::True
     }
 
     /// [507] Hinweis: Ursprünglich vom NB bestätigtes Beginndatum
-    fn evaluate_507(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_507(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note — 'ursprünglich vom NB bestätigtes Beginndatum'.
         // Documents the semantic meaning of the date field; no boolean logic.
         ConditionResult::Unknown
     }
 
     /// [508] Hinweis: Beginndatum beim neuen NB
-    fn evaluate_508(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_508(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note — 'Beginndatum beim neuen NB'.
         // Documents the semantic meaning of the date field; no boolean logic.
         ConditionResult::Unknown
     }
 
     /// [510] Hinweis: Zu verwenden bei der Abmeldung der ESV
-    fn evaluate_510(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_510(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note — to be used for deregistration of ESV (Ersatzversorgung).
         // Documents usage context; no boolean logic.
         ConditionResult::Unknown
@@ -1201,21 +1201,21 @@ impl UtilmdGasConditionEvaluatorFV2604 {
     }
 
     /// [527] Hinweis: Es ist die ID der Marktlokation und alle Identifikatoren der Messlokationen anzugeben
-    fn evaluate_527(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_527(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note — ID of Marktlokation AND all Messlokation
         // identifiers must be provided. No evaluatable boolean logic.
         ConditionResult::Unknown
     }
 
     /// [528] Hinweis: Es ist das Datum/ Daten aus der Anfrage zu verwenden
-    fn evaluate_528(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_528(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note — the date(s) from the original request must be used.
         // No evaluatable boolean logic.
         ConditionResult::Unknown
     }
 
     /// [530] Hinweis: Es sind alle an dem Meldepunkt vorhandenen Daten, die mit dieser Segmentgruppe übermittelt werden und zum Datum „Änderung zum“ Gültigkeit haben, anzugeben. Dies kann zur Folge haben...
-    fn evaluate_530(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_530(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note — all data valid at 'Änderung zum' date for the
         // reporting point must be provided, possibly requiring repeated segment groups.
         // No evaluatable boolean logic.
@@ -1223,150 +1223,150 @@ impl UtilmdGasConditionEvaluatorFV2604 {
     }
 
     /// [556] Hinweis: Wenn keine Korrespondenzanschrift des Endverbrauchers/ Kunden vorliegt, ist die Anschrift der Marktlokation zu übermitteln
-    fn evaluate_556(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_556(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wenn keine Korrespondenzanschrift des Endverbrauchers/Kunden vorliegt, ist die Anschrift der Marktlokation zu übermitteln — informational note, always applies
         ConditionResult::True
     }
 
     /// [558] Hinweis: Diese Information kann freiwillig ausgetauscht werden
-    fn evaluate_558(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_558(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: This information can be exchanged voluntarily.
         // No evaluatable boolean logic — purely documentary.
         ConditionResult::Unknown
     }
 
     /// [559] Hinweis: Die Korrespondenzanschrift des Endverbrauchers/Kunden wird nicht zur Identifikation genutzt
-    fn evaluate_559(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_559(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Correspondence address of end consumer/customer is not used for identification.
         // No evaluatable boolean logic — purely documentary.
         ConditionResult::Unknown
     }
 
     /// [560] Hinweis: Die Angabe Name und Adresse für die Ablesekarte wird nicht zur Identifikation genutzt
-    fn evaluate_560(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_560(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Name and address for Ablesekarte (meter reading card) is not used
         // for identification purposes. No evaluatable boolean logic — purely documentary.
         ConditionResult::Unknown
     }
 
     /// [566] Hinweis: Altlieferant
-    fn evaluate_566(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_566(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: 'Altlieferant' (previous supplier). Informational label for the
         // market participant role context; no evaluatable boolean logic.
         ConditionResult::Unknown
     }
 
     /// [567] Hinweis: Neulieferant
-    fn evaluate_567(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_567(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: 'Neulieferant' (new supplier). Informational label for the
         // market participant role context; no evaluatable boolean logic.
         ConditionResult::Unknown
     }
 
     /// [570] Hinweis: Netzbetreiber Alt
-    fn evaluate_570(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_570(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Netzbetreiber Alt — informational note, always applies
         ConditionResult::True
     }
 
     /// [571] Hinweis: Auslösender Marktpartner (LFA bei STS+7++ZG9, LFN bei STS+7++ZH0, NB bei STS+7++ZH1)
-    fn evaluate_571(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_571(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Auslösender Marktpartner (LFA bei STS+7++ZG9, LFN bei STS+7++ZH0, NB bei STS+7++ZH1) — informational note, always applies
         ConditionResult::True
     }
 
     /// [572] Hinweis: Kundenname aus Anmeldung Lieferant neu
-    fn evaluate_572(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_572(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Kundenname aus Anmeldung Lieferant neu — informational note, always applies
         ConditionResult::True
     }
 
     /// [581] Hinweis: Es ist das nächst mögliche Kündigungsdatum anzugeben
-    fn evaluate_581(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_581(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist das nächst mögliche Kündigungsdatum anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [583] Hinweis: Verwendung der ID der Marktlokation
-    fn evaluate_583(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_583(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Marktlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [584] Hinweis: Verwendung der ID der Messlokation
-    fn evaluate_584(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_584(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Messlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [590] Hinweis: Es ist die ID der Marktlokation, welche dem LF zugeordnet sind, sowie alle Identifikatoren der Messlokationen anzugeben
-    fn evaluate_590(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_590(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist die ID der Marktlokation, welche dem LF zugeordnet sind, sowie alle Identifikatoren der Messlokationen anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [601] Hinweis: Es ist die ID der Marktlokation und alle Identifikatoren der Messlokationen anzugeben.
-    fn evaluate_601(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_601(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist die ID der Marktlokation und alle Identifikatoren der Messlokationen anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [621] Hinweis: Es ist der MSB anzugeben, welcher ab dem Zeitpunkt der Lokation zugeordnet ist, der in DTM+76 (Datum zum geplanten Leistungsbeginn) genannt ist.
-    fn evaluate_621(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_621(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist der MSB anzugeben, welcher ab dem Zeitpunkt der Lokation zugeordnet ist, der in DTM+76 (Datum zum geplanten Leistungsbeginn) genannt ist.
         ConditionResult::True
     }
 
     /// [622] Hinweis: Falls die OBIS-Kennzahl für mehrere Marktrollen relevant ist, so muss die Segmentgruppe pro Marktrolle wiederholt werden
-    fn evaluate_622(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_622(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Falls die OBIS-Kennzahl für mehrere Marktrollen relevant ist, so muss die Segmentgruppe pro Marktrolle wiederholt werden
         ConditionResult::True
     }
 
     /// [636] Hinweis: Dieses RFF klassifiziert mit einem Code im DE1153 die in derselben Segmentgruppe enthaltenen DTM zu einem Markt- bzw. Messlokation relevanten Inhalt
-    fn evaluate_636(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_636(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dieses RFF klassifiziert mit einem Code im DE1153 die in derselben Segmentgruppe enthaltenen DTM zu einem Markt- bzw. Messlokation relevanten Inhalt
         ConditionResult::True
     }
 
     /// [637] Hinweis: Bei Verpflichtungsanfrage
-    fn evaluate_637(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_637(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Bei Verpflichtungsanfrage — informational note, always applies
         ConditionResult::True
     }
 
     /// [638] Hinweis: Bei Aufforderung zur Übernahme der einzelnen Messlokation durch den gMSB
-    fn evaluate_638(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_638(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Bei Aufforderung zur Übernahme der einzelnen Messlokation durch den gMSB — informational note, always applies
         ConditionResult::True
     }
 
     /// [643] Hinweis: Nachfolgender Netzbetreiber
-    fn evaluate_643(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_643(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Nachfolgender Netzbetreiber — informational note, always applies
         ConditionResult::True
     }
 
     /// [644] Hinweis: Wenn in der zugehörigen Anmeldung (44001) in diesem Segmente "Einzug in Neuanlage" (SG4 STS+7++E02) enthalten ist, wird in diesem Geschäftsvorfall  der Code E01 verwendet
-    fn evaluate_644(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_644(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: informational note about E01/E02 usage in Bestätigung — always applies
         ConditionResult::True
     }
 
     /// [651] Hinweis: Bei einer Marktraumumstellung (Gas) ist zu beachten, dass die tatsächliche Meldung zur Marktraumumstellung auf Ebene der Messlokation durch Angabe der Gasqualität erfolgt. Die betroffene...
-    fn evaluate_651(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_651(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Marktraumumstellung Gas — informational note about Messlokation reporting — always applies
         ConditionResult::True
     }
 
     /// [654] Hinweis: Es sind ausschließlich die Daten zum Meldepunkt anzugeben, die für den in NAD+MR (Nachrichtenempfänger) adressierten Marktpartner relevant ist
-    fn evaluate_654(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_654(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Only data relevant to the addressed Marktpartner (NAD+MR) should be provided — always applies
         ConditionResult::True
     }
 
     /// [655] Hinweis: Wenn ein Zähler an einen Mengenumwerter angeschlossen ist werden an dem Zähler keine OBIS-Kennzahlen angegeben Hier gibt es nur OBIS Kennzahlen vom Mengenumwerter
-    fn evaluate_655(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_655(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: When a meter is connected to a volume converter, no OBIS codes are given for the meter — always applies
         ConditionResult::True
     }

@@ -179,7 +179,7 @@ impl PartinConditionEvaluatorFV2604 {
     }
 
     /// [500] Hinweis: Es kann der Firmenname eines Dienstleisters oder die identische Firmenbezeichnung aus SG4 NAD+SU / DDM / DEB / Z31 / Z34 / Z35 / Z36 / Z71 eingetragen werden.
-    fn evaluate_500(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_500(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es kann der Firmenname eines Dienstleisters oder die identische Firmenbezeichnung aus SG4 NAD+SU / DDM / DEB / Z31 / Z34 / Z35 / Z36 / Z71 eingetragen werden.
         ConditionResult::True
     }
@@ -197,7 +197,7 @@ impl PartinConditionEvaluatorFV2604 {
     }
 
     /// [3] wenn vorhanden
-    fn evaluate_3(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_3(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: wenn vorhanden — informational annotation indicating the element is conditional/optional; always applies when evaluated
         ConditionResult::True
     }
@@ -532,7 +532,7 @@ impl PartinConditionEvaluatorFV2604 {
 
     /// [494] Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt.
     // REVIEW: This condition states the referenced date must be the document creation timestamp or earlier. Verifying this would require knowing the actual document creation time as an external reference point, which is not present in the EDIFACT message itself. The phrasing describes a semantic constraint on the field's value origin rather than a checkable boolean predicate from message content. Treated as an always-true informational annotation similar to a Hinweis, since the field by definition carries the value the sender chose as the document date. (medium confidence)
-    fn evaluate_494(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_494(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt.
         // This is a semantic annotation about what the date field must represent (document creation time or earlier).
         // It cannot be evaluated as a boolean predicate from the EDIFACT message content alone.
@@ -540,27 +540,27 @@ impl PartinConditionEvaluatorFV2604 {
     }
 
     /// [501] Hinweis: Es darf kein Name einer natürlichen Person übermittelt werden, stattdessen ist die organisatorische Einheit im Unternehmen zu nennen.
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es darf kein Name einer natürlichen Person übermittelt werden, stattdessen ist die organisatorische Einheit im Unternehmen zu nennen.
         // Informational note about data privacy — no natural person names, use organisational unit — always applies.
         ConditionResult::True
     }
 
     /// [502] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es darf nur eine Information im DE3148 übermittelt werden.
         // Informational note about cardinality of DE3148 — only one value may be transmitted — always applies.
         ConditionResult::True
     }
 
     /// [503] Hinweis: Angabe erfolgt in gesetzlicher deutscher Zeit
-    fn evaluate_503(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_503(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe erfolgt in gesetzlicher deutscher Zeit — informational note, always applies
         ConditionResult::True
     }
 
     /// [504] Hinweis: Es ist mindestens die Umsatzsteuer- bzw. Steuernummer zu nennen, die in der INVOIC genutzt wird.
-    fn evaluate_504(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_504(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist mindestens die Umsatzsteuer- bzw. Steuernummer zu nennen — informational note, always applies
         ConditionResult::True
     }
@@ -590,19 +590,19 @@ impl PartinConditionEvaluatorFV2604 {
     }
 
     /// [506] Hinweis: Das Datenelement ist so zu füllen, dass sein Inhalt den Vorgaben des USt.-Gesetzes genügt, so dass der Empfänger diese Daten in einer INVOIC nutzen kann.
-    fn evaluate_506(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_506(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Das Datenelement ist so zu füllen, dass sein Inhalt den Vorgaben des USt.-Gesetzes genügt — informational note, always applies
         ConditionResult::True
     }
 
     /// [508] Hinweis: Der LF in seiner Funktion als Grund- und Ersatzversorger muss den NB, in deren Netzgebiet der LF als Grund- und Ersatzversorger ist, einen Bilanzkreis für verbrauchende Marktlokationen ü...
-    fn evaluate_508(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_508(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Der LF als Grund- und Ersatzversorger muss dem NB einen Bilanzkreis übermitteln — informational note, always applies
         ConditionResult::True
     }
 
     /// [908] Format: Mögliche Werte: 1 bis n
-    fn evaluate_908(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_908(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Format: Mögliche Werte: 1 bis n — informational cardinality note, always applies
         ConditionResult::True
     }

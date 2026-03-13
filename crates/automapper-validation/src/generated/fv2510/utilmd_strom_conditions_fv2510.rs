@@ -877,7 +877,7 @@ impl UtilmdStromConditionEvaluatorFV2510 {
     }
 
     /// [44] Es ist die Zeitraum-ID vom DE1156 aus einem passenden SG6 RFF+Z49/ Z53 (Verwendungszeitraum der Daten: "Gültige Daten", "Keine Daten") aus der Anfragennachricht aus SG6 RFF+TN DE1154 ((Referenz Vo...
-    fn evaluate_44(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_44(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Die Zeitraum-ID ist vom DE1156 aus einem passenden SG6 RFF+Z49/Z53
         // (Verwendungszeitraum der Daten) aus der Anfragenachricht, identifiziert über
         // SG6 RFF+TN DE1154 (Referenz Vorgangsnummer), einzutragen. Informelle Befüllungsregel.
@@ -1519,35 +1519,35 @@ impl UtilmdStromConditionEvaluatorFV2510 {
     }
 
     /// [399] Wenn im SG8 SEQ+Z78 mit identischer Zeitraum-ID im DE1050 wie im DE3224 dieses Segments, das RFF+Z31 (Lokationsbündelstruktur) im DE1153 der Code Z31 (Lokationsbündelstruktur) vorhanden, und im D...
-    fn evaluate_399(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_399(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [399] requires manual implementation
         // Reason: Requires cross-group Zeitraum-ID matching: the SEQ+Z78 DE1050 value must equal DE3224 of 'dieses Segments'. The phrase 'dieses Segments' implies the condition is evaluated in the context of a specific segment instance (likely a SG5/SG6 LOC or RFF) whose Zeitraum-ID is to be compared — this runtime per-segment context is not available in the message-wide EvaluationContext. The RFF+Z31 value check (not equal to '9992 00000 001 8') is individually implementable, but without the Zeitraum-ID anchor the result would be incorrect for most PIDs.
         ConditionResult::Unknown
     }
 
     /// [413] Wenn eine SG8 SEQ+Z02/ZA1/ZA2 (OBIS-Daten der Marktlokation) mit einer OBIS-Kennzahl für Wirkarbeit und kumuliert im PIA+5, mit gleicher Zeitraum-ID und identischem Code im DE1229 des SG8 SEQ+Z02/...
-    fn evaluate_413(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_413(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [413] requires manual implementation
         // Reason: Requires knowing the 'current SG8' instance being validated: the condition checks whether another SG8 with SEQ+Z02/ZA1/ZA2, same Zeitraum-ID (SEQ DE1050), and identical DE1229 code as the current SG8 exists and has a Wirkarbeit+kumuliert OBIS (C=1/2, D=8) in PIA+5. The 'same Zeitraum-ID and identical DE1229 code as the current SG8' comparison requires per-instance context not available in EvaluationContext. A message-wide existence check would produce false positives by ignoring the Zeitraum-ID/code correlation constraint.
         ConditionResult::Unknown
     }
 
     /// [414] Wenn keine SG8 SEQ+Z02/ZA1/ZA2 (OBIS-Daten der Marktlokation) mit einer OBIS-Kennzahl für Wirkarbeit und kumuliert im PIA+5, mit gleicher Zeitraum-ID und identischem Code im DE1229 des SG8 SEQ+Z02...
-    fn evaluate_414(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_414(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [414] requires manual implementation
         // Reason: Negation of condition [413]. Same structural complexity: requires 'current SG8' context to verify that no other SG8 with matching Zeitraum-ID (SEQ DE1050) and same DE1229 code has a Wirkarbeit+kumuliert OBIS in PIA+5. Cannot be correctly implemented without the per-instance current SG8 reference.
         ConditionResult::Unknown
     }
 
     /// [415] Wenn eine weitere SG8 SEQ+Z02/ZA1/ZA2 (OBIS-Daten der Marktlokation) mit einer OBIS-Kennzahl für Wirkarbeit und 1/4 Stunde im PIA+5, mit gleicher Zeitraum-ID und identischem Code im DE1229 des SG8...
-    fn evaluate_415(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_415(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [415] requires manual implementation
         // Reason: Analogous to condition [413] but targets Wirkarbeit+1/4 Stunde (OBIS D=5, quarter-hour interval measurement) instead of kumuliert (D=8). Requires the same 'current SG8' context for Zeitraum-ID and DE1229 code matching against another SG8 instance. Cannot be implemented correctly without per-instance evaluation context.
         ConditionResult::Unknown
     }
 
     /// [416] Wenn keine SG8 SEQ+Z02/ZA1/ZA2 (OBIS-Daten der Marktlokation) mit einer OBIS-Kennzahl für Wirkarbeit und 1/4 Stunde im PIA+5, mit gleicher Zeitraum-ID und identischem Code im DE1229 des SG8 SEQ+Z0...
-    fn evaluate_416(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_416(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [416] requires manual implementation
         // Reason: This condition requires checking for absence of an SG8 SEQ+Z02/ZA1/ZA2 group that contains a PIA+5 with an OBIS code specifically representing 'Wirkarbeit und 1/4 Stunde'. Determining which OBIS code patterns qualify as 'Wirkarbeit' (active energy) and '1/4 Stunde' (15-minute granularity) requires domain-specific knowledge about OBIS code structure not derivable from the MIG schema alone. The cross-group Zeitraum-ID matching adds further complexity. Cannot implement reliably without an authoritative list of qualifying OBIS code patterns.
         ConditionResult::Unknown
@@ -1562,7 +1562,7 @@ impl UtilmdStromConditionEvaluatorFV2510 {
     }
 
     /// [517] Hinweis: Anzuwenden, wenn einer Marktlokation eine Paket-ID zugeordnet wurde und diese wieder gelöscht werden soll, da sie nicht unter den genannten NB-Wechsel fällt
-    fn evaluate_517(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_517(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Anzuwenden, wenn einer Marktlokation eine Paket-ID zugeordnet wurde
         // und diese wieder gelöscht werden soll, da sie nicht unter den genannten
         // NB-Wechsel fällt — informational note, always applies
@@ -1570,7 +1570,7 @@ impl UtilmdStromConditionEvaluatorFV2510 {
     }
 
     /// [534] Hinweis: Aufgrund der Wiederholbarkeit des SG4 STS Status der Antwort ist die Angabe von max. acht Verwendungszeiträumen möglich
-    fn evaluate_534(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_534(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Aufgrund der Wiederholbarkeit des SG4 STS Status der Antwort ist
         // die Angabe von max. acht Verwendungszeiträumen möglich
         // — informational note about cardinality, always applies
@@ -1578,7 +1578,7 @@ impl UtilmdStromConditionEvaluatorFV2510 {
     }
 
     /// [557] Hinweis: Wurden vom Verantwortlichen mehr als acht Verwendungszeiträume gesendet, so werden acht beliebige Verwendungszeiträume beantwortet
-    fn evaluate_557(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_557(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wurden vom Verantwortlichen mehr als acht Verwendungszeiträume
         // gesendet, so werden acht beliebige Verwendungszeiträume beantwortet
         // — informational processing note, always applies
@@ -1586,55 +1586,55 @@ impl UtilmdStromConditionEvaluatorFV2510 {
     }
 
     /// [560] Hinweis: Dies entspricht dem Geschäftsvorfall A
-    fn evaluate_560(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_560(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dies entspricht dem Geschäftsvorfall A — informational note, always applies
         ConditionResult::True
     }
 
     /// [561] Hinweis: Dies entspricht dem Geschäftsvorfall B
-    fn evaluate_561(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_561(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dies entspricht dem Geschäftsvorfall B — informational note, always applies
         ConditionResult::True
     }
 
     /// [562] Hinweis: Bei Marktlokationen, welche auf Basis von Werten bilanziert werden, wird der erste Tag des Jahres angegeben.
-    fn evaluate_562(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_562(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Bei Marktlokationen, welche auf Basis von Werten bilanziert werden, wird der erste Tag des Jahres angegeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [564] Hinweis: Das IDE+Z01 (Liste) definiert den Geschäftsvorfall. Alle aufgelisteten IDE+24 sind Bestandteil des Geschäftsvorfalls
-    fn evaluate_564(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_564(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Das IDE+Z01 (Liste) definiert den Geschäftsvorfall. Alle aufgelisteten IDE+24 sind Bestandteil des Geschäftsvorfalls — informational note, always applies
         ConditionResult::True
     }
 
     /// [565] Hinweis: Das IDE+24 beschreibt einen Bestandteil einer Liste, wenn ein IDE+Z01 vorhanden ist. Es beschreibt nicht den Geschäftsvorfall
-    fn evaluate_565(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_565(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Das IDE+24 beschreibt einen Bestandteil einer Liste, wenn ein IDE+Z01 vorhanden ist. Es beschreibt nicht den Geschäftsvorfall — informational note, always applies
         ConditionResult::True
     }
 
     /// [578] Hinweis: Dies gilt für den Zeitraum welcher mit Z53 (keine Daten) definiert ist
-    fn evaluate_578(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_578(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dies gilt für den Zeitraum welcher mit Z53 (keine Daten) definiert ist — informational note, always applies
         ConditionResult::True
     }
 
     /// [580] Hinweis:  Ersatzbelieferung gibt es nur bei  - Marktlokationen in der Niederspannung, die kein Haushaltskunde gem. EnWG sind und die nicht mehr der gesetzlichen Ersatzversorgung (drei Monate) unter...
-    fn evaluate_580(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_580(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Ersatzbelieferung context note (Niederspannung non-household / Mittelspannung/Hochspannung) — informational note, always applies
         ConditionResult::True
     }
 
     /// [681] Hinweis: Übergangsversorgung gibt es nur bei Marktlokationen, die unter § 38a EnWG fallen. Grundlage ist eine bilaterale Vereinbarung
-    fn evaluate_681(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_681(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Übergangsversorgung applies only to Marktlokationen under § 38a EnWG based on bilateral agreement — informational note, always applies
         ConditionResult::True
     }
 
     /// [686] Hinweis: Zu verwenden bei der Abmeldung der Übergangsversorgung.
-    fn evaluate_686(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_686(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Zu verwenden bei der Abmeldung der Übergangsversorgung — informational note, always applies
         ConditionResult::True
     }

@@ -271,52 +271,52 @@ impl ReqoteConditionEvaluatorFV2510 {
     }
 
     /// [494] Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt.
-    fn evaluate_494(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_494(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [494] requires manual implementation
         // Reason: Condition states the date must be the document creation time or earlier. This requires knowing which specific DTM qualifier 'the date mentioned here' refers to in the field context, and comparing it against the document creation DTM. Without field-level context in the evaluator (only message-wide segment access), the correct source qualifier is ambiguous. Likely requires comparing a specific DTM against DTM+137 (document creation), but which qualifier is 'das hier genannte Datum' cannot be determined from the condition text alone.
         ConditionResult::Unknown
     }
 
     /// [517] Hinweis: Verwendung der ID der Technischen Ressource
-    fn evaluate_517(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_517(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Technischen Ressource — informational note, always applies
         ConditionResult::True
     }
 
     /// [518] Hinweis: zur Angabe von Kontaktdaten des Kunden des Lieferanten um die Änderung an der Technik zu vereinfachen.
-    fn evaluate_518(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_518(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe von Kontaktdaten des Kunden des Lieferanten — informational note, always applies
         ConditionResult::True
     }
 
     /// [520] Hinweis: Angabe des Beginnzeitpunkts des gewünschten Umsetzungstermins aus Sicht des Anfragenden.
-    fn evaluate_520(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_520(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe des Beginnzeitpunkts des gewünschten Umsetzungstermins — informational note, always applies
         ConditionResult::True
     }
 
     /// [521] Hinweis: Angabe des Endezeitpunkts des gewünschten Umsetzungstermins aus Sicht des Anfragenden.
-    fn evaluate_521(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_521(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe des Endezeitpunkts des gewünschten Umsetzungstermins — informational note, always applies
         ConditionResult::True
     }
 
     /// [911] Format: Mögliche Werte: 1 bis n, je Nachricht oder Segmentgruppe bei 1 beginnend und fortlaufend aufsteigend
-    fn evaluate_911(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_911(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [911] requires manual implementation
         // Reason: Sequential numbering validation (1..n, monotonically increasing per message or segment group) requires knowing the specific segment and element to inspect, plus iterating across all group instances to verify ordering. The condition description does not specify which segment/element carries the sequence number in this REQOTE SG28 context, and no relevant segment structure is provided. Cannot implement without that information.
         ConditionResult::Unknown
     }
 
     /// [922] Format: TR-ID
-    fn evaluate_922(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_922(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [922] requires manual implementation
         // Reason: Format: TR-ID validation requires knowing which specific segment and element in REQOTE SG28 carries the TR-ID value. The validate_tr_id helper is available, but the segment structure reference provided does not include the segment (e.g., RFF, IDE, or similar) that holds this identifier in SG28. Cannot safely implement without that context.
         ConditionResult::Unknown
     }
 
     /// [967] Format: Zertifikatskörper gemäß X509.1, BSI TR-03109-4
-    fn evaluate_967(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_967(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [967] requires manual implementation
         // Reason: Format: Zertifikatskörper gemäß X509.1, BSI TR-03109-4 requires X.509 certificate body parsing/validation. No helper for certificate format validation exists in the available API (validate_* functions cover numeric, DTM, email, phone, MaLo-ID, TR-ID, etc. — not binary certificate bodies). This would require a cryptographic library integration outside the current EvaluationContext API.
         ConditionResult::Unknown
@@ -337,7 +337,7 @@ impl ReqoteConditionEvaluatorFV2510 {
     }
 
     /// [2067] Die SG12 RFF+Z37 Referenz auf ID der Technischen Ressource ist so oft zu wiederholen, bis alle IDs der Technischen Ressourcen angegeben sind, die der Steuerbaren Ressource in LOC+172 DE3225 (Meldep...
-    fn evaluate_2067(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2067(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: SG12 RFF+Z37 (Referenz auf ID der Technischen Ressource) ist so oft zu wiederholen,
         // bis alle IDs der Technischen Ressourcen angegeben sind, die der Steuerbaren Ressource in
         // LOC+172 DE3225 (Meldepunkt) zugeordnet werden sollen — informational repetition cardinality note.
@@ -345,7 +345,7 @@ impl ReqoteConditionEvaluatorFV2510 {
     }
 
     /// [2068] Diese SG27 ist so oft zu wiederholen, dass alle Produkte zur Lokation die innerhalb des  gewünschten Umsetzungstermins (Zeitintervall aus DTM+469 (Startdatum oder Zeitpunkt) und DTM+472 (Endedatum...
-    fn evaluate_2068(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2068(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: SG27 ist so oft zu wiederholen, dass alle gewünschten Produkte zur Lokation
         // innerhalb des Umsetzungstermins (DTM+469 bis DTM+472) genannt sind, deren Kombination
         // gemäß Codeliste Kapitel 7 möglich ist — informational repetition cardinality note.
@@ -592,135 +592,135 @@ impl ReqoteConditionEvaluatorFV2510 {
     }
 
     /// [500] Hinweis: Angabe eines technischen Ansprechpartners für die Geräteübernahme
-    fn evaluate_500(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_500(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe eines technischen Ansprechpartners für die Geräteübernahme
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [501] Hinweis: Angabe eines Ansprechpartners für die Rechnungsabwicklung
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe eines Ansprechpartners für die Rechnungsabwicklung
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [502] Hinweis: Verwendung der ID der Marktlokation
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Marktlokation
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [503] Hinweis: Verwendung der ID der Messlokation
-    fn evaluate_503(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_503(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Messlokation
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [504] Hinweis: Verwendung der ID der Tranche
-    fn evaluate_504(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_504(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Tranche — informational note, always applies
         ConditionResult::True
     }
 
     /// [507] Hinweis: Vorgangsnummer aus SG4 IDE+24 DE7402 der UTILMD mit BGM+E01 mit der die Anmeldung des MSB-Wechsels erfolgt ist.
-    fn evaluate_507(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_507(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Vorgangsnummer aus SG4 IDE+24 DE7402 der UTILMD — informational note, always applies
         ConditionResult::True
     }
 
     /// [508] Hinweis: Wert aus BGM+Z73 DE1004 der IFTSTA mit der die Antwort auf die Bestellung der Konfiguration übermittelt wurde
-    fn evaluate_508(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_508(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z73 DE1004 der IFTSTA — informational note, always applies
         ConditionResult::True
     }
 
     /// [509] Hinweis: Vorgangsnummer aus CNI DE1490 der IFTSTA mit BGM+Z73 mit der die Antwort auf die Bestellung der Konfiguration übermittelt wurde
-    fn evaluate_509(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_509(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Vorgangsnummer aus CNI DE1490 der IFTSTA — informational note, always applies
         ConditionResult::True
     }
 
     /// [510] Hinweis: Verwendung der ID der Netzlokation
-    fn evaluate_510(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_510(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Netzlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [511] Hinweis: Verwendung der ID der Steuerbaren Ressource
-    fn evaluate_511(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_511(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [512] Hinweis: Für den Empfang der Werte nach Typ 2 aus dem SMGW.
-    fn evaluate_512(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_512(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [514] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_514(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_514(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [515] Hinweis: Es ist eine URI IPv4 für die Bereitstellung der Werte anzugeben.
-    fn evaluate_515(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_515(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [516] Hinweis: Es ist eine URI IPv6 für die Bereitstellung der Werte anzugeben.
-    fn evaluate_516(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_516(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [903] Format: Möglicher Wert: 1
-    fn evaluate_903(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_903(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [906] Format: max. 3 Nachkommastellen
-    fn evaluate_906(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_906(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [931] Format: ZZZ = +00
-    fn evaluate_931(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_931(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [932] Format: HHMM = 2200
-    fn evaluate_932(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_932(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [933] Format: HHMM = 2300
-    fn evaluate_933(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_933(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [934] Format: HHMM = 0400
-    fn evaluate_934(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_934(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [935] Format: HHMM = 0500
-    fn evaluate_935(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_935(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [939] Format: Die Zeichenkette muss die Zeichen @ und . enthalten
-    fn evaluate_939(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_939(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [940] Format: Die Zeichenkette muss mit dem Zeichen + beginnen und danach dürfen nur noch Ziffern folgen
-    fn evaluate_940(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_940(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [950] Format: Marktlokations-ID
-    fn evaluate_950(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_950(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 

@@ -203,14 +203,14 @@ impl ReqoteConditionEvaluatorFV2504 {
     }
 
     /// [494] Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt.
-    fn evaluate_494(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_494(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [494] requires manual implementation
         // Reason: Requires comparing 'this DE' value against the document creation timestamp (DTM+137). Without knowing which specific data element/segment this condition is applied to in the current validation context, a generic implementation cannot be written safely. The condition is context-dependent and the field being validated is not specified in the condition text alone.
         ConditionResult::Unknown
     }
 
     /// [967] Format: Zertifikatskörper gemäß X509.1, BSI TR-03109-4
-    fn evaluate_967(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_967(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [967] requires manual implementation
         // Reason: Format: X.509 certificate body per BSI TR-03109-4. Validating an X.509 certificate body requires actual ASN.1/DER parsing — none of the available format validation helpers cover certificate validation. This cannot be implemented with the current EvaluationContext API.
         ConditionResult::Unknown
@@ -444,135 +444,135 @@ impl ReqoteConditionEvaluatorFV2504 {
     }
 
     /// [500] Hinweis: Angabe eines technischen Ansprechpartners für die Geräteübernahme
-    fn evaluate_500(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_500(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe eines technischen Ansprechpartners für die Geräteübernahme
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [501] Hinweis: Angabe eines Ansprechpartners für die Rechnungsabwicklung
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Angabe eines Ansprechpartners für die Rechnungsabwicklung
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [502] Hinweis: Verwendung der ID der Marktlokation
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Marktlokation
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [503] Hinweis: Verwendung der ID der Messlokation
-    fn evaluate_503(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_503(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Messlokation
         // Informational note — always applies
         ConditionResult::True
     }
 
     /// [504] Hinweis: Verwendung der ID der Tranche
-    fn evaluate_504(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_504(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Tranche — informational note, always applies
         ConditionResult::True
     }
 
     /// [507] Hinweis: Vorgangsnummer aus SG4 IDE+24 DE7402 der UTILMD mit BGM+E01 mit der die Anmeldung des MSB-Wechsels erfolgt ist.
-    fn evaluate_507(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_507(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Vorgangsnummer aus SG4 IDE+24 DE7402 der UTILMD — informational note, always applies
         ConditionResult::True
     }
 
     /// [508] Hinweis: Wert aus BGM+Z73 DE1004 der IFTSTA mit der die Antwort auf die Bestellung der Konfiguration übermittelt wurde
-    fn evaluate_508(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_508(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z73 DE1004 der IFTSTA — informational note, always applies
         ConditionResult::True
     }
 
     /// [509] Hinweis: Vorgangsnummer aus CNI DE1490 der IFTSTA mit BGM+Z73 mit der die Antwort auf die Bestellung der Konfiguration übermittelt wurde
-    fn evaluate_509(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_509(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Vorgangsnummer aus CNI DE1490 der IFTSTA — informational note, always applies
         ConditionResult::True
     }
 
     /// [510] Hinweis: Verwendung der ID der Netzlokation
-    fn evaluate_510(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_510(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Netzlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [511] Hinweis: Verwendung der ID der Steuerbaren Ressource
-    fn evaluate_511(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_511(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [512] Hinweis: Für den Empfang der Werte nach Typ 2 aus dem SMGW.
-    fn evaluate_512(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_512(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [514] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_514(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_514(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [515] Hinweis: Es ist eine URI IPv4 für die Bereitstellung der Werte anzugeben.
-    fn evaluate_515(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_515(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [516] Hinweis: Es ist eine URI IPv6 für die Bereitstellung der Werte anzugeben.
-    fn evaluate_516(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_516(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [903] Format: Möglicher Wert: 1
-    fn evaluate_903(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_903(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [906] Format: max. 3 Nachkommastellen
-    fn evaluate_906(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_906(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [931] Format: ZZZ = +00
-    fn evaluate_931(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_931(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [932] Format: HHMM = 2200
-    fn evaluate_932(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_932(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [933] Format: HHMM = 2300
-    fn evaluate_933(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_933(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [934] Format: HHMM = 0400
-    fn evaluate_934(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_934(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [935] Format: HHMM = 0500
-    fn evaluate_935(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_935(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [939] Format: Die Zeichenkette muss die Zeichen @ und . enthalten
-    fn evaluate_939(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_939(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [940] Format: Die Zeichenkette muss mit dem Zeichen + beginnen und danach dürfen nur noch Ziffern folgen
-    fn evaluate_940(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_940(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [950] Format: Marktlokations-ID
-    fn evaluate_950(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_950(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 

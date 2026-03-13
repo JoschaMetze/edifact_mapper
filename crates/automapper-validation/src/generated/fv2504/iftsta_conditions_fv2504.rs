@@ -211,21 +211,21 @@ impl IftstaConditionEvaluatorFV2504 {
     }
 
     /// [6] Wenn für das 3-Tupel (MaBiS-ZP, Betrachtungszeitraum, Version der Summenzeitreihe) dem BIKO der Prüfstatus vorliegt, so ist dieser immer zusammen mit dem Datenstatus zu übertragen.
-    fn evaluate_6(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_6(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [6] requires manual implementation
         // Reason: Complex co-occurrence rule: if Prüfstatus is available for the 3-tuple (MaBiS-ZP, Betrachtungszeitraum, Version der Summenzeitreihe) from BIKO, then it MUST always be transmitted together with the Datenstatus. Requires knowledge of the exact STS qualifier codes distinguishing Prüfstatus from Datenstatus in this IFTSTA context, and how the 3-tuple membership is expressed in segment structure. The AHB segment structure reference is needed to identify the correct element indices and qualifier values.
         ConditionResult::Unknown
     }
 
     /// [7] Wenn der Datenstatus "Abgerechnete Daten" bzw. "Abgerechnete Daten Korrektur-BKA" nicht vorhanden.
-    fn evaluate_7(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_7(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [7] requires manual implementation
         // Reason: Checks absence of Datenstatus values 'Abgerechnete Daten' and 'Abgerechnete Daten Korrektur-BKA' in STS segments. The structure (STS segment absence check) is clear, but the exact qualifier codes for these specific data status values in IFTSTA are not provided in the segment structure reference. Without authoritative codes from the AHB, implementing this would require guessing qualifier values, which risks incorrect behavior.
         ConditionResult::Unknown
     }
 
     /// [8] Wenn der Datenstatus einer NZR vom BIKO an NB nicht vorhanden.
-    fn evaluate_8(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_8(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // TODO: Condition [8] requires manual implementation
         // Reason: Checks absence of the Datenstatus for a NZR (Netzregelzone-Zeitreihe) from BIKO to NB. The 'vom BIKO an NB' routing context and the specific qualifier codes identifying NZR-type Datenstatus in STS are not determinable without the AHB segment structure reference. This may also involve external context about message routing (whether this is a BIKO-to-NB message).
         ConditionResult::Unknown
@@ -412,12 +412,12 @@ impl IftstaConditionEvaluatorFV2504 {
     }
 
     /// [47] Es sind nur Codes aus dem EBD-Cluster "Ablehnung" möglich.
-    fn evaluate_47(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_47(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [48] Es sind nur Codes aus dem EBD-Cluster "Zustimmung" möglich.
-    fn evaluate_48(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_48(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
@@ -432,7 +432,7 @@ impl IftstaConditionEvaluatorFV2504 {
     }
 
     /// [51] Es sind nur Codes aus dem EBD-Cluster "Abweisung" möglich.
-    fn evaluate_51(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_51(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
@@ -1452,103 +1452,103 @@ impl IftstaConditionEvaluatorFV2504 {
     }
 
     /// [501] Hinweis: Aus QUOTES BGM DE1004
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Aus QUOTES BGM DE1004 — informational note about field origin, always applies
         ConditionResult::True
     }
 
     /// [502] Hinweis: Aus REQOTE BGM DE1004
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Aus REQOTE BGM DE1004 — informational note about field origin, always applies
         ConditionResult::True
     }
 
     /// [503] Hinweis: Auf Selbsteinbau eines iMS oder einer mME wird verzichtet
-    fn evaluate_503(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_503(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Auf Selbsteinbau eines iMS oder einer mME wird verzichtet — informational note, always applies
         ConditionResult::True
     }
 
     /// [504] Hinweis: Verwendung der ID des MaBiS-ZP
-    fn evaluate_504(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_504(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID des MaBiS-ZP — informational note, always applies
         ConditionResult::True
     }
 
     /// [505] Hinweis: Verwendung der ID der Messlokation
-    fn evaluate_505(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_505(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Messlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [506] Hinweis: Verwendung der ID der Marktlokation
-    fn evaluate_506(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_506(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Marktlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [510] Hinweis: Es ist neben der Information über die Ablehnung auch der unverändert gebliebene Datenstatus informell mitzugeben.
-    fn evaluate_510(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_510(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist neben der Information über die Ablehnung auch der unverändert gebliebene Datenstatus informell mitzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [512] Hinweis: Aus MSCONS BGM DE1004
-    fn evaluate_512(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_512(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Aus MSCONS BGM DE1004 — informational note, always applies
         ConditionResult::True
     }
 
     /// [519] Hinweis: Aus ORDERS BGM DE1004
-    fn evaluate_519(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_519(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Aus ORDERS BGM DE1004 — informational note, always applies
         ConditionResult::True
     }
 
     /// [520] Hinweis: Zeitpunkt, zu dem der Wechsel erfolgt, falls er zustande kommt
-    fn evaluate_520(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_520(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Zeitpunkt, zu dem der Wechsel erfolgt, falls er zustande kommt — informational note, always applies
         ConditionResult::True
     }
 
     /// [521] Hinweis: Zeitpunkt, ab dem der MSBN tatsächlich den Messstellenbetrieb übernimmt
-    fn evaluate_521(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_521(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Zeitpunkt, ab dem der MSBN tatsächlich den Messstellenbetrieb übernimmt — informational note, always applies
         ConditionResult::True
     }
 
     /// [522] Hinweis: Zeitpunkt, ab dem der gMSB den Messstellenbetrieb übernimmt
-    fn evaluate_522(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_522(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Zeitpunkt, ab dem der gMSB den Messstellenbetrieb übernimmt — informational note, always applies
         ConditionResult::True
     }
 
     /// [523] Hinweis: Wert aus BGM DE1004 der MSCONS, auf die sich die Statusangabe bezieht
-    fn evaluate_523(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_523(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM DE1004 der MSCONS, auf die sich die Statusangabe bezieht — informational note, always applies
         ConditionResult::True
     }
 
     /// [524] Hinweis: Wert aus BGM DE1004 der MSCONS, die den Gegenvorschlag enthält
-    fn evaluate_524(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_524(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM DE1004 der MSCONS, die den Gegenvorschlag enthält — informational note, always applies
         ConditionResult::True
     }
 
     /// [525] Hinweis: Je SG14 sind nur Statusinformationen zu einer MSCONS enthalten
-    fn evaluate_525(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_525(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Je SG14 sind nur Statusinformationen zu einer MSCONS enthalten — informational note, always applies
         ConditionResult::True
     }
 
     /// [530] Hinweis: Hier ist die Arbeit bzw. Leistung anzugeben, die der Sender der IFTSTA im Lieferschein für den von ihm genannten Zeitraum / Leistungsperiode erwartet hätte.
-    fn evaluate_530(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_530(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Hier ist die Arbeit bzw. Leistung anzugeben, die der Sender der IFTSTA im Lieferschein für den von ihm genannten Zeitraum / Leistungsperiode erwartet hätte — informational note, always applies
         ConditionResult::True
     }
 
     /// [531] Vom MSBN in Schritt 1 des SD verwendete Vorgangsnummer, damit der LF diese bei der Bestellung einer Konfiguration beim MSBN, unter dem Vorbehalt, dass der MSB-Wechsel an der Messlokation erfolgreic...
-    fn evaluate_531(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_531(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Vom MSBN in Schritt 1 des SD verwendete Vorgangsnummer, damit der LF diese
         // bei der Bestellung einer Konfiguration beim MSBN verwenden kann — informational note
         // describing field semantics and usage context, always applies unconditionally
@@ -1556,25 +1556,25 @@ impl IftstaConditionEvaluatorFV2504 {
     }
 
     /// [532] Hinweis: Verwendung der ID der Netzlokation
-    fn evaluate_532(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_532(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Netzlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [533] Hinweis: Verwendung der ID der Steuerbaren Ressource
-    fn evaluate_533(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_533(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Steuerbaren Ressource — informational note, always applies
         ConditionResult::True
     }
 
     /// [534] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_534(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_534(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es darf nur eine Information im DE3148 übermittelt werden — informational note, always applies
         ConditionResult::True
     }
 
     /// [535] Hinweis: Aus UTILMD IDE DE7402
-    fn evaluate_535(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_535(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Aus UTILMD IDE DE7402 — informational note about value origin, always applies
         ConditionResult::True
     }
@@ -1623,7 +1623,7 @@ impl IftstaConditionEvaluatorFV2504 {
     }
 
     /// [911] Format: Mögliche Werte: 1 bis n, je Nachricht bei 1 beginnend und fortlaufend aufsteigend
-    fn evaluate_911(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_911(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Mögliche Werte 1 bis n, je Nachricht bei 1 beginnend und fortlaufend aufsteigend
         // Informational note about sequence numbering — always applies
         ConditionResult::True

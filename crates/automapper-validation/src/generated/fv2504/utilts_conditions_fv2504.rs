@@ -677,7 +677,7 @@ impl UtiltsConditionEvaluatorFV2504 {
     }
 
     /// [10] wenn vorhanden
-    fn evaluate_10(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_10(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // "wenn vorhanden" — conditional modifier meaning the associated rule applies
         // only when the element is present. As a standalone boolean predicate this
         // always evaluates to True: the condition itself imposes no additional
@@ -1189,7 +1189,7 @@ impl UtiltsConditionEvaluatorFV2504 {
     }
 
     /// [55] Es ist der Wert einzutragen, der sich aus der Wiederholungshäufigkeit des SG6 RFF+Z49/ Z53 (Verwendungszeitraum der Daten: Gültige Daten/ Keine Daten) ergibt. Bedeutet: Das erste SG6 RFF+Z49/ Z53...
-    fn evaluate_55(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_55(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: The value to enter is derived from the repetition index of SG6 RFF+Z49/Z53:
         // first occurrence = "1", second = "2", third = "3", etc.
         // This is an informational annotation describing how to populate the data element.
@@ -1278,54 +1278,54 @@ impl UtiltsConditionEvaluatorFV2504 {
     }
 
     /// [501] Hinweis: Verwendung der ID der Marktlokation
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [502] Hinweis: Verwendung der ID der Messlokation
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Messlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [504] Hinweis: Wert aus BGM+Z55 DE1004 der ORDERS mit der die Reklamation einer Definition erfolgt ist
-    fn evaluate_504(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_504(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z55 DE1004 der ORDERS mit der die Reklamation einer Definition erfolgt ist — informational note, always applies
         ConditionResult::True
     }
 
     /// [505] Hinweis: Jede ausgerollte Zählzeitdefinition ist in einem eigenen IDE anzugeben
-    fn evaluate_505(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_505(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Jede ausgerollte Zählzeitdefinition ist in einem eigenen IDE anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [506] Hinweis: Zeitpunkt, ab dem die Übersicht der Zählzeitdefinitionen gültig ist
-    fn evaluate_506(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_506(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Zeitpunkt, ab dem die Übersicht der Zählzeitdefinitionen gültig ist — informational note, always applies
         ConditionResult::True
     }
 
     /// [507] Hinweis: Es ist die Zeit nach der deutschen gesetzlichen Zeit anzugeben
-    fn evaluate_507(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_507(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist die Zeit nach der deutschen gesetzlichen Zeit anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [508] Hinweis: Zeitpunkt, ab dem die Übersicht der Schaltzeitdefinitionen gültig ist
-    fn evaluate_508(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_508(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Zeitpunkt, ab dem die Übersicht der Schaltzeitdefinitionen gültig ist — informational note, always applies
         ConditionResult::True
     }
 
     /// [509] Hinweis: Zeitpunkt, ab dem die Übersicht der Leistungskurvendefinition gültig ist
-    fn evaluate_509(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_509(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Zeitpunkt, ab dem die Übersicht der Leistungskurvendefinition gültig ist — informational note, always applies
         ConditionResult::True
     }
 
     /// [510] Hinweis: Für jeden Zählzeitänderungszeitpunkt (SG8 DTM+Z33) ist diese Sementgruppe einmal anzugeben
-    fn evaluate_510(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_510(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Für jeden Zählzeitänderungszeitpunkt (SG8 DTM+Z33) ist diese Segmentgruppe einmal anzugeben — informational note, always applies
         ConditionResult::True
     }
@@ -1416,7 +1416,7 @@ impl UtiltsConditionEvaluatorFV2504 {
     }
 
     /// [514] Hinweis: Für jeden Schaltzeitänderungszeitpunkt (SG8 DTM+Z44) ist diese Sementgruppe einmal anzugeben
-    fn evaluate_514(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_514(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Für jeden Schaltzeitänderungszeitpunkt (SG8 DTM+Z44) ist diese Segmentgruppe einmal anzugeben — informational note, always applies
         ConditionResult::True
     }
@@ -1508,7 +1508,7 @@ impl UtiltsConditionEvaluatorFV2504 {
     }
 
     /// [518] Hinweis: Für jeden Leistungskurvenänderungszeitpunkt (SG8 DTM+Z45) ist diese Sementgruppe einmal anzugeben
-    fn evaluate_518(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_518(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Für jeden Leistungskurvenänderungszeitpunkt (SG8 DTM+Z45) ist diese Segmentgruppe einmal anzugeben — informational note, always applies
         ConditionResult::True
     }
@@ -1601,61 +1601,61 @@ impl UtiltsConditionEvaluatorFV2504 {
     }
 
     /// [522] Hinweis: Jede ausgerollte Schaltzeitdefinition ist in einem eigenen IDE anzugeben
-    fn evaluate_522(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_522(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Jede ausgerollte Schaltzeitdefinition ist in einem eigenen IDE anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [523] Hinweis: Jede ausgerollte Leistungskurvendefinition ist in einem eigenen IDE anzugeben
-    fn evaluate_523(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_523(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Jede ausgerollte Leistungskurvendefinition ist in einem eigenen IDE anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [524] Hinweis: Es ist der Code einer Zählzeitdefinition anzugeben
-    fn evaluate_524(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_524(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist der Code einer Zählzeitdefinition anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [525] Hinweis: Es ist der Code einer Schaltzeitdefinition anzugeben
-    fn evaluate_525(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_525(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist der Code einer Schaltzeitdefinition anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [526] Hinweis: Es ist der Code einer Leistungskurvendefinition anzugeben
-    fn evaluate_526(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_526(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist der Code einer Leistungskurvendefinition anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [527] Hinweis: Dieser Code ist anzugeben, wenn es sich um eine einmalig zu übermittelnde Definition handelt
-    fn evaluate_527(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_527(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dieser Code ist anzugeben, wenn es sich um eine einmalig zu übermittelnde Definition handelt — informational note, always applies
         ConditionResult::True
     }
 
     /// [528] Hinweis: Dieser Code ist anzugeben, wenn es sich um eine jährlich zu übermittelnde Definition handelt
-    fn evaluate_528(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_528(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dieser Code ist anzugeben, wenn es sich um eine jährlich zu übermittelnde Definition handelt — informational note, always applies
         ConditionResult::True
     }
 
     /// [529] Hinweis: Verwendung der ID der Netzlokation
-    fn evaluate_529(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_529(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Netzlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [530] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_530(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_530(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es darf nur eine Information im DE3148 übermittelt werden — informational note, always applies
         ConditionResult::True
     }
 
     /// [531] Hinweis: Für weitere Details siehe Kapitel 4.1 "Übermittlung einer Vielzahl von Berechnungsformeln in einem Vorgang"
-    fn evaluate_531(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_531(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Für weitere Details siehe Kapitel 4.1 "Übermittlung einer Vielzahl von Berechnungsformeln in einem Vorgang" — informational note, always applies
         ConditionResult::True
     }
@@ -1707,13 +1707,13 @@ impl UtiltsConditionEvaluatorFV2504 {
     }
 
     /// [533] Hinweis: Für jeden übermittelten Zeitraum aus der Übermittlung der Berechnungsformel ist genau einmal das Segement anzugeben
-    fn evaluate_533(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_533(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Für jeden übermittelten Zeitraum aus der Übermittlung der Berechnungsformel ist genau einmal das Segment anzugeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [534] Hinweis: Wert aus SG5 IDE+24 DE7402 mit der die Übermitt-lung der Berechnungsformel erfolgt ist.
-    fn evaluate_534(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_534(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus SG5 IDE+24 DE7402 — value comes from the Vorgangsnummer of the Berechnungsformel transmission; informational note, always applies
         ConditionResult::True
     }
@@ -1993,7 +1993,7 @@ impl UtiltsConditionEvaluatorFV2504 {
     }
 
     /// [2001] Segment bzw. Segmentgruppe ist genau einmal anzugeben
-    fn evaluate_2001(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2001(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Segment bzw. Segmentgruppe ist genau einmal anzugeben — informational cardinality note, always applies
         ConditionResult::True
     }

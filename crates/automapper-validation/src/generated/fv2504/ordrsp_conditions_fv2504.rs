@@ -403,7 +403,7 @@ impl OrdrspConditionEvaluatorFV2504 {
 
     /// [34] wenn vorhanden
     // REVIEW: 'wenn vorhanden' is a generic conditional-use annotation meaning the element should be included whenever the relevant data is available. As a standalone condition without a specific segment target, it functions as a Hinweis-like unconditional True. (medium confidence)
-    fn evaluate_34(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_34(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // 'wenn vorhanden' — generic availability condition: element is conditional on presence of the data
         // Without a specific segment reference this acts as an unconditional note
         ConditionResult::True
@@ -415,13 +415,13 @@ impl OrdrspConditionEvaluatorFV2504 {
     }
 
     /// [38] Möglicher Wert: ZB4 oder ZB5
-    fn evaluate_38(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_38(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Möglicher Wert: ZB4 oder ZB5 — informational note documenting permitted values
         ConditionResult::True
     }
 
     /// [39] Möglicher Wert: E17 oder Z07
-    fn evaluate_39(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_39(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Möglicher Wert: E17 oder Z07 — informational note documenting permitted values
         ConditionResult::True
     }
@@ -589,19 +589,19 @@ impl OrdrspConditionEvaluatorFV2504 {
     }
 
     /// [53] Vorgangsnummer aus IDE DE7402 der UTILTS mit BGM+Z59
-    fn evaluate_53(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_53(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Vorgangsnummer aus IDE DE7402 der UTILTS mit BGM+Z59 — informational note about value origin, always applies
         ConditionResult::True
     }
 
     /// [54] Vorgangsnummer aus IDE DE7402 der UTILTS mit BGM+Z80
-    fn evaluate_54(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_54(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Vorgangsnummer aus IDE DE7402 der UTILTS mit BGM+Z80 — informational note about value origin, always applies
         ConditionResult::True
     }
 
     /// [55] Vorgangsnummer aus IDE DE7402 der UTILTS mit BGM+Z81
-    fn evaluate_55(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_55(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Vorgangsnummer aus IDE DE7402 der UTILTS mit BGM+Z81 — informational note about value origin, always applies
         ConditionResult::True
     }
@@ -716,19 +716,19 @@ impl OrdrspConditionEvaluatorFV2504 {
     }
 
     /// [63] Dokumentennummer aus BGM+Z60 DE1004 der UTILTS
-    fn evaluate_63(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_63(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer aus BGM+Z60 DE1004 der UTILTS — informational note, always applies
         ConditionResult::True
     }
 
     /// [64] Dokumentennummer aus BGM+Z78 DE1004 der UTILTS
-    fn evaluate_64(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_64(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer aus BGM+Z78 DE1004 der UTILTS — informational note, always applies
         ConditionResult::True
     }
 
     /// [65] Dokumentennummer aus BGM+Z79 DE1004 der UTILTS
-    fn evaluate_65(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_65(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer aus BGM+Z79 DE1004 der UTILTS — informational note, always applies
         ConditionResult::True
     }
@@ -844,155 +844,155 @@ impl OrdrspConditionEvaluatorFV2504 {
 
     /// [494] Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt.
     // REVIEW: 'Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt.' This is a constraint description stating the date must be the document creation time or earlier. It functions as an unconditional validation rule (always applies) rather than a conditional trigger. Without knowing which specific DTM qualifier 'here' refers to in the calling context, and since the constraint itself is always applicable, returning True is appropriate. (medium confidence)
-    fn evaluate_494(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_494(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [500] Hinweis: Angabe eines technischen Ansprechpartners für die Geräteübernahme
-    fn evaluate_500(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_500(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [503] Hinweis: Datum, bis zu dem der MSBA zur Fortführung verpflichtet wurde
-    fn evaluate_503(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_503(&self, _ctx: &EvaluationContext) -> ConditionResult {
         ConditionResult::True
     }
 
     /// [504] Hinweis: Ggf. korrigiert bei einer Zeitangabe in der ORDERS, die außerhalb des max. möglichen Weiterverpflichtungszeitraums ist. Als Antwort wird dann in SG2 AJT Zustimmung mit Terminänderung an...
-    fn evaluate_504(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_504(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Ggf. korrigiert bei einer Zeitangabe in der ORDERS, die außerhalb des max. möglichen Weiterverpflichtungszeitraums ist. Als Antwort wird dann in SG2 AJT Zustimmung mit Terminänderung angegeben.
         ConditionResult::True
     }
 
     /// [513] Hinweis: Wert aus BGM+Z12 DE1004 der ORDERS, mit der die Bestellung erfolgt ist.
-    fn evaluate_513(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_513(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z12 DE1004 der ORDERS, mit der die Bestellung erfolgt ist.
         ConditionResult::True
     }
 
     /// [518] Hinweis: Wert aus BGM+Z10 DE1004 der ORDERS, mit der die Bestellung erfolgt ist
-    fn evaluate_518(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_518(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z10 DE1004 der ORDERS, mit der die Bestellung erfolgt ist.
         ConditionResult::True
     }
 
     /// [519] Hinweis: Wert aus BGM+7 DE1004 der ORDERS, mit der die Bestellung erfolgt ist.
-    fn evaluate_519(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_519(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+7 DE1004 der ORDERS, mit der die Bestellung erfolgt ist.
         ConditionResult::True
     }
 
     /// [520] Hinweis: Wert aus BGM+Z29 DE1004 der ORDERS, mit der die Anfrage zur Beendigung der Rechnungsabwicklung erfolgt ist.
-    fn evaluate_520(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_520(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z29 DE1004 der ORDERS, mit der die Anfrage zur Beendigung der Rechnungsabwicklung erfolgt ist.
         ConditionResult::True
     }
 
     /// [521] Hinweis: Wert aus BGM+Z14/Z61/Z62 DE1004 der ORDERS, mit der die Anforderung von Stammdaten erfolgt ist
-    fn evaluate_521(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_521(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z14/Z61/Z62 DE1004 der ORDERS, mit der die Anforderung von Stammdaten erfolgt ist
         // Informational note — documents that the BGM DE1004 value originates from the original ORDERS request.
         ConditionResult::True
     }
 
     /// [522] Hinweis: Wert aus BGM+7/Z28/Z48 DE1004 der ORDERS, mit der die Anforderung von Werten erfolgt ist.
-    fn evaluate_522(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_522(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+7/Z28/Z48 DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [523] Hinweis: Wert aus BGM+7 DE1004 der ORDERS, mit der die Anforderung Anforderung von Brennwert und Zustandszahl erfolgt ist.
-    fn evaluate_523(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_523(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+7 DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [524] Hinweis: Wert aus BGM+Z14 DE1004 der ORDERS, mit der die Anfrage vom MSB Gas erfolgt ist.
-    fn evaluate_524(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_524(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z14 DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [525] Hinweis: Wert aus BGM+Z24 DE1004 der ORDERS, mit der die Anforderung Allokationsliste erfolgt ist
-    fn evaluate_525(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_525(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z24 DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [526] Hinweis: Wert aus BGM+Z23 DE1004 der ORDERS, mit der die Anforderung bilanzierte Menge erfolgt ist
-    fn evaluate_526(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_526(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z23 DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [527] Hinweis: Wert aus BGM+Z34 DE1004 der ORDERS, mit der die Reklamation von Werten erfolgt ist.
-    fn evaluate_527(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_527(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z34 DE1004 der ORDERS, mit der die Reklamation von Werten erfolgt ist. — informational note, always applies
         ConditionResult::True
     }
 
     /// [529] Hinweis: Dokumentennummer aus BGM DE1004 der ORDERS
-    fn evaluate_529(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_529(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer aus BGM DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [530] Hinweis: Dokumentennummer aus BGM DE1004 der ORDCHG
-    fn evaluate_530(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_530(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Dokumentennummer aus BGM DE1004 der ORDCHG — informational note, always applies
         ConditionResult::True
     }
 
     /// [533] Hinweis: Wert aus BGM+Z51 DE1004 der ORDCHG
-    fn evaluate_533(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_533(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z51 DE1004 der ORDCHG — informational note, always applies
         ConditionResult::True
     }
 
     /// [534] Hinweis: Wert aus BGM+Z52 DE1004 der ORDCHG
-    fn evaluate_534(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_534(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z52 DE1004 der ORDCHG — informational note, always applies
         ConditionResult::True
     }
 
     /// [535] Hinweis: Wert aus BGM+Z13 DE1004 der ORDERS, mit der die Ankündigung Gerätewechselabsicht erfolgt ist.
-    fn evaluate_535(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_535(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z13 DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [536] Hinweis: Es ist die MP-ID des Eigentümers (MSB) zur bilateralen Klärung anzugeben, wenn der angefragte MSB nicht selber der Eigentümer ist.
-    fn evaluate_536(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_536(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: MP-ID des Eigentümers (MSB) angeben — informational note, always applies
         ConditionResult::True
     }
 
     /// [537] Hinweis: Wert aus BGM+Z72 DE1004 der ORDERS, mit der die Bestellung Beendigung der Konfiguration erfolgt ist.
-    fn evaluate_537(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_537(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z72 DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [538] Hinweis: Wert aus BGM+Z76 DE1004 der ORDERS, mit der die Reklamation der Konfiguration erfolgt ist.
-    fn evaluate_538(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_538(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z76 DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [539] Hinweis: Wert aus BGM+Z73/Z74 DE1004 der ORDERS, mit der die Bestellung der Konfiguration erfolgt ist.
-    fn evaluate_539(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_539(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z73/Z74 DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [540] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_540(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_540(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es darf nur eine Information im DE3148 übermittelt werden — informational note, always applies
         ConditionResult::True
     }
 
     /// [542] Hinweis: Wert aus BGM+Z91 DE1004 der ORDERS, mit der die Bestellung Änderung der Abrechnungsdaten erfolgt ist.
-    fn evaluate_542(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_542(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z91 DE1004 der ORDERS — informational note about value origin, always applies
         ConditionResult::True
     }

@@ -208,7 +208,7 @@ impl AperakConditionEvaluatorFV2504 {
 
     /// [494] Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde, oder ein Zeitpunkt, der davor liegt
     // REVIEW: This condition is a declarative constraint: the date in this field must be the document creation time or earlier. It is not a conditional predicate that selects when a field is used, but rather a validation rule that always applies. Without knowing the specific DTM qualifier pair to compare (which field this annotates vs. DTM+137), a full comparison is not implementable. Returning True reflects that the constraint is always in force. (medium confidence)
-    fn evaluate_494(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_494(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Das hier genannte Datum muss der Zeitpunkt sein, zu dem das Dokument erstellt wurde,
         // oder ein Zeitpunkt, der davor liegt.
         // This is a declarative validation constraint on the field value itself — it always
@@ -218,19 +218,19 @@ impl AperakConditionEvaluatorFV2504 {
     }
 
     /// [500] Hinweis: Für Folgeprozesse.
-    fn evaluate_500(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_500(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Für Folgeprozesse — informational note, always applies
         ConditionResult::True
     }
 
     /// [501] Hinweis: Für Initialprozesse.
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Für Initialprozesse — informational note, always applies
         ConditionResult::True
     }
 
     /// [502] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es darf nur eine Information im DE3148 übermittelt werden — informational note, always applies
         ConditionResult::True
     }

@@ -394,25 +394,25 @@ impl MsconsConditionEvaluatorFV2604 {
     }
 
     /// [578] Hinweis: Wenn es sich um die Übermittlung des Leistungswertes für die Netzentgelte mit Jahresleistungspreissystem handelt.
-    fn evaluate_578(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_578(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Übermittlung des Leistungswertes für Netzentgelte mit Jahresleistungspreissystem — informational note, always applies
         ConditionResult::True
     }
 
     /// [579] Hinweis: Wenn es sich um die Übermittlung des Leistungswertes für die Netzentgelte mit Monatsleistungspreissystem handelt.
-    fn evaluate_579(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_579(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Übermittlung des Leistungswertes für Netzentgelte mit Monatsleistungspreissystem — informational note, always applies
         ConditionResult::True
     }
 
     /// [580] Hinweis: Wenn es sich um die Übermittlung des Leistungswertes für die Netzentgelte mit Tagesleistungspreissystem handelt.
-    fn evaluate_580(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_580(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Übermittlung des Leistungswertes für Netzentgelte mit Tagesleistungspreissystem — informational note, always applies
         ConditionResult::True
     }
 
     /// [581] Hinweis: Wenn es sich um die Übermittlung des Monatsmaximum gemäß WiM handelt.
-    fn evaluate_581(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_581(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wenn es sich um die Übermittlung des Monatsmaximum gemäß WiM handelt.
         // Informational note, always applies
         ConditionResult::True
@@ -1520,321 +1520,321 @@ impl MsconsConditionEvaluatorFV2604 {
     }
 
     /// [501] Hinweis: Es sind nur die Werte erlaubt, die in der EDI@Energy Codeliste der OBIS-Kennzahlen und Medien mit dem entsprechenden Prüfidentifikator versehen sind.
-    fn evaluate_501(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_501(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note about allowed OBIS codes — always applies unconditionally
         ConditionResult::True
     }
 
     /// [502] Hinweis: Einmal für die Energiemenge von Beginn des Kalenderjahres bis zum Lieferbeginn und bis zu zweimal für die zwei höchsten Monatsleistungswerte (wegen KAV) von Beginn des Kalenderjahres bi...
-    fn evaluate_502(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_502(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note about cardinality (once for energy from start of calendar year,
         // up to twice for two highest monthly peak values due to KAV) — always applies unconditionally
         ConditionResult::True
     }
 
     /// [506] Hinweis: Nur bei Einspeisemengen und bei Gas zur stündlichen Energiedatenübermittlung
-    fn evaluate_506(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_506(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note — only for feed-in quantities and gas hourly energy data transmission
         // This is an informational annotation, not a boolean predicate — always applies
         ConditionResult::True
     }
 
     /// [509] Hinweis: Falls es sich um eine Korrekturenergiemenge handelt, ist hier die Referenz auf die MSCONS anzugeben, in der der Zählerstand vorab übermittelt wurde.
-    fn evaluate_509(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_509(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note — for correction energy amounts, reference the prior MSCONS
         // in which the meter reading was transmitted. Informational annotation, always applies.
         ConditionResult::True
     }
 
     /// [510] Hinweis: Verwendung der ID der Messlokation
-    fn evaluate_510(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_510(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Messlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [511] Hinweis: Verwendung der ID des MaBiS-ZP
-    fn evaluate_511(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_511(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID des MaBiS-ZP — informational note, always applies
         ConditionResult::True
     }
 
     /// [512] Hinweis: Verwendung der Bilanzkreisbezeichnung
-    fn evaluate_512(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_512(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der Bilanzkreisbezeichnung — informational note, always applies
         ConditionResult::True
     }
 
     /// [513] Hinweis: Verwendung der Bezeichnung des Bilanzierungsgebietes
-    fn evaluate_513(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_513(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der Bezeichnung des Bilanzierungsgebietes — informational note, always applies
         ConditionResult::True
     }
 
     /// [514] Hinweis: Verwendung der ID der Marktlokation
-    fn evaluate_514(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_514(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Marktlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [515] Hinweis: Verwendung der Profilbezeichnung
-    fn evaluate_515(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_515(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der Profilbezeichnung — informational note, always applies
         ConditionResult::True
     }
 
     /// [516] Hinweis: Verwendung der Bezeichnung der Profilschar
-    fn evaluate_516(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_516(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der Bezeichnung der Profilschar — informational note, always applies
         ConditionResult::True
     }
 
     /// [518] Hinweis: Verwendung der ID der Tranche
-    fn evaluate_518(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_518(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Tranche — informational note, always applies
         ConditionResult::True
     }
 
     /// [519] Hinweis: Nur wenn der gemessene Lastgang der Messlokation nicht dem Lastgang der Marktlokation 1:1 entspricht.
-    fn evaluate_519(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_519(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Nur wenn der gemessene Lastgang der Messlokation nicht dem Lastgang der Marktlokation 1:1 entspricht — informational note, always applies
         ConditionResult::True
     }
 
     /// [520] Hinweis: Wenn es sich um eine 1:1 Beziehung zwischen Messlokation und Marktlokation handelt und der gemessene Lastgang der Messlokation dem Lastgang der Marktlokation 1:1 entspricht, oder wenn der ...
-    fn evaluate_520(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_520(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wenn es sich um eine 1:1 Beziehung zwischen Messlokation und Marktlokation handelt... — informational note, always applies
         ConditionResult::True
     }
 
     /// [522] Hinweis: Nur für die Übermittlung der Korrekturenergiemengen im Zeitintervall zwischen zwei Messwerten.
-    fn evaluate_522(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_522(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Nur für die Übermittlung der Korrekturenergiemengen im Zeitintervall zwischen zwei Messwerten.
         ConditionResult::True
     }
 
     /// [523] Hinweis: Nur für die Übermittlung der Energiemenge im Zeitintervall zwischen zwei Messwerten vor der Netznutzungsabrechnung.
-    fn evaluate_523(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_523(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Nur für die Übermittlung der Energiemenge im Zeitintervall zwischen zwei Messwerten vor der Netznutzungsabrechnung.
         ConditionResult::True
     }
 
     /// [524] Hinweis: Nur, wenn es sich um die Übermittlung von Abrechnungsbrennwert und Z-Zahl für den vom Lieferanten über eine Geschäftsdatenanfrage angeforderten Zeitraum handelt.
-    fn evaluate_524(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_524(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Nur, wenn es sich um die Übermittlung von Abrechnungsbrennwert und Z-Zahl für den vom Lieferanten über eine Geschäftsdatenanfrage angeforderten Zeitraum handelt.
         ConditionResult::True
     }
 
     /// [525] Hinweis: Nur für die Übermittlung der Energiemenge im Zeitintervall für eine Marktlokation ohne Messlokation (Pauschalanlage) wenn eines der Ereignisse aus Kapitel 4.2 eingetreten ist.
-    fn evaluate_525(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_525(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Nur für die Übermittlung der Energiemenge im Zeitintervall für eine Marktlokation ohne Messlokation (Pauschalanlage) wenn eines der Ereignisse aus Kapitel 4.2 eingetreten ist.
         ConditionResult::True
     }
 
     /// [526] Hinweis: Wert aus BGM+Z24 DE1004 der ORDERS mit der die Allokationsliste bestellt wurde.
-    fn evaluate_526(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_526(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z24 DE1004 der ORDERS mit der die Allokationsliste bestellt wurde.
         ConditionResult::True
     }
 
     /// [528] Hinweis: Wert aus BGM+Z28 DE1004 der ORDERS mit der die Anforderung von Messwerten erfolgt ist.
-    fn evaluate_528(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_528(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z28 DE1004 der ORDERS mit der die Anforderung von Messwerten erfolgt ist.
         // Informational note, always applies
         ConditionResult::True
     }
 
     /// [529] Hinweis: Wert aus BGM+7 DE1004 der ORDERS mit der die Anforderung von Messwerten erfolgt ist.
-    fn evaluate_529(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_529(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+7 DE1004 der ORDERS mit der die Anforderung von Messwerten erfolgt ist.
         // Informational note, always applies
         ConditionResult::True
     }
 
     /// [530] Hinweis: Wert aus SG4 IDE+24 DE7402 der UTILMD mit dem der Sender der MSCONS die vorherigen Stammdaten mittels UTILMD übermittelt hat.
-    fn evaluate_530(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_530(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus SG4 IDE+24 DE7402 der UTILMD mit dem der Sender der MSCONS die vorherigen Stammdaten mittels UTILMD übermittelt hat.
         // Informational note, always applies
         ConditionResult::True
     }
 
     /// [531] Hinweis: Wert aus BGM+7 DE1004 der MSCONS mit der der Zählerstand übermittelt wurde.
-    fn evaluate_531(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_531(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+7 DE1004 der MSCONS mit der der Zählerstand übermittelt wurde.
         // Informational note, always applies
         ConditionResult::True
     }
 
     /// [532] Hinweis: Wert aus BGM+7/Z27/Z28/270/Z41/Z42/Z85 DE1004 der MSCONS Nachricht, die storniert wird
-    fn evaluate_532(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_532(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+7/Z27/Z28/270/Z41/Z42/Z85 DE1004 der MSCONS Nachricht, die storniert wird
         // Informational note, always applies
         ConditionResult::True
     }
 
     /// [535] Hinweis: Verwendung der ID des Netzkoppelpunktes Strom/Gas
-    fn evaluate_535(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_535(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID des Netzkoppelpunktes Strom/Gas — informational note, always applies
         ConditionResult::True
     }
 
     /// [538] Hinweis: Die Referenz auf die ORDERS ist nur dann anzugeben, wenn diese Werte vom Empfänger auch ursprünglich mittels ORDERS angefragt wurden.
-    fn evaluate_538(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_538(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Die Referenz auf die ORDERS ist nur dann anzugeben, wenn diese Werte vom Empfänger auch ursprünglich mittels ORDERS angefragt wurden — informational note, always applies
         ConditionResult::True
     }
 
     /// [541] Hinweis: Ein Korrekturgrund ist anzugeben, wenn: 1. ein bereits an den MP übermittelter vorläufiger Wert nach Stornierung durch einen Ersatzwert ersetzt wird, oder  2. ein bereits an den MP über...
-    fn evaluate_541(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_541(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Ein Korrekturgrund ist anzugeben in bestimmten Ersatzwert/Stornierung-Szenarien — informational note, always applies
         ConditionResult::True
     }
 
     /// [543] Hinweis: Wert aus BGM+Z23 DE1004 der ORDERS mit der die bilanzierte Menge bestellt wurde.
-    fn evaluate_543(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_543(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z23 DE1004 der ORDERS mit der die bilanzierte Menge bestellt wurde — informational note, always applies
         ConditionResult::True
     }
 
     /// [544] Hinweis: Bei einer Mengenaufteilung (z. B. Aufgrund einer Abgrenzung) für SG6 LOC+172 muss für den frühesten angegebenen Zeitpunkt zum Beginn des Zeitintervalls  (über alle Wiederholungen der L...
-    fn evaluate_544(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_544(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Bei einer Mengenaufteilung für SG6 LOC+172 muss für den frühesten Zeitpunkt zu jeder OBIS-Kennziffer ein Zählerstand vorhanden sein — informational note, always applies
         ConditionResult::True
     }
 
     /// [545] Hinweis: Bei einer Mengenaufteilung (z. B. Aufgrund einer Abgrenzung) für SG6 LOC+172 muss für den spätesten angegebenen Zeitpunkt zum Ende des Zeitintervalls (über alle Wiederholungen der LIN-...
-    fn evaluate_545(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_545(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: informational note about Mengenaufteilung and Zählerstand requirement — always applies
         ConditionResult::True
     }
 
     /// [546] Hinweis: Eine Referenz auf die Stammdatenänderung des Gerätewechsels ist immer anzugeben, wenn diese dem Sender vorliegt.
-    fn evaluate_546(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_546(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: informational note about referencing master data changes for device replacements — always applies
         ConditionResult::True
     }
 
     /// [547] Hinweis: Der Code 270 ist nur zu nutzen, wenn ein Lieferschein, der vor dem 1.4.2021 erstellt wurde, storniert wird.
-    fn evaluate_547(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_547(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: informational note — code 270 only for cancelling delivery notes created before 1.4.2021 — always applies
         ConditionResult::True
     }
 
     /// [551] Hinweis: Ein Korrekturgrund ist anzugeben, wenn: 1. ein bereits an den MP übermittelter vorläufiger Wert durch einen Ersatzwert ersetzt wird, oder  2. ein bereits an den MP übermittelter Ersatzw...
-    fn evaluate_551(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_551(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: informational note describing when a Korrekturgrund must be provided — always applies
         ConditionResult::True
     }
 
     /// [553] Hinweis: Wert aus BGM+Z34 DE1004 der ORDERS mit der die Reklamation von Werten erfolgt ist
-    fn evaluate_553(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_553(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: informational note — value from BGM+Z34 DE1004 of the ORDERS used for value complaint — always applies
         ConditionResult::True
     }
 
     /// [554] Hinweis: Verwendung der ID der Technischen Ressource
-    fn evaluate_554(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_554(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Technischen Ressource — informational note, always applies
         ConditionResult::True
     }
 
     /// [556] Hinweis: Wert aus BGM+Z45 DE1004 der ORDERS mit der die Anforderung der Ausfallarbeit durch den anfNB erfolgt ist.
-    fn evaluate_556(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_556(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z45 DE1004 der ORDERS — informational note, always applies
         ConditionResult::True
     }
 
     /// [557] Hinweis: Die Referenz auf die ursprüngliche MSCONS ist anzugeben, wenn es sich um die Übermittlung eines Gegenvorschlags durch den BTR handelt.
-    fn evaluate_557(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_557(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Referenz auf ursprüngliche MSCONS bei Gegenvorschlag — informational note, always applies
         ConditionResult::True
     }
 
     /// [558] Hinweis: Wert aus BGM+Z45 DE1004 der MSCONS auf die sich die Übermittlung des Gegenvorschlags durch den BTR bezieht.
-    fn evaluate_558(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_558(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM+Z45 DE1004 der MSCONS bei Gegenvorschlag — informational note, always applies
         ConditionResult::True
     }
 
     /// [559] Hinweis: Ein Korrekturgrund ist anzugeben, wenn: 1. ein bereits an den MP übermittelter vorläufiger Wert nach Stornierung durch einen Ersatzwert ersetzt wird, oder  2. ein bereits an den MP über...
-    fn evaluate_559(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_559(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Korrekturgrund bei Ersatz/Stornierung von Werten — informational note, always applies
         ConditionResult::True
     }
 
     /// [560] Hinweis: Ein Korrekturgrund ist anzugeben, wenn: 1. ein bereits an den MP übermittelter vorläufiger Wert durch einen Ersatzwert ersetzt wird, oder  2. ein bereits an den MP übermittelter Ersatzw...
-    fn evaluate_560(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_560(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Ein Korrekturgrund ist anzugeben, wenn ein vorläufiger/Ersatz/wahrer Wert ersetzt wird — informational note, always applies
         ConditionResult::True
     }
 
     /// [566] Hinweis: Es sind nur die Werte erlaubt, die im vorherigen Stammdatenaustausch zu diesem Meldepunkt vom MSB zum Zeitpunkt übermittelt wurden.
-    fn evaluate_566(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_566(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es sind nur die Werte erlaubt, die im vorherigen Stammdatenaustausch übermittelt wurden — informational note, always applies
         ConditionResult::True
     }
 
     /// [567] Hinweis: Es ist die Konfigurations-ID anzugeben, die im vorherigen Stammdatenaustausch kommuniziert wurde.
-    fn evaluate_567(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_567(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es ist die Konfigurations-ID anzugeben, die im vorherigen Stammdatenaustausch kommuniziert wurde — informational note, always applies
         ConditionResult::True
     }
 
     /// [568] Hinweis: Verwendung ist nur zulässig, wenn es sich um 1:n Beziehung zwischen Markt- und Messlokation handelt und auf Ebene der Messlokation unterschiedliche Ersatzwertbildungsverfahren verwendet u...
-    fn evaluate_568(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_568(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung nur zulässig bei 1:n Beziehung zwischen Markt- und Messlokation mit unterschiedlichen Ersatzwertbildungsverfahren — informational note, always applies
         ConditionResult::True
     }
 
     /// [569] Hinweis: Bei mehreren Zählerständen einer Messlokation (z. B. HT/NT) ist diese Zeitangabe zu nutzen und eine Wiederholung das SG9 LIN durchzuführen.
-    fn evaluate_569(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_569(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Bei mehreren Zählerständen einer Messlokation (z. B. HT/NT) ist diese Zeitangabe zu nutzen und SG9 LIN zu wiederholen — informational note, always applies
         ConditionResult::True
     }
 
     /// [570] Hinweis: Verwendung ist nur zulässig, wenn es sich um 1:n Beziehung zwischen Markt- und Messlokation handelt und auf Ebene der Messlokation unterschiedliche Gründe für die Ersatzwertbildung vorl...
-    fn evaluate_570(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_570(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung ist nur zulässig, wenn es sich um 1:n Beziehung zwischen Markt- und Messlokation handelt und auf Ebene der Messlokation unterschiedliche Gründe für die Ersatzwertbildung vorliegen und kommuniziert wurden.
         ConditionResult::True
     }
 
     /// [571] Hinweis: Verwendung ist nur zulässig, wenn es sich um 1:n Beziehung handelt und auf Ebene der Netzkopplungspunkte unterschiedliche Gründe für die Ersatzwertbildung vorliegen und kommuniziert wur...
-    fn evaluate_571(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_571(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung ist nur zulässig, wenn es sich um 1:n Beziehung handelt und auf Ebene der Netzkopplungspunkte unterschiedliche Gründe für die Ersatzwertbildung vorliegen und kommuniziert wurden.
         ConditionResult::True
     }
 
     /// [572] Hinweis: Verwendung ist nur zulässig, wenn es sich um 1:n Beziehung handelt und auf Ebene der Netzkopplungspunkte unterschiedliche Ersatzwertbildungsverfahren vorliegen und kommuniziert wurden.
-    fn evaluate_572(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_572(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung ist nur zulässig, wenn es sich um 1:n Beziehung handelt und auf Ebene der Netzkopplungspunkte unterschiedliche Ersatzwertbildungsverfahren vorliegen und kommuniziert wurden.
         ConditionResult::True
     }
 
     /// [573] Hinweis: Eine Energiemenge in der Sparte Gas ist gemäß DVGW G685 Arbeitsblatt 4 Kapitel 5.3 auf ganze Kilowattstunden zu runden.
-    fn evaluate_573(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_573(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Eine Energiemenge in der Sparte Gas ist gemäß DVGW G685 Arbeitsblatt 4 Kapitel 5.3 auf ganze Kilowattstunden zu runden.
         ConditionResult::True
     }
 
     /// [574] Hinweis: Wert aus BGM DE1004 der ORDERS mit der die Bestellung der Werte nach Typ 2 erfolg ist
-    fn evaluate_574(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_574(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Wert aus BGM DE1004 der ORDERS mit der die Bestellung der Werte nach Typ 2 erfolg ist
         ConditionResult::True
     }
 
     /// [575] Hinweis: Verwendung der ID der Netzlokation
-    fn evaluate_575(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_575(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Verwendung der ID der Netzlokation — informational note, always applies
         ConditionResult::True
     }
 
     /// [576] Hinweis: Es darf nur eine Information im DE3148 übermittelt werden
-    fn evaluate_576(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_576(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Es darf nur eine Information im DE3148 übermittelt werden — informational note, always applies
         ConditionResult::True
     }
 
     /// [577] Hinweis: Dieser Code ist auch zu verwenden, wenn aufgrund der Beendigung einer Messlokation (Stilllegung) die Beendigung der Marktlokation (Stilllegung) zu unterschiedlichen Zeitpunkten erfolgt, da...
-    fn evaluate_577(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_577(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Informational note about Messlokation/Marktlokation termination timing — always applies
         ConditionResult::True
     }
@@ -2159,19 +2159,19 @@ impl MsconsConditionEvaluatorFV2604 {
     }
 
     /// [2001] Segmentgruppe ist nur einmal je UNH anzugeben
-    fn evaluate_2001(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2001(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Segmentgruppe ist nur einmal je UNH anzugeben — cardinality annotation, always applies
         ConditionResult::True
     }
 
     /// [2002] Segmentgruppe ist bis zu drei Mal je SG5 NAD+DP anzugeben
-    fn evaluate_2002(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2002(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Segmentgruppe ist bis zu drei Mal je SG5 NAD+DP anzugeben — cardinality annotation, always applies
         ConditionResult::True
     }
 
     /// [2003] Segmentgruppe ist genau zwei Mal je SG9 LIN anzugeben
-    fn evaluate_2003(&self, ctx: &EvaluationContext) -> ConditionResult {
+    fn evaluate_2003(&self, _ctx: &EvaluationContext) -> ConditionResult {
         // Hinweis: Segmentgruppe ist genau zwei Mal je SG9 LIN anzugeben — cardinality annotation, always applies
         ConditionResult::True
     }
