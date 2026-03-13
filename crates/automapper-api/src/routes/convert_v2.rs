@@ -117,18 +117,7 @@ pub(crate) async fn convert_v2(
                 );
             }
 
-            // Step 6: UTILMD path — look up ConversionService for PID pipeline
-            let service = state
-                .mig_registry
-                .service(&req.format_version)
-                .ok_or_else(|| ApiError::BadRequest {
-                    message: format!(
-                        "No MIG service available for format version '{}'",
-                        req.format_version
-                    ),
-                })?;
-
-            // Step 7: Detect PID from the first message to resolve variant
+            // Step 6: Detect PID from the first message to resolve variant
             let first_segments = first_chunk.all_segments();
             let first_pid = detect_pid(&first_segments).map_err(|e| ApiError::ConversionError {
                 message: format!("PID detection error: {e}"),
@@ -141,6 +130,17 @@ pub(crate) async fn convert_v2(
                     message: format!(
                         "Could not determine message variant for PID {first_pid} in {}",
                         req.format_version
+                    ),
+                })?;
+
+            // Step 7: Look up variant-specific ConversionService for MIG
+            let service = state
+                .mig_registry
+                .service_for_variant(&req.format_version, msg_variant)
+                .ok_or_else(|| ApiError::BadRequest {
+                    message: format!(
+                        "No MIG service available for format version '{}' variant '{}'",
+                        req.format_version, msg_variant
                     ),
                 })?;
 

@@ -30,9 +30,9 @@ pub(crate) fn load_reverse_context<'a>(
     let service =
         state
             .mig_registry
-            .service(format_version)
+            .service_for_variant(format_version, msg_variant)
             .ok_or_else(|| ApiError::BadRequest {
-                message: format!("No MIG service available for format version '{format_version}'"),
+                message: format!("No MIG service available for {format_version}/{msg_variant}"),
             })?;
 
     // Get AHB segment numbers from cache

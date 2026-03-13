@@ -100,14 +100,14 @@ pub(crate) async fn validate_v2(
             ),
         })?;
 
-    // Step 7: Load MIG service, filter for PID, assemble with diagnostics
+    // Step 7: Load variant-specific MIG service, filter for PID, assemble with diagnostics
     let service = state
         .mig_registry
-        .service(&req.format_version)
+        .service_for_variant(&req.format_version, msg_variant)
         .ok_or_else(|| ApiError::BadRequest {
             message: format!(
-                "No MIG service available for format version '{}'",
-                req.format_version
+                "No MIG service available for format version '{}' variant '{}'",
+                req.format_version, msg_variant
             ),
         })?;
 

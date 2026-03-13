@@ -110,14 +110,19 @@ impl MigServiceRegistry {
                                 match VariantCache::load(&variant_cache_path) {
                                     Ok(vc) => {
                                         // Register ConversionService from cached MIG schema.
-                                        // Only use UTILMD_Strom variants (the primary MIG for assembly).
+                                        // Key by "{fv}/{variant}" so each message type has its own MIG.
+                                        // Also register under plain "{fv}" for backward compat (first wins).
                                         if let Some(mig) = vc.mig_schema {
-                                            if !services.contains_key(&fv)
-                                                && variant.starts_with("UTILMD_Strom")
-                                            {
-                                                tracing::info!(
-                                                    "Loaded MIG schema for {fv} from variant cache ({variant})"
-                                                );
+                                            let variant_key =
+                                                format!("{}/{}", fv, variant);
+                                            tracing::info!(
+                                                "Loaded MIG schema for {variant_key} from variant cache"
+                                            );
+                                            services.insert(
+                                                variant_key,
+                                                ConversionService::from_mig(mig.clone()),
+                                            );
+                                            if !services.contains_key(&fv) {
                                                 services.insert(
                                                     fv.clone(),
                                                     ConversionService::from_mig(mig),
@@ -630,9 +635,22 @@ impl MigServiceRegistry {
         }
     }
 
-    /// Get a conversion service for the given format version.
+    /// Get a conversion service for the given format version (backward compat — returns first loaded).
     pub fn service(&self, format_version: &str) -> Option<&ConversionService> {
         self.services.get(format_version)
+    }
+
+    /// Get a conversion service for a specific format version and variant.
+    /// Falls back to the format-version-only key if no variant-specific service exists.
+    pub fn service_for_variant(
+        &self,
+        format_version: &str,
+        msg_variant: &str,
+    ) -> Option<&ConversionService> {
+        let key = format!("{}/{}", format_version, msg_variant);
+        self.services
+            .get(&key)
+            .or_else(|| self.services.get(format_version))
     }
 
     /// Get a mapping engine for the given format version and message type/variant key.
