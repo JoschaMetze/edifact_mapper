@@ -54,6 +54,12 @@ pub struct MigServiceRegistry {
     /// Key: "{fv}/{variant}/pid_{pid}" e.g. "FV2504/UTILMD_Strom/pid_55001"
     transaction_engines: HashMap<String, MappingEngine>,
     ahb_schemas: HashMap<String, AhbSchema>,
+    /// PID → variant mapping derived from cache keys.
+    /// Key: "{fv}/pid_{pid}" → variant name (e.g., "UTILMD_Strom")
+    pid_to_variant: HashMap<String, String>,
+    /// Per-PID AHB segment numbers from cache.
+    /// Key: "{fv}/{variant}/pid_{pid}" → segment number list
+    pid_segment_numbers: HashMap<String, Vec<String>>,
     /// Flat mapping engines for response messages (APERAK, CONTRL).
     /// Key: "{fv}/{msg_type}" e.g. "FV2504/APERAK"
     response_engines: HashMap<String, MappingEngine>,
@@ -70,6 +76,10 @@ impl MigServiceRegistry {
         // MIG services are populated from variant cache (preferred) or MIG XML fallback.
         // The variant cache loading below will insert ConversionService entries from
         // cached MigSchema when available.
+
+        // PID resolution indices built from cache
+        let mut pid_to_variant: HashMap<String, String> = HashMap::new();
+        let mut pid_segment_numbers: HashMap<String, Vec<String>> = HashMap::new();
 
         // Load TOML mapping definitions: mappings/{FV}/{msg_variant}/{pid}/
         // Also loads shared message-level definitions from mappings/{FV}/{msg_variant}/message/
@@ -172,8 +182,24 @@ impl MigServiceRegistry {
                                             transaction_engines.insert(key, engine);
                                         }
 
+                                        // Populate PID→variant and PID→segment_numbers from cache
+                                        for pid_dirname in mapping_engines
+                                            .keys()
+                                            .filter(|k| k.starts_with(&format!("{}/{}/", fv, variant)))
+                                            .filter_map(|k| k.rsplit('/').next())
+                                            .map(|s| s.to_string())
+                                            .collect::<Vec<_>>()
+                                        {
+                                            let pid_key = format!("{}/{}", fv, pid_dirname);
+                                            pid_to_variant.insert(pid_key, variant.clone());
+                                        }
+                                        for (pid_dirname, numbers) in &vc.pid_segment_numbers {
+                                            let key = format!("{}/{}/{}", fv, variant, pid_dirname);
+                                            pid_segment_numbers.insert(key, numbers.clone());
+                                        }
+
                                         tracing::info!(
-                                            "Loaded variant cache for {}/{} ({} combined, {} tx engines, {} code lookups, mig: {})",
+                                            "Loaded variant cache for {}/{} ({} combined, {} tx engines, {} code lookups, {} pid seg nums, mig: {})",
                                             fv,
                                             variant,
                                             mapping_engines
@@ -191,6 +217,7 @@ impl MigServiceRegistry {
                                                 )))
                                                 .count(),
                                             vc.code_lookups.len(),
+                                            vc.pid_segment_numbers.len(),
                                             if services.contains_key(&fv) { "cached" } else { "none" },
                                         );
                                         continue; // Skip per-PID iteration
@@ -656,6 +683,8 @@ impl MigServiceRegistry {
             message_engines,
             transaction_engines,
             ahb_schemas,
+            pid_to_variant,
+            pid_segment_numbers,
             response_engines,
             response_migs,
         }
@@ -738,11 +767,18 @@ impl MigServiceRegistry {
         self.ahb_schemas.get(&key)
     }
 
-    /// Resolve the message variant (e.g., `"UTILMD_Strom"`) for a given PID
-    /// by scanning all loaded AHB schemas for the format version.
+    /// Resolve the message variant (e.g., `"UTILMD_Strom"`) for a given PID.
     ///
-    /// Returns the variant portion of the AHB key (after the `"{fv}/"` prefix).
+    /// Checks cached `pid_to_variant` first (populated from VariantCache),
+    /// then falls back to scanning AHB schemas.
     pub fn resolve_variant(&self, fv: &str, pid: &str) -> Option<&str> {
+        // Check cache first
+        let cache_key = format!("{}/pid_{}", fv, pid);
+        if let Some(variant) = self.pid_to_variant.get(&cache_key) {
+            return Some(variant.as_str());
+        }
+
+        // Fallback: scan AHB schemas
         let prefix = format!("{}/", fv);
         for (key, schema) in &self.ahb_schemas {
             if let Some(variant) = key.strip_prefix(&prefix) {
@@ -752,6 +788,20 @@ impl MigServiceRegistry {
             }
         }
         None
+    }
+
+    /// Get cached AHB segment numbers for a specific PID.
+    ///
+    /// Key: "{fv}/{variant}/pid_{pid}". Returns None if not cached (caller should
+    /// fall back to AHB schema lookup).
+    pub fn segment_numbers_for_pid(
+        &self,
+        fv: &str,
+        msg_variant: &str,
+        pid: &str,
+    ) -> Option<&Vec<String>> {
+        let key = format!("{}/{}/pid_{}", fv, msg_variant, pid);
+        self.pid_segment_numbers.get(&key)
     }
 
     /// Get a response mapping engine for a message type (e.g., APERAK, CONTRL).
@@ -766,6 +816,27 @@ impl MigServiceRegistry {
     pub fn response_mig(&self, fv: &str, msg_type: &str) -> Option<&MigSchema> {
         let key = format!("{}/{}", fv, msg_type);
         self.response_migs.get(&key)
+    }
+
+    /// Build an AhbWorkflow for a specific PID from its PID schema JSON.
+    ///
+    /// Loads the schema from `crates/mig-types/src/generated/{fv}/{msg_type}/pids/pid_{pid}_schema.json`.
+    /// Returns `None` if the schema file doesn't exist or can't be parsed.
+    pub fn ahb_workflow_for_pid(
+        &self,
+        fv: &str,
+        msg_variant: &str,
+        pid: &str,
+    ) -> Option<automapper_validation::AhbWorkflow> {
+        let msg_type = msg_variant.split('_').next()?.to_lowercase();
+        let fv_lower = fv.to_lowercase();
+        let schema_path = format!(
+            "crates/mig-types/src/generated/{}/{}/pids/pid_{}_schema.json",
+            fv_lower, msg_type, pid
+        );
+        let schema_str = std::fs::read_to_string(&schema_path).ok()?;
+        let schema: serde_json::Value = serde_json::from_str(&schema_str).ok()?;
+        crate::validation_bridge::ahb_workflow_from_pid_schema(&schema)
     }
 
     /// Check if any MIG services are available.
@@ -1025,15 +1096,117 @@ mod tests {
             message_engines: HashMap::new(),
             transaction_engines: HashMap::new(),
             ahb_schemas,
+            pid_to_variant: HashMap::new(),
+            pid_segment_numbers: HashMap::new(),
             response_engines: HashMap::new(),
             response_migs: HashMap::new(),
         };
 
+        // Falls back to AHB schema scan when pid_to_variant is empty
         assert_eq!(
             registry.resolve_variant("FV2504", "55001"),
             Some("UTILMD_Strom")
         );
         assert_eq!(registry.resolve_variant("FV2504", "99999"), None);
         assert_eq!(registry.resolve_variant("FV9999", "55001"), None);
+    }
+
+    #[test]
+    fn test_resolve_variant_uses_cache_first() {
+        let mut pid_to_variant = HashMap::new();
+        pid_to_variant.insert(
+            "FV2504/pid_19120".to_string(),
+            "ORDRSP".to_string(),
+        );
+
+        let registry = MigServiceRegistry {
+            services: HashMap::new(),
+            mapping_engines: HashMap::new(),
+            message_engines: HashMap::new(),
+            transaction_engines: HashMap::new(),
+            ahb_schemas: HashMap::new(),
+            pid_to_variant,
+            pid_segment_numbers: HashMap::new(),
+            response_engines: HashMap::new(),
+            response_migs: HashMap::new(),
+        };
+
+        // Resolves from cache without any AHB schemas loaded
+        assert_eq!(
+            registry.resolve_variant("FV2504", "19120"),
+            Some("ORDRSP")
+        );
+        assert_eq!(registry.resolve_variant("FV2504", "99999"), None);
+    }
+
+    #[test]
+    fn test_segment_numbers_for_pid() {
+        let mut pid_segment_numbers = HashMap::new();
+        pid_segment_numbers.insert(
+            "FV2504/UTILMD_Strom/pid_55001".to_string(),
+            vec!["0010".to_string(), "0020".to_string()],
+        );
+
+        let registry = MigServiceRegistry {
+            services: HashMap::new(),
+            mapping_engines: HashMap::new(),
+            message_engines: HashMap::new(),
+            transaction_engines: HashMap::new(),
+            ahb_schemas: HashMap::new(),
+            pid_to_variant: HashMap::new(),
+            pid_segment_numbers,
+            response_engines: HashMap::new(),
+            response_migs: HashMap::new(),
+        };
+
+        let nums = registry.segment_numbers_for_pid("FV2504", "UTILMD_Strom", "55001");
+        assert_eq!(nums, Some(&vec!["0010".to_string(), "0020".to_string()]));
+        assert_eq!(
+            registry.segment_numbers_for_pid("FV2504", "UTILMD_Strom", "99999"),
+            None
+        );
+    }
+
+    #[test]
+    fn test_ahb_workflow_for_pid_from_schema() {
+        // ahb_workflow_for_pid uses workspace-root-relative paths
+        // Tests run from crate dir, so cd to workspace root
+        let schema_check = std::path::Path::new(
+            "crates/mig-types/src/generated/fv2504/utilmd/pids/pid_55001_schema.json",
+        );
+        if !schema_check.exists() {
+            // Try from workspace root (CI may run from there)
+            let alt = std::path::Path::new(
+                "../../crates/mig-types/src/generated/fv2504/utilmd/pids/pid_55001_schema.json",
+            );
+            if alt.exists() {
+                // We're in the crate dir — cd to workspace root for this test
+                std::env::set_current_dir("../..").unwrap();
+            } else {
+                eprintln!("Skipping: schema not found");
+                return;
+            }
+        }
+
+        let registry = MigServiceRegistry {
+            services: HashMap::new(),
+            mapping_engines: HashMap::new(),
+            message_engines: HashMap::new(),
+            transaction_engines: HashMap::new(),
+            ahb_schemas: HashMap::new(),
+            pid_to_variant: HashMap::new(),
+            pid_segment_numbers: HashMap::new(),
+            response_engines: HashMap::new(),
+            response_migs: HashMap::new(),
+        };
+
+        let workflow = registry.ahb_workflow_for_pid("FV2504", "UTILMD_Strom", "55001");
+        assert!(workflow.is_some(), "Should build workflow from schema");
+        let wf = workflow.unwrap();
+        assert_eq!(wf.pruefidentifikator, "55001");
+        assert!(!wf.fields.is_empty());
+
+        // Non-existent PID returns None
+        assert!(registry.ahb_workflow_for_pid("FV2504", "UTILMD_Strom", "99999").is_none());
     }
 }
