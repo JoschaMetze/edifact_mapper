@@ -141,12 +141,16 @@ fn collect_fields_from_segment(
                             .unwrap_or("")
                             .to_string();
                         let codes = collect_code_rules(el);
+                        let element_index =
+                            el.get("index").and_then(|v| v.as_u64()).map(|v| v as usize);
                         fields.push(AhbFieldRule {
                             segment_path,
                             name,
                             ahb_status: ahb_status.to_string(),
                             codes,
                             parent_group_ahb_status: el_parent_status,
+                            element_index,
+                            component_index: None,
                         });
                     }
                 }
@@ -174,12 +178,20 @@ fn collect_fields_from_segment(
                                 .unwrap_or("")
                                 .to_string();
                             let codes = collect_code_rules(comp);
+                            let element_index =
+                                el.get("index").and_then(|v| v.as_u64()).map(|v| v as usize);
+                            let component_index = comp
+                                .get("sub_index")
+                                .and_then(|v| v.as_u64())
+                                .map(|v| v as usize);
                             fields.push(AhbFieldRule {
                                 segment_path,
                                 name,
                                 ahb_status: ahb_status.to_string(),
                                 codes,
                                 parent_group_ahb_status: comp_parent_status,
+                                element_index,
+                                component_index,
                             });
                         }
                     }
@@ -238,6 +250,8 @@ pub fn ahb_workflow_from_pruefidentifikator(pruefid: &Pruefidentifikator) -> Ahb
                     })
                     .collect(),
                 parent_group_ahb_status: f.parent_group_ahb_status.clone(),
+                element_index: None,
+                component_index: None,
             })
             .collect(),
     }

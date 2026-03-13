@@ -86,6 +86,7 @@ fn test_snapshot_clean_report() {
             ahb_status: "Muss".to_string(),
             codes: vec![],
             parent_group_ahb_status: None,
+            ..Default::default()
         }],
     };
 
@@ -125,6 +126,7 @@ fn test_snapshot_report_with_errors() {
                 ahb_status: "Muss".to_string(),
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             },
             AhbFieldRule {
                 segment_path: "SG2/NAD/C082/3039".to_string(),
@@ -132,6 +134,7 @@ fn test_snapshot_report_with_errors() {
                 ahb_status: "Muss [182] ∧ [152]".to_string(),
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             },
             AhbFieldRule {
                 segment_path: "SG4/DTM/C507/2380".to_string(),
@@ -139,6 +142,7 @@ fn test_snapshot_report_with_errors() {
                 ahb_status: "X".to_string(),
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             },
         ],
     };

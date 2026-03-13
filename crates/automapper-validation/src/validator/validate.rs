@@ -37,6 +37,14 @@ pub struct AhbFieldRule {
     /// When the parent group is optional ("Kann") and its qualifier variant is
     /// absent from the message, mandatory checks for child fields are skipped.
     pub parent_group_ahb_status: Option<String>,
+
+    /// Element index within the segment (0-based). Used to locate the correct
+    /// element when checking presence and code values. `None` defaults to 0.
+    pub element_index: Option<usize>,
+
+    /// Component sub-index within a composite element (0-based). Used to locate
+    /// the correct component. `None` defaults to 0.
+    pub component_index: Option<usize>,
 }
 
 /// An allowed code value within an AHB field rule.
@@ -319,9 +327,10 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
         ctx: &EvaluationContext,
         report: &mut ValidationReport,
     ) {
-        // Group allowed codes by (group_path_key, segment_tag).
-        // E.g., "SG2/NAD/3035" → key ("SG2", "NAD"), "SG4/SG12/NAD/3035" → key ("SG4/SG12", "NAD")
-        let mut codes_by_group: HashMap<(String, String), HashSet<&str>> = HashMap::new();
+        // Group allowed codes by (group_path_key, segment_tag, element_index, component_index).
+        // E.g., "SG2/NAD/3035" → key ("SG2", "NAD", 0, 0)
+        type CodeKey = (String, String, usize, usize);
+        let mut codes_by_group: HashMap<CodeKey, HashSet<&str>> = HashMap::new();
 
         for field in &workflow.fields {
             if field.codes.is_empty() || !is_qualifier_field(&field.segment_path) {
@@ -329,7 +338,11 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
             }
             let tag = extract_segment_id(&field.segment_path);
             let group_key = extract_group_path_key(&field.segment_path);
-            let entry = codes_by_group.entry((group_key, tag)).or_default();
+            let el_idx = field.element_index.unwrap_or(0);
+            let comp_idx = field.component_index.unwrap_or(0);
+            let entry = codes_by_group
+                .entry((group_key, tag, el_idx, comp_idx))
+                .or_default();
             for code in &field.codes {
                 if code.ahb_status == "X" || code.ahb_status.starts_with("Muss") {
                     entry.insert(&code.value);
@@ -339,7 +352,7 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
 
         let nav = ctx.navigator.unwrap();
 
-        for ((group_key, tag), allowed_codes) in &codes_by_group {
+        for ((group_key, tag, el_idx, comp_idx), allowed_codes) in &codes_by_group {
             if allowed_codes.is_empty() {
                 continue;
             }
@@ -357,6 +370,8 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                     ctx.find_segments(tag),
                     allowed_codes,
                     tag,
+                    *el_idx,
+                    *comp_idx,
                     &format!("{tag}/qualifier"),
                     report,
                 );
@@ -369,6 +384,8 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                         refs,
                         allowed_codes,
                         tag,
+                        *el_idx,
+                        *comp_idx,
                         &format!("{group_key}/{tag}/qualifier"),
                         report,
                     );
@@ -385,14 +402,17 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
         ctx: &EvaluationContext,
         report: &mut ValidationReport,
     ) {
-        let mut codes_by_tag: HashMap<String, HashSet<&str>> = HashMap::new();
+        // Key: (tag, element_index, component_index)
+        let mut codes_by_tag: HashMap<(String, usize, usize), HashSet<&str>> = HashMap::new();
 
         for field in &workflow.fields {
             if field.codes.is_empty() || !is_qualifier_field(&field.segment_path) {
                 continue;
             }
             let tag = extract_segment_id(&field.segment_path);
-            let entry = codes_by_tag.entry(tag).or_default();
+            let el_idx = field.element_index.unwrap_or(0);
+            let comp_idx = field.component_index.unwrap_or(0);
+            let entry = codes_by_tag.entry((tag, el_idx, comp_idx)).or_default();
             for code in &field.codes {
                 if code.ahb_status == "X" || code.ahb_status.starts_with("Muss") {
                     entry.insert(&code.value);
@@ -400,7 +420,7 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
             }
         }
 
-        for (tag, allowed_codes) in &codes_by_tag {
+        for ((tag, el_idx, comp_idx), allowed_codes) in &codes_by_tag {
             if allowed_codes.is_empty() {
                 continue;
             }
@@ -408,25 +428,29 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                 ctx.find_segments(tag),
                 allowed_codes,
                 tag,
+                *el_idx,
+                *comp_idx,
                 &format!("{tag}/qualifier"),
                 report,
             );
         }
     }
 
-    /// Check a list of segments' qualifier (element[0][0]) against allowed codes.
+    /// Check a list of segments' qualifier at the given element/component index against allowed codes.
     fn check_segments_against_codes(
         segments: Vec<&OwnedSegment>,
         allowed_codes: &HashSet<&str>,
         _tag: &str,
+        el_idx: usize,
+        comp_idx: usize,
         field_path: &str,
         report: &mut ValidationReport,
     ) {
         for segment in segments {
             if let Some(code_value) = segment
                 .elements
-                .first()
-                .and_then(|e| e.first())
+                .get(el_idx)
+                .and_then(|e| e.get(comp_idx))
                 .filter(|v| !v.is_empty())
             {
                 if !allowed_codes.contains(code_value.as_str()) {
@@ -468,11 +492,13 @@ fn is_field_present(ctx: &EvaluationContext, field: &AhbFieldRule) -> bool {
     // check for a segment with one of those specific qualifiers.
     if !field.codes.is_empty() && is_qualifier_field(&field.segment_path) {
         let required_codes: Vec<&str> = field.codes.iter().map(|c| c.value.as_str()).collect();
+        let el_idx = field.element_index.unwrap_or(0);
+        let comp_idx = field.component_index.unwrap_or(0);
         let matching = ctx.find_segments(&segment_id);
         return matching.iter().any(|seg| {
             seg.elements
-                .first()
-                .and_then(|e| e.first())
+                .get(el_idx)
+                .and_then(|e| e.get(comp_idx))
                 .is_some_and(|v| required_codes.contains(&v.as_str()))
         });
     }
@@ -687,6 +713,7 @@ mod tests {
                 ahb_status: "Muss [182] ∧ [152]".to_string(),
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             }],
         };
 
@@ -718,6 +745,7 @@ mod tests {
                 ahb_status: "Muss [182] ∧ [152]".to_string(),
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             }],
         };
 
@@ -745,6 +773,7 @@ mod tests {
                 ahb_status: "Muss [182] ∧ [152]".to_string(),
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             }],
         };
 
@@ -773,6 +802,7 @@ mod tests {
                 ahb_status: "Muss [182] ∧ [152]".to_string(),
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             }],
         };
 
@@ -818,6 +848,7 @@ mod tests {
                 ahb_status: "Muss".to_string(), // No conditions
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             }],
         };
 
@@ -844,6 +875,7 @@ mod tests {
                 ahb_status: "X".to_string(),
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             }],
         };
 
@@ -870,6 +902,7 @@ mod tests {
                 ahb_status: "Soll".to_string(),
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             }],
         };
 
@@ -963,6 +996,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "UNH/S009/0052".to_string(),
@@ -974,6 +1008,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
             ],
         };
@@ -1031,6 +1066,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1042,6 +1078,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
             ],
         };
@@ -1097,6 +1134,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1108,6 +1146,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
             ],
         };
@@ -1181,6 +1220,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1192,6 +1232,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG4/SG12/NAD/3035".to_string(),
@@ -1203,6 +1244,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG4/SG12/NAD/3035".to_string(),
@@ -1214,6 +1256,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
             ],
         };
@@ -1284,6 +1327,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1295,6 +1339,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
             ],
         };
@@ -1350,6 +1395,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1361,6 +1407,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
             ],
         };
@@ -1447,6 +1494,7 @@ mod tests {
                     ahb_status: "Muss".to_string(),
                     codes: vec![],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG2/SG3/CTA/C056/3412".to_string(),
@@ -1454,6 +1502,7 @@ mod tests {
                     ahb_status: "X".to_string(),
                     codes: vec![],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
             ],
         };
@@ -1528,6 +1577,7 @@ mod tests {
                 ahb_status: "Muss".to_string(),
                 codes: vec![],
                 parent_group_ahb_status: None,
+                ..Default::default()
             }],
         };
 
@@ -1619,6 +1669,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1630,6 +1681,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
             ],
         };
@@ -1739,6 +1791,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: Some("Muss".to_string()),
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -1750,6 +1803,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: Some("Muss".to_string()),
+                    ..Default::default()
                 },
                 // SG5 "Kann" — LOC+Z16 present, LOC+Z17 absent → should NOT error
                 AhbFieldRule {
@@ -1762,6 +1816,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: Some("Kann".to_string()),
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG4/SG5/LOC/3227".to_string(),
@@ -1773,6 +1828,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: Some("Kann".to_string()),
+                    ..Default::default()
                 },
             ],
         };
@@ -1878,6 +1934,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: Some("Muss [2061]".to_string()),
+                    ..Default::default()
                 },
                 // SG5 "Soll [165]" with [165]=False → LOC+Z17 NOT required → skip
                 AhbFieldRule {
@@ -1890,6 +1947,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: Some("Soll [165]".to_string()),
+                    ..Default::default()
                 },
             ],
         };
@@ -1940,6 +1998,7 @@ mod tests {
                     ahb_status: "X".to_string(),
                 }],
                 parent_group_ahb_status: Some("Soll [165]".to_string()),
+                ..Default::default()
             }],
         };
 
@@ -2042,6 +2101,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG2/NAD/3035".to_string(),
@@ -2053,6 +2113,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG4/SG12/NAD/3035".to_string(),
@@ -2064,6 +2125,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
                 AhbFieldRule {
                     segment_path: "SG4/SG12/NAD/3035".to_string(),
@@ -2075,6 +2137,7 @@ mod tests {
                         ahb_status: "X".to_string(),
                     }],
                     parent_group_ahb_status: None,
+                    ..Default::default()
                 },
             ],
         };
