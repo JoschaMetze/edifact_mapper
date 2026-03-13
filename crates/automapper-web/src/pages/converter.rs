@@ -31,6 +31,9 @@ pub fn ConverterPage() -> impl IntoView {
     let (is_validating, set_is_validating) = signal(false);
     let (_validation_duration_ms, set_validation_duration_ms) = signal(0.0_f64);
 
+    // Validation filter state
+    let (show_external_warnings, set_show_external_warnings) = signal(false);
+
     // Response generation state
     let (gen_response_enabled, set_gen_response_enabled) = signal(false);
     let (response_type_sel, set_response_type_sel) = signal("auto".to_string());
@@ -163,8 +166,20 @@ pub fn ConverterPage() -> impl IntoView {
         }
     });
 
-    let validation_badge = Signal::derive(move || {
+    let filtered_validation_issues = Signal::derive(move || {
         let issues = validation_issues.get();
+        if show_external_warnings.get() {
+            issues
+        } else {
+            issues
+                .into_iter()
+                .filter(|i| !i.message.contains("external conditions require provider"))
+                .collect()
+        }
+    });
+
+    let validation_badge = Signal::derive(move || {
+        let issues = filtered_validation_issues.get();
         if issues.is_empty() {
             String::new()
         } else {
@@ -292,7 +307,20 @@ pub fn ConverterPage() -> impl IntoView {
                 badge=validation_badge
                 initially_open=true
             >
-                <ErrorList errors=validation_issues.into() />
+                <div class="validation-filters">
+                    <label class="response-checkbox">
+                        <input
+                            type="checkbox"
+                            prop:checked=move || show_external_warnings.get()
+                            on:change=move |ev| {
+                                let checked = event_target::<web_sys::HtmlInputElement>(&ev).checked();
+                                set_show_external_warnings.set(checked);
+                            }
+                        />
+                        " Show external provider warnings"
+                    </label>
+                </div>
+                <ErrorList errors=filtered_validation_issues />
             </CollapsiblePanel>
 
             <CollapsiblePanel
