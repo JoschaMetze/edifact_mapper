@@ -33,6 +33,14 @@ pub struct Pid21038Sg15 {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid21038Sg17 {
     pub nad: Option<OwnedSegment>,
+    pub sg18: Vec<Pid21038Sg18>,
+}
+
+/// SG18 — Funktion des Ansprechpartners, Code
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Pid21038Sg18 {
+    pub com: Option<OwnedSegment>,
+    pub cta: Option<OwnedSegment>,
 }
 
 /// SG25
@@ -170,8 +178,41 @@ impl Pid21038Sg17 {
             cursor.restore(saved);
             return None;
         }
+        let mut sg18 = Vec::new();
+        while let Some(item) = Pid21038Sg18::from_segments(segments, cursor) {
+            sg18.push(item);
+        }
         Some(Self {
             nad,
+            sg18,
+        })
+    }
+}
+
+impl Pid21038Sg18 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let com = if peek_is(segments, cursor, "COM") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        let cta = if peek_is(segments, cursor, "CTA") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if com.is_none() && cta.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            com,
+            cta,
         })
     }
 }

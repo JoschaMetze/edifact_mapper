@@ -4,6 +4,7 @@
     "sg2": {
       "children": {
         "sg3_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -15,8 +16,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -24,6 +28,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
                   "type": "code"
                 },
                 {
@@ -35,8 +40,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Name vom Ansprechpartner",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -54,36 +61,50 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "id": "3148",
                       "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -108,8 +129,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -117,13 +141,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -134,18 +161,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "DVGW",
                       "name": "DE, DVGW Service & Consult GmbH",
                       "value": "332"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -161,8 +194,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -170,13 +206,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -187,18 +226,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "DVGW",
                       "name": "DE, DVGW Service & Consult GmbH",
                       "value": "332"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -217,6 +262,7 @@
     "sg4": {
       "children": {
         "sg5_172": {
+          "ahb_status": "X",
           "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
@@ -230,8 +276,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "MELDEPUNKT",
                       "name": "Meldepunkt",
                       "value": "172"
                     }
@@ -239,13 +288,16 @@
                   "id": "3227",
                   "index": 0,
                   "name": "Mit dem Code 172 wird die ID der Marktlokation, Messlokation, Tranche oder des MaBiS-ZP beschrieben",
+                  "parent_group_ahb_status": "Muss [2061]",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [953]",
                       "id": "3225",
                       "name": "Identifikator",
+                      "parent_group_ahb_status": "Muss [2061]",
                       "sub_index": 0,
                       "type": "data"
                     }
@@ -262,6 +314,7 @@
           "source_group": "SG5"
         },
         "sg5_z08": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3227",
             "segment": "LOC",
@@ -273,8 +326,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ZUKUENFTIGER_MELDEPUNKT",
                       "name": "zukünftiger Meldepunkt",
                       "value": "Z08"
                     }
@@ -282,13 +338,16 @@
                   "id": "3227",
                   "index": 0,
                   "name": "Mit dem Code Z08 wird die ID der Marktlokation oder Messlokation beschrieben",
+                  "parent_group_ahb_status": "Muss [2061]",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [950] ⊻ [951]",
                       "id": "3225",
                       "name": "Identifikator",
+                      "parent_group_ahb_status": "Muss [2061]",
                       "sub_index": 0,
                       "type": "data"
                     }
@@ -315,380 +374,475 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "PRUEFIDENTIFIKATOR",
                           "name": "Prüfidentifikator",
                           "value": "Z13"
                         }
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
                       "codes": [
                         {
+                          "enum": "GELI_GAS_ANMELDUNG_NN",
                           "name": "GeLi Gas / Anmeldung NN",
                           "value": "44001"
                         },
                         {
+                          "enum": "GELI_GAS_BESTAETIGUNG_ANMELDUNG",
                           "name": "GeLi Gas / Bestätigung Anmeldung",
                           "value": "44002"
                         },
                         {
+                          "enum": "GELI_GAS_ABLEHNUNG_ANMELDUNG",
                           "name": "GeLi Gas / Ablehnung Anmeldung",
                           "value": "44003"
                         },
                         {
+                          "enum": "GELI_GAS_ABMELDUNG_NN",
                           "name": "GeLi Gas / Abmeldung NN",
                           "value": "44004"
                         },
                         {
+                          "enum": "GELI_GAS_BESTAETIGUNG_ABMELDUNG",
                           "name": "GeLi Gas / Bestätigung Abmeldung",
                           "value": "44005"
                         },
                         {
+                          "enum": "GELI_GAS_ABLEHNUNG_ABMELDUNG",
                           "name": "GeLi Gas / Ablehnung Abmeldung",
                           "value": "44006"
                         },
                         {
+                          "enum": "GELI_GAS_ABMELDUNG_NN_NB",
                           "name": "GeLi Gas / Abmeldung NN vom NB",
                           "value": "44007"
                         },
                         {
+                          "enum": "GELI_GAS_BESTAETIGUNG_ABMELDUNG_NB",
                           "name": "GeLi Gas / Bestätigung Abmeldung vom NB",
                           "value": "44008"
                         },
                         {
+                          "enum": "GELI_GAS_ABLEHNUNG_ABMELDUNG_NB",
                           "name": "GeLi Gas / Ablehnung Abmeldung vom NB",
                           "value": "44009"
                         },
                         {
+                          "enum": "GELI_GAS_ABMELDEANFRAGE_NB",
                           "name": "GeLi Gas / Abmeldeanfrage des NB",
                           "value": "44010"
                         },
                         {
+                          "enum": "GELI_GAS_BESTAETIGUNG_ABMELDEANFRAGE",
                           "name": "GeLi Gas / Bestätigung Abmeldeanfrage",
                           "value": "44011"
                         },
                         {
+                          "enum": "GELI_GAS_ABLEHNUNG_ABMELDEANFRAGE",
                           "name": "GeLi Gas / Ablehnung Abmeldeanfrage",
                           "value": "44012"
                         },
                         {
+                          "enum": "GELI_GAS_ANMELDUNG_EOG",
                           "name": "GeLi Gas / Anmeldung EoG",
                           "value": "44013"
                         },
                         {
+                          "enum": "GELI_GAS_BESTAETIGUNG_EOG_ANMELDUNG",
                           "name": "GeLi Gas / Bestätigung EoG Anmeldung",
                           "value": "44014"
                         },
                         {
+                          "enum": "GELI_GAS_ABLEHNUNG_EOG_ANMELDUNG",
                           "name": "GeLi Gas / Ablehnung EoG Anmeldung",
                           "value": "44015"
                         },
                         {
+                          "enum": "GELI_GAS_KUENDIGUNG_BEIM_ALTEN_LIEFERANTEN",
                           "name": "GeLi Gas / Kündigung beim alten Lieferanten",
                           "value": "44016"
                         },
                         {
+                          "enum": "GELI_GAS_BESTAETIGUNG_KUENDIGUNG",
                           "name": "GeLi Gas / Bestätigung Kündigung",
                           "value": "44017"
                         },
                         {
+                          "enum": "GELI_GAS_ABLEHNUNG_KUENDIGUNG",
                           "name": "GeLi Gas / Ablehnung Kündigung",
                           "value": "44018"
                         },
                         {
+                          "enum": "GELI_GAS_BESTANDSLISTE_ZUGEORDNETE_MARKTLOKATIONEN",
                           "name": "GeLi Gas / Bestandsliste zugeordnete Marktlokationen",
                           "value": "44019"
                         },
                         {
+                          "enum": "GELI_GAS_AENDERUNGSMELDUNG_BESTANDSLISTE",
                           "name": "GeLi Gas / Änderungsmeldung zur Bestandsliste",
                           "value": "44020"
                         },
                         {
+                          "enum": "GELI_GAS_ANTWORT_AENDERUNGSMELDUNG_BESTANDSLISTE",
                           "name": "GeLi Gas / Antwort auf Änderungsmeldung zur Bestandsliste",
                           "value": "44021"
                         },
                         {
+                          "enum": "GELI_GAS_ANFRAGE_STORNIERUNG",
                           "name": "GeLi Gas / Anfrage nach Stornierung",
                           "value": "44022"
                         },
                         {
+                          "enum": "GELI_GAS_BESTAETIGUNG_ANFRAGE_STORNIERUNG",
                           "name": "GeLi Gas / Bestätigung Anfrage Stornierung",
                           "value": "44023"
                         },
                         {
+                          "enum": "GELI_GAS_ABLEHNUNG_ANFRAGE_STORNIERUNG",
                           "name": "GeLi Gas / Ablehnung Anfrage Stornierung",
                           "value": "44024"
                         },
                         {
+                          "enum": "GELI_GAS_ANTWORT_GESCHAEFTSDATENANFRAGE",
                           "name": "GeLi Gas / Antwort auf die Geschäftsdatenanfrage",
                           "value": "44035"
                         },
                         {
+                          "enum": "GELI_GAS_INFORMATIONSMELDUNG_EXISTIERENDE_ZUORDNUNG",
                           "name": "GeLi Gas / Informationsmeldung über existierende Zuordnung",
                           "value": "44036"
                         },
                         {
+                          "enum": "GELI_GAS_INFORMATIONSMELDUNG_BEENDIGUNG_ZUORDNUNG",
                           "name": "GeLi Gas / Informationsmeldung zur Beendigung der Zuordnung",
                           "value": "44037"
                         },
                         {
+                          "enum": "GELI_GAS_INFORMATIONSMELDUNG_AUFHEBUNG_ZUK_ZUORDNUNG",
                           "name": "GeLi Gas / Informationsmeldung zur Aufhebung einer zuk. Zuordnung",
                           "value": "44038"
                         },
                         {
+                          "enum": "WIM_GAS_KUENDIGUNG_MSB",
                           "name": "WiM Gas / Kündigung MSB",
                           "value": "44039"
                         },
                         {
+                          "enum": "WIM_GAS_BESTAETIGUNG_KUENDIGUNG_MSB",
                           "name": "WiM Gas / Bestätigung Kündigung MSB",
                           "value": "44040"
                         },
                         {
+                          "enum": "WIM_GAS_ABLEHNUNG_KUENDIGUNG_MSB",
                           "name": "WiM Gas / Ablehnung Kündigung MSB",
                           "value": "44041"
                         },
                         {
+                          "enum": "WIM_GAS_ANMELDUNG_MSB",
                           "name": "WiM Gas / Anmeldung MSB",
                           "value": "44042"
                         },
                         {
+                          "enum": "WIM_GAS_BESTAETIGUNG_ANMELDUNG_MSB",
                           "name": "WiM Gas / Bestätigung Anmeldung MSB",
                           "value": "44043"
                         },
                         {
+                          "enum": "WIM_GAS_ABLEHNUNG_ANMELDUNG_MSB",
                           "name": "WiM Gas / Ablehnung Anmeldung MSB",
                           "value": "44044"
                         },
                         {
+                          "enum": "WIM_GAS_ENDE_MSB",
                           "name": "WiM Gas / Ende MSB",
                           "value": "44051"
                         },
                         {
+                          "enum": "WIM_GAS_BESTAETIGUNG_ENDE_MSB",
                           "name": "WiM Gas / Bestätigung Ende MSB",
                           "value": "44052"
                         },
                         {
+                          "enum": "WIM_GAS_ABLEHNUNG_ENDE_MSB",
                           "name": "WiM Gas / Ablehnung Ende MSB",
                           "value": "44053"
                         },
                         {
+                          "enum": "WIM_GAS_ANTWORT_MSB_GESCHAEFTSDATENANFRAGE",
                           "name": "WiM Gas / Antwort auf die MSB Geschäftsdatenanfrage",
                           "value": "44060"
                         },
                         {
+                          "enum": "TSIMSG_DEKLARATIONSLISTE_MGV",
                           "name": "TSIMSG / Deklarationsliste an MGV",
                           "value": "44096"
                         },
                         {
+                          "enum": "TSIMSG_DEKLARATIONSLISTE_BKV",
                           "name": "TSIMSG / Deklarationsliste an BKV",
                           "value": "44097"
                         },
                         {
+                          "enum": "NBW_GAS_STAMMDATEN_MESSLOKATION",
                           "name": "NBW Gas / Stammdaten zur Messlokation",
                           "value": "44101"
                         },
                         {
+                          "enum": "NBW_GAS_AKTUALISIERTE_STAMMDATEN_MESSLOKATION",
                           "name": "NBW Gas / Aktualisierte Stammdaten zur Messlokation",
                           "value": "44102"
                         },
                         {
+                          "enum": "NBW_GAS_STAMMDATEN_VERBRAUCHENDEN_MARKTLOKATION",
                           "name": "NBW Gas / Stammdaten zur verbrauchenden Marktlokation",
                           "value": "44103"
                         },
                         {
+                          "enum": "NBW_GAS_AKTUALISIERTE_STAMMDATEN_VERBRAUCHENDEN",
                           "name": "NBW Gas / Aktualisierte Stammdaten zur verbrauchenden Marktlokation",
                           "value": "44104"
                         },
                         {
+                          "enum": "NBW_GAS_ABLEHNUNG_STAMMDATEN_VERBRAUCHENDEN_MARKTLOKATION",
                           "name": "NBW Gas / Ablehnung auf Stammdaten zur verbrauchenden Marktlokation",
                           "value": "44105"
                         },
                         {
+                          "enum": "SDAE_GAS_BILA_REL_AENDERUNG_LF_NB",
                           "name": "SDÄ Gas / Nicht bila.rel. Änderung vom LF an NB",
                           "value": "44109"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_AENDERUNG_LF_AG_AF",
                           "name": "SDÄ Gas / Antwort auf Änderung vom LF AG an AF",
                           "value": "44111"
                         },
                         {
+                          "enum": "SDAE_GAS_BILA_REL_AENDERUNG_NB_LF",
                           "name": "SDÄ Gas / Nicht bila.rel. Änderung vom NB an LF",
                           "value": "44112"
                         },
                         {
+                          "enum": "SDAE_GAS_BILA_REL_AENDERUNG_NB_MSB",
                           "name": "SDÄ Gas / Nicht bila.rel. Änderung vom NB an MSB",
                           "value": "44113"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_AENDERUNG_NB_AG_NB",
                           "name": "SDÄ Gas / Antwort auf Änderung vom NB AG an NB",
                           "value": "44115"
                         },
                         {
+                          "enum": "SDAE_GAS_AENDERUNG_MSB_NB",
                           "name": "SDÄ Gas / Änderung vom MSB an NB",
                           "value": "44116"
                         },
                         {
+                          "enum": "SDAE_GAS_AENDERUNG_MSB_NB_LF",
                           "name": "SDÄ Gas / Änderung vom MSB NB an LF",
                           "value": "44117"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_AENDERUNG_MSB_AG_AF",
                           "name": "SDÄ Gas / Antwort auf Änderung vom MSB AG an AF",
                           "value": "44119"
                         },
                         {
+                          "enum": "SDAE_GAS_BILA_REL_AENDERUNG_LF_NB_2",
                           "name": "SDÄ Gas / Bila.rel. Änderung vom LF an NB",
                           "value": "44120"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_BILA_REL_AENDERUNG_LF_NB_LF",
                           "name": "SDÄ Gas / Antwort auf bila.rel. Änderung vom LF  NB an LF",
                           "value": "44121"
                         },
                         {
+                          "enum": "SDAE_GAS_BILA_REL_AENDERUNG_NB_ABHAENGIGKEITEN_NB_LF_MSB",
                           "name": "SDÄ Gas / Bila.rel. Änderung vom NB mit Abhängigkeiten NB an LF / MSB",
                           "value": "44123"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_BILA_REL_AENDERUNG_NB_ABHAENGIGKEITEN_AG_NB",
                           "name": "SDÄ Gas / Antwort auf bila.rel. Änderung vom NB mit Abhängigkeiten AG an NB ",
                           "value": "44124"
                         },
                         {
+                          "enum": "SDAE_GAS_BILA_REL_ANFRAGE_LF_NB_BERECHTIGT_LF",
                           "name": "SDÄ Gas / Nicht bila.rel. Anfrage an LF NB [Berechtigt] an LF",
                           "value": "44137"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_BILA_REL_ANFRAGE_LF_LF_NB_2",
                           "name": "SDÄ Gas / Antwort auf nicht bila.rel. Anfrage an LF LF an NB",
                           "value": "44138"
                         },
                         {
+                          "enum": "SDAE_GAS_BILA_REL_ANFRAGE_NB_LF_NB",
                           "name": "SDÄ Gas / Nicht bila.rel. Anfrage an NB LF an NB",
                           "value": "44139"
                         },
                         {
+                          "enum": "SDAE_GAS_BILA_REL_ANFRAGE_NB_MSB_NB",
                           "name": "SDÄ Gas / Nicht bila.rel. Anfrage an NB MSB an NB",
                           "value": "44140"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_BILA_REL_ANFRAGE_NB_NB_AF",
                           "name": "SDÄ Gas / Antwort auf nicht bila.rel. Anfrage an NB NB an AF",
                           "value": "44142"
                         },
                         {
+                          "enum": "SDAE_GAS_ANFRAGE_MSB_ABHAENGIGKEITEN_LF_NB",
                           "name": "SDÄ Gas / Anfrage an MSB mit Abhängigkeiten LF an NB",
                           "value": "44143"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_ANFRAGE_MSB_ABHAENGIGKEITEN_NB_AF",
                           "name": "SDÄ Gas / Antwort auf Anfrage an MSB mit Abhängigkeiten NB an AF",
                           "value": "44145"
                         },
                         {
+                          "enum": "SDAE_GAS_ABLEHNUNG_ANFRAGE_MSB_ABHAENGIGKEITEN_NB_AF",
                           "name": "SDÄ Gas / Ablehnung der Anfrage an MSB mit Abhängigkeiten NB an AF",
                           "value": "44146"
                         },
                         {
+                          "enum": "SDAE_GAS_ANFRAGE_MSB_ABHAENGIGKEITEN_NB_VERTEILER_MSB",
                           "name": "SDÄ Gas / Anfrage an MSB mit Abhängigkeiten NB [Verteiler] an MSB",
                           "value": "44147"
                         },
                         {
+                          "enum": "SDAE_GAS_ANFRAGE_MSB_ABHAENGIGKEITEN_NB_BERECHTIGT_MSB",
                           "name": "SDÄ Gas / Anfrage an MSB mit Abhängigkeiten NB [Berechtigt] an MSB",
                           "value": "44148"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_ANFRAGE_MSB_ABHAENGIGKEITEN_MSB_NB",
                           "name": "SDÄ Gas / Antwort auf Anfrage an MSB mit Abhängigkeiten MSB an NB",
                           "value": "44149"
                         },
                         {
+                          "enum": "SDAE_GAS_BILA_REL_ANFRAGE_LF_NB_LF",
                           "name": "SDÄ Gas / Bila.rel. Anfrage an LF NB an LF",
                           "value": "44150"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_BILA_REL_ANFRAGE_LF_LF_NB",
                           "name": "SDÄ Gas / Antwort auf bila.rel. Anfrage an LF LF an NB",
                           "value": "44151"
                         },
                         {
+                          "enum": "SDAE_GAS_ABLEHNUNG_BILA_REL_ANFRAGE_LF_LF_NB",
                           "name": "SDÄ Gas / Ablehnung der bila.rel. Anfrage an LF LF an NB",
                           "value": "44152"
                         },
                         {
+                          "enum": "SDAE_GAS_BILA_REL_ANFRAGE_NB_ABHAENGIGKEITEN",
                           "name": "SDÄ Gas / Bila.rel. Anfrage an NB mit Abhängigkeiten",
                           "value": "44156"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_BILA_REL_ANFRAGE_NB_ABHAENGIGKEITEN",
                           "name": "SDÄ Gas / Antwort auf bila.rel. Anfrage an NB mit Abhängigkeiten",
                           "value": "44157"
                         },
                         {
+                          "enum": "SDAE_GAS_AENDERUNG_MSB_OHNE_ABHAENGIGKEITEN_MSB_NB",
                           "name": "SDÄ Gas / Änderung vom MSB ohne Abhängigkeiten MSB an NB",
                           "value": "44159"
                         },
                         {
+                          "enum": "SDAE_GAS_AENDERUNG_MSB_OHNE_ABHAENGIGKEITEN_NB_LF_MSB",
                           "name": "SDÄ Gas / Änderung vom MSB ohne Abhängigkeiten NB an LF / MSB",
                           "value": "44160"
                         },
                         {
+                          "enum": "SDAE_GAS_AENDERUNG_MSB_OHNE_ABHAENGIGKEITEN_AG_AF",
                           "name": "SDÄ Gas / Änderung vom MSB ohne Abhängigkeiten AG an AF",
                           "value": "44161"
                         },
                         {
+                          "enum": "SDAE_ANFRAGE_MSB_OHNE_ABHAENGIGKEITEN_LF_MSB_NB",
                           "name": "SDÄ Gas / Anfrage an MSB ohne Abhängigkeiten von LF / MSB an NB",
                           "value": "44162"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_ANFRAGE_MSB_OHNE_ABHAENGIGKEITEN_LF_MSB_NB",
                           "name": "SDÄ Gas / Antwort auf Anfrage an MSB ohne Abhängigkeiten LF / MSB an NB",
                           "value": "44163"
                         },
                         {
+                          "enum": "SDAE_GAS_ABLEHNUNG_ANFRAGE_MSB_OHNE_ABHAENGIGKEITEN_LF_MSB",
                           "name": "SDÄ Gas / Ablehnung auf Anfrage an MSB ohne Abhängigkeiten LF / MSB an NB",
                           "value": "44164"
                         },
                         {
+                          "enum": "SDAE_GAS_ANFRAGE_MSB_OHNE_ABHAENGIGKEITEN_NB_VERTEILER_MSB",
                           "name": "SDÄ Gas / Anfrage an MSB ohne Abhängigkeiten NB [Verteiler] an MSB",
                           "value": "44165"
                         },
                         {
+                          "enum": "SDAE_GAS_ANFRAGE_MSB_OHNE_ABHAENGIGKEITEN_NB_BERECHTIGTER",
                           "name": "SDÄ Gas / Anfrage an MSB ohne Abhängigkeiten NB [Berechtigter] an MSB",
                           "value": "44166"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_ANFRAGE_MSB_OHNE_ABHAENGIGKEITEN_MSB_NB",
                           "name": "SDÄ Gas / Antwort auf Anfrage an MSB ohne Abhängigkeiten MSB an NB",
                           "value": "44167"
                         },
                         {
+                          "enum": "WIM_GAS_VERPFLICHTUNGSANFRAGE_AUFFORDERUNG",
                           "name": "WiM Gas / Verpflichtungsanfrage / Aufforderung",
                           "value": "44168"
                         },
                         {
+                          "enum": "WIM_GAS_BESTAETIGUNG_VERPFLICHTUNGSANFRAGE",
                           "name": "WiM Gas / Bestätigung Verpflichtungsanfrage",
                           "value": "44169"
                         },
                         {
+                          "enum": "WIM_GAS_ABLEHNUNG_VERPFLICHTUNGSANFRAGE",
                           "name": "WiM Gas / Ablehnung Verpflichtungsanfrage",
                           "value": "44170"
                         },
                         {
+                          "enum": "SDAE_GAS_ANFRAGE_MSB_ABHAENGIGKEIT_MSB_NB",
                           "name": "SDÄ Gas / Anfrage an MSB mit Abhängigkeit MSB an NB",
                           "value": "44172"
                         },
                         {
+                          "enum": "SDAE_GAS_AENDERUNG_MARKTLOKATIONSSTRUKTUR_NB_LF",
                           "name": "SDÄ Gas / Änderung der Marktlokationsstruktur NB an LF",
                           "value": "44175"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_AENDERUNG_MARKTLOKATIONSSTRUKTUR_LF_NB",
                           "name": "SDÄ Gas / Antwort auf Änderung der Marktlokationsstruktur LF an NB",
                           "value": "44176"
                         },
                         {
+                          "enum": "SDAE_GAS_ANFRAGE_KOMPLEXEN_MARKTLOKATIONSSTRUKTUR_LF_NB",
                           "name": "SDÄ Gas / Anfrage der komplexen Marktlokationsstruktur LF an NB",
                           "value": "44180"
                         },
                         {
+                          "enum": "SDAE_GAS_ANTWORT_ANFRAGE_KOMPLEXEN_MARKTLOKATIONSSTRUKTUR_NB",
                           "name": "SDÄ Gas / Antwort auf Anfrage der komplexen Marktlokationsstruktur NB an LF",
                           "value": "44181"
                         },
                         {
+                          "enum": "SDAE_GAS_ABLEHNUNG_ANFRAGE_KOMPLEXEN_MARKTLOKATIONSSTRUKTUR",
                           "name": "SDÄ Gas / Ablehnung der Anfrage der komplexen Marktlokationsstruktur NB an LF",
                           "value": "44182"
                         }
@@ -719,8 +873,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "TRANSAKTION",
                   "name": "Transaktion",
                   "value": "24"
                 }
@@ -728,13 +885,16 @@
               "id": "7495",
               "index": 0,
               "name": "Objekt, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7402",
                   "name": "Vorgangsnummer",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -752,32 +912,42 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "VERTRAGSBEGINN",
                       "name": "Datum Vertragsbeginn",
                       "value": "92"
                     }
                   ],
                   "id": "2005",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X [UB2]",
                   "id": "2380",
                   "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "CCYYMMDDHHMMZZZ",
                       "name": "CCYYMMDDHHMMZZZ",
                       "value": "303"
                     }
                   ],
                   "id": "2379",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -795,32 +965,42 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GUELTIGKEITSBEGINN",
                       "name": "Gültigkeit, Beginndatum",
                       "value": "157"
                     }
                   ],
                   "id": "2005",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X [UB2]",
                   "id": "2380",
                   "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "CCYYMMDDHHMMZZZ",
                       "name": "CCYYMMDDHHMMZZZ",
                       "value": "303"
                     }
                   ],
                   "id": "2379",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -838,14 +1018,18 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "TRANSAKTIONSGRUND",
                       "name": "Transaktionsgrund",
                       "value": "7"
                     }
                   ],
                   "id": "9015",
                   "name": "Statuskategorie, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 }
@@ -872,202 +1056,252 @@
                 {
                   "codes": [
                     {
+                      "enum": "AUSZUG",
                       "name": "Kunde verlässt oder bezieht eine schon bestehende Marktlokation",
                       "value": "E01"
                     },
                     {
+                      "enum": "NEUBEZUG",
                       "name": "Kunde bezieht erstmals eine Marktlokation (z. B. Neubau)",
                       "value": "E02"
                     },
                     {
+                      "enum": "LIEFERANTENWECHSEL",
                       "name": "- Kunde bleibt an der Marktlokation, hat nur den Marktpartner gewechselt",
                       "value": "E03"
                     },
                     {
+                      "enum": "STORNO",
                       "name": "Dient dem Rückruf von abgegebenen Meldungen",
                       "value": "E05"
                     },
                     {
+                      "enum": "ERSATZBELIEFERUNG",
                       "name": "Ersatzbelieferung",
                       "value": "E06"
                     },
                     {
+                      "enum": "KUEND_LF_RAHMENVERTRAG",
                       "name": "Kündigung Lieferantenrahmenvertrag",
                       "value": "Z02"
                     },
                     {
+                      "enum": "ZUSAETZLICHER_DATENSATZ",
                       "name": "Zusätzlicher Datensatz",
                       "value": "Z15"
                     },
                     {
+                      "enum": "NB_KEIN_EINZUG_ANMELDEDATUM",
                       "name": "Der NB informiert den LFN darüber, dass zum gewünschten Anmeldedatum noch ein anderer LFA der Marktlokation zugeordnet ist und deshalb eine Abmeldeanfrage an den LFA stellt.",
                       "value": "Z26"
                     },
                     {
+                      "enum": "AUSZUG_STILLLEGUNG",
                       "name": "Kunde zieht aus der Marktlokation aus und die Marktlokation wird stillgelegt (bei allen anderen Auszügen ist E01 zu verwenden)",
                       "value": "Z33"
                     },
                     {
+                      "enum": "AUSZUG_NB_KEINE_ZUORDNUNG",
                       "name": "Beim NB liegt nur eine Auszugsmeldung für die Marktlokation vor. Es erfolgt seitens des NB anschließend eine Meldung der Marktlokation an den E/G. ",
                       "value": "Z36"
                     },
                     {
+                      "enum": "NEUE_MALO_OHNE_LF",
                       "name": "Beim NB liegt eine neue Marktlokation ohne Lieferantenzuordnung vor. Daher erfolgt eine Meldung an den  zuständigen LF für die EoG.",
                       "value": "Z37"
                     },
                     {
+                      "enum": "VORUEBERGEHENDER_ANSCHLUSS_OHNE_LF",
                       "name": "Ein erstellter vorübergehender Anschluss wird aufgrund von fehlendem LF dem  zuständigen LF für die EoG gemeldet.",
                       "value": "Z39"
                     },
                     {
+                      "enum": "PROZESS_GESCHAEFTSDATENANFRAGE_BENUTZT",
                       "name": "Wird für den Prozess Geschäftsdatenanfrage benutzt.",
                       "value": "Z40"
                     },
                     {
+                      "enum": "ABLAUF_FRIST_ERSATZVERSORGUNG",
                       "name": "Verstreicht die gesetzliche 3 Monatsfrist der Ersatzversorgung ohne Aufnahme der Folgelieferung durch einen Lieferanten, kann der zuständigen LF die Marktlokation mit diesem Transaktionsgrund abmelden.",
                       "value": "Z41"
                     },
                     {
+                      "enum": "WIEDERINBETRIEBNAHME",
                       "name": "Wiederinbetriebnahme",
                       "value": "Z69"
                     },
                     {
+                      "enum": "EOG_BK_SCHLIESSUNG",
                       "name": "EoG aus Bilanzkreisschließung",
                       "value": "ZC6"
                     },
                     {
+                      "enum": "EOG_ERLOESCHEN_ZUORD_ERMO",
                       "name": "EoG aufgrund Erlöschen der Zuordnungsermächtigung",
                       "value": "ZC7"
                     },
                     {
+                      "enum": "BEEND_ZUORDNUNG",
                       "name": "Beendigung der Zuordnung",
                       "value": "ZC8"
                     },
                     {
+                      "enum": "AUFHEBUNG_ZUORDNUNG_AUSZUG",
                       "name": "Aufhebung einer zukünftigen Zuordnung wegen Auszug des Kunden",
                       "value": "ZG9"
                     },
                     {
+                      "enum": "AUFHEBUNG_ZUORDNUNG_ANM_ANDERER",
                       "name": "Aufhebung einer zukünftigen Zuordnung wegen Anmeldung eines anderen Lieferanten zu einem früheren Termin",
                       "value": "ZH0"
                     },
                     {
+                      "enum": "AUFHEBUNG_ZUORDNUNG_STILLLEGUNG",
                       "name": "Aufhebung einer zukünftigen Zuordnung wegen Stilllegung",
                       "value": "ZH1"
                     },
                     {
+                      "enum": "VERTRAGSAUFHEBUNG_KUNDE",
                       "name": "Vertrag zwischen Absender des Geschäftsvorfalls und Kunde wurde aufgehoben, wird z. B. verwendet wenn der Kunde den Vertrag widerruft.",
                       "value": "ZH2"
                     },
                     {
+                      "enum": "ES_UNVERZUEGLICH_KORREKTUR_ZUORDNUNGSLISTE_LF_NB_VERSENDET",
                       "name": "Es wird unverzüglich eine Korrektur der Zuordnungsliste vom LF an den NB versendet, mit dem abweichenden Inhalt der eingegangenen bzw. bestätigten Einzelmeldungen zu der Marktlokation. Die einzelnen Vorgänge können zu einer Fehlerkorrektur-Nachricht zusammengefasst werden.",
                       "value": "ZD0"
                     },
                     {
+                      "enum": "NB_VERZICHTET_ZUORDNUNG_MARKTLOKATION_E_G_NAMENSPRUEFUNG",
                       "name": "Der NB verzichtet bei Zuordnung der Marktlokation zum E/G auf die Namensprüfung und sendet eine Abmeldeanfrage an den E/G",
                       "value": "ZD2"
                     },
                     {
+                      "enum": "STAMMDATEN_AEND",
                       "name": "Stammdatenänderung",
                       "value": "ZE3"
                     },
                     {
+                      "enum": "WEGGEFALLENE_MARKT_MESSLOKATION",
                       "name": "Weggefallene Markt- bzw. Messlokation",
                       "value": "ZE4"
                     },
                     {
+                      "enum": "INITIALMELDUNG",
                       "name": "Initialmeldung",
                       "value": "ZE5"
                     },
                     {
+                      "enum": "BILA_REL_AENDERUNG_LF",
                       "name": "Nicht bila.rel. Änderung vom LF",
                       "value": "ZE6"
                     },
                     {
+                      "enum": "BILA_REL_AENDERUNG_NB",
                       "name": "Nicht bila.rel. Änderung vom NB",
                       "value": "ZE7"
                     },
                     {
+                      "enum": "AENDERUNG_MSB_ABHAENGIGKEITEN",
                       "name": "Änderung vom MSB mit Abhängigkeiten",
                       "value": "ZE8"
                     },
                     {
+                      "enum": "BILA_REL_AENDERUNG_LF_2",
                       "name": "Bila.rel. Änderung vom LF",
                       "value": "ZE9"
                     },
                     {
+                      "enum": "BILA_REL_AENDERUNG_NB_ABHAENGIGKEITEN",
                       "name": "Bila.rel. Änderung vom NB mit Abhängigkeiten",
                       "value": "ZF0"
                     },
                     {
+                      "enum": "BILA_REL_ANFRAGE_LF_2",
                       "name": "Nicht bila.rel. Anfrage an LF",
                       "value": "ZF3"
                     },
                     {
+                      "enum": "BILA_REL_ANFRAGE_NB",
                       "name": "Nicht bila.rel. Anfrage an NB",
                       "value": "ZF4"
                     },
                     {
+                      "enum": "ANFRAGE_MSB_ABHAENGIGKEITEN",
                       "name": "Anfrage an MSB mit Abhängigkeiten",
                       "value": "ZF5"
                     },
                     {
+                      "enum": "BILA_REL_ANFRAGE_LF",
                       "name": "Bila.rel. Anfrage an LF",
                       "value": "ZF6"
                     },
                     {
+                      "enum": "BILA_REL_ANFRAGE_NB_OHNE_ABHAENGIGKEITEN",
                       "name": "Bila.rel. Anfrage an NB ohne Abhängigkeiten",
                       "value": "ZF7"
                     },
                     {
+                      "enum": "BILA_REL_ANFRAGE_NB_ABHAENGIGKEITEN",
                       "name": "Bila.rel. Anfrage an NB mit Abhängigkeiten",
                       "value": "ZF8"
                     },
                     {
+                      "enum": "AENDERUNG_MSB_OHNE_ABHAENGIGKEITEN",
                       "name": "Änderung vom MSB ohne Abhängigkeiten",
                       "value": "ZG7"
                     },
                     {
+                      "enum": "ANFRAGE_MSB_OHNE_ABHAENGIGKEITEN",
                       "name": "Anfrage an MSB ohne Abhängigkeiten",
                       "value": "ZG8"
                     },
                     {
+                      "enum": "AENDERUNG_KOMPLEXEN_MARKTLOKATIONSSTRUKTUR",
                       "name": "Änderung der komplexen Marktlokationsstruktur",
                       "value": "ZI9"
                     },
                     {
+                      "enum": "ANFRAGE_LOKATIONSBUENDELSTRUKTUR",
                       "name": "Anfrage der Lokationsbündelstruktur",
                       "value": "ZJ0"
                     },
                     {
+                      "enum": "ANFRAGE_KOMPLEXEN_MARKTLOKATIONSSTRUKTUR",
                       "name": "Anfrage der komplexen Marktlokationsstruktur",
                       "value": "ZJ1"
                     },
                     {
+                      "enum": "STAMMDATEN",
                       "name": "Stammdaten",
                       "value": "ZP3"
                     },
                     {
+                      "enum": "KUEND_VERTRAG_ANSCHLUSSNEHMER",
                       "name": "Kündigung aufgrund Vertrag mit Anschlussnehmer",
                       "value": "ZR9"
                     },
                     {
+                      "enum": "ENDE_KUEND_LF",
                       "name": "Anzuwenden wenn Ende wegen Kündigung durch bislang beliefernden LF (LFA)",
                       "value": "ZT4"
                     },
                     {
+                      "enum": "ENDE_KUEND_KUNDE",
                       "name": "Anzuwenden wenn Ende wegen \r\n- Kündigung durch den Kunden, \r\n- Kündigung durch LFN,\r\n- Keine Kündigung des Vertrages notwendig da Vertrag nur auf bestimmte Zeit gelaufen ist und von alleine ausläuft und\r\n- Kündigung durch Dritten z.B. unabhängige Berater",
                       "value": "ZT5"
                     },
                     {
+                      "enum": "EOG_KUEND_LF",
                       "name": "EoG wegen Kündigung durch LF",
                       "value": "ZT6"
                     },
                     {
+                      "enum": "EOG_KUEND_KUNDE_LFN",
                       "name": "EoG wegen Kündigung durch Kunde/LFN",
                       "value": "ZT7"
                     },
                     {
+                      "enum": "UEBERGANGSVERSORGUNG_GIBT_ES_MARKTLOKATIONEN_PARAGRAPH_38A",
                       "name": "Übergangsversorgung gibt es nur bei Marktlokationen, die unter § 38a EnWG fallen. Grundlage ist eine bilaterale Vereinbarung",
                       "value": "ZZD"
                     }
@@ -1101,46 +1335,57 @@
             {
               "codes": [
                 {
+                  "enum": "ANMELDUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Aufnahme der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Einzug oder Lieferantenwechsel, Aufnahme einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Übernahme des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E01"
                 },
                 {
+                  "enum": "BEENDIGUNG_NETZNUTZUNG_VERBRAUCHEND",
                   "name": "Dient der Mitteilung über die Beendigung der Netznutzung an einer verbrauchenden Marktlokation z.B. bei Auszug oder Lieferantenwechsel, Beendigung einer Direktvermarktung an einer erzeugenden Marktlokation oder Tranche, zur Abgabe des Messstellenbetriebes an einer Messlokation bei MSB-Wechsel.",
                   "value": "E02"
                 },
                 {
+                  "enum": "STAMMDATENAENDERUNG",
                   "name": "Dient der Mitteilung über die Änderungen von Stammdaten ohne dabei das Verhältnis Kunde, Lieferant und Messstellenbetreiber zu verändern. Z. B. Anpassung der Jahresverbrauchsprognose oder Namensänderung.",
                   "value": "E03"
                 },
                 {
+                  "enum": "DIESE_LISTE_MUSS_SPATE_GAS_GUELTIGEM_FESTLEGUNGSVERFAHREN",
                   "name": "Diese Liste muss in der Spate Gas gemäß gültigem Festlegungsverfahren der Bundesnetzagentur immer am 16. Werktag versendet werden und enthält alle verbrauchenden Marktlokationen zum darauf folgenden Monat die mindestens 1 Kalendertag in Netznutzung oder Bilanzierung sind. ",
                   "value": "E06"
                 },
                 {
+                  "enum": "STAMMDATEN_MALO_MELO",
                   "name": "Dient der Übermittlung von Stammdaten zu einer Marktlokation oder Messlokation.",
                   "value": "Z14"
                 },
                 {
+                  "enum": "KUENDIGUNG_LIEFERVERTRAG",
                   "name": "Dient der Mitteilung über die Kündigung eines Liefer- oder Messstellenbetriebsvertrags zur Kommunikation zwischen zwei LF oder zwei MSB.",
                   "value": "E35"
                 },
                 {
+                  "enum": "HINWEIS_BEENDIGUNG",
                   "name": "Diese Nachricht dient der Übermittlung von Hinweisen und zur Beendigung der Zuordnung eines LFA oder eines zukünftigen LF zu einer Marktlokation. Es erfordert keine Antwortnachricht.",
                   "value": "E44"
                 },
                 {
+                  "enum": "DEKLARATIONSLISTE_LEITFADEN_GABI",
                   "name": "Deklarationsliste (nur für den Leitfaden zur GABi)",
                   "value": "Z02"
                 },
                 {
+                  "enum": "NETZBETREIBERWECHSEL",
                   "name": "Netzbetreiberwechsel",
                   "value": "Z22"
                 },
                 {
+                  "enum": "DIESER_KATEGORIE_VORANKUENDIGUNG_DURCHGEFUEHRT_UM",
                   "name": "Mit dieser Kategorie wird eine Vorankündigung durchgeführt, um den Lieferanten über eine Marktraumumstellung im Gas zu informieren.",
                   "value": "Z26"
                 },
                 {
+                  "enum": "AUFFORDERUNG",
                   "name": "Aufforderung",
                   "value": "Z40"
                 }
@@ -1179,6 +1424,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -1197,6 +1443,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -1234,6 +1481,7 @@
             {
               "codes": [
                 {
+                  "enum": "UTILMD",
                   "name": "Netzanschluss-Stammdaten",
                   "value": "UTILMD"
                 }
@@ -1246,6 +1494,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -1258,6 +1507,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2011_A",
                   "name": "Ausgabe 2011 - A",
                   "value": "11A"
                 }
@@ -1270,6 +1520,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -1282,6 +1533,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_24",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "G1.1"
                 }
@@ -1307,10 +1559,12 @@
             {
               "codes": [
                 {
+                  "enum": "BEGINN",
                   "name": "Beginn",
                   "value": "C"
                 },
                 {
+                  "enum": "ENDE",
                   "name": "Ende",
                   "value": "F"
                 }

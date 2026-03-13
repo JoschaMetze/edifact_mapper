@@ -12,8 +12,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "PRUEFIDENTIFIKATOR",
                       "name": "Prüfidentifikator",
                       "value": "Z13"
@@ -21,12 +23,15 @@
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "TEP_VERGANGENHEITSWERTE_REFERENZ_MESSUNG",
                       "name": "TEP Vergangenheitswerte Referenz-Messung",
                       "value": "13012"
@@ -34,6 +39,7 @@
                   ],
                   "id": "1154",
                   "name": "Prüfidentifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -52,6 +58,7 @@
     "sg2": {
       "children": {
         "sg4_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -63,9 +70,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
-                      "enum": "INFORMATIONSSTELLE",
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationsstelle",
                       "value": "IC"
                     }
@@ -73,6 +82,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
                   "type": "code"
                 },
                 {
@@ -84,8 +94,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Abteilung oder Bearbeiter",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -103,34 +115,42 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939] [142]) ∨ ([940] [143])) ∧ [576]",
                       "id": "3148",
                       "name": "Nummer, Adresse",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
-                          "enum": "E_MAIL",
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "E-Mail",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
@@ -138,6 +158,7 @@
                       ],
                       "id": "3155",
                       "name": "Kommunikationsadresse, Qualifier",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -162,9 +183,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -172,13 +195,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [117]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -189,20 +215,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -218,8 +248,10 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
@@ -228,13 +260,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [117]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -245,20 +280,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -277,6 +316,7 @@
     "sg5": {
       "children": {
         "sg6_z04": {
+          "ahb_status": "X",
           "children": {
             "sg9": {
               "children": {
@@ -291,8 +331,10 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
+                                  "ahb_status": "X",
                                   "enum": "PROGNOSEWERT",
                                   "name": "Prognosewert",
                                   "value": "187"
@@ -300,12 +342,15 @@
                               ],
                               "id": "6063",
                               "name": "Menge, Qualifier",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             },
                             {
+                              "ahb_status": "X [902] ∧ [906]",
                               "id": "6060",
                               "name": "Menge",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 1,
                               "type": "data"
                             },
@@ -351,27 +396,34 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
-                                  "enum": "VERARBEITUNG_BEGINNDATUM_ZEIT",
+                                  "ahb_status": "X",
+                                  "enum": "VERARBEITUNGSBEGINN",
                                   "name": "Verarbeitung, Beginndatum/-zeit",
                                   "value": "163"
                                 }
                               ],
                               "id": "2005",
                               "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             },
                             {
+                              "ahb_status": "X [931]",
                               "id": "2380",
                               "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 1,
                               "type": "data"
                             },
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
+                                  "ahb_status": "X",
                                   "enum": "CCYYMMDDHHMMZZZ",
                                   "name": "CCYYMMDDHHMMZZZ",
                                   "value": "303"
@@ -379,6 +431,7 @@
                               ],
                               "id": "2379",
                               "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 2,
                               "type": "code"
                             }
@@ -396,27 +449,34 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
-                                  "enum": "VERARBEITUNG_ENDEDATUM_ZEIT",
+                                  "ahb_status": "X",
+                                  "enum": "VERARBEITUNGSENDE",
                                   "name": "Verarbeitung, Endedatum/-zeit",
                                   "value": "164"
                                 }
                               ],
                               "id": "2005",
                               "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             },
                             {
+                              "ahb_status": "X [931]",
                               "id": "2380",
                               "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 1,
                               "type": "data"
                             },
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
+                                  "ahb_status": "X",
                                   "enum": "CCYYMMDDHHMMZZZ",
                                   "name": "CCYYMMDDHHMMZZZ",
                                   "value": "303"
@@ -424,6 +484,7 @@
                               ],
                               "id": "2379",
                               "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 2,
                               "type": "code"
                             }
@@ -445,9 +506,11 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X [908]",
                       "id": "1082",
                       "index": 0,
                       "name": "Positionsnummer",
+                      "parent_group_ahb_status": "Muss",
                       "type": "data"
                     }
                   ],
@@ -457,8 +520,10 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "PRODUKTIDENTIFIKATION",
                           "name": "Produktidentifikation",
                           "value": "5"
@@ -467,19 +532,24 @@
                       "id": "4347",
                       "index": 0,
                       "name": "Produkt-/Erzeugnisnummer, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "type": "code"
                     },
                     {
                       "components": [
                         {
+                          "ahb_status": "X [501]",
                           "id": "7140",
                           "name": "Medium / OBIS-Kennzahl",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "OBIS_KENNZAHL",
                               "name": "OBIS-Kennzahl",
                               "value": "SRW"
@@ -487,6 +557,7 @@
                           ],
                           "id": "7143",
                           "name": "Art der Produkt-/Leistungsnummer, Code",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 1,
                           "type": "code"
                         }
@@ -514,8 +585,10 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "PROFILBEZEICHNUNG",
                       "name": "Profilbezeichnung",
                       "value": "Z04"
@@ -524,13 +597,16 @@
                   "id": "3227",
                   "index": 0,
                   "name": "Ortsangabe, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [905] [515]",
                       "id": "3225",
                       "name": "Bezeichnung",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     }
@@ -548,8 +624,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "FERTIGSTELLUNGSDATUM_ZEIT",
                           "name": "Fertigstellungsdatum/-zeit",
                           "value": "293"
@@ -557,18 +635,23 @@
                       ],
                       "id": "2005",
                       "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [931]",
                       "id": "2380",
                       "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "CCYYMMDDHHMMSSZZZ",
                           "name": "CCYYMMDDHHMMSSZZZ",
                           "value": "304"
@@ -576,6 +659,7 @@
                       ],
                       "id": "2379",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 2,
                       "type": "code"
                     }
@@ -600,8 +684,10 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "PROFILERSTELLUNG",
                   "name": "Profilerstellung",
                   "value": "DED"
@@ -610,6 +696,7 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [2001]",
               "type": "code"
             }
           ],
@@ -803,7 +890,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -957,7 +1044,7 @@
                   "value": "500"
                 },
                 {
-                  "enum": "DE_DVGW_SERVICE_CONSULT_GMBH",
+                  "enum": "DE_DVGW_DEUTSCHE_VEREINIGUNG_GAS_WASSERFACHES_E_V",
                   "name": "DE, DVGW Service & Consult GmbH",
                   "value": "502"
                 }
@@ -993,7 +1080,7 @@
                   "value": "500"
                 },
                 {
-                  "enum": "DE_DVGW_SERVICE_CONSULT_GMBH",
+                  "enum": "DE_DVGW_DEUTSCHE_VEREINIGUNG_GAS_WASSERFACHES_E_V",
                   "name": "DE, DVGW Service & Consult GmbH",
                   "value": "502"
                 }
@@ -1115,7 +1202,7 @@
             {
               "codes": [
                 {
-                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_6",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "2.4c"
                 }

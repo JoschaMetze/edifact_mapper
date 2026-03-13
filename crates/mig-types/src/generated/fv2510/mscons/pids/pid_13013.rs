@@ -13,6 +13,13 @@ pub struct Pid13013Sg1 {
     pub rff: Option<OwnedSegment>,
 }
 
+/// SG10 — Menge, Qualifier
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Pid13013Sg10 {
+    pub dtm: Option<OwnedSegment>,
+    pub qty: Option<OwnedSegment>,
+}
+
 /// SG2 — Beteiligter, Qualifier
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid13013Sg2 {
@@ -49,6 +56,7 @@ pub struct Pid13013Sg6172 {
 pub struct Pid13013Sg9 {
     pub lin: Option<OwnedSegment>,
     pub pia: Option<OwnedSegment>,
+    pub sg10: Vec<Pid13013Sg10>,
 }
 
 /// PID 13013: marktlokations- scharfe Allokationsliste Gas (MMMA)
@@ -91,6 +99,34 @@ impl Pid13013Sg1 {
         Some(Self {
             dtm,
             rff,
+        })
+    }
+}
+
+impl Pid13013Sg10 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let dtm = if peek_is(segments, cursor, "DTM") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        let qty = if peek_is(segments, cursor, "QTY") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if dtm.is_none() && qty.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            dtm,
+            qty,
         })
     }
 }
@@ -231,9 +267,14 @@ impl Pid13013Sg9 {
             cursor.restore(saved);
             return None;
         }
+        let mut sg10 = Vec::new();
+        while let Some(item) = Pid13013Sg10::from_segments(segments, cursor) {
+            sg10.push(item);
+        }
         Some(Self {
             lin,
             pia,
+            sg10,
         })
     }
 }

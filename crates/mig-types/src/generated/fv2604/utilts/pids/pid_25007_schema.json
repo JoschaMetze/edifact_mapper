@@ -4,6 +4,7 @@
     "sg2": {
       "children": {
         "sg3_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -15,8 +16,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -24,6 +28,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
                   "type": "code"
                 },
                 {
@@ -35,8 +40,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Name vom Ansprechpartner",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -54,36 +61,50 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939][53]) ∨ ([940][54])) ∧ [530]",
                       "id": "3148",
                       "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -108,8 +129,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -117,13 +141,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [1]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -134,18 +161,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -161,8 +194,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -170,13 +206,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [1]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -187,18 +226,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -227,26 +272,34 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "PRUEFIDENTIFIKATOR",
                           "name": "Prüfidentifikator",
                           "value": "Z13"
                         }
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "UEBERSICHT_LEISTUNGSKURVENDEFINITIONEN",
                           "name": "Übersicht Leistungskurvendefinitionen",
                           "value": "25007"
                         }
                       ],
                       "id": "1154",
                       "name": "Referenz, Identifikation",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -264,20 +317,26 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "BEANTRAGUNGSNUMMER",
                           "name": "Beantragungsnummer",
                           "value": "AGI"
                         }
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Soll [26]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [504]",
                       "id": "1154",
                       "name": "Referenz, Identifikation",
+                      "parent_group_ahb_status": "Soll [26]",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -294,6 +353,7 @@
           "source_group": "SG6"
         },
         "sg8_z70": {
+          "ahb_status": "X",
           "children": {
             "sg9": {
               "discriminator": {
@@ -304,8 +364,11 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "CODE_LEISTUNGSKURVENDEFINITION",
                           "name": "Code der Leistungskurvendefinition",
                           "value": "Z53"
                         }
@@ -313,6 +376,7 @@
                       "id": "7059",
                       "index": 0,
                       "name": "Klassentyp, Code",
+                      "parent_group_ahb_status": "Muss",
                       "type": "code"
                     },
                     {
@@ -331,8 +395,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X [43]",
                           "id": "7037",
                           "name": "Code der Leistungskurvendefinition",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "data"
                         }
@@ -350,14 +416,18 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "HAEUFIGKEIT_UEBERMITTLUNG",
                               "name": "Häufigkeit der Übermittlung",
                               "value": "ZE0"
                             }
                           ],
                           "id": "7111",
                           "name": "Merkmalswert, Code",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         },
@@ -374,18 +444,24 @@
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "ES_HANDELT_SICH_UM_ZAEHLZEITDEFINITION",
                               "name": "Es handelt sich um eine Leistungskurvendefinition mit identischen Leistungskurvenänderungszeitpunkten an allen Tagen über den gesamten Gültigkeitszeitraum. Diese Leistungskurvendefinition wird einmalig ausgerollt und übermittelt.",
                               "value": "Z33"
                             },
                             {
+                              "ahb_status": "X",
+                              "enum": "ES_HANDELT_SICH_UM_ZAEHLZEITDEFINITION_UNTERSCHIEDLICHEN",
                               "name": "Es handelt sich um eine Leistungskurvendefinition mit unterschiedlichen Leistungskurvenänderungszeitpunkten an den einzelnen Tagen über den gesamten Gültigkeitszeitraum. Diese Leistungskurvendefinition muss jedes Jahr ausgerollt und übermittelt werden.",
                               "value": "Z34"
                             }
                           ],
                           "id": "7110",
                           "name": "Merkmalswert",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 3,
                           "type": "code"
                         }
@@ -403,14 +479,18 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "UEBERMITTELBARKEIT_AUSGEROLLTEN_DEFINITION",
                               "name": "Übermittelbarkeit der ausgerollten Definition",
                               "value": "ZD5"
                             }
                           ],
                           "id": "7111",
                           "name": "Merkmalswert, Code",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         },
@@ -427,18 +507,24 @@
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "LF_NB_UEBERMITTELT_AUSGEROLLTE_ZAEHLZEITDEFINITION_PER",
                               "name": "Der LF bzw. NB übermittelt die ausgerollte Leistungskurvendefinition per EDIFACT mit dem Nachrichtenformat UTILTS.",
                               "value": "Z23"
                             },
                             {
+                              "ahb_status": "X",
+                              "enum": "LF_NB_UEBERMITTELT_AUSGEROLLTE_ZAEHLZEITDEFINITION_BILATERAL",
                               "name": "Der LF bzw. NB übermittelt die ausgerollte Leistungskurvendefinition auf einem bilateral vereinbarten Weg. Dieser Weg wird hier nicht weiter beschrieben.",
                               "value": "Z24"
                             }
                           ],
                           "id": "7110",
                           "name": "Merkmalswert",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 3,
                           "type": "code"
                         }
@@ -466,8 +552,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "LEISTUNGSKURVENDEFINITION",
                       "name": "Leistungskurvendefinition",
                       "value": "Z70"
                     }
@@ -475,6 +564,7 @@
                   "id": "1229",
                   "index": 0,
                   "name": "Handlung, Code",
+                  "parent_group_ahb_status": "Muss [24]",
                   "type": "code"
                 }
               ],
@@ -493,8 +583,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "TRANSAKTION",
                   "name": "Transaktion",
                   "value": "24"
                 }
@@ -502,13 +595,16 @@
               "id": "7495",
               "index": 0,
               "name": "Objekt, Qualifier",
+              "parent_group_ahb_status": "Muss [2001]",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7402",
                   "name": "Vorgangsnummer",
+                  "parent_group_ahb_status": "Muss [2001]",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -526,32 +622,42 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GUELTIGKEITSBEGINN",
                       "name": "Gültigkeit, Beginndatum",
                       "value": "157"
                     }
                   ],
                   "id": "2005",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "parent_group_ahb_status": "Muss [2001]",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X [931] [509] ∧ [UB1]",
                   "id": "2380",
                   "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "parent_group_ahb_status": "Muss [2001]",
                   "sub_index": 1,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "CCYYMMDDHHMMZZZ",
                       "name": "CCYYMMDDHHMMZZZ",
                       "value": "303"
                     }
                   ],
                   "id": "2379",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "parent_group_ahb_status": "Muss [2001]",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -569,32 +675,42 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FERTIGSTELLUNGSDATUM_ZEIT",
                       "name": "Fertigstellungsdatum/-zeit",
                       "value": "293"
                     }
                   ],
                   "id": "2005",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "parent_group_ahb_status": "Muss [2001]",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X [931]",
                   "id": "2380",
                   "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "parent_group_ahb_status": "Muss [2001]",
                   "sub_index": 1,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "CCYYMMDDHHMMSSZZZ",
                       "name": "CCYYMMDDHHMMSSZZZ",
                       "value": "304"
                     }
                   ],
                   "id": "2379",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "parent_group_ahb_status": "Muss [2001]",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -612,14 +728,18 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "NUTZUNG_DEFINITIONEN",
                       "name": "Nutzung von Definitionen",
                       "value": "Z36"
                     }
                   ],
                   "id": "9015",
                   "name": "Statuskategorie, Code",
+                  "parent_group_ahb_status": "Muss [2001]",
                   "sub_index": 0,
                   "type": "code"
                 }
@@ -631,18 +751,24 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ZAEHLZEITDEFINITIONEN_NB_LF_NUTZT_ZAEHLZEITDEFINITIONEN",
                       "name": "Bei Zählzeitdefinitionen:\r\nDer NB bzw. LF nutzt Zählzeitdefinitionen für die Tarifierung von Werten. Die Liste der Zählzeitdefinitionen enthält somit Zählzeitdefinitionen.\r\n\r\nBei Schaltzeitdefinitionen:\r\nDer NB bzw. LF nutzt Schaltzeitdefinitionen. Die Liste der Schaltzeitdefinitionen enthält somit Schaltzeitdefinitionen.\r\n\r\nBei Leistungskurvendefinitionen:\r\nDer NB bzw. LF nutzt Leistungskurvendefinitionen. Die Liste der Leistungskurvendefinitionen enthält somit Leistungskurven.",
                       "value": "Z45"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "ZAEHLZEITDEFINITIONEN_NB_NUTZT_KEINE_ZAEHLZEITDEFINITIONEN",
                       "name": "Bei Zählzeitdefinitionen:\r\nDer NB nutzt keine Zählzeitdefinitionen für die Tarifierung von Werten. Die Liste der Zählzeitdefinitionen enthält somit keine Zählzeitdefinitionen.\r\n\r\nBei Schaltzeitdefinitionen:\r\nDer NB bzw. LF nutzt keine Schaltzeitdefinitionen. Die Liste der Schaltzeitdefinitionen enthält somit keine Schaltzeitdefinitionen.\r\n\r\nBei Leistungskurvendefinitionen:\r\nDer NB bzw. LF nutzt keine Leistungskurven. Die Liste der Leistungskurvendefinitionen enthält somit keine Leistungskurven.",
                       "value": "Z46"
                     }
                   ],
                   "id": "4405",
                   "name": "Status, Code",
+                  "parent_group_ahb_status": "Muss [2001]",
                   "sub_index": 0,
                   "type": "code"
                 }
@@ -670,30 +796,37 @@
             {
               "codes": [
                 {
+                  "enum": "BERECHNUNGSFORMEL",
                   "name": "Berechnungsformel",
                   "value": "Z36"
                 },
                 {
+                  "enum": "AUSGEROLLTE_ZAEHLZEITDEFINITION",
                   "name": "Ausgerollte Zählzeitdefinition",
                   "value": "Z59"
                 },
                 {
+                  "enum": "UEBERSICHT_ZAEHLZEITDEFINITIONEN",
                   "name": "Übersicht Zählzeitdefinitionen",
                   "value": "Z60"
                 },
                 {
+                  "enum": "UEBERSICHT_SCHALTZEITDEFINITIONEN",
                   "name": "Übersicht Schaltzeitdefinitionen",
                   "value": "Z78"
                 },
                 {
+                  "enum": "UEBERSICHT_LEISTUNGSKURVENDEFINITIONEN",
                   "name": "Übersicht Leistungskurvendefinitionen",
                   "value": "Z79"
                 },
                 {
+                  "enum": "AUSGEROLLTE_SCHALTZEITDEFINITION",
                   "name": "Ausgerollte Schaltzeitdefinition",
                   "value": "Z80"
                 },
                 {
+                  "enum": "AUSGEROLLTE_LEISTUNGSKURVENDEFINITION",
                   "name": "Ausgerollte Leistungskurvendefinition",
                   "value": "Z81"
                 }
@@ -732,6 +865,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -750,6 +884,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -781,6 +916,7 @@
             {
               "codes": [
                 {
+                  "enum": "NETZNUTZUNGSZEITEN_NACHRICHT",
                   "name": "Netznutzungszeiten-Nachricht",
                   "value": "UTILTS"
                 }
@@ -793,6 +929,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -805,6 +942,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2018_A",
                   "name": "Ausgabe 2018 - A",
                   "value": "18A"
                 }
@@ -817,6 +955,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -829,6 +968,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_15",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "1.1e"
                 }

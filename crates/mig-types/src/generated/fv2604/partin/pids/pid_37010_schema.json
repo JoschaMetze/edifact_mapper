@@ -12,26 +12,34 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRUEFIDENTIFIKATOR",
                       "name": "Prüfidentifikator",
                       "value": "Z13"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "KOMMUNIKATIONSDATEN_MSB_GAS",
                       "name": "Kommunikationsdaten des MSB Gas",
                       "value": "37010"
                     }
                   ],
                   "id": "1154",
                   "name": "Referenz, Identifikation",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -49,14 +57,18 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ANWENDUNGSREFERENZ",
                       "name": "Anwendungsreferenznummer",
                       "value": "AGK"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
@@ -73,8 +85,10 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X [908][505]",
                   "id": "1056",
                   "name": "Versionsnummer",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 3,
                   "type": "data"
                 }
@@ -92,32 +106,42 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GUELTIGKEITSBEGINN",
                       "name": "Gültigkeit, Beginndatum",
                       "value": "157"
                     }
                   ],
                   "id": "2005",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X [UB1]",
                   "id": "2380",
                   "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "CCYYMMDDHHMMZZZ",
                       "name": "CCYYMMDDHHMMZZZ",
                       "value": "303"
                     }
                   ],
                   "id": "2379",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -135,14 +159,18 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "REFERENZ_VORIGE_NACHRICHT",
                       "name": "Referenznummer einer vorangegangenen Nachricht",
                       "value": "ACW"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Soll [4]",
                   "sub_index": 0,
                   "type": "code"
                 },
@@ -159,8 +187,10 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X [908]",
                   "id": "1056",
                   "name": "Versionsnummer",
+                  "parent_group_ahb_status": "Soll [4]",
                   "sub_index": 3,
                   "type": "data"
                 }
@@ -179,6 +209,7 @@
     "sg2": {
       "children": {
         "sg3_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -190,8 +221,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -199,6 +233,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
                   "type": "code"
                 },
                 {
@@ -210,8 +245,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Name vom Ansprechpartner",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -229,36 +266,50 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939][6]) ∨ ([940][7])) ∧ [502]",
                       "id": "3148",
                       "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -283,8 +334,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -292,13 +346,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [41]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -309,18 +366,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "DVGW",
                       "name": "DE, DVGW Service & Consult GmbH",
                       "value": "332"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -336,8 +399,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -345,13 +411,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [41]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -362,18 +431,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "DVGW",
                       "name": "DE, DVGW Service & Consult GmbH",
                       "value": "332"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -392,6 +467,7 @@
     "sg4": {
       "children": {
         "sg12_z40": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "7059",
             "segment": "CCI",
@@ -403,8 +479,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ERREICHBARKEIT_UNTERNEHMENS",
                       "name": "Erreichbarkeit des Unternehmens",
                       "value": "Z40"
                     }
@@ -412,6 +491,7 @@
                   "id": "7059",
                   "index": 0,
                   "name": "Klassentyp, Code",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 }
               ],
@@ -423,52 +503,72 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X [1P1..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P1..1]",
+                          "enum": "VERFUEGBARKEIT_MONTAG",
                           "name": "Verfügbarkeit Montag",
                           "value": "Z36"
                         },
                         {
+                          "ahb_status": "X [1P1..1]",
+                          "enum": "VERFUEGBARKEIT_DIENSTAG",
                           "name": "Verfügbarkeit Dienstag",
                           "value": "Z37"
                         },
                         {
+                          "ahb_status": "X [1P1..1]",
+                          "enum": "VERFUEGBARKEIT_MITTWOCH",
                           "name": "Verfügbarkeit Mittwoch",
                           "value": "Z38"
                         },
                         {
+                          "ahb_status": "X [1P1..1]",
+                          "enum": "VERFUEGBARKEIT_DONNERSTAG",
                           "name": "Verfügbarkeit Donnerstag",
                           "value": "Z39"
                         },
                         {
+                          "ahb_status": "X [1P1..1]",
+                          "enum": "VERFUEGBARKEIT_FREITAG",
                           "name": "Verfügbarkeit Freitag",
                           "value": "Z40"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "MITTAGSPAUSE_AUSSCHLUSS_VERFUEGBARKEIT",
                           "name": "Mittagspause (= Ausschluss der Verfügbarkeit)",
                           "value": "Z41"
                         }
                       ],
                       "id": "2005",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [503]",
                       "id": "2380",
                       "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "HHMMHHMM",
                           "name": "HHMMHHMM",
                           "value": "501"
                         }
                       ],
                       "id": "2379",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 2,
                       "type": "code"
                     }
@@ -485,6 +585,7 @@
           "source_group": "SG12"
         },
         "sg6": {
+          "ahb_status": "Muss [504]",
           "discriminator": {
             "element": "1153",
             "segment": "RFF"
@@ -495,24 +596,32 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X [2P0..1] ⊻ [3P1..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [2P0..1] ⊻ [3P1..1]",
+                          "enum": "UMSATZSTEUERNUMMER",
                           "name": "Umsatzsteuernummer",
                           "value": "VA"
                         },
                         {
+                          "ahb_status": "X [2P0..1]",
+                          "enum": "STEUERNUMMER",
                           "name": "Steuernummer",
                           "value": "FC"
                         }
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Muss [504]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "1154",
                       "name": "Referenz, Identifikation",
+                      "parent_group_ahb_status": "Muss [504]",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -530,8 +639,11 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "FAXNUMMER",
                           "name": "Faxnummer",
                           "value": "Z25"
                         }
@@ -542,6 +654,7 @@
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [940]",
                       "id": "1154",
                       "name": "Faxnummer",
                       "sub_index": 1,
@@ -560,6 +673,7 @@
           "source_group": "SG6"
         },
         "sg7_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -571,8 +685,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -580,6 +697,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
@@ -591,8 +709,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [501]",
                       "id": "3412",
                       "name": "Name der organisatorischen Einheit",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -610,28 +730,38 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939][6]) ∨ ([940][8])) ∧ [502]",
                       "id": "3148",
                       "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P1..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P1..1]",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P1..1]",
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         }
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -656,8 +786,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "MESSSTELLENBETREIBER",
                   "name": "Messstellenbetreiber",
                   "value": "DEB"
                 }
@@ -665,24 +798,31 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "code"
             },
             {
+              "ahb_status": "X [506]",
               "id": "3164",
               "index": 5,
               "name": "Ortsname, Klartext",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
+              "ahb_status": "M [2] ∧ [506]\r\nS [3] ∧ [506]",
               "id": "3251",
               "index": 7,
               "name": "Postleitzahl",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
+              "ahb_status": "X [506]",
               "id": "3207",
               "index": 8,
               "name": "ISO 3166-1 = Alpha-2-Code",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
@@ -714,8 +854,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [506]",
                   "id": "3036",
                   "name": "Name",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -744,14 +886,18 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FIRMENBEZEICHNUNG",
                       "name": "Struktur der Firmenbezeichnung",
                       "value": "Z02"
                     }
                   ],
                   "id": "3045",
                   "name": "Format für den Namen des Beteiligten, Code",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 5,
                   "type": "code"
                 }
@@ -763,8 +909,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [506]",
                   "id": "3042",
                   "name": "Straße und Hausnummer oder Postfach",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -811,8 +959,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "KREDITINSTITUT",
                   "name": "Kreditinstitut",
                   "value": "BK"
                 }
@@ -820,6 +971,7 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "code"
             },
             {
@@ -831,20 +983,26 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3194",
                   "name": "IBAN",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "id": "3192",
                   "name": "Name des Kontoinhabers",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 1,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "K",
                   "id": "3192",
                   "name": "Name des Kontoinhabers",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 2,
                   "type": "data"
                 }
@@ -856,8 +1014,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3433",
                   "name": "BIC",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -892,8 +1052,10 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "id": "3432",
                   "name": "Name des Kredinstituts",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 6,
                   "type": "data"
                 }
@@ -909,8 +1071,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "INTERNETSEITE",
                   "name": "Internetseite",
                   "value": "Z13"
                 }
@@ -918,6 +1083,7 @@
               "id": "4451",
               "index": 0,
               "name": "Textbezug, Qualifier",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "code"
             },
             {
@@ -942,8 +1108,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "4440",
                   "name": "Internetseite",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -983,8 +1151,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "GERICHT_HANDELSREGISTER_NUMMER",
                   "name": "Gericht und Handelsregister-Nummer",
                   "value": "Z15"
                 }
@@ -992,6 +1163,7 @@
               "id": "4451",
               "index": 0,
               "name": "Textbezug, Qualifier",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "code"
             },
             {
@@ -1016,14 +1188,18 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "4440",
                   "name": "Gericht",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "id": "4440",
                   "name": "Handelsregister-Nummer",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 1,
                   "type": "data"
                 },
@@ -1057,8 +1233,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ANSPRECHPARTNER_UEBERTRAGUNGSWEG_DATENAUSTAUSCH",
                   "name": "Ansprechpartner Übertragungsweg / Datenaustausch",
                   "value": "Z10"
                 }
@@ -1066,24 +1245,31 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "code"
             },
             {
+              "ahb_status": "X",
               "id": "3164",
               "index": 5,
               "name": "Ortsname, Klartext",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
+              "ahb_status": "M [2]\r\nS [3]",
               "id": "3251",
               "index": 7,
               "name": "Postleitzahl",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "id": "3207",
               "index": 8,
               "name": "ISO 3166-1 = Alpha-2-Code",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
@@ -1115,8 +1301,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [500]",
                   "id": "3036",
                   "name": "Name",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1145,14 +1333,18 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FIRMENBEZEICHNUNG",
                       "name": "Struktur der Firmenbezeichnung",
                       "value": "Z02"
                     }
                   ],
                   "id": "3045",
                   "name": "Format für den Namen des Beteiligten, Code",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 5,
                   "type": "code"
                 }
@@ -1164,8 +1356,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3042",
                   "name": "Straße und Hausnummer oder Postfach",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1212,8 +1406,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ANSPRECHPARTNER_RAHMENVERTRAEGE",
                   "name": "Ansprechpartner Rahmenverträge",
                   "value": "Z11"
                 }
@@ -1221,24 +1418,31 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "code"
             },
             {
+              "ahb_status": "X",
               "id": "3164",
               "index": 5,
               "name": "Ortsname, Klartext",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
+              "ahb_status": "M [2]\r\nS [3]",
               "id": "3251",
               "index": 7,
               "name": "Postleitzahl",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "id": "3207",
               "index": 8,
               "name": "ISO 3166-1 = Alpha-2-Code",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
@@ -1270,8 +1474,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [500]",
                   "id": "3036",
                   "name": "Name",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1300,14 +1506,18 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FIRMENBEZEICHNUNG",
                       "name": "Struktur der Firmenbezeichnung",
                       "value": "Z02"
                     }
                   ],
                   "id": "3045",
                   "name": "Format für den Namen des Beteiligten, Code",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 5,
                   "type": "code"
                 }
@@ -1319,8 +1529,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3042",
                   "name": "Straße und Hausnummer oder Postfach",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1367,8 +1579,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ANSPRECHPARTNER_KUENDIGUNGSPROZESSE",
                   "name": "Ansprechpartner Kündigungsprozesse",
                   "value": "Z12"
                 }
@@ -1376,24 +1591,31 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10] ∧ [22]",
               "type": "code"
             },
             {
+              "ahb_status": "X",
               "id": "3164",
               "index": 5,
               "name": "Ortsname, Klartext",
+              "parent_group_ahb_status": "Muss [10] ∧ [22]",
               "type": "data"
             },
             {
+              "ahb_status": "M [2]\r\nS [3]",
               "id": "3251",
               "index": 7,
               "name": "Postleitzahl",
+              "parent_group_ahb_status": "Muss [10] ∧ [22]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "id": "3207",
               "index": 8,
               "name": "ISO 3166-1 = Alpha-2-Code",
+              "parent_group_ahb_status": "Muss [10] ∧ [22]",
               "type": "data"
             },
             {
@@ -1425,8 +1647,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [500]",
                   "id": "3036",
                   "name": "Name",
+                  "parent_group_ahb_status": "Muss [10] ∧ [22]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1455,14 +1679,18 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FIRMENBEZEICHNUNG",
                       "name": "Struktur der Firmenbezeichnung",
                       "value": "Z02"
                     }
                   ],
                   "id": "3045",
                   "name": "Format für den Namen des Beteiligten, Code",
+                  "parent_group_ahb_status": "Muss [10] ∧ [22]",
                   "sub_index": 5,
                   "type": "code"
                 }
@@ -1474,8 +1702,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3042",
                   "name": "Straße und Hausnummer oder Postfach",
+                  "parent_group_ahb_status": "Muss [10] ∧ [22]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1522,8 +1752,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ANSPRECHPARTNER_WECHSELPROZESSE",
                   "name": "Ansprechpartner Wechselprozesse",
                   "value": "Z13"
                 }
@@ -1531,24 +1764,31 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "code"
             },
             {
+              "ahb_status": "X",
               "id": "3164",
               "index": 5,
               "name": "Ortsname, Klartext",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
+              "ahb_status": "M [2]\r\nS [3]",
               "id": "3251",
               "index": 7,
               "name": "Postleitzahl",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "id": "3207",
               "index": 8,
               "name": "ISO 3166-1 = Alpha-2-Code",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
@@ -1580,8 +1820,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [500]",
                   "id": "3036",
                   "name": "Name",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1610,14 +1852,18 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FIRMENBEZEICHNUNG",
                       "name": "Struktur der Firmenbezeichnung",
                       "value": "Z02"
                     }
                   ],
                   "id": "3045",
                   "name": "Format für den Namen des Beteiligten, Code",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 5,
                   "type": "code"
                 }
@@ -1629,8 +1875,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3042",
                   "name": "Straße und Hausnummer oder Postfach",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1677,8 +1925,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ANSPRECHPARTNER_STAMMDATENPROZESSE",
                   "name": "Ansprechpartner Stammdatenprozesse",
                   "value": "Z14"
                 }
@@ -1686,24 +1937,31 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "code"
             },
             {
+              "ahb_status": "X",
               "id": "3164",
               "index": 5,
               "name": "Ortsname, Klartext",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
+              "ahb_status": "M [2]\r\nS [3]",
               "id": "3251",
               "index": 7,
               "name": "Postleitzahl",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "id": "3207",
               "index": 8,
               "name": "ISO 3166-1 = Alpha-2-Code",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
@@ -1735,8 +1993,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [500]",
                   "id": "3036",
                   "name": "Name",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1765,14 +2025,18 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FIRMENBEZEICHNUNG",
                       "name": "Struktur der Firmenbezeichnung",
                       "value": "Z02"
                     }
                   ],
                   "id": "3045",
                   "name": "Format für den Namen des Beteiligten, Code",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 5,
                   "type": "code"
                 }
@@ -1784,8 +2048,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3042",
                   "name": "Straße und Hausnummer oder Postfach",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1832,8 +2098,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ANSPRECHPARTNER_ABRECHNUNGSPROZESSE",
                   "name": "Ansprechpartner Abrechnungsprozesse",
                   "value": "Z17"
                 }
@@ -1841,24 +2110,31 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "code"
             },
             {
+              "ahb_status": "X",
               "id": "3164",
               "index": 5,
               "name": "Ortsname, Klartext",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
+              "ahb_status": "M [2]\r\nS [3]",
               "id": "3251",
               "index": 7,
               "name": "Postleitzahl",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "id": "3207",
               "index": 8,
               "name": "ISO 3166-1 = Alpha-2-Code",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
@@ -1890,8 +2166,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [500]",
                   "id": "3036",
                   "name": "Name",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1920,14 +2198,18 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FIRMENBEZEICHNUNG",
                       "name": "Struktur der Firmenbezeichnung",
                       "value": "Z02"
                     }
                   ],
                   "id": "3045",
                   "name": "Format für den Namen des Beteiligten, Code",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 5,
                   "type": "code"
                 }
@@ -1939,8 +2221,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3042",
                   "name": "Straße und Hausnummer oder Postfach",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1987,8 +2271,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ANSPRECHPARTNER_BEWEGUNGSDATEN",
                   "name": "Ansprechpartner Bewegungsdaten",
                   "value": "Z19"
                 }
@@ -1996,24 +2283,31 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "code"
             },
             {
+              "ahb_status": "X",
               "id": "3164",
               "index": 5,
               "name": "Ortsname, Klartext",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
+              "ahb_status": "M [2]\r\nS [3]",
               "id": "3251",
               "index": 7,
               "name": "Postleitzahl",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "id": "3207",
               "index": 8,
               "name": "ISO 3166-1 = Alpha-2-Code",
+              "parent_group_ahb_status": "Muss [10]",
               "type": "data"
             },
             {
@@ -2045,8 +2339,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [500]",
                   "id": "3036",
                   "name": "Name",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -2075,14 +2371,18 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FIRMENBEZEICHNUNG",
                       "name": "Struktur der Firmenbezeichnung",
                       "value": "Z02"
                     }
                   ],
                   "id": "3045",
                   "name": "Format für den Namen des Beteiligten, Code",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 5,
                   "type": "code"
                 }
@@ -2094,8 +2394,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3042",
                   "name": "Straße und Hausnummer oder Postfach",
+                  "parent_group_ahb_status": "Muss [10]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -2142,8 +2444,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ANSPRECHPARTNER_SPERR_ENTSPERRPROZESSE",
                   "name": "Ansprechpartner Sperr-/Entsperrprozesse",
                   "value": "Z20"
                 }
@@ -2151,24 +2456,31 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "code"
             },
             {
+              "ahb_status": "X",
               "id": "3164",
               "index": 5,
               "name": "Ortsname, Klartext",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
+              "ahb_status": "M [2]\r\nS [3]",
               "id": "3251",
               "index": 7,
               "name": "Postleitzahl",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "id": "3207",
               "index": 8,
               "name": "ISO 3166-1 = Alpha-2-Code",
+              "parent_group_ahb_status": "Muss [10] ∧ [45]",
               "type": "data"
             },
             {
@@ -2200,8 +2512,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [500]",
                   "id": "3036",
                   "name": "Name",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -2230,14 +2544,18 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FIRMENBEZEICHNUNG",
                       "name": "Struktur der Firmenbezeichnung",
                       "value": "Z02"
                     }
                   ],
                   "id": "3045",
                   "name": "Format für den Namen des Beteiligten, Code",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 5,
                   "type": "code"
                 }
@@ -2249,8 +2567,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3042",
                   "name": "Straße und Hausnummer oder Postfach",
+                  "parent_group_ahb_status": "Muss [10] ∧ [45]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -2297,8 +2617,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ANSPRECHPARTNER_TECHNISCHER_NETZANSCHLUSS_NEUANLAGEN",
                   "name": "Ansprechpartner technischer Netzanschluss für Neuanlagen und Anlagenumbau",
                   "value": "Z33"
                 }
@@ -2306,24 +2629,31 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [10]  ∧ [25]",
               "type": "code"
             },
             {
+              "ahb_status": "X",
               "id": "3164",
               "index": 5,
               "name": "Ortsname, Klartext",
+              "parent_group_ahb_status": "Muss [10]  ∧ [25]",
               "type": "data"
             },
             {
+              "ahb_status": "M [2]\r\nS [3]",
               "id": "3251",
               "index": 7,
               "name": "Postleitzahl",
+              "parent_group_ahb_status": "Muss [10]  ∧ [25]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "id": "3207",
               "index": 8,
               "name": "ISO 3166-1 = Alpha-2-Code",
+              "parent_group_ahb_status": "Muss [10]  ∧ [25]",
               "type": "data"
             },
             {
@@ -2355,8 +2685,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [500]",
                   "id": "3036",
                   "name": "Name",
+                  "parent_group_ahb_status": "Muss [10]  ∧ [25]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -2385,14 +2717,18 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "FIRMENBEZEICHNUNG",
                       "name": "Struktur der Firmenbezeichnung",
                       "value": "Z02"
                     }
                   ],
                   "id": "3045",
                   "name": "Format für den Namen des Beteiligten, Code",
+                  "parent_group_ahb_status": "Muss [10]  ∧ [25]",
                   "sub_index": 5,
                   "type": "code"
                 }
@@ -2404,8 +2740,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3042",
                   "name": "Straße und Hausnummer oder Postfach",
+                  "parent_group_ahb_status": "Muss [10]  ∧ [25]",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -2474,6 +2812,7 @@
         {
           "codes": [
             {
+              "enum": "DOKUMENT_VERFUEGBAR",
               "name": "Dokument nicht verfügbar",
               "value": "11"
             }
@@ -2488,6 +2827,7 @@
             {
               "codes": [
                 {
+                  "enum": "PARTNERSTAMMDATEN",
                   "name": "Partnerstammdaten",
                   "value": "10"
                 }
@@ -2526,6 +2866,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -2544,6 +2885,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -2575,6 +2917,7 @@
             {
               "codes": [
                 {
+                  "enum": "PARTNERSTAMMDATEN",
                   "name": "Partnerstammdaten",
                   "value": "PARTIN"
                 }
@@ -2587,6 +2930,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -2599,6 +2943,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2020_B",
                   "name": "Ausgabe 2020 - B",
                   "value": "20B"
                 }
@@ -2611,6 +2956,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -2623,6 +2969,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_16",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "1.0f"
                 }
@@ -2646,6 +2993,7 @@
         {
           "codes": [
             {
+              "enum": "TRENNUNG_KOPF_POSITIONSTEIL",
               "name": "Trennung von Kopf- und Positionsteil",
               "value": "D"
             }

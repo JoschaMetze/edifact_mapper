@@ -12,20 +12,26 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "REFERENZ_VORIGE_NACHRICHT",
                       "name": "Referenznummer einer vorangegangenen Nachricht",
                       "value": "ACW"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Soll [1]",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X [504]",
                   "id": "1154",
                   "name": "Referenz, Identifikation",
+                  "parent_group_ahb_status": "Soll [1]",
                   "sub_index": 1,
                   "type": "data"
                 }
@@ -43,26 +49,34 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRUEFIDENTIFIKATOR",
                       "name": "Prüfidentifikator",
                       "value": "Z13"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PREISBLATT_MSB_LEISTUNGEN",
                       "name": "Preisblatt MSB-Leistungen",
                       "value": "27002"
                     }
                   ],
                   "id": "1154",
                   "name": "Prüfidentifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -93,20 +107,26 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "BERECHNUNGSPREIS",
                               "name": "Berechnungspreis",
                               "value": "CAL"
                             }
                           ],
                           "id": "5125",
                           "name": "Preis, Qualifier",
+                          "parent_group_ahb_status": "Muss [520]",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
+                          "ahb_status": "X [912] [513]",
                           "id": "5118",
                           "name": "Preis, Betrag",
+                          "parent_group_ahb_status": "Muss [520]",
                           "sub_index": 1,
                           "type": "data"
                         },
@@ -129,14 +149,18 @@
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X [31] ∧ [32]",
                           "codes": [
                             {
+                              "ahb_status": "X [31] ∧ [32]",
+                              "enum": "JAHR",
                               "name": "Jahr",
                               "value": "ANN"
                             }
                           ],
                           "id": "6411",
                           "name": "Maßeinheit, Code",
+                          "parent_group_ahb_status": "Muss [520]",
                           "sub_index": 5,
                           "type": "code"
                         }
@@ -152,8 +176,11 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "JAEHRLICHER_MENGENBEREICH",
                           "name": "jährlicher Mengenbereich",
                           "value": "10"
                         }
@@ -161,35 +188,46 @@
                       "id": "6167",
                       "index": 0,
                       "name": "Wertebereich, Qualifier",
+                      "parent_group_ahb_status": "Muss [520]",
                       "type": "code"
                     },
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "STUECK",
                               "name": "Stück",
                               "value": "H87"
                             },
                             {
+                              "ahb_status": "X",
+                              "enum": "TAG",
                               "name": "Tag",
                               "value": "DAY"
                             }
                           ],
                           "id": "6411",
                           "name": "Maßeinheit, Code",
+                          "parent_group_ahb_status": "Muss [520]",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
+                          "ahb_status": "X ([909] ∧ [937])[521]",
                           "id": "6162",
                           "name": "Wertebereichsgrenze, untere",
+                          "parent_group_ahb_status": "Muss [520]",
                           "sub_index": 1,
                           "type": "data"
                         },
                         {
+                          "ahb_status": "S [55] ∧ [512] ([908] ∧ [937])",
                           "id": "6152",
                           "name": "Wertebereichsgrenze, obere",
+                          "parent_group_ahb_status": "Muss [520]",
                           "sub_index": 2,
                           "type": "data"
                         }
@@ -214,9 +252,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X [911]",
                   "id": "1082",
                   "index": 0,
                   "name": "Vom Programm vergebene Positionsnummer innerhalb der Nachricht (fortlaufende Nummer von 1 bis n)",
+                  "parent_group_ahb_status": "Muss",
                   "type": "data"
                 },
                 {
@@ -228,24 +268,32 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X ([941] ([31] ∧ [32] ∧ [40])) ⊻ ([942] ([31] ∧ [33] ∧ [45])) ⊻ ([959] ([34] ∧ [46]))",
                       "id": "7140",
                       "name": "Artikelnummer des BDEW / Artikel-ID des BDEW",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [31] ∧ [32]",
                       "codes": [
                         {
+                          "ahb_status": "X [31] ∧ [32]",
+                          "enum": "ARTIKELNUMMER",
                           "name": "Artikelnummer",
                           "value": "Z01"
                         },
                         {
+                          "ahb_status": "X ([31] ∧ [33]) ⊻ [34]",
+                          "enum": "ARTIKEL_ID",
                           "name": "Artikel-ID",
                           "value": "Z09"
                         }
                       ],
                       "id": "7143",
                       "name": "Art der Produkt-/Leistungsnummer, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -261,8 +309,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ZUSAETZLICHE_IDENTIFIKATION",
                       "name": "Zusätzliche Identifikation",
                       "value": "1"
                     }
@@ -270,25 +321,32 @@
                   "id": "4347",
                   "index": 0,
                   "name": "Produkt-/Erzeugnisnummer, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "id": "7140",
                       "name": "Code des Preisschlüsselstamms",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "PREISSCHLUESSELSTAMM",
                           "name": "Preisschlüsselstamm",
                           "value": "Z06"
                         }
                       ],
                       "id": "7143",
                       "name": "Art der Produkt-/Leistungsnummer, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -304,12 +362,17 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X [6]",
                   "codes": [
                     {
+                      "ahb_status": "X [6]",
+                      "enum": "CODE_LISTE_CODEPFLEGENDEN_ORGANISATION",
                       "name": "Code (aus der Liste einer codepflegenden Organisation)",
                       "value": "C"
                     },
                     {
+                      "ahb_status": "X [7]",
+                      "enum": "TEILSTRUKTURIERT_CODE_TEXT",
                       "name": "Teilstrukturiert (Code und Text)",
                       "value": "X"
                     }
@@ -317,83 +380,120 @@
                   "id": "7077",
                   "index": 0,
                   "name": "Beschreibungsformat, Code",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [4]",
                       "codes": [
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_1_PUNKT_1_ANGEMESSENES_ENTGELT_IMS",
                           "name": "§ 31 MsbG, Abs. 1 Punkt 1\r\nAngemessenes Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 100 000 Kilowattstunden",
                           "value": "Z15"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_1_PUNKT_2_MEHR_200_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 1 Punkt 2\r\nNicht mehr als 200 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 50 000 bis einschließlich 100 000 Kilowattstunden",
                           "value": "Z16"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_1_PUNKT_3_MEHR_170_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 1 Punkt 3\r\nNicht mehr als 170 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 20 000 bis einschließlich 50 000 Kilowattstunden",
                           "value": "Z17"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_1_PUNKT_4_MEHR_130_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 1 Punkt 4\r\nNicht mehr als 130 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 10 000 bis einschließlich 20 000 Kilowattstunden",
                           "value": "Z18"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_1_PUNKT_5_MEHR_100_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 1 Punkt 5\r\nNicht mehr als 100 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit unterbrechbaren Verbrauchseinrichtung nach § 14a EnWG",
                           "value": "Z19"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_1_PUNKT_6_MEHR_100_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 1 Punkt 6\r\nNicht mehr als 100 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 6 000 bis einschließlich 10 000 Kilowattstunden",
                           "value": "Z20"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_2_PUNKT_1_MEHR_100_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 2 Punkt 1\r\nNicht mehr als 100 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit installierter Leistung über 7 bis einschließlich 15 Kilowatt",
                           "value": "Z21"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_2_PUNKT_2_MEHR_130_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 2 Punkt 2\r\nNicht mehr als 130 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit installierter Leistung über 15 bis einschließlich 30 Kilowatt",
                           "value": "Z22"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_2_PUNKT_3_MEHR_200_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 2 Punkt 3\r\nNicht mehr als 200 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit installierter Leistung über 30 bis einschließlich 100 Kilowatt",
                           "value": "Z23"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_2_PUNKT_4_ANGEMESSENES_ENTGELT_IMS",
                           "name": "§ 31 MsbG, Abs. 2 Punkt 4\r\nangemessenes Entgelt für mit iMS ausgestattete Marktlokation mit installierter Leistung über 100 Kilowatt",
                           "value": "Z24"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_32_MSBG_MEHR_20_EURO_BRUTTO_JAEHRLICH_MME",
                           "name": "§ 32 MsbG,\r\nnicht mehr als 20 Euro brutto jährlich für mit mME ausgestattete Marktlokation",
                           "value": "Z25"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_3_PUNKT_1_2020_MEHR_60_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 3 Punkt 1\r\nAb 2020 nicht mehr als 60 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 4 000 bis einschließlich 6 000 Kilowattstunden",
                           "value": "Z28"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_3_PUNKT_2_2020_MEHR_40_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 3 Punkt 2\r\nAb 2020 nicht mehr als 40 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 3 000 bis einschließlich 4 000 Kilowattstunden",
                           "value": "Z29"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_3_PUNKT_3_2020_MEHR_30_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 3 Punkt 3\r\nAb 2020 nicht mehr als 30 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch von über 2 000 bis einschließlich 3 000 Kilowattstunden",
                           "value": "Z30"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_3_PUNKT_4_2020_MEHR_23_EURO_BRUTTO",
                           "name": "§ 31 MsbG, Abs. 3 Punkt 4\r\nAb 2020 nicht mehr als 23 Euro brutto jährliches Entgelt für mit iMS ausgestattete Marktlokation mit einem Jahresstromverbrauch bis einschließlich 2 000 Kilowattstunden",
                           "value": "Z31"
                         },
                         {
+                          "ahb_status": "X [4]",
+                          "enum": "PARAGRAPH_31_MSBG_ABS_3_2018_MEHR_60_EURO_BRUTTO_JAEHRLICH",
                           "name": "§ 31 MsbG, Abs. 3\r\nAb 2018 nicht mehr als 60 Euro brutto jährlich für optional mit iMS ausgestattete Neuanlage einer Marktlokation",
                           "value": "Z32"
                         },
                         {
+                          "ahb_status": "X [5]",
+                          "enum": "ZUSATZLEISTUNG",
                           "name": "Zusatzleistung",
                           "value": "Z41"
                         }
                       ],
                       "id": "7081",
                       "name": "Produkt/Leistung, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -405,26 +505,36 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "Muss [2]",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "HOECHSTSPANNUNG",
                           "name": "Höchstspannung",
                           "value": "Z08"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "HOCHSPANNUNG",
                           "name": "Hochspannung",
                           "value": "Z09"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "MITTELSPANNUNG",
                           "name": "Mittelspannung",
                           "value": "Z10"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "NIEDERSPANNUNG",
                           "name": "Niederspannung",
                           "value": "Z11"
                         }
                       ],
                       "id": "7009",
                       "name": "Spannungsebene der Primärwicklung des Wandlers",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     },
@@ -441,8 +551,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "Muss [3]",
                       "id": "7008",
                       "name": "Produkt-/Leistungsbeschreibung",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 3,
                       "type": "data"
                     }
@@ -467,8 +579,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "KEINE_GRUPPE_GENUTZT",
                   "name": "keine Gruppe genutzt",
                   "value": "9"
                 }
@@ -476,6 +591,7 @@
               "id": "5379",
               "index": 0,
               "name": "Produktgruppen-Art, Code",
+              "parent_group_ahb_status": "Muss [9]",
               "type": "code"
             }
           ],
@@ -488,6 +604,7 @@
     "sg2": {
       "children": {
         "sg4_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -499,8 +616,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -508,6 +628,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
                   "type": "code"
                 },
                 {
@@ -519,8 +640,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Kontakt",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -538,36 +661,50 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939][37]) ∨ ([940][38])) ∧ [519]",
                       "id": "3148",
                       "name": "Kommunikationsadresse, Identifikation",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "E-Mail",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -592,8 +729,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -601,13 +741,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [19]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -618,18 +761,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -645,8 +794,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -654,13 +806,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [19]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -671,18 +826,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -709,38 +870,50 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "REFERENZWAEHRUNG",
                       "name": "Referenzwährung",
                       "value": "2"
                     }
                   ],
                   "id": "6347",
                   "name": "Währungsverwendung, Qualifier",
+                  "parent_group_ahb_status": "Muss [9]",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "EURO",
                       "name": "Euro",
                       "value": "EUR"
                     }
                   ],
                   "id": "6345",
                   "name": "Währung, Code",
+                  "parent_group_ahb_status": "Muss [9]",
                   "sub_index": 1,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "WAEHRUNG_PREISLISTE",
                       "name": "Währung der Preisliste",
                       "value": "8"
                     }
                   ],
                   "id": "6343",
                   "name": "Währung, Qualifier",
+                  "parent_group_ahb_status": "Muss [9]",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -778,6 +951,7 @@
         {
           "codes": [
             {
+              "enum": "DOKUMENT_VERFUEGBAR",
               "name": "Dokument nicht verfügbar",
               "value": "11"
             }
@@ -792,30 +966,37 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGLEICHSENERGIEPREIS",
                   "name": "Ausgleichsenergiepreis",
                   "value": "Z04"
                 },
                 {
+                  "enum": "PREISBLATT_MESSSTELLENBETRIEB",
                   "name": "Preisblatt Messstellenbetrieb",
                   "value": "Z32"
                 },
                 {
+                  "enum": "PREISBLATT_SPERREN_ENTSPERREN_VERZUGSKOSTEN",
                   "name": "Preisblatt Sperren / Entsperren und Verzugskosten",
                   "value": "Z54"
                 },
                 {
+                  "enum": "PREISBLATT_NETZNUTZUNG_OHNE_GEMEINDESPEZIFISCHE",
                   "name": "Preisblatt Netznutzung ohne gemeindespezifische Konzessionsabgaben",
                   "value": "Z64"
                 },
                 {
+                  "enum": "PREISBLATT_BLINDARBEIT",
                   "name": "Preisblatt Blindarbeit",
                   "value": "Z67"
                 },
                 {
+                  "enum": "PREISBLATT_NETZNUTZUNG_GEMEINDESPEZIFISCHE",
                   "name": "Preisblatt Netznutzung: Gemeindespezifische Konzessionsabgaben",
                   "value": "Z70"
                 },
                 {
+                  "enum": "PREISBLATT_KONFIGURATIONEN",
                   "name": "Preisblatt Konfigurationen",
                   "value": "Z77"
                 }
@@ -854,6 +1035,7 @@
             {
               "codes": [
                 {
+                  "enum": "BILANZIERUNGSDATUM_ZEIT_PERIODE",
                   "name": "Bilanzierungsdatum, -zeit, -periode",
                   "value": "492"
                 }
@@ -872,6 +1054,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMM",
                   "name": "CCYYMM",
                   "value": "610"
                 }
@@ -903,6 +1086,7 @@
             {
               "codes": [
                 {
+                  "enum": "PREISLISTE_KATALOG",
                   "name": "Preisliste/Katalog",
                   "value": "PRICAT"
                 }
@@ -915,6 +1099,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -927,6 +1112,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2020_B",
                   "name": "Ausgabe 2020 - B",
                   "value": "20B"
                 }
@@ -939,6 +1125,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -951,6 +1138,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_10",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "2.0d"
                 }

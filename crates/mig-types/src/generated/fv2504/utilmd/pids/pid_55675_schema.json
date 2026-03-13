@@ -4,6 +4,7 @@
     "sg2": {
       "children": {
         "sg3_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -15,8 +16,10 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
@@ -25,6 +28,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
                   "type": "code"
                 },
                 {
@@ -36,8 +40,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Name vom Ansprechpartner",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -55,34 +61,42 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939] [321]) ∨ ([940] [322])) ∧ [514]",
                       "id": "3148",
                       "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
@@ -90,6 +104,7 @@
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -114,8 +129,10 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
@@ -124,13 +141,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -141,13 +161,16 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
                       "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
@@ -155,6 +178,7 @@
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -170,8 +194,10 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
@@ -180,13 +206,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -197,13 +226,16 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
                       "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
@@ -211,6 +243,7 @@
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -229,6 +262,7 @@
     "sg4": {
       "children": {
         "sg5_z16": {
+          "ahb_status": "X",
           "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
@@ -242,8 +276,10 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "MALO",
                       "name": "Marktlokation",
                       "value": "Z16"
@@ -252,13 +288,16 @@
                   "id": "3227",
                   "index": 0,
                   "name": "Mit dem Code Z16 wird die ID der Marktlokation beschrieben",
+                  "parent_group_ahb_status": "Muss [2061]",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [950]",
                       "id": "3225",
                       "name": "ID der Marktlokation",
+                      "parent_group_ahb_status": "Muss [2061]",
                       "sub_index": 0,
                       "type": "data"
                     },
@@ -293,6 +332,7 @@
           "source_group": "SG5"
         },
         "sg5_z21": {
+          "ahb_status": "X",
           "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
@@ -306,8 +346,10 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "TRANCHE",
                       "name": "Tranche",
                       "value": "Z21"
@@ -316,13 +358,16 @@
                   "id": "3227",
                   "index": 0,
                   "name": "Mit dem Code Z21 wird die ID der Tranche beschrieben",
+                  "parent_group_ahb_status": "Muss [2061] ∧ [481]",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [950]",
                       "id": "3225",
                       "name": "ID der Tranche",
+                      "parent_group_ahb_status": "Muss [2061] ∧ [481]",
                       "sub_index": 0,
                       "type": "data"
                     },
@@ -367,8 +412,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "PRUEFIDENTIFIKATOR",
                           "name": "Prüfidentifikator",
                           "value": "Z13"
@@ -376,12 +423,15 @@
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "RUECKM_BKA_ERZEUGENDE_MALO_2",
                           "name": "GPKE / Rückmeldung / Anfrage Abrechnungsdaten Bilanzkreisabrechnung erzeugender MaLo vom ÜNB",
                           "value": "55675"
@@ -389,6 +439,7 @@
                       ],
                       "id": "1154",
                       "name": "Prüfidentifikator",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -406,8 +457,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "TRANSAKTIONSREFERENZ",
                           "name": "Transaktions-Referenznummer",
                           "value": "TN"
@@ -415,12 +468,15 @@
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Muss [301]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "1154",
                       "name": "Vorgangsnummer",
+                      "parent_group_ahb_status": "Muss [301]",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -438,23 +494,28 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X [5P0..n]",
                       "codes": [
                         {
+                          "ahb_status": "X [5P0..n]",
                           "enum": "SYSTEM_VORHANDENE_DATEN",
                           "name": "Im System vorhandene Daten",
                           "value": "Z47"
                         },
                         {
+                          "ahb_status": "X [2P0..n]",
                           "enum": "ERWARTETE_DATEN",
                           "name": "Erwartete Daten",
                           "value": "Z48"
                         },
                         {
+                          "ahb_status": "X [4P0..n]",
                           "enum": "SYSTEM_KEINE_DATEN",
                           "name": "Im System keine Daten vorhanden",
                           "value": "Z54"
                         },
                         {
+                          "ahb_status": "X [2P0..n]",
                           "enum": "KEINE_DATEN_ERWARTET",
                           "name": "Keine Daten erwartet",
                           "value": "Z55"
@@ -462,6 +523,7 @@
                       ],
                       "id": "1153",
                       "name": "Qualität des Zeitraums",
+                      "parent_group_ahb_status": "Muss [315] ∧ [707]\r\nSoll [8] ∧ [301] ∧ [707]",
                       "sub_index": 0,
                       "type": "code"
                     },
@@ -472,8 +534,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [914] ∧ [937] [127] ⊻ [128]",
                       "id": "1156",
                       "name": "Zeitraum-ID",
+                      "parent_group_ahb_status": "Muss [315] ∧ [707]\r\nSoll [8] ∧ [301] ∧ [707]",
                       "sub_index": 2,
                       "type": "data"
                     }
@@ -491,8 +555,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "VERWENDUNG_DATEN_AB",
                           "name": "Verwendung der Daten ab",
                           "value": "Z25"
@@ -500,18 +566,23 @@
                       ],
                       "id": "2005",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "parent_group_ahb_status": "Muss [315] ∧ [707]\r\nSoll [8] ∧ [301] ∧ [707]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [UB1]",
                       "id": "2380",
                       "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "parent_group_ahb_status": "Muss [315] ∧ [707]\r\nSoll [8] ∧ [301] ∧ [707]",
                       "sub_index": 1,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "CCYYMMDDHHMMZZZ",
                           "name": "CCYYMMDDHHMMZZZ",
                           "value": "303"
@@ -519,6 +590,7 @@
                       ],
                       "id": "2379",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "parent_group_ahb_status": "Muss [315] ∧ [707]\r\nSoll [8] ∧ [301] ∧ [707]",
                       "sub_index": 2,
                       "type": "code"
                     }
@@ -536,8 +608,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "VERWENDUNG_DATEN_BIS",
                           "name": "Verwendung der Daten bis",
                           "value": "Z26"
@@ -545,18 +619,23 @@
                       ],
                       "id": "2005",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "parent_group_ahb_status": "Muss [315] ∧ [707]\r\nSoll [8] ∧ [301] ∧ [707]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [UB1]",
                       "id": "2380",
                       "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "parent_group_ahb_status": "Muss [315] ∧ [707]\r\nSoll [8] ∧ [301] ∧ [707]",
                       "sub_index": 1,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "CCYYMMDDHHMMZZZ",
                           "name": "CCYYMMDDHHMMZZZ",
                           "value": "303"
@@ -564,6 +643,7 @@
                       ],
                       "id": "2379",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "parent_group_ahb_status": "Muss [315] ∧ [707]\r\nSoll [8] ∧ [301] ∧ [707]",
                       "sub_index": 2,
                       "type": "code"
                     }
@@ -580,6 +660,7 @@
           "source_group": "SG6"
         },
         "sg8_z80_z81": {
+          "ahb_status": "X [2P0..n]",
           "children": {
             "sg10": {
               "data_quality_hint": "erwartet",
@@ -613,8 +694,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "ZUGEORDNETER_MARKTPARTNER",
                               "name": "Zugeordneter Marktpartner",
                               "value": "ZB3"
@@ -622,6 +705,7 @@
                           ],
                           "id": "7037",
                           "name": "Merkmal, Code",
+                          "parent_group_ahb_status": "Soll [8]",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -639,8 +723,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "LF",
                               "name": "LF",
                               "value": "Z89"
@@ -648,12 +734,15 @@
                           ],
                           "id": "7111",
                           "name": "Merkmalswert, Code",
+                          "parent_group_ahb_status": "Soll [8]",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
+                          "ahb_status": "X",
                           "id": "1131",
                           "name": "MP-ID",
+                          "parent_group_ahb_status": "Soll [8]",
                           "sub_index": 1,
                           "type": "data"
                         }
@@ -669,8 +758,10 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "BK",
                           "name": "Bilanzkreis",
                           "value": "Z19"
@@ -679,6 +770,7 @@
                       "id": "7059",
                       "index": 0,
                       "name": "Klassentyp, Code",
+                      "parent_group_ahb_status": "Soll [8] ∧ [479]",
                       "type": "code"
                     },
                     {
@@ -697,8 +789,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "id": "7037",
                           "name": "Bilanzkreis",
+                          "parent_group_ahb_status": "Soll [8] ∧ [479]",
                           "sub_index": 0,
                           "type": "data"
                         }
@@ -714,8 +808,10 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "BG",
                           "name": "Bilanzierungsgebiet",
                           "value": "Z20"
@@ -724,6 +820,7 @@
                       "id": "7059",
                       "index": 0,
                       "name": "Klassentyp, Code",
+                      "parent_group_ahb_status": "Soll [8]",
                       "type": "code"
                     },
                     {
@@ -742,8 +839,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "id": "7037",
                           "name": "Bilanzierungsgebiet",
+                          "parent_group_ahb_status": "Soll [8]",
                           "sub_index": 0,
                           "type": "data"
                         }
@@ -759,8 +858,10 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "STRUKTUR",
                           "name": "Struktur",
                           "value": "15"
@@ -769,6 +870,7 @@
                       "id": "7059",
                       "index": 0,
                       "name": "Klassentyp, Code",
+                      "parent_group_ahb_status": "Soll [8] ∧ [17] ∧ [2182]",
                       "type": "code"
                     },
                     {
@@ -787,8 +889,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "SZR_TYP",
                               "name": "Summenzeitreihentyp",
                               "value": "Z21"
@@ -796,6 +900,7 @@
                           ],
                           "id": "7037",
                           "name": "Merkmal, Code",
+                          "parent_group_ahb_status": "Soll [8] ∧ [17] ∧ [2182]",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -813,6 +918,7 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
                               "enum": "NB_GUELTIGER_CODE",
@@ -822,6 +928,7 @@
                           ],
                           "id": "7111",
                           "name": "Angabe des Codes aus der EDI@Energy Codeliste der Zeitreihentypen.",
+                          "parent_group_ahb_status": "Soll [8] ∧ [17] ∧ [2182]",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -858,8 +965,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "SPANNUNGSEBENE_MALO",
                               "name": "Spannungsebene der Marktlokation",
                               "value": "E03"
@@ -867,6 +976,7 @@
                           ],
                           "id": "7037",
                           "name": "Merkmal, Code",
+                          "parent_group_ahb_status": "Soll [8] ∧ [2182]",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -884,23 +994,28 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "HOECHSTSPANNUNG",
                               "name": "Höchstspannung",
                               "value": "E03"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "HOCHSPANNUNG",
                               "name": "Hochspannung",
                               "value": "E04"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "MITTELSPANNUNG",
                               "name": "Mittelspannung",
                               "value": "E05"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "NIEDERSPANNUNG",
                               "name": "Niederspannung",
                               "value": "E06"
@@ -908,6 +1023,7 @@
                           ],
                           "id": "7111",
                           "name": "Spannungsebene der Marktlokation",
+                          "parent_group_ahb_status": "Soll [8] ∧ [2182]",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -925,18 +1041,22 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X [116]",
                           "codes": [
                             {
+                              "ahb_status": "X [116]",
                               "enum": "HOES_HS_UMSPANNUNG",
                               "name": "Hös/HS Umspannung",
                               "value": "E07"
                             },
                             {
+                              "ahb_status": "X [115]",
                               "enum": "HS_MS_UMSPANNUNG",
                               "name": "HS/MS Umspannung",
                               "value": "E08"
                             },
                             {
+                              "ahb_status": "X [114]",
                               "enum": "MS_NS_UMSPANNUNG",
                               "name": "MS/NS Umspannung",
                               "value": "E09"
@@ -944,6 +1064,7 @@
                           ],
                           "id": "7111",
                           "name": "Umspannung der Marktlokation",
+                          "parent_group_ahb_status": "Soll [8] ∧ [2182]",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -980,8 +1101,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "PROGNOSE_WERTE",
                               "name": "Prognose auf Basis von Werten",
                               "value": "ZC0"
@@ -989,6 +1112,7 @@
                           ],
                           "id": "7037",
                           "name": "Merkmal, Code",
+                          "parent_group_ahb_status": "Soll [8]",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -1019,13 +1143,16 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X [2P0..n]",
                   "codes": [
                     {
+                      "ahb_status": "X [2P0..n]",
                       "enum": "ERWARTETE_DATEN_MALO",
                       "name": "Erwartete Daten der Marktlokation",
                       "value": "Z80"
                     },
                     {
+                      "ahb_status": "X [3P0..n]",
                       "enum": "SYSTEM_DATEN_MALO",
                       "name": "Im System vorhandene Daten der Marktlokation",
                       "value": "Z81"
@@ -1034,13 +1161,16 @@
                   "id": "1229",
                   "index": 0,
                   "name": "Handlung, Code",
+                  "parent_group_ahb_status": "Soll [8]",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [914] ∧ [937] [22]",
                       "id": "1050",
                       "name": "Referenz auf Zeitraum-ID",
+                      "parent_group_ahb_status": "Soll [8]",
                       "sub_index": 0,
                       "type": "data"
                     }
@@ -1057,6 +1187,7 @@
           "source_group": "SG8"
         },
         "sg8_z94_z95": {
+          "ahb_status": "X [2P0..n]",
           "children": {
             "sg10": {
               "data_quality_hint": "erwartet",
@@ -1090,8 +1221,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "ZUGEORDNETER_MARKTPARTNER",
                               "name": "Zugeordneter Marktpartner",
                               "value": "ZB3"
@@ -1099,6 +1232,7 @@
                           ],
                           "id": "7037",
                           "name": "Merkmal, Code",
+                          "parent_group_ahb_status": "Soll [8]",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -1116,8 +1250,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "LF",
                               "name": "LF",
                               "value": "Z89"
@@ -1125,12 +1261,15 @@
                           ],
                           "id": "7111",
                           "name": "Merkmalswert, Code",
+                          "parent_group_ahb_status": "Soll [8]",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
+                          "ahb_status": "X",
                           "id": "1131",
                           "name": "MP-ID",
+                          "parent_group_ahb_status": "Soll [8]",
                           "sub_index": 1,
                           "type": "data"
                         }
@@ -1146,8 +1285,10 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "BK",
                           "name": "Bilanzkreis",
                           "value": "Z19"
@@ -1156,6 +1297,7 @@
                       "id": "7059",
                       "index": 0,
                       "name": "Klassentyp, Code",
+                      "parent_group_ahb_status": "Soll [8]",
                       "type": "code"
                     },
                     {
@@ -1174,8 +1316,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "id": "7037",
                           "name": "Bilanzkreis",
+                          "parent_group_ahb_status": "Soll [8]",
                           "sub_index": 0,
                           "type": "data"
                         }
@@ -1206,13 +1350,16 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X [2P0..n]",
                   "codes": [
                     {
+                      "ahb_status": "X [2P0..n]",
                       "enum": "ERWARTETE_DATEN_TRANCHE",
                       "name": "Erwartete Daten der Tranche",
                       "value": "Z94"
                     },
                     {
+                      "ahb_status": "X [3P0..n]",
                       "enum": "SYSTEM_DATEN_TRANCHE",
                       "name": "Im System vorhandene Daten der Tranche",
                       "value": "Z95"
@@ -1221,13 +1368,16 @@
                   "id": "1229",
                   "index": 0,
                   "name": "Handlung, Code",
+                  "parent_group_ahb_status": "Soll [8] ∧ [481]",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [914] ∧ [937] [22]",
                       "id": "1050",
                       "name": "Referenz auf Zeitraum-ID",
+                      "parent_group_ahb_status": "Soll [8] ∧ [481]",
                       "sub_index": 0,
                       "type": "data"
                     }
@@ -1252,8 +1402,10 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "TRANSAKTION",
                   "name": "Transaktion",
                   "value": "24"
@@ -1262,13 +1414,16 @@
               "id": "7495",
               "index": 0,
               "name": "Objekt, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7402",
                   "name": "Vorgangsnummer",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -1286,8 +1441,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "TRANSAKTIONSGRUND",
                       "name": "Transaktionsgrund",
                       "value": "7"
@@ -1295,6 +1452,7 @@
                   ],
                   "id": "9015",
                   "name": "Statuskategorie, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 }
@@ -1319,13 +1477,16 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "BKA_ERZEUGEND",
                       "name": "Abrechnungsdaten BK-Abrechnung erzeugender Malo",
                       "value": "ZX2"
                     },
                     {
+                      "ahb_status": "X",
                       "enum": "KORREKTUR_BKA_ERZEUGEND",
                       "name": "Korrektur Abrechnungsdaten BK-Abrechnung erzeugender MaLo",
                       "value": "ZAO"
@@ -1333,6 +1494,7 @@
                   ],
                   "id": "9013",
                   "name": "Transaktionsgrund",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 }
@@ -1344,13 +1506,16 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "ERZEUGENDE_MALO",
                       "name": "Erzeugende Marktlokation",
                       "value": "ZW3"
                     },
                     {
+                      "ahb_status": "X",
                       "enum": "TRANCHE",
                       "name": "Tranche",
                       "value": "ZW5"
@@ -1358,6 +1523,7 @@
                   ],
                   "id": "9013",
                   "name": "Dieses Datenelement definiert weitere Details zum Transaktionsgrund.",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 }
@@ -1400,8 +1566,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "STATUS_ANTWORT",
                       "name": "Status der Antwort",
                       "value": "E01"
@@ -1409,6 +1577,7 @@
                   ],
                   "id": "9015",
                   "name": "Statuskategorie, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 }
@@ -1433,14 +1602,18 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "9013",
                   "name": "Code des Prüfschritts",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "E_0612",
                       "name": "EBD Nr. E_0612",
                       "value": "E_0612"
@@ -1448,6 +1621,7 @@
                   ],
                   "id": "1131",
                   "name": "Codeliste, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 },
@@ -1458,8 +1632,10 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X [914] ∧ [937] ∧ [44]",
                   "id": "9012",
                   "name": "Zeitraum-ID aus der Änderungsmeldung des Verantwortlichen",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 3,
                   "type": "data"
                 }
@@ -1475,8 +1651,10 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "ALLGEMEINE_HINWEISE",
                   "name": "Zusätzliche Informationen (für allgemeine Hinweise)",
                   "value": "ACB"
@@ -1485,6 +1663,7 @@
               "id": "4451",
               "index": 0,
               "name": "Textbezug, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
@@ -1509,8 +1688,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "4440",
                   "name": "Text für allgemeine Information",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },

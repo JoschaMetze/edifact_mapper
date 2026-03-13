@@ -4,6 +4,7 @@
     "sg2": {
       "children": {
         "sg3_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -15,8 +16,10 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
@@ -25,6 +28,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
                   "type": "code"
                 },
                 {
@@ -36,8 +40,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Name vom Ansprechpartner",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -55,34 +61,42 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939] [321]) ∨ ([940] [322])) ∧ [514]",
                       "id": "3148",
                       "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
@@ -90,6 +104,7 @@
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -114,8 +129,10 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
@@ -124,13 +141,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -141,13 +161,16 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
                       "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
@@ -155,6 +178,7 @@
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -170,8 +194,10 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
@@ -180,13 +206,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -197,13 +226,16 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
                       "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
@@ -211,6 +243,7 @@
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -229,6 +262,7 @@
     "sg4": {
       "children": {
         "sg5_z20": {
+          "ahb_status": "X",
           "data_quality_hint": "base",
           "discriminator": {
             "element": "3227",
@@ -242,8 +276,10 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "TR",
                       "name": "Technische Ressource",
                       "value": "Z20"
@@ -252,13 +288,16 @@
                   "id": "3227",
                   "index": 0,
                   "name": "Mit dem Code Z20 wird die ID der Technischen Ressource beschrieben",
+                  "parent_group_ahb_status": "Muss [2061]",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [922]",
                       "id": "3225",
                       "name": "ID der Technischen Ressource",
+                      "parent_group_ahb_status": "Muss [2061]",
                       "sub_index": 0,
                       "type": "data"
                     },
@@ -303,8 +342,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "PRUEFIDENTIFIKATOR",
                           "name": "Prüfidentifikator",
                           "value": "Z13"
@@ -312,12 +353,15 @@
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "AEND_DATEN_TR_NB_LF",
                           "name": "GPKE / Änderung Daten der TR vom NB an LF",
                           "value": "55617"
@@ -325,6 +369,7 @@
                       ],
                       "id": "1154",
                       "name": "Prüfidentifikator",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -342,13 +387,16 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "GUELTIGE_DATEN",
                           "name": "Gültige Daten",
                           "value": "Z49"
                         },
                         {
+                          "ahb_status": "X",
                           "enum": "KEINE_DATEN",
                           "name": "Keine Daten",
                           "value": "Z53"
@@ -356,6 +404,7 @@
                       ],
                       "id": "1153",
                       "name": "Qualität des Zeitraums",
+                      "parent_group_ahb_status": "Muss [707]",
                       "sub_index": 0,
                       "type": "code"
                     },
@@ -366,8 +415,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [914] ∧ [937] [126]",
                       "id": "1156",
                       "name": "Zeitraum-ID",
+                      "parent_group_ahb_status": "Muss [707]",
                       "sub_index": 2,
                       "type": "data"
                     }
@@ -385,8 +436,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "VERWENDUNG_DATEN_AB",
                           "name": "Verwendung der Daten ab",
                           "value": "Z25"
@@ -394,18 +447,23 @@
                       ],
                       "id": "2005",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "parent_group_ahb_status": "Muss [707]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [UB1]",
                       "id": "2380",
                       "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "parent_group_ahb_status": "Muss [707]",
                       "sub_index": 1,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "CCYYMMDDHHMMZZZ",
                           "name": "CCYYMMDDHHMMZZZ",
                           "value": "303"
@@ -413,6 +471,7 @@
                       ],
                       "id": "2379",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "parent_group_ahb_status": "Muss [707]",
                       "sub_index": 2,
                       "type": "code"
                     }
@@ -430,8 +489,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "VERWENDUNG_DATEN_BIS",
                           "name": "Verwendung der Daten bis",
                           "value": "Z26"
@@ -439,18 +500,23 @@
                       ],
                       "id": "2005",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "parent_group_ahb_status": "Muss [707]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [UB1]",
                       "id": "2380",
                       "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "parent_group_ahb_status": "Muss [707]",
                       "sub_index": 1,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "CCYYMMDDHHMMZZZ",
                           "name": "CCYYMMDDHHMMZZZ",
                           "value": "303"
@@ -458,6 +524,7 @@
                       ],
                       "id": "2379",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "parent_group_ahb_status": "Muss [707]",
                       "sub_index": 2,
                       "type": "code"
                     }
@@ -474,6 +541,7 @@
           "source_group": "SG6"
         },
         "sg8_z52": {
+          "ahb_status": "X",
           "children": {
             "sg10": {
               "data_quality_hint": "base",
@@ -486,18 +554,22 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "STROMVERBRAUCHSART",
                           "name": "Stromverbrauchsart",
                           "value": "Z17"
                         },
                         {
+                          "ahb_status": "X",
                           "enum": "STROMERZEUGUNGSART",
                           "name": "Stromerzeugungsart",
                           "value": "Z50"
                         },
                         {
+                          "ahb_status": "X",
                           "enum": "SPEICHER",
                           "name": "Speicher",
                           "value": "Z56"
@@ -506,6 +578,7 @@
                       "id": "7059",
                       "index": 0,
                       "name": "Klassentyp, Code",
+                      "parent_group_ahb_status": "Muss",
                       "type": "code"
                     }
                   ],
@@ -517,23 +590,28 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X [1P0..1]",
                           "codes": [
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "BETRIEBSSTROM",
                               "name": "Hierunter ist Strom zu verstehen, der ausschließlich zum Betrieb von Endverbrauchsgeräten (z.B. Radio, Fernseher, Kühlschrank, Beleuchtung...) genutzt wird.",
                               "value": "Z64"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "WAERMEBEDARFSDECKUNG",
                               "name": "Hierunter ist Strom zu verstehen, der zur Wärmebedarfsdeckung (z.B. Standspeicherheizung, Fußbodenspeicherheizungen, Wärmepumpe....) eingesetzt wird.",
                               "value": "Z65"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "EMOB",
                               "name": "E-Mobilität",
                               "value": "ZE5"
                             },
                             {
+                              "ahb_status": "X [1P0..1]",
                               "enum": "STRASSENBELEUCHTUNG",
                               "name": "Straßenbeleuchtung",
                               "value": "ZA8"
@@ -541,6 +619,7 @@
                           ],
                           "id": "7111",
                           "name": "Verbrauchsart",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -558,33 +637,40 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "SPEICHERHEIZUNG",
                               "name": "Hierunter fallen Heizungsanlagen bei denen das Speichermedium (z.B. Standspeicherheizkörper, Estrich als Fußbodenspeicher) während lastschwacher Zeiten aufgeladen wird und während des Tages Wärme abgeben.",
                               "value": "Z56"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "WAERMEPUMPE",
                               "name": "Wärmepumpen entziehen der Umwelt (Luft, Wasser oder Erdreich) Wärme und heben mit technischem Verfahren die Temperatur auf ein Temperaturniveau an, um Gebäude zu heizen. Der Stromverbrauch steht somit immer in zeitlicher Verbindung zur Wärmeerzeugung.",
                               "value": "Z57"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "DIREKTHEIZUNG",
                               "name": "Hierunter fallen Heizungsanlagen, die direkt und damit zeitgleich elektrische Energie in Wärme umwandeln (z.B. Konvektionsheizung, Infrarotheizung, Flächenheizung).",
                               "value": "Z61"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "WAERMEPUMPE_WAERME_KAELTE",
                               "name": "Wärmepumpe (Wärme und Kälte)",
                               "value": "ZV5"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "WAERMEPUMPE_KAELTE",
                               "name": "Wärmepumpe (Kälte)",
                               "value": "ZV6"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "WAERMEPUMPE_WAERME",
                               "name": "Wärmepumpe (Wärme)",
                               "value": "ZV7"
@@ -592,6 +678,7 @@
                           ],
                           "id": "7111",
                           "name": "Wärmenutzung",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -609,18 +696,22 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "OEFFENTLICHE_LADEMOEGLICHKEIT",
                               "name": "An der Marktlokation ist eine nicht öffentlliche Lademöglichkeit vorhanden",
                               "value": "ZE6"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "OEFFENTLICHE_LADESAEULE_MEHRERE",
                               "name": "Es handelt sich um eine öffentliche Ladesäule mit ggf. mehreren Ladeanschlüssen an der Marktlokation",
                               "value": "Z87"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "OEFFENTLICHE_LADESAEULE_MEHR",
                               "name": "Es handelt sich um mehr als eine öffentliche Ladesäule an der Marktlokation",
                               "value": "ZE7"
@@ -628,6 +719,7 @@
                           ],
                           "id": "7111",
                           "name": "Art der E-Mobilität",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -645,28 +737,34 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "SOLAR",
                               "name": "Solar",
                               "value": "ZF5"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "WIND",
                               "name": "Wind",
                               "value": "ZF6"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "GAS",
                               "name": "Gas",
                               "value": "ZG0"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "WASSER",
                               "name": "Wasser",
                               "value": "ZG1"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "SONSTIGE_ERZEUGUNGSART",
                               "name": "Sonstige Erzeugungsart",
                               "value": "ZG5"
@@ -674,6 +772,7 @@
                           ],
                           "id": "7111",
                           "name": "Erzeugungsart",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -691,23 +790,28 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "WASSERSTOFFSPEICHER",
                               "name": "Wasserstoffspeicher",
                               "value": "ZF7"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "PUMPSPEICHER",
                               "name": "Pumpspeicher",
                               "value": "ZF8"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "BATTERIESPEICHER",
                               "name": "Batteriespeicher",
                               "value": "ZF9"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "SONSTIGE_SPEICHERART",
                               "name": "Sonstige Speicherart",
                               "value": "ZG6"
@@ -715,6 +819,7 @@
                           ],
                           "id": "7111",
                           "name": "Wasserstoffspeicher, Pumpspeicher, Batteriespeicher",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -732,13 +837,16 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "PARAGRAPH_14A_ENWG",
                               "name": "Technischen Ressource fällt unter § 14a EnWG",
                               "value": "ZG8"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "PARAGRAPH_14A_ENWG_2",
                               "name": "Technischen Ressource fällt nicht unter § 14a EnWG",
                               "value": "ZG9"
@@ -746,6 +854,7 @@
                           ],
                           "id": "7111",
                           "name": "Kategorie der verbrauchenden Technischen Ressource",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -763,13 +872,16 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "INBETRIEBSETZUNG_TR_2023",
                               "name": "Inbetriebsetzung der TR nach 2023",
                               "value": "ZH0"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "INBETRIEBSETZUNG_TR_VOR_2024",
                               "name": "Inbetriebsetzung der TR vor 2024",
                               "value": "ZH1"
@@ -777,6 +889,7 @@
                           ],
                           "id": "7111",
                           "name": "Inbetriebsetzungsdatum der verbrauchenden Technischen Ressource nach § 14a EnWG",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -794,23 +907,28 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "WECHSEL_14A_MODELL_BK6",
                               "name": "Wechselmöglichkeit in das § 14a EnWG-Modell gem. Festlegung BK6-22-300 einmalig noch möglich",
                               "value": "ZH2"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "WECHSEL_14A_MODELL_BK6_2",
                               "name": "Wechselmöglichkeit in das § 14a EnWG-Modell gem. Festlegung BK6-22-300 nicht möglich",
                               "value": "ZH3"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "BEFRISTET_14A_ALT_BIS_2028",
                               "name": "Befristet im alten § 14a EnWG-Modell bis 2028 ohne Wechselmöglichkeit",
                               "value": "ZH4"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "WECHSEL_14A_MODELL_BK6_22_300",
                               "name": "Wechsel in das § 14a EnWG-Modell gem. Festlegung BK6-22-300 wurde durchgeführt",
                               "value": "ZH5"
@@ -818,6 +936,7 @@
                           ],
                           "id": "7111",
                           "name": "Einordnung der verbrauchenden Technischen Ressource nach § 14a EnWG mit Inbetriebsetzung vor 2024",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -833,8 +952,10 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "WEITERE_TECHNISCHE_EINRICHTUNGEN",
                           "name": "Information zu weiteren technischen Einrichtungen",
                           "value": "Z63"
@@ -843,6 +964,7 @@
                       "id": "7059",
                       "index": 0,
                       "name": "Klassentyp, Code",
+                      "parent_group_ahb_status": "Muss ([446] ⊻ [448]) ∧ [467]",
                       "type": "code"
                     }
                   ],
@@ -854,13 +976,16 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "ZUSAETZLICHE_TR_VORHANDEN",
                               "name": "Dieser Code ist auszuwählen, wenn neben den genannten Technischen Ressourcen in der verbrauchenden Marktlokation weitere technische Einrichtungen (z. B. Kraft/ Licht) vorhanden sind",
                               "value": "ZH7"
                             },
                             {
+                              "ahb_status": "X",
                               "enum": "ZUSAETZLICHE_TR_VORHANDEN_2",
                               "name": "Dieser Code ist auszuwählen, wenn neben den genannten Technischen Ressourcen in der verbrauchenden Marktlokation keine weitere technische Einrichtung vorhanden ist.",
                               "value": "ZH8"
@@ -868,6 +993,7 @@
                           ],
                           "id": "7111",
                           "name": "Merkmalswert, Code",
+                          "parent_group_ahb_status": "Muss ([446] ⊻ [448]) ∧ [467]",
                           "sub_index": 0,
                           "type": "code"
                         }
@@ -896,8 +1022,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "NENNLEISTUNG_AUFNAHME",
                               "name": "Nennleistung (Aufnahme)",
                               "value": "Z43"
@@ -905,18 +1033,23 @@
                           ],
                           "id": "6063",
                           "name": "Menge, Qualifier",
+                          "parent_group_ahb_status": "Muss ([446] ∧ ([465] ∨ [466]) ∧ [467] ∧ ([468] ⊻ ([469] ∧ [470]))) ⊻ [448]\r\nSoll [165]",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
+                          "ahb_status": "X",
                           "id": "6060",
                           "name": "Menge",
+                          "parent_group_ahb_status": "Muss ([446] ∧ ([465] ∨ [466]) ∧ [467] ∧ ([468] ⊻ ([469] ∧ [470]))) ⊻ [448]\r\nSoll [165]",
                           "sub_index": 1,
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "KILOWATT",
                               "name": "Kilowatt",
                               "value": "KWT"
@@ -924,6 +1057,7 @@
                           ],
                           "id": "6411",
                           "name": "Maßeinheit, Code",
+                          "parent_group_ahb_status": "Muss ([446] ∧ ([465] ∨ [466]) ∧ [467] ∧ ([468] ⊻ ([469] ∧ [470]))) ⊻ [448]\r\nSoll [165]",
                           "sub_index": 2,
                           "type": "code"
                         }
@@ -941,8 +1075,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "NENNLEISTUNG_ABGABE",
                               "name": "Nennleistung (Abgabe)",
                               "value": "Z44"
@@ -950,18 +1086,23 @@
                           ],
                           "id": "6063",
                           "name": "Menge, Qualifier",
+                          "parent_group_ahb_status": "Muss [447] ⊻ [448]",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
+                          "ahb_status": "X",
                           "id": "6060",
                           "name": "Menge",
+                          "parent_group_ahb_status": "Muss [447] ⊻ [448]",
                           "sub_index": 1,
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "KILOWATT",
                               "name": "Kilowatt",
                               "value": "KWT"
@@ -969,6 +1110,7 @@
                           ],
                           "id": "6411",
                           "name": "Maßeinheit, Code",
+                          "parent_group_ahb_status": "Muss [447] ⊻ [448]",
                           "sub_index": 2,
                           "type": "code"
                         }
@@ -986,8 +1128,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "SPEICHERKAPAZITAET",
                               "name": "Speicherkapazität",
                               "value": "Z42"
@@ -995,18 +1139,23 @@
                           ],
                           "id": "6063",
                           "name": "Menge, Qualifier",
+                          "parent_group_ahb_status": "Muss [448]",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
+                          "ahb_status": "X",
                           "id": "6060",
                           "name": "Menge",
+                          "parent_group_ahb_status": "Muss [448]",
                           "sub_index": 1,
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
                               "enum": "KILOWATTSTUNDE",
                               "name": "Kilowattstunde",
                               "value": "KWH"
@@ -1014,6 +1163,7 @@
                           ],
                           "id": "6411",
                           "name": "Maßeinheit, Code",
+                          "parent_group_ahb_status": "Muss [448]",
                           "sub_index": 2,
                           "type": "code"
                         }
@@ -1043,8 +1193,10 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "DATEN_TR",
                       "name": "Daten der Technischen Ressource",
                       "value": "Z52"
@@ -1053,13 +1205,16 @@
                   "id": "1229",
                   "index": 0,
                   "name": "Handlung, Code",
+                  "parent_group_ahb_status": "Muss [2004]",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [914] ∧ [937] [22]",
                       "id": "1050",
                       "name": "Referenz auf Zeitraum-ID",
+                      "parent_group_ahb_status": "Muss [2004]",
                       "sub_index": 0,
                       "type": "data"
                     }
@@ -1077,8 +1232,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "SR",
                           "name": "Steuerbare Ressource",
                           "value": "Z38"
@@ -1086,12 +1243,15 @@
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Muss [2004]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [961]",
                       "id": "1154",
                       "name": "ID der Steuerbaren Ressource",
+                      "parent_group_ahb_status": "Muss [2004]",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -1109,8 +1269,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "NELO",
                           "name": "Netzlokation",
                           "value": "Z32"
@@ -1118,12 +1280,15 @@
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Muss [2004]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [960]",
                       "id": "1154",
                       "name": "ID der Netzlokation",
+                      "parent_group_ahb_status": "Muss [2004]",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -1148,8 +1313,10 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "TRANSAKTION",
                   "name": "Transaktion",
                   "value": "24"
@@ -1158,13 +1325,16 @@
               "id": "7495",
               "index": 0,
               "name": "Objekt, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7402",
                   "name": "Vorgangsnummer",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -1182,8 +1352,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "TRANSAKTIONSGRUND",
                       "name": "Transaktionsgrund",
                       "value": "7"
@@ -1191,6 +1363,7 @@
                   ],
                   "id": "9015",
                   "name": "Statuskategorie, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 }
@@ -1215,8 +1388,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "AEND_DATEN_TR",
                       "name": "Änderung Daten der TR",
                       "value": "ZY0"
@@ -1224,6 +1399,7 @@
                   ],
                   "id": "9013",
                   "name": "Transaktionsgrund",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 }

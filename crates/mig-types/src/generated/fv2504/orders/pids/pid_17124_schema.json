@@ -12,196 +12,245 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRUEFIDENTIFIKATOR",
                       "name": "Prüfidentifikator",
                       "value": "Z13"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
                   "codes": [
                     {
+                      "enum": "BESTELLUNG_GERAETEUEBERNAHME",
                       "name": "Bestellung Geräteübernahme",
                       "value": "17001"
                     },
                     {
+                      "enum": "WEITERVERPFLICHTUNG_MSBA",
                       "name": "Weiterverpflichtung MSBA",
                       "value": "17002"
                     },
                     {
+                      "enum": "BEAUFTRAGUNG_AENDERUNG_MESSLOKATION",
                       "name": "Beauftragung zur Änderung der Messlokation",
                       "value": "17003"
                     },
                     {
+                      "enum": "ANFORDERUNG_MESSWERTE",
                       "name": "Anforderung Messwerte",
                       "value": "17004"
                     },
                     {
+                      "enum": "BESTELLUNG_RECHNUNGSABWICKLUNG_MSB_LF",
                       "name": "Bestellung Rechnungsabwicklung MSB über LF",
                       "value": "17005"
                     },
                     {
+                      "enum": "BEENDIGUNG_RECHNUNGSABWICKLUNG_MSB_LF",
                       "name": "Beendigung Rechnungsabwicklung MSB über LF",
                       "value": "17006"
                     },
                     {
+                      "enum": "BESTELLUNG_WERTEN_ESA",
                       "name": "Bestellung von Werten für ESA",
                       "value": "17007"
                     },
                     {
+                      "enum": "ABBESTELLUNG_WERTEN_ESA",
                       "name": "Abbestellung von Werten für ESA",
                       "value": "17008"
                     },
                     {
+                      "enum": "ANZEIGE_GERAETEWECHSELABSICHT",
                       "name": "Anzeige Gerätewechselabsicht",
                       "value": "17009"
                     },
                     {
+                      "enum": "ANFRAGE_STAMMDATEN_MARKTLOKATION",
                       "name": "Anfrage Stammdaten Marktlokation",
                       "value": "17101"
                     },
                     {
+                      "enum": "ANFRAGE_WERTE",
                       "name": "Anfrage Werte",
                       "value": "17102"
                     },
                     {
+                      "enum": "ANFRAGE_BRENNWERT_ZUSTANDSZAHL",
                       "name": "Anfrage Brennwert und Zustandszahl",
                       "value": "17103"
                     },
                     {
+                      "enum": "ANFRAGE_MSB_GAS",
                       "name": "Anfrage vom MSB Gas",
                       "value": "17104"
                     },
                     {
+                      "enum": "ANFORDERUNG_ALLOKATIONSLISTE",
                       "name": "Anforderung Allokationsliste",
                       "value": "17110"
                     },
                     {
+                      "enum": "MELDUNG_REKLAMATION_WERTEN",
                       "name": "Meldung einer Reklamation von Werten",
                       "value": "17113"
                     },
                     {
+                      "enum": "ANFORDERUNG_BILANZIERTE_MENGE",
                       "name": "Anforderung bilanzierte Menge",
                       "value": "17114"
                     },
                     {
+                      "enum": "SPERRAUFTRAG",
                       "name": "Sperrauftrag",
                       "value": "17115"
                     },
                     {
+                      "enum": "ANFRAGE_SPERRUNG",
                       "name": "Anfrage Sperrung",
                       "value": "17116"
                     },
                     {
+                      "enum": "ENTSPERRAUFTRAG",
                       "name": "Entsperrauftrag",
                       "value": "17117"
                     },
                     {
+                      "enum": "BESTELLUNG_KONFIGURATIONSAENDERUNG",
                       "name": "Bestellung Konfigurationsänderung",
                       "value": "17118"
                     },
                     {
+                      "enum": "BESTELLUNG_AENDERUNG_PROGNOSEGRUNDLAGE",
                       "name": "Bestellung Änderung Prognosegrundlage",
                       "value": "17120"
                     },
                     {
+                      "enum": "BESTELLUNG_AENDERUNG",
                       "name": "Bestellung Änderung",
                       "value": "17121"
                     },
                     {
+                      "enum": "REKLAMATION_DEFINITION",
                       "name": "Reklamation einer Definition",
                       "value": "17122"
                     },
                     {
+                      "enum": "BESTELLUNG_AENDERUNG_ZAEHLZEITDEFINITION",
                       "name": "Bestellung Änderung Zählzeitdefinition",
                       "value": "17123"
                     },
                     {
+                      "enum": "ANFRAGE_STAMMDATEN_MESSLOKATION",
                       "name": "Anfrage Stammdaten Messlokation",
                       "value": "17126"
                     },
                     {
+                      "enum": "REKLAMATION_KONFIGURATION",
                       "name": "Reklamation einer Konfiguration",
                       "value": "17128"
                     },
                     {
+                      "enum": "BESTELLUNG_BEENDIGUNG_KONFIGURATION",
                       "name": "Bestellung Beendigung einer Konfiguration",
                       "value": "17129"
                     },
                     {
+                      "enum": "BESTELLUNG_AENDERUNG_KONFIGURATION",
                       "name": "Bestellung Änderung einer Konfiguration",
                       "value": "17130"
                     },
                     {
+                      "enum": "BESTELLUNG_ANGEBOTS_KONFIGURATION",
                       "name": "Bestellung eines Angebots einer Konfiguration",
                       "value": "17131"
                     },
                     {
+                      "enum": "ANFRAGE_STAMMDATEN",
                       "name": "Anfrage Stammdaten",
                       "value": "17132"
                     },
                     {
+                      "enum": "BESTELLUNG_AENDERUNG_ABRECHNUNGSDATEN",
                       "name": "Bestellung Änderung Abrechnungsdaten",
                       "value": "17133"
                     },
                     {
+                      "enum": "EINRICHTUNG_KONFIGURATION_AUFGRUND_ZUORDNUNG_LF_NB_MSB",
                       "name": "Einrichtung Konfiguration aufgrund Zuordnung LF von NB an MSB",
                       "value": "17134"
                     },
                     {
+                      "enum": "EINRICHTUNG_KONFIGURATION_AUFGRUND_ZUORDNUNG_LF_MSB_MSB",
                       "name": "Einrichtung Konfiguration aufgrund Zuordnung LF von MSB an MSB",
                       "value": "17135"
                     },
                     {
+                      "enum": "ANFORDERUNG_NORMIERTER_PROFILE_PROFILSCHAREN",
                       "name": "Anforderung normierter Profile/Profilscharen",
                       "value": "17201"
                     },
                     {
+                      "enum": "ANFORDERUNG_LIEFERANTENCLEARINGLISTE",
                       "name": "Anforderung Lieferantenclearingliste",
                       "value": "17202"
                     },
                     {
+                      "enum": "ANFORDERUNG_BILANZKREISZUORDNUNGSLISTE",
                       "name": "Anforderung Bilanzkreiszuordnungsliste",
                       "value": "17203"
                     },
                     {
+                      "enum": "ANFORDERUNG_CLEARINGLISTE_BAS",
                       "name": "Anforderung Clearingliste BAS",
                       "value": "17204"
                     },
                     {
+                      "enum": "ANFORDERUNG_CLEARINGLISTE_DZR",
                       "name": "Anforderung Clearingliste DZR",
                       "value": "17205"
                     },
                     {
+                      "enum": "ANFORDERUNG_BILANZIERUNGSGEBIETSCLEARINGLISTE",
                       "name": "Anforderung Bilanzierungsgebietsclearingliste",
                       "value": "17206"
                     },
                     {
+                      "enum": "BESTELLUNG_BK_SZR_AGGREGATIONSEBENE_RZ",
                       "name": "Ab-/Bestellung BK-SZR auf Aggregationsebene RZ",
                       "value": "17207"
                     },
                     {
+                      "enum": "ANFORDERUNG_CLEARINGLISTE_UENB_DZR",
                       "name": "Anforderung Clearingliste ÜNB-DZR",
                       "value": "17208"
                     },
                     {
+                      "enum": "ANFORDERUNG_AUSFALLARBEIT",
                       "name": "Anforderung Ausfallarbeit",
                       "value": "17209"
                     },
                     {
+                      "enum": "ANFORDERUNG_LIEFERANTENAUSFALLARBEITSCLEARINGLISTE",
                       "name": "Anforderung Lieferantenausfallarbeitsclearingliste",
                       "value": "17210"
                     },
                     {
+                      "enum": "REKLAMATION_PROFILE_PROFILSCHAREN",
                       "name": "Reklamation Profile bzw. Profilscharen",
                       "value": "17211"
                     },
                     {
+                      "enum": "ANFORDERUNG_ABO",
                       "name": "Anforderung Abo",
                       "value": "17301"
                     }
@@ -226,6 +275,7 @@
     "sg2": {
       "children": {
         "sg5_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -237,8 +287,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -246,6 +299,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
                   "type": "code"
                 },
                 {
@@ -257,8 +311,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Kontakt",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -276,36 +332,50 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939] [147]) ∨ ([940] [148])) ∧ [567]",
                       "id": "3148",
                       "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -330,8 +400,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -339,13 +412,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [61]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -356,18 +432,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -383,8 +465,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -392,13 +477,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [61]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -409,18 +497,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -436,8 +530,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "LIEFERANSCHRIFT",
                   "name": "Lieferanschrift",
                   "value": "DP"
                 }
@@ -445,6 +542,7 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             }
           ],
@@ -454,8 +552,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "MELDEPUNKT",
                   "name": "Meldepunkt",
                   "value": "172"
                 }
@@ -463,13 +564,16 @@
               "id": "3227",
               "index": 0,
               "name": "Ortsangabe, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [950] [521]",
                   "id": "3225",
                   "name": "Identifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -500,8 +604,11 @@
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ZAEHLZEITDEFINITION",
                   "name": "Zählzeitdefinition",
                   "value": "Z42"
                 }
@@ -530,138 +637,172 @@
             {
               "codes": [
                 {
+                  "enum": "PROZESSDATENBERICHT",
                   "name": "Prozessdatenbericht",
                   "value": "7"
                 },
                 {
+                  "enum": "BK_ZUORDNUNGSLISTE",
                   "name": "Bilanzkreiszuordnungsliste",
                   "value": "E40"
                 },
                 {
+                  "enum": "CLEARINGLISTE",
                   "name": "Clearingliste",
                   "value": "Z05"
                 },
                 {
+                  "enum": "ZEITREIHEN_RAHMEN_BILANZKREISABRECHNUNG",
                   "name": "Zeitreihen im Rahmen der Bilanzkreisabrechnung",
                   "value": "BK"
                 },
                 {
+                  "enum": "GERAETEUEBERNAHME",
                   "name": "Geräteübernahme",
                   "value": "Z10"
                 },
                 {
+                  "enum": "WEITERVERPFLICHTUNG_BETRIEB_MESSLOKATION",
                   "name": "Weiterverpflichtung zum Betrieb der Messlokation",
                   "value": "Z11"
                 },
                 {
+                  "enum": "AENDERUNG_TECHNIK_LOKATION",
                   "name": "Änderung der Technik der Lokation",
                   "value": "Z12"
                 },
                 {
+                  "enum": "GERAETEWECHSELABSICHT",
                   "name": "Gerätewechselabsicht",
                   "value": "Z13"
                 },
                 {
+                  "enum": "STAMMDATEN_MALO_MELO",
                   "name": "Stammdaten der Markt- oder Messlokation",
                   "value": "Z14"
                 },
                 {
+                  "enum": "NORMIERTES_PROFIL_PROFILSCHAR",
                   "name": "normiertes Profil/Profilschar",
                   "value": "Z19"
                 },
                 {
+                  "enum": "BILANZIERTE_MENGE_MMMA",
                   "name": "Bilanzierte Menge (MMMA)",
                   "value": "Z23"
                 },
                 {
+                  "enum": "ALLOKATIONSLISTE_MMMA",
                   "name": "Allokationsliste (MMMA)",
                   "value": "Z24"
                 },
                 {
+                  "enum": "ENERGIEMENGE_LEISTUNGSMAXIMUM",
                   "name": "Energiemenge und Leistungsmaximum",
                   "value": "Z28"
                 },
                 {
+                  "enum": "ABRECHNUNG_MESSSTELLENBETRIEBS_MSB_LF",
                   "name": "Abrechnung des Messstellenbetriebs vom MSB an den LF",
                   "value": "Z29"
                 },
                 {
+                  "enum": "AENDERUNG_PROGNOSEGRUNDLAGE",
                   "name": "Änderung Prognosegrundlage",
                   "value": "Z30"
                 },
                 {
+                  "enum": "AENDERUNG_GERAETEKONFIGURATION",
                   "name": "Änderung Gerätekonfiguration",
                   "value": "Z31"
                 },
                 {
+                  "enum": "REKLAMATION_WERTEN",
                   "name": "Reklamation von Werten",
                   "value": "Z34"
                 },
                 {
+                  "enum": "REDISPATCH_EINZELZEITREIHE_AUSFALLARBEIT",
                   "name": "Redispatch Einzelzeitreihe Ausfallarbeit",
                   "value": "Z45"
                 },
                 {
+                  "enum": "LASTGANG_MARKTLOKATION_TRANCHE",
                   "name": "Lastgang Marktlokation, Tranche",
                   "value": "Z48"
                 },
                 {
+                  "enum": "SPERRUNG",
                   "name": "Sperrung",
                   "value": "Z51"
                 },
                 {
+                  "enum": "ENTSPERRUNG",
                   "name": "Entsperrung",
                   "value": "Z52"
                 },
                 {
+                  "enum": "REKLAMATION_UEBERSICHT_DEFINITIONEN_DEFINITION",
                   "name": "Reklamation der Übersicht der Definitionen oder einer Definition",
                   "value": "Z55"
                 },
                 {
+                  "enum": "AENDERUNG_INDIVIDUELLER_KONFIGURATION",
                   "name": "Änderung individueller Konfiguration",
                   "value": "Z56"
                 },
                 {
+                  "enum": "UEBERMITTLUNG_WERTEN_ESA",
                   "name": "Übermittlung von Werten an ESA",
                   "value": "Z57"
                 },
                 {
+                  "enum": "REKLAMATION_PROFIL_PROFILSCHAR",
                   "name": "Reklamation Profil/Profilschar",
                   "value": "Z58"
                 },
                 {
+                  "enum": "STAMMDATEN_MARKTLOKATION",
                   "name": "Stammdaten der Marktlokation",
                   "value": "Z61"
                 },
                 {
+                  "enum": "STAMMDATEN_MESSLOKATION",
                   "name": "Stammdaten der Messlokation",
                   "value": "Z62"
                 },
                 {
+                  "enum": "AENDERUNG",
                   "name": "Änderung",
                   "value": "Z68"
                 },
                 {
+                  "enum": "BEENDIGUNG_KONFIGURATION",
                   "name": "Beendigung einer Konfiguration",
                   "value": "Z72"
                 },
                 {
+                  "enum": "BESTELLUNG_KONFIGURATION",
                   "name": "Bestellung einer Konfiguration",
                   "value": "Z73"
                 },
                 {
+                  "enum": "BESTELLUNG_ANGEBOTS_KONFIGURATION",
                   "name": "Bestellung eines Angebots einer Konfiguration",
                   "value": "Z74"
                 },
                 {
+                  "enum": "REKLAMATION_KONFIGURATION",
                   "name": "Reklamation einer Konfiguration",
                   "value": "Z76"
                 },
                 {
+                  "enum": "BESTELLUNG_AENDERUNG_ABRECHNUNGSDATEN",
                   "name": "Bestellung Änderung Abrechnungsdaten",
                   "value": "Z91"
                 },
                 {
+                  "enum": "EINRICHTUNG_KONFIGURATION_AUFGRUND_ZUORDNUNG_LF",
                   "name": "Einrichtung Konfiguration aufgrund Zuordnung LF",
                   "value": "Z92"
                 }
@@ -700,6 +841,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -718,6 +860,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -749,6 +892,7 @@
             {
               "codes": [
                 {
+                  "enum": "BESTELLUNG",
                   "name": "Bestellung",
                   "value": "ORDERS"
                 }
@@ -761,6 +905,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -773,6 +918,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2009_B",
                   "name": "Ausgabe 2009 - B",
                   "value": "09B"
                 }
@@ -785,6 +931,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -797,6 +944,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_8",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "1.4a"
                 }
@@ -820,6 +968,7 @@
         {
           "codes": [
             {
+              "enum": "TRENNUNG_POSITIONS_SUMMENTEIL",
               "name": "Trennung von Positions- und Summenteil",
               "value": "S"
             }

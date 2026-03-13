@@ -10,8 +10,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -19,13 +22,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [3]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -36,18 +42,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -63,8 +75,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "INFORMATIONSKONTAKT",
                   "name": "Informationsstelle",
                   "value": "IC"
                 }
@@ -72,6 +87,7 @@
               "id": "3139",
               "index": 0,
               "name": "Funktion des Ansprechpartners, Code",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
@@ -83,8 +99,10 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "id": "3412",
                   "name": "Abteilung oder Bearbeiter",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "data"
                 }
@@ -102,36 +120,50 @@
             {
               "components": [
                 {
+                  "ahb_status": "X (([939][21]) ∨ ([940][22])) ∧ [508]",
                   "id": "3148",
                   "name": "Kommunikationsadresse, Identifikation",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X [1P0..1]",
                   "codes": [
                     {
+                      "ahb_status": "X [1P0..1]",
+                      "enum": "EMAIL",
                       "name": "E-Mail",
                       "value": "EM"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
+                      "enum": "TELEFAX",
                       "name": "Telefax",
                       "value": "FX"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
+                      "enum": "TELEFON",
                       "name": "Telefon",
                       "value": "TE"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
+                      "enum": "WEITERES_TELEFON",
                       "name": "weiteres Telefon",
                       "value": "AJ"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
+                      "enum": "HANDY",
                       "name": "Handy",
                       "value": "AL"
                     }
                   ],
                   "id": "3155",
                   "name": "Art des Kommunikationsmittels, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -147,8 +179,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -156,13 +191,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [3]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -173,18 +211,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -211,14 +255,19 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "id": "4465",
                   "index": 0,
                   "name": "Code des Prüfschritts",
+                  "parent_group_ahb_status": "Muss",
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X [492]",
                   "codes": [
                     {
+                      "ahb_status": "X [492]",
+                      "enum": "CODELISTE_STROM_NR_S_0108",
                       "name": "Codeliste Strom Nr. S_0108",
                       "value": "S_0108"
                     }
@@ -226,6 +275,7 @@
                   "id": "1082",
                   "index": 1,
                   "name": "Positionsnummer",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 }
               ],
@@ -236,6 +286,7 @@
           "source_group": "SG3"
         },
         "sg3_s_0108": {
+          "ahb_status": "X [492]",
           "discriminator": {
             "element": "1082",
             "segment": "AJT",
@@ -247,14 +298,19 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "id": "4465",
                   "index": 0,
                   "name": "Code des Prüfschritts",
+                  "parent_group_ahb_status": "Muss",
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X [492]",
                   "codes": [
                     {
+                      "ahb_status": "X [492]",
+                      "enum": "CODELISTE_STROM_NR_S_0108",
                       "name": "Codeliste Strom Nr. S_0108",
                       "value": "S_0108"
                     }
@@ -262,6 +318,7 @@
                   "id": "1082",
                   "index": 1,
                   "name": "Positionsnummer",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 }
               ],
@@ -271,8 +328,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ALLGEMEINE_HINWEISE",
                       "name": "Zusätzliche Informationen (für allgemeine Hinweise)",
                       "value": "ACB"
                     }
@@ -280,6 +340,7 @@
                   "id": "4451",
                   "index": 0,
                   "name": "Textbezug, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
@@ -304,8 +365,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "id": "4440",
                       "name": "Freier Text",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     }
@@ -332,18 +395,24 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "LIEFERSCHEIN_GRUND_ARBEITSPREIS",
                       "name": "Lieferschein Grund- / Arbeitspreis",
                       "value": "Z41"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "LIEFERSCHEIN_ARBEITS_LEISTUNGSPREIS",
                       "name": "Lieferschein Arbeits- / Leistungspreis",
                       "value": "Z42"
                     }
                   ],
                   "id": "1001",
                   "name": "Dokumentenname, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 }
@@ -355,8 +424,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [506]",
                   "id": "1004",
                   "name": "Rechnungsnummer der abgelehnten Rechnung oder Dokumentennummer des abgelehnten Lieferscheins",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -384,10 +455,12 @@
             {
               "codes": [
                 {
+                  "enum": "BELASTUNGSANZEIGE",
                   "name": "Belastungsanzeige",
                   "value": "456"
                 },
                 {
+                  "enum": "MSCONS_INVOIC_UNTERSTUETZT",
                   "name": "MSCONS, die eine INVOIC unterstützt",
                   "value": "739"
                 }
@@ -426,6 +499,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -444,6 +518,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -469,6 +544,7 @@
             {
               "codes": [
                 {
+                  "enum": "PRUEFIDENTIFIKATOR",
                   "name": "Prüfidentifikator",
                   "value": "Z13"
                 }
@@ -481,10 +557,12 @@
             {
               "codes": [
                 {
+                  "enum": "PRUEFIDENTIFIKATOR",
                   "name": "Prüfidentifikator",
                   "value": "29001"
                 },
                 {
+                  "enum": "PRUEFIDENTIFIKATOR_2",
                   "name": "Prüfidentifikator",
                   "value": "29002"
                 }
@@ -516,6 +594,7 @@
             {
               "codes": [
                 {
+                  "enum": "HANDELSUNSTIMMIGKEIT",
                   "name": "Handelsunstimmigkeit",
                   "value": "COMDIS"
                 }
@@ -528,6 +607,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -540,6 +620,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2017_A",
                   "name": "Ausgabe 2017 - A",
                   "value": "17A"
                 }
@@ -552,6 +633,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -564,6 +646,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_22",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "1.0g"
                 }

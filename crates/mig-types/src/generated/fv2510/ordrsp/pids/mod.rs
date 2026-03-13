@@ -13,6 +13,7 @@ pub mod pid_19118;
 pub mod pid_19119;
 pub mod pid_19120;
 pub mod pid_19121;
+pub mod pid_##alt##;
 pub mod pid_19123;
 pub mod pid_19124;
 pub mod pid_19127;

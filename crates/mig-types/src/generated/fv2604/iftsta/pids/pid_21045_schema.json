@@ -4,6 +4,7 @@
     "sg1": {
       "children": {
         "sg2_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -15,8 +16,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -24,6 +28,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
                   "type": "code"
                 },
                 {
@@ -35,8 +40,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Kontakt",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -54,36 +61,50 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939][146]) ∨ ([940][147])) ∧ [534]",
                       "id": "3148",
                       "name": "Nummer / E-Mail Adresse",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "E-Mail",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -108,8 +129,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -117,13 +141,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [27]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -134,18 +161,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -161,8 +194,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -170,13 +206,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [27]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -187,18 +226,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -235,14 +280,18 @@
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "PRIVILEGIERTE_ENERGIEMENGE",
                               "name": "Privilegierte Energiemenge",
                               "value": "Z02"
                             }
                           ],
                           "id": "7008",
                           "name": "Produkt-/Leistungsbeschreibung",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 1,
                           "type": "code"
                         }
@@ -260,32 +309,42 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "VERARBEITUNGSBEGINN",
                               "name": "Verarbeitung, Beginndatum/-zeit",
                               "value": "163"
                             }
                           ],
                           "id": "2005",
                           "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
+                          "ahb_status": "X",
                           "id": "2380",
                           "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 1,
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "CCYYMMDDHHMMZZZ",
                               "name": "CCYYMMDDHHMMZZZ",
                               "value": "303"
                             }
                           ],
                           "id": "2379",
                           "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 2,
                           "type": "code"
                         }
@@ -303,32 +362,42 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "VERARBEITUNGSENDE",
                               "name": "Verarbeitung, Endedatum/-zeit",
                               "value": "164"
                             }
                           ],
                           "id": "2005",
                           "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
+                          "ahb_status": "X",
                           "id": "2380",
                           "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 1,
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "CCYYMMDDHHMMZZZ",
                               "name": "CCYYMMDDHHMMZZZ",
                               "value": "303"
                             }
                           ],
                           "id": "2379",
                           "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 2,
                           "type": "code"
                         }
@@ -346,32 +415,42 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "ERREICHTE_MENGE_ZEITINTERVALL",
                               "name": "Erreichte Menge in dem Zeitintervall",
                               "value": "136"
                             }
                           ],
                           "id": "6063",
                           "name": "Menge, Qualifier",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "code"
                         },
                         {
+                          "ahb_status": "X",
                           "id": "6060",
                           "name": "Menge",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 1,
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "KILOWATTSTUNDE",
                               "name": "Kilowattstunde",
                               "value": "KWH"
                             }
                           ],
                           "id": "6411",
                           "name": "Maßeinheit, Code",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 2,
                           "type": "code"
                         }
@@ -396,8 +475,11 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "KUNDE_LF",
                           "name": "Kunde des LF",
                           "value": "Z09"
                         }
@@ -405,6 +487,7 @@
                       "id": "3035",
                       "index": 0,
                       "name": "Beteiligter, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "type": "code"
                     },
                     {
@@ -436,8 +519,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "id": "3036",
                           "name": "Name",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "data"
                         },
@@ -466,18 +551,24 @@
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X",
                           "codes": [
                             {
+                              "ahb_status": "X",
+                              "enum": "PERSONENNAME",
                               "name": "Struktur von Personennamen",
                               "value": "Z01"
                             },
                             {
+                              "ahb_status": "X",
+                              "enum": "FIRMENBEZEICHNUNG",
                               "name": "Struktur der Firmenbezeichnung",
                               "value": "Z02"
                             }
                           ],
                           "id": "3045",
                           "name": "Format für den Namen des Beteiligten, Code",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 5,
                           "type": "code"
                         }
@@ -499,9 +590,11 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X [903]",
                       "id": "1496",
                       "index": 0,
                       "name": "Positionsnummer",
+                      "parent_group_ahb_status": "Soll [1]",
                       "type": "data"
                     }
                   ],
@@ -511,8 +604,11 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "ALLGEMEINE_HINWEISE",
                           "name": "Zusätzliche Informationen (für allgemeine Hinweise)",
                           "value": "ACB"
                         }
@@ -520,6 +616,7 @@
                       "id": "4451",
                       "index": 0,
                       "name": "Textbezug, Qualifier",
+                      "parent_group_ahb_status": "Soll [1]",
                       "type": "code"
                     },
                     {
@@ -544,8 +641,10 @@
                     {
                       "components": [
                         {
+                          "ahb_status": "X",
                           "id": "4440",
                           "name": "Freier Text",
+                          "parent_group_ahb_status": "Soll [1]",
                           "sub_index": 0,
                           "type": "data"
                         },
@@ -596,14 +695,18 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "GRUND_PRIVILEGIERUNG_ENFG",
                           "name": "Grund der Privilegierung nach EnFG",
                           "value": "Z41"
                         }
                       ],
                       "id": "9015",
                       "name": "Statuskategorie, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -628,46 +731,66 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "PARAGRAPH_21_ENFG_STROMSPEICHER_VERLUSTENERGIE",
                           "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
                           "value": "ZU5"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "PARAGRAPH_22_ENFG_ELEKTRISCH_ANGETRIEBENE_WAERMEPUMPEN",
                           "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
                           "value": "ZU6"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "PARAGRAPH_23_ENFG_UMLAGEERHEBUNG_ANLAGEN_VERSTROMUNG",
                           "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
                           "value": "ZU7"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "PARAGRAPHPARAGRAPH_25_27_ENFG_HERSTELLUNG_GRUENEN",
                           "name": "§§ 25 - 27 EnFG Herstellung von Grünen Wasserstoff",
                           "value": "ZU8"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "PARAGRAPHPARAGRAPH_30_35_ENFG_STROMKOSTENINTENSIVE",
                           "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
                           "value": "ZU9"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "PARAGRAPH_36_ENFG_HERSTELLUNG_WASSERSTOFF",
                           "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
                           "value": "ZV0"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "PARAGRAPH_37_ENFG_SCHIENENBAHNEN",
                           "name": "§ 37 EnFG Schienenbahnen",
                           "value": "ZV1"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "PARAGRAPH_38_ENFG_ELEKTRISCHE_BETRIEBENE_BUSSEN",
                           "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
                           "value": "ZV2"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "PARAGRAPH_39_ENFG_LANDSTROMANLAGEN",
                           "name": "§ 39 EnFG Landstromanlagen",
                           "value": "ZV3"
                         }
                       ],
                       "id": "9013",
                       "name": "Statusanlass, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -679,46 +802,66 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X [143]",
                       "codes": [
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_21_ENFG_STROMSPEICHER_VERLUSTENERGIE",
                           "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
                           "value": "ZU5"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_22_ENFG_ELEKTRISCH_ANGETRIEBENE_WAERMEPUMPEN",
                           "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
                           "value": "ZU6"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_23_ENFG_UMLAGEERHEBUNG_ANLAGEN_VERSTROMUNG",
                           "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
                           "value": "ZU7"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPHPARAGRAPH_25_27_ENFG_HERSTELLUNG_GRUENEN",
                           "name": "§§ 25 - 27 EnFG Herstellung von Grünen Wasserstoff",
                           "value": "ZU8"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPHPARAGRAPH_30_35_ENFG_STROMKOSTENINTENSIVE",
                           "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
                           "value": "ZU9"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_36_ENFG_HERSTELLUNG_WASSERSTOFF",
                           "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
                           "value": "ZV0"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_37_ENFG_SCHIENENBAHNEN",
                           "name": "§ 37 EnFG Schienenbahnen",
                           "value": "ZV1"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_38_ENFG_ELEKTRISCHE_BETRIEBENE_BUSSEN",
                           "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
                           "value": "ZV2"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_39_ENFG_LANDSTROMANLAGEN",
                           "name": "§ 39 EnFG Landstromanlagen",
                           "value": "ZV3"
                         }
                       ],
                       "id": "9013",
                       "name": "Statusanlass, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -730,46 +873,66 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X [143]",
                       "codes": [
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_21_ENFG_STROMSPEICHER_VERLUSTENERGIE",
                           "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
                           "value": "ZU5"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_22_ENFG_ELEKTRISCH_ANGETRIEBENE_WAERMEPUMPEN",
                           "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
                           "value": "ZU6"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_23_ENFG_UMLAGEERHEBUNG_ANLAGEN_VERSTROMUNG",
                           "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
                           "value": "ZU7"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPHPARAGRAPH_25_27_ENFG_HERSTELLUNG_GRUENEN",
                           "name": "§§ 25 - 27 EnFG Herstellung von Grünen Wasserstoff",
                           "value": "ZU8"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPHPARAGRAPH_30_35_ENFG_STROMKOSTENINTENSIVE",
                           "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
                           "value": "ZU9"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_36_ENFG_HERSTELLUNG_WASSERSTOFF",
                           "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
                           "value": "ZV0"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_37_ENFG_SCHIENENBAHNEN",
                           "name": "§ 37 EnFG Schienenbahnen",
                           "value": "ZV1"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_38_ENFG_ELEKTRISCHE_BETRIEBENE_BUSSEN",
                           "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
                           "value": "ZV2"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_39_ENFG_LANDSTROMANLAGEN",
                           "name": "§ 39 EnFG Landstromanlagen",
                           "value": "ZV3"
                         }
                       ],
                       "id": "9013",
                       "name": "Statusanlass, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -781,46 +944,66 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X [143]",
                       "codes": [
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_21_ENFG_STROMSPEICHER_VERLUSTENERGIE",
                           "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
                           "value": "ZU5"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_22_ENFG_ELEKTRISCH_ANGETRIEBENE_WAERMEPUMPEN",
                           "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
                           "value": "ZU6"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_23_ENFG_UMLAGEERHEBUNG_ANLAGEN_VERSTROMUNG",
                           "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
                           "value": "ZU7"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPHPARAGRAPH_25_27_ENFG_HERSTELLUNG_GRUENEN",
                           "name": "§§ 25 - 27 EnFG Herstellung von Grünen Wasserstoff",
                           "value": "ZU8"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPHPARAGRAPH_30_35_ENFG_STROMKOSTENINTENSIVE",
                           "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
                           "value": "ZU9"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_36_ENFG_HERSTELLUNG_WASSERSTOFF",
                           "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
                           "value": "ZV0"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_37_ENFG_SCHIENENBAHNEN",
                           "name": "§ 37 EnFG Schienenbahnen",
                           "value": "ZV1"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_38_ENFG_ELEKTRISCHE_BETRIEBENE_BUSSEN",
                           "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
                           "value": "ZV2"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_39_ENFG_LANDSTROMANLAGEN",
                           "name": "§ 39 EnFG Landstromanlagen",
                           "value": "ZV3"
                         }
                       ],
                       "id": "9013",
                       "name": "Statusanlass, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -832,46 +1015,66 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X [143]",
                       "codes": [
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_21_ENFG_STROMSPEICHER_VERLUSTENERGIE",
                           "name": "§ 21 EnFG Stromspeicher und Verlustenergie",
                           "value": "ZU5"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_22_ENFG_ELEKTRISCH_ANGETRIEBENE_WAERMEPUMPEN",
                           "name": "§ 22 EnFG elektrisch angetriebene Wärmepumpen",
                           "value": "ZU6"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_23_ENFG_UMLAGEERHEBUNG_ANLAGEN_VERSTROMUNG",
                           "name": "§ 23 EnFG Umlageerhebung bei Anlagen zur Verstromung von Kuppelgasen",
                           "value": "ZU7"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPHPARAGRAPH_25_27_ENFG_HERSTELLUNG_GRUENEN",
                           "name": "§§ 25 - 27 EnFG Herstellung von Grünen Wasserstoff",
                           "value": "ZU8"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPHPARAGRAPH_30_35_ENFG_STROMKOSTENINTENSIVE",
                           "name": "§§ 30 - 35 EnFG stromkostenintensive Unternehmen",
                           "value": "ZU9"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_36_ENFG_HERSTELLUNG_WASSERSTOFF",
                           "name": "§ 36 EnFG Herstellung von Wasserstoff in stromkostenintensiven Unternehmen",
                           "value": "ZV0"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_37_ENFG_SCHIENENBAHNEN",
                           "name": "§ 37 EnFG Schienenbahnen",
                           "value": "ZV1"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_38_ENFG_ELEKTRISCHE_BETRIEBENE_BUSSEN",
                           "name": "§ 38 EnFG elektrische betriebene Bussen im Linienverkehr",
                           "value": "ZV2"
                         },
                         {
+                          "ahb_status": "X [143]",
+                          "enum": "PARAGRAPH_39_ENFG_LANDSTROMANLAGEN",
                           "name": "§ 39 EnFG Landstromanlagen",
                           "value": "ZV3"
                         }
                       ],
                       "id": "9013",
                       "name": "Statusanlass, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -889,26 +1092,34 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "PRUEFIDENTIFIKATOR",
                           "name": "Prüfidentifikator",
                           "value": "Z13"
                         }
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "GPKE_PRIVILEGIERUNGSINFORMATION_ENFG",
                           "name": "GPKE / Privilegierungsinformation nach EnFG",
                           "value": "21045"
                         }
                       ],
                       "id": "1154",
                       "name": "Prüfidentifikator",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -926,32 +1137,42 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "GUELTIGKEITSZEITSPANNE",
                           "name": "Gültigkeitszeitspanne",
                           "value": "273"
                         }
                       ],
                       "id": "2005",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Funktion, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "2380",
                       "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "CCYY",
                           "name": "CCYY",
                           "value": "602"
                         }
                       ],
                       "id": "2379",
                       "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 2,
                       "type": "code"
                     }
@@ -973,9 +1194,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X [911]",
               "id": "1490",
               "index": 0,
               "name": "Vorgangsnummer",
+              "parent_group_ahb_status": "Muss",
               "type": "data"
             }
           ],
@@ -985,8 +1208,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "MELDEPUNKT",
                   "name": "Meldepunkt",
                   "value": "172"
                 }
@@ -994,13 +1220,16 @@
               "id": "3227",
               "index": 0,
               "name": "Ortsangabe, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [950] [506]",
                   "id": "3225",
                   "name": "Identifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -1028,30 +1257,37 @@
             {
               "codes": [
                 {
+                  "enum": "MABIS_MELDUNG_EN",
                   "name": "MaBiS Meldung(en)",
                   "value": "Z03"
                 },
                 {
+                  "enum": "WIM_MELDUNG_EN",
                   "name": "WiM Meldung(en)",
                   "value": "Z09"
                 },
                 {
+                  "enum": "GPKE_MELDUNG_EN",
                   "name": "GPKE Meldung(en)",
                   "value": "Z33"
                 },
                 {
+                  "enum": "REDISPATCH_MELDUNG_EN",
                   "name": "Redispatch Meldung(en)",
                   "value": "Z49"
                 },
                 {
+                  "enum": "BEENDIGUNG_KONFIGURATION",
                   "name": "Beendigung einer Konfiguration",
                   "value": "Z72"
                 },
                 {
+                  "enum": "BESTELLUNG_KONFIGURATION",
                   "name": "Bestellung einer Konfiguration",
                   "value": "Z73"
                 },
                 {
+                  "enum": "ENFG_INFORMATIONEN",
                   "name": "EnFG Informationen",
                   "value": "Z86"
                 }
@@ -1090,6 +1326,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -1108,6 +1345,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -1139,6 +1377,7 @@
             {
               "codes": [
                 {
+                  "enum": "MULTIMODALER_STATUSBERICHT",
                   "name": "Multimodaler Statusbericht",
                   "value": "IFTSTA"
                 }
@@ -1151,6 +1390,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -1163,6 +1403,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2018_A",
                   "name": "Ausgabe 2018 - A",
                   "value": "18A"
                 }
@@ -1175,6 +1416,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -1187,6 +1429,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_17",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "2.0g"
                 }

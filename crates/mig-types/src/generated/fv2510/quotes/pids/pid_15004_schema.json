@@ -12,20 +12,26 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ANFRAGE_NUMMER",
                       "name": "Nummer der Anfrage",
                       "value": "AAV"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X [511]",
                   "id": "1154",
                   "name": "Nachrichtennummer",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "data"
                 }
@@ -43,26 +49,34 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRUEFIDENTIFIKATOR",
                       "name": "Prüfidentifikator",
                       "value": "Z13"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ANGEBOT_ANFRAGE_KONFIGURATION",
                       "name": "Angebot zur Anfrage einer Konfiguration",
                       "value": "15004"
                     }
                   ],
                   "id": "1154",
                   "name": "Prüfidentifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -81,6 +95,7 @@
     "sg11": {
       "children": {
         "sg14_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -92,8 +107,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -101,6 +119,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
@@ -112,8 +131,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Kontakt",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -131,36 +152,50 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939] [72]) ∨ ([940] [73])) ∧ [516]",
                       "id": "3148",
                       "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -185,8 +220,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -194,13 +232,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [39]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -211,18 +252,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -238,8 +285,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -247,13 +297,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [39]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -264,18 +317,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -291,8 +350,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "LIEFERANSCHRIFT",
                   "name": "Lieferanschrift",
                   "value": "DP"
                 }
@@ -300,6 +362,7 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             }
           ],
@@ -309,8 +372,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "MELDEPUNKT",
                   "name": "Meldepunkt",
                   "value": "172"
                 }
@@ -318,13 +384,16 @@
               "id": "3227",
               "index": 0,
               "name": "Ortsangabe, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X ([950] [501] ∧ ([50] ∨ [52])) ⊻ ([951] [502] ∧ ([52] ∨ [53])) ⊻ ([960] [512] ∧ ([50] ∨ [51] ∨ [52])) ⊻ ([961] [513] ∧ ([49] ∨ [50] ∨ [51]))",
                   "id": "3225",
                   "name": "Identifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -351,8 +420,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "CODE_SCHALTZEITDEFINITION",
                       "name": "Code der Schaltzeitdefinition",
                       "value": "Z52"
                     }
@@ -360,6 +432,7 @@
                   "id": "7059",
                   "index": 0,
                   "name": "Klassentyp, Code",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
@@ -378,8 +451,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "id": "7037",
                       "name": "Code der Schaltzeitdefinition",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     }
@@ -395,8 +470,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "CODE_LEISTUNGSKURVENDEFINITION",
                       "name": "Code der Leistungskurvendefinition",
                       "value": "Z53"
                     }
@@ -404,6 +482,7 @@
                   "id": "7059",
                   "index": 0,
                   "name": "Klassentyp, Code",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
@@ -422,8 +501,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "id": "7037",
                       "name": "Code der Leistungskurvendefinition",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     }
@@ -439,8 +520,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "AENDERUNGSMOEGLICHKEIT_KONFIGURATION_SMGW",
                       "name": "Änderungsmöglichkeit der Konfiguration im SMGW",
                       "value": "Z54"
                     }
@@ -448,6 +532,7 @@
                   "id": "7059",
                   "index": 0,
                   "name": "Klassentyp, Code",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
@@ -466,18 +551,24 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "SELBSTSTAENDIGE_AENDERUNGSMOEGLICHKEIT_ERFORDERLICH",
                           "name": "selbstständige Änderungsmöglichkeit erforderlich",
                           "value": "ZF7"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "SELBSTSTAENDIGE_AENDERUNGSMOEGLICHKEIT_ERFORDERLICH_2",
                           "name": "selbstständige Änderungsmöglichkeit nicht erforderlich",
                           "value": "ZF8"
                         }
                       ],
                       "id": "7037",
                       "name": "Merkmal, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -493,8 +584,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "SCHWELLWERTE",
                       "name": "Schwellwerte",
                       "value": "Z60"
                     }
@@ -502,6 +596,7 @@
                   "id": "7059",
                   "index": 0,
                   "name": "Klassentyp, Code",
+                  "parent_group_ahb_status": "Muss [2066] ∧ [71]",
                   "type": "code"
                 },
                 {
@@ -520,8 +615,10 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X [70]",
                       "id": "7037",
                       "name": "Messprodukt-Position-Code",
+                      "parent_group_ahb_status": "Muss [2066] ∧ [71]",
                       "sub_index": 0,
                       "type": "data"
                     },
@@ -538,14 +635,18 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [906] ∧ [962]",
                       "id": "7036",
                       "name": "oberer Schwellwert",
+                      "parent_group_ahb_status": "Muss [2066] ∧ [71]",
                       "sub_index": 3,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [906] ∧ [962]",
                       "id": "7036",
                       "name": "unterer Schwellwert",
+                      "parent_group_ahb_status": "Muss [2066] ∧ [71]",
                       "sub_index": 4,
                       "type": "data"
                     }
@@ -570,14 +671,19 @@
         {
           "elements": [
             {
+              "ahb_status": "X [903]",
               "id": "1082",
               "index": 0,
               "name": "Vom Programm vorgegebene Positionsnummer innerhalb einer Anfrage",
+              "parent_group_ahb_status": "Soll [54] ∧ [2060] ∧ [58]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ERFORDERLICHES_PRODUKT_SCHALTZEITDEFINITIONEN",
                   "name": "Erforderliches Produkt Schaltzeitdefinitionen",
                   "value": "Z64"
                 }
@@ -585,6 +691,7 @@
               "id": "1229",
               "index": 1,
               "name": "Handlung, Code",
+              "parent_group_ahb_status": "Soll [54] ∧ [2060] ∧ [58]",
               "type": "code"
             }
           ],
@@ -594,8 +701,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "PRODUKTIDENTIFIKATION",
                   "name": "Produktidentifikation",
                   "value": "5"
                 }
@@ -603,25 +713,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Soll [54] ∧ [2060] ∧ [58]",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [59]",
                   "id": "7140",
                   "name": "Produkt-Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2060] ∧ [58]",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRODUKT",
                       "name": "Produkt",
                       "value": "Z11"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2060] ∧ [58]",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -637,8 +754,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "GRUPPENARTIKEL_ARTIKEL_ID",
                   "name": "Gruppenartikel-ID / Artikel-ID",
                   "value": "Z02"
                 }
@@ -646,25 +766,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Soll [54] ∧ [2060] ∧ [58]",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7140",
                   "name": "Artikel-ID",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2060] ∧ [58]",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ARTIKEL_ID",
                       "name": "Artikel-ID",
                       "value": "Z09"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2060] ∧ [58]",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -680,14 +807,19 @@
         {
           "elements": [
             {
+              "ahb_status": "X [903]",
               "id": "1082",
               "index": 0,
               "name": "Vom Programm vorgegebene Positionsnummer innerhalb einer Anfrage",
+              "parent_group_ahb_status": "Soll [54] ∧ [2061] ∧ ([55] ⊻ [57] ⊻ [58])",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ERFORDERLICHES_PRODUKT_LEISTUNGSKURVENDEFINITIONEN",
                   "name": "Erforderliches Produkt Leistungskurvendefinitionen",
                   "value": "Z65"
                 }
@@ -695,6 +827,7 @@
               "id": "1229",
               "index": 1,
               "name": "Handlung, Code",
+              "parent_group_ahb_status": "Soll [54] ∧ [2061] ∧ ([55] ⊻ [57] ⊻ [58])",
               "type": "code"
             }
           ],
@@ -704,8 +837,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "PRODUKTIDENTIFIKATION",
                   "name": "Produktidentifikation",
                   "value": "5"
                 }
@@ -713,25 +849,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Soll [54] ∧ [2061] ∧ ([55] ⊻ [57] ⊻ [58])",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [60]",
                   "id": "7140",
                   "name": "Produkt-Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2061] ∧ ([55] ⊻ [57] ⊻ [58])",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRODUKT",
                       "name": "Produkt",
                       "value": "Z11"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2061] ∧ ([55] ⊻ [57] ⊻ [58])",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -747,8 +890,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "GRUPPENARTIKEL_ARTIKEL_ID",
                   "name": "Gruppenartikel-ID / Artikel-ID",
                   "value": "Z02"
                 }
@@ -756,25 +902,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Soll [54] ∧ [2061] ∧ ([55] ⊻ [57] ⊻ [58])",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7140",
                   "name": "Artikel-ID",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2061] ∧ ([55] ⊻ [57] ⊻ [58])",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ARTIKEL_ID",
                       "name": "Artikel-ID",
                       "value": "Z09"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2061] ∧ ([55] ⊻ [57] ⊻ [58])",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -790,14 +943,19 @@
         {
           "elements": [
             {
+              "ahb_status": "X [903]",
               "id": "1082",
               "index": 0,
               "name": "Vom Programm vorgegebene Positionsnummer innerhalb einer Anfrage",
+              "parent_group_ahb_status": "Soll [54] ∧ [2062] ∧ ([57] ⊻ [58])",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ERFORDERLICHES_PRODUKT_AD_HOC_STEUERKANAL",
                   "name": "Erforderliches Produkt Ad-hoc-Steuerkanal",
                   "value": "Z66"
                 }
@@ -805,6 +963,7 @@
               "id": "1229",
               "index": 1,
               "name": "Handlung, Code",
+              "parent_group_ahb_status": "Soll [54] ∧ [2062] ∧ ([57] ⊻ [58])",
               "type": "code"
             }
           ],
@@ -814,8 +973,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "PRODUKTIDENTIFIKATION",
                   "name": "Produktidentifikation",
                   "value": "5"
                 }
@@ -823,25 +985,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Soll [54] ∧ [2062] ∧ ([57] ⊻ [58])",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [61]",
                   "id": "7140",
                   "name": "Produkt-Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2062] ∧ ([57] ⊻ [58])",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRODUKT",
                       "name": "Produkt",
                       "value": "Z11"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2062] ∧ ([57] ⊻ [58])",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -857,8 +1026,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "GRUPPENARTIKEL_ARTIKEL_ID",
                   "name": "Gruppenartikel-ID / Artikel-ID",
                   "value": "Z02"
                 }
@@ -866,25 +1038,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Soll [54] ∧ [2062] ∧ ([57] ⊻ [58])",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7140",
                   "name": "Artikel-ID",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2062] ∧ ([57] ⊻ [58])",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ARTIKEL_ID",
                       "name": "Artikel-ID",
                       "value": "Z09"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2062] ∧ ([57] ⊻ [58])",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -900,14 +1079,19 @@
         {
           "elements": [
             {
+              "ahb_status": "X [903]",
               "id": "1082",
               "index": 0,
               "name": "Vom Programm vorgegebene Positionsnummer innerhalb einer Anfrage",
+              "parent_group_ahb_status": "Soll [54] ∧ [2063] ∧ ([55] ⊻ [56] ⊻ [57])",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ERFORDERLICHES_MESSPRODUKT_WERTE_TYP_2_BACKEND",
                   "name": "Erforderliches Messprodukt für Werte nach Typ 2 aus Backend",
                   "value": "Z67"
                 }
@@ -915,6 +1099,7 @@
               "id": "1229",
               "index": 1,
               "name": "Handlung, Code",
+              "parent_group_ahb_status": "Soll [54] ∧ [2063] ∧ ([55] ⊻ [56] ⊻ [57])",
               "type": "code"
             }
           ],
@@ -924,8 +1109,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "PRODUKTIDENTIFIKATION",
                   "name": "Produktidentifikation",
                   "value": "5"
                 }
@@ -933,25 +1121,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Soll [54] ∧ [2063] ∧ ([55] ⊻ [56] ⊻ [57])",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [62]",
                   "id": "7140",
                   "name": "Produkt-Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2063] ∧ ([55] ⊻ [56] ⊻ [57])",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRODUKT",
                       "name": "Produkt",
                       "value": "Z11"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2063] ∧ ([55] ⊻ [56] ⊻ [57])",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -967,8 +1162,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "GRUPPENARTIKEL_ARTIKEL_ID",
                   "name": "Gruppenartikel-ID / Artikel-ID",
                   "value": "Z02"
                 }
@@ -976,25 +1174,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Soll [54] ∧ [2063] ∧ ([55] ⊻ [56] ⊻ [57])",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7140",
                   "name": "Artikel-ID",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2063] ∧ ([55] ⊻ [56] ⊻ [57])",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ARTIKEL_ID",
                       "name": "Artikel-ID",
                       "value": "Z09"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2063] ∧ ([55] ⊻ [56] ⊻ [57])",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -1010,14 +1215,19 @@
         {
           "elements": [
             {
+              "ahb_status": "X [903]",
               "id": "1082",
               "index": 0,
               "name": "Vom Programm vorgegebene Positionsnummer innerhalb einer Anfrage",
+              "parent_group_ahb_status": "Soll [54] ∧ [2064] ∧ [56]",
               "type": "data"
             },
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ERFORDERLICHES_PRODUKT_KONFIGURATIONSERLAUBNIS_WERTE_TYP_2",
                   "name": "Erforderliches Produkt Konfigurationserlaubnis für Werte nach Typ 2 aus SMGW",
                   "value": "Z68"
                 }
@@ -1025,6 +1235,7 @@
               "id": "1229",
               "index": 1,
               "name": "Handlung, Code",
+              "parent_group_ahb_status": "Soll [54] ∧ [2064] ∧ [56]",
               "type": "code"
             }
           ],
@@ -1034,8 +1245,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "PRODUKTIDENTIFIKATION",
                   "name": "Produktidentifikation",
                   "value": "5"
                 }
@@ -1043,25 +1257,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Soll [54] ∧ [2064] ∧ [56]",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [63]",
                   "id": "7140",
                   "name": "Produkt-Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2064] ∧ [56]",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRODUKT",
                       "name": "Produkt",
                       "value": "Z11"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2064] ∧ [56]",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -1077,8 +1298,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "GRUPPENARTIKEL_ARTIKEL_ID",
                   "name": "Gruppenartikel-ID / Artikel-ID",
                   "value": "Z02"
                 }
@@ -1086,25 +1310,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Soll [54] ∧ [2064] ∧ [56]",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7140",
                   "name": "Artikel-ID",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2064] ∧ [56]",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ARTIKEL_ID",
                       "name": "Artikel-ID",
                       "value": "Z09"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Soll [54] ∧ [2064] ∧ [56]",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -1132,22 +1363,27 @@
             {
               "codes": [
                 {
+                  "enum": "ANGEBOT",
                   "name": "Angebot",
                   "value": "310"
                 },
                 {
+                  "enum": "ABRECHNUNG_MESSSTELLENBETRIEBS_MSB_LF",
                   "name": "Abrechnung des Messstellenbetriebs vom MSB an den LF",
                   "value": "Z29"
                 },
                 {
+                  "enum": "UEBERMITTLUNG_WERTEN_ESA",
                   "name": "Übermittlung von Werten an ESA",
                   "value": "Z57"
                 },
                 {
+                  "enum": "BESTELLUNG_ANGEBOTS_KONFIGURATION",
                   "name": "Bestellung eines Angebots einer Konfiguration",
                   "value": "Z74"
                 },
                 {
+                  "enum": "BESTELLUNG_ANGEBOTS_AENDERUNG_TECHNIK_LOKATION",
                   "name": "Bestellung eines Angebots Änderung der Technik der Lokation",
                   "value": "Z93"
                 }
@@ -1186,6 +1422,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -1204,6 +1441,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -1235,26 +1473,32 @@
             {
               "codes": [
                 {
+                  "enum": "KAUF",
                   "name": "Kauf",
                   "value": "Z07"
                 },
                 {
+                  "enum": "NUTZUNGSUEBERLASSUNG",
                   "name": "Nutzungsüberlassung",
                   "value": "Z08"
                 },
                 {
+                  "enum": "ANGEBOT_BASIS_PREISBLATT",
                   "name": "Angebot auf Basis Preisblatt",
                   "value": "Z33"
                 },
                 {
+                  "enum": "INDIVIDUELLES_ANGEBOT",
                   "name": "Individuelles Angebot",
                   "value": "Z34"
                 },
                 {
+                  "enum": "AENDERUNG_KONFIGURATION",
                   "name": "Änderung Konfiguration",
                   "value": "Z55"
                 },
                 {
+                  "enum": "NEUKONFIGURATION",
                   "name": "Neukonfiguration",
                   "value": "Z64"
                 }
@@ -1286,6 +1530,7 @@
             {
               "codes": [
                 {
+                  "enum": "ANGEBOT",
                   "name": "Angebot",
                   "value": "QUOTES"
                 }
@@ -1298,6 +1543,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -1310,6 +1556,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2010_A",
                   "name": "Ausgabe 2010 - A",
                   "value": "10A"
                 }
@@ -1322,6 +1569,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -1334,6 +1582,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_13",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "1.3b"
                 }
@@ -1357,6 +1606,7 @@
         {
           "codes": [
             {
+              "enum": "TRENNUNG_POSITIONS_SUMMENTEIL",
               "name": "Trennung von Positions- und Summenteil",
               "value": "S"
             }

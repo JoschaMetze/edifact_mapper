@@ -1,0 +1,1277 @@
+{
+  "beschreibung": "##alt##",
+  "fields": {
+    "sg1": {
+      "discriminator": {
+        "element": "1153",
+        "segment": "RFF"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "ahb_status": "X",
+                  "codes": [
+                    {
+                      "ahb_status": "X",
+                      "enum": "AUFTRAGSNUMMER_EINKAUF",
+                      "name": "Auftragsnummer (Einkauf)",
+                      "value": "ON"
+                    }
+                  ],
+                  "id": "1153",
+                  "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "ahb_status": "X [529]",
+                  "id": "1154",
+                  "name": "Referenz Nachrichtennummer",
+                  "parent_group_ahb_status": "Muss",
+                  "sub_index": 1,
+                  "type": "data"
+                }
+              ],
+              "composite": "C506",
+              "index": 0,
+              "name": "Referenz"
+            }
+          ],
+          "id": "RFF",
+          "name": "Referenz auf Nachrichtennummer (BGM DE1004) aus der ORDERS bzw. ORDCHG"
+        },
+        {
+          "elements": [
+            {
+              "components": [
+                {
+                  "ahb_status": "X",
+                  "codes": [
+                    {
+                      "ahb_status": "X",
+                      "enum": "PRUEFIDENTIFIKATOR",
+                      "name": "Prüfidentifikator",
+                      "value": "Z13"
+                    }
+                  ],
+                  "id": "1153",
+                  "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
+                  "sub_index": 0,
+                  "type": "code"
+                },
+                {
+                  "codes": [
+                    {
+                      "enum": "BESTELLBESTAETIGUNG",
+                      "name": "Bestellbestätigung",
+                      "value": "19001"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_BESTELLUNG",
+                      "name": "Ablehnung der Bestellung",
+                      "value": "19002"
+                    },
+                    {
+                      "enum": "FORTFUEHRUNGSBESTAETIGUNG_MSBA",
+                      "name": "Fortführungsbestätigung MSBA",
+                      "value": "19003"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_FORTFUEHRUNG",
+                      "name": "Ablehnung Fortführung",
+                      "value": "19004"
+                    },
+                    {
+                      "enum": "AUFTRAGSBESTAETIGUNG_AENDERUNG_MESSLOKATION",
+                      "name": "Auftragsbestätigung der Änderung der Messlokation",
+                      "value": "19005"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_AENDERUNG_MESSLOKATION",
+                      "name": "Ablehnung der Änderung der Messlokation",
+                      "value": "19006"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_ANFORDERUNG_MESSWERTE",
+                      "name": "Ablehnung Anforderung Messwerte",
+                      "value": "19007"
+                    },
+                    {
+                      "enum": "BESTAETIGUNG_BEENDIGUNG_RECHNUNGSABWICKLUNG_MSB_LF",
+                      "name": "Bestätigung Beendigung Rechnungsabwicklung MSB über LF",
+                      "value": "19009"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_BEENDIGUNG_RECHNUNGSABWICKLUNG_MSB_LF",
+                      "name": "Ablehnung Beendigung Rechnungsabwicklung MSB über LF",
+                      "value": "19010"
+                    },
+                    {
+                      "enum": "BESTAETIGUNG_BESTELLUNG_WERTEN_ESA",
+                      "name": "Bestätigung der Ab-/Bestellung von Werten für ESA",
+                      "value": "19011"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_BESTELLUNG_WERTEN_ESA",
+                      "name": "Ablehnung der Ab-/Bestellung von Werten für ESA",
+                      "value": "19012"
+                    },
+                    {
+                      "enum": "BESTAETIGUNG_STORNIERUNG_BESTELLUNG_ESA",
+                      "name": "Bestätigung der Stornierung einer Bestellung für ESA",
+                      "value": "19013"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_STORNIERUNG_BESTELLUNG_ESA",
+                      "name": "Ablehnung der Stornierung einer Bestellung für ESA",
+                      "value": "19014"
+                    },
+                    {
+                      "enum": "BESTAETIGUNG_GERAETEWECHSELABSICHT",
+                      "name": "Bestätigung Gerätewechselabsicht",
+                      "value": "19015"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_GERAETEWECHSELABSICHT",
+                      "name": "Ablehnung Gerätewechselabsicht",
+                      "value": "19016"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_ANFRAGE_STAMMDATEN",
+                      "name": "Ablehnung Anfrage Stammdaten",
+                      "value": "19101"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_ANFRAGE_WERTE",
+                      "name": "Ablehnung Anfrage Werte",
+                      "value": "19102"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_BRENNWERT_ZUSTANDSZAHL",
+                      "name": "Ablehnung Brennwert und Zustandszahl",
+                      "value": "19103"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_ANFRAGE_MSB_GAS",
+                      "name": "Ablehnung Anfrage vom MSB Gas",
+                      "value": "19104"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_ALLOKATIONSLISTE",
+                      "name": "Ablehnung Allokationsliste",
+                      "value": "19110"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_REKLAMATION_WERTEN",
+                      "name": "Ablehnung der Reklamation von Werten",
+                      "value": "19114"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_ANFORDERUNG_BILANZIERTE_MENGE",
+                      "name": "Ablehnung Anforderung bilanzierte Menge",
+                      "value": "19115"
+                    },
+                    {
+                      "enum": "BESTAETIGUNG_SPERR_ENTSPERRAUFTRAG",
+                      "name": "Bestätigung Sperr-/Entsperrauftrag",
+                      "value": "19116"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_SPERR_ENTSPERRAUFTRAG",
+                      "name": "Ablehnung Sperr-/Entsperrauftrag",
+                      "value": "19117"
+                    },
+                    {
+                      "enum": "BESTAETIGUNG_ANFRAGE_SPERRUNG",
+                      "name": "Bestätigung Anfrage Sperrung",
+                      "value": "19118"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_ANFRAGE_SPERRUNG",
+                      "name": "Ablehnung Anfrage Sperrung",
+                      "value": "19119"
+                    },
+                    {
+                      "enum": "MITTEILUNG_AENDERUNG",
+                      "name": "Mitteilung zur  Änderung",
+                      "value": "19120"
+                    },
+                    {
+                      "enum": "MITTEILUNG_AENDERUNG_PROGNOSEGRUNDLAGE",
+                      "name": "Mitteilung zur Änderung Prognosegrundlage",
+                      "value": "19121"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_REKLAMATION_DEFINITION",
+                      "name": "Ablehnung der Reklamation einer Definition",
+                      "value": "19123"
+                    },
+                    {
+                      "enum": "MITTEILUNG_AENDERUNG_ZAEHLZEITDEFINITION",
+                      "name": "Mitteilung zur Änderung Zählzeitdefinition",
+                      "value": "19124"
+                    },
+                    {
+                      "enum": "MITTEILUNG_KONFIGURATIONSAENDERUNG",
+                      "name": "Mitteilung zur Konfigurationsänderung",
+                      "value": "19127"
+                    },
+                    {
+                      "enum": "BESTAETIGUNG_STORNIERUNG_SPERR_ENTSPERRAUFTRAG",
+                      "name": "Bestätigung Stornierung Sperr-/Entsperrauftrag",
+                      "value": "19128"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_STORNIERUNG_SPERR_ENTSPERRAUFTRAG",
+                      "name": "Ablehnung Stornierung Sperr-/Entsperrauftrag",
+                      "value": "19129"
+                    },
+                    {
+                      "enum": "BEARBEITUNGSSTAND_REKLAMATION_KONFIGURATION",
+                      "name": "Bearbeitungsstand zur Reklamation einer Konfiguration",
+                      "value": "19130"
+                    },
+                    {
+                      "enum": "ANTWORT_BESTELLUNG_BEENDIGUNG_KONFIGURATION",
+                      "name": "Antwort auf Bestellung Beendigung einer Konfiguration",
+                      "value": "19131"
+                    },
+                    {
+                      "enum": "MITTEILUNG_BESTELLUNG_AENDERUNG_KONFIGURATION",
+                      "name": "Mitteilung zur Bestellung Änderung einer Konfiguration",
+                      "value": "19132"
+                    },
+                    {
+                      "enum": "BEARBEITUNGSSTAND_BESTELLUNG_ABRECHNUNGSDATEN",
+                      "name": "Bearbeitungsstand Bestellung Abrechnungsdaten",
+                      "value": "19133"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_BESTELLUNG_AGGREGATIONSEBENE",
+                      "name": "Ablehnung Ab-/Bestellung der Aggregationsebene",
+                      "value": "19204"
+                    },
+                    {
+                      "enum": "ABLEHNUNG_ABO",
+                      "name": "Ablehnung Abo",
+                      "value": "19301"
+                    },
+                    {
+                      "enum": "BESTAETIGUNG_ENDE_ABO",
+                      "name": "Bestätigung Ende Abo",
+                      "value": "19302"
+                    }
+                  ],
+                  "id": "1154",
+                  "name": "Prüfidentifikator",
+                  "sub_index": 1,
+                  "type": "code"
+                }
+              ],
+              "composite": "C506",
+              "index": 0,
+              "name": "Referenz"
+            }
+          ],
+          "id": "RFF",
+          "name": "Prüfidentifikator"
+        }
+      ],
+      "source_group": "SG1"
+    },
+    "sg2": {
+      "discriminator": {
+        "element": "1082",
+        "segment": "AJT"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "ahb_status": "X",
+              "id": "4465",
+              "index": 0,
+              "name": "Code des Prüfschritts",
+              "parent_group_ahb_status": "Muss",
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "enum": "EBD_NR_E_0003",
+                  "name": "EBD Nr. E_0003",
+                  "value": "E_0003"
+                },
+                {
+                  "enum": "EBD_NR_E_0022",
+                  "name": "EBD Nr. E_0022",
+                  "value": "E_0022"
+                },
+                {
+                  "enum": "EBD_NR_E_0206",
+                  "name": "EBD Nr. E_0206",
+                  "value": "E_0206"
+                },
+                {
+                  "enum": "EBD_NR_E_0209",
+                  "name": "EBD Nr. E_0209",
+                  "value": "E_0209"
+                },
+                {
+                  "enum": "EBD_NR_E_0249",
+                  "name": "EBD Nr. E_0249",
+                  "value": "E_0249"
+                },
+                {
+                  "enum": "EBD_NR_E_0250",
+                  "name": "EBD Nr. E_0250",
+                  "value": "E_0250"
+                },
+                {
+                  "enum": "EBD_NR_E_0254",
+                  "name": "EBD Nr. E_0254",
+                  "value": "E_0254"
+                },
+                {
+                  "enum": "EBD_NR_E_0256",
+                  "name": "EBD Nr. E_0256",
+                  "value": "E_0256"
+                },
+                {
+                  "enum": "EBD_NR_E_0257",
+                  "name": "EBD Nr. E_0257",
+                  "value": "E_0257"
+                },
+                {
+                  "enum": "EBD_NR_E_0441",
+                  "name": "EBD Nr. E_0441",
+                  "value": "E_0441"
+                },
+                {
+                  "enum": "EBD_NR_E_0442",
+                  "name": "EBD Nr. E_0442",
+                  "value": "E_0442"
+                },
+                {
+                  "enum": "EBD_NR_E_0443",
+                  "name": "EBD Nr. E_0443",
+                  "value": "E_0443"
+                },
+                {
+                  "enum": "EBD_NR_E_0468",
+                  "name": "EBD Nr. E_0468",
+                  "value": "E_0468"
+                },
+                {
+                  "enum": "EBD_NR_E_0470",
+                  "name": "EBD Nr. E_0470",
+                  "value": "E_0470"
+                },
+                {
+                  "enum": "EBD_NR_E_0488",
+                  "name": "EBD Nr. E_0488",
+                  "value": "E_0488"
+                },
+                {
+                  "enum": "EBD_NR_E_0497",
+                  "name": "EBD Nr. E_0497",
+                  "value": "E_0497"
+                },
+                {
+                  "enum": "EBD_NR_E_0523",
+                  "name": "EBD Nr. E_0523",
+                  "value": "E_0523"
+                },
+                {
+                  "enum": "EBD_NR_E_0526",
+                  "name": "EBD Nr. E_0526",
+                  "value": "E_0526"
+                },
+                {
+                  "enum": "EBD_NR_E_0527",
+                  "name": "EBD Nr. E_0527",
+                  "value": "E_0527"
+                },
+                {
+                  "enum": "EBD_NR_E_0533",
+                  "name": "EBD Nr. E_0533",
+                  "value": "E_0533"
+                },
+                {
+                  "enum": "EBD_NR_E_0538",
+                  "name": "EBD Nr. E_0538",
+                  "value": "E_0538"
+                },
+                {
+                  "enum": "EBD_NR_E_0539",
+                  "name": "EBD Nr. E_0539",
+                  "value": "E_0539"
+                },
+                {
+                  "enum": "EBD_NR_E_0540",
+                  "name": "EBD Nr. E_0540",
+                  "value": "E_0540"
+                },
+                {
+                  "enum": "EBD_NR_E_0544",
+                  "name": "EBD Nr. E_0544",
+                  "value": "E_0544"
+                },
+                {
+                  "enum": "EBD_NR_E_0545",
+                  "name": "EBD Nr. E_0545",
+                  "value": "E_0545"
+                },
+                {
+                  "enum": "EBD_NR_E_0546",
+                  "name": "EBD Nr. E_0546",
+                  "value": "E_0546"
+                },
+                {
+                  "enum": "EBD_NR_E_0547",
+                  "name": "EBD Nr. E_0547",
+                  "value": "E_0547"
+                },
+                {
+                  "enum": "EBD_NR_E_0548",
+                  "name": "EBD Nr. E_0548",
+                  "value": "E_0548"
+                },
+                {
+                  "enum": "EBD_NR_E_0549",
+                  "name": "EBD Nr. E_0549",
+                  "value": "E_0549"
+                },
+                {
+                  "enum": "EBD_NR_E_0550",
+                  "name": "EBD Nr. E_0550",
+                  "value": "E_0550"
+                },
+                {
+                  "enum": "EBD_NR_E_0551",
+                  "name": "EBD Nr. E_0551",
+                  "value": "E_0551"
+                },
+                {
+                  "enum": "EBD_NR_E_0552",
+                  "name": "EBD Nr. E_0552",
+                  "value": "E_0552"
+                },
+                {
+                  "enum": "EBD_NR_E_0553",
+                  "name": "EBD Nr. E_0553",
+                  "value": "E_0553"
+                },
+                {
+                  "enum": "EBD_NR_E_0554",
+                  "name": "EBD Nr. E_0554",
+                  "value": "E_0554"
+                },
+                {
+                  "enum": "EBD_NR_E_0595",
+                  "name": "EBD Nr. E_0595",
+                  "value": "E_0595"
+                },
+                {
+                  "enum": "EBD_NR_E_0800",
+                  "name": "EBD Nr. E_0800",
+                  "value": "E_0800"
+                },
+                {
+                  "enum": "EBD_NR_E_1000",
+                  "name": "EBD Nr. E_1000",
+                  "value": "E_1000"
+                },
+                {
+                  "enum": "EBD_NR_E_1001",
+                  "name": "EBD Nr. E_1001",
+                  "value": "E_1001"
+                },
+                {
+                  "enum": "EBD_NR_E_1004",
+                  "name": "EBD Nr. E_1004",
+                  "value": "E_1004"
+                },
+                {
+                  "enum": "EBD_NR_E_1006",
+                  "name": "EBD Nr. E_1006",
+                  "value": "E_1006"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0001",
+                  "name": "Codeliste Gas Nr. G_0001",
+                  "value": "G_0001"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0015",
+                  "name": "Codeliste Gas Nr. G_0015",
+                  "value": "G_0015"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0049",
+                  "name": "Codeliste Gas Nr. G_0049",
+                  "value": "G_0049"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0050",
+                  "name": "Codeliste Gas Nr. G_0050",
+                  "value": "G_0050"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0059",
+                  "name": "Codeliste Gas Nr. G_0059",
+                  "value": "G_0059"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0060",
+                  "name": "Codeliste Gas Nr. G_0060",
+                  "value": "G_0060"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0061",
+                  "name": "Codeliste Gas Nr. G_0061",
+                  "value": "G_0061"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0062",
+                  "name": "Codeliste Gas Nr. G_0062",
+                  "value": "G_0062"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0063",
+                  "name": "Codeliste Gas Nr. G_0063",
+                  "value": "G_0063"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0064",
+                  "name": "Codeliste Gas Nr. G_0064",
+                  "value": "G_0064"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0065",
+                  "name": "Codeliste Gas Nr. G_0065",
+                  "value": "G_0065"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0066",
+                  "name": "Codeliste Gas Nr. G_0066",
+                  "value": "G_0066"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0072",
+                  "name": "Codeliste Gas Nr. G_0072",
+                  "value": "G_0072"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0073",
+                  "name": "Codeliste Gas Nr. G_0073",
+                  "value": "G_0073"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0074",
+                  "name": "Codeliste Gas Nr. G_0074",
+                  "value": "G_0074"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0075",
+                  "name": "Codeliste Gas Nr. G_0075",
+                  "value": "G_0075"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0078",
+                  "name": "Codeliste Gas Nr. G_0078",
+                  "value": "G_0078"
+                },
+                {
+                  "enum": "CODELISTE_GAS_NR_G_0082",
+                  "name": "Codeliste Gas Nr. G_0082",
+                  "value": "G_0082"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0061",
+                  "name": "Codeliste Strom Nr. S_0061",
+                  "value": "S_0061"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0062",
+                  "name": "Codeliste Strom Nr. S_0062",
+                  "value": "S_0062"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0065",
+                  "name": "Codeliste Strom Nr. S_0065",
+                  "value": "S_0065"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0066",
+                  "name": "Codeliste Strom Nr. S_0066",
+                  "value": "S_0066"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0067",
+                  "name": "Codeliste Strom Nr. S_0067",
+                  "value": "S_0067"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0068",
+                  "name": "Codeliste Strom Nr. S_0068",
+                  "value": "S_0068"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0073",
+                  "name": "Codeliste Strom Nr. S_0073",
+                  "value": "S_0073"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0074",
+                  "name": "Codeliste Strom Nr. S_0074",
+                  "value": "S_0074"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0075",
+                  "name": "Codeliste Strom Nr. S_0075",
+                  "value": "S_0075"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0076",
+                  "name": "Codeliste Strom Nr. S_0076",
+                  "value": "S_0076"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0077",
+                  "name": "Codeliste Strom Nr. S_0077",
+                  "value": "S_0077"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0078",
+                  "name": "Codeliste Strom Nr. S_0078",
+                  "value": "S_0078"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0079",
+                  "name": "Codeliste Strom Nr. S_0079",
+                  "value": "S_0079"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0092",
+                  "name": "Codeliste Strom Nr. S_0092",
+                  "value": "S_0092"
+                },
+                {
+                  "enum": "CODELISTE_STROM_NR_S_0093",
+                  "name": "Codeliste Strom Nr. S_0093",
+                  "value": "S_0093"
+                }
+              ],
+              "id": "1082",
+              "index": 1,
+              "name": "Positionsnummer",
+              "type": "code"
+            }
+          ],
+          "id": "AJT",
+          "name": "Die Angabe einer Antwortkategorie ergibt sich aus dem jeweiligen Anwendungsfall."
+        }
+      ],
+      "source_group": "SG2"
+    },
+    "sg3": {
+      "children": {
+        "sg6_ic": {
+          "ahb_status": "X",
+          "discriminator": {
+            "element": "3139",
+            "segment": "CTA",
+            "values": [
+              "IC"
+            ]
+          },
+          "segments": [
+            {
+              "elements": [
+                {
+                  "ahb_status": "X",
+                  "codes": [
+                    {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
+                      "name": "Informationskontakt",
+                      "value": "IC"
+                    }
+                  ],
+                  "id": "3139",
+                  "index": 0,
+                  "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
+                  "type": "code"
+                },
+                {
+                  "components": [
+                    {
+                      "id": "3413",
+                      "name": "Kontakt, Nummer",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "ahb_status": "X",
+                      "id": "3412",
+                      "name": "Kontakt",
+                      "parent_group_ahb_status": "Kann",
+                      "sub_index": 1,
+                      "type": "data"
+                    }
+                  ],
+                  "composite": "C056",
+                  "index": 1,
+                  "name": "Kontaktangaben"
+                }
+              ],
+              "id": "CTA",
+              "name": "Dieses Segment dient der Identifikation von Ansprechpartnern innerhalb des im vorangegangenen NAD-Segment spezifizierten Unternehmens."
+            },
+            {
+              "elements": [
+                {
+                  "components": [
+                    {
+                      "ahb_status": "X (([939] [50]) ∨ ([940] [51])) ∧ [540]",
+                      "id": "3148",
+                      "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Kann",
+                      "sub_index": 0,
+                      "type": "data"
+                    },
+                    {
+                      "ahb_status": "X [1P0..1]",
+                      "codes": [
+                        {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
+                          "name": "Elektronische Post",
+                          "value": "EM"
+                        },
+                        {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
+                          "name": "Telefax",
+                          "value": "FX"
+                        },
+                        {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFON",
+                          "name": "Telefon",
+                          "value": "TE"
+                        },
+                        {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "WEITERES_TELEFON",
+                          "name": "weiteres Telefon",
+                          "value": "AJ"
+                        },
+                        {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "HANDY",
+                          "name": "Handy",
+                          "value": "AL"
+                        }
+                      ],
+                      "id": "3155",
+                      "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Kann",
+                      "sub_index": 1,
+                      "type": "code"
+                    }
+                  ],
+                  "composite": "C076",
+                  "index": 0,
+                  "name": "Kommunikationsverbindung"
+                }
+              ],
+              "id": "COM",
+              "name": "Zur Angabe einer Kommunikationsnummer einer Abteilung oder einer Person, die als Ansprechpartner dient. Ein Segment zur Angabe von Kommunikationsnummer und -typ des im vorangegangenen CTA-Segments angegebenen Sachbearbeiters oder der Abteilung."
+            }
+          ],
+          "source_group": "SG6"
+        }
+      },
+      "discriminator": {
+        "element": "3035",
+        "segment": "NAD"
+      },
+      "segments": [
+        {
+          "elements": [
+            {
+              "ahb_status": "X",
+              "codes": [
+                {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
+                  "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
+                  "value": "MS"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "ahb_status": "X [30]",
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "ahb_status": "X",
+                  "codes": [
+                    {
+                      "ahb_status": "X",
+                      "enum": "GS1",
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "MP-ID Absender"
+        },
+        {
+          "elements": [
+            {
+              "ahb_status": "X",
+              "codes": [
+                {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
+                  "name": "Nachrichtenempfänger",
+                  "value": "MR"
+                }
+              ],
+              "id": "3035",
+              "index": 0,
+              "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
+              "type": "code"
+            },
+            {
+              "components": [
+                {
+                  "ahb_status": "X [30]",
+                  "id": "3039",
+                  "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
+                  "sub_index": 0,
+                  "type": "data"
+                },
+                {
+                  "id": "1131",
+                  "name": "Codeliste, Code",
+                  "sub_index": 1,
+                  "type": "data"
+                },
+                {
+                  "ahb_status": "X",
+                  "codes": [
+                    {
+                      "ahb_status": "X",
+                      "enum": "GS1",
+                      "name": "GS1",
+                      "value": "9"
+                    },
+                    {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
+                      "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
+                      "value": "293"
+                    }
+                  ],
+                  "id": "3055",
+                  "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
+                  "sub_index": 2,
+                  "type": "code"
+                }
+              ],
+              "composite": "C082",
+              "index": 1,
+              "name": "Identifikation des Beteiligten"
+            }
+          ],
+          "id": "NAD",
+          "name": "DE3039: Zur Identifikation der Partner wird die MP-ID angegeben."
+        }
+      ],
+      "source_group": "SG3"
+    }
+  },
+  "format_version": "FV2504",
+  "kommunikation_von": "##alt##",
+  "pid": "##alt##",
+  "root_segments": [
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "enum": "PROZESSDATENBERICHT",
+                  "name": "Prozessdatenbericht",
+                  "value": "7"
+                },
+                {
+                  "enum": "ZEITREIHEN_RAHMEN_BILANZKREISABRECHNUNG",
+                  "name": "Zeitreihen im Rahmen der Bilanzkreisabrechnung",
+                  "value": "BK"
+                },
+                {
+                  "enum": "GERAETEUEBERNAHME",
+                  "name": "Geräteübernahme",
+                  "value": "Z10"
+                },
+                {
+                  "enum": "WEITERVERPFLICHTUNG_BETRIEB_MESSLOKATION",
+                  "name": "Weiterverpflichtung zum Betrieb der Messlokation",
+                  "value": "Z11"
+                },
+                {
+                  "enum": "AENDERUNG_TECHNIK_LOKATION",
+                  "name": "Änderung der Technik der Lokation",
+                  "value": "Z12"
+                },
+                {
+                  "enum": "GERAETEWECHSELABSICHT",
+                  "name": "Gerätewechselabsicht",
+                  "value": "Z13"
+                },
+                {
+                  "enum": "STAMMDATEN_MALO_MELO",
+                  "name": "Stammdaten der Markt- oder Messlokation",
+                  "value": "Z14"
+                },
+                {
+                  "enum": "BILANZIERTE_MENGE_MMMA",
+                  "name": "Bilanzierte Menge (MMMA)",
+                  "value": "Z23"
+                },
+                {
+                  "enum": "ALLOKATIONSLISTE_MMMA",
+                  "name": "Allokationsliste (MMMA)",
+                  "value": "Z24"
+                },
+                {
+                  "enum": "ENERGIEMENGE_LEISTUNGSMAXIMUM",
+                  "name": "Energiemenge und Leistungsmaximum",
+                  "value": "Z28"
+                },
+                {
+                  "enum": "ABRECHNUNG_MESSSTELLENBETRIEBS_MSB_LF",
+                  "name": "Abrechnung des Messstellenbetriebs vom MSB an den LF",
+                  "value": "Z29"
+                },
+                {
+                  "enum": "AENDERUNG_PROGNOSEGRUNDLAGE",
+                  "name": "Änderung Prognosegrundlage",
+                  "value": "Z30"
+                },
+                {
+                  "enum": "AENDERUNG_GERAETEKONFIGURATION",
+                  "name": "Änderung Gerätekonfiguration",
+                  "value": "Z31"
+                },
+                {
+                  "enum": "REKLAMATION_WERTEN",
+                  "name": "Reklamation von Werten",
+                  "value": "Z34"
+                },
+                {
+                  "enum": "LASTGANG_MARKTLOKATION_TRANCHE",
+                  "name": "Lastgang Marktlokation, Tranche",
+                  "value": "Z48"
+                },
+                {
+                  "enum": "SPERRUNG",
+                  "name": "Sperrung",
+                  "value": "Z51"
+                },
+                {
+                  "enum": "ENTSPERRUNG",
+                  "name": "Entsperrung",
+                  "value": "Z52"
+                },
+                {
+                  "enum": "REKLAMATION_UEBERSICHT_DEFINITIONEN_DEFINITION",
+                  "name": "Reklamation der Übersicht der Definitionen oder einer Definition",
+                  "value": "Z55"
+                },
+                {
+                  "enum": "AENDERUNG_INDIVIDUELLER_KONFIGURATION",
+                  "name": "Änderung individueller Konfiguration",
+                  "value": "Z56"
+                },
+                {
+                  "enum": "UEBERMITTLUNG_WERTEN_ESA",
+                  "name": "Übermittlung von Werten an ESA",
+                  "value": "Z57"
+                },
+                {
+                  "enum": "AENDERUNG",
+                  "name": "Änderung",
+                  "value": "Z68"
+                },
+                {
+                  "enum": "BEENDIGUNG_KONFIGURATION",
+                  "name": "Beendigung einer Konfiguration",
+                  "value": "Z72"
+                },
+                {
+                  "enum": "BESTELLUNG_KONFIGURATION",
+                  "name": "Bestellung einer Konfiguration",
+                  "value": "Z73"
+                },
+                {
+                  "enum": "BESTELLUNG_ANGEBOTS_KONFIGURATION",
+                  "name": "Bestellung eines Angebots einer Konfiguration",
+                  "value": "Z74"
+                },
+                {
+                  "enum": "REKLAMATION_KONFIGURATION",
+                  "name": "Reklamation einer Konfiguration",
+                  "value": "Z76"
+                },
+                {
+                  "enum": "BESTELLUNG_AENDERUNG_ABRECHNUNGSDATEN",
+                  "name": "Bestellung Änderung Abrechnungsdaten",
+                  "value": "Z91"
+                }
+              ],
+              "id": "1001",
+              "name": "Dokumentenname, Code",
+              "sub_index": 0,
+              "type": "code"
+            }
+          ],
+          "composite": "C002",
+          "index": 0,
+          "name": "Dokumenten-/Nachrichtenname"
+        },
+        {
+          "components": [
+            {
+              "id": "1004",
+              "name": "EDI-Nachrichtennummer, vergeben vom Absender des Dokuments.",
+              "sub_index": 0,
+              "type": "data"
+            }
+          ],
+          "composite": "C106",
+          "index": 1,
+          "name": "Dokumenten-/Nachrichten-Identifikation"
+        }
+      ],
+      "id": "BGM",
+      "name": "Dieses Segment dient dazu, Typ und Funktion einer Nachricht anzuzeigen und die Identifikationsnummer zu übermitteln. DE1001: Darin ist die Kategorie der gesamten Nachricht festgelegt."
+    },
+    {
+      "elements": [
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "enum": "DOKUMENTENDATUM",
+                  "name": "Dokumenten-/Nachrichtendatum/-zeit",
+                  "value": "137"
+                }
+              ],
+              "id": "2005",
+              "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "id": "2380",
+              "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+              "sub_index": 1,
+              "type": "data"
+            },
+            {
+              "codes": [
+                {
+                  "enum": "CCYYMMDDHHMMZZZ",
+                  "name": "CCYYMMDDHHMMZZZ",
+                  "value": "303"
+                }
+              ],
+              "id": "2379",
+              "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+              "sub_index": 2,
+              "type": "code"
+            }
+          ],
+          "composite": "C507",
+          "index": 0,
+          "name": "Datum/Uhrzeit/Zeitspanne"
+        }
+      ],
+      "id": "DTM",
+      "name": "Dieses Segment wird zur Angabe des Nachrichtendatums verwendet."
+    },
+    {
+      "elements": [
+        {
+          "id": "0062",
+          "index": 0,
+          "name": "Eindeutige Nachrichtenreferenz des Absenders. Nummer der Nachrichten einer Übertragungsdatei im Datenaustausch. Identisch mit DE0062 im UNT, i. d. R. vom sendenden Konverter vergeben.",
+          "type": "data"
+        },
+        {
+          "components": [
+            {
+              "codes": [
+                {
+                  "enum": "BESTELLANTWORT",
+                  "name": "Bestellantwort",
+                  "value": "ORDRSP"
+                }
+              ],
+              "id": "0065",
+              "name": "Nachrichtentyp-Kennung",
+              "sub_index": 0,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "enum": "ENTWURFS_VERSION",
+                  "name": "Entwurfs-Version",
+                  "value": "D"
+                }
+              ],
+              "id": "0052",
+              "name": "Versionsnummer des Nachrichtentyps",
+              "sub_index": 1,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "enum": "AUSGABE_2010_A",
+                  "name": "Ausgabe 2010 - A",
+                  "value": "10A"
+                }
+              ],
+              "id": "0054",
+              "name": "Freigabenummer des Nachrichtentyps",
+              "sub_index": 2,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "enum": "UN_CEFACT",
+                  "name": "UN/CEFACT",
+                  "value": "UN"
+                }
+              ],
+              "id": "0051",
+              "name": "Verwaltende Organisation",
+              "sub_index": 3,
+              "type": "code"
+            },
+            {
+              "codes": [
+                {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_9",
+                  "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
+                  "value": "1.4"
+                }
+              ],
+              "id": "0057",
+              "name": "Anwendungscode der zuständigen Organisation",
+              "sub_index": 4,
+              "type": "code"
+            }
+          ],
+          "composite": "S009",
+          "index": 1,
+          "name": "Nachrichten-Kennung"
+        }
+      ],
+      "id": "UNH",
+      "name": "Nachrichten-Kopfsegment"
+    },
+    {
+      "elements": [
+        {
+          "codes": [
+            {
+              "enum": "TRENNUNG_POSITIONS_SUMMENTEIL",
+              "name": "Trennung von Positions- und Summenteil",
+              "value": "S"
+            }
+          ],
+          "id": "0081",
+          "index": 0,
+          "name": "Abschnittskennung, codiert",
+          "type": "code"
+        }
+      ],
+      "id": "UNS",
+      "name": "Abschnitts-Kontrollsegment"
+    },
+    {
+      "elements": [
+        {
+          "id": "0074",
+          "index": 0,
+          "name": "Hier wird die Gesamtzahl der Segmente einer Nachricht angegeben.",
+          "type": "data"
+        },
+        {
+          "id": "0062",
+          "index": 1,
+          "name": "Die Referenznummer aus dem UNH-Segment muss hier wiederholt werden.",
+          "type": "data"
+        }
+      ],
+      "id": "UNT",
+      "name": "Das UNT-Segment ist ein Muss-Segment in UN/EDIFACT. Es muss immer das letzte Segment in einer Nachricht sein."
+    }
+  ]
+}

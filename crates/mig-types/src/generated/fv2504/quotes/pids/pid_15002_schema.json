@@ -12,20 +12,26 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ANFRAGE_NUMMER",
                       "name": "Nummer der Anfrage",
                       "value": "AAV"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Soll [17]",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X [505]",
                   "id": "1154",
                   "name": "Nachrichtennummer",
+                  "parent_group_ahb_status": "Soll [17]",
                   "sub_index": 1,
                   "type": "data"
                 }
@@ -43,26 +49,34 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRUEFIDENTIFIKATOR",
                       "name": "Prüfidentifikator",
                       "value": "Z13"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ANGEBOT_RECHNUNGSABWICKLUNG_MSB_LF",
                       "name": "Angebot Rechnungsabwicklung MSB über LF",
                       "value": "15002"
                     }
                   ],
                   "id": "1154",
                   "name": "Prüfidentifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -81,6 +95,7 @@
     "sg11": {
       "children": {
         "sg14_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -92,8 +107,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -101,6 +119,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
@@ -112,8 +131,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Kontakt",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -131,36 +152,50 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939] [72]) ∨ ([940] [73])) ∧ [516]",
                       "id": "3148",
                       "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -185,8 +220,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -194,13 +232,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [39]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -211,18 +252,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -238,8 +285,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -247,13 +297,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [39]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -264,18 +317,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -291,8 +350,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "LIEFERANSCHRIFT",
                   "name": "Lieferanschrift",
                   "value": "DP"
                 }
@@ -300,6 +362,7 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             }
           ],
@@ -309,8 +372,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "MELDEPUNKT",
                   "name": "Meldepunkt",
                   "value": "172"
                 }
@@ -318,13 +384,16 @@
               "id": "3227",
               "index": 0,
               "name": "Ortsangabe, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [950] [501]",
                   "id": "3225",
                   "name": "Identifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -343,6 +412,7 @@
     "sg27": {
       "children": {
         "sg31": {
+          "ahb_status": "Muss ([81] ∧ [2069]) ⊻ ([82] ∧ [2070])",
           "discriminator": {
             "element": "5125",
             "segment": "PRI"
@@ -353,20 +423,26 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "BERECHNUNGSPREIS",
                           "name": "Berechnungspreis",
                           "value": "CAL"
                         }
                       ],
                       "id": "5125",
                       "name": "Preis, Qualifier",
+                      "parent_group_ahb_status": "Muss ([81] ∧ [2069]) ⊻ ([82] ∧ [2070])",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "M [21] ∧ [912]",
                       "id": "5118",
                       "name": "Preis, Betrag",
+                      "parent_group_ahb_status": "Muss ([81] ∧ [2069]) ⊻ ([82] ∧ [2070])",
                       "sub_index": 1,
                       "type": "data"
                     },
@@ -383,24 +459,32 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [908]",
                       "id": "5284",
                       "name": "Einzelpreisbasis, Menge",
+                      "parent_group_ahb_status": "Muss ([81] ∧ [2069]) ⊻ ([82] ∧ [2070])",
                       "sub_index": 4,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "STUECK",
                           "name": "Stück",
                           "value": "H87"
                         },
                         {
+                          "ahb_status": "X [21]",
+                          "enum": "TAG",
                           "name": "Tag",
                           "value": "DAY"
                         }
                       ],
                       "id": "6411",
                       "name": "Maßeinheit, Code",
+                      "parent_group_ahb_status": "Muss ([81] ∧ [2069]) ⊻ ([82] ∧ [2070])",
                       "sub_index": 5,
                       "type": "code"
                     }
@@ -417,6 +501,7 @@
           "source_group": "SG31"
         },
         "sg32": {
+          "ahb_status": "Soll [18] ∧ [20]",
           "discriminator": {
             "element": "1153",
             "segment": "RFF"
@@ -427,20 +512,26 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "MALO",
                           "name": "Marktlokation",
                           "value": "Z18"
                         }
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Soll [18] ∧ [20]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [950]",
                       "id": "1154",
                       "name": "ID einer Marktlokation",
+                      "parent_group_ahb_status": "Soll [18] ∧ [20]",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -465,9 +556,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X [911]",
               "id": "1082",
               "index": 0,
               "name": "Vom Programm vorgegebene Positionsnummer innerhalb einer Anforderung",
+              "parent_group_ahb_status": "Muss",
               "type": "data"
             },
             {
@@ -479,24 +572,32 @@
             {
               "components": [
                 {
+                  "ahb_status": "X ([31] ∧ ([65] ⊻ [66])) ⊻ ([942] [69] ∧ ([67] ⊻ [68]))",
                   "id": "7140",
                   "name": "Produkt-/Leistungsnummer",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X [65] ⊻ [66]",
                   "codes": [
                     {
+                      "ahb_status": "X [65] ⊻ [66]",
+                      "enum": "ARTIKELNUMMER",
                       "name": "Artikelnummer",
                       "value": "Z01"
                     },
                     {
+                      "ahb_status": "X [67] ⊻ [68]",
+                      "enum": "ARTIKEL_ID",
                       "name": "Artikel-ID",
                       "value": "Z09"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -512,8 +613,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ZUSAETZLICHE_IDENTIFIKATION",
                   "name": "Zusätzliche Identifikation",
                   "value": "1"
                 }
@@ -521,25 +625,32 @@
               "id": "4347",
               "index": 0,
               "name": "Produkt-/Erzeugnisnummer, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7140",
                   "name": "Preisschlüsselstamm",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PREISSCHLUESSELSTAMM",
                       "name": "Preisschlüsselstamm",
                       "value": "Z06"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -566,38 +677,50 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "REFERENZWAEHRUNG",
                       "name": "Referenzwährung",
                       "value": "2"
                     }
                   ],
                   "id": "6347",
                   "name": "Währungsverwendung, Qualifier",
+                  "parent_group_ahb_status": "Muss [21]",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "EURO",
                       "name": "Euro",
                       "value": "EUR"
                     }
                   ],
                   "id": "6345",
                   "name": "Währung, Code",
+                  "parent_group_ahb_status": "Muss [21]",
                   "sub_index": 1,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "WAEHRUNG_RECHNUNG",
                       "name": "Währung der Rechnung",
                       "value": "4"
                     }
                   ],
                   "id": "6343",
                   "name": "Währung, Qualifier",
+                  "parent_group_ahb_status": "Muss [21]",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -625,18 +748,22 @@
             {
               "codes": [
                 {
+                  "enum": "ANGEBOT",
                   "name": "Angebot",
                   "value": "310"
                 },
                 {
+                  "enum": "ABRECHNUNG_MESSSTELLENBETRIEBS_MSB_LF",
                   "name": "Abrechnung des Messstellenbetriebs vom MSB an den LF",
                   "value": "Z29"
                 },
                 {
+                  "enum": "UEBERMITTLUNG_WERTEN_ESA",
                   "name": "Übermittlung von Werten an ESA",
                   "value": "Z57"
                 },
                 {
+                  "enum": "BESTELLUNG_ANGEBOTS_KONFIGURATION",
                   "name": "Bestellung eines Angebots einer Konfiguration",
                   "value": "Z74"
                 }
@@ -675,6 +802,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -693,6 +821,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -724,26 +853,32 @@
             {
               "codes": [
                 {
+                  "enum": "KAUF",
                   "name": "Kauf",
                   "value": "Z07"
                 },
                 {
+                  "enum": "NUTZUNGSUEBERLASSUNG",
                   "name": "Nutzungsüberlassung",
                   "value": "Z08"
                 },
                 {
+                  "enum": "ANGEBOT_BASIS_PREISBLATT",
                   "name": "Angebot auf Basis Preisblatt",
                   "value": "Z33"
                 },
                 {
+                  "enum": "INDIVIDUELLES_ANGEBOT",
                   "name": "Individuelles Angebot",
                   "value": "Z34"
                 },
                 {
+                  "enum": "AENDERUNG_KONFIGURATION",
                   "name": "Änderung Konfiguration",
                   "value": "Z55"
                 },
                 {
+                  "enum": "NEUKONFIGURATION",
                   "name": "Neukonfiguration",
                   "value": "Z64"
                 }
@@ -775,6 +910,7 @@
             {
               "codes": [
                 {
+                  "enum": "ANGEBOT",
                   "name": "Angebot",
                   "value": "QUOTES"
                 }
@@ -787,6 +923,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -799,6 +936,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2010_A",
                   "name": "Ausgabe 2010 - A",
                   "value": "10A"
                 }
@@ -811,6 +949,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -823,6 +962,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_11",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "1.3a"
                 }
@@ -846,6 +986,7 @@
         {
           "codes": [
             {
+              "enum": "TRENNUNG_POSITIONS_SUMMENTEIL",
               "name": "Trennung von Positions- und Summenteil",
               "value": "S"
             }

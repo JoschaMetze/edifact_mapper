@@ -12,6 +12,12 @@ pub struct Pid13011Sg1 {
     pub rff: Option<OwnedSegment>,
 }
 
+/// SG10 — Menge, Qualifier
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Pid13011Sg10 {
+    pub qty: Option<OwnedSegment>,
+}
+
 /// SG2 — Beteiligter, Qualifier
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pid13011Sg2 {
@@ -48,6 +54,7 @@ pub struct Pid13011Sg6Z06 {
 pub struct Pid13011Sg9 {
     pub lin: Option<OwnedSegment>,
     pub pia: Option<OwnedSegment>,
+    pub sg10: Vec<Pid13011Sg10>,
 }
 
 /// PID 13011: Profilschar
@@ -84,6 +91,28 @@ impl Pid13011Sg1 {
         }
         Some(Self {
             rff,
+        })
+    }
+}
+
+impl Pid13011Sg10 {
+    /// Try to assemble this group from segments at the cursor position.
+    pub fn from_segments(
+        segments: &[OwnedSegment],
+        cursor: &mut SegmentCursor,
+    ) -> Option<Self> {
+        let saved = cursor.save();
+        let qty = if peek_is(segments, cursor, "QTY") {
+            Some(consume(segments, cursor)?.clone())
+        } else {
+            None
+        };
+        if qty.is_none() {
+            cursor.restore(saved);
+            return None;
+        }
+        Some(Self {
+            qty,
         })
     }
 }
@@ -224,9 +253,14 @@ impl Pid13011Sg9 {
             cursor.restore(saved);
             return None;
         }
+        let mut sg10 = Vec::new();
+        while let Some(item) = Pid13011Sg10::from_segments(segments, cursor) {
+            sg10.push(item);
+        }
         Some(Self {
             lin,
             pia,
+            sg10,
         })
     }
 }

@@ -12,20 +12,26 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ANFRAGE_NUMMER",
                       "name": "Nummer der Anfrage",
                       "value": "AAV"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X [504]",
                   "id": "1154",
                   "name": "Nachrichtennummer",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "data"
                 }
@@ -43,26 +49,34 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRUEFIDENTIFIKATOR",
                       "name": "Prüfidentifikator",
                       "value": "Z13"
                     }
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ANGEBOT_GERAETEUEBERNAHME",
                       "name": "Angebot Geräteübernahme",
                       "value": "15001"
                     }
                   ],
                   "id": "1154",
                   "name": "Prüfidentifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -81,6 +95,7 @@
     "sg11": {
       "children": {
         "sg14_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -92,8 +107,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationskontakt",
                       "value": "IC"
                     }
@@ -101,6 +119,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
@@ -112,8 +131,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [500]",
                       "id": "3412",
                       "name": "Kontakt",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -131,36 +152,50 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939] [72]) ∨ ([940] [73])) ∧ [516]",
                       "id": "3148",
                       "name": "Nummer / Adresse",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "Elektronische Post",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         }
                       ],
                       "id": "3155",
                       "name": "Art des Kommunikationsmittels, Code",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -185,8 +220,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -194,13 +232,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -211,22 +252,30 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "DVGW",
                       "name": "DE, DVGW Service & Consult GmbH",
                       "value": "332"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -242,8 +291,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "NACHRICHTENEMPFAENGER",
                   "name": "Nachrichtenempfänger",
                   "value": "MR"
                 }
@@ -251,13 +303,16 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -268,22 +323,30 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "DVGW",
                       "name": "DE, DVGW Service & Consult GmbH",
                       "value": "332"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -299,8 +362,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "LIEFERANSCHRIFT",
                   "name": "Lieferanschrift",
                   "value": "DP"
                 }
@@ -308,6 +374,7 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             }
           ],
@@ -317,8 +384,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "MELDEPUNKT",
                   "name": "Meldepunkt",
                   "value": "172"
                 }
@@ -326,13 +396,16 @@
               "id": "3227",
               "index": 0,
               "name": "Ortsangabe, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X [951] [502]",
                   "id": "3225",
                   "name": "Identifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -351,6 +424,7 @@
     "sg27": {
       "children": {
         "sg28": {
+          "ahb_status": "Muss [2] ∧ [5]",
           "discriminator": {
             "element": "7037",
             "segment": "CCI"
@@ -380,14 +454,18 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "ZAEHLERTYP",
                           "name": "Zählertyp",
                           "value": "E13"
                         }
                       ],
                       "id": "7037",
                       "name": "Merkmal, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [5]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -405,62 +483,90 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X [492]",
                       "codes": [
                         {
+                          "ahb_status": "X [492]",
+                          "enum": "ANALOGER_HAUSHALTSZAEHLER_DREHSTROM",
                           "name": "analoger Haushaltszähler (Drehstrom)",
                           "value": "AHZ"
                         },
                         {
+                          "ahb_status": "X [493]",
+                          "enum": "BALGENGASZAEHLER",
                           "name": "Balgengaszähler",
                           "value": "BGZ"
                         },
                         {
+                          "ahb_status": "X [493]",
+                          "enum": "DREHKOLBENGASZAEHLER",
                           "name": "Drehkolbengaszähler",
                           "value": "DKZ"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "ELEKTRONISCHER_HAUSHALTSZAEHLER",
                           "name": "elektronischer Haushaltszähler",
                           "value": "EHZ"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "INDIVIDUELLE_SONDERAUSSTATTUNG",
                           "name": "Zur Sonderausstattung gehört z.B. Gas-Encoder",
                           "value": "IVA"
                         },
                         {
+                          "ahb_status": "X [492]",
+                          "enum": "LASTGANGZAEHLER",
                           "name": "Lastgangzähler",
                           "value": "LAZ"
                         },
                         {
+                          "ahb_status": "X [492]",
+                          "enum": "MAXIMUMZAEHLER",
                           "name": "Maximumzähler",
                           "value": "MAZ"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "MODERNE_MESSEINRICHTUNG",
                           "name": "moderne Messeinrichtung nach MsbG",
                           "value": "MME"
                         },
                         {
+                          "ahb_status": "X [493]",
+                          "enum": "MESSDATENREGISTRIERGERAET",
                           "name": "Messdatenregistriergerät",
                           "value": "MRG"
                         },
                         {
+                          "ahb_status": "X [493]",
+                          "enum": "TURBINENRADGASZAEHLER",
                           "name": "Turbinenradgaszähler",
                           "value": "TRZ"
                         },
                         {
+                          "ahb_status": "X [493]",
+                          "enum": "ULTRASCHALLGASZAEHLER",
                           "name": "Ultraschallgaszähler",
                           "value": "UGZ"
                         },
                         {
+                          "ahb_status": "X [493]",
+                          "enum": "WIRBELGASZAEHLER",
                           "name": "Wirbelgaszähler",
                           "value": "WGZ"
                         },
                         {
+                          "ahb_status": "X [492]",
+                          "enum": "ANALOGER_WECHSELSTROMZAEHLER",
                           "name": "analoger Wechselstromzähler",
                           "value": "WSZ"
                         }
                       ],
                       "id": "7111",
                       "name": "Merkmalswert, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [5]",
                       "sub_index": 0,
                       "type": "code"
                     },
@@ -477,30 +583,42 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [8]",
                       "codes": [
                         {
+                          "ahb_status": "X [8]",
+                          "enum": "EDL40",
                           "name": "EDL40",
                           "value": "Z01"
                         },
                         {
+                          "ahb_status": "X [8]",
+                          "enum": "EDL21",
                           "name": "EDL21",
                           "value": "Z02"
                         },
                         {
+                          "ahb_status": "X [8]",
+                          "enum": "SONSTIGER_EHZ",
                           "name": "sonstiger EHZ",
                           "value": "Z03"
                         },
                         {
+                          "ahb_status": "X [25]",
+                          "enum": "STANDARD",
                           "name": "Standard",
                           "value": "Z04"
                         },
                         {
+                          "ahb_status": "X [25]",
+                          "enum": "MEDA_ZAEHLER",
                           "name": "MeDa-Zähler",
                           "value": "Z05"
                         }
                       ],
                       "id": "7110",
                       "name": "Zählertyp",
+                      "parent_group_ahb_status": "Muss [2] ∧ [5]",
                       "sub_index": 3,
                       "type": "code"
                     }
@@ -536,98 +654,144 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G10",
                           "name": "Gaszähler G10",
                           "value": "G10"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G100",
                           "name": "Gaszähler G100",
                           "value": "G100"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G1000",
                           "name": "Gaszähler G1000",
                           "value": "G1000"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G10000",
                           "name": "Gaszähler G10000",
                           "value": "G10000"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G12500",
                           "name": "Gaszähler G12500",
                           "value": "G12500"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G16",
                           "name": "Gaszähler G16",
                           "value": "G16"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G160",
                           "name": "Gaszähler G160",
                           "value": "G160"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G1600",
                           "name": "Gaszähler G1600",
                           "value": "G1600"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G16000",
                           "name": "Gaszähler G16000",
                           "value": "G16000"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G2_5",
                           "name": "Gaszähler G2.5",
                           "value": "G2.5"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G25",
                           "name": "Gaszähler G25",
                           "value": "G25"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G250",
                           "name": "Gaszähler G250",
                           "value": "G250"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G2500",
                           "name": "Gaszähler G2500",
                           "value": "G2500"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G350",
                           "name": "Gaszähler G350",
                           "value": "G350"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G4",
                           "name": "Gaszähler G4",
                           "value": "G4"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G40",
                           "name": "Gaszähler G40",
                           "value": "G40"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G400",
                           "name": "Gaszähler G400",
                           "value": "G400"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G4000",
                           "name": "Gaszähler G4000",
                           "value": "G4000"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G6",
                           "name": "Gaszähler G6",
                           "value": "G6"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G65",
                           "name": "Gaszähler G65",
                           "value": "G65"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G650",
                           "name": "Gaszähler G650",
                           "value": "G650"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "GASZAEHLER_G6500",
                           "name": "Gaszähler G6500",
                           "value": "G6500"
                         }
                       ],
                       "id": "7110",
                       "name": "für Gas: (Angabe Größe)",
+                      "parent_group_ahb_status": "Muss [2] ∧ [5]",
                       "sub_index": 3,
                       "type": "code"
                     }
@@ -645,22 +809,30 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "EINTARIF",
                           "name": "Eintarif",
                           "value": "ETZ"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "ZWEITARIF",
                           "name": "Zweitarif",
                           "value": "ZTZ"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "MEHRTARIF",
                           "name": "Mehrtarif",
                           "value": "NTZ"
                         }
                       ],
                       "id": "7111",
                       "name": "Merkmalswert, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [5]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -678,18 +850,24 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "EINRICHTUNGSZAEHLER",
                           "name": "Einrichtungszähler",
                           "value": "ERZ"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "ZWEIRICHTUNGSZAEHLER",
                           "name": "Zweirichtungszähler",
                           "value": "ZRZ"
                         }
                       ],
                       "id": "7111",
                       "name": "Merkmalswert, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [5]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -726,14 +904,18 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "WANDLER",
                           "name": "Wandler",
                           "value": "Z25"
                         }
                       ],
                       "id": "7037",
                       "name": "Merkmal, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [492] ∧ [9]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -751,26 +933,36 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "BLOCKSTROMWANDLER",
                           "name": "Blockstromwandler",
                           "value": "MBW"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "MESSWANDLER_STROM",
                           "name": "Messwandlersatz Strom",
                           "value": "MIW"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "KOMBIMESSWANDLER_STROM_SPANNUNG",
                           "name": "Kombimesswandlersatz (Strom und Spannung)",
                           "value": "MPW"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "MESSWANDLER_SPANNUNG",
                           "name": "Messwandlersatz Spannung",
                           "value": "MUW"
                         }
                       ],
                       "id": "7111",
                       "name": "Merkmalswert, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [492] ∧ [9]",
                       "sub_index": 0,
                       "type": "code"
                     },
@@ -787,8 +979,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "M [914] [10]",
                       "id": "7110",
                       "name": "Wandlerfaktor",
+                      "parent_group_ahb_status": "Muss [2] ∧ [492] ∧ [9]",
                       "sub_index": 3,
                       "type": "data"
                     }
@@ -825,14 +1019,18 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "MENGENUMWERTER",
                           "name": "Mengenumwerter",
                           "value": "Z64"
                         }
                       ],
                       "id": "7037",
                       "name": "Merkmal, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [493] ∧ [9]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -850,22 +1048,30 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "DICHTEMENGENUMWERTER",
                           "name": "Dichtemengenumwerter",
                           "value": "DMU"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "TEMPERATURMENGENUMWERTER",
                           "name": "Temperaturmengenumwerter",
                           "value": "TMU"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "ZUSTANDSMENGENUMWERTER",
                           "name": "Zustandsmengenumwerter",
                           "value": "ZMU"
                         }
                       ],
                       "id": "7111",
                       "name": "Merkmalswert, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [493] ∧ [9]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -902,14 +1108,18 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "KOMMUNIKATIONSEINRICHTUNG",
                           "name": "Kommunikationseinrichtung",
                           "value": "Z26"
                         }
                       ],
                       "id": "7037",
                       "name": "Merkmal, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [11]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -927,34 +1137,48 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "GSM_GPRS_UMTS",
                           "name": "GSM/GPRS/UMTS-Kom.-Einr.",
                           "value": "GSM"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "ETHERNET_LAN_WLAN",
                           "name": "Ethernet-Kom.-Einricht. LAN/WLAN",
                           "value": "ETH"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "PLC",
                           "name": "PLC-Kom.-Einrichtung",
                           "value": "PLC"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "FESTNETZ_TAE",
                           "name": "Festnetz-Kom.-Einricht. TAE",
                           "value": "PST"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "DSL",
                           "name": "DSL-Kom.Einr.",
                           "value": "DSL"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "LTE",
                           "name": "LTE-Kom.-Einr.",
                           "value": "LTE"
                         }
                       ],
                       "id": "7111",
                       "name": "Merkmalswert, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [11]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -991,14 +1215,18 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "TECHNISCHE_STEUEREINRICHTUNG",
                           "name": "Technische Steuereinrichtung",
                           "value": "Z27"
                         }
                       ],
                       "id": "7037",
                       "name": "Merkmal, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [12]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -1016,18 +1244,24 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "RUNDSTEUEREMPFAENGER",
                           "name": "Rundsteuerempfänger",
                           "value": "RSU"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "TARIFSCHALTUHR",
                           "name": "Tarifschaltuhr",
                           "value": "TSU"
                         }
                       ],
                       "id": "7111",
                       "name": "Merkmalswert, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [12]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -1064,14 +1298,18 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "SMGW",
                           "name": "Smartmeter-Gateway",
                           "value": "Z75"
                         }
                       ],
                       "id": "7037",
                       "name": "Merkmal, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [15]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -1108,14 +1346,18 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "STEUERBOX",
                           "name": "Steuerbox",
                           "value": "Z76"
                         }
                       ],
                       "id": "7037",
                       "name": "Merkmal, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [16]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -1152,14 +1394,18 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "BEFESTIGUNGSART_ZAEHLEINRICHTUNG",
                           "name": "Befestigungsart Zähleinrichtung",
                           "value": "Z28"
                         }
                       ],
                       "id": "7037",
                       "name": "Merkmal, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [5]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -1177,30 +1423,42 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X [492]",
                       "codes": [
                         {
+                          "ahb_status": "X [492]",
+                          "enum": "STECKTECHNIK_BKE",
                           "name": "Stecktechnik (Befestigungs- und Kontaktierungseinrichtung)",
                           "value": "BKE"
                         },
                         {
+                          "ahb_status": "X [492]",
+                          "enum": "DREIPUNKTAUFHAENGUNG",
                           "name": "3-Dreipunktaufhängung",
                           "value": "DPA"
                         },
                         {
+                          "ahb_status": "X [492]",
+                          "enum": "HUTSCHIENE",
                           "name": "Hutschiene",
                           "value": "HUT"
                         },
                         {
+                          "ahb_status": "X [493]",
+                          "enum": "EINSTUTZEN_ZAEHLER",
                           "name": "Einstutzen-Zähler",
                           "value": "Z31"
                         },
                         {
+                          "ahb_status": "X [493]",
+                          "enum": "ZWEISTUTZEN_ZAEHLER",
                           "name": "Zweistutzen-Zähler",
                           "value": "Z32"
                         }
                       ],
                       "id": "7111",
                       "name": "Merkmalswert, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [5]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -1237,14 +1495,18 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "MESSWERTERFASSUNG_ZAEHLEINRICHTUNG",
                           "name": "Messwerterfassung an der Zähleinrichtung",
                           "value": "E12"
                         }
                       ],
                       "id": "7037",
                       "name": "Merkmal, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [5]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -1262,18 +1524,24 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "FERNAUSLESBAR",
                           "name": "fernauslesbare Zähler",
                           "value": "AMR"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "MANUELL_AUSGELESEN",
                           "name": "manuell ausgelesene Zähler",
                           "value": "MMR"
                         }
                       ],
                       "id": "7111",
                       "name": "Merkmalswert, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [5]",
                       "sub_index": 0,
                       "type": "code"
                     }
@@ -1290,6 +1558,7 @@
           "source_group": "SG28"
         },
         "sg31": {
+          "ahb_status": "Muss [2] ∧ [2068]",
           "discriminator": {
             "element": "5125",
             "segment": "PRI"
@@ -1300,20 +1569,26 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "BERECHNUNGSPREIS",
                           "name": "Berechnungspreis",
                           "value": "CAL"
                         }
                       ],
                       "id": "5125",
                       "name": "Preis, Qualifier",
+                      "parent_group_ahb_status": "Muss [2] ∧ [2068]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X [912]",
                       "id": "5118",
                       "name": "Preis, Betrag",
+                      "parent_group_ahb_status": "Muss [2] ∧ [2068]",
                       "sub_index": 1,
                       "type": "data"
                     },
@@ -1330,24 +1605,32 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [908]",
                       "id": "5284",
                       "name": "Einzelpreisbasis, Menge",
+                      "parent_group_ahb_status": "Muss [2] ∧ [2068]",
                       "sub_index": 4,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [79]",
                       "codes": [
                         {
+                          "ahb_status": "X [79]",
+                          "enum": "STUECK",
                           "name": "Stück",
                           "value": "H87"
                         },
                         {
+                          "ahb_status": "X [80]",
+                          "enum": "TAG",
                           "name": "Tag",
                           "value": "DAY"
                         }
                       ],
                       "id": "6411",
                       "name": "Maßeinheit, Code",
+                      "parent_group_ahb_status": "Muss [2] ∧ [2068]",
                       "sub_index": 5,
                       "type": "code"
                     }
@@ -1364,6 +1647,7 @@
           "source_group": "SG31"
         },
         "sg32": {
+          "ahb_status": "Soll [2] ∧ [13] ∧ [506]",
           "discriminator": {
             "element": "1153",
             "segment": "RFF"
@@ -1374,20 +1658,26 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "GERAETENUMMER",
                           "name": "Gerätenummer",
                           "value": "Z09"
                         }
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Soll [2] ∧ [13] ∧ [506]",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "1154",
                       "name": "Gerätenummer",
+                      "parent_group_ahb_status": "Soll [2] ∧ [13] ∧ [506]",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -1405,32 +1695,42 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "VERWEIS_KATALOGNUMMER",
                           "name": "Verweis auf Katalognummer",
                           "value": "APF"
                         }
                       ],
                       "id": "1153",
                       "name": "Referenz, Qualifier",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "code"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "1154",
                       "name": "Katalognummer",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "1156",
                       "name": "Zeilennummer",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 2,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "1056",
                       "name": "Versionsnummer",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 3,
                       "type": "data"
                     }
@@ -1447,6 +1747,7 @@
           "source_group": "SG32"
         },
         "sg42_vy": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3035",
             "segment": "NAD",
@@ -1458,8 +1759,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ANDERE_PARTEI",
                       "name": "andere zugehörige Partei",
                       "value": "VY"
                     }
@@ -1467,13 +1771,16 @@
                   "id": "3035",
                   "index": 0,
                   "name": "Beteiligter, Qualifier",
+                  "parent_group_ahb_status": "Soll [30] ∧ [44] ∧ [503]",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X",
                       "id": "3039",
                       "name": "MP-ID",
+                      "parent_group_ahb_status": "Soll [30] ∧ [44] ∧ [503]",
                       "sub_index": 0,
                       "type": "data"
                     },
@@ -1484,22 +1791,30 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
+                          "enum": "GS1",
                           "name": "GS1",
                           "value": "9"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "BDEW",
                           "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                           "value": "293"
                         },
                         {
+                          "ahb_status": "X",
+                          "enum": "DVGW",
                           "name": "DE, DVGW Service & Consult GmbH",
                           "value": "332"
                         }
                       ],
                       "id": "3055",
                       "name": "Verantwortliche Stelle für die Codepflege, Code",
+                      "parent_group_ahb_status": "Soll [30] ∧ [44] ∧ [503]",
                       "sub_index": 2,
                       "type": "code"
                     }
@@ -1524,9 +1839,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X [911]",
               "id": "1082",
               "index": 0,
               "name": "Vom Programm vorgegebene Positionsnummer innerhalb einer Anforderung",
+              "parent_group_ahb_status": "Muss",
               "type": "data"
             },
             {
@@ -1538,20 +1855,26 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [31]",
                   "id": "7140",
                   "name": "Produkt-/Leistungsnummer",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "ARTIKELNUMMER",
                       "name": "Artikelnummer",
                       "value": "Z01"
                     }
                   ],
                   "id": "7143",
                   "name": "Art der Produkt-/Leistungsnummer, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -1575,14 +1898,18 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "KANN_ANGEBOTEN_WERDEN",
                       "name": "Kann nicht angeboten werden",
                       "value": "Z09"
                     }
                   ],
                   "id": "7081",
                   "name": "Produkt/Leistung, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 }
@@ -1600,36 +1927,48 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "PRODUKTIONS_HERSTELLUNGSDATUM",
                       "name": "Produktions-/Herstellungsdatum",
                       "value": "94"
                     },
                     {
+                      "ahb_status": "X",
+                      "enum": "BAUJAHR_JAHR_VERKEHRS_BRINGENS",
                       "name": "Baujahr/Jahr des in Verkehrs bringens",
                       "value": "Z03"
                     }
                   ],
                   "id": "2005",
                   "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "id": "2380",
                   "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "CCYY",
                       "name": "CCYY",
                       "value": "602"
                     }
                   ],
                   "id": "2379",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -1647,32 +1986,42 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "EICHGUELTIGKEIT",
                       "name": "Eichgültigkeit",
                       "value": "Z04"
                     }
                   ],
                   "id": "2005",
                   "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "id": "2380",
                   "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "CCYY",
                       "name": "CCYY",
                       "value": "602"
                     }
                   ],
                   "id": "2379",
                   "name": "Datums- oder Uhrzeit- oder Zeitspannen-Format, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -1688,8 +2037,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "SERIALNUMMER",
                   "name": "Serialnummer",
                   "value": "BN"
                 }
@@ -1697,13 +2049,16 @@
               "id": "7405",
               "index": 0,
               "name": "Objektidentifikation, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "7402",
                   "name": "Herstellernummer",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 }
@@ -1719,8 +2074,11 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
+                  "enum": "ALLGEMEINE_HINWEISE",
                   "name": "Zusätzliche Informationen (für allgemeine Hinweise)",
                   "value": "ACB"
                 }
@@ -1728,6 +2086,7 @@
               "id": "4451",
               "index": 0,
               "name": "Textbezug, Qualifier",
+              "parent_group_ahb_status": "Muss",
               "type": "code"
             },
             {
@@ -1752,8 +2111,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "id": "4440",
                   "name": "Freier Text zur weiteren Erklärung.",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -1804,38 +2165,50 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "REFERENZWAEHRUNG",
                       "name": "Referenzwährung",
                       "value": "2"
                     }
                   ],
                   "id": "6347",
                   "name": "Währungsverwendung, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "EURO",
                       "name": "Euro",
                       "value": "EUR"
                     }
                   ],
                   "id": "6345",
                   "name": "Währung, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
+                      "enum": "WAEHRUNG_RECHNUNG",
                       "name": "Währung der Rechnung",
                       "value": "4"
                     }
                   ],
                   "id": "6343",
                   "name": "Währung, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -1863,22 +2236,27 @@
             {
               "codes": [
                 {
+                  "enum": "ANGEBOT",
                   "name": "Angebot",
                   "value": "310"
                 },
                 {
+                  "enum": "ABRECHNUNG_MESSSTELLENBETRIEBS_MSB_LF",
                   "name": "Abrechnung des Messstellenbetriebs vom MSB an den LF",
                   "value": "Z29"
                 },
                 {
+                  "enum": "UEBERMITTLUNG_WERTEN_ESA",
                   "name": "Übermittlung von Werten an ESA",
                   "value": "Z57"
                 },
                 {
+                  "enum": "BESTELLUNG_ANGEBOTS_KONFIGURATION",
                   "name": "Bestellung eines Angebots einer Konfiguration",
                   "value": "Z74"
                 },
                 {
+                  "enum": "BESTELLUNG_ANGEBOTS_AENDERUNG_TECHNIK_LOKATION",
                   "name": "Bestellung eines Angebots Änderung der Technik der Lokation",
                   "value": "Z93"
                 }
@@ -1917,6 +2295,7 @@
             {
               "codes": [
                 {
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -1935,6 +2314,7 @@
             {
               "codes": [
                 {
+                  "enum": "CCYYMMDDHHMMZZZ",
                   "name": "CCYYMMDDHHMMZZZ",
                   "value": "303"
                 }
@@ -1966,26 +2346,32 @@
             {
               "codes": [
                 {
+                  "enum": "KAUF",
                   "name": "Kauf",
                   "value": "Z07"
                 },
                 {
+                  "enum": "NUTZUNGSUEBERLASSUNG",
                   "name": "Nutzungsüberlassung",
                   "value": "Z08"
                 },
                 {
+                  "enum": "ANGEBOT_BASIS_PREISBLATT",
                   "name": "Angebot auf Basis Preisblatt",
                   "value": "Z33"
                 },
                 {
+                  "enum": "INDIVIDUELLES_ANGEBOT",
                   "name": "Individuelles Angebot",
                   "value": "Z34"
                 },
                 {
+                  "enum": "AENDERUNG_KONFIGURATION",
                   "name": "Änderung Konfiguration",
                   "value": "Z55"
                 },
                 {
+                  "enum": "NEUKONFIGURATION",
                   "name": "Neukonfiguration",
                   "value": "Z64"
                 }
@@ -2017,6 +2403,7 @@
             {
               "codes": [
                 {
+                  "enum": "ANGEBOT",
                   "name": "Angebot",
                   "value": "QUOTES"
                 }
@@ -2029,6 +2416,7 @@
             {
               "codes": [
                 {
+                  "enum": "ENTWURFS_VERSION",
                   "name": "Entwurfs-Version",
                   "value": "D"
                 }
@@ -2041,6 +2429,7 @@
             {
               "codes": [
                 {
+                  "enum": "AUSGABE_2010_A",
                   "name": "Ausgabe 2010 - A",
                   "value": "10A"
                 }
@@ -2053,6 +2442,7 @@
             {
               "codes": [
                 {
+                  "enum": "UN_CEFACT",
                   "name": "UN/CEFACT",
                   "value": "UN"
                 }
@@ -2065,6 +2455,7 @@
             {
               "codes": [
                 {
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_13",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "1.3b"
                 }
@@ -2088,6 +2479,7 @@
         {
           "codes": [
             {
+              "enum": "TRENNUNG_POSITIONS_SUMMENTEIL",
               "name": "Trennung von Positions- und Summenteil",
               "value": "S"
             }

@@ -19,7 +19,7 @@
                       "value": "AGI"
                     },
                     {
-                      "enum": "REFERENZNUMMER_VORANGEGANGENEN_NACHRICHT",
+                      "enum": "REFERENZ_VORIGE_NACHRICHT",
                       "name": "Referenznummer einer vorangegangenen Nachricht",
                       "value": "ACW"
                     }
@@ -30,8 +30,10 @@
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X [528] ∨ [553]",
                   "id": "1154",
                   "name": "Referenznummer",
+                  "parent_group_ahb_status": "Soll [1] ∧ [69]",
                   "sub_index": 1,
                   "type": "data"
                 }
@@ -49,8 +51,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "PRUEFIDENTIFIKATOR",
                       "name": "Prüfidentifikator",
                       "value": "Z13"
@@ -58,12 +62,15 @@
                   ],
                   "id": "1153",
                   "name": "Referenz, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "code"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "ENERGIEMENGE_LEISTUNGSMAXIMUM",
                       "name": "Energiemenge und Leistungsmaximum",
                       "value": "13016"
@@ -71,6 +78,7 @@
                   ],
                   "id": "1154",
                   "name": "Prüfidentifikator",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 1,
                   "type": "code"
                 }
@@ -89,6 +97,7 @@
     "sg2": {
       "children": {
         "sg4_ic": {
+          "ahb_status": "X",
           "discriminator": {
             "element": "3139",
             "segment": "CTA",
@@ -100,9 +109,11 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
-                      "enum": "INFORMATIONSSTELLE",
+                      "ahb_status": "X",
+                      "enum": "INFORMATIONSKONTAKT",
                       "name": "Informationsstelle",
                       "value": "IC"
                     }
@@ -110,6 +121,7 @@
                   "id": "3139",
                   "index": 0,
                   "name": "Funktion des Ansprechpartners, Code",
+                  "parent_group_ahb_status": "Kann",
                   "type": "code"
                 },
                 {
@@ -121,8 +133,10 @@
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X",
                       "id": "3412",
                       "name": "Abteilung oder Bearbeiter",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "data"
                     }
@@ -140,34 +154,42 @@
                 {
                   "components": [
                     {
+                      "ahb_status": "X (([939] [142]) ∨ ([940] [143])) ∧ [576]",
                       "id": "3148",
                       "name": "Nummer, Adresse",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 0,
                       "type": "data"
                     },
                     {
+                      "ahb_status": "X [1P0..1]",
                       "codes": [
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "TELEFON",
                           "name": "Telefon",
                           "value": "TE"
                         },
                         {
-                          "enum": "E_MAIL",
+                          "ahb_status": "X [1P0..1]",
+                          "enum": "EMAIL",
                           "name": "E-Mail",
                           "value": "EM"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "WEITERES_TELEFON",
                           "name": "weiteres Telefon",
                           "value": "AJ"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "HANDY",
                           "name": "Handy",
                           "value": "AL"
                         },
                         {
+                          "ahb_status": "X [1P0..1]",
                           "enum": "TELEFAX",
                           "name": "Telefax",
                           "value": "FX"
@@ -175,6 +197,7 @@
                       ],
                       "id": "3155",
                       "name": "Kommunikationsadresse, Qualifier",
+                      "parent_group_ahb_status": "Kann",
                       "sub_index": 1,
                       "type": "code"
                     }
@@ -201,7 +224,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENAUSSTELLER_ABSENDER",
+                  "enum": "NACHRICHTENAUSSTELLER",
                   "name": "Dokumenten-/Nachrichtenaussteller bzw. -absender",
                   "value": "MS"
                 }
@@ -214,8 +237,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [117]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -226,20 +251,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -270,8 +299,10 @@
             {
               "components": [
                 {
+                  "ahb_status": "X [117]",
                   "id": "3039",
                   "name": "MP-ID",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 0,
                   "type": "data"
                 },
@@ -282,20 +313,24 @@
                   "type": "data"
                 },
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "GS1",
                       "name": "GS1",
                       "value": "9"
                     },
                     {
-                      "enum": "DE_BDEW_BUNDESVERBAND_ENERGIE_WASSERWIRTSCHAFT_E_V",
+                      "ahb_status": "X",
+                      "enum": "BDEW",
                       "name": "DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)",
                       "value": "293"
                     }
                   ],
                   "id": "3055",
                   "name": "Verantwortliche Stelle für die Codepflege, Code",
+                  "parent_group_ahb_status": "Muss",
                   "sub_index": 2,
                   "type": "code"
                 }
@@ -314,6 +349,7 @@
     "sg5": {
       "children": {
         "sg6_172": {
+          "ahb_status": "X",
           "children": {
             "sg9": {
               "children": {
@@ -330,23 +366,28 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X [69]",
                               "codes": [
                                 {
+                                  "ahb_status": "X [69]",
                                   "enum": "WAHRER_WERT",
                                   "name": "Wahrer Wert",
                                   "value": "220"
                                 },
                                 {
+                                  "ahb_status": "X [69]",
                                   "enum": "ERSATZWERT",
                                   "name": "Ersatzwert",
                                   "value": "67"
                                 },
                                 {
+                                  "ahb_status": "X [35] ∧ [69]",
                                   "enum": "VORLAEUFIGER_WERT",
                                   "name": "Vorläufiger Wert",
                                   "value": "Z18"
                                 },
                                 {
+                                  "ahb_status": "X [91]",
                                   "enum": "ANGABE_LIEFERSCHEIN",
                                   "name": "Angabe für Lieferschein",
                                   "value": "Z31"
@@ -354,12 +395,15 @@
                               ],
                               "id": "6063",
                               "name": "Menge, Qualifier",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             },
                             {
+                              "ahb_status": "X [902] ∧ [906]",
                               "id": "6060",
                               "name": "Menge",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 1,
                               "type": "data"
                             },
@@ -405,21 +449,26 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
-                                  "enum": "VERARBEITUNG_BEGINNDATUM_ZEIT",
+                                  "ahb_status": "X",
+                                  "enum": "VERARBEITUNGSBEGINN",
                                   "name": "Verarbeitung, Beginndatum/-zeit",
                                   "value": "163"
                                 }
                               ],
                               "id": "2005",
                               "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             },
                             {
+                              "ahb_status": "X [UB1] ∧ [495]",
                               "id": "2380",
                               "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 1,
                               "type": "data"
                             },
@@ -450,21 +499,26 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
-                                  "enum": "VERARBEITUNG_ENDEDATUM_ZEIT",
+                                  "ahb_status": "X",
+                                  "enum": "VERARBEITUNGSENDE",
                                   "name": "Verarbeitung, Endedatum/-zeit",
                                   "value": "164"
                                 }
                               ],
                               "id": "2005",
                               "name": "Datums- oder Uhrzeits- oder Zeitspannen-Funktion, Qualifier",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             },
                             {
+                              "ahb_status": "X [UB1] ∧ [495]",
                               "id": "2380",
                               "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 1,
                               "type": "data"
                             },
@@ -508,8 +562,10 @@
                               "type": "code"
                             },
                             {
+                              "ahb_status": "X",
                               "id": "2380",
                               "name": "Datum oder Uhrzeit oder Zeitspanne, Wert",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 1,
                               "type": "data"
                             },
@@ -545,8 +601,10 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
+                                  "ahb_status": "X",
                                   "enum": "PLAUSIBILISIERUNGSHINWEIS",
                                   "name": "Plausibilisierungshinweis",
                                   "value": "Z33"
@@ -554,6 +612,7 @@
                               ],
                               "id": "9015",
                               "name": "Statuskategorie, Code",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             }
@@ -578,33 +637,40 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X [5P0..1]",
                               "codes": [
                                 {
+                                  "ahb_status": "X [5P0..1]",
                                   "enum": "MESSWERT_WURDE_DURCH_KUNDEN_ZAEHLER_ABGELESEN",
                                   "name": "Messwert wurde durch den Kunden am Zähler abgelesen.",
                                   "value": "Z83"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "LEERSTAND",
                                   "name": "Leerstand",
                                   "value": "Z84"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "REALER_ZAEHLERUEBERLAUF_GEPRUEFT",
                                   "name": "Realer Zählerüberlauf geprüft",
                                   "value": "Z85"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "PLAUSIBEL_WG_KONTROLLABLESUNG",
                                   "name": "Plausibel wg. Kontrollablesung",
                                   "value": "Z86"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "PLAUSIBEL_WG_KUNDENHINWEIS",
                                   "name": "Plausibel wg. Kundenhinweis",
                                   "value": "Z87"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "AUSTAUSCH_ERSATZWERTES",
                                   "name": "Austausch des Ersatzwertes",
                                   "value": "ZC3"
@@ -612,6 +678,7 @@
                               ],
                               "id": "9013",
                               "name": "Statusanlaß, Code",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             }
@@ -629,8 +696,10 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
+                                  "ahb_status": "X",
                                   "enum": "ERSATZWERTBILDUNGSVERFAHREN",
                                   "name": "Ersatzwertbildungsverfahren",
                                   "value": "Z32"
@@ -638,6 +707,7 @@
                               ],
                               "id": "9015",
                               "name": "Statuskategorie, Code",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             }
@@ -662,28 +732,34 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X [4P0..1]",
                               "codes": [
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_MESSWERT_GEEICHTER_VERGLEICHSMESSUNG",
                                   "name": "Strom: Messwert aus geeichter Vergleichsmessung.",
                                   "value": "Z88"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_MESSWERT_VERFUEGBAREN_GEEICHTEN_GERAETEN_Z_B",
                                   "name": "Strom: Messwert aus verfügbaren nicht geeichten Geräten (z. B. Analogmessung).\r\nGas: Messwert eines nicht geeichten Messgerätes in der gleichen Messstrecke.",
                                   "value": "Z89"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_BERECHNUNG_NEUEN_WERTES_DURCH_INTERPOLATION",
                                   "name": "Strom / Gas: Berechnung eines neuen Wertes durch Interpolation.",
                                   "value": "Z92"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_VERGLEICHSWERTVERFAHREN_TEILSCHRITTEN_WERTEBESTIMMUNG",
                                   "name": "Strom: Vergleichswertverfahren mit Teilschritten Wertebestimmung, Ersatzprofilbestimmung und Skalierung.",
                                   "value": "ZJ2"
                                 },
                                 {
+                                  "ahb_status": "X [46] ∧ [568]",
                                   "enum": "STROM_GAS_1_N_BEZIEHUNG_MARKT_MESSLOKATION_KOENNEN_EBENE",
                                   "name": "Strom / Gas: bei einer 1:N Beziehung zwischen Markt- und Messlokation können auf Ebene der Messlokation verschiedene Ersatzwertbildungsverfahren verwendet werden, sodass auf Ebene der Marktlokation auf die Ersatzwerbildungsverfahren der bereits übermittelten Werte der Messlokation verwiesen wird.",
                                   "value": "ZS0"
@@ -691,6 +767,7 @@
                               ],
                               "id": "9013",
                               "name": "Statusanlaß, Code",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             }
@@ -708,8 +785,10 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
+                                  "ahb_status": "X",
                                   "enum": "KORREKTURGRUND",
                                   "name": "Korrekturgrund",
                                   "value": "Z34"
@@ -717,6 +796,7 @@
                               ],
                               "id": "9015",
                               "name": "Statuskategorie, Code",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             }
@@ -741,103 +821,124 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X [4P0..1]",
                               "codes": [
                                 {
-                                  "enum": "STROM_GAS_ZUGANG_MESSEINRICHTUNG_MOEGLICH_VOR_ORT_ABLESUNG",
+                                  "ahb_status": "X [4P0..1]",
+                                  "enum": "KEIN_ZUGANG",
                                   "name": "Strom / Gas: Zugang zur Messeinrichtung nicht möglich (Vor-Ort-Ablesung).",
                                   "value": "Z74"
                                 },
                                 {
-                                  "enum": "STROM_GAS_FERNAUSLESUNG_KONNTE_FRISTGERECHT_DURCHGEFUEHRT",
+                                  "ahb_status": "X [4P0..1]",
+                                  "enum": "KOMMUNIKATIONSSTOERUNG",
                                   "name": "Strom / Gas: Fernauslesung konnte nicht fristgerecht durchgeführt werden.",
                                   "value": "Z75"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_NETZAUSFALL_AUSFALL_NETZGEBIETES_FEHLENDE",
                                   "name": "Strom / Gas: Netzausfall = Ausfall eines Netzgebietes/fehlende Primärspannung.",
                                   "value": "Z76"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_MESSSPANNUNGSAUSFALL_FEHLENDE_HILFSSPANNUNG",
                                   "name": "Strom: Messspannungsausfall oder fehlende Hilfsspannung.",
                                   "value": "Z77"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_MESSWERTE_UNVOLLSTAENDIG_WEGEN_GERAETEWECHSELS",
                                   "name": "Strom / Gas: Messwerte unvollständig wegen Gerätewechsels.",
                                   "value": "Z78"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_WAEHREND_WARTUNGS_REVISIONS_INSTANDSETZUNGSARBEITEN",
                                   "name": "Strom: Während Wartungs-, Revisions- oder Instandsetzungsarbeiten am geeichten Messgeräten stehen keine Messwerte zur Verfügung.",
                                   "value": "Z79"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_GERAET_ARBEITET_AUSSERHALB_ZUGELASSENEN",
                                   "name": "Strom / Gas: Das Gerät arbeitet außerhalb der zugelassenen Betriebsbedingungen und liefert keine Messwerte.",
                                   "value": "Z80"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_MESSWERTE_SIND_VERWENDBAR_VERFUEGBAR",
                                   "name": "Strom / Gas: Messwerte sind nicht verwendbar / verfügbar, da bei der Messeinrichtung ein Defekt festgestellt wurde.",
                                   "value": "Z81"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_MOEGLICHER_GERAETEDEFEKT_MESSEINRICHTUNG",
                                   "name": "Strom / Gas: Möglicher Gerätedefekt/ Messeinrichtung in Überprüfung (z. B. Befundprüfung).",
                                   "value": "Z82"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_UHRZEIT_WAR_AUSSERHALB_ZULAESSIGEN_GRENZWERTE",
                                   "name": "Strom / Gas: Uhrzeit war außerhalb der zulässigen Grenzwerte.",
                                   "value": "ZA0"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_ENERGIE_LEISTUNG_VOLUMEN_ETC_UNPLAUSIBEL",
                                   "name": "Strom / Gas: Energie, Leistung, Volumen, etc. unplausibel.",
                                   "value": "ZA1"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "FALSCHER_WANDLERFAKTOR",
                                   "name": "Falscher Wandlerfaktor",
                                   "value": "ZA3"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "STROM_GAS_FEHLERHAFTE_ABLESUNG_INCL_MESSSTELLENVERWECHSLUNG",
                                   "name": "Strom / Gas: Fehlerhafte Ablesung incl. Messstellenverwechslung, Zahlendreher, ...",
                                   "value": "ZA4"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "STROM_GAS_Z_B_AENDERUNG_BERECHNUNGSVORSCHRIFT_NACHTRAEGLICH",
                                   "name": "Strom / Gas: z. B. Änderung der Berechnungsvorschrift, nachträglich berücksichtigte Zweit- bzw. Untermessung.",
                                   "value": "ZA5"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "UMBAU_MESSLOKATION",
                                   "name": "Umbau der Messlokation",
                                   "value": "ZA6"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "DATENBEARBEITUNGSFEHLER",
                                   "name": "Datenbearbeitungsfehler",
                                   "value": "ZA7"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "STROM_GAS_TECHNISCHER_FEHLER_MESSEINRICHTUNG",
                                   "name": "Strom / Gas: Technischer Fehler in der Messeinrichtung.",
                                   "value": "ZB0"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "AENDERUNG_TARIFSCHALTZEITEN",
                                   "name": "Änderung Tarifschaltzeiten",
                                   "value": "ZB9"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1] ⊻ [5P0..1]",
                                   "enum": "STROM_TARIFSCHALTGERAET_DEFEKT",
                                   "name": "Strom: Tarifschaltgerät defekt.",
                                   "value": "ZC2"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_WERT_BASIERT_UNZUREICHENDEN_ANZAHL_IMPULSEN",
                                   "name": "Strom / Gas: Der Wert basiert auf einer unzureichenden Anzahl von Impulsen gemäß der Eichordnung.",
                                   "value": "ZC4"
@@ -845,6 +946,7 @@
                               ],
                               "id": "9013",
                               "name": "Statusanlaß, Code",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             }
@@ -862,8 +964,10 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X",
                               "codes": [
                                 {
+                                  "ahb_status": "X",
                                   "enum": "GRUND_ERSATZWERTBILDUNG",
                                   "name": "Grund der Ersatzwertbildung",
                                   "value": "Z40"
@@ -871,6 +975,7 @@
                               ],
                               "id": "9015",
                               "name": "Statuskategorie, Code",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             }
@@ -895,108 +1000,130 @@
                         {
                           "components": [
                             {
+                              "ahb_status": "X [4P0..1]",
                               "codes": [
                                 {
-                                  "enum": "STROM_GAS_ZUGANG_MESSEINRICHTUNG_MOEGLICH_VOR_ORT_ABLESUNG",
+                                  "ahb_status": "X [4P0..1]",
+                                  "enum": "KEIN_ZUGANG",
                                   "name": "Strom / Gas: Zugang zur Messeinrichtung nicht möglich (Vor-Ort-Ablesung).",
                                   "value": "Z74"
                                 },
                                 {
-                                  "enum": "STROM_GAS_FERNAUSLESUNG_KONNTE_FRISTGERECHT_DURCHGEFUEHRT",
+                                  "ahb_status": "X [4P0..1]",
+                                  "enum": "KOMMUNIKATIONSSTOERUNG",
                                   "name": "Strom / Gas: Fernauslesung konnte nicht fristgerecht durchgeführt werden.",
                                   "value": "Z75"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_NETZAUSFALL_AUSFALL_NETZGEBIETES_FEHLENDE",
                                   "name": "Strom / Gas: Netzausfall = Ausfall eines Netzgebietes/fehlende Primärspannung.",
                                   "value": "Z76"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_MESSSPANNUNGSAUSFALL_FEHLENDE_HILFSSPANNUNG",
                                   "name": "Strom: Messspannungsausfall oder fehlende Hilfsspannung.",
                                   "value": "Z77"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_MESSWERTE_UNVOLLSTAENDIG_WEGEN_GERAETEWECHSELS",
                                   "name": "Strom / Gas: Messwerte unvollständig wegen Gerätewechsels.",
                                   "value": "Z78"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_WAEHREND_WARTUNGS_REVISIONS_INSTANDSETZUNGSARBEITEN",
                                   "name": "Strom: Während Wartungs-, Revisions- oder Instandsetzungsarbeiten am geeichten Messgeräten stehen keine Messwerte zur Verfügung.",
                                   "value": "Z79"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_GERAET_ARBEITET_AUSSERHALB_ZUGELASSENEN",
                                   "name": "Strom / Gas: Das Gerät arbeitet außerhalb der zugelassenen Betriebsbedingungen und liefert keine Messwerte.",
                                   "value": "Z80"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_MESSWERTE_SIND_VERWENDBAR_VERFUEGBAR",
                                   "name": "Strom / Gas: Messwerte sind nicht verwendbar / verfügbar, da bei der Messeinrichtung ein Defekt festgestellt wurde.",
                                   "value": "Z81"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_MOEGLICHER_GERAETEDEFEKT_MESSEINRICHTUNG",
                                   "name": "Strom / Gas: Möglicher Gerätedefekt/ Messeinrichtung in Überprüfung (z. B. Befundprüfung).",
                                   "value": "Z82"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_UHRZEIT_WAR_AUSSERHALB_ZULAESSIGEN_GRENZWERTE",
                                   "name": "Strom / Gas: Uhrzeit war außerhalb der zulässigen Grenzwerte.",
                                   "value": "ZA0"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_ENERGIE_LEISTUNG_VOLUMEN_ETC_UNPLAUSIBEL",
                                   "name": "Strom / Gas: Energie, Leistung, Volumen, etc. unplausibel.",
                                   "value": "ZA1"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "FALSCHER_WANDLERFAKTOR",
                                   "name": "Falscher Wandlerfaktor",
                                   "value": "ZA3"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_FEHLERHAFTE_ABLESUNG_INCL_MESSSTELLENVERWECHSLUNG",
                                   "name": "Strom / Gas: Fehlerhafte Ablesung incl. Messstellenverwechslung, Zahlendreher, ...",
                                   "value": "ZA4"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_Z_B_AENDERUNG_BERECHNUNGSVORSCHRIFT_NACHTRAEGLICH",
                                   "name": "Strom / Gas: z. B. Änderung der Berechnungsvorschrift, nachträglich berücksichtigte Zweit- bzw. Untermessung.",
                                   "value": "ZA5"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "UMBAU_MESSLOKATION",
                                   "name": "Umbau der Messlokation",
                                   "value": "ZA6"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "DATENBEARBEITUNGSFEHLER",
                                   "name": "Datenbearbeitungsfehler",
                                   "value": "ZA7"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_TECHNISCHER_FEHLER_MESSEINRICHTUNG",
                                   "name": "Strom / Gas: Technischer Fehler in der Messeinrichtung.",
                                   "value": "ZB0"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "AENDERUNG_TARIFSCHALTZEITEN",
                                   "name": "Änderung Tarifschaltzeiten",
                                   "value": "ZB9"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_TARIFSCHALTGERAET_DEFEKT",
                                   "name": "Strom: Tarifschaltgerät defekt.",
                                   "value": "ZC2"
                                 },
                                 {
+                                  "ahb_status": "X [4P0..1]",
                                   "enum": "STROM_GAS_WERT_BASIERT_UNZUREICHENDEN_ANZAHL_IMPULSEN",
                                   "name": "Strom / Gas: Der Wert basiert auf einer unzureichenden Anzahl von Impulsen gemäß der Eichordnung.",
                                   "value": "ZC4"
                                 },
                                 {
+                                  "ahb_status": "X [46] ∧ [570]",
                                   "enum": "STROM_GAS_1_N_BEZIEHUNG_MARKT_MESSLOKATION_KOENNEN_EBENE_2",
                                   "name": "Strom / Gas: bei einer 1:N Beziehung zwischen Markt- und Messlokation können auf Ebene der Messlokation verschiedene unterschiedliche Gründe für die Ersatzwertbildung vorliegen, sodass auf Ebene der Marktlokation auf die Gründe der Ersatzwertbildung der bereits übermittelten Werte der Messlokation verwiesen wird.",
                                   "value": "ZS9"
@@ -1004,6 +1131,7 @@
                               ],
                               "id": "9013",
                               "name": "Statusanlaß, Code",
+                              "parent_group_ahb_status": "Muss",
                               "sub_index": 0,
                               "type": "code"
                             }
@@ -1027,9 +1155,11 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X [908]",
                       "id": "1082",
                       "index": 0,
                       "name": "Positionsnummer",
+                      "parent_group_ahb_status": "Muss",
                       "type": "data"
                     }
                   ],
@@ -1039,8 +1169,10 @@
                 {
                   "elements": [
                     {
+                      "ahb_status": "X",
                       "codes": [
                         {
+                          "ahb_status": "X",
                           "enum": "PRODUKTIDENTIFIKATION",
                           "name": "Produktidentifikation",
                           "value": "5"
@@ -1049,24 +1181,30 @@
                       "id": "4347",
                       "index": 0,
                       "name": "Produkt-/Erzeugnisnummer, Qualifier",
+                      "parent_group_ahb_status": "Muss",
                       "type": "code"
                     },
                     {
                       "components": [
                         {
+                          "ahb_status": "X ([69] ∧ [501] ∧ [566]) ⊻ ([91] ∧ [501])",
                           "id": "7140",
                           "name": "Medium / OBIS-Kennzahl",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 0,
                           "type": "data"
                         },
                         {
+                          "ahb_status": "X [79]",
                           "codes": [
                             {
+                              "ahb_status": "X [79]",
                               "enum": "OBIS_KENNZAHL",
                               "name": "OBIS-Kennzahl",
                               "value": "SRW"
                             },
                             {
+                              "ahb_status": "X [78]",
                               "enum": "BDEW_OBIS_AEHNLICHE_KENNZAHL",
                               "name": "BDEW OBIS-ähnliche Kennzahl",
                               "value": "Z02"
@@ -1074,6 +1212,7 @@
                           ],
                           "id": "7143",
                           "name": "Art der Produkt-/Leistungsnummer, Code",
+                          "parent_group_ahb_status": "Muss",
                           "sub_index": 1,
                           "type": "code"
                         }
@@ -1103,8 +1242,10 @@
             {
               "elements": [
                 {
+                  "ahb_status": "X",
                   "codes": [
                     {
+                      "ahb_status": "X",
                       "enum": "MELDEPUNKT",
                       "name": "Meldepunkt",
                       "value": "172"
@@ -1113,13 +1254,16 @@
                   "id": "3227",
                   "index": 0,
                   "name": "Ortsangabe, Qualifier",
+                  "parent_group_ahb_status": "Muss",
                   "type": "code"
                 },
                 {
                   "components": [
                     {
+                      "ahb_status": "X [950] [514]",
                       "id": "3225",
                       "name": "Bezeichnung",
+                      "parent_group_ahb_status": "Muss",
                       "sub_index": 0,
                       "type": "data"
                     }
@@ -1144,8 +1288,10 @@
         {
           "elements": [
             {
+              "ahb_status": "X",
               "codes": [
                 {
+                  "ahb_status": "X",
                   "enum": "LIEFERANSCHRIFT",
                   "name": "Lieferanschrift",
                   "value": "DP"
@@ -1154,6 +1300,7 @@
               "id": "3035",
               "index": 0,
               "name": "Beteiligter, Qualifier",
+              "parent_group_ahb_status": "Muss [2001]",
               "type": "code"
             }
           ],
@@ -1347,7 +1494,7 @@
             {
               "codes": [
                 {
-                  "enum": "DOKUMENTEN_NACHRICHTENDATUM_ZEIT",
+                  "enum": "DOKUMENTENDATUM",
                   "name": "Dokumenten-/Nachrichtendatum/-zeit",
                   "value": "137"
                 }
@@ -1501,7 +1648,7 @@
                   "value": "500"
                 },
                 {
-                  "enum": "DE_DVGW_SERVICE_CONSULT_GMBH",
+                  "enum": "DE_DVGW_DEUTSCHE_VEREINIGUNG_GAS_WASSERFACHES_E_V",
                   "name": "DE, DVGW Service & Consult GmbH",
                   "value": "502"
                 }
@@ -1537,7 +1684,7 @@
                   "value": "500"
                 },
                 {
-                  "enum": "DE_DVGW_SERVICE_CONSULT_GMBH",
+                  "enum": "DE_DVGW_DEUTSCHE_VEREINIGUNG_GAS_WASSERFACHES_E_V",
                   "name": "DE, DVGW Service & Consult GmbH",
                   "value": "502"
                 }
@@ -1659,7 +1806,7 @@
             {
               "codes": [
                 {
-                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW",
+                  "enum": "VERSIONSNUMMER_ZUGRUNDELIEGENDEN_BDEW_6",
                   "name": "Versionsnummer der zugrundeliegenden BDEW-Nachrichtenbeschreibung",
                   "value": "2.4c"
                 }
