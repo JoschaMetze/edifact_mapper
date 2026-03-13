@@ -30,6 +30,192 @@ pub fn ahb_workflow_from_schema(schema: &AhbSchema, pid: &str) -> Option<AhbWork
 ///
 /// This is useful when you already have the specific PID object and don't need
 /// to search through the full schema.
+/// Build an [`AhbWorkflow`] from an enriched PID schema JSON value.
+///
+/// The schema must contain `ahb_status` fields on elements/components (produced by
+/// the generator with AHB enrichment enabled). Returns `None` if the schema is
+/// missing required top-level fields (`pid`, `beschreibung`).
+pub fn ahb_workflow_from_pid_schema(schema: &serde_json::Value) -> Option<AhbWorkflow> {
+    let pid = schema.get("pid")?.as_str()?;
+    let beschreibung = schema.get("beschreibung")?.as_str().unwrap_or("");
+    let kommunikation_von = schema
+        .get("kommunikation_von")
+        .and_then(|v| v.as_str())
+        .map(|s| s.to_string());
+
+    let mut fields = Vec::new();
+
+    // Walk groups in "fields" object
+    if let Some(groups) = schema.get("fields").and_then(|v| v.as_object()) {
+        for (_group_name, group) in groups {
+            let source_group = group
+                .get("source_group")
+                .and_then(|v| v.as_str())
+                .unwrap_or("");
+            let group_ahb_status = group
+                .get("ahb_status")
+                .and_then(|v| v.as_str())
+                .map(|s| s.to_string());
+            collect_fields_from_group(&mut fields, group, source_group, &group_ahb_status);
+        }
+    }
+
+    // Walk root_segments (outside any group)
+    if let Some(root_segs) = schema.get("root_segments").and_then(|v| v.as_array()) {
+        for seg in root_segs {
+            collect_fields_from_segment(&mut fields, seg, "", &None);
+        }
+    }
+
+    Some(AhbWorkflow {
+        pruefidentifikator: pid.to_string(),
+        description: beschreibung.to_string(),
+        communication_direction: kommunikation_von,
+        fields,
+    })
+}
+
+/// Recursively collect AHB field rules from a group and its children.
+fn collect_fields_from_group(
+    fields: &mut Vec<AhbFieldRule>,
+    group: &serde_json::Value,
+    group_path: &str,
+    parent_group_ahb_status: &Option<String>,
+) {
+    // Collect from segments in this group
+    if let Some(segments) = group.get("segments").and_then(|v| v.as_array()) {
+        for seg in segments {
+            collect_fields_from_segment(fields, seg, group_path, parent_group_ahb_status);
+        }
+    }
+
+    // Recurse into children
+    if let Some(children) = group.get("children").and_then(|v| v.as_object()) {
+        for (_child_name, child) in children {
+            let child_source = child
+                .get("source_group")
+                .and_then(|v| v.as_str())
+                .unwrap_or("");
+            let child_path = if group_path.is_empty() {
+                child_source.to_string()
+            } else {
+                format!("{}/{}", group_path, child_source)
+            };
+            let child_group_status = child
+                .get("ahb_status")
+                .and_then(|v| v.as_str())
+                .map(|s| s.to_string());
+            collect_fields_from_group(fields, child, &child_path, &child_group_status);
+        }
+    }
+}
+
+/// Collect AHB field rules from a single segment's elements.
+fn collect_fields_from_segment(
+    fields: &mut Vec<AhbFieldRule>,
+    seg: &serde_json::Value,
+    group_path: &str,
+    parent_group_ahb_status: &Option<String>,
+) {
+    let seg_id = seg.get("id").and_then(|v| v.as_str()).unwrap_or("");
+
+    if let Some(elements) = seg.get("elements").and_then(|v| v.as_array()) {
+        for el in elements {
+            // Direct data element (has "id" but no "composite")
+            if el.get("composite").is_none() {
+                if let Some(de_id) = el.get("id").and_then(|v| v.as_str()) {
+                    if let Some(ahb_status) = el.get("ahb_status").and_then(|v| v.as_str()) {
+                        let segment_path = if group_path.is_empty() {
+                            format!("{}/{}", seg_id, de_id)
+                        } else {
+                            format!("{}/{}/{}", group_path, seg_id, de_id)
+                        };
+                        let el_parent_status = el
+                            .get("parent_group_ahb_status")
+                            .and_then(|v| v.as_str())
+                            .map(|s| s.to_string())
+                            .or_else(|| parent_group_ahb_status.clone());
+                        let name = el
+                            .get("name")
+                            .and_then(|v| v.as_str())
+                            .unwrap_or("")
+                            .to_string();
+                        let codes = collect_code_rules(el);
+                        fields.push(AhbFieldRule {
+                            segment_path,
+                            name,
+                            ahb_status: ahb_status.to_string(),
+                            codes,
+                            parent_group_ahb_status: el_parent_status,
+                        });
+                    }
+                }
+            }
+
+            // Composite element — walk components
+            if let Some(composite_id) = el.get("composite").and_then(|v| v.as_str()) {
+                if let Some(components) = el.get("components").and_then(|v| v.as_array()) {
+                    for comp in components {
+                        let comp_id = comp.get("id").and_then(|v| v.as_str()).unwrap_or("");
+                        if let Some(ahb_status) = comp.get("ahb_status").and_then(|v| v.as_str()) {
+                            let segment_path = if group_path.is_empty() {
+                                format!("{}/{}/{}", seg_id, composite_id, comp_id)
+                            } else {
+                                format!("{}/{}/{}/{}", group_path, seg_id, composite_id, comp_id)
+                            };
+                            let comp_parent_status = comp
+                                .get("parent_group_ahb_status")
+                                .and_then(|v| v.as_str())
+                                .map(|s| s.to_string())
+                                .or_else(|| parent_group_ahb_status.clone());
+                            let name = comp
+                                .get("name")
+                                .and_then(|v| v.as_str())
+                                .unwrap_or("")
+                                .to_string();
+                            let codes = collect_code_rules(comp);
+                            fields.push(AhbFieldRule {
+                                segment_path,
+                                name,
+                                ahb_status: ahb_status.to_string(),
+                                codes,
+                                parent_group_ahb_status: comp_parent_status,
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// Collect code rules from an element or component's "codes" array.
+fn collect_code_rules(el: &serde_json::Value) -> Vec<AhbCodeRule> {
+    let Some(codes) = el.get("codes").and_then(|v| v.as_array()) else {
+        return Vec::new();
+    };
+    codes
+        .iter()
+        .map(|c| AhbCodeRule {
+            value: c
+                .get("value")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string(),
+            description: c
+                .get("name")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string(),
+            ahb_status: c
+                .get("ahb_status")
+                .and_then(|v| v.as_str())
+                .unwrap_or("X")
+                .to_string(),
+        })
+        .collect()
+}
+
 pub fn ahb_workflow_from_pruefidentifikator(pruefid: &Pruefidentifikator) -> AhbWorkflow {
     AhbWorkflow {
         pruefidentifikator: pruefid.id.clone(),
@@ -289,5 +475,37 @@ mod tests {
         assert_eq!(workflow.description, "Anmeldung MaLo");
         assert_eq!(workflow.fields.len(), 1);
         assert_eq!(workflow.fields[0].name, "ID der Marktlokation");
+    }
+
+    #[test]
+    fn test_ahb_workflow_from_pid_schema() {
+        let schema_path = std::path::Path::new(
+            "../../crates/mig-types/src/generated/fv2504/utilmd/pids/pid_55001_schema.json",
+        );
+        if !schema_path.exists() {
+            eprintln!("Skipping: schema not found");
+            return;
+        }
+
+        let schema_str = std::fs::read_to_string(schema_path).unwrap();
+        let schema: serde_json::Value = serde_json::from_str(&schema_str).unwrap();
+
+        let workflow = ahb_workflow_from_pid_schema(&schema).unwrap();
+
+        assert_eq!(workflow.pruefidentifikator, "55001");
+        assert!(!workflow.description.is_empty());
+        assert!(workflow.communication_direction.is_some());
+        assert!(!workflow.fields.is_empty(), "Should have field rules");
+
+        // Check that at least some fields have non-empty ahb_status
+        let has_status = workflow
+            .fields
+            .iter()
+            .any(|f| !f.ahb_status.is_empty());
+        assert!(has_status, "Should have at least one field with ahb_status");
+
+        // Check that code rules are populated
+        let has_codes = workflow.fields.iter().any(|f| !f.codes.is_empty());
+        assert!(has_codes, "Should have at least one field with code rules");
     }
 }
