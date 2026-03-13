@@ -134,6 +134,9 @@ impl ConditionEvaluator for PricatConditionEvaluatorFV2504 {
     fn is_external(&self, condition: u32) -> bool {
         self.external_conditions.contains(&condition)
     }
+    fn is_known(&self, condition: u32) -> bool {
+        matches!(condition, 1 | 2 | 3 | 4 | 5 | 6 | 7 | 9 | 10 | 12 | 14 | 19 | 22 | 24 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 64 | 490 | 491 | 492 | 494 | 495 | 502 | 503 | 504 | 511 | 512 | 513 | 519 | 520 | 521 | 902 | 908 | 909 | 911 | 912 | 926 | 929 | 931 | 932 | 933 | 937 | 939 | 940 | 941 | 942 | 946 | 948 | 949 | 957 | 959 | 968)
+    }
 }
 
 impl PricatConditionEvaluatorFV2504 {

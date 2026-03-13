@@ -156,6 +156,9 @@ impl ConditionEvaluator for RemadvConditionEvaluatorFV2504 {
     fn is_external(&self, condition: u32) -> bool {
         self.external_conditions.contains(&condition)
     }
+    fn is_known(&self, condition: u32) -> bool {
+        matches!(condition, 2 | 3 | 4 | 8 | 9 | 11 | 12 | 14 | 15 | 16 | 18 | 22 | 26 | 28 | 33 | 34 | 35 | 36 | 39 | 40 | 41 | 42 | 43 | 45 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59 | 60 | 61 | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 74 | 75 | 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 | 85 | 86 | 87 | 88 | 89 | 90 | 91 | 92 | 93 | 94 | 95 | 97 | 98 | 99 | 101 | 102 | 103 | 104 | 492 | 493 | 501 | 502 | 503 | 510 | 511 | 512 | 515 | 517 | 518 | 519 | 520 | 521 | 523 | 525 | 526 | 529 | 533 | 534 | 535 | 536 | 537 | 538 | 544 | 548 | 549 | 926 | 930 | 931 | 939 | 940)
+    }
 }
 
 impl RemadvConditionEvaluatorFV2504 {

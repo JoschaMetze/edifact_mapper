@@ -123,6 +123,9 @@ impl ConditionEvaluator for PartinConditionEvaluatorFV2604 {
     fn is_external(&self, condition: u32) -> bool {
         self.external_conditions.contains(&condition)
     }
+    fn is_known(&self, condition: u32) -> bool {
+        matches!(condition, 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 41 | 43 | 44 | 45 | 46 | 49 | 50 | 490 | 491 | 494 | 500 | 501 | 502 | 503 | 504 | 505 | 506 | 508 | 908 | 931 | 932 | 933 | 939 | 940)
+    }
 }
 
 impl PartinConditionEvaluatorFV2604 {

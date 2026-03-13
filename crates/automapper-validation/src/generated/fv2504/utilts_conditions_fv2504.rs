@@ -155,6 +155,9 @@ impl ConditionEvaluator for UtiltsConditionEvaluatorFV2504 {
     fn is_external(&self, condition: u32) -> bool {
         self.external_conditions.contains(&condition)
     }
+    fn is_known(&self, condition: u32) -> bool {
+        matches!(condition, 1 | 2 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 21 | 22 | 24 | 25 | 26 | 27 | 29 | 30 | 31 | 32 | 33 | 34 | 36 | 37 | 41 | 42 | 43 | 44 | 46 | 47 | 48 | 49 | 50 | 53 | 54 | 55 | 56 | 57 | 58 | 59 | 61 | 62 | 490 | 491 | 494 | 501 | 502 | 504 | 505 | 506 | 507 | 508 | 509 | 510 | 511 | 512 | 513 | 514 | 515 | 516 | 517 | 518 | 519 | 520 | 521 | 522 | 523 | 524 | 525 | 526 | 527 | 528 | 529 | 530 | 531 | 532 | 533 | 534 | 912 | 913 | 914 | 915 | 930 | 931 | 932 | 933 | 937 | 939 | 940 | 947 | 950 | 951 | 960 | 963 | 964 | 965 | 969 | 2001 | 2002 | 2004 | 2005 | 2006 | 2007)
+    }
 }
 
 impl UtiltsConditionEvaluatorFV2504 {

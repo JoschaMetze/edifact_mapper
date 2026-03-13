@@ -93,6 +93,9 @@ impl ConditionEvaluator for ComdisConditionEvaluatorFV2510 {
     fn is_external(&self, condition: u32) -> bool {
         self.external_conditions.contains(&condition)
     }
+    fn is_known(&self, condition: u32) -> bool {
+        matches!(condition, 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 492 | 493 | 505 | 506 | 508 | 509 | 510 | 930 | 931 | 939 | 940)
+    }
 }
 
 impl ComdisConditionEvaluatorFV2510 {

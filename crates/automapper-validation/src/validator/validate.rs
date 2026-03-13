@@ -240,36 +240,49 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                     // Condition not met - field not required, skip
                 }
                 ConditionResult::Unknown => {
-                    // Partition unknown IDs into external (need provider) vs truly unknown
-                    let (external_ids, missing_ids): (Vec<u32>, Vec<u32>) =
-                        unknown_ids.into_iter().partition(|id| self.evaluator.is_external(*id));
+                    // Partition unknown IDs into three categories:
+                    // 1. External: require an external provider (business context)
+                    // 2. Undetermined: implemented but returned Unknown (data not present)
+                    // 3. Missing: not implemented in evaluator at all
+                    let mut external_ids = Vec::new();
+                    let mut undetermined_ids = Vec::new();
+                    let mut missing_ids = Vec::new();
+                    for id in unknown_ids {
+                        if self.evaluator.is_external(id) {
+                            external_ids.push(id);
+                        } else if self.evaluator.is_known(id) {
+                            undetermined_ids.push(id);
+                        } else {
+                            missing_ids.push(id);
+                        }
+                    }
 
-                    let detail = match (external_ids.is_empty(), missing_ids.is_empty()) {
-                        (true, true) => String::new(),
-                        (false, true) => {
-                            let ids: Vec<String> =
-                                external_ids.iter().map(|id| format!("[{id}]")).collect();
-                            format!(
-                                " (external conditions require provider: {})",
-                                ids.join(", ")
-                            )
-                        }
-                        (true, false) => {
-                            let ids: Vec<String> =
-                                missing_ids.iter().map(|id| format!("[{id}]")).collect();
-                            format!(" (missing conditions: {})", ids.join(", "))
-                        }
-                        (false, false) => {
-                            let ext: Vec<String> =
-                                external_ids.iter().map(|id| format!("[{id}]")).collect();
-                            let miss: Vec<String> =
-                                missing_ids.iter().map(|id| format!("[{id}]")).collect();
-                            format!(
-                                " (external conditions require provider: {}; missing conditions: {})",
-                                ext.join(", "),
-                                miss.join(", ")
-                            )
-                        }
+                    let mut parts = Vec::new();
+                    if !external_ids.is_empty() {
+                        let ids: Vec<String> =
+                            external_ids.iter().map(|id| format!("[{id}]")).collect();
+                        parts.push(format!(
+                            "external conditions require provider: {}",
+                            ids.join(", ")
+                        ));
+                    }
+                    if !undetermined_ids.is_empty() {
+                        let ids: Vec<String> =
+                            undetermined_ids.iter().map(|id| format!("[{id}]")).collect();
+                        parts.push(format!(
+                            "conditions could not be determined from message data: {}",
+                            ids.join(", ")
+                        ));
+                    }
+                    if !missing_ids.is_empty() {
+                        let ids: Vec<String> =
+                            missing_ids.iter().map(|id| format!("[{id}]")).collect();
+                        parts.push(format!("missing conditions: {}", ids.join(", ")));
+                    }
+                    let detail = if parts.is_empty() {
+                        String::new()
+                    } else {
+                        format!(" ({})", parts.join("; "))
                     };
                     report.add_issue(
                         ValidationIssue::new(

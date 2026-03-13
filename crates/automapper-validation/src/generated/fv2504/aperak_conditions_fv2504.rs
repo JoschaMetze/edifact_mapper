@@ -66,6 +66,9 @@ impl ConditionEvaluator for AperakConditionEvaluatorFV2504 {
     fn is_external(&self, condition: u32) -> bool {
         self.external_conditions.contains(&condition)
     }
+    fn is_known(&self, condition: u32) -> bool {
+        matches!(condition, 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 494 | 500 | 501 | 502 | 931 | 939 | 940)
+    }
 }
 
 impl AperakConditionEvaluatorFV2504 {

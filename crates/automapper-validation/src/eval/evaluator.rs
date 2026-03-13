@@ -78,6 +78,17 @@ pub trait ConditionEvaluator: Send + Sync {
     /// (i.e., cannot be determined from the EDIFACT message alone).
     fn is_external(&self, condition: u32) -> bool;
 
+    /// Returns `true` if this evaluator has an implementation for the given
+    /// condition number (whether internal or external). Conditions that fall
+    /// through to the `_ => Unknown` wildcard return `false`.
+    ///
+    /// This allows distinguishing "implemented but returned Unknown because
+    /// the relevant data isn't present in the message" from "not implemented
+    /// at all".
+    fn is_known(&self, _condition: u32) -> bool {
+        false
+    }
+
     /// Returns the message type this evaluator handles (e.g., "UTILMD").
     fn message_type(&self) -> &str;
 
@@ -92,6 +103,10 @@ impl<T: ConditionEvaluator + ?Sized> ConditionEvaluator for std::sync::Arc<T> {
 
     fn is_external(&self, condition: u32) -> bool {
         (**self).is_external(condition)
+    }
+
+    fn is_known(&self, condition: u32) -> bool {
+        (**self).is_known(condition)
     }
 
     fn message_type(&self) -> &str {

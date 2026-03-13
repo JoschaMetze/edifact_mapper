@@ -133,6 +133,9 @@ impl ConditionEvaluator for ReqoteConditionEvaluatorFV2504 {
     fn is_external(&self, condition: u32) -> bool {
         self.external_conditions.contains(&condition)
     }
+    fn is_known(&self, condition: u32) -> bool {
+        matches!(condition, 1 | 2 | 10 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 490 | 491 | 492 | 493 | 494 | 500 | 501 | 502 | 503 | 504 | 507 | 508 | 509 | 510 | 511 | 512 | 514 | 515 | 516 | 903 | 906 | 931 | 932 | 933 | 934 | 935 | 939 | 940 | 950 | 951 | 960 | 961 | 962 | 967 | 2005 | 2060 | 2061 | 2062 | 2063 | 2064 | 2065 | 2066)
+    }
 }
 
 impl ReqoteConditionEvaluatorFV2504 {

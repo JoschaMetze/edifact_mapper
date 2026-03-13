@@ -77,6 +77,9 @@ impl ConditionEvaluator for InsrptConditionEvaluatorFV2510 {
     fn is_external(&self, condition: u32) -> bool {
         self.external_conditions.contains(&condition)
     }
+    fn is_known(&self, condition: u32) -> bool {
+        matches!(condition, 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 494 | 495 | 506 | 507 | 508 | 509 | 510 | 511 | 512 | 513 | 514 | 515 | 908 | 931 | 950 | 951)
+    }
 }
 
 impl InsrptConditionEvaluatorFV2510 {

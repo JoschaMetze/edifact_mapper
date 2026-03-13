@@ -56,6 +56,9 @@ impl ConditionEvaluator for OrdchgConditionEvaluatorFV2504 {
     fn is_external(&self, condition: u32) -> bool {
         self.external_conditions.contains(&condition)
     }
+    fn is_known(&self, condition: u32) -> bool {
+        matches!(condition, 1 | 2 | 3 | 4 | 5 | 494 | 500 | 501 | 502 | 503 | 931 | 939 | 940)
+    }
 }
 
 impl OrdchgConditionEvaluatorFV2504 {

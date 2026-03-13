@@ -49,6 +49,9 @@ impl ConditionEvaluator for ContrlConditionEvaluatorFV2504 {
     fn is_external(&self, condition: u32) -> bool {
         self.external_conditions.contains(&condition)
     }
+    fn is_known(&self, condition: u32) -> bool {
+        matches!(condition, 1 | 2 | 3 | 5 | 6 | 8 | 9)
+    }
 }
 
 impl ContrlConditionEvaluatorFV2504 {
