@@ -63,6 +63,8 @@ pub struct MigServiceRegistry {
     /// MIG schemas for response message types.
     /// Key: "{fv}/{msg_type}" e.g. "FV2504/APERAK"
     response_migs: HashMap<String, MigSchema>,
+    /// Condition evaluator registry keyed by (message_type, format_version).
+    evaluator_registry: automapper_validation::eval::EvaluatorRegistry,
 }
 
 impl MigServiceRegistry {
@@ -623,6 +625,66 @@ impl MigServiceRegistry {
             }
         }
 
+        // Register all generated condition evaluators
+        let evaluator_registry = automapper_validation::eval::EvaluatorRegistry::new();
+        evaluator_registry.register(automapper_validation::AperakConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::ComdisConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::ContrlConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::IftstaConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::InvoicConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::MsconsConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::OrdchgConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::OrdersConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::OrdrspConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::PartinConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::PricatConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::QuotesConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::RemadvConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::ReqoteConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::UtilmdGasConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::UtilmdStromConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::UtiltsConditionEvaluatorFV2504::default());
+        evaluator_registry.register(automapper_validation::ComdisConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::IftstaConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::InsrptConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::InvoicConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::MsconsConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::OrdersConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::OrdrspConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::PartinConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::PricatConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::QuotesConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::RemadvConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::ReqoteConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::AperakConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::ContrlConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::OrdchgConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::UtilmdGasConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::UtilmdStromConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::UtiltsConditionEvaluatorFV2510::default());
+        evaluator_registry.register(automapper_validation::AperakConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::ComdisConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::ContrlConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::IftstaConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::InsrptConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::InvoicConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::MsconsConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::OrdchgConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::OrdersConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::OrdrspConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::PartinConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::PricatConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::QuotesConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::RemadvConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::ReqoteConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::UtilmdGasConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::UtilmdStromConditionEvaluatorFV2604::default());
+        evaluator_registry.register(automapper_validation::UtiltsConditionEvaluatorFV2604::default());
+        tracing::info!(
+            "Registered {} condition evaluators",
+            evaluator_registry.registered_keys().len()
+        );
+
         Self {
             services,
             mapping_engines,
@@ -632,6 +694,7 @@ impl MigServiceRegistry {
             pid_segment_numbers,
             response_engines,
             response_migs,
+            evaluator_registry,
         }
     }
 
@@ -778,6 +841,11 @@ impl MigServiceRegistry {
     /// Check if any MIG services are available.
     pub fn has_services(&self) -> bool {
         !self.services.is_empty()
+    }
+
+    /// Get the condition evaluator registry.
+    pub fn evaluator_registry(&self) -> &automapper_validation::eval::EvaluatorRegistry {
+        &self.evaluator_registry
     }
 }
 
@@ -1023,6 +1091,7 @@ mod tests {
             pid_segment_numbers: HashMap::new(),
             response_engines: HashMap::new(),
             response_migs: HashMap::new(),
+            evaluator_registry: automapper_validation::eval::EvaluatorRegistry::new(),
         };
 
         assert_eq!(
@@ -1051,6 +1120,7 @@ mod tests {
             pid_segment_numbers: HashMap::new(),
             response_engines: HashMap::new(),
             response_migs: HashMap::new(),
+            evaluator_registry: automapper_validation::eval::EvaluatorRegistry::new(),
         };
 
         // Resolves from cache without any AHB schemas loaded
@@ -1079,6 +1149,7 @@ mod tests {
             pid_segment_numbers,
             response_engines: HashMap::new(),
             response_migs: HashMap::new(),
+            evaluator_registry: automapper_validation::eval::EvaluatorRegistry::new(),
         };
 
         let nums = registry.segment_numbers_for_pid("FV2504", "UTILMD_Strom", "55001");
@@ -1120,6 +1191,7 @@ mod tests {
             pid_segment_numbers: HashMap::new(),
             response_engines: HashMap::new(),
             response_migs: HashMap::new(),
+            evaluator_registry: automapper_validation::eval::EvaluatorRegistry::new(),
         };
 
         let workflow = registry.ahb_workflow_for_pid("FV2504", "UTILMD_Strom", "55001");

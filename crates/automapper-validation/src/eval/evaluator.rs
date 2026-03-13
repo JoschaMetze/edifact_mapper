@@ -85,6 +85,24 @@ pub trait ConditionEvaluator: Send + Sync {
     fn format_version(&self) -> &str;
 }
 
+impl<T: ConditionEvaluator + ?Sized> ConditionEvaluator for std::sync::Arc<T> {
+    fn evaluate(&self, condition: u32, ctx: &EvaluationContext) -> ConditionResult {
+        (**self).evaluate(condition, ctx)
+    }
+
+    fn is_external(&self, condition: u32) -> bool {
+        (**self).is_external(condition)
+    }
+
+    fn message_type(&self) -> &str {
+        (**self).message_type()
+    }
+
+    fn format_version(&self) -> &str {
+        (**self).format_version()
+    }
+}
+
 /// Provider for external conditions that depend on context outside the EDIFACT message.
 ///
 /// External conditions are things like:

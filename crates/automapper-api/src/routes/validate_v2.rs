@@ -138,8 +138,16 @@ pub(crate) async fn validate_v2(
             Box::new(automapper_validation::eval::NoOpExternalProvider)
         };
 
-    // Step 9: Create condition evaluator and validator
-    let evaluator = automapper_validation::UtilmdStromConditionEvaluatorFV2504::default();
+    // Step 9: Create condition evaluator and validator (resolved by message type + FV)
+    let evaluator = state
+        .mig_registry
+        .evaluator_registry()
+        .get(msg_variant, &req.format_version)
+        .unwrap_or_else(|| {
+            std::sync::Arc::new(
+                automapper_validation::UtilmdStromConditionEvaluatorFV2504::default(),
+            )
+        });
     let validator = automapper_validation::EdifactValidator::new(evaluator);
 
     // Step 10: Run validation with group navigator
