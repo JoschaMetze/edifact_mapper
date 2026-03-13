@@ -187,7 +187,9 @@ impl<'a> EvaluationContext<'a> {
         child_group_id: &str,
     ) -> usize {
         match self.navigator {
-            Some(nav) => nav.child_group_instance_count(parent_path, parent_instance, child_group_id),
+            Some(nav) => {
+                nav.child_group_instance_count(parent_path, parent_instance, child_group_id)
+            }
             None => 0,
         }
     }
@@ -204,7 +206,11 @@ impl<'a> EvaluationContext<'a> {
     ) -> Vec<OwnedSegment> {
         match self.navigator {
             Some(nav) => nav.find_segments_in_child_group(
-                segment_id, parent_path, parent_instance, child_group_id, child_instance,
+                segment_id,
+                parent_path,
+                parent_instance,
+                child_group_id,
+                child_instance,
             ),
             None => Vec::new(),
         }
@@ -221,7 +227,11 @@ impl<'a> EvaluationContext<'a> {
         instance_index: usize,
     ) -> Option<String> {
         self.navigator?.extract_value_in_group(
-            segment_id, element_index, component_index, group_path, instance_index,
+            segment_id,
+            element_index,
+            component_index,
+            group_path,
+            instance_index,
         )
     }
 
@@ -230,17 +240,30 @@ impl<'a> EvaluationContext<'a> {
 
     /// Check if any segment with the given tag + qualifier exists (message-wide).
     /// Returns `True` if found, `False` if not.
-    pub fn has_qualifier(&self, tag: &str, element_index: usize, qualifier: &str) -> ConditionResult {
+    pub fn has_qualifier(
+        &self,
+        tag: &str,
+        element_index: usize,
+        qualifier: &str,
+    ) -> ConditionResult {
         ConditionResult::from(
-            !self.find_segments_with_qualifier(tag, element_index, qualifier).is_empty(),
+            !self
+                .find_segments_with_qualifier(tag, element_index, qualifier)
+                .is_empty(),
         )
     }
 
     /// Check if a segment with given tag + qualifier does NOT exist (message-wide).
     /// Returns `True` if absent, `False` if present.
-    pub fn lacks_qualifier(&self, tag: &str, element_index: usize, qualifier: &str) -> ConditionResult {
+    pub fn lacks_qualifier(
+        &self,
+        tag: &str,
+        element_index: usize,
+        qualifier: &str,
+    ) -> ConditionResult {
         ConditionResult::from(
-            self.find_segments_with_qualifier(tag, element_index, qualifier).is_empty(),
+            self.find_segments_with_qualifier(tag, element_index, qualifier)
+                .is_empty(),
         )
     }
 
@@ -262,7 +285,12 @@ impl<'a> EvaluationContext<'a> {
             return ConditionResult::Unknown;
         }
         for seg in &segments {
-            if let Some(v) = seg.elements.get(value_elem).and_then(|e| e.get(value_comp)).map(|s| s.as_str()) {
+            if let Some(v) = seg
+                .elements
+                .get(value_elem)
+                .and_then(|e| e.get(value_comp))
+                .map(|s| s.as_str())
+            {
                 if values.contains(&v) {
                     return ConditionResult::True;
                 }
@@ -287,7 +315,13 @@ impl<'a> EvaluationContext<'a> {
         if instance_count > 0 {
             for i in 0..instance_count {
                 if !self
-                    .find_segments_with_qualifier_in_group(tag, element_index, qualifier, group_path, i)
+                    .find_segments_with_qualifier_in_group(
+                        tag,
+                        element_index,
+                        qualifier,
+                        group_path,
+                        i,
+                    )
                     .is_empty()
                 {
                     return ConditionResult::True;
@@ -356,8 +390,9 @@ impl<'a> EvaluationContext<'a> {
         let instance_count = self.group_instance_count(group_path);
         if instance_count > 0 {
             for i in 0..instance_count {
-                let segs = self
-                    .find_segments_with_qualifier_in_group(tag, qual_elem, qualifier, group_path, i);
+                let segs = self.find_segments_with_qualifier_in_group(
+                    tag, qual_elem, qualifier, group_path, i,
+                );
                 for seg in &segs {
                     if seg
                         .elements
@@ -401,7 +436,11 @@ impl<'a> EvaluationContext<'a> {
             for pi in 0..parent_count {
                 // Check if this parent instance has the required qualifier
                 let parent_segs = self.find_segments_with_qualifier_in_group(
-                    parent_tag, parent_elem, parent_qual, parent_path, pi,
+                    parent_tag,
+                    parent_elem,
+                    parent_qual,
+                    parent_path,
+                    pi,
                 );
                 if parent_segs.is_empty() {
                     continue;
@@ -410,7 +449,11 @@ impl<'a> EvaluationContext<'a> {
                 let child_count = self.child_group_instance_count(parent_path, pi, child_group_id);
                 for ci in 0..child_count {
                     let child_segs = self.find_segments_in_child_group(
-                        child_tag, parent_path, pi, child_group_id, ci,
+                        child_tag,
+                        parent_path,
+                        pi,
+                        child_group_id,
+                        ci,
                     );
                     if child_segs.iter().any(|s| {
                         s.elements
@@ -425,8 +468,12 @@ impl<'a> EvaluationContext<'a> {
             return ConditionResult::False;
         }
         // Fallback: message-wide — check both qualifiers exist independently
-        let has_parent = !self.find_segments_with_qualifier(parent_tag, parent_elem, parent_qual).is_empty();
-        let has_child = !self.find_segments_with_qualifier(child_tag, child_elem, child_qual).is_empty();
+        let has_parent = !self
+            .find_segments_with_qualifier(parent_tag, parent_elem, parent_qual)
+            .is_empty();
+        let has_child = !self
+            .find_segments_with_qualifier(child_tag, child_elem, child_qual)
+            .is_empty();
         ConditionResult::from(has_parent && has_child)
     }
 
@@ -450,10 +497,22 @@ impl<'a> EvaluationContext<'a> {
         if instance_count > 0 {
             for i in 0..instance_count {
                 let has_present = !self
-                    .find_segments_with_qualifier_in_group(present_tag, present_elem, present_qual, group_path, i)
+                    .find_segments_with_qualifier_in_group(
+                        present_tag,
+                        present_elem,
+                        present_qual,
+                        group_path,
+                        i,
+                    )
                     .is_empty();
                 let has_absent = !self
-                    .find_segments_with_qualifier_in_group(absent_tag, absent_elem, absent_qual, group_path, i)
+                    .find_segments_with_qualifier_in_group(
+                        absent_tag,
+                        absent_elem,
+                        absent_qual,
+                        group_path,
+                        i,
+                    )
                     .is_empty();
                 if has_present && !has_absent {
                     return ConditionResult::True;
@@ -462,8 +521,12 @@ impl<'a> EvaluationContext<'a> {
             return ConditionResult::False;
         }
         // Fallback: message-wide
-        let has_present = !self.find_segments_with_qualifier(present_tag, present_elem, present_qual).is_empty();
-        let has_absent = !self.find_segments_with_qualifier(absent_tag, absent_elem, absent_qual).is_empty();
+        let has_present = !self
+            .find_segments_with_qualifier(present_tag, present_elem, present_qual)
+            .is_empty();
+        let has_absent = !self
+            .find_segments_with_qualifier(absent_tag, absent_elem, absent_qual)
+            .is_empty();
         ConditionResult::from(has_present && !has_absent)
     }
 
@@ -480,9 +543,10 @@ impl<'a> EvaluationContext<'a> {
         let instance_count = self.group_instance_count(group_path);
         let mut results = Vec::new();
         for i in 0..instance_count {
-            if let Some(val) = self.navigator.and_then(|nav| {
-                nav.extract_value_in_group(tag, elem, comp, group_path, i)
-            }) {
+            if let Some(val) = self
+                .navigator
+                .and_then(|nav| nav.extract_value_in_group(tag, elem, comp, group_path, i))
+            {
                 if !val.is_empty() {
                     results.push((i, val));
                 }
@@ -520,10 +584,18 @@ impl<'a> EvaluationContext<'a> {
             let mut source_values = Vec::new();
             for si in 0..source_count {
                 let segs = self.find_segments_with_qualifier_in_group(
-                    source_tag, source_qual_elem, source_qual, source_path, si,
+                    source_tag,
+                    source_qual_elem,
+                    source_qual,
+                    source_path,
+                    si,
                 );
                 for seg in &segs {
-                    if let Some(val) = seg.elements.get(source_value_elem).and_then(|e| e.get(source_value_comp)) {
+                    if let Some(val) = seg
+                        .elements
+                        .get(source_value_elem)
+                        .and_then(|e| e.get(source_value_comp))
+                    {
                         if !val.is_empty() {
                             source_values.push(val.clone());
                         }
@@ -534,7 +606,8 @@ impl<'a> EvaluationContext<'a> {
                 return ConditionResult::Unknown;
             }
             // Check if any target instance has a matching value
-            let target_values = self.collect_group_values(target_tag, target_elem, target_comp, target_path);
+            let target_values =
+                self.collect_group_values(target_tag, target_elem, target_comp, target_path);
             for (_, tv) in &target_values {
                 if source_values.iter().any(|sv| sv == tv) {
                     return ConditionResult::True;
@@ -543,10 +616,16 @@ impl<'a> EvaluationContext<'a> {
             return ConditionResult::False;
         }
         // Fallback: message-wide search
-        let source_segs = self.find_segments_with_qualifier(source_tag, source_qual_elem, source_qual);
+        let source_segs =
+            self.find_segments_with_qualifier(source_tag, source_qual_elem, source_qual);
         let source_vals: Vec<&str> = source_segs
             .iter()
-            .filter_map(|s| s.elements.get(source_value_elem).and_then(|e| e.get(source_value_comp)).map(|v| v.as_str()))
+            .filter_map(|s| {
+                s.elements
+                    .get(source_value_elem)
+                    .and_then(|e| e.get(source_value_comp))
+                    .map(|v| v.as_str())
+            })
             .filter(|v| !v.is_empty())
             .collect();
         if source_vals.is_empty() {
@@ -554,7 +633,10 @@ impl<'a> EvaluationContext<'a> {
         }
         let target_segs = self.find_segments(target_tag);
         let has_match = target_segs.iter().any(|s| {
-            s.elements.get(target_elem).and_then(|e| e.get(target_comp)).map(|v| v.as_str())
+            s.elements
+                .get(target_elem)
+                .and_then(|e| e.get(target_comp))
+                .map(|v| v.as_str())
                 .is_some_and(|v| source_vals.contains(&v))
         });
         ConditionResult::from(has_match)
@@ -583,20 +665,26 @@ impl<'a> EvaluationContext<'a> {
         let instance_count = self.group_instance_count(group_path);
         if instance_count > 0 {
             for i in 0..instance_count {
-                let a_present = self.find_segments_in_group(tag_a, group_path, i).iter().any(|seg| {
-                    seg.elements
-                        .get(elem_a)
-                        .and_then(|e| e.first())
-                        .map(|s| s.as_str())
-                        .is_some_and(|v| quals_a.contains(&v))
-                });
-                let b_present = self.find_segments_in_group(tag_b, group_path, i).iter().any(|seg| {
-                    seg.elements
-                        .get(elem_b)
-                        .and_then(|e| e.get(comp_b))
-                        .map(|s| s.as_str())
-                        .is_some_and(|v| vals_b.contains(&v))
-                });
+                let a_present = self
+                    .find_segments_in_group(tag_a, group_path, i)
+                    .iter()
+                    .any(|seg| {
+                        seg.elements
+                            .get(elem_a)
+                            .and_then(|e| e.first())
+                            .map(|s| s.as_str())
+                            .is_some_and(|v| quals_a.contains(&v))
+                    });
+                let b_present = self
+                    .find_segments_in_group(tag_b, group_path, i)
+                    .iter()
+                    .any(|seg| {
+                        seg.elements
+                            .get(elem_b)
+                            .and_then(|e| e.get(comp_b))
+                            .map(|s| s.as_str())
+                            .is_some_and(|v| vals_b.contains(&v))
+                    });
                 if a_present && b_present {
                     return ConditionResult::True;
                 }
@@ -743,13 +831,20 @@ impl<'a> EvaluationContext<'a> {
             let mut total = 0;
             for i in 0..instance_count {
                 total += self
-                    .find_segments_with_qualifier_in_group(tag, element_index, qualifier, group_path, i)
+                    .find_segments_with_qualifier_in_group(
+                        tag,
+                        element_index,
+                        qualifier,
+                        group_path,
+                        i,
+                    )
                     .len();
             }
             return total;
         }
         // Fallback: message-wide
-        self.find_segments_with_qualifier(tag, element_index, qualifier).len()
+        self.find_segments_with_qualifier(tag, element_index, qualifier)
+            .len()
     }
 
     /// Count segments matching tag (any qualifier) within a group path.
@@ -793,7 +888,10 @@ mod tests {
 
     impl MockGroupNavigator {
         fn new() -> Self {
-            Self { groups: vec![], children: vec![] }
+            Self {
+                groups: vec![],
+                children: vec![],
+            }
         }
         fn with_group(mut self, path: &[&str], instance: usize, segs: Vec<OwnedSegment>) -> Self {
             self.groups
@@ -920,7 +1018,10 @@ mod tests {
         ) -> Option<String> {
             let segs = self.find_instance(group_path, instance_index)?;
             let seg = segs.iter().find(|s| s.id == segment_id)?;
-            seg.elements.get(element_index)?.get(component_index).cloned()
+            seg.elements
+                .get(element_index)?
+                .get(component_index)
+                .cloned()
         }
     }
 
@@ -1072,9 +1173,7 @@ mod tests {
 
     #[test]
     fn test_has_qualified_value() {
-        let segments = vec![
-            make_segment("STS", vec![vec!["7"], vec![], vec!["ZG9"]]),
-        ];
+        let segments = vec![make_segment("STS", vec![vec!["7"], vec![], vec!["ZG9"]])];
         let external = NoOpExternalProvider;
         let ctx = EvaluationContext::new("55001", &external, &segments);
 
@@ -1167,8 +1266,13 @@ mod tests {
 
         assert_eq!(
             ctx.any_group_has_co_occurrence(
-                "SEQ", 0, &["Z01"],
-                "CCI", 2, 0, &["Z07"],
+                "SEQ",
+                0,
+                &["Z01"],
+                "CCI",
+                2,
+                0,
+                &["Z07"],
                 &["SG4", "SG8"],
             ),
             ConditionResult::True,
@@ -1176,8 +1280,13 @@ mod tests {
         // Wrong CCI value
         assert_eq!(
             ctx.any_group_has_co_occurrence(
-                "SEQ", 0, &["Z01"],
-                "CCI", 2, 0, &["ZC0"],
+                "SEQ",
+                0,
+                &["Z01"],
+                "CCI",
+                2,
+                0,
+                &["ZC0"],
                 &["SG4", "SG8"],
             ),
             ConditionResult::False,
@@ -1192,31 +1301,64 @@ mod tests {
         // SG8[0] has SEQ+Z98, with SG10 child having CCI+Z23
         // SG8[1] has SEQ+Z01, no SG10 children
         let nav = MockGroupNavigator::new()
-            .with_group(&["SG4", "SG8"], 0, vec![make_segment("SEQ", vec![vec!["Z98"]])])
-            .with_group(&["SG4", "SG8"], 1, vec![make_segment("SEQ", vec![vec!["Z01"]])])
-            .with_child_group(&["SG4", "SG8"], 0, "SG10", 0, vec![
-                make_segment("CCI", vec![vec!["Z23"]]),
-            ]);
+            .with_group(
+                &["SG4", "SG8"],
+                0,
+                vec![make_segment("SEQ", vec![vec!["Z98"]])],
+            )
+            .with_group(
+                &["SG4", "SG8"],
+                1,
+                vec![make_segment("SEQ", vec![vec!["Z01"]])],
+            )
+            .with_child_group(
+                &["SG4", "SG8"],
+                0,
+                "SG10",
+                0,
+                vec![make_segment("CCI", vec![vec!["Z23"]])],
+            );
         let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
 
         // SG8 with SEQ+Z98 has SG10 child with CCI+Z23 → True
         assert_eq!(
             ctx.filtered_parent_child_has_qualifier(
-                &["SG4", "SG8"], "SEQ", 0, "Z98", "SG10", "CCI", 0, "Z23",
+                &["SG4", "SG8"],
+                "SEQ",
+                0,
+                "Z98",
+                "SG10",
+                "CCI",
+                0,
+                "Z23",
             ),
             ConditionResult::True,
         );
         // SG8 with SEQ+Z01 has no SG10 children → False
         assert_eq!(
             ctx.filtered_parent_child_has_qualifier(
-                &["SG4", "SG8"], "SEQ", 0, "Z01", "SG10", "CCI", 0, "Z23",
+                &["SG4", "SG8"],
+                "SEQ",
+                0,
+                "Z01",
+                "SG10",
+                "CCI",
+                0,
+                "Z23",
             ),
             ConditionResult::False,
         );
         // Wrong child qualifier → False
         assert_eq!(
             ctx.filtered_parent_child_has_qualifier(
-                &["SG4", "SG8"], "SEQ", 0, "Z98", "SG10", "CCI", 0, "Z99",
+                &["SG4", "SG8"],
+                "SEQ",
+                0,
+                "Z98",
+                "SG10",
+                "CCI",
+                0,
+                "Z99",
             ),
             ConditionResult::False,
         );
@@ -1234,14 +1376,28 @@ mod tests {
 
         assert_eq!(
             ctx.filtered_parent_child_has_qualifier(
-                &["SG4", "SG8"], "SEQ", 0, "Z98", "SG10", "CCI", 0, "Z23",
+                &["SG4", "SG8"],
+                "SEQ",
+                0,
+                "Z98",
+                "SG10",
+                "CCI",
+                0,
+                "Z23",
             ),
             ConditionResult::True,
         );
         // Missing child qualifier in message-wide → False
         assert_eq!(
             ctx.filtered_parent_child_has_qualifier(
-                &["SG4", "SG8"], "SEQ", 0, "Z98", "SG10", "CCI", 0, "Z99",
+                &["SG4", "SG8"],
+                "SEQ",
+                0,
+                "Z98",
+                "SG10",
+                "CCI",
+                0,
+                "Z99",
             ),
             ConditionResult::False,
         );
@@ -1253,13 +1409,19 @@ mod tests {
         // SG8[0]: SEQ+Z59 present, CCI+11 absent
         // SG8[1]: SEQ+Z01 present, CCI+11 present
         let nav = MockGroupNavigator::new()
-            .with_group(&["SG4", "SG8"], 0, vec![
-                make_segment("SEQ", vec![vec!["Z59"]]),
-            ])
-            .with_group(&["SG4", "SG8"], 1, vec![
-                make_segment("SEQ", vec![vec!["Z01"]]),
-                make_segment("CCI", vec![vec!["11"]]),
-            ]);
+            .with_group(
+                &["SG4", "SG8"],
+                0,
+                vec![make_segment("SEQ", vec![vec!["Z59"]])],
+            )
+            .with_group(
+                &["SG4", "SG8"],
+                1,
+                vec![
+                    make_segment("SEQ", vec![vec!["Z01"]]),
+                    make_segment("CCI", vec![vec!["11"]]),
+                ],
+            );
         let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
 
         // SG8[0] has SEQ+Z59 without CCI+11 → True
@@ -1281,9 +1443,7 @@ mod tests {
 
     #[test]
     fn test_any_group_has_qualifier_without_fallback() {
-        let segments = vec![
-            make_segment("SEQ", vec![vec!["Z59"]]),
-        ];
+        let segments = vec![make_segment("SEQ", vec![vec!["Z59"]])];
         let external = NoOpExternalProvider;
         let ctx = EvaluationContext::new("55001", &external, &segments);
 
@@ -1298,12 +1458,16 @@ mod tests {
     fn test_collect_group_values() {
         let external = NoOpExternalProvider;
         let nav = MockGroupNavigator::new()
-            .with_group(&["SG4", "SG6"], 0, vec![
-                make_segment("RFF", vec![vec!["Z49", "REF001"]]),
-            ])
-            .with_group(&["SG4", "SG6"], 1, vec![
-                make_segment("RFF", vec![vec!["Z49", "REF002"]]),
-            ]);
+            .with_group(
+                &["SG4", "SG6"],
+                0,
+                vec![make_segment("RFF", vec![vec!["Z49", "REF001"]])],
+            )
+            .with_group(
+                &["SG4", "SG6"],
+                1,
+                vec![make_segment("RFF", vec![vec!["Z49", "REF002"]])],
+            );
         let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
 
         let values = ctx.collect_group_values("RFF", 0, 1, &["SG4", "SG6"]);
@@ -1319,22 +1483,36 @@ mod tests {
         // SG8[0]: SEQ with c286 value "TS001" (matches)
         // SG8[1]: SEQ with c286 value "TS999" (no match)
         let nav = MockGroupNavigator::new()
-            .with_group(&["SG4", "SG6"], 0, vec![
-                make_segment("RFF", vec![vec!["Z49", "TS001"]]),
-            ])
-            .with_group(&["SG4", "SG8"], 0, vec![
-                make_segment("SEQ", vec![vec!["Z98"], vec!["TS001"]]),
-            ])
-            .with_group(&["SG4", "SG8"], 1, vec![
-                make_segment("SEQ", vec![vec!["Z01"], vec!["TS999"]]),
-            ]);
+            .with_group(
+                &["SG4", "SG6"],
+                0,
+                vec![make_segment("RFF", vec![vec!["Z49", "TS001"]])],
+            )
+            .with_group(
+                &["SG4", "SG8"],
+                0,
+                vec![make_segment("SEQ", vec![vec!["Z98"], vec!["TS001"]])],
+            )
+            .with_group(
+                &["SG4", "SG8"],
+                1,
+                vec![make_segment("SEQ", vec![vec!["Z01"], vec!["TS999"]])],
+            );
         let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
 
         // RFF+Z49 value "TS001" matches SEQ value at [1][0] → True
         assert_eq!(
             ctx.groups_share_qualified_value(
-                "RFF", 0, "Z49", 0, 1, &["SG4", "SG6"],
-                "SEQ", 1, 0, &["SG4", "SG8"],
+                "RFF",
+                0,
+                "Z49",
+                0,
+                1,
+                &["SG4", "SG6"],
+                "SEQ",
+                1,
+                0,
+                &["SG4", "SG8"],
             ),
             ConditionResult::True,
         );
@@ -1344,19 +1522,31 @@ mod tests {
     fn test_groups_share_qualified_value_no_match() {
         let external = NoOpExternalProvider;
         let nav = MockGroupNavigator::new()
-            .with_group(&["SG4", "SG6"], 0, vec![
-                make_segment("RFF", vec![vec!["Z49", "TS001"]]),
-            ])
-            .with_group(&["SG4", "SG8"], 0, vec![
-                make_segment("SEQ", vec![vec!["Z98"], vec!["TS999"]]),
-            ]);
+            .with_group(
+                &["SG4", "SG6"],
+                0,
+                vec![make_segment("RFF", vec![vec!["Z49", "TS001"]])],
+            )
+            .with_group(
+                &["SG4", "SG8"],
+                0,
+                vec![make_segment("SEQ", vec![vec!["Z98"], vec!["TS999"]])],
+            );
         let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
 
         // No matching value → False
         assert_eq!(
             ctx.groups_share_qualified_value(
-                "RFF", 0, "Z49", 0, 1, &["SG4", "SG6"],
-                "SEQ", 1, 0, &["SG4", "SG8"],
+                "RFF",
+                0,
+                "Z49",
+                0,
+                1,
+                &["SG4", "SG6"],
+                "SEQ",
+                1,
+                0,
+                &["SG4", "SG8"],
             ),
             ConditionResult::False,
         );
@@ -1367,19 +1557,31 @@ mod tests {
         let external = NoOpExternalProvider;
         // No RFF+Z49 at all
         let nav = MockGroupNavigator::new()
-            .with_group(&["SG4", "SG6"], 0, vec![
-                make_segment("RFF", vec![vec!["Z13", "55001"]]),
-            ])
-            .with_group(&["SG4", "SG8"], 0, vec![
-                make_segment("SEQ", vec![vec!["Z98"], vec!["TS001"]]),
-            ]);
+            .with_group(
+                &["SG4", "SG6"],
+                0,
+                vec![make_segment("RFF", vec![vec!["Z13", "55001"]])],
+            )
+            .with_group(
+                &["SG4", "SG8"],
+                0,
+                vec![make_segment("SEQ", vec![vec!["Z98"], vec!["TS001"]])],
+            );
         let ctx = EvaluationContext::with_navigator("55001", &external, &[], &nav);
 
         // No source qualifier match → Unknown
         assert_eq!(
             ctx.groups_share_qualified_value(
-                "RFF", 0, "Z49", 0, 1, &["SG4", "SG6"],
-                "SEQ", 1, 0, &["SG4", "SG8"],
+                "RFF",
+                0,
+                "Z49",
+                0,
+                1,
+                &["SG4", "SG6"],
+                "SEQ",
+                1,
+                0,
+                &["SG4", "SG8"],
             ),
             ConditionResult::Unknown,
         );
@@ -1397,8 +1599,16 @@ mod tests {
 
         assert_eq!(
             ctx.groups_share_qualified_value(
-                "RFF", 0, "Z49", 0, 1, &["SG4", "SG6"],
-                "SEQ", 1, 0, &["SG4", "SG8"],
+                "RFF",
+                0,
+                "Z49",
+                0,
+                1,
+                &["SG4", "SG6"],
+                "SEQ",
+                1,
+                0,
+                &["SG4", "SG8"],
             ),
             ConditionResult::True,
         );
@@ -1409,9 +1619,17 @@ mod tests {
         let external = NoOpExternalProvider;
         let ctx = EvaluationContext::new("55001", &external, &[]);
 
-        assert_eq!(ctx.child_group_instance_count(&["SG4", "SG8"], 0, "SG10"), 0);
-        assert!(ctx.find_segments_in_child_group("CCI", &["SG4", "SG8"], 0, "SG10", 0).is_empty());
-        assert_eq!(ctx.extract_value_in_group("SEQ", 0, 0, &["SG4", "SG8"], 0), None);
+        assert_eq!(
+            ctx.child_group_instance_count(&["SG4", "SG8"], 0, "SG10"),
+            0
+        );
+        assert!(ctx
+            .find_segments_in_child_group("CCI", &["SG4", "SG8"], 0, "SG10", 0)
+            .is_empty());
+        assert_eq!(
+            ctx.extract_value_in_group("SEQ", 0, 0, &["SG4", "SG8"], 0),
+            None
+        );
     }
 
     // --- has_segment_matching tests ---
@@ -1433,9 +1651,10 @@ mod tests {
 
     #[test]
     fn test_has_segment_matching_not_found() {
-        let segments = vec![
-            make_segment("STS", vec![vec!["7"], vec!["E01"], vec!["ZW4"]]),
-        ];
+        let segments = vec![make_segment(
+            "STS",
+            vec![vec!["7"], vec!["E01"], vec!["ZW4"]],
+        )];
         let external = NoOpExternalProvider;
         let ctx = EvaluationContext::new("55001", &external, &segments);
 
@@ -1462,16 +1681,12 @@ mod tests {
             .with_group(
                 &["SG4"],
                 0,
-                vec![
-                    make_segment("STS", vec![vec!["7"], vec!["E01"]]),
-                ],
+                vec![make_segment("STS", vec![vec!["7"], vec!["E01"]])],
             )
             .with_group(
                 &["SG4"],
                 1,
-                vec![
-                    make_segment("STS", vec![vec!["Z20"], vec!["Z32"]]),
-                ],
+                vec![make_segment("STS", vec![vec!["Z20"], vec!["Z32"]])],
             );
         let segments = vec![
             make_segment("STS", vec![vec!["7"], vec!["E01"]]),
@@ -1490,9 +1705,10 @@ mod tests {
 
     #[test]
     fn test_dtm_ge() {
-        let segments = vec![
-            make_segment("DTM", vec![vec!["137", "202601010000", "303"]]),
-        ];
+        let segments = vec![make_segment(
+            "DTM",
+            vec![vec!["137", "202601010000", "303"]],
+        )];
         let external = NoOpExternalProvider;
         let ctx = EvaluationContext::new("55001", &external, &segments);
 
@@ -1504,9 +1720,10 @@ mod tests {
 
     #[test]
     fn test_dtm_lt() {
-        let segments = vec![
-            make_segment("DTM", vec![vec!["137", "202601010000", "303"]]),
-        ];
+        let segments = vec![make_segment(
+            "DTM",
+            vec![vec!["137", "202601010000", "303"]],
+        )];
         let external = NoOpExternalProvider;
         let ctx = EvaluationContext::new("55001", &external, &segments);
 
@@ -1517,9 +1734,10 @@ mod tests {
 
     #[test]
     fn test_dtm_le() {
-        let segments = vec![
-            make_segment("DTM", vec![vec!["137", "202601010000", "303"]]),
-        ];
+        let segments = vec![make_segment(
+            "DTM",
+            vec![vec!["137", "202601010000", "303"]],
+        )];
         let external = NoOpExternalProvider;
         let ctx = EvaluationContext::new("55001", &external, &segments);
 
@@ -1544,9 +1762,7 @@ mod tests {
             .with_group(
                 &["SG4", "SG8"],
                 1,
-                vec![
-                    make_segment("CCI", vec![vec!["Z23"]]),
-                ],
+                vec![make_segment("CCI", vec![vec!["Z23"]])],
             );
         let segments = vec![
             make_segment("CCI", vec![vec!["Z23"]]),
@@ -1556,9 +1772,18 @@ mod tests {
         let external = NoOpExternalProvider;
         let ctx = EvaluationContext::with_navigator("55001", &external, &segments, &nav);
 
-        assert_eq!(ctx.count_qualified_in_group("CCI", 0, "Z23", &["SG4", "SG8"]), 2);
-        assert_eq!(ctx.count_qualified_in_group("CCI", 0, "Z30", &["SG4", "SG8"]), 1);
-        assert_eq!(ctx.count_qualified_in_group("CCI", 0, "Z99", &["SG4", "SG8"]), 0);
+        assert_eq!(
+            ctx.count_qualified_in_group("CCI", 0, "Z23", &["SG4", "SG8"]),
+            2
+        );
+        assert_eq!(
+            ctx.count_qualified_in_group("CCI", 0, "Z30", &["SG4", "SG8"]),
+            1
+        );
+        assert_eq!(
+            ctx.count_qualified_in_group("CCI", 0, "Z99", &["SG4", "SG8"]),
+            0
+        );
     }
 
     #[test]
@@ -1575,9 +1800,7 @@ mod tests {
             .with_group(
                 &["SG4", "SG8"],
                 1,
-                vec![
-                    make_segment("SEQ", vec![vec!["Z01"]]),
-                ],
+                vec![make_segment("SEQ", vec![vec!["Z01"]])],
             );
         let segments = vec![
             make_segment("SEQ", vec![vec!["Z98"]]),
@@ -1603,7 +1826,10 @@ mod tests {
         let ctx = EvaluationContext::new("55001", &external, &segments);
 
         // Falls back to message-wide count
-        assert_eq!(ctx.count_qualified_in_group("CCI", 0, "Z23", &["SG4", "SG8"]), 2);
+        assert_eq!(
+            ctx.count_qualified_in_group("CCI", 0, "Z23", &["SG4", "SG8"]),
+            2
+        );
         assert_eq!(ctx.count_in_group("CCI", &["SG4", "SG8"]), 3);
     }
 }

@@ -167,7 +167,11 @@ pub fn validate_malo_id(value: &str) -> ConditionResult {
     let mut sum = 0u32;
     for (i, &d) in digits[..10].iter().enumerate() {
         let multiplied = if i % 2 == 0 { d } else { d * 2 };
-        sum += if multiplied > 9 { multiplied - 9 } else { multiplied };
+        sum += if multiplied > 9 {
+            multiplied - 9
+        } else {
+            multiplied
+        };
     }
     let expected = (10 - (sum % 10)) % 10;
     ConditionResult::from(check == expected)
@@ -221,9 +225,12 @@ pub fn validate_artikel_pattern(value: &str, segment_lengths: &[usize]) -> Condi
     if parts.len() != segment_lengths.len() {
         return ConditionResult::from(false);
     }
-    let valid = parts.iter().zip(segment_lengths.iter()).all(|(part, &expected_len)| {
-        part.len() == expected_len && part.chars().all(|c| c.is_ascii_digit())
-    });
+    let valid = parts
+        .iter()
+        .zip(segment_lengths.iter())
+        .all(|(part, &expected_len)| {
+            part.len() == expected_len && part.chars().all(|c| c.is_ascii_digit())
+        });
     ConditionResult::from(valid)
 }
 
@@ -261,8 +268,14 @@ mod tests {
 
     #[test]
     fn test_max_decimal_places() {
-        assert_eq!(validate_max_decimal_places("123.45", 2), ConditionResult::True);
-        assert_eq!(validate_max_decimal_places("123.456", 2), ConditionResult::False);
+        assert_eq!(
+            validate_max_decimal_places("123.45", 2),
+            ConditionResult::True
+        );
+        assert_eq!(
+            validate_max_decimal_places("123.456", 2),
+            ConditionResult::False
+        );
         assert_eq!(validate_max_decimal_places("123", 2), ConditionResult::True);
         assert_eq!(validate_max_decimal_places("0.1", 3), ConditionResult::True);
         assert_eq!(validate_max_decimal_places("", 2), ConditionResult::Unknown);
@@ -271,14 +284,26 @@ mod tests {
     #[test]
     fn test_no_decimal_places() {
         assert_eq!(validate_max_decimal_places("100", 0), ConditionResult::True);
-        assert_eq!(validate_max_decimal_places("100.5", 0), ConditionResult::False);
+        assert_eq!(
+            validate_max_decimal_places("100.5", 0),
+            ConditionResult::False
+        );
     }
 
     #[test]
     fn test_max_integer_digits() {
-        assert_eq!(validate_max_integer_digits("1234", 4), ConditionResult::True);
-        assert_eq!(validate_max_integer_digits("12345", 4), ConditionResult::False);
-        assert_eq!(validate_max_integer_digits("-123.45", 4), ConditionResult::True);
+        assert_eq!(
+            validate_max_integer_digits("1234", 4),
+            ConditionResult::True
+        );
+        assert_eq!(
+            validate_max_integer_digits("12345", 4),
+            ConditionResult::False
+        );
+        assert_eq!(
+            validate_max_integer_digits("-123.45", 4),
+            ConditionResult::True
+        );
         assert_eq!(validate_max_integer_digits("", 4), ConditionResult::Unknown);
     }
 
@@ -299,29 +324,62 @@ mod tests {
 
     #[test]
     fn test_hhmm_equals() {
-        assert_eq!(validate_hhmm_equals("202601012200+00", "2200"), ConditionResult::True);
-        assert_eq!(validate_hhmm_equals("202601012300+00", "2200"), ConditionResult::False);
-        assert_eq!(validate_hhmm_equals("short", "2200"), ConditionResult::Unknown);
+        assert_eq!(
+            validate_hhmm_equals("202601012200+00", "2200"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            validate_hhmm_equals("202601012300+00", "2200"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            validate_hhmm_equals("short", "2200"),
+            ConditionResult::Unknown
+        );
     }
 
     #[test]
     fn test_hhmm_range() {
-        assert_eq!(validate_hhmm_range("202601011530+00", "0000", "2359"), ConditionResult::True);
-        assert_eq!(validate_hhmm_range("202601010000+00", "0000", "2359"), ConditionResult::True);
-        assert_eq!(validate_hhmm_range("202601012359+00", "0000", "2359"), ConditionResult::True);
+        assert_eq!(
+            validate_hhmm_range("202601011530+00", "0000", "2359"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            validate_hhmm_range("202601010000+00", "0000", "2359"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            validate_hhmm_range("202601012359+00", "0000", "2359"),
+            ConditionResult::True
+        );
     }
 
     #[test]
     fn test_mmddhhmm_equals() {
-        assert_eq!(validate_mmddhhmm_equals("202612312300+00", "12312300"), ConditionResult::True);
-        assert_eq!(validate_mmddhhmm_equals("202601012200+00", "12312300"), ConditionResult::False);
+        assert_eq!(
+            validate_mmddhhmm_equals("202612312300+00", "12312300"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            validate_mmddhhmm_equals("202601012200+00", "12312300"),
+            ConditionResult::False
+        );
     }
 
     #[test]
     fn test_timezone_utc() {
-        assert_eq!(validate_timezone_utc("202601012200+00"), ConditionResult::True);
-        assert_eq!(validate_timezone_utc("202601012200+01"), ConditionResult::False);
-        assert_eq!(validate_timezone_utc("202601012200"), ConditionResult::Unknown);
+        assert_eq!(
+            validate_timezone_utc("202601012200+00"),
+            ConditionResult::True
+        );
+        assert_eq!(
+            validate_timezone_utc("202601012200+01"),
+            ConditionResult::False
+        );
+        assert_eq!(
+            validate_timezone_utc("202601012200"),
+            ConditionResult::Unknown
+        );
     }
 
     // --- Contact validation ---
@@ -369,11 +427,26 @@ mod tests {
 
     #[test]
     fn test_artikel_pattern() {
-        assert_eq!(validate_artikel_pattern("1-23-4", &[1, 2, 1]), ConditionResult::True);
-        assert_eq!(validate_artikel_pattern("1-23-4-567", &[1, 2, 1, 3]), ConditionResult::True);
-        assert_eq!(validate_artikel_pattern("1-23-4-56", &[1, 2, 1, 3]), ConditionResult::False);
-        assert_eq!(validate_artikel_pattern("1-AB-4", &[1, 2, 1]), ConditionResult::False);
-        assert_eq!(validate_artikel_pattern("", &[1, 2, 1]), ConditionResult::Unknown);
+        assert_eq!(
+            validate_artikel_pattern("1-23-4", &[1, 2, 1]),
+            ConditionResult::True
+        );
+        assert_eq!(
+            validate_artikel_pattern("1-23-4-567", &[1, 2, 1, 3]),
+            ConditionResult::True
+        );
+        assert_eq!(
+            validate_artikel_pattern("1-23-4-56", &[1, 2, 1, 3]),
+            ConditionResult::False
+        );
+        assert_eq!(
+            validate_artikel_pattern("1-AB-4", &[1, 2, 1]),
+            ConditionResult::False
+        );
+        assert_eq!(
+            validate_artikel_pattern("", &[1, 2, 1]),
+            ConditionResult::Unknown
+        );
     }
 
     // --- TR-ID / SR-ID validation ---
@@ -401,7 +474,10 @@ mod tests {
 
     #[test]
     fn test_exact_length() {
-        assert_eq!(validate_exact_length("1234567890123456", 16), ConditionResult::True);
+        assert_eq!(
+            validate_exact_length("1234567890123456", 16),
+            ConditionResult::True
+        );
         assert_eq!(validate_exact_length("123", 16), ConditionResult::False);
         assert_eq!(validate_exact_length("", 16), ConditionResult::Unknown);
     }

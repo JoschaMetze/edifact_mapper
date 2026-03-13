@@ -4,9 +4,9 @@
 // Generated: 2026-03-12T10:50:19Z
 // </auto-generated>
 
-use crate::eval::{ConditionEvaluator, ConditionResult, EvaluationContext};
 #[allow(unused_imports)]
 use crate::eval::format_validators::*;
+use crate::eval::{ConditionEvaluator, ConditionResult, EvaluationContext};
 
 /// Generated condition evaluator for PRICAT FV2510.
 pub struct PricatConditionEvaluatorFV2510 {
@@ -38,7 +38,9 @@ impl Default for PricatConditionEvaluatorFV2510 {
         external_conditions.insert(69);
         external_conditions.insert(70);
         external_conditions.insert(492);
-        Self { external_conditions }
+        Self {
+            external_conditions,
+        }
     }
 }
 
@@ -168,7 +170,6 @@ impl PricatConditionEvaluatorFV2510 {
     /// [10] Wenn eine weitere SG36 vorhanden ist, bei der sich der Inhalt von LIN DE7140 von LIN DE7140 dieser SG36 nur in der Ziffer nach dem letzten "-" unterscheidet und die Ziffer dort größer ist als in ...
     // REVIEW: Requires iterating all SG36 instances, extracting LIN DE7140 (elements[2][0]), splitting on the last '-', and checking whether any other SG36 has the same prefix with a strictly higher numeric suffix. This is the 'Gruppenartikel-ID / Artikel-ID' relationship. Group path SG17→SG36 based on PRICAT tx_group='SG17' from project knowledge. (medium confidence)
     fn evaluate_10(&self, ctx: &EvaluationContext) -> ConditionResult {
-
         let nav = match ctx.navigator() {
             Some(n) => n,
             None => return ConditionResult::Unknown,
@@ -181,7 +182,8 @@ impl PricatConditionEvaluatorFV2510 {
         let mut lin_values: Vec<String> = Vec::new();
         for i in 0..sg36_count {
             let lin_segs = nav.find_segments_in_group("LIN", &["SG17", "SG36"], i);
-            let val = lin_segs.first()
+            let val = lin_segs
+                .first()
                 .and_then(|s| s.elements.get(2))
                 .and_then(|e| e.first())
                 .cloned()
@@ -227,13 +229,11 @@ impl PricatConditionEvaluatorFV2510 {
 
     /// [31] wenn BGM DE1001 = Z32 (Preisblatt Messstellenbetrieb)
     fn evaluate_31(&self, ctx: &EvaluationContext) -> ConditionResult {
-
         ctx.has_segment_matching("BGM", &[(0, 0, "Z32")])
     }
 
     /// [34] wenn BGM DE1001 = Z77 (Preisblatt Konfigurationen)
     fn evaluate_34(&self, ctx: &EvaluationContext) -> ConditionResult {
-
         ctx.has_segment_matching("BGM", &[(0, 0, "Z77")])
     }
 
@@ -247,7 +247,8 @@ impl PricatConditionEvaluatorFV2510 {
     // REVIEW: Checks BGM DE1001 == Z77, then validates DTM+137 (document date) >= 2023-10-01 00:00. 'Der hier genannte Zeitpunkt' refers to the timestamp field where this condition is annotated in the AHB; DTM+137 is assumed as the document date for PRICAT. Condition is inapplicable (Unknown) when BGM code is not Z77. German legal time threshold mapped to 202310010000 using dtm_ge string comparison on format 303. (medium confidence)
     fn evaluate_44(&self, ctx: &EvaluationContext) -> ConditionResult {
         let bgm_segs = ctx.find_segments("BGM");
-        let is_z77 = bgm_segs.first()
+        let is_z77 = bgm_segs
+            .first()
             .and_then(|s| s.elements.first())
             .and_then(|e| e.first())
             .is_some_and(|v| v == "Z77");
@@ -300,7 +301,8 @@ impl PricatConditionEvaluatorFV2510 {
     // REVIEW: Checks BGM DE1001 == Z94, then validates DTM+137 (document date) >= 2025-10-01 00:00. Mirrors condition 44 pattern but for the Z94 document code introduced with FV2510 and the later threshold date. Condition is inapplicable (Unknown) when BGM code is not Z94. German legal time threshold 2025-10-01 00:00 mapped to 202510010000. (medium confidence)
     fn evaluate_56(&self, ctx: &EvaluationContext) -> ConditionResult {
         let bgm_segs = ctx.find_segments("BGM");
-        let is_z94 = bgm_segs.first()
+        let is_z94 = bgm_segs
+            .first()
             .and_then(|s| s.elements.first())
             .and_then(|e| e.first())
             .is_some_and(|v| v == "Z94");
@@ -318,7 +320,8 @@ impl PricatConditionEvaluatorFV2510 {
     /// [60] Wenn in dieser SG36 der Teil vor dem "-" aus LIN DE7140 aus der Tabelle des Kapitels "Produkte zur Bestellung einer Änderung an einer Lokation in der Sparte Strom" der EDI@Energy Codeliste der Kon...
     /// EXTERNAL: Requires context from outside the message.
     fn evaluate_60(&self, ctx: &EvaluationContext) -> ConditionResult {
-        ctx.external.evaluate("lin_product_code_is_lokationsaenderung_strom")
+        ctx.external
+            .evaluate("lin_product_code_is_lokationsaenderung_strom")
     }
 
     /// [61] Wenn in dieser SG36 der Wert der Zahl nach dem "-" aus LIN DE7140 &gt; 01
@@ -368,7 +371,8 @@ impl PricatConditionEvaluatorFV2510 {
     /// [63] Wenn vorheriges DE7008 zur Beschreibung der Leistung dieser Artikel-ID nicht ausreicht
     /// EXTERNAL: Requires context from outside the message.
     fn evaluate_63(&self, ctx: &EvaluationContext) -> ConditionResult {
-        ctx.external.evaluate("previous_imd_description_insufficient")
+        ctx.external
+            .evaluate("previous_imd_description_insufficient")
     }
 
     /// [65] wenn in dieser SG36 der Teil des Codes in LIN DE7140 nach dem "-" von "01" abweicht
@@ -379,7 +383,9 @@ impl PricatConditionEvaluatorFV2510 {
             None => {
                 let lins = ctx.find_segments("LIN");
                 let found = lins.iter().any(|s| {
-                    s.elements.get(2).and_then(|e| e.first())
+                    s.elements
+                        .get(2)
+                        .and_then(|e| e.first())
                         .and_then(|code| code.split_once('-'))
                         .map(|(_, suffix)| suffix != "01")
                         .unwrap_or(false)
@@ -392,7 +398,11 @@ impl PricatConditionEvaluatorFV2510 {
             let lins = nav.find_segments_in_group("LIN", &["SG17", "SG36"], i);
             for lin in &lins {
                 if let Some(code) = lin.elements.get(2).and_then(|e| e.first()) {
-                    if code.split_once('-').map(|(_, suffix)| suffix != "01").unwrap_or(false) {
+                    if code
+                        .split_once('-')
+                        .map(|(_, suffix)| suffix != "01")
+                        .unwrap_or(false)
+                    {
                         return ConditionResult::True;
                     }
                 }
@@ -420,7 +430,8 @@ impl PricatConditionEvaluatorFV2510 {
             let sg36_count = nav.child_group_instance_count(&["SG17"], sg17_i, "SG36");
             let mut code_parts: Vec<(String, String)> = Vec::new();
             for sg36_i in 0..sg36_count {
-                let lins = nav.find_segments_in_child_group("LIN", &["SG17"], sg17_i, "SG36", sg36_i);
+                let lins =
+                    nav.find_segments_in_child_group("LIN", &["SG17"], sg17_i, "SG36", sg36_i);
                 for lin in &lins {
                     if let Some(code) = lin.elements.get(2).and_then(|e| e.first()) {
                         if let Some((prefix, suffix)) = code.split_once('-') {
@@ -434,7 +445,10 @@ impl PricatConditionEvaluatorFV2510 {
                     let next = n + 1;
                     let width = suffix.len();
                     let next_str = format!("{:0width$}", next, width = width);
-                    if code_parts.iter().any(|(p, s)| p == prefix && s == &next_str) {
+                    if code_parts
+                        .iter()
+                        .any(|(p, s)| p == prefix && s == &next_str)
+                    {
                         return ConditionResult::True;
                     }
                 }
@@ -468,7 +482,10 @@ impl PricatConditionEvaluatorFV2510 {
             return ConditionResult::Unknown;
         }
         let matches = segs.iter().any(|s| {
-            s.elements.get(2).and_then(|e| e.first()).is_some_and(|v| v == "9991000003030-01")
+            s.elements
+                .get(2)
+                .and_then(|e| e.first())
+                .is_some_and(|v| v == "9991000003030-01")
         });
         ConditionResult::from(matches)
     }
@@ -486,7 +503,8 @@ impl PricatConditionEvaluatorFV2510 {
         }
         for i in 0..sg36_count {
             let lin_segs = nav.find_segments_in_group("LIN", &["SG36"], i);
-            let lin_val = match lin_segs.first()
+            let lin_val = match lin_segs
+                .first()
                 .and_then(|s| s.elements.get(2))
                 .and_then(|e| e.first())
                 .filter(|v| !v.is_empty())
@@ -526,7 +544,8 @@ impl PricatConditionEvaluatorFV2510 {
                     continue;
                 }
                 let lin_segs_k = nav.find_segments_in_group("LIN", &["SG36"], k);
-                let lin_val_k = match lin_segs_k.first()
+                let lin_val_k = match lin_segs_k
+                    .first()
                     .and_then(|s| s.elements.get(2))
                     .and_then(|e| e.first())
                     .filter(|v| !v.is_empty())

@@ -51,4 +51,3 @@ pub type ReqoteConditionEvaluatorFV2604 = super::fv2510::ReqoteConditionEvaluato
 
 /// Alias: FV2604 conditions are identical to FV2510.
 pub type InsrptConditionEvaluatorFV2604 = super::fv2510::InsrptConditionEvaluatorFV2510;
-

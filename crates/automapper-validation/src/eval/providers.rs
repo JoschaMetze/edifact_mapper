@@ -10,9 +10,8 @@ use super::evaluator::{ConditionResult, ExternalConditionProvider};
 
 /// Countries where postal codes (PLZ) are required in the EU/EEA energy market.
 const COUNTRIES_WITH_PLZ: &[&str] = &[
-    "DE", "AT", "CH", "BE", "BG", "CZ", "DK", "EE", "FI", "FR", "GR", "HR", "HU", "IE", "IT",
-    "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK", "ES", "GB", "NO", "CY",
-    "IS", "LI",
+    "DE", "AT", "CH", "BE", "BG", "CZ", "DK", "EE", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT",
+    "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK", "ES", "GB", "NO", "CY", "IS", "LI",
 ];
 
 const COUNTRY_PLZ_CONDITIONS: &[&str] = &[
@@ -447,9 +446,7 @@ impl ExternalConditionProvider for MarketRoleProvider {
             }
             // Compound: sender_is_lf_nb = sender is LF OR NB
             if let Some(roles) = MarketRole::parse_compound(role_str) {
-                return ConditionResult::from(
-                    roles.iter().any(|r| self.sender_roles.contains(r)),
-                );
+                return ConditionResult::from(roles.iter().any(|r| self.sender_roles.contains(r)));
             }
         }
         if let Some(role_str) = condition_name.strip_prefix("recipient_is_") {
@@ -490,9 +487,7 @@ impl ExternalConditionProvider for MarketRoleProvider {
                 return ConditionResult::from(!self.sender_roles.contains(&role));
             }
             if let Some(roles) = MarketRole::parse_compound(role_str) {
-                return ConditionResult::from(
-                    !roles.iter().any(|r| self.sender_roles.contains(r)),
-                );
+                return ConditionResult::from(!roles.iter().any(|r| self.sender_roles.contains(r)));
             }
         }
         // mp_id_role_is_<role> — treated like sender role check
@@ -532,25 +527,26 @@ fn resolve_konfigurationen_alias(condition_name: &str) -> Option<Konfigurationen
             Some(KonfigurationenAlias::AllCodes)
         }
         "is_messprodukt_code" => Some(KonfigurationenAlias::MessproduktUnion),
-        "messprodukts_typ2_smgw" | "product_in_typ2_smgw_codelist"
+        "messprodukts_typ2_smgw"
+        | "product_in_typ2_smgw_codelist"
         | "order_contains_smgw_type2_product" => {
             Some(KonfigurationenAlias::Category("messprodukt_typ2_smgw"))
         }
-        "valid_adhoc_steuerkanal_product" => {
-            Some(KonfigurationenAlias::Category("config_product_adhoc_steuerkanal"))
-        }
-        "product_code_level_messlokation" => {
-            Some(KonfigurationenAlias::Category("messprodukt_standard_messlokation"))
-        }
-        "product_code_level_netzlokation" => {
-            Some(KonfigurationenAlias::Category("messprodukt_standard_netzlokation"))
-        }
-        "product_code_abrechnungsdaten_valid" => {
-            Some(KonfigurationenAlias::Category("produkte_aenderung_abrechnungsdaten"))
-        }
-        "lin_product_code_is_lokationsaenderung_strom" => {
-            Some(KonfigurationenAlias::Category("produkte_aenderung_lokation"))
-        }
+        "valid_adhoc_steuerkanal_product" => Some(KonfigurationenAlias::Category(
+            "config_product_adhoc_steuerkanal",
+        )),
+        "product_code_level_messlokation" => Some(KonfigurationenAlias::Category(
+            "messprodukt_standard_messlokation",
+        )),
+        "product_code_level_netzlokation" => Some(KonfigurationenAlias::Category(
+            "messprodukt_standard_netzlokation",
+        )),
+        "product_code_abrechnungsdaten_valid" => Some(KonfigurationenAlias::Category(
+            "produkte_aenderung_abrechnungsdaten",
+        )),
+        "lin_product_code_is_lokationsaenderung_strom" => Some(KonfigurationenAlias::Category(
+            "produkte_aenderung_lokation",
+        )),
         _ => None,
     }
 }
@@ -575,10 +571,7 @@ pub struct KonfigurationenProvider {
 
 impl KonfigurationenProvider {
     /// Create from pre-parsed categories and a product code to check.
-    pub fn new(
-        categories: HashMap<String, Vec<String>>,
-        product_code: Option<String>,
-    ) -> Self {
+    pub fn new(categories: HashMap<String, Vec<String>>, product_code: Option<String>) -> Self {
         let mut all_codes = HashSet::new();
         let categories: HashMap<String, HashSet<String>> = categories
             .into_iter()
@@ -610,10 +603,7 @@ impl KonfigurationenProvider {
     }
 
     /// Load from the JSON format of `konfigurationen_code_lists.json`.
-    pub fn from_json(
-        json: &str,
-        product_code: Option<String>,
-    ) -> Result<Self, serde_json::Error> {
+    pub fn from_json(json: &str, product_code: Option<String>) -> Result<Self, serde_json::Error> {
         #[derive(serde::Deserialize)]
         struct KonfigurationenFile {
             categories: HashMap<String, Vec<String>>,
@@ -772,10 +762,7 @@ mod tests {
             vec!["Z91".to_string(), "Z90".to_string()],
         );
         let provider = CodeListProvider::new(lists);
-        assert_eq!(
-            provider.evaluate("code_in_7111:Z91"),
-            ConditionResult::True
-        );
+        assert_eq!(provider.evaluate("code_in_7111:Z91"), ConditionResult::True);
         assert_eq!(
             provider.evaluate("code_in_7111:ZZZ"),
             ConditionResult::False
@@ -793,14 +780,8 @@ mod tests {
             "3225": { "name": "Ort", "codes": [{"value": "Z16", "name": "MaLo"}] }
         }"#;
         let provider = CodeListProvider::from_json(json).unwrap();
-        assert_eq!(
-            provider.evaluate("code_in_7111:Z91"),
-            ConditionResult::True
-        );
-        assert_eq!(
-            provider.evaluate("code_in_3225:Z16"),
-            ConditionResult::True
-        );
+        assert_eq!(provider.evaluate("code_in_7111:Z91"), ConditionResult::True);
+        assert_eq!(provider.evaluate("code_in_3225:Z16"), ConditionResult::True);
         assert_eq!(
             provider.evaluate("code_in_3225:Z99"),
             ConditionResult::False
@@ -816,10 +797,8 @@ mod tests {
             provider.evaluate("not_a_code_check"),
             ConditionResult::Unknown
         );
-        assert_eq!(
-            provider.evaluate("code_in_7111"),
-            ConditionResult::Unknown
-        ); // no colon
+        assert_eq!(provider.evaluate("code_in_7111"), ConditionResult::Unknown);
+        // no colon
     }
 
     // ---- SectorProvider tests ----
@@ -835,14 +814,8 @@ mod tests {
             provider.evaluate("recipient_is_gas"),
             ConditionResult::False
         );
-        assert_eq!(
-            provider.evaluate("mp_id_is_strom"),
-            ConditionResult::True
-        );
-        assert_eq!(
-            provider.evaluate("mp_id_is_gas"),
-            ConditionResult::False
-        );
+        assert_eq!(provider.evaluate("mp_id_is_strom"), ConditionResult::True);
+        assert_eq!(provider.evaluate("mp_id_is_gas"), ConditionResult::False);
         assert_eq!(
             provider.evaluate("market_location_is_electricity"),
             ConditionResult::True
@@ -864,10 +837,7 @@ mod tests {
             provider.evaluate("recipient_is_strom"),
             ConditionResult::False
         );
-        assert_eq!(
-            provider.evaluate("recipient_is_gas"),
-            ConditionResult::True
-        );
+        assert_eq!(provider.evaluate("recipient_is_gas"), ConditionResult::True);
         assert_eq!(
             provider.evaluate("recipient_is_msb_gas"),
             ConditionResult::True
@@ -885,10 +855,8 @@ mod tests {
 
     #[test]
     fn test_market_role_provider() {
-        let provider = MarketRoleProvider::new(
-            vec![MarketRole::LF],
-            vec![MarketRole::NB, MarketRole::MSB],
-        );
+        let provider =
+            MarketRoleProvider::new(vec![MarketRole::LF], vec![MarketRole::NB, MarketRole::MSB]);
         assert_eq!(provider.evaluate("sender_is_lf"), ConditionResult::True);
         assert_eq!(provider.evaluate("sender_is_nb"), ConditionResult::False);
         assert_eq!(provider.evaluate("recipient_is_nb"), ConditionResult::True);
@@ -922,18 +890,12 @@ mod tests {
     fn test_market_role_unknown_suffix() {
         let provider = MarketRoleProvider::new(vec![MarketRole::LF], vec![]);
         // "sender_is_xyz" — xyz not a known role, so Unknown
-        assert_eq!(
-            provider.evaluate("sender_is_xyz"),
-            ConditionResult::Unknown
-        );
+        assert_eq!(provider.evaluate("sender_is_xyz"), ConditionResult::Unknown);
     }
 
     #[test]
     fn test_market_role_compound() {
-        let provider = MarketRoleProvider::new(
-            vec![MarketRole::LF],
-            vec![MarketRole::NB],
-        );
+        let provider = MarketRoleProvider::new(vec![MarketRole::LF], vec![MarketRole::NB]);
         // recipient_is_lf_msb = recipient is LF OR MSB → NB is neither → False
         assert_eq!(
             provider.evaluate("recipient_is_lf_msb"),
@@ -950,10 +912,7 @@ mod tests {
             ConditionResult::True
         );
         // mp_id_role_is_lf → sender has LF → True
-        assert_eq!(
-            provider.evaluate("mp_id_role_is_lf"),
-            ConditionResult::True
-        );
+        assert_eq!(provider.evaluate("mp_id_role_is_lf"), ConditionResult::True);
     }
 
     #[test]
@@ -988,10 +947,7 @@ mod tests {
         // Market role resolved
         assert_eq!(composite.evaluate("sender_is_lf"), ConditionResult::True);
         // Unknown conditions still return Unknown
-        assert_eq!(
-            composite.evaluate("some_unknown"),
-            ConditionResult::Unknown
-        );
+        assert_eq!(composite.evaluate("some_unknown"), ConditionResult::Unknown);
     }
 
     // ---- KonfigurationenProvider tests ----
@@ -1185,24 +1141,21 @@ mod tests {
 
     #[test]
     fn test_market_role_mgv_kn() {
-        let provider = MarketRoleProvider::new(
-            vec![MarketRole::MGV],
-            vec![MarketRole::KN],
-        );
+        let provider = MarketRoleProvider::new(vec![MarketRole::MGV], vec![MarketRole::KN]);
         assert_eq!(provider.evaluate("sender_is_mgv"), ConditionResult::True);
         assert_eq!(provider.evaluate("recipient_is_kn"), ConditionResult::True);
         assert_eq!(provider.evaluate("sender_is_kn"), ConditionResult::False);
-        assert_eq!(provider.evaluate("recipient_is_mgv"), ConditionResult::False);
+        assert_eq!(
+            provider.evaluate("recipient_is_mgv"),
+            ConditionResult::False
+        );
     }
 
     // ---- MarketRole: _or_ compound ----
 
     #[test]
     fn test_market_role_or_compound() {
-        let provider = MarketRoleProvider::new(
-            vec![MarketRole::LF],
-            vec![MarketRole::NB],
-        );
+        let provider = MarketRoleProvider::new(vec![MarketRole::LF], vec![MarketRole::NB]);
         // recipient_is_lf_or_nb = recipient is LF OR NB → NB matches → True
         assert_eq!(
             provider.evaluate("recipient_is_lf_or_nb"),
@@ -1219,10 +1172,7 @@ mod tests {
 
     #[test]
     fn test_market_role_recipient_not() {
-        let provider = MarketRoleProvider::new(
-            vec![MarketRole::LF],
-            vec![MarketRole::NB],
-        );
+        let provider = MarketRoleProvider::new(vec![MarketRole::LF], vec![MarketRole::NB]);
         // recipient_not_mgv_or_kn = recipient is NOT (MGV or KN) → NB is neither → True
         assert_eq!(
             provider.evaluate("recipient_not_mgv_or_kn"),
@@ -1234,15 +1184,9 @@ mod tests {
             ConditionResult::False
         );
         // recipient_not_lf = recipient is NOT LF → True (NB is the recipient)
-        assert_eq!(
-            provider.evaluate("recipient_not_lf"),
-            ConditionResult::True
-        );
+        assert_eq!(provider.evaluate("recipient_not_lf"), ConditionResult::True);
         // sender_not_lf = sender is NOT LF → False (LF is the sender)
-        assert_eq!(
-            provider.evaluate("sender_not_lf"),
-            ConditionResult::False
-        );
+        assert_eq!(provider.evaluate("sender_not_lf"), ConditionResult::False);
         // sender_not_nb_or_msb = sender is NOT (NB or MSB) → LF is neither → True
         assert_eq!(
             provider.evaluate("sender_not_nb_or_msb"),
@@ -1301,8 +1245,7 @@ mod tests {
 
     #[test]
     fn test_konfigurationen_alias_all_codes() {
-        let provider =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000000044"));
+        let provider = make_konfigurationen_provider_with_messprodukt(Some("9991000000044"));
         // is_konfigurationsprodukt_code → all_codes check
         assert_eq!(
             provider.evaluate("is_konfigurationsprodukt_code"),
@@ -1314,8 +1257,7 @@ mod tests {
             ConditionResult::True
         );
 
-        let provider2 =
-            make_konfigurationen_provider_with_messprodukt(Some("0000000000000"));
+        let provider2 = make_konfigurationen_provider_with_messprodukt(Some("0000000000000"));
         assert_eq!(
             provider2.evaluate("is_konfigurationsprodukt_code"),
             ConditionResult::False
@@ -1325,32 +1267,28 @@ mod tests {
     #[test]
     fn test_konfigurationen_alias_messprodukt_union() {
         // Code in messprodukt_standard_marktlokation (part of union)
-        let provider =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000000044"));
+        let provider = make_konfigurationen_provider_with_messprodukt(Some("9991000000044"));
         assert_eq!(
             provider.evaluate("is_messprodukt_code"),
             ConditionResult::True
         );
 
         // Code in messprodukt_typ2_smgw (part of union)
-        let provider2 =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000000500"));
+        let provider2 = make_konfigurationen_provider_with_messprodukt(Some("9991000000500"));
         assert_eq!(
             provider2.evaluate("is_messprodukt_code"),
             ConditionResult::True
         );
 
         // Code in messprodukt_esa (part of union)
-        let provider3 =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000000600"));
+        let provider3 = make_konfigurationen_provider_with_messprodukt(Some("9991000000600"));
         assert_eq!(
             provider3.evaluate("is_messprodukt_code"),
             ConditionResult::True
         );
 
         // Code in config_product_leistungskurve (NOT in union)
-        let provider4 =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000000721"));
+        let provider4 = make_konfigurationen_provider_with_messprodukt(Some("9991000000721"));
         assert_eq!(
             provider4.evaluate("is_messprodukt_code"),
             ConditionResult::False
@@ -1359,8 +1297,7 @@ mod tests {
 
     #[test]
     fn test_konfigurationen_alias_single_category() {
-        let provider =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000000500"));
+        let provider = make_konfigurationen_provider_with_messprodukt(Some("9991000000500"));
         // messprodukts_typ2_smgw → messprodukt_typ2_smgw
         assert_eq!(
             provider.evaluate("messprodukts_typ2_smgw"),
@@ -1377,40 +1314,35 @@ mod tests {
             ConditionResult::True
         );
 
-        let provider2 =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000000800"));
+        let provider2 = make_konfigurationen_provider_with_messprodukt(Some("9991000000800"));
         // valid_adhoc_steuerkanal_product → config_product_adhoc_steuerkanal
         assert_eq!(
             provider2.evaluate("valid_adhoc_steuerkanal_product"),
             ConditionResult::True
         );
 
-        let provider3 =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000000200"));
+        let provider3 = make_konfigurationen_provider_with_messprodukt(Some("9991000000200"));
         // product_code_level_messlokation → messprodukt_standard_messlokation
         assert_eq!(
             provider3.evaluate("product_code_level_messlokation"),
             ConditionResult::True
         );
 
-        let provider4 =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000000300"));
+        let provider4 = make_konfigurationen_provider_with_messprodukt(Some("9991000000300"));
         // product_code_level_netzlokation → messprodukt_standard_netzlokation
         assert_eq!(
             provider4.evaluate("product_code_level_netzlokation"),
             ConditionResult::True
         );
 
-        let provider5 =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000000900"));
+        let provider5 = make_konfigurationen_provider_with_messprodukt(Some("9991000000900"));
         // product_code_abrechnungsdaten_valid → produkte_aenderung_abrechnungsdaten
         assert_eq!(
             provider5.evaluate("product_code_abrechnungsdaten_valid"),
             ConditionResult::True
         );
 
-        let provider6 =
-            make_konfigurationen_provider_with_messprodukt(Some("9991000001000"));
+        let provider6 = make_konfigurationen_provider_with_messprodukt(Some("9991000001000"));
         // lin_product_code_is_lokationsaenderung_strom → produkte_aenderung_lokation
         assert_eq!(
             provider6.evaluate("lin_product_code_is_lokationsaenderung_strom"),

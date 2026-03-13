@@ -1188,4 +1188,4 @@ impl PricatConditionEvaluatorFV2504 {
             None => ConditionResult::Unknown,
         }
     }
-} 
+}

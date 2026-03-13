@@ -51,4 +51,3 @@ pub type OrdchgConditionEvaluatorFV2510 = super::fv2504::OrdchgConditionEvaluato
 
 /// Alias: FV2510 conditions are identical to FV2504.
 pub type UtiltsConditionEvaluatorFV2510 = super::fv2504::UtiltsConditionEvaluatorFV2504;
-
