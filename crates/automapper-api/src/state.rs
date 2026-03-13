@@ -51,6 +51,8 @@ pub struct MigServiceRegistry {
     /// Transaction-only engines per PID (without message-level defs).
     /// Key: "{fv}/{variant}/pid_{pid}" e.g. "FV2504/UTILMD_Strom/pid_55001"
     transaction_engines: HashMap<String, MappingEngine>,
+    /// Fallback empty engine for PIDs with no per-PID transaction dir.
+    empty_engine: MappingEngine,
     /// PID → variant mapping derived from cache keys.
     /// Key: "{fv}/pid_{pid}" → variant name (e.g., "UTILMD_Strom")
     pid_to_variant: HashMap<String, String>,
@@ -693,6 +695,7 @@ impl MigServiceRegistry {
             mapping_engines,
             message_engines,
             transaction_engines,
+            empty_engine: MappingEngine::from_definitions(vec![]),
             pid_to_variant,
             pid_segment_numbers,
             response_engines,
@@ -773,7 +776,10 @@ impl MigServiceRegistry {
         let msg_key = format!("{}/{}", fv, msg_variant);
         let tx_key = format!("{}/{}/pid_{}", fv, msg_variant, pid);
         let msg = self.message_engines.get(&msg_key)?;
-        let tx = self.transaction_engines.get(&tx_key)?;
+        let tx = self
+            .transaction_engines
+            .get(&tx_key)
+            .unwrap_or(&self.empty_engine);
         Some((msg, tx))
     }
 
@@ -1090,6 +1096,7 @@ mod tests {
             mapping_engines: HashMap::new(),
             message_engines: HashMap::new(),
             transaction_engines: HashMap::new(),
+            empty_engine: MappingEngine::from_definitions(vec![]),
             pid_to_variant,
             pid_segment_numbers: HashMap::new(),
             response_engines: HashMap::new(),
@@ -1118,7 +1125,7 @@ mod tests {
             mapping_engines: HashMap::new(),
             message_engines: HashMap::new(),
             transaction_engines: HashMap::new(),
-
+            empty_engine: MappingEngine::from_definitions(vec![]),
             pid_to_variant,
             pid_segment_numbers: HashMap::new(),
             response_engines: HashMap::new(),
@@ -1147,7 +1154,7 @@ mod tests {
             mapping_engines: HashMap::new(),
             message_engines: HashMap::new(),
             transaction_engines: HashMap::new(),
-
+            empty_engine: MappingEngine::from_definitions(vec![]),
             pid_to_variant: HashMap::new(),
             pid_segment_numbers,
             response_engines: HashMap::new(),
@@ -1189,7 +1196,7 @@ mod tests {
             mapping_engines: HashMap::new(),
             message_engines: HashMap::new(),
             transaction_engines: HashMap::new(),
-
+            empty_engine: MappingEngine::from_definitions(vec![]),
             pid_to_variant: HashMap::new(),
             pid_segment_numbers: HashMap::new(),
             response_engines: HashMap::new(),
