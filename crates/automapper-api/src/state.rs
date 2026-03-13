@@ -776,10 +776,15 @@ impl MigServiceRegistry {
         let msg_key = format!("{}/{}", fv, msg_variant);
         let tx_key = format!("{}/{}/pid_{}", fv, msg_variant, pid);
         let msg = self.message_engines.get(&msg_key)?;
-        let tx = self
-            .transaction_engines
-            .get(&tx_key)
-            .unwrap_or(&self.empty_engine);
+        let tx = match self.transaction_engines.get(&tx_key) {
+            Some(engine) => engine,
+            None => {
+                tracing::warn!(
+                    "No transaction engine for {tx_key} — falling back to empty engine (cache gap?)"
+                );
+                &self.empty_engine
+            }
+        };
         Some((msg, tx))
     }
 

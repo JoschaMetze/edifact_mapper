@@ -241,20 +241,12 @@ impl MessageTypeConfig {
             return;
         };
 
-        let tx_dir = self.pid_dir(pid);
         if !self.message_dir().exists() {
             eprintln!("Skipping roundtrip for PID {pid}: message directory not found");
             return;
         }
 
-        // For PIDs without a tx dir, use an empty tx engine
-        let (msg_engine, tx_engine) = if tx_dir.exists() {
-            self.load_split_engines(pid)
-        } else {
-            let msg = self.load_message_engine();
-            let tx = MappingEngine::from_definitions(vec![]);
-            (msg, tx)
-        };
+        let (msg_engine, tx_engine) = self.load_split_engines(pid);
 
         let mut tested = 0;
         let mut skipped = 0;
