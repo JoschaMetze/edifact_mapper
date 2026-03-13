@@ -68,7 +68,13 @@ pub trait GroupNavigator: Send + Sync {
         child_group_id: &str,
         child_instance: usize,
     ) -> Vec<OwnedSegment> {
-        let _ = (segment_id, parent_path, parent_instance, child_group_id, child_instance);
+        let _ = (
+            segment_id,
+            parent_path,
+            parent_instance,
+            child_group_id,
+            child_instance,
+        );
         vec![]
     }
 
@@ -89,7 +95,13 @@ pub trait GroupNavigator: Send + Sync {
         group_path: &[&str],
         instance_index: usize,
     ) -> Option<String> {
-        let _ = (segment_id, element_index, component_index, group_path, instance_index);
+        let _ = (
+            segment_id,
+            element_index,
+            component_index,
+            group_path,
+            instance_index,
+        );
         None
     }
 }

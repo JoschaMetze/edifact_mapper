@@ -148,6 +148,7 @@ fn test_variant_cache_roundtrip() {
         code_lookups: HashMap::new(),
         mig_schema: None,
         segment_structure: None,
+        pid_segment_numbers: HashMap::new(),
     };
 
     let tmp = tempfile::tempdir().expect("tempdir");

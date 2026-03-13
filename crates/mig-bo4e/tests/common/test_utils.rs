@@ -10,7 +10,7 @@ use mig_assembly::parsing::parse_mig;
 use mig_assembly::pid_filter::filter_mig_for_pid;
 use mig_assembly::renderer::render_edifact;
 use mig_assembly::tokenize::{parse_to_segments, split_messages};
-use mig_bo4e::engine::MappingEngine;
+use mig_bo4e::engine::{MappingEngine, VariantCache};
 use mig_bo4e::path_resolver::PathResolver;
 use mig_bo4e::pid_schema_index::PidSchemaIndex;
 use mig_types::schema::mig::MigSchema;
@@ -124,13 +124,40 @@ impl MessageTypeConfig {
         fixtures
     }
 
-    /// Load split engines — tries bincode cache first, falls back to TOML.
+    /// Try loading the consolidated variant cache file.
+    fn load_variant_cache(&self) -> Option<VariantCache> {
+        let variant_name = match self.variant {
+            Some(v) => format!("{}_{}", self.message_type, v),
+            None => self.message_type.to_string(),
+        };
+        let cache_file = Path::new(CACHE_BASE)
+            .join(self.format_version)
+            .join(format!("{}.json", variant_name));
+        if cache_file.exists() {
+            VariantCache::load(&cache_file).ok()
+        } else {
+            None
+        }
+    }
+
+    /// Load split engines — tries variant cache first, then individual .bin, falls back to TOML.
     pub fn load_split_engines(&self, pid: &str) -> (MappingEngine, MappingEngine) {
+        let pid_dirname = format!("pid_{pid}");
+
+        // Try consolidated variant cache first (one file read for everything)
+        if let Some(vc) = self.load_variant_cache() {
+            let msg = MappingEngine::from_definitions(vc.message_defs);
+            if let Some(tx_defs) = vc.transaction_defs.get(&pid_dirname) {
+                let tx = MappingEngine::from_definitions(tx_defs.clone());
+                return (msg, tx);
+            }
+        }
+
+        // Try individual .bin cache files
         let cache_dir = self.cache_dir();
         let msg_cache = cache_dir.join("msg.bin");
-        let tx_cache = cache_dir.join(format!("tx_pid_{pid}.bin"));
+        let tx_cache = cache_dir.join(format!("tx_{pid_dirname}.bin"));
 
-        // Try cache first (paths already resolved, no PathResolver needed)
         if msg_cache.exists() && tx_cache.exists() {
             let msg = MappingEngine::load_cached(&msg_cache).unwrap();
             let tx = MappingEngine::load_cached(&tx_cache).unwrap();
@@ -159,8 +186,14 @@ impl MessageTypeConfig {
         }
     }
 
-    /// Load message-only engine — tries bincode cache first, falls back to TOML.
+    /// Load message-only engine — tries variant cache, then bincode cache, falls back to TOML.
     pub fn load_message_engine(&self) -> MappingEngine {
+        // Try consolidated variant cache first
+        if let Some(vc) = self.load_variant_cache() {
+            return MappingEngine::from_definitions(vc.message_defs);
+        }
+
+        // Try individual .bin cache
         let msg_cache = self.cache_dir().join("msg.bin");
         if msg_cache.exists() {
             return MappingEngine::load_cached(&msg_cache).unwrap();
@@ -387,8 +420,13 @@ pub fn run_single_fixture_roundtrip_with_tx_group(
     );
 
     // Step 4: Reverse mapping → AssembledTree (content only, no UNH/UNT)
-    let mut reverse_tree =
-        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, tx_group, Some(filtered_mig));
+    let mut reverse_tree = MappingEngine::map_interchange_reverse(
+        msg_engine,
+        tx_engine,
+        &mapped,
+        tx_group,
+        Some(filtered_mig),
+    );
 
     // Add UNH to the front of pre-group segments, UNT to post-group.
     let unh_assembled = owned_to_assembled(&msg_chunk.unh);

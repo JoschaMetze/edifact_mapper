@@ -10,8 +10,7 @@ use mig_types::schema::mig::MigSchema;
 use std::path::{Path, PathBuf};
 
 pub const MIG_XML_PATH: &str = "../../xml-migs-and-ahbs/FV2604/ORDRSP_MIG_1_4b_20251001.xml";
-pub const AHB_XML_PATH: &str =
-    "../../xml-migs-and-ahbs/FV2604/ORDRSP_AHB_1_1a_20251001.xml";
+pub const AHB_XML_PATH: &str = "../../xml-migs-and-ahbs/FV2604/ORDRSP_AHB_1_1a_20251001.xml";
 pub const FIXTURE_DIR: &str = "../../example_market_communication_bo4e_transactions/ORDRSP/FV2604";
 pub const MAPPINGS_BASE: &str = "../../mappings/FV2604/ORDRSP";
 pub const SCHEMA_DIR: &str = "../../crates/mig-types/src/generated/fv2604/ordrsp/pids";

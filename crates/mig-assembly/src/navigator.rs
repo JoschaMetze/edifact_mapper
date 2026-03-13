@@ -304,11 +304,20 @@ mod tests {
         let tree = tree_with_sg4_sg8();
         let nav = AssembledTreeNavigator::new(&tree);
         // SG8[0] has 2 SG10 children
-        assert_eq!(nav.child_group_instance_count(&["SG4", "SG8"], 0, "SG10"), 2);
+        assert_eq!(
+            nav.child_group_instance_count(&["SG4", "SG8"], 0, "SG10"),
+            2
+        );
         // SG8[1] has no SG10 children
-        assert_eq!(nav.child_group_instance_count(&["SG4", "SG8"], 1, "SG10"), 0);
+        assert_eq!(
+            nav.child_group_instance_count(&["SG4", "SG8"], 1, "SG10"),
+            0
+        );
         // Non-existent child group
-        assert_eq!(nav.child_group_instance_count(&["SG4", "SG8"], 0, "SG12"), 0);
+        assert_eq!(
+            nav.child_group_instance_count(&["SG4", "SG8"], 0, "SG12"),
+            0
+        );
     }
 
     #[test]
@@ -335,9 +344,13 @@ mod tests {
         // Invalid parent path
         assert_eq!(nav.child_group_instance_count(&["SG99"], 0, "SG10"), 0);
         // Invalid parent instance
-        assert!(nav.find_segments_in_child_group("CCI", &["SG4", "SG8"], 99, "SG10", 0).is_empty());
+        assert!(nav
+            .find_segments_in_child_group("CCI", &["SG4", "SG8"], 99, "SG10", 0)
+            .is_empty());
         // Invalid child instance
-        assert!(nav.find_segments_in_child_group("CCI", &["SG4", "SG8"], 0, "SG10", 99).is_empty());
+        assert!(nav
+            .find_segments_in_child_group("CCI", &["SG4", "SG8"], 0, "SG10", 99)
+            .is_empty());
     }
 
     #[test]
@@ -361,11 +374,20 @@ mod tests {
         let tree = tree_with_sg4_sg8();
         let nav = AssembledTreeNavigator::new(&tree);
         // Non-existent segment
-        assert_eq!(nav.extract_value_in_group("LOC", 0, 0, &["SG4", "SG8"], 0), None);
+        assert_eq!(
+            nav.extract_value_in_group("LOC", 0, 0, &["SG4", "SG8"], 0),
+            None
+        );
         // Element index out of bounds
-        assert_eq!(nav.extract_value_in_group("SEQ", 5, 0, &["SG4", "SG8"], 0), None);
+        assert_eq!(
+            nav.extract_value_in_group("SEQ", 5, 0, &["SG4", "SG8"], 0),
+            None
+        );
         // Component index out of bounds
-        assert_eq!(nav.extract_value_in_group("SEQ", 0, 5, &["SG4", "SG8"], 0), None);
+        assert_eq!(
+            nav.extract_value_in_group("SEQ", 0, 5, &["SG4", "SG8"], 0),
+            None
+        );
         // Invalid group path
         assert_eq!(nav.extract_value_in_group("SEQ", 0, 0, &["SG99"], 0), None);
     }

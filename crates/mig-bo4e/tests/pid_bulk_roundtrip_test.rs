@@ -132,8 +132,13 @@ fn run_generated_roundtrip(pid: &str) {
     );
 
     // Step 4: Reverse mapping → AssembledTree
-    let mut reverse_tree =
-        MappingEngine::map_interchange_reverse(&msg_engine, &tx_engine, &mapped, "SG4", Some(&filtered_mig));
+    let mut reverse_tree = MappingEngine::map_interchange_reverse(
+        &msg_engine,
+        &tx_engine,
+        &mapped,
+        "SG4",
+        Some(&filtered_mig),
+    );
 
     let unh_assembled = test_utils::owned_to_assembled(&msg_chunk.unh);
     reverse_tree.segments.insert(0, unh_assembled);

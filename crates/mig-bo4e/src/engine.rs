@@ -2726,6 +2726,10 @@ pub struct VariantCache {
     /// Segment element counts derived from MIG — cached for reverse mapping padding.
     #[serde(default)]
     pub segment_structure: Option<crate::segment_structure::SegmentStructure>,
+    /// Per-PID AHB segment numbers (key: "pid_55001"). Used for MIG filtering at runtime.
+    /// Eliminates the need to parse AHB XML files at startup.
+    #[serde(default)]
+    pub pid_segment_numbers: HashMap<String, Vec<String>>,
 }
 
 impl VariantCache {
