@@ -573,7 +573,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mesz_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -586,7 +586,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mez_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1186,7 +1186,7 @@ impl OrdersConditionEvaluatorFV2504 {
         {
             Some(val) if !val.is_empty() => validate_malo_id(val),
             Some(_) => ConditionResult::False,
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1736,7 +1736,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 3),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1757,7 +1757,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, ">", 0.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1774,7 +1774,7 @@ impl OrdersConditionEvaluatorFV2504 {
         {
             Some(val) if !val.is_empty() => validate_max_length(val, 35),
             Some(_) => ConditionResult::False,
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1788,7 +1788,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 2),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1802,7 +1802,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_timezone_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1817,7 +1817,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2200"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1830,7 +1830,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2300"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1843,7 +1843,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0400"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1856,7 +1856,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0500"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1869,7 +1869,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_email(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1882,7 +1882,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_phone(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1895,7 +1895,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1908,7 +1908,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_zahlpunkt(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1922,7 +1922,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, "<", 100.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1935,7 +1935,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1948,7 +1948,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1963,7 +1963,7 @@ impl OrdersConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_integer_digits(val, 6),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 

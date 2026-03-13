@@ -188,7 +188,7 @@ impl ReqoteConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mesz_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -201,7 +201,7 @@ impl ReqoteConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mez_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -588,7 +588,7 @@ impl ReqoteConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_zahlpunkt(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -602,7 +602,7 @@ impl ReqoteConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -616,7 +616,7 @@ impl ReqoteConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -629,7 +629,7 @@ impl ReqoteConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_integer_digits(val, 6),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 

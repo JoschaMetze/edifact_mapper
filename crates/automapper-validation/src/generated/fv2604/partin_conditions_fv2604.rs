@@ -262,7 +262,7 @@ impl PartinConditionEvaluatorFV2604 {
     /// [10] Wenn BGM DE1373 = 11 (Dokument nicht verfügbar) nicht vorhanden
     fn evaluate_10(&self, ctx: &EvaluationContext) -> ConditionResult {
         match ctx.find_segment("BGM") {
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
             Some(bgm) => ConditionResult::from(
                 bgm.elements
                     .get(4)
@@ -277,7 +277,7 @@ impl PartinConditionEvaluatorFV2604 {
     fn evaluate_11(&self, ctx: &EvaluationContext) -> ConditionResult {
         let nads = ctx.find_segments_with_qualifier("NAD", 0, "SU");
         match nads.first() {
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
             Some(nad) => ConditionResult::from(
                 nad.elements
                     .get(8)
@@ -291,7 +291,7 @@ impl PartinConditionEvaluatorFV2604 {
     fn evaluate_12(&self, ctx: &EvaluationContext) -> ConditionResult {
         let nads = ctx.find_segments_with_qualifier("NAD", 0, "DDM");
         match nads.first() {
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
             Some(nad) => ConditionResult::from(
                 nad.elements
                     .get(8)
@@ -305,7 +305,7 @@ impl PartinConditionEvaluatorFV2604 {
     fn evaluate_13(&self, ctx: &EvaluationContext) -> ConditionResult {
         let nads = ctx.find_segments_with_qualifier("NAD", 0, "DEB");
         match nads.first() {
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
             Some(nad) => ConditionResult::from(
                 nad.elements
                     .get(8)
@@ -319,7 +319,7 @@ impl PartinConditionEvaluatorFV2604 {
     fn evaluate_14(&self, ctx: &EvaluationContext) -> ConditionResult {
         let nads = ctx.find_segments_with_qualifier("NAD", 0, "SU");
         match nads.first() {
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
             Some(nad) => ConditionResult::from(
                 nad.elements
                     .get(8)
@@ -334,7 +334,7 @@ impl PartinConditionEvaluatorFV2604 {
     fn evaluate_15(&self, ctx: &EvaluationContext) -> ConditionResult {
         let nads = ctx.find_segments_with_qualifier("NAD", 0, "DDM");
         match nads.first() {
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
             Some(nad) => ConditionResult::from(
                 nad.elements
                     .get(8)
@@ -349,7 +349,7 @@ impl PartinConditionEvaluatorFV2604 {
     fn evaluate_16(&self, ctx: &EvaluationContext) -> ConditionResult {
         let nads = ctx.find_segments_with_qualifier("NAD", 0, "DEB");
         match nads.first() {
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
             Some(nad) => ConditionResult::from(
                 nad.elements
                     .get(8)
@@ -516,7 +516,7 @@ impl PartinConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mesz_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -529,7 +529,7 @@ impl PartinConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mez_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -620,7 +620,7 @@ impl PartinConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_timezone_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -634,7 +634,7 @@ impl PartinConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2200"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -648,7 +648,7 @@ impl PartinConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2300"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -662,7 +662,7 @@ impl PartinConditionEvaluatorFV2604 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_email(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -676,7 +676,7 @@ impl PartinConditionEvaluatorFV2604 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_phone(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 }

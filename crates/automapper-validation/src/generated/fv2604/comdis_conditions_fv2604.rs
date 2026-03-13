@@ -666,7 +666,7 @@ impl ComdisConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 2),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -680,7 +680,7 @@ impl ComdisConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_timezone_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -693,7 +693,7 @@ impl ComdisConditionEvaluatorFV2604 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_email(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -706,7 +706,7 @@ impl ComdisConditionEvaluatorFV2604 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_phone(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 }

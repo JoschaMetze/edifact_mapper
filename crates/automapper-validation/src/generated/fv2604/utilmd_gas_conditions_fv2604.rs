@@ -234,7 +234,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
                 Some(val) => ConditionResult::from(val == "1"),
                 None => ConditionResult::False,
             },
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -478,12 +478,12 @@ impl UtilmdGasConditionEvaluatorFV2604 {
                     Some(value) => match value.chars().nth(3) {
                         Some('T') => ConditionResult::True,
                         Some(_) => ConditionResult::False,
-                        None => ConditionResult::Unknown,
+                        None => ConditionResult::False, // segment absent → condition not applicable
                     },
-                    None => ConditionResult::Unknown,
+                    None => ConditionResult::False, // segment absent → condition not applicable
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1383,7 +1383,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, ">=", 0.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1396,7 +1396,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 4),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1409,7 +1409,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 6),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1422,7 +1422,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 2),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1435,7 +1435,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_timezone_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1449,7 +1449,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0400"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1463,7 +1463,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0500"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1477,7 +1477,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1491,7 +1491,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, "<=", 10.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1505,7 +1505,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1519,7 +1519,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_zahlpunkt(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1546,7 +1546,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_max_length(val, 20),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1562,7 +1562,7 @@ impl UtilmdGasConditionEvaluatorFV2604 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_or_zahlpunkt(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 

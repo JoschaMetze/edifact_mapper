@@ -270,7 +270,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mesz_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -283,7 +283,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mez_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -297,7 +297,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_sr_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -504,7 +504,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -526,7 +526,7 @@ impl QuotesConditionEvaluatorFV2504 {
                     _ => ConditionResult::Unknown,
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -548,7 +548,7 @@ impl QuotesConditionEvaluatorFV2504 {
                     _ => ConditionResult::Unknown,
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -570,7 +570,7 @@ impl QuotesConditionEvaluatorFV2504 {
                     _ => ConditionResult::Unknown,
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -881,7 +881,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, "==", 1.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -896,7 +896,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 3),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -911,7 +911,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, ">=", 1.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -934,7 +934,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 6),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -949,7 +949,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, ">", 0.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -964,7 +964,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_timezone_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -979,7 +979,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2200"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -994,7 +994,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2300"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1009,7 +1009,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0400"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1024,7 +1024,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0500"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1068,7 +1068,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_artikel_pattern(val, &[1, 2, 1, 3]),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1082,7 +1082,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1096,7 +1096,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_zahlpunkt(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1111,7 +1111,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1126,7 +1126,7 @@ impl QuotesConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_integer_digits(val, 6),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1233,7 +1233,7 @@ impl QuotesConditionEvaluatorFV2504 {
                     .map(|s| s.as_str());
                 ConditionResult::from(unit == Some("H87"))
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 

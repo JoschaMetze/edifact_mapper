@@ -222,7 +222,7 @@ impl OrdrspConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mesz_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -235,7 +235,7 @@ impl OrdrspConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mez_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -714,7 +714,7 @@ impl OrdrspConditionEvaluatorFV2504 {
                     .map(|v| v.as_str());
                 ConditionResult::from(matches!(code, Some("Z78") | Some("Z79")))
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1011,7 +1011,7 @@ impl OrdrspConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, ">=", 0.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1026,7 +1026,7 @@ impl OrdrspConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, "==", 1.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1041,7 +1041,7 @@ impl OrdrspConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 2),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1054,7 +1054,7 @@ impl OrdrspConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_timezone_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1067,7 +1067,7 @@ impl OrdrspConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2200"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1080,7 +1080,7 @@ impl OrdrspConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2300"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1093,7 +1093,7 @@ impl OrdrspConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0400"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1106,7 +1106,7 @@ impl OrdrspConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0500"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 

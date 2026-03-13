@@ -1570,7 +1570,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mesz_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1583,7 +1583,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mez_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1619,7 +1619,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => ConditionResult::from(val.as_str() <= doc_val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1643,7 +1643,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => ConditionResult::from(val.as_str() <= doc_val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1667,7 +1667,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => ConditionResult::from(val.as_str() > doc_val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1810,7 +1810,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, ">=", 0.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1824,7 +1824,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, "==", 1.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1838,7 +1838,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 3),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1859,7 +1859,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_timezone_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1873,7 +1873,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2200"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1886,7 +1886,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2300"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1899,7 +1899,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0400"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1912,7 +1912,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0500"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1956,7 +1956,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1970,7 +1970,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_zahlpunkt(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1984,7 +1984,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1998,7 +1998,7 @@ impl IftstaConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 }

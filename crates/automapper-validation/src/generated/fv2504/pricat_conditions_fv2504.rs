@@ -184,7 +184,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mesz_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -197,7 +197,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mez_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -244,7 +244,7 @@ impl PricatConditionEvaluatorFV2504 {
     /// [9] Wenn BGM DE1373 =11 nicht vorhanden
     fn evaluate_9(&self, ctx: &EvaluationContext) -> ConditionResult {
         match ctx.find_segment("BGM") {
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
             Some(seg) => {
                 let val = seg
                     .elements
@@ -325,9 +325,9 @@ impl PricatConditionEvaluatorFV2504 {
                 Some('1') => ConditionResult::True,
                 Some(c) if c.is_ascii_digit() => ConditionResult::False,
                 Some(_) => ConditionResult::False,
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             },
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -346,9 +346,9 @@ impl PricatConditionEvaluatorFV2504 {
                 Some(c) if c.is_ascii_digit() && c > '1' => ConditionResult::True,
                 Some(c) if c.is_ascii_digit() => ConditionResult::False,
                 Some(_) => ConditionResult::False,
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             },
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -384,7 +384,7 @@ impl PricatConditionEvaluatorFV2504 {
                         _ => ConditionResult::Unknown,
                     }
                 }
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             }
         }
     }
@@ -410,7 +410,7 @@ impl PricatConditionEvaluatorFV2504 {
                         _ => ConditionResult::Unknown,
                     }
                 }
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             }
         }
     }
@@ -520,7 +520,7 @@ impl PricatConditionEvaluatorFV2504 {
                     ConditionResult::Unknown
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -555,7 +555,7 @@ impl PricatConditionEvaluatorFV2504 {
                     ConditionResult::Unknown
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -602,7 +602,7 @@ impl PricatConditionEvaluatorFV2504 {
                     ConditionResult::Unknown
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -729,7 +729,7 @@ impl PricatConditionEvaluatorFV2504 {
                     ConditionResult::Unknown
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -883,7 +883,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 6),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -898,7 +898,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, "==", 0.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -913,7 +913,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, "==", 1000.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1008,7 +1008,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1094,7 +1094,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_artikel_pattern(val, &[1, 2, 1, 3]),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1107,7 +1107,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_artikel_pattern(val, &[1, 2, 1, 3]),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1121,7 +1121,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 11),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1134,7 +1134,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_artikel_pattern(val, &[1, 2, 1, 8, 2]),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1147,7 +1147,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_artikel_pattern(val, &[1, 2, 1, 8, 2, 1]),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1160,7 +1160,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_artikel_pattern(val, &[1, 2, 1, 8]),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1174,7 +1174,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_artikel_pattern(val, &[13, 2]),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1188,7 +1188,7 @@ impl PricatConditionEvaluatorFV2504 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, "<=", 0.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 }

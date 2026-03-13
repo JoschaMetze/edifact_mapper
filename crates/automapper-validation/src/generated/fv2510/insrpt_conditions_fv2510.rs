@@ -292,7 +292,7 @@ impl InsrptConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_numeric(val, ">=", 1.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -307,7 +307,7 @@ impl InsrptConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_timezone_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -322,7 +322,7 @@ impl InsrptConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 

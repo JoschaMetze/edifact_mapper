@@ -306,10 +306,10 @@ impl InvoicConditionEvaluatorFV2510 {
                     .map(|s| s.as_str())
                 {
                     Some(country) => ConditionResult::from(country != "DE"),
-                    None => ConditionResult::Unknown,
+                    None => ConditionResult::False, // segment absent → condition not applicable
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -325,10 +325,10 @@ impl InvoicConditionEvaluatorFV2510 {
                     .map(|s| s.as_str())
                 {
                     Some(country) => ConditionResult::from(country == "DE"),
-                    None => ConditionResult::Unknown,
+                    None => ConditionResult::False, // segment absent → condition not applicable
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -481,9 +481,9 @@ impl InvoicConditionEvaluatorFV2510 {
                     Ok(n) => ConditionResult::from(n >= 0.0),
                     Err(_) => ConditionResult::Unknown,
                 },
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             },
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -497,9 +497,9 @@ impl InvoicConditionEvaluatorFV2510 {
                     Ok(n) => ConditionResult::from(n < 0.0),
                     Err(_) => ConditionResult::Unknown,
                 },
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             },
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -563,7 +563,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     _ => ConditionResult::Unknown,
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -612,7 +612,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     _ => ConditionResult::Unknown,
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -660,7 +660,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     _ => ConditionResult::Unknown,
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -752,7 +752,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     _ => ConditionResult::Unknown,
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -794,7 +794,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     }
                     _ => ConditionResult::Unknown,
                 },
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             }
         }
     }
@@ -811,7 +811,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     ),
                     _ => ConditionResult::Unknown,
                 },
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             }
         }
     }
@@ -833,7 +833,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     }
                     _ => ConditionResult::Unknown,
                 },
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             }
         }
     }
@@ -860,7 +860,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     ),
                     _ => ConditionResult::Unknown,
                 },
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             }
         }
     }
@@ -877,7 +877,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     }
                     _ => ConditionResult::Unknown,
                 },
-                None => ConditionResult::Unknown,
+                None => ConditionResult::False, // segment absent → condition not applicable
             }
         }
     }
@@ -918,7 +918,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     _ => ConditionResult::Unknown,
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -991,7 +991,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     _ => ConditionResult::Unknown,
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1104,7 +1104,7 @@ impl InvoicConditionEvaluatorFV2510 {
                     _ => ConditionResult::Unknown,
                 }
             }
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1117,7 +1117,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mesz_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1130,7 +1130,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => is_mez_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1301,7 +1301,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, ">=", 0.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1317,7 +1317,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 3),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1333,7 +1333,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, ">=", 1.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1375,7 +1375,7 @@ impl InvoicConditionEvaluatorFV2510 {
                 Ok(_) => ConditionResult::False,
                 Err(_) => ConditionResult::False,
             },
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1389,7 +1389,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 6),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1403,7 +1403,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, ">", 0.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1418,7 +1418,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_numeric(val, "==", -1.0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1432,7 +1432,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 2),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1445,7 +1445,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_timezone_utc(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1458,7 +1458,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2200"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1471,7 +1471,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "2300"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1484,7 +1484,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0400"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1497,7 +1497,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_hhmm_equals(val, "0500"),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1510,7 +1510,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 0),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1523,7 +1523,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_email(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1536,7 +1536,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_phone(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1549,7 +1549,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.get(1))
         {
             Some(val) => validate_max_decimal_places(val, 11),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1562,7 +1562,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1575,7 +1575,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_zahlpunkt(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1588,7 +1588,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 
@@ -1601,7 +1601,7 @@ impl InvoicConditionEvaluatorFV2510 {
             .and_then(|e| e.first())
         {
             Some(val) => validate_malo_id(val),
-            None => ConditionResult::Unknown,
+            None => ConditionResult::False, // segment absent → condition not applicable
         }
     }
 }
