@@ -179,7 +179,7 @@ impl MigServiceRegistry {
                                             transaction_engines.insert(key, engine);
                                         }
 
-                                        // Populate PID→variant and PID→segment_numbers from cache
+                                        // Populate PID→variant from mapping engines
                                         for pid_dirname in mapping_engines
                                             .keys()
                                             .filter(|k| k.starts_with(&format!("{}/{}/", fv, variant)))
@@ -189,6 +189,14 @@ impl MigServiceRegistry {
                                         {
                                             let pid_key = format!("{}/{}", fv, pid_dirname);
                                             pid_to_variant.insert(pid_key, variant.clone());
+                                        }
+                                        // Also populate PID→variant from segment numbers
+                                        // (covers PIDs that have AHB data but no TOML mappings yet)
+                                        for pid_dirname in vc.pid_segment_numbers.keys() {
+                                            let pid_key = format!("{}/{}", fv, pid_dirname);
+                                            pid_to_variant
+                                                .entry(pid_key)
+                                                .or_insert_with(|| variant.clone());
                                         }
                                         for (pid_dirname, numbers) in &vc.pid_segment_numbers {
                                             let key = format!("{}/{}/{}", fv, variant, pid_dirname);
