@@ -478,6 +478,115 @@ mod tests {
     }
 
     #[test]
+    fn test_schema_workflow_matches_ahb_workflow() {
+        use automapper_generator::parsing::ahb_parser;
+
+        let mig_path = std::path::Path::new(
+            "../../xml-migs-and-ahbs/FV2504/UTILMD_MIG_Strom_S2_1_Fehlerkorrektur_20250320.xml",
+        );
+        let ahb_path = std::path::Path::new(
+            "../../xml-migs-and-ahbs/FV2504/UTILMD_AHB_Strom_2_1_Fehlerkorrektur_20250623.xml",
+        );
+        let schema_path = std::path::Path::new(
+            "../../crates/mig-types/src/generated/fv2504/utilmd/pids/pid_55001_schema.json",
+        );
+        if !mig_path.exists() || !ahb_path.exists() || !schema_path.exists() {
+            eprintln!("Skipping: test fixtures not found");
+            return;
+        }
+
+        // Build workflow from AHB XML (old way)
+        let ahb = ahb_parser::parse_ahb(ahb_path, "UTILMD", Some("Strom"), "FV2504").unwrap();
+        let ahb_workflow = ahb_workflow_from_schema(&ahb, "55001").unwrap();
+
+        // Build workflow from PID schema JSON (new way)
+        let schema_str = std::fs::read_to_string(schema_path).unwrap();
+        let schema: serde_json::Value = serde_json::from_str(&schema_str).unwrap();
+        let schema_workflow = ahb_workflow_from_pid_schema(&schema).unwrap();
+
+        // Compare metadata
+        assert_eq!(
+            ahb_workflow.pruefidentifikator,
+            schema_workflow.pruefidentifikator
+        );
+        assert_eq!(ahb_workflow.description, schema_workflow.description);
+        assert_eq!(
+            ahb_workflow.communication_direction,
+            schema_workflow.communication_direction
+        );
+
+        // Log field counts for diagnostics
+        eprintln!(
+            "AHB workflow: {} fields, Schema workflow: {} fields",
+            ahb_workflow.fields.len(),
+            schema_workflow.fields.len()
+        );
+
+        // Build lookup sets
+        let schema_paths: std::collections::HashSet<&str> = schema_workflow
+            .fields
+            .iter()
+            .map(|f| f.segment_path.as_str())
+            .collect();
+        let ahb_paths: std::collections::HashSet<&str> = ahb_workflow
+            .fields
+            .iter()
+            .map(|f| f.segment_path.as_str())
+            .collect();
+
+        // Schema fields that are in groups (not root/transport) should all be in AHB
+        for schema_field in &schema_workflow.fields {
+            assert!(
+                ahb_paths.contains(schema_field.segment_path.as_str()),
+                "Schema field {} not found in AHB workflow",
+                schema_field.segment_path
+            );
+        }
+
+        // AHB fields not in schema are expected for root/transport segments (UNH, UNT, BGM, DTM)
+        let mut missing_from_schema = Vec::new();
+        for ahb_field in &ahb_workflow.fields {
+            if !schema_paths.contains(ahb_field.segment_path.as_str()) {
+                missing_from_schema.push(&ahb_field.segment_path);
+            }
+        }
+        eprintln!(
+            "AHB fields not in schema (root/transport): {:?}",
+            missing_from_schema
+        );
+
+        // For matching fields, compare ahb_status.
+        // Note: Some paths appear multiple times (e.g., CCI/C240/7037 in different SG8 variants).
+        // We check that for each schema field, there's at least one AHB field with matching
+        // segment_path and ahb_status.
+        for schema_field in &schema_workflow.fields {
+            let ahb_matches: Vec<_> = ahb_workflow
+                .fields
+                .iter()
+                .filter(|f| f.segment_path == schema_field.segment_path)
+                .collect();
+            assert!(
+                !ahb_matches.is_empty(),
+                "Schema field {} should have AHB counterpart",
+                schema_field.segment_path
+            );
+            let status_match = ahb_matches
+                .iter()
+                .any(|f| f.ahb_status == schema_field.ahb_status);
+            assert!(
+                status_match,
+                "No AHB field with matching ahb_status for {} (schema: {}, ahb: {:?})",
+                schema_field.segment_path,
+                schema_field.ahb_status,
+                ahb_matches
+                    .iter()
+                    .map(|f| &f.ahb_status)
+                    .collect::<Vec<_>>()
+            );
+        }
+    }
+
+    #[test]
     fn test_ahb_workflow_from_pid_schema() {
         let schema_path = std::path::Path::new(
             "../../crates/mig-types/src/generated/fv2504/utilmd/pids/pid_55001_schema.json",
