@@ -39,6 +39,24 @@ impl EvaluatorRegistry {
             .insert(key, Arc::new(evaluator));
     }
 
+    /// Register a condition evaluator under a custom key, overriding the
+    /// evaluator's own `message_type()` and `format_version()`.
+    ///
+    /// Useful for type aliases where the underlying evaluator reports a
+    /// different format version than the one we want to register under.
+    pub fn register_as<E: ConditionEvaluator + 'static>(
+        &self,
+        evaluator: E,
+        message_type: &str,
+        format_version: &str,
+    ) {
+        let key = (message_type.to_string(), format_version.to_string());
+        self.evaluators
+            .write()
+            .expect("registry lock poisoned")
+            .insert(key, Arc::new(evaluator));
+    }
+
     /// Register an already-Arc'd evaluator.
     pub fn register_arc(&self, evaluator: Arc<dyn ConditionEvaluator>) {
         let key = (

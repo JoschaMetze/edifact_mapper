@@ -29,7 +29,9 @@ pub struct MessageChunk {
 
 impl MessageChunk {
     /// Reconstruct the full segment list for this message (envelope + UNH + body + UNT).
-    /// This is the input format expected by `Assembler::assemble_generic()`.
+    ///
+    /// Note: only use this when the MIG schema includes envelope segments (UNA, UNB).
+    /// For MIG schemas that start at UNH, use `message_segments()` instead.
     pub fn all_segments(&self) -> Vec<OwnedSegment> {
         let mut segs = Vec::with_capacity(self.envelope.len() + 2 + self.body.len());
         segs.extend_from_slice(&self.envelope);
@@ -37,6 +39,33 @@ impl MessageChunk {
         segs.extend(self.body.iter().cloned());
         segs.push(self.unt.clone());
         segs
+    }
+
+    /// Message-only segments (UNH + body + UNT), excluding interchange envelope.
+    ///
+    /// Use this for assembly when the MIG schema starts at UNH (most message types).
+    /// UTILMD MIG schemas include UNA/UNB, so those still need `all_segments()`.
+    pub fn message_segments(&self) -> Vec<OwnedSegment> {
+        let mut segs = Vec::with_capacity(2 + self.body.len());
+        segs.push(self.unh.clone());
+        segs.extend(self.body.iter().cloned());
+        segs.push(self.unt.clone());
+        segs
+    }
+
+    /// Return the appropriate segments for assembly based on whether the MIG
+    /// includes envelope segments (UNA/UNB) or starts at UNH.
+    pub fn segments_for_mig(&self, mig: &mig_types::schema::mig::MigSchema) -> Vec<OwnedSegment> {
+        let starts_with_envelope = mig
+            .segments
+            .first()
+            .map(|s| s.id == "UNA" || s.id == "UNB")
+            .unwrap_or(false);
+        if starts_with_envelope {
+            self.all_segments()
+        } else {
+            self.message_segments()
+        }
     }
 }
 

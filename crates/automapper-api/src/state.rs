@@ -662,24 +662,26 @@ impl MigServiceRegistry {
         evaluator_registry.register(automapper_validation::UtilmdGasConditionEvaluatorFV2510::default());
         evaluator_registry.register(automapper_validation::UtilmdStromConditionEvaluatorFV2510::default());
         evaluator_registry.register(automapper_validation::UtiltsConditionEvaluatorFV2510::default());
-        evaluator_registry.register(automapper_validation::AperakConditionEvaluatorFV2604::default());
+        // FV2604: 6 real evaluators with own format_version()
         evaluator_registry.register(automapper_validation::ComdisConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::ContrlConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::IftstaConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::InsrptConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::InvoicConditionEvaluatorFV2604::default());
         evaluator_registry.register(automapper_validation::MsconsConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::OrdchgConditionEvaluatorFV2604::default());
         evaluator_registry.register(automapper_validation::OrdersConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::OrdrspConditionEvaluatorFV2604::default());
         evaluator_registry.register(automapper_validation::PartinConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::PricatConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::QuotesConditionEvaluatorFV2604::default());
         evaluator_registry.register(automapper_validation::RemadvConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::ReqoteConditionEvaluatorFV2604::default());
         evaluator_registry.register(automapper_validation::UtilmdGasConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::UtilmdStromConditionEvaluatorFV2604::default());
-        evaluator_registry.register(automapper_validation::UtiltsConditionEvaluatorFV2604::default());
+        // FV2604: 12 aliases (underlying evaluator reports FV2504/FV2510 — register_as overrides key)
+        evaluator_registry.register_as(automapper_validation::AperakConditionEvaluatorFV2604::default(), "APERAK", "FV2604");
+        evaluator_registry.register_as(automapper_validation::ContrlConditionEvaluatorFV2604::default(), "CONTRL", "FV2604");
+        evaluator_registry.register_as(automapper_validation::IftstaConditionEvaluatorFV2604::default(), "IFTSTA", "FV2604");
+        evaluator_registry.register_as(automapper_validation::InsrptConditionEvaluatorFV2604::default(), "INSRPT", "FV2604");
+        evaluator_registry.register_as(automapper_validation::InvoicConditionEvaluatorFV2604::default(), "INVOIC", "FV2604");
+        evaluator_registry.register_as(automapper_validation::OrdchgConditionEvaluatorFV2604::default(), "ORDCHG", "FV2604");
+        evaluator_registry.register_as(automapper_validation::OrdrspConditionEvaluatorFV2604::default(), "ORDRSP", "FV2604");
+        evaluator_registry.register_as(automapper_validation::PricatConditionEvaluatorFV2604::default(), "PRICAT", "FV2604");
+        evaluator_registry.register_as(automapper_validation::QuotesConditionEvaluatorFV2604::default(), "QUOTES", "FV2604");
+        evaluator_registry.register_as(automapper_validation::ReqoteConditionEvaluatorFV2604::default(), "REQOTE", "FV2604");
+        evaluator_registry.register_as(automapper_validation::UtilmdStromConditionEvaluatorFV2604::default(), "UTILMD_Strom", "FV2604");
+        evaluator_registry.register_as(automapper_validation::UtiltsConditionEvaluatorFV2604::default(), "UTILTS", "FV2604");
         tracing::info!(
             "Registered {} condition evaluators",
             evaluator_registry.registered_keys().len()

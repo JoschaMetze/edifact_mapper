@@ -95,7 +95,7 @@ pub(crate) async fn validate_bo4e(
             message: "No messages found after re-tokenization".to_string(),
         })?;
 
-    let all_segments = msg_chunk.all_segments();
+    let all_segments = msg_chunk.message_segments();
 
     // Step 5: Assemble with diagnostics for validation
     let assembler = Assembler::new(&ctx.filtered_mig);

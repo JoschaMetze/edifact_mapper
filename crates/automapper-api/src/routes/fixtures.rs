@@ -87,6 +87,11 @@ pub(crate) async fn list_fixture_catalog() -> Result<Json<FixtureCatalogResponse
         for fv_dir in fv_dirs {
             let format_version = fv_dir.file_name().to_string_lossy().to_string();
 
+            // Only show FV2504 and newer (older versions are unsupported)
+            if format_version.as_str() < "FV2504" {
+                continue;
+            }
+
             // Count unique fixture base names (files ending in .edi or .bo.json).
             let fixture_count = count_fixture_bases(&fv_dir.path());
             if fixture_count == 0 {

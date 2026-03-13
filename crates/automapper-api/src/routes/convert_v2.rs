@@ -118,7 +118,7 @@ pub(crate) async fn convert_v2(
             }
 
             // Step 6: Detect PID from the first message to resolve variant
-            let first_segments = first_chunk.all_segments();
+            let first_segments = first_chunk.message_segments();
             let first_pid = detect_pid(&first_segments).map_err(|e| ApiError::ConversionError {
                 message: format!("PID detection error: {e}"),
             })?;
@@ -150,7 +150,7 @@ pub(crate) async fn convert_v2(
             let mut last_filtered_mig = None;
 
             for (msg_idx, msg_chunk) in chunks.messages.iter().enumerate() {
-                let all_segments = msg_chunk.all_segments();
+                let all_segments = msg_chunk.message_segments();
 
                 // Detect PID from this message's segments
                 let pid = detect_pid(&all_segments).map_err(|e| ApiError::ConversionError {
@@ -223,7 +223,7 @@ pub(crate) async fn convert_v2(
             let validation = if query.validate.unwrap_or(false) {
                 // Reuse the first message's segments + PID for validation
                 if let Some(first_chunk) = chunks.messages.first() {
-                    let val_segments = first_chunk.all_segments();
+                    let val_segments = first_chunk.message_segments();
                     let val_pid =
                         detect_pid(&val_segments).map_err(|e| ApiError::ConversionError {
                             message: format!("PID detection error during validation: {e}"),
@@ -347,7 +347,7 @@ fn convert_response_message(
     let mut nachrichten = Vec::new();
 
     for (msg_idx, msg_chunk) in chunks.messages.iter().enumerate() {
-        let all_segments = msg_chunk.all_segments();
+        let all_segments = msg_chunk.message_segments();
 
         // Assemble using the full response MIG (no PID filtering)
         let assembler = Assembler::new(response_mig);

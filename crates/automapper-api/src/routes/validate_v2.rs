@@ -71,7 +71,7 @@ pub(crate) async fn validate_v2(
             message: "No messages found in EDIFACT content".to_string(),
         })?;
 
-    let all_segments = msg_chunk.all_segments();
+    let all_segments = msg_chunk.message_segments();
 
     // Step 4: Detect PID
     let pid = detect_pid(&all_segments).map_err(|e| ApiError::ConversionError {
