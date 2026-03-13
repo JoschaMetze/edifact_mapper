@@ -656,12 +656,13 @@ impl MigServiceRegistry {
         evaluator_registry.register(automapper_validation::QuotesConditionEvaluatorFV2510::default());
         evaluator_registry.register(automapper_validation::RemadvConditionEvaluatorFV2510::default());
         evaluator_registry.register(automapper_validation::ReqoteConditionEvaluatorFV2510::default());
-        evaluator_registry.register(automapper_validation::AperakConditionEvaluatorFV2510::default());
-        evaluator_registry.register(automapper_validation::ContrlConditionEvaluatorFV2510::default());
-        evaluator_registry.register(automapper_validation::OrdchgConditionEvaluatorFV2510::default());
-        evaluator_registry.register(automapper_validation::UtilmdGasConditionEvaluatorFV2510::default());
+        // FV2510: 5 aliases to FV2504 — register_as overrides key
+        evaluator_registry.register_as(automapper_validation::AperakConditionEvaluatorFV2510::default(), "APERAK", "FV2510");
+        evaluator_registry.register_as(automapper_validation::ContrlConditionEvaluatorFV2510::default(), "CONTRL", "FV2510");
+        evaluator_registry.register_as(automapper_validation::OrdchgConditionEvaluatorFV2510::default(), "ORDCHG", "FV2510");
+        evaluator_registry.register_as(automapper_validation::UtilmdGasConditionEvaluatorFV2510::default(), "UTILMD_Gas", "FV2510");
+        evaluator_registry.register_as(automapper_validation::UtiltsConditionEvaluatorFV2510::default(), "UTILTS", "FV2510");
         evaluator_registry.register(automapper_validation::UtilmdStromConditionEvaluatorFV2510::default());
-        evaluator_registry.register(automapper_validation::UtiltsConditionEvaluatorFV2510::default());
         // FV2604: 6 real evaluators with own format_version()
         evaluator_registry.register(automapper_validation::ComdisConditionEvaluatorFV2604::default());
         evaluator_registry.register(automapper_validation::MsconsConditionEvaluatorFV2604::default());
