@@ -3,8 +3,6 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use automapper_generator::parsing::ahb_parser::parse_ahb;
-use automapper_generator::schema::ahb::AhbSchema;
 use mig_assembly::parsing::parse_mig;
 use mig_assembly::ConversionService;
 use mig_bo4e::code_lookup::CodeLookup;
@@ -53,7 +51,6 @@ pub struct MigServiceRegistry {
     /// Transaction-only engines per PID (without message-level defs).
     /// Key: "{fv}/{variant}/pid_{pid}" e.g. "FV2504/UTILMD_Strom/pid_55001"
     transaction_engines: HashMap<String, MappingEngine>,
-    ahb_schemas: HashMap<String, AhbSchema>,
     /// PID → variant mapping derived from cache keys.
     /// Key: "{fv}/pid_{pid}" → variant name (e.g., "UTILMD_Strom")
     pid_to_variant: HashMap<String, String>,
@@ -542,70 +539,6 @@ impl MigServiceRegistry {
             }
         }
 
-        // Load AHB schemas for PID lookup — discover all *_AHB_*.xml files
-        let mut ahb_schemas = HashMap::new();
-        if xml_base.is_dir() {
-            if let Ok(fv_entries) = std::fs::read_dir(xml_base) {
-                for fv_entry in fv_entries.flatten() {
-                    let fv_path = fv_entry.path();
-                    if !fv_path.is_dir() {
-                        continue;
-                    }
-                    let fv = fv_entry.file_name().to_string_lossy().to_string();
-                    if let Ok(files) = std::fs::read_dir(&fv_path) {
-                        for file in files.flatten() {
-                            let fname = file.file_name().to_string_lossy().to_string();
-                            if !fname.contains("_AHB_") || !fname.ends_with(".xml") {
-                                continue;
-                            }
-                            // Parse filename: {MSG_TYPE}_AHB_{Variant}_... or {MSG_TYPE}_AHB_...
-                            // e.g. "UTILMD_AHB_Strom_2_1_..." → msg_type=UTILMD, variant=Strom
-                            // e.g. "ORDRSP_AHB_1_0a_..." → msg_type=ORDRSP, variant=None
-                            let msg_type = fname.split("_AHB_").next().unwrap_or("");
-                            if msg_type.is_empty() {
-                                continue;
-                            }
-                            // Determine variant: check if there's a known variant name after _AHB_
-                            let after_ahb = fname
-                                .split("_AHB_")
-                                .nth(1)
-                                .unwrap_or("");
-                            let variant = if after_ahb.starts_with("Strom") {
-                                Some("Strom")
-                            } else if after_ahb.starts_with("Gas") {
-                                Some("Gas")
-                            } else {
-                                None
-                            };
-                            let key = match variant {
-                                Some(v) => format!("{}/{}_{}", fv, msg_type, v),
-                                None => format!("{}/{}", fv, msg_type),
-                            };
-                            // Skip if already loaded (first file wins per key)
-                            if ahb_schemas.contains_key(&key) {
-                                continue;
-                            }
-                            match parse_ahb(&file.path(), msg_type, variant, &fv) {
-                                Ok(schema) => {
-                                    tracing::info!(
-                                        "Loaded AHB schema for {key} with {} workflows",
-                                        schema.workflows.len()
-                                    );
-                                    ahb_schemas.insert(key, schema);
-                                }
-                                Err(e) => {
-                                    tracing::warn!(
-                                        "Failed to load AHB from {}: {e}",
-                                        file.path().display()
-                                    );
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         // Load response message MIGs and mapping engines (APERAK, CONTRL)
         let mut response_engines = HashMap::new();
         let mut response_migs = HashMap::new();
@@ -682,7 +615,6 @@ impl MigServiceRegistry {
             mapping_engines,
             message_engines,
             transaction_engines,
-            ahb_schemas,
             pid_to_variant,
             pid_segment_numbers,
             response_engines,
@@ -760,34 +692,12 @@ impl MigServiceRegistry {
         self.message_engines.get(&key)
     }
 
-    /// Get an AHB schema for the given format version and message type/variant.
-    /// Key format: "FV2504/UTILMD_Strom"
-    pub fn ahb_schema(&self, fv: &str, msg_variant: &str) -> Option<&AhbSchema> {
-        let key = format!("{}/{}", fv, msg_variant);
-        self.ahb_schemas.get(&key)
-    }
-
     /// Resolve the message variant (e.g., `"UTILMD_Strom"`) for a given PID.
     ///
-    /// Checks cached `pid_to_variant` first (populated from VariantCache),
-    /// then falls back to scanning AHB schemas.
+    /// Uses `pid_to_variant` cache populated from VariantCache at startup.
     pub fn resolve_variant(&self, fv: &str, pid: &str) -> Option<&str> {
-        // Check cache first
         let cache_key = format!("{}/pid_{}", fv, pid);
-        if let Some(variant) = self.pid_to_variant.get(&cache_key) {
-            return Some(variant.as_str());
-        }
-
-        // Fallback: scan AHB schemas
-        let prefix = format!("{}/", fv);
-        for (key, schema) in &self.ahb_schemas {
-            if let Some(variant) = key.strip_prefix(&prefix) {
-                if schema.workflows.iter().any(|w| w.id == pid) {
-                    return Some(variant);
-                }
-            }
-        }
-        None
+        self.pid_to_variant.get(&cache_key).map(|s| s.as_str())
     }
 
     /// Get cached AHB segment numbers for a specific PID.
@@ -1072,37 +982,23 @@ mod tests {
 
     #[test]
     fn test_resolve_variant_finds_pid() {
-        let mut ahb_schemas = HashMap::new();
-        let schema = AhbSchema {
-            message_type: "UTILMD".to_string(),
-            variant: Some("Strom".to_string()),
-            version: "2.1".to_string(),
-            format_version: "FV2504".to_string(),
-            source_file: String::new(),
-            workflows: vec![automapper_generator::schema::ahb::Pruefidentifikator {
-                id: "55001".to_string(),
-                beschreibung: "Test workflow".to_string(),
-                kommunikation_von: None,
-                fields: vec![],
-                segment_numbers: vec![],
-            }],
-            bedingungen: vec![],
-        };
-        ahb_schemas.insert("FV2504/UTILMD_Strom".to_string(), schema);
+        let mut pid_to_variant = HashMap::new();
+        pid_to_variant.insert(
+            "FV2504/pid_55001".to_string(),
+            "UTILMD_Strom".to_string(),
+        );
 
         let registry = MigServiceRegistry {
             services: HashMap::new(),
             mapping_engines: HashMap::new(),
             message_engines: HashMap::new(),
             transaction_engines: HashMap::new(),
-            ahb_schemas,
-            pid_to_variant: HashMap::new(),
+            pid_to_variant,
             pid_segment_numbers: HashMap::new(),
             response_engines: HashMap::new(),
             response_migs: HashMap::new(),
         };
 
-        // Falls back to AHB schema scan when pid_to_variant is empty
         assert_eq!(
             registry.resolve_variant("FV2504", "55001"),
             Some("UTILMD_Strom")
@@ -1124,7 +1020,7 @@ mod tests {
             mapping_engines: HashMap::new(),
             message_engines: HashMap::new(),
             transaction_engines: HashMap::new(),
-            ahb_schemas: HashMap::new(),
+
             pid_to_variant,
             pid_segment_numbers: HashMap::new(),
             response_engines: HashMap::new(),
@@ -1152,7 +1048,7 @@ mod tests {
             mapping_engines: HashMap::new(),
             message_engines: HashMap::new(),
             transaction_engines: HashMap::new(),
-            ahb_schemas: HashMap::new(),
+
             pid_to_variant: HashMap::new(),
             pid_segment_numbers,
             response_engines: HashMap::new(),
@@ -1193,7 +1089,7 @@ mod tests {
             mapping_engines: HashMap::new(),
             message_engines: HashMap::new(),
             transaction_engines: HashMap::new(),
-            ahb_schemas: HashMap::new(),
+
             pid_to_variant: HashMap::new(),
             pid_segment_numbers: HashMap::new(),
             response_engines: HashMap::new(),

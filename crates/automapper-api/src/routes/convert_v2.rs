@@ -146,17 +146,6 @@ pub(crate) async fn convert_v2(
 
             let mut nachrichten = Vec::new();
 
-            // Look up AHB schema once (same for all messages of this variant)
-            let ahb = state
-                .mig_registry
-                .ahb_schema(&req.format_version, msg_variant)
-                .ok_or_else(|| ApiError::Internal {
-                    message: format!(
-                        "No AHB schema available for {}/{}",
-                        req.format_version, msg_variant
-                    ),
-                })?;
-
             // Track the last filtered MIG for optional validation
             let mut last_filtered_mig = None;
 
@@ -168,14 +157,19 @@ pub(crate) async fn convert_v2(
                     message: format!("PID detection error in message {msg_idx}: {e}"),
                 })?;
 
-                let workflow = ahb.workflows.iter().find(|w| w.id == pid).ok_or_else(|| {
-                    ApiError::ConversionError {
-                        message: format!("PID {pid} not found in AHB (message {msg_idx})"),
-                    }
-                })?;
-
-                let ahb_numbers: HashSet<String> =
-                    workflow.segment_numbers.iter().cloned().collect();
+                // Get AHB segment numbers from cache
+                let ahb_numbers: HashSet<String> = state
+                    .mig_registry
+                    .segment_numbers_for_pid(&req.format_version, msg_variant, &pid)
+                    .ok_or_else(|| ApiError::ConversionError {
+                        message: format!(
+                            "No segment numbers cached for PID {pid} in {}/{}",
+                            req.format_version, msg_variant
+                        ),
+                    })?
+                    .iter()
+                    .cloned()
+                    .collect();
 
                 // Filter MIG for this PID and assemble
                 let filtered_mig = filter_mig_for_pid(service.mig(), &ahb_numbers);
@@ -235,11 +229,15 @@ pub(crate) async fn convert_v2(
                             message: format!("PID detection error during validation: {e}"),
                         })?;
 
-                    let val_workflow =
-                        crate::validation_bridge::ahb_workflow_from_schema(ahb, &val_pid)
-                            .ok_or_else(|| ApiError::ConversionError {
-                                message: format!("PID {val_pid} not found in AHB for validation"),
-                            })?;
+                    let val_workflow = state
+                        .mig_registry
+                        .ahb_workflow_for_pid(&req.format_version, msg_variant, &val_pid)
+                        .ok_or_else(|| ApiError::ConversionError {
+                            message: format!(
+                                "No AHB workflow available for PID {val_pid} in {}/{}",
+                                req.format_version, msg_variant
+                            ),
+                        })?;
 
                     let external = automapper_validation::eval::NoOpExternalProvider;
                     let evaluator =

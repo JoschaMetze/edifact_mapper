@@ -89,22 +89,15 @@ pub(crate) async fn validate_v2(
             ),
         })?;
 
-    let ahb = state
+    // Step 6: Build AhbWorkflow from PID schema JSON (no AHB XML needed)
+    let workflow = state
         .mig_registry
-        .ahb_schema(&req.format_version, msg_variant)
-        .ok_or_else(|| ApiError::Internal {
+        .ahb_workflow_for_pid(&req.format_version, msg_variant, &pid)
+        .ok_or_else(|| ApiError::ConversionError {
             message: format!(
-                "No AHB schema available for {}/{}",
+                "No AHB workflow available for PID {pid} in {}/{}",
                 req.format_version, msg_variant
             ),
-        })?;
-
-    // Step 6: Build AhbWorkflow from schema
-    let workflow =
-        crate::validation_bridge::ahb_workflow_from_schema(ahb, &pid).ok_or_else(|| {
-            ApiError::ConversionError {
-                message: format!("PID {pid} not found in AHB"),
-            }
         })?;
 
     // Step 7: Load MIG service, filter for PID, assemble with diagnostics
@@ -118,15 +111,19 @@ pub(crate) async fn validate_v2(
             ),
         })?;
 
-    let ahb_workflow =
-        ahb.workflows
-            .iter()
-            .find(|w| w.id == pid)
-            .ok_or_else(|| ApiError::ConversionError {
-                message: format!("PID {pid} not found in AHB workflows"),
-            })?;
-
-    let ahb_numbers: HashSet<String> = ahb_workflow.segment_numbers.iter().cloned().collect();
+    // Get AHB segment numbers from cache
+    let ahb_numbers: HashSet<String> = state
+        .mig_registry
+        .segment_numbers_for_pid(&req.format_version, msg_variant, &pid)
+        .ok_or_else(|| ApiError::ConversionError {
+            message: format!(
+                "No segment numbers cached for PID {pid} in {}/{}",
+                req.format_version, msg_variant
+            ),
+        })?
+        .iter()
+        .cloned()
+        .collect();
     let filtered_mig = filter_mig_for_pid(service.mig(), &ahb_numbers);
     let assembler = Assembler::new(&filtered_mig);
     let (tree, structure_diagnostics) = assembler.assemble_with_diagnostics(&all_segments);

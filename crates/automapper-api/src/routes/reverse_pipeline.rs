@@ -4,7 +4,6 @@
 
 use std::collections::HashSet;
 
-use automapper_generator::schema::ahb::AhbSchema;
 use automapper_generator::schema::mig::MigSchema;
 use mig_assembly::disassembler::{DisassembledSegment, Disassembler};
 use mig_assembly::pid_filter::filter_mig_for_pid;
@@ -19,7 +18,6 @@ pub(crate) struct ReversePipelineContext<'a> {
     pub filtered_mig: MigSchema,
     pub msg_engine: &'a MappingEngine,
     pub tx_engine: &'a MappingEngine,
-    pub ahb: &'a AhbSchema,
 }
 
 /// Load all MIG/AHB resources needed for reverse mapping a given PID.
@@ -37,22 +35,18 @@ pub(crate) fn load_reverse_context<'a>(
                 message: format!("No MIG service available for format version '{format_version}'"),
             })?;
 
-    let ahb = state
+    // Get AHB segment numbers from cache
+    let ahb_numbers: HashSet<String> = state
         .mig_registry
-        .ahb_schema(format_version, msg_variant)
+        .segment_numbers_for_pid(format_version, msg_variant, pid)
         .ok_or_else(|| ApiError::Internal {
-            message: format!("No AHB schema available for {format_version}/{msg_variant}"),
-        })?;
-
-    let ahb_workflow =
-        ahb.workflows
-            .iter()
-            .find(|w| w.id == pid)
-            .ok_or_else(|| ApiError::ConversionError {
-                message: format!("PID {pid} not found in AHB"),
-            })?;
-
-    let ahb_numbers: HashSet<String> = ahb_workflow.segment_numbers.iter().cloned().collect();
+            message: format!(
+                "No cached segment numbers for {format_version}/{msg_variant}/pid_{pid}"
+            ),
+        })?
+        .iter()
+        .cloned()
+        .collect();
     let filtered_mig = filter_mig_for_pid(service.mig(), &ahb_numbers);
 
     let (msg_engine, tx_engine) = state
@@ -66,7 +60,6 @@ pub(crate) fn load_reverse_context<'a>(
         filtered_mig,
         msg_engine,
         tx_engine,
-        ahb,
     })
 }
 
