@@ -608,9 +608,9 @@ fn detect_group_scope(description: &str) -> Option<String> {
 
     // Pattern 1: Explicit parent/child path notation
     // "SG8 SEQ+Z98 SG10 CCI+..." or "SG8 SEQ+Z01/ SG10 CCI+..."
-    let explicit_parent_child = regex::Regex::new(
-        r"(?i)(SG\d+)\s+(?:SEQ|CCI|RFF)\+\S+[\s/]+(SG\d+)\s+(?:CCI|CAV|RFF)"
-    ).unwrap();
+    let explicit_parent_child =
+        regex::Regex::new(r"(?i)(SG\d+)\s+(?:SEQ|CCI|RFF)\+\S+[\s/]+(SG\d+)\s+(?:CCI|CAV|RFF)")
+            .unwrap();
     if let Some(cap) = explicit_parent_child.captures(description) {
         let parent = cap.get(1).unwrap().as_str();
         let child = cap.get(2).unwrap().as_str();
@@ -623,12 +623,10 @@ fn detect_group_scope(description: &str) -> Option<String> {
     // Pattern 2: Bare "SG10 CCI+..." or "SG10 CAV+..." (without explicit SG8 prefix)
     // Implies SG10 is a child of the current SG8 context
     if hints.is_empty() {
-        let bare_sg10 = regex::Regex::new(
-            r"(?i)\bSG10\s+(?:CCI|CAV)\+(\S+)"
-        ).unwrap();
+        let bare_sg10 = regex::Regex::new(r"(?i)\bSG10\s+(?:CCI|CAV)\+(\S+)").unwrap();
         if bare_sg10.is_match(description) {
-            let has_nicht = description.contains("nicht vorhanden")
-                || description.starts_with("Wenn nicht ");
+            let has_nicht =
+                description.contains("nicht vorhanden") || description.starts_with("Wenn nicht ");
             if has_nicht {
                 hints.push(
                     "PARENT-CHILD ABSENCE: SG10 is a child of SG8. To check SG10 child absence, \
@@ -648,9 +646,9 @@ fn detect_group_scope(description: &str) -> Option<String> {
     }
 
     // Pattern 3: "in derselben/dieser SG8 ... nicht vorhanden" — same-instance absence
-    let same_group_absence = regex::Regex::new(
-        r"(?i)(?:in\s+)?(?:derselben|dieser|dem)\s+(SG\d+).*?nicht\s+vorhanden"
-    ).unwrap();
+    let same_group_absence =
+        regex::Regex::new(r"(?i)(?:in\s+)?(?:derselben|dieser|dem)\s+(SG\d+).*?nicht\s+vorhanden")
+            .unwrap();
     if let Some(cap) = same_group_absence.captures(description) {
         let group = cap.get(1).unwrap().as_str();
         hints.push(format!(
@@ -664,21 +662,23 @@ fn detect_group_scope(description: &str) -> Option<String> {
     // Pattern 4: "nicht vorhanden" at end without "derselben" — general absence in parent group
     if hints.is_empty() {
         let trailing_absence = regex::Regex::new(
-            r"(?i)(?:das\s+)?(?:SG\d+\s+)?(?:RFF|PIA|CCI|CAV|SEQ)\+\S+.*?nicht\s+vorhanden"
-        ).unwrap();
+            r"(?i)(?:das\s+)?(?:SG\d+\s+)?(?:RFF|PIA|CCI|CAV|SEQ)\+\S+.*?nicht\s+vorhanden",
+        )
+        .unwrap();
         if trailing_absence.is_match(description) {
             hints.push(
                 "ABSENCE CHECK: Use ctx.lacks_qualifier for message-wide, or \
                  ctx.any_group_has_qualifier_without for same-group-instance absence."
-                    .to_string()
+                    .to_string(),
             );
         }
     }
 
     // Pattern 5: "in der SG8 mit SEQ+..." — SG with qualifier filter, child SG
     let sg_with_qualifier = regex::Regex::new(
-        r"(?i)(?:in\s+)?(?:der|einer|dem)\s+(SG\d+)\s+(?:mit|mit\s+dem)\s+(\w+)\+(\w+).*?(SG\d+)"
-    ).unwrap();
+        r"(?i)(?:in\s+)?(?:der|einer|dem)\s+(SG\d+)\s+(?:mit|mit\s+dem)\s+(\w+)\+(\w+).*?(SG\d+)",
+    )
+    .unwrap();
     if let Some(cap) = sg_with_qualifier.captures(description) {
         let parent = cap.get(1).unwrap().as_str();
         let child = cap.get(4).unwrap().as_str();
@@ -692,24 +692,29 @@ fn detect_group_scope(description: &str) -> Option<String> {
 
     // Pattern 6: Zeitraum-ID cross-reference between SG groups
     let zeitraum_cross = regex::Regex::new(
-        r"(?i)(?:Zeitraum-ID|DE1050|DE1156|DE3224).*?(?:identisch|derselben|gleich|passend)"
-    ).unwrap();
+        r"(?i)(?:Zeitraum-ID|DE1050|DE1156|DE3224).*?(?:identisch|derselben|gleich|passend)",
+    )
+    .unwrap();
     if zeitraum_cross.is_match(description) || description.contains("Zeitraum-ID") {
         hints.push(
             "CROSS-GROUP: Uses Zeitraum-ID matching. Use ctx.collect_group_values to gather \
              Zeitraum-IDs from one group, then iterate another group's instances to find matches. \
              Or use ctx.groups_share_qualified_value for simple correlation."
-                .to_string()
+                .to_string(),
         );
     }
 
     // Pattern 7: "in dieser SG" / "in derselben SG" / "in dieser SG8" — group scope
-    let same_group = regex::Regex::new(
-        r"(?i)in\s+(?:derselben|dieser|dem\s+selben|dem\s+gleichen)\s+(SG\d*)"
-    ).unwrap();
+    let same_group =
+        regex::Regex::new(r"(?i)in\s+(?:derselben|dieser|dem\s+selben|dem\s+gleichen)\s+(SG\d*)")
+            .unwrap();
     if let Some(cap) = same_group.captures(description) {
         let group = cap.get(1).unwrap().as_str();
-        if !group.is_empty() && !hints.iter().any(|h| h.contains("ABSENCE") || h.contains("PARENT-CHILD")) {
+        if !group.is_empty()
+            && !hints
+                .iter()
+                .any(|h| h.contains("ABSENCE") || h.contains("PARENT-CHILD"))
+        {
             hints.push(format!(
                 "GROUP-SCOPED: Use ctx.any_group_has_qualifier or ctx.any_group_has_co_occurrence \
                  with group_path ending in \"{}\"",
@@ -719,22 +724,19 @@ fn detect_group_scope(description: &str) -> Option<String> {
     }
 
     // Pattern 8: Cardinality conditions — "genau einmal" / "mindestens einmal"
-    let cardinality = regex::Regex::new(
-        r"(?i)(?:genau|mindestens)\s+einmal\s+(?:für|pro)"
-    ).unwrap();
+    let cardinality =
+        regex::Regex::new(r"(?i)(?:genau|mindestens)\s+einmal\s+(?:für|pro)").unwrap();
     if cardinality.is_match(description) {
         hints.push(
             "CARDINALITY: Count group instances using ctx.group_instance_count or \
              ctx.child_group_instance_count. Compare against expected count from \
              ctx.collect_group_values."
-                .to_string()
+                .to_string(),
         );
     }
 
     // Pattern 9: Condition reference — "Bedingung [N]" or "Bedingungen [N]"
-    let cond_ref = regex::Regex::new(
-        r"(?i)(?:Bedingung|Bedingungen)\s+\[(\d+)\]"
-    ).unwrap();
+    let cond_ref = regex::Regex::new(r"(?i)(?:Bedingung|Bedingungen)\s+\[(\d+)\]").unwrap();
     if let Some(cap) = cond_ref.captures(description) {
         let cond_id = cap.get(1).unwrap().as_str();
         hints.push(format!(

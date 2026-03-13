@@ -37,10 +37,12 @@ pub fn extract_code_lists(mig: &MigSchema) -> BTreeMap<String, CodeListEntry> {
         if de.codes.is_empty() {
             return;
         }
-        let entry = result.entry(de.id.clone()).or_insert_with(|| CodeListEntry {
-            name: de.name.clone(),
-            codes: Vec::new(),
-        });
+        let entry = result
+            .entry(de.id.clone())
+            .or_insert_with(|| CodeListEntry {
+                name: de.name.clone(),
+                codes: Vec::new(),
+            });
         for code in &de.codes {
             if !entry.codes.iter().any(|c| c.value == code.value) {
                 entry.codes.push(CodeValueEntry {
@@ -90,8 +92,7 @@ pub fn write_code_lists(
     code_lists: &BTreeMap<String, CodeListEntry>,
     output_path: &Path,
 ) -> Result<(), std::io::Error> {
-    let mut json = serde_json::to_string_pretty(code_lists)
-        .map_err(std::io::Error::other)?;
+    let mut json = serde_json::to_string_pretty(code_lists).map_err(std::io::Error::other)?;
     json.push('\n');
     if let Some(parent) = output_path.parent() {
         std::fs::create_dir_all(parent)?;

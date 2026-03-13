@@ -107,6 +107,9 @@ pub fn compile_variant(
     let mig_schema = find_and_parse_mig(xml_base, fv, msg_type_upper, variant_suffix);
     let segment_structure = mig_schema.as_ref().map(SegmentStructure::from_mig);
 
+    // Parse AHB XML for PID segment numbers
+    let pid_segment_numbers = find_and_parse_ahb_numbers(xml_base, fv, msg_type_upper, variant_suffix);
+
     // VariantCache accumulator
     let mut variant_message_defs = Vec::new();
     let mut variant_transaction_defs: HashMap<String, Vec<_>> = HashMap::new();
@@ -214,6 +217,7 @@ pub fn compile_variant(
         code_lookups: variant_code_lookups,
         mig_schema,
         segment_structure,
+        pid_segment_numbers,
     };
     let variant_cache_path = output_base.join(fv).join(format!("{variant}.json"));
     if let Err(e) = variant_cache.save(&variant_cache_path) {
@@ -300,6 +304,63 @@ fn find_and_parse_mig(
         }
     }
     None
+}
+
+/// Find and parse an AHB XML, returning PID → segment numbers map.
+///
+/// Searches `{xml_base}/{fv}/` for `{MSG_TYPE}_AHB_{Variant}_*.xml`.
+fn find_and_parse_ahb_numbers(
+    xml_base: &Path,
+    fv: &str,
+    msg_type: &str,
+    variant_suffix: &str,
+) -> std::collections::HashMap<String, Vec<String>> {
+    use automapper_generator::parsing::ahb_parser::parse_ahb;
+
+    let fv_dir = xml_base.join(fv);
+    if !fv_dir.is_dir() {
+        return Default::default();
+    }
+
+    let prefix = if variant_suffix.is_empty() {
+        format!("{msg_type}_AHB_")
+    } else {
+        format!("{msg_type}_AHB_{variant_suffix}_")
+    };
+
+    let entries = match std::fs::read_dir(&fv_dir) {
+        Ok(e) => e,
+        Err(_) => return Default::default(),
+    };
+    for entry in entries.flatten() {
+        let name = entry.file_name().to_string_lossy().to_string();
+        if name.starts_with(&prefix) && name.ends_with(".xml") {
+            let variant = if variant_suffix.is_empty() {
+                None
+            } else {
+                Some(variant_suffix)
+            };
+            match parse_ahb(&entry.path(), msg_type, variant, fv) {
+                Ok(schema) => {
+                    let mut map = std::collections::HashMap::new();
+                    for workflow in schema.workflows {
+                        if !workflow.segment_numbers.is_empty() {
+                            map.insert(
+                                format!("pid_{}", workflow.id),
+                                workflow.segment_numbers,
+                            );
+                        }
+                    }
+                    return map;
+                }
+                Err(e) => {
+                    eprintln!("Warning: Failed to parse AHB {fv}/{name}: {e}");
+                    return Default::default();
+                }
+            }
+        }
+    }
+    Default::default()
 }
 
 #[cfg(test)]

@@ -517,27 +517,135 @@ struct ConditionStubConfig {
 /// All message type configurations for stub generation.
 const CONDITION_STUB_CONFIGS: &[ConditionStubConfig] = &[
     // Identical across all 3 FVs — generate FV2504 only
-    ConditionStubConfig { key: "UTILMD_Strom", msg_type: "UTILMD", variant: "Strom", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
-    ConditionStubConfig { key: "UTILMD_Gas", msg_type: "UTILMD", variant: "Gas", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
-    ConditionStubConfig { key: "APERAK", msg_type: "APERAK", variant: "", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
-    ConditionStubConfig { key: "CONTRL", msg_type: "CONTRL", variant: "", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
-    ConditionStubConfig { key: "ORDCHG", msg_type: "ORDCHG", variant: "", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
-    ConditionStubConfig { key: "UTILTS", msg_type: "UTILTS", variant: "", generate_fvs: &["FV2504"], aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")] },
+    ConditionStubConfig {
+        key: "UTILMD_Strom",
+        msg_type: "UTILMD",
+        variant: "Strom",
+        generate_fvs: &["FV2504"],
+        aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")],
+    },
+    ConditionStubConfig {
+        key: "UTILMD_Gas",
+        msg_type: "UTILMD",
+        variant: "Gas",
+        generate_fvs: &["FV2504"],
+        aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")],
+    },
+    ConditionStubConfig {
+        key: "APERAK",
+        msg_type: "APERAK",
+        variant: "",
+        generate_fvs: &["FV2504"],
+        aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")],
+    },
+    ConditionStubConfig {
+        key: "CONTRL",
+        msg_type: "CONTRL",
+        variant: "",
+        generate_fvs: &["FV2504"],
+        aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")],
+    },
+    ConditionStubConfig {
+        key: "ORDCHG",
+        msg_type: "ORDCHG",
+        variant: "",
+        generate_fvs: &["FV2504"],
+        aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")],
+    },
+    ConditionStubConfig {
+        key: "UTILTS",
+        msg_type: "UTILTS",
+        variant: "",
+        generate_fvs: &["FV2504"],
+        aliases: &[("FV2510", "FV2504"), ("FV2604", "FV2504")],
+    },
     // FV2504 differs from FV2510, but FV2510=FV2604
-    ConditionStubConfig { key: "IFTSTA", msg_type: "IFTSTA", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
-    ConditionStubConfig { key: "INVOIC", msg_type: "INVOIC", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
-    ConditionStubConfig { key: "ORDRSP", msg_type: "ORDRSP", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
-    ConditionStubConfig { key: "PRICAT", msg_type: "PRICAT", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
-    ConditionStubConfig { key: "QUOTES", msg_type: "QUOTES", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
-    ConditionStubConfig { key: "REQOTE", msg_type: "REQOTE", variant: "", generate_fvs: &["FV2504", "FV2510"], aliases: &[("FV2604", "FV2510")] },
+    ConditionStubConfig {
+        key: "IFTSTA",
+        msg_type: "IFTSTA",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510"],
+        aliases: &[("FV2604", "FV2510")],
+    },
+    ConditionStubConfig {
+        key: "INVOIC",
+        msg_type: "INVOIC",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510"],
+        aliases: &[("FV2604", "FV2510")],
+    },
+    ConditionStubConfig {
+        key: "ORDRSP",
+        msg_type: "ORDRSP",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510"],
+        aliases: &[("FV2604", "FV2510")],
+    },
+    ConditionStubConfig {
+        key: "PRICAT",
+        msg_type: "PRICAT",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510"],
+        aliases: &[("FV2604", "FV2510")],
+    },
+    ConditionStubConfig {
+        key: "QUOTES",
+        msg_type: "QUOTES",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510"],
+        aliases: &[("FV2604", "FV2510")],
+    },
+    ConditionStubConfig {
+        key: "REQOTE",
+        msg_type: "REQOTE",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510"],
+        aliases: &[("FV2604", "FV2510")],
+    },
     // All differ or FV2510≠FV2604
-    ConditionStubConfig { key: "COMDIS", msg_type: "COMDIS", variant: "", generate_fvs: &["FV2504", "FV2510", "FV2604"], aliases: &[] },
-    ConditionStubConfig { key: "MSCONS", msg_type: "MSCONS", variant: "", generate_fvs: &["FV2504", "FV2510", "FV2604"], aliases: &[] },
-    ConditionStubConfig { key: "ORDERS", msg_type: "ORDERS", variant: "", generate_fvs: &["FV2504", "FV2510", "FV2604"], aliases: &[] },
-    ConditionStubConfig { key: "PARTIN", msg_type: "PARTIN", variant: "", generate_fvs: &["FV2504", "FV2510", "FV2604"], aliases: &[] },
-    ConditionStubConfig { key: "REMADV", msg_type: "REMADV", variant: "", generate_fvs: &["FV2504", "FV2510", "FV2604"], aliases: &[] },
+    ConditionStubConfig {
+        key: "COMDIS",
+        msg_type: "COMDIS",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510", "FV2604"],
+        aliases: &[],
+    },
+    ConditionStubConfig {
+        key: "MSCONS",
+        msg_type: "MSCONS",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510", "FV2604"],
+        aliases: &[],
+    },
+    ConditionStubConfig {
+        key: "ORDERS",
+        msg_type: "ORDERS",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510", "FV2604"],
+        aliases: &[],
+    },
+    ConditionStubConfig {
+        key: "PARTIN",
+        msg_type: "PARTIN",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510", "FV2604"],
+        aliases: &[],
+    },
+    ConditionStubConfig {
+        key: "REMADV",
+        msg_type: "REMADV",
+        variant: "",
+        generate_fvs: &["FV2504", "FV2510", "FV2604"],
+        aliases: &[],
+    },
     // INSRPT: only FV2510+ (no FV2504 AHB)
-    ConditionStubConfig { key: "INSRPT", msg_type: "INSRPT", variant: "", generate_fvs: &["FV2510"], aliases: &[("FV2604", "FV2510")] },
+    ConditionStubConfig {
+        key: "INSRPT",
+        msg_type: "INSRPT",
+        variant: "",
+        generate_fvs: &["FV2510"],
+        aliases: &[("FV2604", "FV2510")],
+    },
 ];
 
 /// Generate stub condition evaluator files for all message types.
@@ -553,7 +661,8 @@ fn generate_condition_stubs(
     // fv -> Vec<(module_name, struct_name)>
     let mut fv_modules: HashMap<String, Vec<(String, String)>> = HashMap::new();
     // fv -> Vec<(alias_module_name, alias_struct_name, source_fv, source_module_name, source_struct_name)>
-    let mut fv_aliases: HashMap<String, Vec<(String, String, String, String, String)>> = HashMap::new();
+    let mut fv_aliases: HashMap<String, Vec<(String, String, String, String, String)>> =
+        HashMap::new();
 
     for config in CONDITION_STUB_CONFIGS {
         let key_lower = config.key.to_lowercase();
@@ -571,18 +680,12 @@ fn generate_condition_stubs(
             };
 
             let ahb_dir = xml_base.join(fv);
-            let ahb_path = std::fs::read_dir(&ahb_dir)
-                .ok()
-                .and_then(|entries| {
-                    entries
-                        .filter_map(|e| e.ok())
-                        .find(|e| {
-                            e.file_name()
-                                .to_string_lossy()
-                                .starts_with(&ahb_pattern)
-                        })
-                        .map(|e| e.path())
-                });
+            let ahb_path = std::fs::read_dir(&ahb_dir).ok().and_then(|entries| {
+                entries
+                    .filter_map(|e| e.ok())
+                    .find(|e| e.file_name().to_string_lossy().starts_with(&ahb_pattern))
+                    .map(|e| e.path())
+            });
 
             let ahb_path = match ahb_path {
                 Some(p) => p,
@@ -604,7 +707,9 @@ fn generate_condition_stubs(
                 .bedingungen
                 .iter()
                 .filter_map(|b| {
-                    b.id.parse::<u32>().ok().map(|id| (id, b.description.clone()))
+                    b.id.parse::<u32>()
+                        .ok()
+                        .map(|id| (id, b.description.clone()))
                 })
                 .collect();
             conditions.sort_by_key(|(id, _)| *id);
@@ -626,11 +731,7 @@ fn generate_condition_stubs(
                 .map(|(id, _)| *id)
                 .collect();
 
-            let struct_name = format!(
-                "{}ConditionEvaluator{}",
-                to_pascal_case(config.key),
-                fv
-            );
+            let struct_name = format!("{}ConditionEvaluator{}", to_pascal_case(config.key), fv);
             let module_name = format!("{}_conditions_{}", key_lower, fv_lower);
             let output_file = fv_dir.join(format!("{}.rs", module_name));
 
@@ -642,7 +743,9 @@ fn generate_condition_stubs(
                 ahb_path.file_name().unwrap_or_default().to_string_lossy(),
                 conditions.len()
             ));
-            code.push_str("use crate::eval::{ConditionEvaluator, ConditionResult, EvaluationContext};\n\n");
+            code.push_str(
+                "use crate::eval::{ConditionEvaluator, ConditionResult, EvaluationContext};\n\n",
+            );
 
             let mut sorted_ext: Vec<u32> = external_ids.iter().copied().collect();
             sorted_ext.sort();
@@ -667,7 +770,10 @@ fn generate_condition_stubs(
             ));
             code.push_str("    fn evaluate(&self, condition: u32, ctx: &EvaluationContext) -> ConditionResult {\n        match condition {\n");
             for (id, _) in &conditions {
-                code.push_str(&format!("            {} => self.evaluate_{}(ctx),\n", id, id));
+                code.push_str(&format!(
+                    "            {} => self.evaluate_{}(ctx),\n",
+                    id, id
+                ));
             }
             code.push_str("            _ => ConditionResult::Unknown,\n        }\n    }\n\n");
             code.push_str("    fn is_external(&self, condition: u32) -> bool {\n        self.external_conditions.contains(&condition)\n    }\n}\n\n");
@@ -740,21 +846,24 @@ fn generate_condition_stubs(
             );
             let source_module = format!("{}_conditions_{}", key_lower, source_fv_lower);
 
-            fv_aliases
-                .entry(alias_fv_lower)
-                .or_default()
-                .push((
-                    format!("{}_conditions_{}", key_lower, alias_fv.to_lowercase()),
-                    struct_name_alias,
-                    source_fv_lower,
-                    source_module,
-                    struct_name_source,
-                ));
+            fv_aliases.entry(alias_fv_lower).or_default().push((
+                format!("{}_conditions_{}", key_lower, alias_fv.to_lowercase()),
+                struct_name_alias,
+                source_fv_lower,
+                source_module,
+                struct_name_source,
+            ));
         }
     }
 
     // Generate mod.rs for each FV directory
-    let mut all_fvs: Vec<String> = fv_modules.keys().chain(fv_aliases.keys()).cloned().collect::<HashSet<_>>().into_iter().collect();
+    let mut all_fvs: Vec<String> = fv_modules
+        .keys()
+        .chain(fv_aliases.keys())
+        .cloned()
+        .collect::<HashSet<_>>()
+        .into_iter()
+        .collect();
     all_fvs.sort();
 
     for fv_lower in &all_fvs {
@@ -766,7 +875,10 @@ fn generate_condition_stubs(
         // Real modules
         if let Some(modules) = fv_modules.get(fv_lower) {
             for (module_name, struct_name) in modules {
-                mod_code.push_str(&format!("mod {};\npub use {}::{};\n\n", module_name, module_name, struct_name));
+                mod_code.push_str(&format!(
+                    "mod {};\npub use {}::{};\n\n",
+                    module_name, module_name, struct_name
+                ));
             }
         }
 
@@ -843,10 +955,7 @@ fn derive_external_name(description: &str) -> String {
         "code_list_membership_check".to_string()
     } else {
         // Generate from first few words
-        let words: Vec<&str> = description
-            .split_whitespace()
-            .take(5)
-            .collect();
+        let words: Vec<&str> = description.split_whitespace().take(5).collect();
         words
             .join("_")
             .to_lowercase()
@@ -1841,8 +1950,14 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                     eprintln!("  Falling back to unenhanced fixture generation");
 
                     let tg = tx_group.as_deref().unwrap_or("SG4");
-                    let mig_order = automapper_generator::fixture_generator::build_mig_group_order(&filtered_mig, tg);
-                    let edi = automapper_generator::fixture_generator::generate_fixture(&schema, Some(&mig_order));
+                    let mig_order = automapper_generator::fixture_generator::build_mig_group_order(
+                        &filtered_mig,
+                        tg,
+                    );
+                    let edi = automapper_generator::fixture_generator::generate_fixture(
+                        &schema,
+                        Some(&mig_order),
+                    );
                     let seg_count = edi.matches('\'').count();
                     eprintln!("  Generated {} segments (unenhanced)", seg_count);
 
@@ -2057,7 +2172,8 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
             let code_lists =
                 automapper_generator::codegen::code_list_extractor::extract_code_lists(&mig);
             automapper_generator::codegen::code_list_extractor::write_code_lists(
-                &code_lists, &output,
+                &code_lists,
+                &output,
             )?;
             eprintln!(
                 "Extracted {} code lists ({} total codes) to {}",
@@ -2076,11 +2192,10 @@ fn run(cli: Cli) -> Result<(), automapper_generator::GeneratorError> {
                 "Compiling TOML mappings from {:?} to {:?}",
                 mappings_dir, output_dir
             );
-            let stats =
-                compile_cache::compile_all(&mappings_dir, &schema_dir, &output_dir)
-                    .map_err(|e| automapper_generator::GeneratorError::Validation {
-                        message: e.to_string(),
-                    })?;
+            let stats = compile_cache::compile_all(&mappings_dir, &schema_dir, &output_dir)
+                .map_err(|e| automapper_generator::GeneratorError::Validation {
+                    message: e.to_string(),
+                })?;
 
             eprintln!("\n=== Compilation Complete ===");
             eprintln!("  Message engines:     {}", stats.message_engines);

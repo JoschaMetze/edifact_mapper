@@ -99,7 +99,10 @@ pub fn generate_fixture(schema: &Value, mig_order: Option<&HashMap<String, usize
     if let Some(order) = mig_order {
         non_envelope.sort_by_key(|s| {
             let id = s["id"].as_str().unwrap_or("");
-            order.get(&format!("_root_{id}")).copied().unwrap_or(usize::MAX)
+            order
+                .get(&format!("_root_{id}"))
+                .copied()
+                .unwrap_or(usize::MAX)
         });
     }
     for seg in non_envelope {
@@ -206,8 +209,13 @@ pub fn generate_enhanced_fixture(
     enhance_mapped_message(&mut mapped, &Some(code_map), &config);
 
     // Step 8: Reverse map back to AssembledTree
-    let mut reverse_tree =
-        MappingEngine::map_interchange_reverse(msg_engine, tx_engine, &mapped, tx_group, Some(filtered_mig));
+    let mut reverse_tree = MappingEngine::map_interchange_reverse(
+        msg_engine,
+        tx_engine,
+        &mapped,
+        tx_group,
+        Some(filtered_mig),
+    );
 
     // Add UNH envelope (mapping engine handles content only)
     let unh_assembled = owned_to_assembled(&msg_chunk.unh);
@@ -441,7 +449,10 @@ fn mig_aware_sort_key(key: &str, base_order: &HashMap<String, usize>) -> (usize,
     let base_id = schema_key_to_group_id(key);
     let mig_pos = base_order.get(&base_id).copied().unwrap_or(usize::MAX);
     // Use qualifier suffix for secondary sort (alphabetical within same base group)
-    let qualifier = key.split_once('_').map(|(_, q)| q.to_string()).unwrap_or_default();
+    let qualifier = key
+        .split_once('_')
+        .map(|(_, q)| q.to_string())
+        .unwrap_or_default();
     (mig_pos, qualifier)
 }
 
