@@ -71,38 +71,8 @@ pub fn load_split_engines(pid: &str) -> (MappingEngine, MappingEngine) {
 }
 
 /// Load engines for a PID, handling the case where no per-PID dir exists.
-///
-/// When `pid_NNNNN/` exists → standard load (message + common + pid).
-/// When only `common/` exists → load common with schema filtering (no pid overrides).
 pub fn load_engines_for_pid(pid: &str) -> (MappingEngine, MappingEngine) {
-    let tx_dir = CONFIG.pid_dir(pid);
-    if tx_dir.exists() {
-        CONFIG.load_split_engines(pid)
-    } else {
-        let cmn_dir = CONFIG.common_dir();
-        let resolver = CONFIG.path_resolver();
-        let msg = CONFIG.load_message_engine();
-        if cmn_dir.exists() {
-            let idx = CONFIG.schema_index(pid);
-            let mut defs = MappingEngine::load(&cmn_dir)
-                .unwrap()
-                .with_path_resolver(resolver.clone())
-                .definitions()
-                .to_vec();
-            defs.retain(|d| {
-                d.meta
-                    .source_path
-                    .as_deref()
-                    .map(|sp| idx.has_group(sp))
-                    .unwrap_or(true)
-            });
-            let tx = MappingEngine::from_definitions(defs).with_path_resolver(resolver);
-            (msg, tx)
-        } else {
-            let tx = MappingEngine::from_definitions(vec![]);
-            (msg, tx)
-        }
-    }
+    CONFIG.load_split_engines(pid)
 }
 
 /// Discover generated fixture file for a PID (single file in `generated/` subdir).

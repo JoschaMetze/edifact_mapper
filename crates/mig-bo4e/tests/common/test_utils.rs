@@ -141,6 +141,9 @@ impl MessageTypeConfig {
     }
 
     /// Load split engines — tries variant cache first, then individual .bin, falls back to TOML.
+    ///
+    /// Handles PIDs without per-PID directories by loading common/ definitions
+    /// filtered by schema index (or an empty engine if no common/ exists).
     pub fn load_split_engines(&self, pid: &str) -> (MappingEngine, MappingEngine) {
         let pid_dirname = format!("pid_{pid}");
 
@@ -169,7 +172,8 @@ impl MessageTypeConfig {
         let cmn_dir = self.common_dir();
         let tx_dir = self.pid_dir(pid);
         let resolver = self.path_resolver();
-        if cmn_dir.exists() {
+
+        if tx_dir.exists() && cmn_dir.exists() {
             let idx = self.schema_index(pid);
             let (m, t) =
                 MappingEngine::load_split_with_common(&msg_dir, &cmn_dir, &tx_dir, &idx).unwrap();
@@ -177,12 +181,24 @@ impl MessageTypeConfig {
                 m.with_path_resolver(resolver.clone()),
                 t.with_path_resolver(resolver),
             )
-        } else {
+        } else if tx_dir.exists() {
             let (m, t) = MappingEngine::load_split(&msg_dir, &tx_dir).unwrap();
             (
                 m.with_path_resolver(resolver.clone()),
                 t.with_path_resolver(resolver),
             )
+        } else {
+            // No per-PID dir — use common-only or empty engine
+            let msg = self.load_message_engine();
+            let tx = if cmn_dir.exists() {
+                let idx = self.schema_index(pid);
+                MappingEngine::load_common_only(&cmn_dir, &idx)
+                    .unwrap()
+                    .with_path_resolver(resolver)
+            } else {
+                MappingEngine::from_definitions(vec![])
+            };
+            (msg, tx)
         }
     }
 
