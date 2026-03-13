@@ -232,13 +232,36 @@ impl<E: ConditionEvaluator> EdifactValidator<E> {
                     // Condition not met - field not required, skip
                 }
                 ConditionResult::Unknown => {
-                    // Cannot determine - add info-level warning with specific missing IDs
-                    let detail = if unknown_ids.is_empty() {
-                        String::new()
-                    } else {
-                        let ids: Vec<String> =
-                            unknown_ids.iter().map(|id| format!("[{id}]")).collect();
-                        format!(" (missing conditions: {})", ids.join(", "))
+                    // Partition unknown IDs into external (need provider) vs truly unknown
+                    let (external_ids, missing_ids): (Vec<u32>, Vec<u32>) =
+                        unknown_ids.into_iter().partition(|id| self.evaluator.is_external(*id));
+
+                    let detail = match (external_ids.is_empty(), missing_ids.is_empty()) {
+                        (true, true) => String::new(),
+                        (false, true) => {
+                            let ids: Vec<String> =
+                                external_ids.iter().map(|id| format!("[{id}]")).collect();
+                            format!(
+                                " (external conditions require provider: {})",
+                                ids.join(", ")
+                            )
+                        }
+                        (true, false) => {
+                            let ids: Vec<String> =
+                                missing_ids.iter().map(|id| format!("[{id}]")).collect();
+                            format!(" (missing conditions: {})", ids.join(", "))
+                        }
+                        (false, false) => {
+                            let ext: Vec<String> =
+                                external_ids.iter().map(|id| format!("[{id}]")).collect();
+                            let miss: Vec<String> =
+                                missing_ids.iter().map(|id| format!("[{id}]")).collect();
+                            format!(
+                                " (external conditions require provider: {}; missing conditions: {})",
+                                ext.join(", "),
+                                miss.join(", ")
+                            )
+                        }
                     };
                     report.add_issue(
                         ValidationIssue::new(
